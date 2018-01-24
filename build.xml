@@ -29,58 +29,69 @@
     <copy todir="game_helper_clients/test_client/lib"><fileset dir="${lib.dir}" /></copy>
   </target>
 
+  <target name="runnable">
+
+    <echo message="Make server runnable..."/>
+    <copydir src="${build.dir}/software-challenge-server/jar" dest="${build.dir}/software-challenge-server/runnable"/>
+    <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
+          todir="${build.dir}/software-challenge-server/runnable/plugins"/>
+    <copydir src="${lib.dir}" dest="${build.dir}/software-challenge-server/runnable/lib"/>
+    <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
+    <echo file="${build.dir}/software-challenge-server/runnable/start.bat"
+          message="java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xD;&#xA;" />
+    <echo file="${build.dir}/software-challenge-server/runnable/start.sh"
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xA;" />
+    <chmod file="${build.dir}/software-challenge-server/runnable/start.sh"
+           perm="ugo+x" />
+
+    <echo message="Make test server runnable..."/>
+    <copydir src="${build.dir}/test_client/jar" dest="${build.dir}/test_client/runnable"/>
+    <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
+          todir="${build.dir}/test_client/runnable/plugins"/>
+    <copydir src="${lib.dir}" dest="${build.dir}/test_client/runnable/lib"/>    <!-- test client -->
+    <echo file="${build.dir}/test_client/runnable/start-tests.bat"
+          message="java -Dfile.encoding=UTF-8 -jar test_client.jar&#xD;&#xA;" />
+    <echo file="${build.dir}/test_client/runnable/start-tests.sh"
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar test_client.jar&#xA;"/>
+    <chmod file="${build.dir}/test_client/runnable/start.sh" perm="ugo+x" />
+
+
+    <echo message="Make Player runnable"/>
+    <copydir src="${build.dir}/${game_player}/jar" dest="${build.dir}/${game_player}/runnable"/>
+    <copydir src="${lib.dir}" dest="${build.dir}/${game_player}/runnable/lib"/>
+    <echo file="${build.dir}/${game_player}/runnable/start.sh"
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar ${game_player}.jar&#xA;" />
+    <echo file="${build.dir}/${game_player}/runnable/start.bat"
+          message="java -Dfile.encoding=UTF-8 -jar ${game_player}.jar&#xD;&#xA;" />
+    <chmod file="${build.dir}/${game_player}/runnable/start.sh" perm="ugo+x" />
+
+  </target>
+
   <target name="build" depends="scmversion,dependencies" description="Build and only build for all projects">
 
     <echo message="Compiling Plugins..." />
     <ant dir="game_plugins/${game_name}" target="main" />
 
-    <echo message="Compiling Player..." />
-    <ant dir="game_players/${game_name}" target="main"/>
-
     <echo message="Compiling Server..." />
     <ant dir="game_server" target="main" inheritAll="false" />
     <ant dir="game_helper_clients/test_client" target="main"/>
+
+    <echo message="Compiling Player..." />
+    <ant dir="game_players/${game_name}" target="main"/>
   </target>
 
-  <target name="build-jar" depends="dependencies" description="Build and create jars for all projects">
+  <target name="build-jar" depends="dependencies,build" description="Build and create jars for all projects">
     <ant dir="game_plugins/${game_name}" target="build-jar" />
     <ant dir="game_players/${game_name}" target="build-jar" />
     <ant dir="game_server" target="build-jar"/>
     <ant dir="game_helper_clients/test_client" target="build-jar" />
   </target>
 
-  <target name="deploy" depends="clean, build-jar, build-doc">
-    <mkdir dir="${out.dir}/simple_client/${game_name}/src/lib" />
-    <copy todir="${out.dir}/simple_client/${game_name}/src/lib">
-      <fileset dir="${build.dir}/${game_player}/jar/lib" />
-    </copy>
-
-    <echo message="Generating Starter-Batchfiles" />
-    <!-- Server -->
-    <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
-    <echo file="${build.dir}/software-challenge-server/jar/start.bat" message="java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xD;&#xA;" />
-    <echo file="${build.dir}/software-challenge-server/jar/start.sh" message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xA;" />
-    <chmod file="${build.dir}/software-challenge-server/jar/start.sh" perm="ugo+x" />
-
-    <!-- test client -->
-    <echo file="${build.dir}/test_client/jar/start-tests.bat" message="java -Dfile.encoding=UTF-8 -jar test_client.jar&#xD;&#xA;" />
-    <echo file="${build.dir}/test_client/jar/start-tests.sh"
-          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar test_client.jar&#xA;"/>
-    <chmod file="${build.dir}/test_client/jar/start.sh" perm="ugo+x" />
-
-    <!-- Simple Client -->
-    <echo file="${build.dir}/${game_player}/jar/start.sh"
-          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar ${game_player}.jar&#xA;" />
-    <echo file="${build.dir}/${game_player}/jar/start.bat"
-          message="java -Dfile.encoding=UTF-8 -jar ${game_player}.jar&#xD;&#xA;" />
-    <chmod file="${build.dir}/${game_player}/jar/start.sh" perm="ugo+x" />
-
-
-
+  <target name="deploy" depends="build-jar,runnable,build-doc">
     <echo message="Zipping files..." />
     <!-- Simple Client -->
     <zip destfile="${out.dir}/zipped/simple_client_${game_name}_jar.zip">
-      <zipfileset dir="${build.dir}/${game_player}/jar"/>
+      <zipfileset dir="${build.dir}/${game_player}/runnable"/>
     </zip>
 
     <!-- Simple Client Source -->
@@ -98,9 +109,8 @@
 
     <!-- Software Challenge Server -->
     <zip destfile="${out.dir}/zipped/software-challenge-server.zip">
-      <zipfileset dir="${build.dir}/software-challenge-server/jar/"/>
-      <zipfileset dir="${build.dir}/test_client/jar/"/>
-      <zipfileset file="${build.dir}/${game_plugin}/jar/${game_name}.jar" prefix="plugins" />
+      <zipfileset dir="${build.dir}/software-challenge-server/runnable/"/>
+      <zipfileset file="${build.dir}/test_client/runnable/*.*"/>
       <zipfileset file="${build.dir}/version"/>
     </zip>
   </target>
