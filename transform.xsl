@@ -10,8 +10,15 @@
 <xsl:template match="state">
   <room>
     <data class="memento">
-      <xsl:copy-of select="." />
+      <xsl:copy>
+            <xsl:attribute name="class">state</xsl:attribute>
+            
+            <xsl:copy-of select="@*|node()"/>
+        </xsl:copy>
     </data>
   </room>
+</xsl:template>
+
+<xsl:template match="red">
 </xsl:template>
 </xsl:stylesheet>
