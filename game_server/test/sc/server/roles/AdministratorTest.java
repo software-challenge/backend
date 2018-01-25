@@ -13,6 +13,7 @@ import sc.server.network.Client;
 import sc.server.network.MockClient;
 import sc.server.network.PacketCallback;
 import sc.server.plugins.TestPlugin;
+import sc.shared.InvalidGameStateException;
 
 public class AdministratorTest extends AbstractRoleTest
 {
@@ -21,8 +22,7 @@ public class AdministratorTest extends AbstractRoleTest
 
 	@Test
 	public void shouldBecomeAdminWithCorrectPassword() throws IOException,
-					RescuableClientException
-	{
+					RescuableClientException, InvalidGameStateException {
 		Client client = connectAsAdmin();
 
 		Assert.assertEquals(1, client.getRoles().size());
@@ -30,8 +30,7 @@ public class AdministratorTest extends AbstractRoleTest
 	}
 
 	@Test
-	public void shouldNotBecomeAdminWithWrongPassword() throws IOException
-	{
+	public void shouldNotBecomeAdminWithWrongPassword() throws IOException, InvalidGameStateException {
 		Client client = connectClient();
 
 		Configuration.set(Configuration.PASSWORD_KEY, CORRECT_PASSWORD);
@@ -51,8 +50,7 @@ public class AdministratorTest extends AbstractRoleTest
 		Assert.assertEquals(false, client.isAdministrator());
 	}
 
-	protected MockClient connectAsAdmin()
-	{
+	protected MockClient connectAsAdmin() throws InvalidGameStateException {
 		MockClient client = null;
 		client = connectClient();
 
@@ -72,8 +70,7 @@ public class AdministratorTest extends AbstractRoleTest
 	}
 
 	@Test
-	public void shouldBeAbleToPrepareGame() throws RescuableClientException
-	{
+	public void shouldBeAbleToPrepareGame() throws RescuableClientException, InvalidGameStateException {
 		Client client = connectAsAdmin();
 
 		this.lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(

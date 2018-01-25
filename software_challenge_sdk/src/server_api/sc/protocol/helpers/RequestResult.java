@@ -21,7 +21,7 @@ public final class RequestResult<T extends ProtocolMessage>
 	/**
 	 * True, if error is not set.
 	 * 
-	 * @return
+	 * @return True, if error is not set
 	 */
 	public boolean isSuccessful()
 	{
@@ -35,7 +35,7 @@ public final class RequestResult<T extends ProtocolMessage>
 
 	/**
 	 * Get's the error (if the request failed);
-	 * @return
+	 * @return ProtocolErrorMessage
 	 */
 	public ProtocolErrorMessage getError()
 	{

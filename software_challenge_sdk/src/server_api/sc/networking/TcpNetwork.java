@@ -17,8 +17,8 @@ public class TcpNetwork implements INetworkInterface
 	 * Constructs an implementation of <code>INetworkInterface</code> which
 	 * operates on Java's <code>Socket</code>.
 	 *
-	 * @param socket
-	 * @throws IOException
+	 * @param socket Socket to use for construction
+	 * @throws IOException thrown if socket is invalid
 	 */
 	public TcpNetwork(Socket socket) throws IOException
 	{

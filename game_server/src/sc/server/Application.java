@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Application {
+  static {System.setProperty("logback.configurationFile", System.getProperty("user.dir") + "logback.xml");}
   private static final Logger logger = LoggerFactory
           .getLogger(Application.class);
   private static final Object waitObj = new Object();

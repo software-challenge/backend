@@ -35,7 +35,7 @@ import sc.shared.SlotDescriptor;
  * This class is used to handle all communication with a server. It is used in a
  * client (e.g. the java simple client). It is also used to represent
  * observer-threads started by the server which connect to the server. The
- * server always has a {@link sc.server.network.Client} object for every
+ * server always has a Client object for every
  * LobbyClient representing the client on the server-side.
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory {
@@ -47,7 +47,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private final List<IHistoryListener> historyListeners = new LinkedList<>();
   private final List<IAdministrativeListener> administrativeListeners = new LinkedList<>();
 
-  public static final String DEFAULT_HOST = "localhost";
+  public static final String DEFAULT_HOST = "127.0.0.1";
 
   public LobbyClient(XStream xStream) throws IOException {
     this(xStream, null);
@@ -185,12 +185,15 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(new AuthenticateRequest(password));
   }
 
+  @SuppressWarnings("unchecked")
   public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(
-          String gameType, int playerCount) throws InterruptedException {
+          String gameType) throws InterruptedException {
+
     return blockingRequest(new PrepareGameRequest(gameType),
             PrepareGameProtocolMessage.class);
   }
 
+  @SuppressWarnings("unchecked")
   public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(
           String gameType, SlotDescriptor descriptor1, SlotDescriptor descriptor2)
           throws InterruptedException {
@@ -198,6 +201,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
             PrepareGameProtocolMessage.class);
   }
 
+  @SuppressWarnings("unchecked")
   public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(
           PrepareGameRequest request) throws InterruptedException {
     return blockingRequest(request, PrepareGameProtocolMessage.class);
@@ -257,7 +261,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   /**
    * used in server
    *
-   * @param reservation
+   * @param reservation reservation ID
    */
   public void joinPreparedGame(String reservation) {
     send(new JoinPreparedRoomRequest(reservation));
@@ -265,6 +269,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   /**
    * currently not used in server
+   * @param gameType GameID
    */
   public void joinRoomRequest(String gameType) {
     send(new JoinRoomRequest(gameType));
@@ -273,9 +278,9 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   /**
    * used in server
    *
-   * @param request
-   * @param response
-   * @param handler
+   * @param request ProtocolMessage which contains the request
+   * @param response Response class to be created
+   * @param handler Handler for the requests
    */
   protected void request(ProtocolMessage request, Class<? extends ProtocolMessage> response,
                          IRequestResult handler) {
@@ -283,6 +288,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(request);
   }
 
+  @SuppressWarnings("unchecked")
   protected RequestResult blockingRequest(ProtocolMessage request,
                                                  Class<? extends ProtocolMessage> response) throws InterruptedException {
     final RequestResult requestResult = new RequestResult();

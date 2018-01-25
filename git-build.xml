@@ -6,5 +6,6 @@
        <arg value="HEAD"/>
     </exec>
     <echo message="Git Version is ${code.version}" />
+    <echo message="${code.version}" file="${build.dir}/version"/>
   </target>
 </project>

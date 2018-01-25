@@ -38,6 +38,8 @@ public class Configuration
   public static final String TEST_MODE = "testMode";
   public static final int BIG_DECIMAL_SCALE = 6;
   public static final String PAUSED = "paused";
+  public static final String TIMEOUT = "timeout";
+  public static final String LISTEN_LOCAL_KEY = "local";
 
 
   private static final Logger				logger			= LoggerFactory
@@ -81,6 +83,11 @@ public class Configuration
   public static int getPort()
   {
     return get(PORT_KEY, Integer.class, SharedConfiguration.DEFAULT_PORT);
+  }
+
+  public static boolean getListenLocal()
+  {
+    return get(LISTEN_LOCAL_KEY, Boolean.class, true);
   }
 
   public static XStream getXStream()

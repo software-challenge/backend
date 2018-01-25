@@ -14,12 +14,12 @@ import sc.server.network.Client;
 import sc.server.network.MockClient;
 import sc.server.network.PacketCallback;
 import sc.server.plugins.TestPlugin;
+import sc.shared.InvalidGameStateException;
 
 public class ContestTest extends AdministratorTest
 {
 	@Test
-	public void shouldBeAbleToPrepareAndStartGame() throws RescuableClientException
-	{
+	public void shouldBeAbleToPrepareAndStartGame() throws RescuableClientException, InvalidGameStateException {
 		MockClient admin = connectAsAdmin();
 		Client player1 = connectClient();
 		Client player2 = connectClient();

@@ -6,9 +6,6 @@ import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.GameResult;
 
-/**
- * Created by nils on 26.07.17.
- */
 public class TestPreparedGameResponseListener implements ILobbyClientListener{
   public PrepareGameProtocolMessage response;
 

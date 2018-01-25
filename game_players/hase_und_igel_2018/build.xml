@@ -1,0 +1,106 @@
+<project name="hase_und_igel_2018_player" basedir="." default="main">
+  <!-- Defaults to value from build.xml in root directory (cannot override properties) -->
+  <property name="game_name" value="hase_und_igel_2018" />
+  <property name="root.dir" value="${basedir}/../.." />
+  <property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
+  <property name="build.dir" value="${root.dir}/build" />
+  <property name="plugins.dir" value="${root.dir}/game_plugins" />
+  <property name="lib.dir" value="lib" />
+
+  <!-- Local properties -->
+  <property name="game_player" value="${game_name}_player" />
+  <property name="game_plugin" value="${game_name}_plugin" />
+  <property name="doc.dir" value="${build.dir}/${game_player}/doc" />
+	<property name="src.dir" value="src" />
+	<property name="game.dir" value="${plugins.dir}/${game_name}" />
+	<property name="classes.dir" value="${build.dir}/${game_player}/bin" />
+	<property name="jar.dir" value="${build.dir}/${game_player}/jar" />
+	<property name="main-class" value="sc.player2018.Starter" />
+
+	<path id="classpath.libs">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<fileset dir="${build.dir}/${game_plugin}" includes="**/*.jar" />
+		<!--<pathelement location="${build.dir}/software_challenge_sdk/bin" />-->
+		<!--<pathelement location="${build.dir}/${game_plugin}/bin" />-->
+	</path>
+
+	<path id="classpath.base">
+		<path refid="classpath.libs" />
+		<pathelement location="${classes.dir}" />
+	</path>
+
+	<path id="javadoc">
+		<pathelement location="src" />
+		<pathelement location="${game.dir}/src" />
+	</path>
+
+	<pathconvert property="jar.classpath" pathsep="">
+		<mapper>
+			<chainedmapper>
+				<!-- remove absolute path -->
+				<flattenmapper />
+				<!-- add lib/ prefix -->
+				<globmapper from="*" to="lib/* " />
+			</chainedmapper>
+		</mapper>
+
+		<path refid="classpath.libs" />
+	</pathconvert>
+
+    <pathconvert property="base.classpath" pathsep=":">
+        <path refid="classpath.base" />
+    </pathconvert>
+
+	<target name="clean">
+		<delete dir="${build.dir}/${game_player}" />
+    <delete dir="${doc.dir}" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac source="1.8"
+					 target="1.8"
+					 srcdir="${src.dir}"
+					 encoding="utf8"
+					 destdir="${classes.dir}"
+					 classpathref="classpath.base"
+					 debug="true"
+					 debuglevel="lines,vars,source"
+           includeantruntime="false"/>
+	</target>
+
+	<target name="build-jar" depends="compile">
+		<jar destfile="${jar.dir}/${ant.project.name}.jar"
+			 basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+			</manifest>
+		</jar>
+
+		<copy todir="${jar.dir}/lib" flatten="true">
+			<path refid="classpath.libs" />
+			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
+		</copy>
+		<copy tofile="${jar.dir}/logback.xml"
+              file="src/logback.xml" />
+	</target>
+
+	<target name="javadoc">
+    <javadoc destdir="${doc.dir}/"
+             classpathref="classpath.base"
+             packagenames="sc.*"
+             linksource="true"
+             sourcepath="${src.dir}" />
+	</target>
+
+	<target name="build" depends="build-jar" description="Build only" />
+
+	<target name="build-clean" depends="clean, build" description="Clean and build" />
+
+  <target name="build-doc" depends="javadoc" description="Generate Javadoc only"/>
+
+	<target name="build-all" depends="build-clean, build-doc" description="Clean, build and generate Javadoc" />
+
+	<target name="main" depends="build" description="Clean, build and generate Javadoc"/>
+</project>

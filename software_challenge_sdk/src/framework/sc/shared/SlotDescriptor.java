@@ -53,4 +53,5 @@ public class SlotDescriptor {
 	public boolean isShouldBePaused() {
 		return this.shouldBePaused;
 	}
+
 }
