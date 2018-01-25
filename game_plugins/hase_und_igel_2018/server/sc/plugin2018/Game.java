@@ -18,6 +18,7 @@ import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
+import sc.shared.WelcomeMessage;
 import sc.plugin2018.util.Configuration;
 import sc.plugin2018.util.Constants;
 

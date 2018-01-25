@@ -584,7 +584,7 @@ public class GameState implements Cloneable {
       actions.clear();
     }
     // Generiere mögliche Vorwärtszüge
-    for (int i = 1; i < GameRuleLogic.calculateMoveableFields(this.getCurrentPlayer().getCarrots()); i++) {
+    for (int i = 1; i <= GameRuleLogic.calculateMoveableFields(this.getCurrentPlayer().getCarrots()); i++) {
       GameState clone = null;
       try {
         clone = this.clone();
