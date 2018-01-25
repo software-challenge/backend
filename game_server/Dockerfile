@@ -7,5 +7,6 @@ ADD $game_server_dir /app
 WORKDIR /app
 ADD game_server_start_production.sh /app/start.sh
 ADD logback-production.xml /app/logback-production.xml
+ADD server.properties.production /app/server.properties
 RUN chmod +x /app/start.sh
 CMD ./start.sh
