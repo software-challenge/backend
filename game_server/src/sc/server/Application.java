@@ -38,8 +38,9 @@ public final class Application {
     long start = System.currentTimeMillis();
 
     try {
-      logger.info("loading server.properties");
-      Configuration.load(new FileReader("server.properties"));
+      File file = new File("server.properties");
+      logger.info("loading configuration from {}", file.getAbsolutePath());
+      Configuration.load(new FileReader(file));
     } catch (IOException e) {
       logger.error("Could not find server.properties");
       e.printStackTrace();

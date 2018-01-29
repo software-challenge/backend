@@ -142,24 +142,24 @@ public class Configuration
     {
       return defaultValue;
     }
-
-    try
-    {
-      if (type == String.class) {
-        return type.cast(stringValue);
-      } else if (type == Integer.class) {
-        return type.cast(Integer.parseInt(stringValue));
-      } else if (type == Boolean.class) {
-        return type.cast(Boolean.getBoolean(stringValue));
-      } else {
-        logger.warn("Could not convert String to {} ", type);
-        return defaultValue;
-      }
+    if (type == String.class) {
+      return type.cast(stringValue);
+    } else if (type == Integer.class) {
+      return type.cast(Integer.parseInt(stringValue));
+    } else if (type == Boolean.class) {
+      return type.cast(toBoolean(stringValue));
+    } else {
+      throw new RuntimeException("Could not convert String to " + type.toString());
     }
-    catch (Exception e)
-    {
-      logger.warn("Failed to retrieve key from configuration.", e);
-      return defaultValue;
+  }
+
+  private static boolean toBoolean(String value) {
+    if ("true".equals(value)) {
+      return true;
+    } else if ("false".equals(value)) {
+      return false;
+    } else {
+      throw new IllegalArgumentException("Argument must be true or false");
     }
   }
 }
