@@ -38,7 +38,7 @@ public final class Application {
     long start = System.currentTimeMillis();
 
     try {
-      logger.error("loading server.properties");
+      logger.info("loading server.properties");
       Configuration.load(new FileReader("server.properties"));
     } catch (IOException e) {
       logger.error("Could not find server.properties");

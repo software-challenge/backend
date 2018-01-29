@@ -145,16 +145,13 @@ public class Configuration
 
     try
     {
-      if (type == String.class)
-      {
+      if (type == String.class) {
         return type.cast(stringValue);
-      }
-      else if (type == Integer.class)
-      {
+      } else if (type == Integer.class) {
         return type.cast(Integer.parseInt(stringValue));
-      }
-      else
-      {
+      } else if (type == Boolean.class) {
+        return type.cast(Boolean.getBoolean(stringValue));
+      } else {
         logger.warn("Could not convert String to {} ", type);
         return defaultValue;
       }
