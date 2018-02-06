@@ -7,6 +7,8 @@ ADD $game_server_dir /app
 WORKDIR /app
 ADD game_server_start_production.sh /app/start.sh
 ADD logback-production.xml /app/logback-production.xml
-ADD server.properties.production /app/server.properties
+# This will be overwritten by the docker secret with the real password in production:
+ADD server.properties.production /run/secrets/gameserver_properties
+RUN rm /app/server.properties && ln -s /run/secrets/gameserver_properties /app/server.properties
 RUN chmod +x /app/start.sh
 CMD ./start.sh
