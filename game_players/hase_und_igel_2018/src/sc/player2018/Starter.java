@@ -6,6 +6,7 @@ import jargs.gnu.CmdLineParser.UnknownOptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.framework.plugins.SimplePlayer;
+import sc.player2018.logic.Logic;
 import sc.plugin2018.AbstractClient;
 import sc.plugin2018.IGameHandler;
 import sc.shared.SharedConfiguration;

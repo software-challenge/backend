@@ -1,5 +1,5 @@
 #!/bin/bash
-JAR="./softwarechallenge-server.jar"
+JAR="./software-challenge-server.jar"
 echo "Starting game server ($JAR)..."
 exec java \
     -Dfile.encoding=UTF-8 \

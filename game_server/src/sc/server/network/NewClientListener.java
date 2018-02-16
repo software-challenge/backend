@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.InetAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -123,10 +124,14 @@ public class NewClientListener implements Runnable, Closeable	{
   private void startSocketListener() throws IOException
   {
     int port = Configuration.getPort();
+    InetAddress bindAddr = null; // From the docs: If bindAddr is null, it will default accepting connections on any/all local addresses.
+    if (Configuration.getListenLocal()) {
+      bindAddr = InetAddress.getByName(null); // localhost
+    }
 
     try
     {
-      this.serverSocket = new ServerSocket(port);
+      this.serverSocket = new ServerSocket(port, 0, bindAddr);
       int usedPort = this.serverSocket.getLocalPort();
       NewClientListener.lastUsedPort = usedPort;
       logger.info("Listening on port {} for incoming connections.",
