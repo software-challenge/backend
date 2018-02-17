@@ -65,9 +65,19 @@ public class Move extends ProtocolMove implements Cloneable {
    * @param selectedActions
    *          Aktionen des Zuges
    */
-  public Move(List<Action> selectedActions) {
+  public Move(List<Action> actions) {
     assert selectedActions != null;
-    actions = new CopyOnWriteArrayList<>(selectedActions);
+    this.actions = new CopyOnWriteArrayList<>(actions);
+  }
+
+  /**
+   * Erzeugt einen neuen Zug aus den Aktionen
+   *
+   * @param actions
+   *          Aktionen des Zuges
+   */
+  public Move(Action... actions) {
+    this.actions = new CopyOnWriteArrayList<>(actions);
   }
 
   /**
