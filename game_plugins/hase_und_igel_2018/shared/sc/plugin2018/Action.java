@@ -8,7 +8,7 @@ import sc.shared.InvalidMoveException;
  * Eine Aktion, die Bestandteil eines Zuges ist. Kann auch ohne den Zug mittels perform ausgeführt werden.
  */
 @XStreamAlias(value = "action")
-public abstract class Action implements Comparable<Action> {
+public abstract class Action implements Comparable<Action>, Cloneable {
 
   public Action() {
     this.order = 0;
@@ -36,4 +36,5 @@ public abstract class Action implements Comparable<Action> {
   }
 
   public abstract Action clone();
+
 }
