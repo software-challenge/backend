@@ -170,6 +170,14 @@ public class GameState implements Cloneable {
   }
 
   /**
+   * Liefert den Spieler als {@code Player}-Objekt, der als die entsprechende Farbe spielt
+   * @param color die Farbe des gefragten Spielers
+   */
+  public Player getPlayer(PlayerColor color) {
+    return color == PlayerColor.RED ? red : blue;
+  }
+
+  /**
    * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
    * ist.
    *
@@ -182,7 +190,7 @@ public class GameState implements Cloneable {
   /**
    * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
    * ist. Dies ist aequivalent zum Aufruf
-   * {@code getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
+   * {@code getCurrentPlayer().getPlayerColor()}, aber schneller.
    *
    * @return Die Farbe des Spielers, der momentan am Zug ist.
    */
@@ -221,11 +229,17 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Liefert den Spieler als {@code Player}-Objekt, der als die entsprechende Farbe spielt
-   * @param color die Farbe des gefragten Spielers
+   * @deprecated ersetzt durch {@link #getPlayer(PlayerColor)}
    */
-  public Player getPlayer(PlayerColor color) {
-    return color == PlayerColor.RED ? red : blue;
+  public Player getRedPlayer() {
+    return red;
+  }
+
+  /**
+   * @deprecated ersetzt durch {@link #getPlayer(PlayerColor)}
+   */
+  public Player getBluePlayer() {
+    return blue;
   }
 
   /**
