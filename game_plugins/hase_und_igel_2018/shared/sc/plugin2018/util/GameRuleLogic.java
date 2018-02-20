@@ -278,6 +278,9 @@ public class GameRuleLogic
 
 		final Player o = state.getOpponent(player);
 		int nextPos = o.getFieldIndex() - 1;
+		if (nextPos == 0) {
+			return false;
+		}
 
 		FieldType type = state.getTypeAt(nextPos);
 		switch (type)
