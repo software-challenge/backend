@@ -111,8 +111,8 @@ public class GameState implements Cloneable {
    */
   protected GameState(GameState stateToClone) throws CloneNotSupportedException {
     GameState clone = stateToClone.clone();
-    setRedPlayer(clone.getRedPlayer());
-    setBluePlayer(clone.getBluePlayer());
+    setRedPlayer(clone.getPlayer(PlayerColor.RED));
+    setBluePlayer(clone.getPlayer(PlayerColor.BLUE));
     setLastMove(clone.getLastMove());
     setBoard(clone.getBoard());
     setCurrentPlayer(clone.getCurrentPlayerColor());
@@ -122,7 +122,7 @@ public class GameState implements Cloneable {
    * erzeugt eine Deepcopy dieses Objekts
    *
    * @return ein neues Objekt mit gleichen Eigenschaften
-   * @throws CloneNotSupportedException falls klonen fehlschlaegt
+   * @throws CloneNotSupportedException falls das Klonen fehlschlaegt
    */
   @Override
   public GameState clone() throws CloneNotSupportedException {
@@ -153,7 +153,6 @@ public class GameState implements Cloneable {
    *          Der hinzuzufuegende Spieler.
    */
   public void addPlayer(Player player) {
-
     if (player.getPlayerColor() == PlayerColor.RED) {
       red = player;
     } else if (player.getPlayerColor() == PlayerColor.BLUE) {
@@ -171,19 +170,27 @@ public class GameState implements Cloneable {
   }
 
   /**
+   * Liefert den Spieler als {@code Player}-Objekt, der als die entsprechende Farbe spielt
+   * @param color die Farbe des gefragten Spielers
+   */
+  public Player getPlayer(PlayerColor color) {
+    return color == PlayerColor.RED ? red : blue;
+  }
+
+  /**
    * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
    * ist.
    *
    * @return Der Spieler, der momentan am Zug ist.
    */
   public Player getCurrentPlayer() {
-    return (currentPlayer == PlayerColor.RED ? red : blue);
+    return getPlayer(currentPlayer);
   }
 
   /**
    * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
    * ist. Dies ist aequivalent zum Aufruf
-   * {@code getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
+   * {@code getCurrentPlayer().getPlayerColor()}, aber schneller.
    *
    * @return Die Farbe des Spielers, der momentan am Zug ist.
    */
@@ -206,7 +213,7 @@ public class GameState implements Cloneable {
    * @return Der Spieler, der momentan nicht am Zug ist.
    */
   public Player getOtherPlayer() {
-    return currentPlayer == PlayerColor.RED ? blue : red;
+    return getPlayer(getOtherPlayerColor());
   }
 
   /**
@@ -222,14 +229,17 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der dem
-   * Spiel als erstes beigetreten ist und demzufolge mit der Farbe
-   * {@code PlayerColor.RED} spielt.
-   *
-   * @return Der rote Spieler.
+   * @deprecated ersetzt durch {@link #getPlayer(PlayerColor)}
    */
   public Player getRedPlayer() {
     return red;
+  }
+
+  /**
+   * @deprecated ersetzt durch {@link #getPlayer(PlayerColor)}
+   */
+  public Player getBluePlayer() {
+    return blue;
   }
 
   /**
@@ -238,17 +248,6 @@ public class GameState implements Cloneable {
    */
   protected void setRedPlayer(Player red) {
     this.red = red;
-  }
-
-  /**
-   * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der dem
-   * Spiel als zweites beigetreten ist und demzufolge mit der Farbe
-   * {@code PlayerColor.BLUE} spielt.
-   *
-   * @return Der blaue Spieler.
-   */
-  public Player getBluePlayer() {
-    return blue;
   }
 
   /**
@@ -465,11 +464,7 @@ public class GameState implements Cloneable {
    * @return Punktzahl des Spielers
    */
   public int getPointsForPlayer(PlayerColor playerColor) {
-    if (playerColor == PlayerColor.RED) {
-      return this.getRedPlayer().getFieldIndex();
-    } else {
-      return this.getBluePlayer().getFieldIndex();
-    }
+    return getPlayer(playerColor).getFieldIndex();
   }
 
   /**
@@ -480,11 +475,7 @@ public class GameState implements Cloneable {
   }
   
   public Player getOpponent(Player player) {
-    if (player.getPlayerColor() == PlayerColor.RED) {
-      return this.getBluePlayer();
-    } else {
-      return this.getRedPlayer();
-    }
+    return getPlayer(player.getPlayerColor().opponent());
   }
 
   /**
@@ -503,11 +494,7 @@ public class GameState implements Cloneable {
     if (action instanceof Skip) {
       return;
     }
-    if (this.getCurrentPlayerColor() == PlayerColor.RED) {
-      this.getRedPlayer().setLastNonSkipAction(action);
-    } else {
-      this.getBluePlayer().setLastNonSkipAction(action);
-    }
+    getCurrentPlayer().setLastNonSkipAction(action);
   }
 
   /**
@@ -534,11 +521,7 @@ public class GameState implements Cloneable {
    * @return letzte Aktion die nicht Skip war
    */
   public Action getLastNonSkipAction(PlayerColor playerColor) {
-    if (playerColor == PlayerColor.RED) {
-      return this.getRedPlayer().getLastNonSkipAction();
-    } else {
-      return this.getBluePlayer().getLastNonSkipAction();
-    }
+    return getPlayer(playerColor).getLastNonSkipAction();
   }
 
   /**
