@@ -14,6 +14,11 @@
 
   <target name="clean">
     <delete dir="${build.dir}" />
+    <delete dir="${out.dir}" />
+    <delete dir="game_server/lib"/>
+    <delete dir="game_players/${game_name}/lib"/>
+    <delete dir="game_plugins/${game_name}/lib"/>
+    <delete dir="game_helper_clients/test_client/lib"/>
   </target>
 
   <target name="dependencies">
