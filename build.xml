@@ -54,6 +54,7 @@
     <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
           todir="${build.dir}/test_client/runnable/plugins"/>
     <copydir src="${lib.dir}" dest="${build.dir}/test_client/runnable/lib"/>    <!-- test client -->
+    <copy file="${build.dir}/software-challenge-server/runnable/server.properties" todir="${build.dir}/test_client/runnable/"/>
     <echo file="${build.dir}/test_client/runnable/start-tests.bat"
           message="java -Dfile.encoding=UTF-8 -jar test_client.jar&#xD;&#xA;" />
     <echo file="${build.dir}/test_client/runnable/start-tests.sh"
@@ -115,7 +116,7 @@
     <!-- Software Challenge Server -->
     <zip destfile="${out.dir}/zipped/software-challenge-server.zip">
       <zipfileset dir="${build.dir}/software-challenge-server/runnable/"/>
-      <zipfileset file="${build.dir}/test_client/runnable/*.*"/>
+      <zipfileset file="${build.dir}/test_client/runnable/*.*" excludes="server.properties"/>
       <zipfileset file="${build.dir}/version"/>
     </zip>
   </target>
