@@ -18,10 +18,9 @@
 	<property name="game_plugin" value="${game_name}_plugin" />
 
 	<path id="classpath.libs">
-    <fileset dir="${lib.dir}" includes="**/*.jar"/>
-    <fileset dir="${build.dir}/${game_plugin}" includes="**/*.jar"/>
-    <fileset dir="${build.dir}/software-challenge-server" includes="**/*.jar" />
-    <pathelement location="${build.dir}/${game_plugin}/bin" />
+    <fileset file="${lib.dir}/*"/>
+    <fileset dir="${build.dir}/${game_plugin}/jar" includes="*.jar"/>
+    <fileset dir="${build.dir}/software-challenge-server/jar" includes="*.jar" />
 	</path>
 
 	<path id="classpath.base">
@@ -29,17 +28,10 @@
 		<pathelement location="${classes.dir}" />
 	</path>
 
-	<pathconvert property="jar.classpath" pathsep=" ">
-		<mapper>
-			<chainedmapper>
-				<!-- remove absolute path -->
-				<flattenmapper />
-				<!-- add lib/ prefix -->
-				<globmapper from="*" to="lib/*" />
-			</chainedmapper>
-		</mapper>
-
-		<path refid="classpath.libs" />
+	<pathconvert property="jar.classpath" pathsep=" " refid="classpath.libs">
+		<map from="${lib.dir}" to="lib"/>
+		<map from="${build.dir}/${game_plugin}/jar" to="lib"/>
+		<map from="${build.dir}/software-challenge-server/jar/" to=""/>
 	</pathconvert>
 
 	<target name="clean">
@@ -71,9 +63,9 @@
 		</jar>
 
 		<copy todir="${jar.dir}/lib" flatten="true">
-			<path refid="classpath.libs" />
+			<fileset dir="${lib.dir}"/>
 			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />-->
-			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
+			<fileset dir="${build.dir}/${game_plugin}" includes="jar/*.jar" />
 		</copy>
 		<copy tofile="${jar.dir}/logback-tests.xml" file="src/logback-tests.xml"/>
 	</target>
