@@ -9,6 +9,7 @@ import sc.shared.DebugHint;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,49 +63,34 @@ public class Move extends ProtocolMove implements Cloneable {
    * Erzeugt einen neuen Zug aus Liste von Aktionen. Die Liste der Aktionen wird kopiert
    * (d.h. eine Änderung der Liste nach Erstellung des Zuges ändert den Zug nicht mehr).
    *
-   * @param selectedActions
+   * @param actions
    *          Aktionen des Zuges
    */
-  public Move(List<Action> selectedActions) {
-    assert selectedActions != null;
-    actions = new CopyOnWriteArrayList<>(selectedActions);
+  public Move(List<Action> actions) {
+    assert actions != null;
+    this.actions = new CopyOnWriteArrayList<>(actions);
+  }
+
+  /**
+   * Erzeugt einen neuen Zug aus den Aktionen
+   *
+   * @param actions
+   *          Aktionen des Zuges
+   */
+  public Move(Action... actions) {
+    this.actions = new CopyOnWriteArrayList<>(actions);
   }
 
   /**
    * erzeugt eine Deepcopy dieses Objektes
    *
    * @return ein neues Objekt mit gleichen Eigenschaften
-   * @throws CloneNotSupportedException
-   *           falls nicht geklont werden kann
    */
   @Override
-  public Object clone() {
-    List<Action> clonedActions = new CopyOnWriteArrayList<>();
+  public Move clone() {
+    List<Action> clonedActions = new ArrayList<>(getActions().size());
     for (Action action : getActions()) {
-      if (action instanceof Advance) {
-        Advance clonedAction = ((Advance) action).clone();
-        clonedActions.add(clonedAction);
-      }
-      if (action instanceof Skip) {
-        Skip clonedAction = ((Skip) action).clone();
-        clonedActions.add(clonedAction);
-      }
-      if (action instanceof EatSalad) {
-        EatSalad clonedAction = ((EatSalad) action).clone();
-        clonedActions.add(clonedAction);
-      }
-      if (action instanceof ExchangeCarrots) {
-        ExchangeCarrots clonedAction = ((ExchangeCarrots) action).clone();
-        clonedActions.add(clonedAction);
-      }
-      if (action instanceof FallBack) {
-        FallBack clonedAction = ((FallBack) action).clone();
-        clonedActions.add(clonedAction);
-      }
-      if (action instanceof Card) {
-        Card clonedAction = ((Card) action).clone();
-        clonedActions.add(clonedAction);
-      }
+      clonedActions.add(action.clone());
     }
     Move clone = new Move(clonedActions);
     if (this.hints != null)
