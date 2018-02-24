@@ -91,7 +91,7 @@ public class Card extends Action {
           }
           state.setLastAction(this);
         } else {
-          throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
+          throw new InvalidMoveException("Das Ausspielen der HURRY_AHEAD Karte ist nicht möglich.");
         }
         break;
       case TAKE_OR_DROP_CARROTS:

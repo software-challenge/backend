@@ -301,7 +301,7 @@ public class GameRuleLogic
         } catch (CloneNotSupportedException e) {
           e.printStackTrace();
         }
-        state2.setLastAction(new Card(CardType.HURRY_AHEAD));
+        state2.setLastAction(new Card(CardType.FALL_BACK));
 				state2.getCurrentPlayer().setCards(player.getCardsWithout(CardType.FALL_BACK));
 				valid = valid && canPlayAnyCard(state2);
 				break;
