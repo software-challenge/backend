@@ -14,6 +14,11 @@
 
   <target name="clean">
     <delete dir="${build.dir}" />
+    <delete dir="${out.dir}" />
+    <delete dir="game_server/lib"/>
+    <delete dir="game_players/${game_name}/lib"/>
+    <delete dir="game_plugins/${game_name}/lib"/>
+    <delete dir="game_helper_clients/test_client/lib"/>
   </target>
 
   <target name="dependencies">
@@ -46,9 +51,11 @@
 
     <echo message="Make test server runnable..."/>
     <copydir src="${build.dir}/test_client/jar" dest="${build.dir}/test_client/runnable"/>
+    <copy file="${build.dir}/software-challenge-server/jar/software-challenge-server.jar" todir="${build.dir}/test_client/runnable" />
     <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
           todir="${build.dir}/test_client/runnable/plugins"/>
     <copydir src="${lib.dir}" dest="${build.dir}/test_client/runnable/lib"/>    <!-- test client -->
+    <copy file="${build.dir}/software-challenge-server/runnable/server.properties" todir="${build.dir}/test_client/runnable/"/>
     <echo file="${build.dir}/test_client/runnable/start-tests.bat"
           message="java -Dfile.encoding=UTF-8 -jar test_client.jar&#xD;&#xA;" />
     <echo file="${build.dir}/test_client/runnable/start-tests.sh"
@@ -110,7 +117,7 @@
     <!-- Software Challenge Server -->
     <zip destfile="${out.dir}/zipped/software-challenge-server.zip">
       <zipfileset dir="${build.dir}/software-challenge-server/runnable/"/>
-      <zipfileset file="${build.dir}/test_client/runnable/*.*"/>
+      <zipfileset file="${build.dir}/test_client/runnable/*.*" excludes="server.properties, software-challenge-server.jar"/>
       <zipfileset file="${build.dir}/version"/>
     </zip>
   </target>

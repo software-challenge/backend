@@ -90,6 +90,7 @@ public class TestClient extends XStreamClient {
     CmdLineParser.Option name2Option = parser.addStringOption("name2");
     CmdLineParser.Option p1CanTimeoutOption = parser.addBooleanOption("timeout1");
     CmdLineParser.Option p2CanTimeoutOption = parser.addBooleanOption("timeout2");
+    new File("logs").mkdirs();
 
     try {
       parser.parse(args);
@@ -145,6 +146,8 @@ public class TestClient extends XStreamClient {
         this.currentTests++;
         send(new GetScoreForPlayerRequest(displayName1));
         send(new GetScoreForPlayerRequest(displayName2));
+
+
         proc1.destroyForcibly();
         proc2.destroyForcibly();
         if (this.currentTests == this.numberOfTests) {
@@ -172,8 +175,8 @@ public class TestClient extends XStreamClient {
         }
       }
       logger.warn("Received new score for " + score.getDisplayName() + ": Siegpunkte " + score.getScoreValues().get(0).getValue() +
-                      ", \u2205 Feldnummer " + score.getScoreValues().get(1).getValue() +
-                      ", \u2205 Karotten " + score.getScoreValues().get(2).getValue() + " after " + currentTests +  " of " + numberOfTests + " tests");
+              ", \u2205 Feldnummer " + score.getScoreValues().get(1).getValue() +
+              ", \u2205 Karotten " + score.getScoreValues().get(2).getValue() + " after " + currentTests +  " of " + numberOfTests + " tests");
       if (gotLastPlayerScores == 2) {
         send(new CloseConnection());
       }
@@ -183,12 +186,22 @@ public class TestClient extends XStreamClient {
       send(new ObservationRequest(pgm.getRoomId()));
       try {
         logger.info("Trying first client {}", TestClient.p1);
-        String startClient1 = "java -jar " + TestClient.p1 + " -r " + pgm.getReservations().get(currentTests % 2) + " -h " + host + " -p " + port;
-        String startClient2 = "java -jar " + TestClient.p2 + " -r " + pgm.getReservations().get((currentTests + 1) % 2) + " -h " + host + " -p " + port;
-        proc1 = Runtime.getRuntime().exec(startClient1);
+        ProcessBuilder builder1 = new ProcessBuilder("java", "-jar", TestClient.p1, "-r", pgm.getReservations().get(currentTests % 2), "-h", host, "-p", ""+port);
+        builder1.redirectOutput(new File("logs"+File.separator+TestClient.displayName1+"_Test"+currentTests+".log"));
+        builder1.redirectError(new File("logs"+File.separator+TestClient.displayName1+"_Test"+currentTests+".err"));
+        proc1 = builder1.start();
+        Thread.sleep(500);
+
+
         logger.info("Trying second client {}", TestClient.p2);
-        proc2 = Runtime.getRuntime().exec(startClient2);
+        ProcessBuilder builder2 = new ProcessBuilder("java", "-jar", TestClient.p2, "-r", pgm.getReservations().get((currentTests+1) % 2), "-h", host, "-p", ""+port);
+        builder2.redirectOutput(new File("logs"+File.separator+TestClient.displayName2+"_Test"+currentTests+".log"));
+        builder2.redirectError(new File("logs"+File.separator+TestClient.displayName2+"_Test"+currentTests+".err"));
+        proc2 = builder2.start();
+        Thread.sleep(500);
       } catch (IOException e) {
+        e.printStackTrace();
+      } catch (InterruptedException e) {
         e.printStackTrace();
       }
     } else {
