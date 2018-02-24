@@ -435,7 +435,7 @@ public class GameRuleLogic
    * Überprüft ob der derzeitige Spieler die Karte spielen kann.
    * @param state derzeitiger GameState
    * @param c Karte die gespielt werden soll
-   * @param n Value fuer TAKE_OR_DROP_CARROTS
+   * @param n Wert fuer TAKE_OR_DROP_CARROTS
    * @return true, falls das Spielen der entsprechenden Karte möglich ist
    */
 	public static boolean isValidToPlayCard(GameState state, CardType c, int n)
