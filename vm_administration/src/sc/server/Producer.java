@@ -1,20 +1,21 @@
-package com.rra;
+package sc.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 
-import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
-import com.rra.configuration.Settings;
-import com.rra.Logger;
+
+import sc.server.configuration.Settings;
 
 public class Producer
   implements
@@ -34,21 +35,25 @@ public class Producer
     this.toWatch = folder;
   }
 
-  public Producer(String hostname, int port) throws IOException
+  public Producer(String hostname, int port) throws IOException, TimeoutException
   {
-    this.conn = new ConnectionFactory().newConnection(hostname, port);
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.setHost(hostname);
+    factory.setPort(port);
+    factory.setAutomaticRecoveryEnabled(true);
+    this.conn = factory.newConnection();
   }
 
-  private void publish(String message, String toQueue) throws IOException
+  private void publish(String message, String toQueue) throws IOException, TimeoutException
   {
     String exchange = "";
 
-    Channel ch = conn.createChannel();
+    Channel ch = this.conn.createChannel();
 
     if (exchange.equals(""))
-      {
-        ch.queueDeclare(toQueue);
-      }
+    {
+      ch.queueDeclare(toQueue, false, false, false, null);
+    }
 
     Logger.log(message);
     Logger.log("published to queue: " + toQueue);
@@ -93,14 +98,34 @@ public class Producer
 
         final File f = new File(folder);
         final File t = new File(tmp);
+
+
         Logger.log("Connecting to RabbitMQ at " + hostAddress + ":"
                    + portNumber);
 
-        final Producer p = new Producer(hostAddress, portNumber);
+      int tries = 0;
+      Producer p = null;
+      // FIXME: this should be handled by rabbitmq client library automatic
+      // retry. But it seems not to work (app crashes with connection refused
+      // exception).
+      while (tries < 5 && p == null) {
+        try {
+          p = new Producer(hostAddress, portNumber);
+        } catch (ConnectException e) {
+          Logger.log("Could not connect to rabbitmq, retrying...");
+          Thread.sleep(2000);
+          tries += 1;
+        }
+      }
+      if (p == null) {
+        Logger.logError("Could not connect to rabbitmq");
+        System.exit(1);
+      } else {
         p.setWatch(f);
         p.setTmp(t);
-
+        Logger.log("Connection established. Starting watch thread.");
         new Thread(p).start();
+      }
       }
     catch (Exception e)
       {
@@ -110,6 +135,7 @@ public class Producer
       }
   }
 
+  @Override
   public void run()
   {
     try
@@ -117,7 +143,7 @@ public class Producer
         boolean active = true;
         while (active)
           {
-            String[] files = toWatch.list();
+            String[] files = this.toWatch.list();
             if (files != null && files.length > 0)
               {
                 for (String file : files)
@@ -128,9 +154,9 @@ public class Producer
                     if (!file.endsWith(".zip"))
                       continue;
 
-                    File oldZIP = new File(toWatch.getAbsolutePath()
+                    File oldZIP = new File(this.toWatch.getAbsolutePath()
                                            + File.separator + file);
-                    File newZIP = new File(toTmp.getAbsolutePath()
+                    File newZIP = new File(this.toTmp.getAbsolutePath()
                                            + File.separator + file);
 
                     // Move zip to tmp folder
@@ -153,7 +179,7 @@ public class Producer
               }
           }
       }
-    catch (IOException e)
+    catch (IOException | TimeoutException e)
       {
         e.printStackTrace();
       }
