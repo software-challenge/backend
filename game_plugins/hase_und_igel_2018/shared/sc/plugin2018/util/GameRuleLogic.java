@@ -301,7 +301,7 @@ public class GameRuleLogic
         } catch (CloneNotSupportedException e) {
           e.printStackTrace();
         }
-        state2.setLastAction(new Card(CardType.HURRY_AHEAD));
+        state2.setLastAction(new Card(CardType.FALL_BACK));
 				state2.getCurrentPlayer().setCards(player.getCardsWithout(CardType.FALL_BACK));
 				valid = valid && canPlayAnyCard(state2);
 				break;
@@ -407,61 +407,43 @@ public class GameRuleLogic
    */
 	private static boolean canPlayAnyCard(GameState state)
 	{
-		boolean valid = false;
-		Player player = state.getCurrentPlayer();
-
-		for (final CardType a : player.getCards())
-		{
-			switch (a)
-			{
-				case EAT_SALAD:
-					valid = valid || isValidToPlayEatSalad(state);
-					break;
-				case FALL_BACK:
-					valid = valid || isValidToPlayFallBack(state);
-					break;
-				case HURRY_AHEAD:
-					valid = valid || isValidToPlayHurryAhead(state);
-					break;
-				case TAKE_OR_DROP_CARROTS:
-					valid = valid || isValidToPlayTakeOrDropCarrots(state, 20);
-					break;
-				default:
-					throw new IllegalArgumentException("Unknown CardType " + a);
-			}
+		for (final CardType card : state.getCurrentPlayer().getCards()) {
+			if(canPlayCard(state, card))
+				return true;
 		}
 
-		return valid;
+		return false;
 	}
 
-  /**
+	private static boolean canPlayCard(GameState state, CardType card) {
+		switch (card)
+		{
+			case EAT_SALAD:
+				return isValidToPlayEatSalad(state);
+			case FALL_BACK:
+				return isValidToPlayFallBack(state);
+			case HURRY_AHEAD:
+				return isValidToPlayHurryAhead(state);
+			case TAKE_OR_DROP_CARROTS:
+				return isValidToPlayTakeOrDropCarrots(state, 20);
+			default:
+				throw new IllegalArgumentException("Unknown CardType " + card);
+		}
+	}
+
+	/**
    * Überprüft ob der derzeitige Spieler die Karte spielen kann.
    * @param state derzeitiger GameState
    * @param c Karte die gespielt werden soll
-   * @param n Parameter mit dem TAKE_OR_DROP_CARROTS überprüft wird
+   * @param n Wert fuer TAKE_OR_DROP_CARROTS
    * @return true, falls das Spielen der entsprechenden Karte möglich ist
    */
 	public static boolean isValidToPlayCard(GameState state, CardType c, int n)
 	{
-		boolean valid;
-		switch (c)
-		{
-			case EAT_SALAD:
-				valid = isValidToPlayEatSalad(state);
-				break;
-			case FALL_BACK:
-				valid = isValidToPlayFallBack(state);
-				break;
-			case HURRY_AHEAD:
-				valid = isValidToPlayHurryAhead(state);
-				break;
-			case TAKE_OR_DROP_CARROTS:
-				valid = isValidToPlayTakeOrDropCarrots(state, n);
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown CardType " + c);
-		}
-		return valid;
+		if(c == CardType.TAKE_OR_DROP_CARROTS)
+			return isValidToPlayTakeOrDropCarrots(state, n);
+		else
+			return canPlayCard(state, c);
 	}
 
 	public static boolean mustEatSalad(GameState state) {
@@ -489,14 +471,7 @@ public class GameRuleLogic
    */
 	public static boolean canPlayCard(GameState state)
 	{
-	  Player player = state.getCurrentPlayer();
-		boolean canPlayCard = state.getTypeAt(player.getFieldIndex()).equals(
-				FieldType.HARE);
-		for (CardType a : player.getCards())
-		{
-			canPlayCard = canPlayCard || isValidToPlayCard(state, a, 0);
-		}
-		return canPlayCard;
+		return state.fieldOfCurrentPlayer() == FieldType.HARE && canPlayAnyCard(state);
 	}
 
 	/**
