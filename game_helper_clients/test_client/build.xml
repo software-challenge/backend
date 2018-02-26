@@ -30,7 +30,7 @@
 
 	<pathconvert property="jar.classpath" pathsep=" " refid="classpath.libs">
 		<map from="${lib.dir}" to="lib"/>
-		<map from="${build.dir}/${game_plugin}/jar" to="lib"/>
+		<map from="${build.dir}/${game_plugin}/jar" to="plugins"/>
 		<map from="${build.dir}/software-challenge-server/jar/" to=""/>
 	</pathconvert>
 
