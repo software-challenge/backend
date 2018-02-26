@@ -37,10 +37,9 @@ public class WinCondition implements Cloneable {
    * klont dieses Objekt
    *
    * @return ein neues Objekt mit gleichen Eigenschaften
-   * @throws CloneNotSupportedException falls Objekt nicht geklont werden kann
    */
   @Override
-  public Object clone() throws CloneNotSupportedException {
+  public Object clone() {
     return new WinCondition(winner, reason);
   }
 

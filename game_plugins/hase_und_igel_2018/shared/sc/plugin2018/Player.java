@@ -258,29 +258,25 @@ public class Player extends SimplePlayer implements Cloneable
 
 
   /**
-   * Erzeugt eine deep copy eines Spielers
-   * @return Spieler
+   * Erzeugt eine deepcopy dieses Spielers
+   * @return Klon des Spielers
    */
 	public Player clone()
 	{
-		Player clone = null;
-		try
-		{
+		Player clone;
+		try {
 			clone = (Player) super.clone();
-			clone.cards = new ArrayList<>();
-      clone.cards.addAll(this.cards);
-      clone.mustPlayCard = this.mustPlayCard;
-			clone.salads = this.salads;
-			clone.carrots = this.carrots;
-			clone.index = this.index;
-			if (this.lastNonSkipAction != null) {
-        clone.lastNonSkipAction = this.lastNonSkipAction.clone();
-      }
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("Cloning of Player failed!", e);
 		}
-		catch (CloneNotSupportedException e)
-		{
-			e.printStackTrace();
-		}
+		clone.cards = new ArrayList<>();
+		clone.cards.addAll(this.cards);
+		clone.mustPlayCard = this.mustPlayCard;
+		clone.salads = this.salads;
+		clone.carrots = this.carrots;
+		clone.index = this.index;
+		if (this.lastNonSkipAction != null)
+			clone.lastNonSkipAction = this.lastNonSkipAction.clone();
 		return clone;
 	}
 
