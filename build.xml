@@ -52,6 +52,8 @@
     <echo message="Make test client runnable..."/>
     <copydir src="${build.dir}/test_client/jar" dest="${build.dir}/test_client/runnable"/>
     <copy file="${build.dir}/software-challenge-server/jar/software-challenge-server.jar" todir="${build.dir}/test_client/runnable" />
+    <copy file="${build.dir}/${game_player}/jar/${game_player}.jar"
+          tofile="${build.dir}/test_client/runnable/defaultplayer.jar"/>
     <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
           todir="${build.dir}/test_client/runnable/plugins"/>
     <copydir src="${lib.dir}" dest="${build.dir}/test_client/runnable/lib"/>    <!-- test client -->

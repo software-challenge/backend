@@ -1,5 +1,6 @@
 package sc;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import com.thoughtworks.xstream.XStream;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
@@ -90,6 +91,14 @@ public class TestClient extends XStreamClient {
     }
   }
 
+  static boolean isJar(String f){
+    String[] split = f.split("\\.");
+    if(split.length >= 1 && split[split.length-1].toLowerCase().equals("jar")){
+      return true;
+    }
+    return false;
+  }
+
   public static void main(String[] args) throws IllegalOptionValueException,
           UnknownOptionException, IOException {
     System.setProperty("file.encoding", "UTF-8");
@@ -130,11 +139,12 @@ public class TestClient extends XStreamClient {
     canTimeout2 = (Boolean) parser.getOptionValue(p2CanTimeoutOption, true);
     displayName1 = (String) parser.getOptionValue(name1Option, "player1");
     displayName2 = (String) parser.getOptionValue(name2Option, "player2");
-    p1 = (String) parser.getOptionValue(p1Option, "../../hase_und_igel_2018_player/runnable/hase_und_igel_2018_player.jar");
-    p2 = (String) parser.getOptionValue(p2Option, "../../hase_und_igel_2018_player/runnable/hase_und_igel_2018_player.jar");
+    p1 = (String) parser.getOptionValue(p1Option, "./defaultplayer.jar");
+    p2 = (String) parser.getOptionValue(p2Option, "./defaultplayer.jar");
 
     File player1File = new  File(p1);
     File player2File = new  File(p2);
+
     if (!player1File.exists()){
       logger.error("Player1 could not be found ("+p1+").");
       return;
@@ -203,23 +213,46 @@ public class TestClient extends XStreamClient {
               ", \u2205 Feldnummer " + score.getScoreValues().get(1).getValue() +
               ", \u2205 Karotten " + score.getScoreValues().get(2).getValue() + " after " + currentTests +  " of " + numberOfTests + " tests");
       if (gotLastPlayerScores == 2) {
+        if (this.currentTests == this.numberOfTests) {
+          logger.warn("Total results: \n=============== SCORES ================\n"+
+              displayName1+": "+scores.get(0).getScoreValues().get(0).getValue()+"\n"+
+              displayName2+": "+scores.get(1).getScoreValues().get(0).getValue()+"\n"+
+              "======================================="
+          );
+        }
         send(new CloseConnection());
       }
+
     } else if (o instanceof PrepareGameProtocolMessage) {
       logger.info("Trying to start clients");
       PrepareGameProtocolMessage pgm = (PrepareGameProtocolMessage) o;
       send(new ObservationRequest(pgm.getRoomId()));
       try {
         logger.info("Trying first client {}", TestClient.p1);
-        ProcessBuilder builder1 = new ProcessBuilder("java", "-jar", TestClient.p1, "-r", pgm.getReservations().get(currentTests % 2), "-h", host, "-p", ""+port);
+        ProcessBuilder builder1;
+        if (isJar(TestClient.p1)) {
+          logger.info("Running java client...");
+          builder1 = new ProcessBuilder("java", "-jar", TestClient.p1, "-r", pgm.getReservations().get(currentTests % 2), "-h", host, "-p", Integer.toString(port));
+        } else {
+          logger.info("Running non java client...");
+          builder1 = new ProcessBuilder(TestClient.p1, "--reservation",pgm.getReservations().get(currentTests % 2), "--host", host, "--port", Integer.toString(port));
+        }
         builder1.redirectOutput(new File("logs"+File.separator+TestClient.displayName1+"_Test"+currentTests+".log"));
+
         builder1.redirectError(new File("logs"+File.separator+TestClient.displayName1+"_Test"+currentTests+".err"));
         proc1 = builder1.start();
         Thread.sleep(100);
 
 
         logger.info("Trying second client {}", TestClient.p2);
-        ProcessBuilder builder2 = new ProcessBuilder("java", "-jar", TestClient.p2, "-r", pgm.getReservations().get((currentTests+1) % 2), "-h", host, "-p", ""+port);
+        ProcessBuilder builder2;
+        if (isJar(TestClient.p2)){
+          logger.info("Running java client...");
+          builder2 = new ProcessBuilder("java", "-jar", TestClient.p2, "-r", pgm.getReservations().get((currentTests+1) % 2), "-h", host, "-p", Integer.toString(port));
+        } else {
+          logger.info("Running non java client...");
+          builder2 = new ProcessBuilder(TestClient.p2, "--reservation",pgm.getReservations().get(currentTests % 2), "--host", host, "--port", Integer.toString(port));
+        }
         builder2.redirectOutput(new File("logs"+File.separator+TestClient.displayName2+"_Test"+currentTests+".log"));
         builder2.redirectError(new File("logs"+File.separator+TestClient.displayName2+"_Test"+currentTests+".err"));
         proc2 = builder2.start();
