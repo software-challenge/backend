@@ -49,7 +49,7 @@
     <chmod file="${build.dir}/software-challenge-server/runnable/start.sh"
            perm="ugo+x" />
 
-    <echo message="Make test server runnable..."/>
+    <echo message="Make test client runnable..."/>
     <copydir src="${build.dir}/test_client/jar" dest="${build.dir}/test_client/runnable"/>
     <copy file="${build.dir}/software-challenge-server/jar/software-challenge-server.jar" todir="${build.dir}/test_client/runnable" />
     <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
@@ -59,7 +59,7 @@
     <echo file="${build.dir}/test_client/runnable/start-tests.bat"
           message="java -Dfile.encoding=UTF-8 -jar test_client.jar&#xD;&#xA;" />
     <echo file="${build.dir}/test_client/runnable/start-tests.sh"
-          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar test_client.jar&#xA;"/>
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar test_client.jar $@&#xA;"/>
     <chmod file="${build.dir}/test_client/runnable/start.sh" perm="ugo+x" />
 
 

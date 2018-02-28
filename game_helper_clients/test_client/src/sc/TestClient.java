@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.networking.INetworkInterface;
@@ -76,6 +77,19 @@ public class TestClient extends XStreamClient {
     logger.info("Waiting for input of displayName to print players current Score");
   }
 
+  private boolean isPlayerRunning(String name) {
+    try {
+      if (name.equals(displayName1)){
+        proc1.exitValue();
+      } else if (name.equals(displayName2)) {
+        proc2.exitValue();
+      }
+      return false;
+    } catch (Exception e) {
+      return true;
+    }
+  }
+
   public static void main(String[] args) throws IllegalOptionValueException,
           UnknownOptionException, IOException {
     System.setProperty("file.encoding", "UTF-8");
@@ -111,13 +125,24 @@ public class TestClient extends XStreamClient {
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (Integer) parser.getOptionValue(portOption,
             SharedConfiguration.DEFAULT_PORT);
-    int numberOfTests = (Integer) parser.getOptionValue(numberOfTestsOption, 100);
+    int numberOfTests = (Integer) parser.getOptionValue(numberOfTestsOption, 10);
     canTimeout1 = (Boolean) parser.getOptionValue(p1CanTimeoutOption, true);
     canTimeout2 = (Boolean) parser.getOptionValue(p2CanTimeoutOption, true);
     displayName1 = (String) parser.getOptionValue(name1Option, "player1");
     displayName2 = (String) parser.getOptionValue(name2Option, "player2");
-    p1 = (String) parser.getOptionValue(p1Option, "./../simple_client/hase_und_igel_player_new/jar/hase_und_igel_player_2018.jar");
-    p2 = (String) parser.getOptionValue(p2Option, "./../simple_client/hase_und_igel_player_new/jar/hase_und_igel_player_2018.jar");
+    p1 = (String) parser.getOptionValue(p1Option, "../../hase_und_igel_2018_player/runnable/hase_und_igel_2018_player.jar");
+    p2 = (String) parser.getOptionValue(p2Option, "../../hase_und_igel_2018_player/runnable/hase_und_igel_2018_player.jar");
+
+    File player1File = new  File(p1);
+    File player2File = new  File(p2);
+    if (!player1File.exists()){
+      logger.error("Player1 could not be found ("+p1+").");
+      return;
+    } else if(!player2File.exists()){
+      logger.error("Player2 could not be found ("+p2+").");
+      return;
+    }
+
     // einen neuen client erzeugen
     try {
       new TestClient(Configuration.getXStream(), sc.plugin2018.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
@@ -190,7 +215,7 @@ public class TestClient extends XStreamClient {
         builder1.redirectOutput(new File("logs"+File.separator+TestClient.displayName1+"_Test"+currentTests+".log"));
         builder1.redirectError(new File("logs"+File.separator+TestClient.displayName1+"_Test"+currentTests+".err"));
         proc1 = builder1.start();
-        Thread.sleep(500);
+        Thread.sleep(100);
 
 
         logger.info("Trying second client {}", TestClient.p2);
@@ -198,7 +223,21 @@ public class TestClient extends XStreamClient {
         builder2.redirectOutput(new File("logs"+File.separator+TestClient.displayName2+"_Test"+currentTests+".log"));
         builder2.redirectError(new File("logs"+File.separator+TestClient.displayName2+"_Test"+currentTests+".err"));
         proc2 = builder2.start();
-        Thread.sleep(500);
+        Thread.sleep(100);
+
+
+
+        if (!isPlayerRunning(displayName1)){
+          logger.error(displayName1+" could not be started in a process.");
+          proc1.destroyForcibly();
+          proc2.destroyForcibly();
+          System.exit(1);
+        } else if (!isPlayerRunning(displayName2)){
+          logger.error(displayName2+" could not be started in a process.");
+          proc1.destroyForcibly();
+          proc2.destroyForcibly();
+          System.exit(1);
+        }
       } catch (IOException e) {
         e.printStackTrace();
       } catch (InterruptedException e) {
