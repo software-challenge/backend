@@ -152,7 +152,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     ScoreCause cause;
     if (player.hasSoftTimeout()) { // Soft-Timeout
       cause = ScoreCause.SOFT_TIMEOUT;
-      reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout() / 1000) + "Sekunden nach Aufforderung keinen Zug gesendet";
+      reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
       matchPoints = 0;
     } else if (player.hasHardTimeout()) { // Hard-Timeout
       cause = ScoreCause.HARD_TIMEOUT;
