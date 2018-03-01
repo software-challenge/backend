@@ -1,21 +1,18 @@
 package sc.framework.plugins;
 
-import java.util.*;
-import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.ProtocolMessage;
-import sc.protocol.responses.ProtocolMove;
 import sc.shared.*;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance {
   private static Logger logger = LoggerFactory
@@ -52,7 +49,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * @throws GameLogicException if any invalid action is done, i.e. game rule violation
    */
   public final void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
-          throws GameLogicException, InvalidGameStateException {
+          throws GameLogicException, InvalidGameStateException, InvalidMoveException {
     Optional<String> errorMsg = Optional.empty();
     if (fromPlayer.equals(this.activePlayer)) {
       if (wasMoveRequested()) {
@@ -82,7 +79,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data)
-          throws GameLogicException, InvalidGameStateException;
+          throws GameLogicException, InvalidGameStateException, InvalidMoveException;
 
   /**
    * Checks if a win condition in the current game state is met.
@@ -308,13 +305,13 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    *
    * @throws GameLogicException Always thrown
    */
-  public void catchInvalidMove(InvalidMoveException e, SimplePlayer author) throws GameLogicException {
+  public void catchInvalidMove(InvalidMoveException e, SimplePlayer author) throws InvalidMoveException {
     author.setViolated(true);
     String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
     author.setViolationReason(e.getMessage());
     logger.error(err, e);
     author.notifyListeners(new ProtocolErrorMessage(e.getMove(), err));
-    throw new GameLogicException(err);
+    throw e;
   }
 
   public String getPluginUUID() {

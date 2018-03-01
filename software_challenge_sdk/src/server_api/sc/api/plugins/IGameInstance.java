@@ -1,16 +1,16 @@
 package sc.api.plugins;
 
-import java.util.List;
-
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.ProtocolMessage;
-import sc.protocol.responses.ProtocolMove;
 import sc.shared.InvalidGameStateException;
+import sc.shared.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
+
+import java.util.List;
 
 public interface IGameInstance
 {
@@ -35,7 +35,7 @@ public interface IGameInstance
 	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
 	 */
 	public void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
-          throws GameLogicException, InvalidGameStateException;
+          throws GameLogicException, InvalidGameStateException, InvalidMoveException;
 
 	/**
 	 * Extends the set of listeners.

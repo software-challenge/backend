@@ -1,26 +1,23 @@
 package sc.plugin2018;
 
-import java.io.*;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sc.api.plugins.exceptions.GameLogicException;
-import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
+import sc.plugin2018.util.Configuration;
+import sc.plugin2018.util.Constants;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
 import sc.shared.WelcomeMessage;
-import sc.plugin2018.util.Configuration;
-import sc.plugin2018.util.Constants;
+
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
@@ -35,10 +32,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   private GameState gameState = new GameState();
 
-  public GameState getGameState() {
-    return this.gameState;
-  }
-
   public Game() {
     this.availableColors.add(PlayerColor.RED);
     this.availableColors.add(PlayerColor.BLUE);
@@ -48,6 +41,10 @@ public class Game extends RoundBasedGameInstance<Player> {
     this.availableColors.add(PlayerColor.RED);
     this.availableColors.add(PlayerColor.BLUE);
     this.pluginUUID = pluginUUID;
+  }
+
+  public GameState getGameState() {
+    return this.gameState;
   }
 
   @Override
@@ -60,7 +57,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    * move)
    */
   @Override
-  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException {
+  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
 
     Player author = (Player) fromPlayer;
 
