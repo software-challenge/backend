@@ -1,11 +1,7 @@
 package sc.server.gaming;
 
-import java.io.*;
-import java.util.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.RescuableClientException;
@@ -19,13 +15,18 @@ import sc.networking.clients.IControllableGame;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
 import sc.protocol.responses.*;
-import sc.protocol.responses.JoinGameProtocolMessage;
 import sc.server.Configuration;
 import sc.server.network.Client;
 import sc.server.network.DummyClient;
 import sc.server.network.IClient;
 import sc.server.plugins.GamePluginInstance;
 import sc.shared.*;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * A wrapper for an actual <code>GameInstance</code>. GameInstances are provided
@@ -528,7 +529,7 @@ public class GameRoom implements IGameListener
       this.game.onAction(resolvePlayer(source), data);
     } catch (InvalidMoveException e) {
       this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.getMove(), e.getMessage())));
-      throw new GameLogicException(e.getMessage());
+      throw new GameLogicException(e.toString());
     }
 
   }

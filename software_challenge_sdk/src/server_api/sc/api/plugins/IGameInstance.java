@@ -1,17 +1,16 @@
 package sc.api.plugins;
 
-import java.util.List;
-
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.ProtocolMessage;
-import sc.protocol.responses.ProtocolMove;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
+
+import java.util.List;
 
 public interface IGameInstance
 {

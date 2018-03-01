@@ -1,22 +1,18 @@
 package sc.framework.plugins;
 
-import java.util.*;
-import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.ProtocolMessage;
-import sc.protocol.responses.ProtocolMove;
-import sc.shared.InvalidMoveException;
 import sc.shared.*;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance {
   private static Logger logger = LoggerFactory
