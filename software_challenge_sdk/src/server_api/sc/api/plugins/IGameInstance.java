@@ -9,6 +9,7 @@ import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.ProtocolMessage;
 import sc.protocol.responses.ProtocolMove;
 import sc.shared.InvalidGameStateException;
+import sc.shared.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -35,7 +36,7 @@ public interface IGameInstance
 	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
 	 */
 	public void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
-          throws GameLogicException, InvalidGameStateException;
+          throws GameLogicException, InvalidGameStateException, InvalidMoveException;
 
 	/**
 	 * Extends the set of listeners.

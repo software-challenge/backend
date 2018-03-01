@@ -4,6 +4,7 @@ import java.util.Map;
 
 import sc.framework.plugins.SimplePlayer;
 import sc.networking.InvalidScoreDefinitionException;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.PlayerScore;
 

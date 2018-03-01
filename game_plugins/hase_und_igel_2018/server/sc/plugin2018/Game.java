@@ -17,6 +17,7 @@ import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.ProtocolMessage;
+import sc.shared.InvalidMoveException;
 import sc.shared.*;
 import sc.shared.WelcomeMessage;
 import sc.plugin2018.util.Configuration;
@@ -60,7 +61,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    * move)
    */
   @Override
-  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException {
+  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
 
     Player author = (Player) fromPlayer;
 

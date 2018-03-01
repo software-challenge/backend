@@ -48,7 +48,11 @@ public class GameRoom implements IGameListener
 	// currently no use
 	private IControllableGame replay;
 
-	public enum GameStatus
+  public List<ObserverRole> getObservers() {
+    return observers;
+  }
+
+  public enum GameStatus
 	{
 		CREATED, ACTIVE, OVER
 	}
@@ -519,8 +523,13 @@ public class GameRoom implements IGameListener
 					"Game is already over, but got data: " + data.getClass());
 		}
 
-		this.game.onAction(resolvePlayer(source), data);
-	}
+    try {
+      this.game.onAction(resolvePlayer(source), data);
+    } catch (InvalidMoveException e) {
+      this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.getMove(), e.getMessage())));
+    }
+
+  }
 
 	/**
 	 * Getter for player out of all playerRoles
@@ -679,7 +688,7 @@ public class GameRoom implements IGameListener
 		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(nextPlayer)));
 	}
 
-	/**
+  /**
 	 * Set descriptors of PlayerSlots
 	 * @param descriptors to be set
 	 * @throws TooManyPlayersException
