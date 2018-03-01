@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
+import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
@@ -527,6 +528,7 @@ public class GameRoom implements IGameListener
       this.game.onAction(resolvePlayer(source), data);
     } catch (InvalidMoveException e) {
       this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.getMove(), e.getMessage())));
+      throw new GameLogicException(e.getMessage());
     }
 
   }
