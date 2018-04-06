@@ -723,4 +723,25 @@ public class GamePlayTest
 		Assert.assertEquals(new WinCondition(PlayerColor.RED, Constants.IN_GOAL_MESSAGE), game.checkWinCondition());
 
 	}
+
+  @Test
+  public void doubleCardFromSaladToSalad() throws InvalidMoveException, InvalidGameStateException {
+    Board board = new Board(0);
+    state.setBoard(board);
+    red.setFieldIndex(42);
+    red.setLastNonSkipAction(new EatSalad());
+    red.setSalads(1);
+    red.setCarrots(34);
+    List<CardType> cardTypeList = new ArrayList<>();
+    cardTypeList.add(CardType.HURRY_AHEAD);
+    cardTypeList.add(CardType.FALL_BACK);
+    red.setCards(cardTypeList);
+    blue.setFieldIndex(41);
+    { // red Moves and plays 2 cards
+      Move move = new Move(new Advance(3, 0), new Card(CardType.FALL_BACK, 1), new Card(CardType.HURRY_AHEAD, 2));
+      move.perform(state);
+    }
+    Assert.assertEquals(42, red.getFieldIndex());
+  }
+
 }

@@ -20,7 +20,7 @@ public class Field {
     this(type, -1);
   }
   
-  private Field(FieldType type, int index) {
+  public Field(FieldType type, int index) {
     this.index = index;
     this.type = type;
   }

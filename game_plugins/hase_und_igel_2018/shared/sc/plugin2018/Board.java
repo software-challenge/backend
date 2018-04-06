@@ -22,6 +22,24 @@ public class Board {
   }
 
   /**
+   * Nur für Testfälle relevant
+   * @param i Testparatmeter für spezielles Board
+   */
+  public Board(int i) {
+    this();
+    switch (i) {
+      case 0:
+        track.remove(40);
+        track.add(40, new Field(FieldType.HARE, 40));
+        track.remove(45);
+        track.add(45, new Field(FieldType.HARE, 45));
+        track.remove(41);
+        track.add(41, new Field(FieldType.POSITION_2, 41));
+        break;
+    }
+  }
+
+  /**
    * Erstellt eine zufällige Rennstrecke. Die Indizes der Salat- und
    * Igelfelder bleiben unverändert - nur die Felder zwischen zwei Igelfeldern
    * werden permutiert. Außerdem werden auch die Abschnitte zwischen Start-
