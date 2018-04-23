@@ -39,8 +39,9 @@
     <echo message="Make server runnable..."/>
     <copydir src="${build.dir}/software-challenge-server/jar" dest="${build.dir}/software-challenge-server/runnable"/>
     <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
-          todir="${build.dir}/software-challenge-server/runnable/plugins"/>
-    <copydir src="${lib.dir}" dest="${build.dir}/software-challenge-server/runnable/lib"/>
+          todir="${build.dir}/software-challenge-server/runnable/lib"/>
+    <copydir src="${lib.dir}" 
+             dest="${build.dir}/software-challenge-server/runnable/lib"/>
     <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
     <echo file="${build.dir}/software-challenge-server/runnable/start.bat"
           message="java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xD;&#xA;" />
@@ -54,9 +55,10 @@
     <copy file="${build.dir}/software-challenge-server/jar/software-challenge-server.jar" todir="${build.dir}/test_client/runnable" />
     <copy file="${build.dir}/${game_player}/jar/${game_player}.jar"
           tofile="${build.dir}/test_client/runnable/defaultplayer.jar"/>
-    <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
-          todir="${build.dir}/test_client/runnable/plugins"/>
-    <copydir src="${lib.dir}" dest="${build.dir}/test_client/runnable/lib"/>    <!-- test client -->
+    <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar" 
+          todir="${build.dir}/test_client/runnable/lib"/>
+    <copydir src="${lib.dir}" 
+             dest="${build.dir}/test_client/runnable/lib"/>    <!-- test client -->
     <copy file="${build.dir}/software-challenge-server/runnable/server.properties" todir="${build.dir}/test_client/runnable/"/>
     <echo file="${build.dir}/test_client/runnable/start-tests.bat"
           message="java -Dfile.encoding=UTF-8 -jar test_client.jar&#xD;&#xA;" />
