@@ -167,8 +167,15 @@ public class TestClient extends XStreamClient {
         send(new GetScoreForPlayerRequest(displayName1));
         send(new GetScoreForPlayerRequest(displayName2));
 
-        proc1.destroyForcibly();
-        proc2.destroyForcibly();
+        //Wait until everything is finished and clear
+        try {
+	        proc1.waitFor();
+			    proc2.waitFor();
+		    } catch (InterruptedException e) {
+			    e.printStackTrace();
+		    }
+        proc1.destroy();
+        proc2.destroy();
         if (this.currentTests == this.numberOfTests) {
           terminateWhenPossible = true;
         }
