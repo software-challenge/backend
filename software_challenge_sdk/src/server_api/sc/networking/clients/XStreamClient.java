@@ -1,24 +1,25 @@
 package sc.networking.clients;
 
-import java.io.*;
-import java.net.SocketException;
-import java.nio.CharBuffer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
 import sc.protocol.responses.CloseConnection;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.InvalidGameStateException;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.SocketException;
+
 public abstract class XStreamClient {
-  private static Logger logger = LoggerFactory
-          .getLogger(XStreamClient.class);
+
+  private static Logger logger = LoggerFactory.getLogger(XStreamClient.class);
+
   private final INetworkInterface networkInterface;
   private final ObjectOutputStream out;
   private ObjectInputStream in;
@@ -46,50 +47,41 @@ public abstract class XStreamClient {
   }
 
   public boolean isReady() {
-    return this.ready;
+    return ready;
   }
 
   /**
    * Signals that client can receive and send
    */
   public void start() {
-    synchronized (this.readyLock) {
-      if (!this.ready) {
-        this.ready = true;
-        this.readyLock.notifyAll();
+    synchronized (readyLock) {
+      if (!ready) {
+        ready = true;
+        readyLock.notifyAll();
       }
     }
   }
 
   public XStreamClient(final XStream xstream,
                        final INetworkInterface networkInterface) throws IOException {
-    if (networkInterface == null) {
-      throw new IllegalArgumentException(
-              "networkInterface must not be null.");
-    }
+    if (networkInterface == null)
+      throw new IllegalArgumentException("networkInterface must not be null.");
 
-    if (xstream == null) {
+    if (xstream == null)
       throw new IllegalArgumentException("xstream must not be null.");
-    }
 
     this.xStream = xstream;
     this.networkInterface = networkInterface;
     this.out = xstream.createObjectOutputStream(networkInterface.getOutputStream(), "protocol");
     this.thread = new Thread(new Runnable() {
-      private Logger threadLogger = LoggerFactory
-              .getLogger(XStreamClient.class);
-
       @Override
       public void run() {
         try {
           receiveThread();
         } catch (Exception e) {
-          this.threadLogger
-                  .error("ReceiveThread caused an exception.", e);
+          logger.error("ReceiveThread caused an exception.", e);
         }
-        logger.debug("Terminated thread with id {} and name {}",
-                XStreamClient.this.thread.getId(),
-                XStreamClient.this.thread.getName());
+        logger.debug("Terminated thread with id {} and name {}", thread.getId(), thread.getName());
       }
     });
     this.thread.setName("XStreamClient Receive Thread "
@@ -99,30 +91,25 @@ public abstract class XStreamClient {
 
   protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException;
 
-  /**
-   * used by the receiving thread. All exceptions should be handled.
-   *
-   * @throws Exception thrown if there was a problem creating the input stream
-   */
-  public void receiveThread() throws Exception {
+  /** used by the receiving thread. All exceptions should be handled. */
+  public void receiveThread() {
     try {
-      XStreamClient.this.in = this.xStream.createObjectInputStream(this.networkInterface.getInputStream());
+      in = xStream.createObjectInputStream(networkInterface.getInputStream());
 
-      synchronized (this.readyLock) {
+      synchronized (readyLock) {
         while (!isReady()) {
-          this.readyLock.wait();
+          readyLock.wait();
         }
       }
 
       while (!Thread.interrupted()) {
-        Object object = XStreamClient.this.in.readObject();
+        Object object = in.readObject();
         if (object instanceof ProtocolMessage) {
           ProtocolMessage response = (ProtocolMessage) object;
 
-          logger.info("Client " + XStreamClient.this + ": Received " + response
-                          + " via " + this.networkInterface);
-          logger.debug("DataDump:\n{}",
-                  this.xStream.toXML(response));
+          logger.debug("Client " + this + ": Received " + response + " via " + networkInterface);
+          logger.trace("Dumping {}:\n{}", response, xStream.toXML(response));
+
           if (response instanceof CloseConnection) {
             handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
             // handleDisconnect takes care of stopping the thread
@@ -135,9 +122,8 @@ public abstract class XStreamClient {
       }
     } catch (IOException e) {
       // The other side closed the connection. It is better when the other
-      // side sends a
-      // CloseConnection message before, giving this side the chance to
-      // close the connection regularly.
+      // side sends a CloseConnection message before, giving this side the 
+      // chance to close the connection regularly.
       // NOTE that a XStreamClient exists on both sides of the connection
       // (as a Client object on the server side and as a LobbyClient
       // object on the client side).
@@ -174,28 +160,22 @@ public abstract class XStreamClient {
 
   public void sendCustomData(byte[] data) throws IOException {
     logger.warn("Sending Custom data (size={})", data.length);
-    this.networkInterface.getOutputStream().write(data);
-    this.networkInterface.getOutputStream().flush();
+    networkInterface.getOutputStream().write(data);
+    networkInterface.getOutputStream().flush();
   }
 
-  public void send(ProtocolMessage o) {
-    if (!isReady()) {
-      throw new IllegalStateException(
-              "Please call start() before sending any messages.");
-    }
-
-    if (isClosed()) {
+  public void send(ProtocolMessage packet) {
+    if (!isReady())
+      throw new IllegalStateException("Please call start() before sending any packets.");
+    
+    if (isClosed())
       throw new IllegalStateException("Writing on a closed xStream.");
-    }
 
-    logger.info(
-            "Client " + this + ": Sending " + o + " via "
-                    + this.networkInterface);
-    logger.debug("DataDump:\n{}",
-            this.xStream.toXML(o));
+    logger.debug("Client " + this + ": Sending " + packet + " via " + networkInterface);
+    logger.trace("Dumping {}:\n{}", packet, this.xStream.toXML(packet));
 
     try {
-      this.out.writeObject(o);
+      this.out.writeObject(packet);
       this.out.flush();
     } catch (XStreamException e) {
       handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
@@ -208,13 +188,11 @@ public abstract class XStreamClient {
     handleDisconnect(cause, null);
   }
 
-  protected final void handleDisconnect(DisconnectCause cause,
-                                        Throwable exception) {
+  protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
     if (exception != null) {
-      logger.warn("Client " + this + " disconnected (Cause: " + cause
-              + ", Exception: " + exception + ")");
+      logger.warn("Client " + this + " disconnected (Cause: " + cause + ", Exception: " + exception + ")");
     } else {
-      logger.info("Client " + this + " disconnected (Cause: {})", cause);
+      logger.info("Client {} disconnected (Cause: {})", this, cause);
     }
 
     this.disconnectCause = cause;
@@ -222,7 +200,7 @@ public abstract class XStreamClient {
     try {
       close();
     } catch (Exception e) {
-      logger.error("Failed to close.", e);
+      logger.error("Failed to close", e);
     }
 
     onDisconnect(cause);
@@ -250,10 +228,9 @@ public abstract class XStreamClient {
   }
 
   protected synchronized void stopReceiver() {
-    logger.info("Stopping receiver thread {}",
-            Thread.currentThread().getName());
+    logger.info("Stopping receiver thread {}", Thread.currentThread().getName());
     if (this.thread.getId() == Thread.currentThread().getId()) {
-      logger.warn("receiver thread is stopping itself");
+      logger.warn("Receiver thread is stopping itself");
     }
     // unlock waiting threads
     synchronized (this.readyLock) {
@@ -290,7 +267,7 @@ public abstract class XStreamClient {
         logger.warn("Failed to close NetworkInterface", e);
       }
     } else {
-      logger.warn("Reclosing an already closed stream");
+      logger.warn("Attempted to close an already closed stream");
     }
   }
 
