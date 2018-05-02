@@ -18,13 +18,10 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * Server configuration.
- *         TODO load values at startup from a properties file
+ * TODO load values at startup from a properties file
  */
-public class Configuration
-{
-  public static final String PASSWORD_KEY	= "password";
-  public static final String PORT_KEY		= "port";
-  public static final String PLUGIN_PATH_KEY	= "plugins";
+public class Configuration {
+
   public static final char DEBUG_SHORT_OPTION = 'd';
   public static final String DEBUG_OPTION = "debug";
   public static final String PLUGINS_OPTION = "plugins";
@@ -33,7 +30,6 @@ public class Configuration
   public static final String TURN_OPTION = "turn";
   public static final String TURN_TO_LOAD = "turnToLoad";
   public static final String PLUGIN_PATH_DEFAULT_KEY = "./plugins";
-  public static final String SAVE_REPLAY_OPTION = "saveReplay";
   public static final String SAVE_REPLAY = "saveReplay";
   public static final String TEST_MODE = "testMode";
   public static final int BIG_DECIMAL_SCALE = 6;
@@ -41,15 +37,17 @@ public class Configuration
   public static final String TIMEOUT = "timeout";
   public static final String LISTEN_LOCAL_KEY = "local";
 
+  private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
-  private static final Logger				logger			= LoggerFactory
-          .getLogger(Configuration.class);
-  private static final XStream			xStream;
-  private static final RuntimeJarLoader	xStreamClassLoader;
-  private static final Properties			properties		= new Properties();
+  private static final XStream xStream;
+  private static final RuntimeJarLoader xStreamClassLoader;
+  private static final Properties properties = new Properties();
 
-  static
-  {
+  public static final String PASSWORD_KEY = "password";
+  public static final String PORT_KEY = "port";
+  public static final String PLUGIN_PATH_KEY = "plugins";
+
+  static {
     /*
      * using the KXml2 parser because the default (Xpp3) and StAX can't parse some special characters in attribute values:
      * <protocol><authenticate passphrase="examplepassword"/>
@@ -64,82 +62,81 @@ public class Configuration
     xStreamClassLoader = AccessController
             .doPrivileged(new PrivilegedAction<RuntimeJarLoader>() {
               @Override
-              public RuntimeJarLoader run()
-              {
+              public RuntimeJarLoader run() {
                 return new RuntimeJarLoader(xStream.getClassLoader());
               }
             });
     xStream.setClassLoader(xStreamClassLoader);
-//		xStream.registerConverter(new PerspectiveAwareConverter(xStream
-//				.getMapper(), xStream.getReflectionProvider()));
+    //xStream.registerConverter(new PerspectiveAwareConverter(xStream.getMapper(), xStream.getReflectionProvider()));
     LobbyProtocol.registerMessages(xStream);
   }
 
-  public static void load(Reader reader) throws IOException
-  {
+  public static void loadServerProperties() {
+    File file = new File("server.properties").getAbsoluteFile();
+    if (file.exists()) {
+      try {
+        logger.info("Loading configuration from {}", file);
+        Configuration.load(new FileReader(file));
+        return;
+      } catch (IOException e) {
+        logger.error("Could not load server.properties, will use default values: {}", e.toString());
+      }
+    } else {
+      logger.warn("Could not find server.properties at {}, will use default values!", file);
+    }
+    properties.setProperty(PASSWORD_KEY, "examplepassword");
+    properties.setProperty(PAUSED, "false");
+  }
+
+  public static void load(Reader reader) throws IOException {
     properties.load(reader);
   }
 
-  public static int getPort()
-  {
+  public static int getPort() {
     return get(PORT_KEY, Integer.class, SharedConfiguration.DEFAULT_PORT);
   }
 
-  public static boolean getListenLocal()
-  {
+  public static boolean getListenLocal() {
     return get(LISTEN_LOCAL_KEY, Boolean.class, true);
   }
 
-  public static XStream getXStream()
-  {
+  public static XStream getXStream() {
     return xStream;
   }
 
-  public static void addXStreamClassloaderURL(URL url)
-  {
+  public static void addXStreamClassloaderURL(URL url) {
     xStreamClassLoader.addURL(url);
   }
 
-  public static String getPluginPath()
-  {
+  public static String getPluginPath() {
     return get(PLUGIN_PATH_KEY, String.class, PLUGIN_PATH_DEFAULT_KEY);
   }
 
-  public static String getAdministrativePassword()
-  {
+  public static String getAdministrativePassword() {
     return get(PASSWORD_KEY);
   }
 
   /**
    * Modifies a property within the configuration.
-   *
-   * @param key
-   * @param value
    */
-  public static void set(final String key, final String value)
-  {
+  public static void set(final String key, final String value) {
     properties.setProperty(key, value);
   }
 
-  public static void setIfNotNull(final String key, final String value)
-  {
-    if (value != null)
-    {
+  public static void setIfNotNull(final String key, final String value) {
+    if (value != null) {
       set(key, value);
     }
   }
 
-  public static String get(final String key)
-  {
+  public static String get(final String key) {
     return get(key, String.class, null);
   }
 
-  public static <T> T get(String key, Class<T> type, T defaultValue)
-  {
+  public static <T> T get(String key, Class<T> type, T defaultValue) {
     String stringValue = properties.getProperty(key);
 
-    if (stringValue == null)
-    {
+    if (stringValue == null) {
       return defaultValue;
     }
     if (type == String.class) {
@@ -162,4 +159,5 @@ public class Configuration
       throw new IllegalArgumentException("Argument must be true or false");
     }
   }
+
 }

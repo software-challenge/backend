@@ -18,7 +18,6 @@ import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -37,16 +36,17 @@ import java.util.List;
  * </ul>
  */
 public class TestClient extends XStreamClient {
+  private static final Logger logger = LoggerFactory.getLogger(TestClient.class);
 
   private static String gameType = "swc_2018_hase_und_igel";
-  
+
   private static String displayName1 = "player1";
   private static String displayName2 = "player2";
   private static boolean canTimeout1;
   private static boolean canTimeout2;
   private static String p1;
   private static String p2;
-  
+
   /** the current host */
   private String host;
   /** the current port */
@@ -62,8 +62,6 @@ public class TestClient extends XStreamClient {
 
   private Process proc1;
   private Process proc2;
-
-  private static final Logger logger = LoggerFactory.getLogger(TestClient.class);
 
   public TestClient(XStream xstream, Collection<Class<?>> protocolClasses,
                     String host, int port, int numberOfTests) throws IOException {
@@ -84,7 +82,8 @@ public class TestClient extends XStreamClient {
 
   public static void main(String[] args) {
     System.setProperty("file.encoding", "UTF-8");
-    // define parameters
+
+    // define commandline options
     CmdLineParser parser = new CmdLineParser();
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
@@ -104,16 +103,8 @@ public class TestClient extends XStreamClient {
       e.printStackTrace();
       System.exit(2);
     }
-    
-    // TODO make static method in sdk for methods like this
-    try {
-      logger.info("Loading server.properties");
-      Configuration.load(new FileReader("server.properties"));
-    } catch (IOException e) {
-      logger.error("Could not find server.properties");
-      e.printStackTrace();
-      return;
-    }
+
+    Configuration.loadServerProperties();
 
     // Parameter laden
     String host = (String) parser.getOptionValue(hostOption, "localhost");
@@ -153,7 +144,7 @@ public class TestClient extends XStreamClient {
       return;
     }
 
-    logger.trace("Received " + message);
+    logger.trace("Received {}", message);
     if (message instanceof TestModeMessage) { // for handling testing
       boolean testMode = (((TestModeMessage) message).testMode);
       logger.debug("TestMode was set to {} - starting clients", testMode);
@@ -162,18 +153,18 @@ public class TestClient extends XStreamClient {
     if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       if (packet.getData() instanceof GameResult) {
-        logger.warn("Received game result");
+        logger.info("Received game result");
         this.currentTests++;
         send(new GetScoreForPlayerRequest(displayName1));
         send(new GetScoreForPlayerRequest(displayName2));
 
         //Wait until everything is finished and clear
         try {
-	        proc1.waitFor();
-			    proc2.waitFor();
-		    } catch (InterruptedException e) {
-			    e.printStackTrace();
-		    }
+          proc1.waitFor();
+          proc2.waitFor();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
         proc1.destroy();
         proc2.destroy();
         if (this.currentTests == this.numberOfTests) {
@@ -186,7 +177,6 @@ public class TestClient extends XStreamClient {
       if (terminateWhenPossible)
         gotLastPlayerScores++;
       Score score = ((PlayerScorePacket) message).getScore();
-      logger.warn(score.toString());
       // add score to list
       if (this.scores.size() < 2) {
         scores.add(score);
@@ -220,10 +210,10 @@ public class TestClient extends XStreamClient {
       try {
         ProcessBuilder builder1;
         if (isJar(TestClient.p1)) {
-          logger.info("Running first client {} as java client...", TestClient.p1);
+          logger.info("Invoking first client {} as java client...", TestClient.p1);
           builder1 = new ProcessBuilder("java", "-jar", TestClient.p1, "-r", pgm.getReservations().get(currentTests % 2), "-h", host, "-p", Integer.toString(port));
         } else {
-          logger.info("Running first client {} as non java client...", TestClient.p1);
+          logger.info("Invoking first client {} as non java client...", TestClient.p1);
           builder1 = new ProcessBuilder(TestClient.p1, "--reservation", pgm.getReservations().get(currentTests % 2), "--host", host, "--port", Integer.toString(port));
         }
         builder1.redirectOutput(new File("logs" + File.separator + TestClient.displayName1 + "_Test" + currentTests + ".log"));
@@ -233,10 +223,10 @@ public class TestClient extends XStreamClient {
 
         ProcessBuilder builder2;
         if (isJar(TestClient.p2)) {
-          logger.info("Running second client {} as java client...", TestClient.p2);
+          logger.info("Invoking second client {} as java client...", TestClient.p2);
           builder2 = new ProcessBuilder("java", "-jar", TestClient.p2, "-r", pgm.getReservations().get((currentTests + 1) % 2), "-h", host, "-p", Integer.toString(port));
         } else {
-          logger.info("Running second client {} as non java client...", TestClient.p2);
+          logger.info("Invoking second client {} as non java client...", TestClient.p2);
           builder2 = new ProcessBuilder(TestClient.p2, "--reservation", pgm.getReservations().get((currentTests + 1) % 2), "--host", host, "--port", Integer.toString(port));
         }
         builder2.redirectOutput(new File("logs" + File.separator + TestClient.displayName2 + "_Test" + currentTests + ".log"));
@@ -273,9 +263,8 @@ public class TestClient extends XStreamClient {
 
   /** prepares slots for new clients (if {@link #currentTests} is even player1 starts, otherwise player2) */
   private void prepareNewClients() {
-    if (currentTests == numberOfTests) {
+    if (currentTests == numberOfTests)
       return;
-    }
     SlotDescriptor slot1;
     SlotDescriptor slot2;
     if (currentTests % 2 == 0) {

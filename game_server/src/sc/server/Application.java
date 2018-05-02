@@ -37,15 +37,8 @@ public final class Application {
     addShutdownHook();
     long start = System.currentTimeMillis();
 
-    try {
-      File file = new File("server.properties");
-      logger.info("loading configuration from {}", file.getAbsolutePath());
-      Configuration.load(new FileReader(file));
-    } catch (IOException e) {
-      logger.error("Could not find server.properties");
-      e.printStackTrace();
-      return;
-    }
+    Configuration.loadServerProperties();
+            
     final Lobby server = new Lobby();
     try {
       server.start();
@@ -74,7 +67,7 @@ public final class Application {
             .addStringOption(Configuration.PLUGINS_OPTION);
     CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
     CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
-    CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY_OPTION);
+    CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY);
     parser.parse(params);
 
     Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
