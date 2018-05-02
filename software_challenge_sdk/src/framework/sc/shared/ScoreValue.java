@@ -27,4 +27,5 @@ public class ScoreValue {
   public void setValue(BigDecimal value) {
     this.value = value;
   }
+
 }

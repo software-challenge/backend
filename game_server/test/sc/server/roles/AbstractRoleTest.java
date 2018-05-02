@@ -70,4 +70,5 @@ public abstract class AbstractRoleTest
 	{
 		return connectClient(false);
 	}
+
 }

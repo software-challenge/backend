@@ -68,4 +68,5 @@ public class PrepareGameRequest extends ProtocolMessage implements ILobbyRequest
   {
     return this.slotDescriptors;
   }
+
 }

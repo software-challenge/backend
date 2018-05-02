@@ -81,4 +81,5 @@ public class GameResult extends ProtocolMessage {
 
 		return true;
 	}
+
 }

@@ -39,4 +39,5 @@ public class Configuration
             Advance.class, Action.class, Skip.class, PlayerColor.class,
             Card.class, EatSalad.class, ExchangeCarrots.class, FallBack.class, Condition.class);
 	}
+
 }

@@ -20,10 +20,9 @@ import sc.shared.InvalidGameStateException;
 
 public class MockClient extends Client
 {
-	private final static Logger		logger				= LoggerFactory
-																.getLogger(MockClient.class);
-	private final Queue<Object>		outgoingMessages	= new LinkedList<Object>();
-	private BlockingQueue<Object>	objects				= new LinkedBlockingQueue<Object>();
+	private final static Logger logger = LoggerFactory.getLogger(MockClient.class);
+	private final Queue<Object>		outgoingMessages = new LinkedList<Object>();
+	private BlockingQueue<Object>	objects = new LinkedBlockingQueue<Object>();
 	private final XStream			xStream;
 
 	public MockClient(StringNetworkInterface stringInterface, XStream xStream)
@@ -119,4 +118,5 @@ public class MockClient extends Client
 	{
 		return this.objects.take();
 	}
+
 }

@@ -48,4 +48,5 @@ public class StringNetworkInterface implements INetworkInterface
 	{
 		return "String@" + this.hashCode();
 	}
+
 }

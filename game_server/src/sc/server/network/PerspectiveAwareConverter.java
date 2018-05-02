@@ -22,8 +22,8 @@ import com.thoughtworks.xstream.mapper.Mapper;
 
 public class PerspectiveAwareConverter extends AbstractReflectionConverter
 {
-	private static final String	PERSPECTIVE_KEY		= "spectator";
-	private static final String	CURRENT_OBJECT_KEY	= "current-object";
+	private static final String	PERSPECTIVE_KEY = "spectator";
+	private static final String	CURRENT_OBJECT_KEY = "current-object";
 
 	public PerspectiveAwareConverter(Mapper mapper,
 			ReflectionProvider reflectionProvider)

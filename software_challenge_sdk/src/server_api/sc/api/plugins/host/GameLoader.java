@@ -20,7 +20,7 @@ import sc.shared.GameResult;
 
 public class GameLoader implements IHistoryListener
 {
-	private static final Logger	logger = LoggerFactory.getLogger(GameLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(GameLoader.class);
 	private volatile boolean finished;
 	private Object obj = null;
 	private List<Class<?>> clazzes;

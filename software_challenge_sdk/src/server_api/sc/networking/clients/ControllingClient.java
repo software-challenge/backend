@@ -8,123 +8,103 @@ import sc.protocol.requests.CancelRequest;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.StepRequest;
 
-public class ControllingClient extends ObservingClient implements
-		IAdministrativeListener
-{
-	private static final Logger	logger			= LoggerFactory
-														.getLogger(ControllingClient.class);
-	final LobbyClient			client;
-	private boolean				allowOneStep	= false;
-	private boolean				pauseHitReceived;
+public class ControllingClient extends ObservingClient implements IAdministrativeListener {
+  private static final Logger logger = LoggerFactory.getLogger(ControllingClient.class);
 
-	public ControllingClient(LobbyClient client, String roomId)
-	{
-		super(client, roomId);
-		this.client = client;
-		client.addListener((IAdministrativeListener) this);
-	}
+  final LobbyClient client;
+  private boolean allowOneStep = false;
+  private boolean pauseHitReceived;
 
-	@Override
-	protected void addObservation(Object observation)
-	{
-		super.addObservation(observation);
+  public ControllingClient(LobbyClient client, String roomId) {
+    super(client, roomId);
+    this.client = client;
+    client.addListener((IAdministrativeListener) this);
+  }
 
-		if (this.allowOneStep)
-		{
-			changePosition(+1);
-			this.allowOneStep = false;
-		}
-	}
+  @Override
+  protected void addObservation(Object observation) {
+    super.addObservation(observation);
 
-	@Override
-	public void pause()
-	{
-		if (!this.client.isClosed())
-		{
-			this.client.send(new PauseGameRequest(this.roomId, true));
-		}
-		super.pause();
-	}
+    if (this.allowOneStep) {
+      changePosition(+1);
+      this.allowOneStep = false;
+    }
+  }
 
-	@Override
-	public void unpause()
-	{
-		this.pauseHitReceived = false;
-		this.gotoEnd();
+  @Override
+  public void pause() {
+    if (!this.client.isClosed()) {
+      this.client.send(new PauseGameRequest(this.roomId, true));
+    }
+    super.pause();
+  }
 
-		if (!this.client.isClosed())
-		{
-			this.client.send(new PauseGameRequest(this.roomId, false));
-		}
+  @Override
+  public void unpause() {
+    this.pauseHitReceived = false;
+    this.gotoEnd();
 
-		super.unpause();
-	}
+    if (!this.client.isClosed()) {
+      this.client.send(new PauseGameRequest(this.roomId, false));
+    }
 
-	private void gotoEnd()
-	{
-		this.setPosition(this.getHistory().size() - 1);
-	}
+    super.unpause();
+  }
 
-	@Override
-	public void next()
-	{
-		if (isAtEnd())
-		{
-			this.pauseHitReceived = false;
+  private void gotoEnd() {
+    this.setPosition(this.getHistory().size() - 1);
+  }
 
-			if (!this.client.isClosed())
-			{
-				this.client.send(new StepRequest(this.roomId));
-				this.allowOneStep = true;
-			}
-		}
+  @Override
+  public void next() {
+    if (isAtEnd()) {
+      this.pauseHitReceived = false;
 
-		super.next();
-	}
+      if (!this.client.isClosed()) {
+        this.client.send(new StepRequest(this.roomId));
+        this.allowOneStep = true;
+      }
+    }
 
-	@Override
-	public boolean hasNext()
-	{
-		if (isGameOver())
-		{
-			return super.hasNext();
-		}
+    super.next();
+  }
 
-		if (isPaused() && isAtEnd())
-		{
-			return this.pauseHitReceived;
-		}
+  @Override
+  public boolean hasNext() {
+    if (isGameOver()) {
+      return super.hasNext();
+    }
 
-		return super.hasNext();
-	}
+    if (isPaused() && isAtEnd()) {
+      return this.pauseHitReceived;
+    }
 
-	@Override
-	public void cancel()
-	{
-		this.pauseHitReceived = false;
+    return super.hasNext();
+  }
 
-		if (!isGameOver())
-		{
-			if (!this.client.isClosed())
-			{
-				this.client.send(new CancelRequest(this.roomId));
-			}
-		}
+  @Override
+  public void cancel() {
+    this.pauseHitReceived = false;
 
-		super.cancel();
-	}
+    if (!isGameOver()) {
+      if (!this.client.isClosed()) {
+        this.client.send(new CancelRequest(this.roomId));
+      }
+    }
 
-	@Override
-	public void onGamePaused(String roomId, SimplePlayer nextPlayer)
-	{
-		logger.info("A PAUSE HIT was detected.");
-		this.pauseHitReceived = true;
-		this.notifyOnUpdate();
-	}
-	
-	@Override
-	public boolean canTogglePause()
-	{
-		return true;
-	}
+    super.cancel();
+  }
+
+  @Override
+  public void onGamePaused(String roomId, SimplePlayer nextPlayer) {
+    logger.info("A PAUSE HIT was detected.");
+    this.pauseHitReceived = true;
+    this.notifyOnUpdate();
+  }
+
+  @Override
+  public boolean canTogglePause() {
+    return true;
+  }
+
 }

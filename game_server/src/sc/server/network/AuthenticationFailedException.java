@@ -10,7 +10,7 @@ public class AuthenticationFailedException extends RescuableClientException
   /**
    *
    */
-  private static final long	serialVersionUID	= 8849650876076674212L;
+  private static final long	serialVersionUID = 8849650876076674212L;
 
   /**
    *
@@ -19,4 +19,5 @@ public class AuthenticationFailedException extends RescuableClientException
   {
     super("Failed to authenticate as administrator");
   }
+
 }

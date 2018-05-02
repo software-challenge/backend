@@ -15,15 +15,15 @@ public class ConverterTest
 	public static class HasSecrets implements IPerspectiveProvider,
 			IPerspectiveAware
 	{
-		public static final Object	hacker		= new Object();
+		public static final Object	hacker = new Object();
 
-		public static final Object	goodFriend	= new Object();
+		public static final Object	goodFriend = new Object();
 
-		private String				secret		= "i-am-secret";
+		private String				secret = "i-am-secret";
 
-		private String				unimportant	= "i-am-unimportant";
+		private String				unimportant = "i-am-unimportant";
 
-		private Object				perspective	= null;
+		private Object				perspective = null;
 
 		@Override
 		public Object getPerspective()
@@ -68,4 +68,5 @@ public class ConverterTest
 		Assert.assertNotSame(-1, msg.indexOf(data.secret));
 		Assert.assertNotSame(-1, msg.indexOf(data.unimportant));
 	}
+
 }

@@ -11,4 +11,5 @@ public enum PlayerColor {
   public PlayerColor opponent() {
     return this == RED ? BLUE : RED;
   }
+
 }

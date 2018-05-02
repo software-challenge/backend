@@ -12,6 +12,6 @@ public class TooManyPlayersException extends GameRoomException
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= 1800416641852939259L;
+	private static final long	serialVersionUID = 1800416641852939259L;
 
 }

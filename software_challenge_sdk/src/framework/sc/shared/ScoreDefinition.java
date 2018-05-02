@@ -51,4 +51,5 @@ public class ScoreDefinition implements Iterable<ScoreFragment> {
     }
     return true;
   }
+
 }

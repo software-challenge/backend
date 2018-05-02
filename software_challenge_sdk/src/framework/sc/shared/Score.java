@@ -57,4 +57,5 @@ public class Score implements Iterable<ScoreValue> {
   public void setNumberOfTests(int numberOfTests) {
     this.numberOfTests = numberOfTests;
   }
+
 }

@@ -10,4 +10,5 @@ public class InvalidGameStateException extends Exception {
   public InvalidGameStateException(String reason) {
     super(reason);
   }
+
 }

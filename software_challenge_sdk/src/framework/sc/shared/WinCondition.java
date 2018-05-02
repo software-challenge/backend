@@ -60,4 +60,5 @@ public class WinCondition implements Cloneable {
   public String toString() {
     return "winner: " + this.getWinner() +" reason: " + this.getReason();
   }
+
 }

@@ -40,4 +40,5 @@ public class CollectionHelperTest
 
 		Assert.assertArrayEquals(result, convertedList.toArray(new String[0]));
 	}
+
 }

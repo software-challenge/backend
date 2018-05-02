@@ -16,4 +16,5 @@ public class CancelRequest extends ProtocolMessage implements ILobbyRequest {
   public CancelRequest(String roomId) {
     this.roomId = roomId;
   }
+
 }

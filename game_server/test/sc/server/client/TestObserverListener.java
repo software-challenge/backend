@@ -53,4 +53,5 @@ public class TestObserverListener implements ILobbyClientListener {
   public void onGameObserved(String roomId) {
     this.roomid = roomId;
   }
+
 }

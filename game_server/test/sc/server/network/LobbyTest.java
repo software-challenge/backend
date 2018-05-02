@@ -61,4 +61,5 @@ public class LobbyTest extends RealServerTest
 		// should cleanup gamelist
 		TestHelper.assertEqualsWithTimeout(0, ()->LobbyTest.this.gameMgr.getGames().size());
 	}
+
 }

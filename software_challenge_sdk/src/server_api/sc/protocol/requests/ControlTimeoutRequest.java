@@ -20,4 +20,5 @@ public class ControlTimeoutRequest  extends ProtocolMessage implements ILobbyReq
     this.activate = activate;
     this.slot = slot;
   }
+
 }
