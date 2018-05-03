@@ -3,31 +3,33 @@ package sc.server;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.shared.SharedConfiguration;
+
+import java.io.File;
+import java.io.IOException;
 
 public final class Application {
-  static {System.setProperty("logback.configurationFile", System.getProperty("user.dir") + "logback.xml");}
+  static {
+    System.setProperty("logback.configurationFile", System.getProperty("user.dir") + "logback.xml");
+  }
+
   private static final Logger logger = LoggerFactory
           .getLogger(Application.class);
   private static final Object waitObj = new Object();
 
   public static void main(String[] params) {
-    // Setup Server
+    // setup server
     System.setProperty("file.encoding", "UTF-8");
     try {
       parseArguments(params);
     } catch (IllegalOptionValueException e) {
-      logger.error("Options could not be parsed");
+      logger.error("Illegal option value: " + e.getMessage());
       e.printStackTrace();
       return;
     } catch (UnknownOptionException e) {
-      logger.error("Unknown option");
+      logger.error(e.getMessage());
       e.printStackTrace();
       return;
     }
@@ -38,7 +40,7 @@ public final class Application {
     long start = System.currentTimeMillis();
 
     Configuration.loadServerProperties();
-            
+
     final Lobby server = new Lobby();
     try {
       server.start();
@@ -63,11 +65,11 @@ public final class Application {
           throws IllegalOptionValueException, UnknownOptionException {
     CmdLineParser parser = new CmdLineParser();
     CmdLineParser.Option debug = parser.addBooleanOption(Configuration.DEBUG_SHORT_OPTION, Configuration.DEBUG_OPTION);
-    CmdLineParser.Option pluginDirectory = parser
-            .addStringOption(Configuration.PLUGINS_OPTION);
+    CmdLineParser.Option pluginDirectory = parser.addStringOption(Configuration.PLUGINS_OPTION);
     CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
     CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
     CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY);
+    CmdLineParser.Option portOption = parser.addIntegerOption('p', Configuration.PORT_KEY);
     parser.parse(params);
 
     Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
@@ -75,6 +77,8 @@ public final class Application {
     String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
     Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
     Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
+    Integer port = (Integer) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT);
+    Configuration.set(Configuration.PORT_KEY, String.valueOf(port));
     if (loadGameFile != null) {
       Configuration.set(Configuration.GAMELOADFILE, loadGameFile);
       if (turnToLoad != 0) {

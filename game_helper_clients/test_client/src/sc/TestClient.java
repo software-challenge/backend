@@ -12,15 +12,14 @@ import sc.protocol.LobbyProtocol;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;
-import sc.shared.GameResult;
-import sc.shared.Score;
-import sc.shared.SharedConfiguration;
-import sc.shared.SlotDescriptor;
+import sc.shared.*;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,103 +37,88 @@ import java.util.List;
 public class TestClient extends XStreamClient {
   private static final Logger logger = LoggerFactory.getLogger(TestClient.class);
 
-  private static String gameType = "swc_2018_hase_und_igel";
+  private static final String gameType = "swc_2018_hase_und_igel";
+  private static final Player[] players = {new Player(), new Player()};
+  private static final File logDir = new File("logs").getAbsoluteFile();
 
-  private static String displayName1 = "player1";
-  private static String displayName2 = "player2";
-  private static boolean canTimeout1;
-  private static boolean canTimeout2;
-  private static String p1;
-  private static String p2;
-
-  /** the current host */
-  private String host;
-  /** the current port */
-  private int port;
-
-  private int currentTests;
-  private int numberOfTests;
-
-  private boolean terminateWhenPossible = false;
-  private int gotLastPlayerScores = 0;
-
-  private List<Score> scores;
-
-  private Process proc1;
-  private Process proc2;
-
-  public TestClient(XStream xstream, Collection<Class<?>> protocolClasses,
-                    String host, int port, int numberOfTests) throws IOException {
-    super(xstream, createTcpNetwork(host, port));
-    scores = new ArrayList<>(2);
-    LobbyProtocol.registerMessages(xstream);
-    LobbyProtocol.registerAdditionalMessages(xstream, protocolClasses);
-    this.host = host;
-    this.port = port;
-    this.numberOfTests = numberOfTests;
-    start();
-    logger.debug("Authenticating as administrator");
-    send(new AuthenticateRequest(Configuration.getAdministrativePassword()));
-    logger.debug("Enabling TestMode");
-    send(new TestModeRequest(true));
-    logger.info("Waiting for input of displayName to print players current Score");
-  }
+  private static TestClient testclient;
 
   public static void main(String[] args) {
     System.setProperty("file.encoding", "UTF-8");
 
     // define commandline options
     CmdLineParser parser = new CmdLineParser();
+    Option serverOption = parser.addBooleanOption("start-server");
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
     Option numberOfTestsOption = parser.addIntegerOption("tests");
-    Option p1Option = parser.addStringOption("player1");
-    Option p2Option = parser.addStringOption("player2");
-    Option name1Option = parser.addStringOption("name1");
-    Option name2Option = parser.addStringOption("name2");
-    Option p1CanTimeoutOption = parser.addBooleanOption("timeout1");
-    Option p2CanTimeoutOption = parser.addBooleanOption("timeout2");
-    new File("logs").mkdirs();
+    Option[] execOptions = {parser.addStringOption("player1"), parser.addStringOption("player2")};
+    Option[] nameOptions = {parser.addStringOption("name1"), parser.addStringOption("name2")};
+    Option[] canTimeoutOptions = {parser.addBooleanOption("timeout1"), parser.addBooleanOption("timeout2")};
 
     try {
       parser.parse(args);
     } catch (CmdLineParser.OptionException e) {
-      logger.error("Invalid option: " + e.getMessage());
+      logger.error(e.toString());
       e.printStackTrace();
-      System.exit(2);
+      exit(2);
     }
 
     Configuration.loadServerProperties();
 
     // Parameter laden
+    boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
     String host = (String) parser.getOptionValue(hostOption, "localhost");
-    int port = (Integer) parser.getOptionValue(portOption,
-            SharedConfiguration.DEFAULT_PORT);
-    int numberOfTests = (Integer) parser.getOptionValue(numberOfTestsOption, 10);
-    canTimeout1 = (Boolean) parser.getOptionValue(p1CanTimeoutOption, true);
-    canTimeout2 = (Boolean) parser.getOptionValue(p2CanTimeoutOption, true);
-    displayName1 = (String) parser.getOptionValue(name1Option, "player1");
-    displayName2 = (String) parser.getOptionValue(name2Option, "player2");
-    p1 = (String) parser.getOptionValue(p1Option, "./defaultplayer.jar");
-    p2 = (String) parser.getOptionValue(p2Option, "./defaultplayer.jar");
-
-    File player1File = new File(p1);
-    File player2File = new File(p2);
-
-    if (!player1File.exists()) {
-      logger.error("Player1 could not be found ({}).", p1);
-      return;
-    } else if (!player2File.exists()) {
-      logger.error("Player2 could not be found ({}).", p2);
-      return;
+    int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT);
+    int numberOfTests = (int) parser.getOptionValue(numberOfTestsOption, 10);
+    for (int i = 0; i < 2; i++) {
+      players[i].canTimeout = (Boolean) parser.getOptionValue(canTimeoutOptions[i], true);
+      players[i].displayName = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
+      players[i].executable = (String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar");
+      players[i].isJar = isJar(players[i].executable);
     }
 
     try {
-      new TestClient(Configuration.getXStream(), sc.plugin2018.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
+      if (startServer) {
+        logger.info("Starting server...");
+        ProcessBuilder builder = new ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-jar", "software-challenge-server.jar", "--port", String.valueOf(port));
+        builder.redirectOutput(new File(logDir, "server-" + port + ".log"));
+        builder.redirectError(new File(logDir, "server-" + port + ".err"));
+        builder.start(); // server will automatically be terminated upon exit since it is a child process
+        Thread.sleep(1000);
+      }
+      testclient = new TestClient(Configuration.getXStream(), sc.plugin2018.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
     } catch (Exception e) {
-      logger.error("Error on startup:");
+      logger.error("Error while initializing: " + e.toString());
       e.printStackTrace();
+      exit(2);
     }
+  }
+
+  private String host;
+  private int port;
+
+  /** number of tests that have already been run */
+  private int currentTests;
+  /** total number of tests that should be executed */
+  private int numberOfTests;
+
+  private boolean terminateWhenPossible = false;
+  private int gotLastPlayerScores = 0;
+
+  public TestClient(XStream xstream, Collection<Class<?>> protocolClasses,
+                    String host, int port, int numberOfTests) throws IOException {
+    super(xstream, createTcpNetwork(host, port));
+    LobbyProtocol.registerMessages(xstream);
+    LobbyProtocol.registerAdditionalMessages(xstream, protocolClasses);
+    this.host = host;
+    this.port = port;
+    this.numberOfTests = numberOfTests;
+    start();
+    logger.debug("Authenticating as administrator, enabling TestMode");
+    send(new AuthenticateRequest(Configuration.getAdministrativePassword()));
+    send(new TestModeRequest(true));
+    logger.info("Waiting for server...");
   }
 
   @Override
@@ -145,62 +129,57 @@ public class TestClient extends XStreamClient {
     }
 
     logger.trace("Received {}", message);
-    if (message instanceof TestModeMessage) { // for handling testing
+    if (message instanceof TestModeMessage) {
       boolean testMode = (((TestModeMessage) message).testMode);
       logger.debug("TestMode was set to {} - starting clients", testMode);
       prepareNewClients();
-    }
-    if (message instanceof RoomPacket) {
+    } else if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       if (packet.getData() instanceof GameResult) {
         logger.info("Received game result");
         this.currentTests++;
-        send(new GetScoreForPlayerRequest(displayName1));
-        send(new GetScoreForPlayerRequest(displayName2));
+        for (int i = 0; i < 2; i++)
+          send(new GetScoreForPlayerRequest(players[i].displayName));
 
-        //Wait until everything is finished and clear
         try {
-          proc1.waitFor();
-          proc2.waitFor();
+          for (int i = 0; i < 2; i++)
+            players[i].proc.waitFor();
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-        proc1.destroy();
-        proc2.destroy();
-        if (this.currentTests == this.numberOfTests) {
-          terminateWhenPossible = true;
-        }
+        for (int i = 0; i < 2; i++)
+          players[i].proc.destroy();
 
+        if (this.currentTests == this.numberOfTests)
+          terminateWhenPossible = true;
         prepareNewClients();
       }
     } else if (message instanceof PlayerScorePacket) {
       if (terminateWhenPossible)
         gotLastPlayerScores++;
       Score score = ((PlayerScorePacket) message).getScore();
-      // add score to list
-      if (this.scores.size() < 2) {
-        scores.add(score);
-      } else {
-        for (Score s : this.scores) {
-          if (s.getDisplayName().equals(score.getDisplayName())) {
-            scores.add(score);
-            scores.remove(s);
-            break;
-          }
+
+      for (Player p : players) {
+        if (p.displayName.equals(score.getDisplayName())) {
+          p.score = score;
+          break;
         }
       }
-      logger.warn("Received new score for " + score.getDisplayName() + ": Siegpunkte " + score.getScoreValues().get(0).getValue() +
-              ", \u2205 Feldnummer " + score.getScoreValues().get(1).getValue() +
-              ", \u2205 Karotten " + score.getScoreValues().get(2).getValue() + " after " + currentTests + " of " + numberOfTests + " tests");
+
+      List<ScoreValue> val = score.getScoreValues();
+      logger.warn(String.format("New score for %s: Siegpunkte %s, \u2205Feldnummer %5.2f, \u2205Karotten %5.2f after %s of %s tests",
+              score.getDisplayName(), val.get(0).getValue(), val.get(1).getValue(), val.get(2).getValue(), currentTests, numberOfTests));
+
       if (gotLastPlayerScores == 2) {
         if (this.currentTests == this.numberOfTests) {
-          logger.warn("End results: \n" +
-                  "=============== SCORES ================\n" +
-                  displayName1 + ": " + scores.get(0).getScoreValues().get(0).getValue() + "\n" +
-                  displayName2 + ": " + scores.get(1).getScoreValues().get(0).getValue() + "\n" +
-                  "=======================================");
+          logger.warn(String.format("End results: \n" +
+                          "=============== SCORES ================\n" +
+                          "%s: %3.0f\n%s: %3.0f\n" +
+                          "=======================================",
+                  players[0], players[0].score.getScoreValues().get(0).getValue(),
+                  players[1], players[1].score.getScoreValues().get(0).getValue()));
         }
-        send(new CloseConnection());
+        exit(0);
       }
 
     } else if (message instanceof PrepareGameProtocolMessage) {
@@ -208,40 +187,16 @@ public class TestClient extends XStreamClient {
       PrepareGameProtocolMessage pgm = (PrepareGameProtocolMessage) message;
       send(new ObservationRequest(pgm.getRoomId()));
       try {
-        ProcessBuilder builder1;
-        if (isJar(TestClient.p1)) {
-          logger.info("Invoking first client {} with Java...", TestClient.p1);
-          builder1 = new ProcessBuilder("java", "-jar", "-mx1500m", TestClient.p1, "-r", pgm.getReservations().get(currentTests % 2), "-h", host, "-p", Integer.toString(port));
-        } else {
-          logger.info("Invoking first client {}...", TestClient.p1);
-          builder1 = new ProcessBuilder(TestClient.p1, "--reservation", pgm.getReservations().get(currentTests % 2), "--host", host, "--port", Integer.toString(port));
-        }
-        builder1.redirectOutput(new File("logs" + File.separator + TestClient.displayName1 + "_Test" + currentTests + ".log"));
-        builder1.redirectError(new File("logs" + File.separator + TestClient.displayName1 + "_Test" + currentTests + ".err"));
-        proc1 = builder1.start();
-        Thread.sleep(100);
+        for (int i = 0; i < 2; i++)
+          startPlayer(i, pgm.getReservations().get((currentTests + i) % 2));
 
-        ProcessBuilder builder2;
-        if (isJar(TestClient.p2)) {
-          logger.info("Invoking second client {} with Java...", TestClient.p2);
-          builder2 = new ProcessBuilder("java", "-mx1500m", "-jar", TestClient.p2, "-r", pgm.getReservations().get((currentTests + 1) % 2), "-h", host, "-p", Integer.toString(port));
-        } else {
-          logger.info("Invoking second client {}...", TestClient.p2);
-          builder2 = new ProcessBuilder(TestClient.p2, "--reservation", pgm.getReservations().get((currentTests + 1) % 2), "--host", host, "--port", Integer.toString(port));
-        }
-        builder2.redirectOutput(new File("logs" + File.separator + TestClient.displayName2 + "_Test" + currentTests + ".log"));
-        builder2.redirectError(new File("logs" + File.separator + TestClient.displayName2 + "_Test" + currentTests + ".err"));
-        proc2 = builder2.start();
-        Thread.sleep(100);
+        for (int i = 0; i < 2; i++)
+          if (!players[i].proc.isAlive()) {
+            logger.error("{} could not be started, look into {}", players[0].displayName, logDir);
+            exit(2);
+          }
 
-        if (!proc1.isAlive()) {
-          logger.error("{} could not be started", displayName1);
-          terminate();
-        } else if (!proc2.isAlive()) {
-          logger.error("{} could not be started", displayName2);
-          terminate();
-        }
-      } catch (IOException | InterruptedException e) {
+      } catch (IOException e) {
         e.printStackTrace();
       }
     } else {
@@ -249,11 +204,53 @@ public class TestClient extends XStreamClient {
     }
   }
 
-  private void terminate() {
-    logger.warn("TERMINATING");
-    proc1.destroyForcibly();
-    proc2.destroyForcibly();
-    System.exit(1);
+  private void startPlayer(int id, String reservation) throws IOException {
+    Player player = players[id];
+    ProcessBuilder builder;
+    if (player.isJar) {
+      logger.info("Invoking client {} {} with Java", id + 1, player);
+      builder = new ProcessBuilder("java", "-jar", "-mx1500m", player.executable, "-r", reservation, "-h", host, "-p", Integer.toString(port));
+    } else {
+      logger.info("Invoking client {} {}", id + 1, player);
+      builder = new ProcessBuilder(player.executable, "--reservation", reservation, "--host", host, "--port", Integer.toString(port));
+    }
+
+    logDir.mkdirs();
+    builder.redirectOutput(new File(logDir, players[id].displayName + "_Test" + currentTests + ".log"));
+    builder.redirectError(new File(logDir, File.separator + players[id].displayName + "_Test" + currentTests + ".err"));
+    players[id].proc = builder.start();
+    try {
+      Thread.sleep(100);
+    } catch (InterruptedException ignored) {
+    }
+  }
+
+  /** prepares slots for new clients (if {@link #currentTests} is even player1 starts, otherwise player2) */
+  private void prepareNewClients() {
+    if (currentTests == numberOfTests)
+      return;
+    SlotDescriptor[] slots = new SlotDescriptor[2];
+    for (int i = 0; i < 2; i++)
+      slots[(currentTests + i) % 2] = new SlotDescriptor(players[i].displayName, players[i].canTimeout, false);
+    send(new PrepareGameRequest(gameType, slots[0], slots[1]));
+  }
+
+  private static void exit(int status) {
+    if (testclient != null)
+      testclient.send(new CloseConnection());
+
+    for (Player p : players)
+      if (p.proc != null)
+        p.proc.destroyForcibly();
+
+    if (status != 0) {
+      logger.warn("Terminating");
+      System.exit(status);
+    }
+  }
+
+  private static boolean isJar(String f) {
+    return f.endsWith("jar") && new File(f).exists();
   }
 
   private static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
@@ -261,24 +258,20 @@ public class TestClient extends XStreamClient {
     return new TcpNetwork(new Socket(host, port));
   }
 
-  /** prepares slots for new clients (if {@link #currentTests} is even player1 starts, otherwise player2) */
-  private void prepareNewClients() {
-    if (currentTests == numberOfTests)
-      return;
-    SlotDescriptor slot1;
-    SlotDescriptor slot2;
-    if (currentTests % 2 == 0) {
-      slot1 = new SlotDescriptor(displayName1, canTimeout1, false);
-      slot2 = new SlotDescriptor(displayName2, canTimeout2, false);
-    } else {
-      slot1 = new SlotDescriptor(displayName2, canTimeout2, false);
-      slot2 = new SlotDescriptor(displayName1, canTimeout1, false);
-    }
-    send(new PrepareGameRequest(gameType, slot1, slot2));
-  }
+}
 
-  private static boolean isJar(String f) {
-    return f.endsWith("jar");
-  }
+class Player {
+  String displayName;
+  boolean canTimeout;
 
+  String executable;
+  boolean isJar;
+
+  Process proc;
+  Score score;
+
+  @Override
+  public String toString() {
+    return displayName;
+  }
 }
