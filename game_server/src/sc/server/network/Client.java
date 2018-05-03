@@ -297,4 +297,5 @@ public class Client extends XStreamClient implements IClient
 		 */
     notifyOnPacket(o);
   }
+
 }

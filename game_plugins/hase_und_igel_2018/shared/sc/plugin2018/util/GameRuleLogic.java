@@ -497,4 +497,5 @@ public class GameRuleLogic
 		return player.getCarrots() <= 10
 						&& player.getSalads() == 0;
 	}
+
 }

@@ -20,4 +20,5 @@ public class FreeReservationRequest extends ProtocolMessage implements ILobbyReq
   public String getReservation() {
     return this.reservation;
   }
+
 }

@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Application {
+  
   static {System.setProperty("logback.configurationFile", System.getProperty("user.dir") + "logback.xml");}
-  private static final Logger logger = LoggerFactory
-          .getLogger(Application.class);
-  private static final Object waitObj = new Object();
+  private static final Logger logger = LoggerFactory.getLogger(Application.class);
+  private static final Object SYNCOBJ = new Object();
 
   public static void main(String[] params) {
     // Setup Server
@@ -57,9 +57,9 @@ public final class Application {
     long end = System.currentTimeMillis();
     logger.info("Server has been initialized in {} ms.", end - start);
 
-    synchronized (waitObj) {
+    synchronized (SYNCOBJ) {
       try {
-        waitObj.wait();
+        SYNCOBJ.wait();
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -116,8 +116,8 @@ public final class Application {
       Thread shutdown = new Thread(() -> {
         ServiceManager.killAll();
         // continues the main-method of this class
-        synchronized (waitObj) {
-          waitObj.notifyAll();
+        synchronized (SYNCOBJ) {
+          SYNCOBJ.notifyAll();
           logger.info("Exiting application...");
         }
       });
@@ -128,4 +128,5 @@ public final class Application {
       logger.warn("Could not install ShutdownHook", e);
     }
   }
+
 }

@@ -18,8 +18,8 @@ import sc.shared.ScoreFragment;
 public class GamePlugin implements IGamePlugin
 {
 
-	public static final String			PLUGIN_AUTHOR		= "";
-	public static final String			PLUGIN_UUID			= "swc_2018_hase_und_igel";
+	public static final String			PLUGIN_AUTHOR = "";
+	public static final String			PLUGIN_UUID = "swc_2018_hase_und_igel";
 
 	public static final ScoreDefinition	SCORE_DEFINITION;
 

@@ -54,4 +54,5 @@ public class TestPreparedGameResponseListener implements ILobbyClientListener{
   public void onGameObserved(String roomId) {
 
   }
+
 }

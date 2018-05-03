@@ -17,4 +17,5 @@ public class TestModeMessage extends ProtocolMessage implements ILobbyRequest {
   public TestModeMessage(boolean testMode) {
     this.testMode = testMode;
   }
+
 }

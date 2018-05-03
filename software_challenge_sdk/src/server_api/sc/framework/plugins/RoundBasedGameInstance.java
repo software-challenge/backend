@@ -15,8 +15,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance {
-  private static Logger logger = LoggerFactory
-          .getLogger(RoundBasedGameInstance.class);
+  private static final Logger logger =LoggerFactory.getLogger(RoundBasedGameInstance.class);
+  
   protected P activePlayer = null;
 
   private int turn = 0;
@@ -317,4 +317,5 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   public String getPluginUUID() {
     return pluginUUID;
   }
+
 }

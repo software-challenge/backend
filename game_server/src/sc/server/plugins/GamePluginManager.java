@@ -16,8 +16,7 @@ import sc.server.gaming.GamePluginApi;
 
 public class GamePluginManager extends PluginManager<GamePluginInstance>
 {
-	protected static Logger	logger	= LoggerFactory
-											.getLogger(GamePluginInstance.class);
+	protected static Logger logger = LoggerFactory.getLogger(GamePluginInstance.class);
 
 	public void activateAllPlugins(GamePluginApi context)
 	{
@@ -131,4 +130,5 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	{
 		Configuration.addXStreamClassloaderURL(url);
 	}
+
 }

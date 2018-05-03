@@ -36,4 +36,5 @@ public final class MementoPacket extends ProtocolMessage implements IPerspective
   public Object getPerspective() {
     return this.perspective;
   }
+
 }

@@ -13,9 +13,8 @@ import sc.server.network.Client;
 public final class ReservationManager
 {
 
-  private static Logger					logger			= LoggerFactory
-          .getLogger(ReservationManager.class);
-  private static Map<String, PlayerSlot>	reservations	= new HashMap<String, PlayerSlot>();
+  private static Logger logger = LoggerFactory.getLogger(ReservationManager.class);
+  private static Map<String, PlayerSlot>	reservations = new HashMap<String, PlayerSlot>();
 
   /**
    * create Object as singleton
@@ -92,4 +91,5 @@ public final class ReservationManager
     PlayerSlot slot = reservations.remove(reservation);
     slot.free();
   }
+
 }

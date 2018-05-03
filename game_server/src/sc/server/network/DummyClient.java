@@ -21,4 +21,5 @@ public class DummyClient implements IClient
 	{
 		// ignore
 	}
+
 }

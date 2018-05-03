@@ -9,35 +9,32 @@ import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.SimplePlayer;
 import sc.shared.PlayerColor;
 
-public class TestPlayer extends SimplePlayer
-{
+public class TestPlayer extends SimplePlayer {
+  
   @XStreamAsAttribute
-	PlayerColor color;
+  PlayerColor color;
 
-	public TestPlayer(PlayerColor pc){
-		this.color = pc;
-	}
+  public TestPlayer(PlayerColor pc) {
+    this.color = pc;
+  }
 
-	@Override
-	public void addPlayerListener(IPlayerListener listener)
-	{
-		this.listeners.add(listener);
-	}
+  @Override
+  public void addPlayerListener(IPlayerListener listener) {
+    this.listeners.add(listener);
+  }
 
-	@Override
-	public void removePlayerListener(IPlayerListener listener)
-	{
-		this.listeners.remove(listener);
-	}
+  @Override
+  public void removePlayerListener(IPlayerListener listener) {
+    this.listeners.remove(listener);
+  }
 
-	public void requestMove()
-	{
-		TestTurnRequest request = new TestTurnRequest();
-		System.out.println("Player: "+color+" requested a move");
-		
-		for (IPlayerListener listener : this.listeners)
-		{
-			listener.onPlayerEvent(request);
-		}
-	}
+  public void requestMove() {
+    TestTurnRequest request = new TestTurnRequest();
+    System.out.println("Player: " + color + " requested a move");
+
+    for (IPlayerListener listener : this.listeners) {
+      listener.onPlayerEvent(request);
+    }
+  }
+
 }

@@ -46,4 +46,5 @@ public class Skip extends Action {
   public String toString() {
     return "Skip order " + this.order;
   }
+
 }
