@@ -33,8 +33,8 @@ import java.util.*;
  * by the plugins. Additional mapping data (Client2Player) will be stored here.
  */
 public class GameRoom implements IGameListener {
-  private static final Logger logger = LoggerFactory .getLogger(GameRoom.class);
-  
+  private static final Logger logger = LoggerFactory.getLogger(GameRoom.class);
+
   private final String id;
   private final GameRoomManager gameRoomManager;
   private final GamePluginInstance provider;
@@ -46,7 +46,7 @@ public class GameRoom implements IGameListener {
   private GameResult result = null;
   private boolean pauseRequested = false;
   private ObservingClient replayObserver;
-  
+
   /** currently unused */
   private IControllableGame replay;
 
@@ -60,7 +60,7 @@ public class GameRoom implements IGameListener {
 
   public GameRoom(String id, GameRoomManager gameRoomManager,
                   GamePluginInstance provider, IGameInstance game, boolean prepared) {
-    
+
     if (provider == null)
       throw new IllegalArgumentException("Provider must not be null");
 
@@ -356,6 +356,7 @@ public class GameRoom implements IGameListener {
    */
   synchronized void fillSlot(PlayerSlot openSlot, Client client)
           throws RescuableClientException {
+    
     openSlot.setClient(client); // set role of Slot as PlayerRole
 
     if (!isPrepared()) // is set when game is game is created or prepared
@@ -739,9 +740,10 @@ public class GameRoom implements IGameListener {
   /**
    * Get the saved {@link GameResult result}
    *
-   * @return GameResult Object
+   * @return GameResult
    */
   public GameResult getResult() {
     return this.result;
   }
+
 }

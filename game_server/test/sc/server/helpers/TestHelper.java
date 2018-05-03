@@ -8,8 +8,8 @@ import sc.helpers.Generator;
 
 public class TestHelper
 {
-	private static final long		DEFAULT_DURATION	= 100;
-	private static final TimeUnit	DEFAULT_TIME_UNIT	= TimeUnit.MILLISECONDS;
+	private static final long		DEFAULT_DURATION = 100;
+	private static final TimeUnit	DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
 
 	public static <T> boolean waitUntilEqual(T expected, Generator<T> action)
 	{
@@ -117,4 +117,5 @@ public class TestHelper
 			o.wait(mills);
 		} catch (Exception e){}
 	}
+
 }

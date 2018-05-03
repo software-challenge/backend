@@ -10,8 +10,7 @@ import sc.server.Configuration;
 
 public class GamePluginApi implements IGamePluginHost
 {
-	private static Logger	logger	= LoggerFactory
-											.getLogger(GamePluginApi.class);
+	private static Logger logger = LoggerFactory.getLogger(GamePluginApi.class);
 
 	@Override
 	public void registerProtocolClass(Class<?> clazz, String alias)
@@ -39,4 +38,5 @@ public class GamePluginApi implements IGamePluginHost
 			}
 		}
 	}
+
 }

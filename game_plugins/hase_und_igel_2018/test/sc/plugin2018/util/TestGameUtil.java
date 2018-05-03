@@ -32,4 +32,5 @@ public class TestGameUtil
 		Assert.assertEquals(3, GameRuleLogic.calculateMoveableFields(6));
 		Assert.assertEquals(3, GameRuleLogic.calculateMoveableFields(7));
 	}
+
 }

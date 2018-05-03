@@ -46,8 +46,7 @@ import java.util.ArrayList;
 public class GameState implements Cloneable {
 
   @XStreamOmitField
-  private static final Logger logger = LoggerFactory
-      .getLogger(GameState.class);
+  private static final Logger logger = LoggerFactory.getLogger(GameState.class);
   /**
    * momentane Rundenzahl
    */
@@ -704,4 +703,5 @@ public class GameState implements Cloneable {
             + this.getLastMove();
 
   }
+
 }

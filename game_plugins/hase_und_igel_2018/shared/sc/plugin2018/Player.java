@@ -306,4 +306,5 @@ public class Player extends SimplePlayer implements Cloneable
     toString += "LastAction " + this.lastNonSkipAction;
     return toString;
   }
+
 }

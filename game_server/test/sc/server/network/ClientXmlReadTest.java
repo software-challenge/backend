@@ -16,7 +16,7 @@ public class ClientXmlReadTest
 {
 	private static class StupidClientListener implements IClientListener
 	{
-		public Object	LastPacket	= null;
+		public Object	LastPacket = null;
 
 		@Override
 		public void onRequest(Client source, PacketCallback callback)
@@ -42,7 +42,7 @@ public class ClientXmlReadTest
 	/**
 	 * Denotes an empty ObjectStream (to be used with XStream).
 	 */
-	private static final String	EMPTY_OBJECT_STREAM	= "<protocol></protocol>";
+	private static final String	EMPTY_OBJECT_STREAM = "<protocol></protocol>";
 
 	@Before
 	public void setup()
@@ -75,4 +75,5 @@ public class ClientXmlReadTest
 		String data = stringInterface.getData();
 		Assert.assertTrue(data.startsWith("<protocol>\n  <example"));
 	}
+
 }

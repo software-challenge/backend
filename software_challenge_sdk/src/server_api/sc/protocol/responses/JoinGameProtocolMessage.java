@@ -29,4 +29,5 @@ public class JoinGameProtocolMessage extends ProtocolMessage {
   public String getRoomId() {
     return this.roomId;
   }
+
 }

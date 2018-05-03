@@ -20,4 +20,5 @@ public class JoinPreparedRoomRequest extends JoinRoomRequest {
   public String getReservationCode() {
     return this.reservationCode;
   }
+
 }

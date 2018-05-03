@@ -24,4 +24,5 @@ public class GamePluginTest {
     Assert.assertEquals(i, 1);
     i++;
   }
+
 }

@@ -3,7 +3,7 @@ package sc.server.network;
 public class PacketCallback
 {
 	private final Object	packet;
-	private boolean			processed	= false;
+	private boolean			processed = false;
 
 	public PacketCallback(Object packet)
 	{
@@ -24,4 +24,5 @@ public class PacketCallback
 	{
 		this.processed = true;
 	}
+
 }

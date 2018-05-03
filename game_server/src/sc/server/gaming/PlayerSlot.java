@@ -135,4 +135,5 @@ public class PlayerSlot
 	{
 		this.getRoom().removePlayer(this.getRole().getPlayer());
 	}
+
 }

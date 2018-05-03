@@ -129,4 +129,5 @@ public class Card extends Action {
             + ((this.getType() == CardType.TAKE_OR_DROP_CARROTS)?(" " + this.value):"")
             + " order " + this.order;
   }
+
 }

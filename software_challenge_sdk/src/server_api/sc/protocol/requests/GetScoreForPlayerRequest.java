@@ -22,4 +22,5 @@ public class GetScoreForPlayerRequest extends ProtocolMessage implements ILobbyR
   public String getDisplayName() {
     return this.displayName;
   }
+
 }

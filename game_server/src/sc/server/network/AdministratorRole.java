@@ -34,4 +34,5 @@ public class AdministratorRole implements IClientRole
   {
     // TODO Auto-generated method stub
   }
+
 }

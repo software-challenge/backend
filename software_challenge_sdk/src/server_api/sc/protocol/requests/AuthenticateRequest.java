@@ -20,4 +20,5 @@ public class AuthenticateRequest extends ProtocolMessage implements ILobbyReques
   public String getPassword() {
     return this.passphrase;
   }
+
 }

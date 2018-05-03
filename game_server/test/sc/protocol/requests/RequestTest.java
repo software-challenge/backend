@@ -43,11 +43,11 @@ public class RequestTest extends RealServerTest{
   @Before
   public void prepare() {
     try {
-      player1  = connectClient("localhost", getServerPort());
+      player1 = connectClient("localhost", getServerPort());
       TestHelper.waitMills(200);
-      player2  = connectClient("localhost", getServerPort());
+      player2 = connectClient("localhost", getServerPort());
       TestHelper.waitMills(200);
-      player3  = connectClient("localhost", getServerPort());
+      player3 = connectClient("localhost", getServerPort());
       TestHelper.waitMills(200);
     } catch(Exception e){
       // happens if port is already in use

@@ -52,4 +52,5 @@ public class EatSalad extends Action {
   public String toString() {
     return "EatSalad order " + this.order;
   }
+
 }

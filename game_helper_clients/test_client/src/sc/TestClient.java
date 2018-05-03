@@ -82,6 +82,7 @@ public class TestClient extends XStreamClient {
       if (startServer) {
         logger.info("Starting server...");
         ProcessBuilder builder = new ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-jar", "software-challenge-server.jar", "--port", String.valueOf(port));
+        logDir.mkdirs();
         builder.redirectOutput(new File(logDir, "server-" + port + ".log"));
         builder.redirectError(new File(logDir, "server-" + port + ".err"));
         builder.start(); // server will automatically be terminated upon exit since it is a child process

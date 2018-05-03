@@ -24,8 +24,7 @@ import java.util.List;
  */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
-  private static Logger logger = LoggerFactory
-          .getLogger(Game.class);
+  private static final Logger logger =LoggerFactory.getLogger(Game.class);
 
   @XStreamOmitField
   private List<PlayerColor> availableColors = new LinkedList<>();
@@ -367,4 +366,5 @@ public class Game extends RoundBasedGameInstance<Player> {
     playerScores.add(getScoreFor(this.gameState.getBluePlayer()));
     return playerScores;
   }
+
 }

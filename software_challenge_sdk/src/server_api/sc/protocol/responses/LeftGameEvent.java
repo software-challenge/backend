@@ -21,4 +21,5 @@ public class LeftGameEvent extends ProtocolMessage {
   public String getRoomId() {
     return this.roomId;
   }
+
 }
