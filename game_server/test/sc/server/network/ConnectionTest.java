@@ -79,4 +79,5 @@ public class ConnectionTest extends RealServerTest
 		TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
             () -> this.lobby.getClientManager().getClients().getFirst().getDisconnectCause(), 1, TimeUnit.SECONDS);
 	}
+
 }

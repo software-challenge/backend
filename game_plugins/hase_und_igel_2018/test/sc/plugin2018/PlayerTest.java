@@ -31,4 +31,5 @@ public class PlayerTest
     Assert.assertEquals(true, red.ownsCardOfType(CardType.FALL_BACK));
     Assert.assertEquals(true, red.ownsCardOfType(CardType.TAKE_OR_DROP_CARROTS));
 	}
+
 }

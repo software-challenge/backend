@@ -189,4 +189,5 @@ public class PlayerTest extends AbstractRoleTest
 		Assert.assertEquals(this.secondState,
 				(int) ((TestGameState) mementoObserver.getState()).state);
 	}
+
 }

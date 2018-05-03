@@ -53,4 +53,5 @@ public class ContestTest extends AdministratorTest
 		Assert.assertEquals(player2, room.getSlots().get(0).getRole()
 				.getClient());
 	}
+
 }

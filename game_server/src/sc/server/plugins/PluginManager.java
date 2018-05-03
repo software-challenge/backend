@@ -27,17 +27,16 @@ import sc.server.Configuration;
  */
 public abstract class PluginManager<PluginInstanceType extends PluginInstance<?, ?>>
 {
-	private static final String							PLUGIN_DIRECTORY			= "plugins";
-	private static final String							JAR_FILE_IDENTIFIER			= ".jar";
-	private static final String							COMPILED_CLASS_IDENTIFIER	= ".class";
+	private static final String							PLUGIN_DIRECTORY = "plugins";
+	private static final String							JAR_FILE_IDENTIFIER = ".jar";
+	private static final String							COMPILED_CLASS_IDENTIFIER = ".class";
 
-	protected static final Logger						logger						= LoggerFactory
-																							.getLogger(PluginManager.class);
+	protected static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
 
-	private static final Class<? extends Annotation>	PLUGIN_ANNOTATION			= PluginDescriptor.class;
+	private static final Class<? extends Annotation>	PLUGIN_ANNOTATION = PluginDescriptor.class;
 
-	private final Collection<PluginInstanceType>		availablePlugins			= new LinkedList<>();
-	private final Collection<PluginInstanceType>		activePlugins				= new LinkedList<>();
+	private final Collection<PluginInstanceType>		availablePlugins = new LinkedList<>();
+	private final Collection<PluginInstanceType>		activePlugins = new LinkedList<>();
 
 	public synchronized void reload()
 	{
@@ -182,4 +181,5 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 	{
 		return PLUGIN_DIRECTORY;
 	}
+
 }

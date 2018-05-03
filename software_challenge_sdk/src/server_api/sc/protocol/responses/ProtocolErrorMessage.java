@@ -28,4 +28,5 @@ public class ProtocolErrorMessage extends ProtocolMessage {
   public String getMessage() {
     return this.message;
   }
+
 }

@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 public class NonEndingByteArrayInputStream extends InputStream
 {
-	private Object					hold	= new Object();
+	private Object					hold = new Object();
 	private ByteArrayInputStream	byteArray;
 
 	public NonEndingByteArrayInputStream(byte[] buf)
@@ -97,4 +97,5 @@ public class NonEndingByteArrayInputStream extends InputStream
 		}
 		return result;
 	}
+
 }

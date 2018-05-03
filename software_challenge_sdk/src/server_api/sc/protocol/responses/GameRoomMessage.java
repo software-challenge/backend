@@ -20,4 +20,5 @@ public class GameRoomMessage extends ProtocolErrorMessage {
     this.roomId = roomId;
     this.existing = existing;
   }
+
 }

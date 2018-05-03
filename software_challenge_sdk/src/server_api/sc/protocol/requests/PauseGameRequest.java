@@ -24,4 +24,5 @@ public class PauseGameRequest extends ProtocolMessage implements ILobbyRequest {
     this.roomId = roomId;
     this.pause = pause;
   }
+
 }

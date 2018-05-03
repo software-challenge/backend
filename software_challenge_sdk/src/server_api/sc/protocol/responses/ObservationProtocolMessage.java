@@ -26,4 +26,5 @@ public class ObservationProtocolMessage extends ProtocolMessage {
   public String getRoomId() {
     return this.roomId;
   }
+
 }

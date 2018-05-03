@@ -13,8 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ManifestHelper {
-	private static final Logger logger = LoggerFactory
-			.getLogger(ManifestHelper.class);
+	private static final Logger logger = LoggerFactory.getLogger(ManifestHelper.class);
 
 	public static final String MODULE_VERSION_ATTRIBUTE_KEY = "SC-Module-Version";
 
@@ -119,4 +118,5 @@ public final class ManifestHelper {
 
 		return null;
 	}
+
 }

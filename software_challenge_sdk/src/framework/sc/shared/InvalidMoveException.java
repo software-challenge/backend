@@ -18,4 +18,5 @@ public class InvalidMoveException extends Exception {
   public ProtocolMove getMove() {
     return move;
   }
+
 }

@@ -34,17 +34,16 @@ import java.util.*;
  */
 public class GameRoom implements IGameListener
 {
-	private static final Logger			  logger		= LoggerFactory
-															        .getLogger(GameRoom.class);
+	private static final Logger logger = LoggerFactory.getLogger(GameRoom.class);
 	private final String				      id;
 	private final GameRoomManager		  gameRoomManager;
 	private final GamePluginInstance	provider;
 	private final IGameInstance			  game;
-	private List<ObserverRole>			  observers	= new LinkedList<>();
-	private List<PlayerSlot>			    playerSlots	= new ArrayList<>(2);
+	private List<ObserverRole>			  observers = new LinkedList<>();
+	private List<PlayerSlot>			    playerSlots = new ArrayList<>(2);
 	private final boolean				      prepared;
-	private GameStatus					      status		= GameStatus.CREATED;
-	private GameResult					      result		= null;
+	private GameStatus					      status = GameStatus.CREATED;
+	private GameResult					      result = null;
 	private boolean pauseRequested = false;
 	private ObservingClient replayObserver;
 	// currently no use
@@ -779,4 +778,5 @@ public class GameRoom implements IGameListener
 	{
 		return this.result;
 	}
+
 }

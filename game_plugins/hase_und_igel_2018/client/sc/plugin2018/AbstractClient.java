@@ -1,29 +1,27 @@
 package sc.plugin2018;
 
-import java.io.IOException;
-import java.net.ConnectException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sc.framework.plugins.SimplePlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
 import sc.plugin2018.util.Configuration;
-import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
 import sc.shared.WelcomeMessage;
 
+import java.io.IOException;
+import java.net.ConnectException;
+
 /**
- * Abstrakter Client nach Vorschrift des SDK
+ * Abstrakter Client nach Vorschrift des SDK.
  * Beinhaltet einen LobbyClient, der den tatsächlichen Client darstellt.
  */
 public abstract class AbstractClient implements ILobbyClientListener {
-
   private static final Logger logger = LoggerFactory.getLogger(AbstractClient.class);
 
   /** The handler reacts to messages from the server received by the lobby client */

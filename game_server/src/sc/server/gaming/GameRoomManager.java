@@ -24,26 +24,21 @@ import sc.shared.*;
  * they are done. Additionally the GameManger has to detect and kill games,
  * which seem to be dead-locked or have caused a timeout.
  */
-public class GameRoomManager
-{
+public class GameRoomManager {
   /* Private fields  */
-  private Map<String, GameRoom>	rooms;
-  private GamePluginApi			pluginApi;
+  private Map<String, GameRoom> rooms;
+  private GamePluginApi pluginApi;
 
-  /* final fields */
-  private final GamePluginManager	gamePluginManager	= new GamePluginManager();
+  private final GamePluginManager gamePluginManager = new GamePluginManager();
 
-  /* static fields */
-  private static Logger logger = LoggerFactory
-          .getLogger(GameRoomManager.class);
+  private static final Logger logger = LoggerFactory.getLogger(GameRoomManager.class);
 
   private LinkedList<Score> scores = new LinkedList<>();
 
   /**
    * Default constructor, initializes rooms, loads available plugins
    */
-  public GameRoomManager()
-  {
+  public GameRoomManager() {
     this.rooms = new HashMap<>();
     this.pluginApi = new GamePluginApi();
     this.gamePluginManager.reload();
@@ -55,41 +50,41 @@ public class GameRoomManager
    *
    * @param room Room to be added
    */
-  private void add(GameRoom room)
-  {
+  private void add(GameRoom room) {
     logger.debug("Adding room with id {}", room.getId());
     this.rooms.put(room.getId(), room);
   }
 
   /**
    * Create a not prepared {@link GameRoom GameRoom} of given type
+   *
    * @param gameType String of current Game
+   *
    * @return Newly created GameRoom
+   *
    * @throws RescuableClientException if creation of game failed
    */
   public synchronized GameRoom createGame(String gameType)
-          throws RescuableClientException
-  {
+          throws RescuableClientException {
     return createGame(gameType, false);
   }
 
   /**
    * make new PluginManager, generate roomId, create Game and GameRoom. If gameFile is set, load gameState from file
+   *
    * @param gameType String of current Game
    * @param prepared signals whether the game was prepared by gui or ..., false if player has to send JoinRoomRequest
+   *
    * @return newly created GameRoom
+   *
    * @throws RescuableClientException if Plugin could not be loaded
    */
-  public synchronized GameRoom createGame(String gameType, boolean prepared)
-          throws RescuableClientException
-  {
+  public synchronized GameRoom createGame(String gameType, boolean prepared) throws RescuableClientException {
     GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
 
-    if (plugin == null)
-    {
+    if (plugin == null) {
       logger.warn("Couldn't find a game of type " + gameType);
-      throw new UnknownGameTypeException(gameType, this.gamePluginManager
-              .getPluginUUIDs());
+      throw new UnknownGameTypeException(gameType, this.gamePluginManager.getPluginUUIDs());
     }
 
     logger.info("Created new game of type " + gameType);
@@ -128,21 +123,22 @@ public class GameRoomManager
     return room;
   }
 
-  private static synchronized  String generateRoomId()
-  {
+  private static synchronized String generateRoomId() {
     return UUID.randomUUID().toString();
   }
 
   /**
    * Open new GameRoom and join Client
-   * @param client Client to join the game
+   *
+   * @param client   Client to join the game
    * @param gameType String of current game
+   *
    * @return GameRoomMessage for new GameRoom, null im unsuccessful
+   *
    * @throws RescuableClientException if game could not be created
    */
   public synchronized GameRoomMessage createAndJoinGame(Client client, String gameType)
-          throws RescuableClientException
-  {
+          throws RescuableClientException {
     GameRoom room = createGame(gameType);
     if (room.join(client)) {
       return new GameRoomMessage(room.getId(), false);
@@ -152,18 +148,18 @@ public class GameRoomManager
 
   /**
    * Called after JoinRoomRequest. Client joins already existing GameRoom or opens new one
-   * @param client to join the game
+   *
+   * @param client   to join the game
    * @param gameType String of current game
+   *
    * @return GameRoomMessage with roomId an success null if unsuccessful
+   *
    * @throws RescuableClientException if client could not join room
    */
   public synchronized GameRoomMessage joinOrCreateGame(Client client, String gameType)
-          throws RescuableClientException
-  {
-    for (GameRoom gameRoom : getGames())
-    {
-      if (gameRoom.join(client))
-      {
+          throws RescuableClientException {
+    for (GameRoom gameRoom : getGames()) {
+      if (gameRoom.join(client)) {
         return new GameRoomMessage(gameRoom.getId(), true);
       }
     }
@@ -173,38 +169,41 @@ public class GameRoomManager
 
   /**
    * Create Collection of {@link GameRoom GameRooms}, which can not be modified
+   *
    * @return Collection<GameRoom>
    */
-  public synchronized Collection<GameRoom> getGames()
-  {
+  public synchronized Collection<GameRoom> getGames() {
     return Collections.unmodifiableCollection(this.rooms.values());
   }
 
   /**
    * Getter for {@link sc.server.plugins.PluginManager PluginManager}
+   *
    * @return PluginManager
    */
-  public GamePluginManager getPluginManager()
-  {
+  public GamePluginManager getPluginManager() {
     return this.gamePluginManager;
   }
 
   /**
    * Getter for {@link GamePluginApi GamePluginApi}
+   *
    * @return GamePluginApi
    */
-  public GamePluginApi getPluginApi()
-  {
+  public GamePluginApi getPluginApi() {
     return this.pluginApi;
   }
 
   /**
    * Creates a new GameRoom {@link #createGame(String) createGame}, set descriptors of PlayerSlots,
    * if exists load state of game from file
-   * @param gameType String of current game
-   * @param descriptors which are displayName, canTimeout and shouldBePaused
+   *
+   * @param gameType     String of current game
+   * @param descriptors  which are displayName, canTimeout and shouldBePaused
    * @param loadGameInfo Object for game information
+   *
    * @return new PrepareGameProtocolMessage with roomId and slots
+   *
    * @throws RescuableClientException if game could not be created
    */
   public synchronized PrepareGameProtocolMessage prepareGame(String gameType, List<SlotDescriptor> descriptors, Object loadGameInfo)
@@ -220,9 +219,12 @@ public class GameRoomManager
   }
 
   /**
-   *  Calls {@link #prepareGame(String, List, Object) prepareGame}
+   * Calls {@link #prepareGame(String, List, Object) prepareGame}
+   *
    * @param prepared PrepareGameRequest with gameType and slotsDescriptors
+   *
    * @return ProtocolMessage from server
+   *
    * @throws RescuableClientException if room could not be created
    */
   public synchronized PrepareGameProtocolMessage prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
@@ -233,17 +235,18 @@ public class GameRoomManager
 
   /**
    * Getter for GameRoom
+   *
    * @param roomId String Id of room to be found
+   *
    * @return returns GameRoom specified by rooId
+   *
    * @throws RescuableClientException if no room could be found
    */
   public synchronized GameRoom findRoom(String roomId)
-          throws RescuableClientException
-  {
+          throws RescuableClientException {
     GameRoom room = this.rooms.get(roomId);
 
-    if (room == null)
-    {
+    if (room == null) {
       throw new RescuableClientException("Couldn't find a room with id " + roomId);
     }
 
@@ -252,10 +255,10 @@ public class GameRoomManager
 
   /**
    * Remove specified room from game
+   *
    * @param gameRoom to be removed
    */
-  public void remove(GameRoom gameRoom)
-  {
+  public void remove(GameRoom gameRoom) {
     this.rooms.remove(gameRoom.getId());
   }
 
@@ -265,10 +268,12 @@ public class GameRoomManager
 
   /**
    * Called by gameRoom after game ended and test mode enabled to save results in playerScores
-   * @param result GameResult
+   *
+   * @param result       GameResult
    * @param playerScores List of playerScores
-   * @param name1 displayName of player1
-   * @param name2 displayName of player2
+   * @param name1        displayName of player1
+   * @param name2        displayName of player2
+   *
    * @throws InvalidScoreDefinitionException if scoreDefinitions do not match
    */
   public void addResultToScore(GameResult result, List<PlayerScore> playerScores, String name1, String name2) throws InvalidScoreDefinitionException {
@@ -279,7 +284,7 @@ public class GameRoomManager
     ScoreDefinition scoreDefinition = result.getDefinition();
     Score firstScore = null;
     Score secondScore = null;
-    for (Score score: this.scores) {
+    for (Score score : this.scores) {
       if (score.getDisplayName().equals(name1)) {
         firstScore = score;
       } else if (score.getDisplayName().equals(name2)) {
@@ -312,7 +317,7 @@ public class GameRoomManager
                         (new BigDecimal(firstScore.getNumberOfTests() - 1)
                                 .divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
                 )).add(
-                playerScores.get(0).getValues().get(i).divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE,BigDecimal.ROUND_HALF_UP)));
+                playerScores.get(0).getValues().get(i).divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
         secondValue.setValue((secondValue.getValue().
                 multiply(
                         (new BigDecimal(secondScore.getNumberOfTests() - 1)
@@ -327,4 +332,5 @@ public class GameRoomManager
       }
     }
   }
+
 }

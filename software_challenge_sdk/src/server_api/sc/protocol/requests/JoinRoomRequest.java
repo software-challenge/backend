@@ -28,4 +28,5 @@ public class JoinRoomRequest extends ProtocolMessage implements ILobbyRequest {
   public String getGameType() {
     return this.gameType;
   }
+
 }

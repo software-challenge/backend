@@ -30,9 +30,8 @@ public class NewClientListener implements Runnable, Closeable	{
 
 
   /* static fields */
-  protected static final Logger		logger			= LoggerFactory
-          .getLogger(NewClientListener.class);
-  public static int					lastUsedPort	= 0;
+  protected static final Logger logger = LoggerFactory.getLogger(NewClientListener.class);
+  public static int					lastUsedPort = 0;
 
   /* constructor */
   NewClientListener(){
@@ -168,4 +167,5 @@ public class NewClientListener implements Runnable, Closeable	{
       }
     }
   }
+
 }

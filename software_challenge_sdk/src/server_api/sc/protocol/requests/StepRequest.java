@@ -24,4 +24,5 @@ public class StepRequest extends ProtocolMessage implements ILobbyRequest {
     this.roomId = roomId;
     this.forced = forced;
   }
+
 }

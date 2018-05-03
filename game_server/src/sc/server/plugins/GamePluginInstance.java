@@ -15,4 +15,5 @@ public class GamePluginInstance extends PluginInstance<IGamePluginHost, IGamePlu
 	{
 		return this.getPlugin().createGame();
 	}
+
 }

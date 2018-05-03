@@ -17,8 +17,8 @@ import sc.shared.InvalidGameStateException;
 
 public class AdministratorTest extends AbstractRoleTest
 {
-	private static final String	CORRECT_PASSWORD	= "this-is-a-secret";
-	private static final String	WRONG_PASSWORD		= "i-am-a-hacker";
+	private static final String	CORRECT_PASSWORD = "this-is-a-secret";
+	private static final String	WRONG_PASSWORD = "i-am-a-hacker";
 
 	@Test
 	public void shouldBecomeAdminWithCorrectPassword() throws IOException,
@@ -78,4 +78,5 @@ public class AdministratorTest extends AbstractRoleTest
 
 		Assert.assertEquals(1, this.gameMgr.getGames().size());
 	}
+
 }

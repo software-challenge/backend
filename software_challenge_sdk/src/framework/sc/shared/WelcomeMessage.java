@@ -29,4 +29,5 @@ public class WelcomeMessage extends ProtocolMessage {
 	public PlayerColor getPlayerColor() {
 		return PlayerColor.valueOf(color.toUpperCase());
 	}
+
 }

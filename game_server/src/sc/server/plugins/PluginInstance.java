@@ -68,4 +68,5 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 			throw new PluginLoaderException(e);
 		}
 	}
+
 }

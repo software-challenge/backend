@@ -49,4 +49,5 @@ public class ObserverRole implements IClientRole
   {
     //TODO close Observer if necessary
   }
+
 }

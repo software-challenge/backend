@@ -9,7 +9,7 @@ public class UnknownGameTypeException extends RescuableClientException
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -6520842646313711672L;
+	private static final long	serialVersionUID = -6520842646313711672L;
 	private Iterable<String>	availableUUIDs;
 
 	public UnknownGameTypeException(String string, Iterable<String> iterable)
