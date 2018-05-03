@@ -1,4 +1,4 @@
-## This file generated from the list of files ignored by SVN! 
+## This file generated from the list of files ignored by SVN!
 
 # Ignore RVM Project Config
 .rvmrc
@@ -56,6 +56,9 @@ software_challenge_sdk/*/doc
 *.toc
 *.out
 *.log
+
+# Ignore VSCode configuration files
+.vscode
 
 \.idea/
 
