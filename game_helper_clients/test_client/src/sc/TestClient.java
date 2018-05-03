@@ -210,10 +210,10 @@ public class TestClient extends XStreamClient {
       try {
         ProcessBuilder builder1;
         if (isJar(TestClient.p1)) {
-          logger.info("Invoking first client {} as java client...", TestClient.p1);
-          builder1 = new ProcessBuilder("java", "-jar", TestClient.p1, "-r", pgm.getReservations().get(currentTests % 2), "-h", host, "-p", Integer.toString(port));
+          logger.info("Invoking first client {} with Java...", TestClient.p1);
+          builder1 = new ProcessBuilder("java", "-jar", "-mx1500m", TestClient.p1, "-r", pgm.getReservations().get(currentTests % 2), "-h", host, "-p", Integer.toString(port));
         } else {
-          logger.info("Invoking first client {} as non java client...", TestClient.p1);
+          logger.info("Invoking first client {}...", TestClient.p1);
           builder1 = new ProcessBuilder(TestClient.p1, "--reservation", pgm.getReservations().get(currentTests % 2), "--host", host, "--port", Integer.toString(port));
         }
         builder1.redirectOutput(new File("logs" + File.separator + TestClient.displayName1 + "_Test" + currentTests + ".log"));
@@ -223,10 +223,10 @@ public class TestClient extends XStreamClient {
 
         ProcessBuilder builder2;
         if (isJar(TestClient.p2)) {
-          logger.info("Invoking second client {} as java client...", TestClient.p2);
-          builder2 = new ProcessBuilder("java", "-jar", TestClient.p2, "-r", pgm.getReservations().get((currentTests + 1) % 2), "-h", host, "-p", Integer.toString(port));
+          logger.info("Invoking second client {} with Java...", TestClient.p2);
+          builder2 = new ProcessBuilder("java", "-mx1500m", "-jar", TestClient.p2, "-r", pgm.getReservations().get((currentTests + 1) % 2), "-h", host, "-p", Integer.toString(port));
         } else {
-          logger.info("Invoking second client {} as non java client...", TestClient.p2);
+          logger.info("Invoking second client {}...", TestClient.p2);
           builder2 = new ProcessBuilder(TestClient.p2, "--reservation", pgm.getReservations().get((currentTests + 1) % 2), "--host", host, "--port", Integer.toString(port));
         }
         builder2.redirectOutput(new File("logs" + File.separator + TestClient.displayName2 + "_Test" + currentTests + ".log"));
