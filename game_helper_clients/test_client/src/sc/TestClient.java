@@ -5,6 +5,7 @@ import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.framework.plugins.SimplePlayer;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
@@ -15,11 +16,9 @@ import sc.server.Configuration;
 import sc.shared.*;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -106,6 +105,7 @@ public class TestClient extends XStreamClient {
 
   private boolean terminateWhenPossible = false;
   private int gotLastPlayerScores = 0;
+  private int irregularGames = 0;
 
   public TestClient(XStream xstream, Collection<Class<?>> protocolClasses,
                     String host, int port, int numberOfTests) throws IOException {
@@ -137,8 +137,15 @@ public class TestClient extends XStreamClient {
     } else if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       if (packet.getData() instanceof GameResult) {
-        logger.info("Received game result");
-        this.currentTests++;
+        GameResult result = (GameResult) packet.getData();
+        if (!result.isRegular())
+          irregularGames++;
+        StringBuilder log = new StringBuilder("Game {} " +
+                (result.isRegular() ? "ended regularly -" : "did not end regularly!") + " Winner: ");
+        for (SimplePlayer winner : result.getWinners())
+          log.append(winner.getDisplayName()).append(", ");
+        logger.info(log.substring(0, log.length() - 2), currentTests);
+        currentTests++;
         for (int i = 0; i < 2; i++)
           send(new GetScoreForPlayerRequest(players[i].displayName));
 
@@ -151,7 +158,7 @@ public class TestClient extends XStreamClient {
         for (int i = 0; i < 2; i++)
           players[i].proc.destroy();
 
-        if (this.currentTests == this.numberOfTests)
+        if (currentTests == numberOfTests)
           terminateWhenPossible = true;
         prepareNewClients();
       }
@@ -172,19 +179,18 @@ public class TestClient extends XStreamClient {
               score.getDisplayName(), val.get(0).getValue(), val.get(1).getValue(), val.get(2).getValue(), currentTests, numberOfTests));
 
       if (gotLastPlayerScores == 2) {
-        if (this.currentTests == this.numberOfTests) {
-          logger.warn(String.format("End results: \n" +
-                          "=============== SCORES ================\n" +
-                          "%s: %3.0f\n%s: %3.0f\n" +
-                          "=======================================",
-                  players[0], players[0].score.getScoreValues().get(0).getValue(),
-                  players[1], players[1].score.getScoreValues().get(0).getValue()));
-        }
+        logger.warn(String.format("End results: \n" +
+                        "=============== SCORES ================\n" +
+                        "%s: %.0f\n%s: %.0f\n" +
+                        "=======================================",
+                players[0], players[0].score.getScoreValues().get(0).getValue(),
+                players[1], players[1].score.getScoreValues().get(0).getValue()));
+        logger.warn("{} of {} games did not end regularly!", irregularGames, currentTests);
         exit(0);
       }
 
     } else if (message instanceof PrepareGameProtocolMessage) {
-      logger.info("Starting clients");
+      logger.debug("Received PrepareGame - starting clients");
       PrepareGameProtocolMessage pgm = (PrepareGameProtocolMessage) message;
       send(new ObservationRequest(pgm.getRoomId()));
       try {
@@ -233,6 +239,7 @@ public class TestClient extends XStreamClient {
     SlotDescriptor[] slots = new SlotDescriptor[2];
     for (int i = 0; i < 2; i++)
       slots[(currentTests + i) % 2] = new SlotDescriptor(players[i].displayName, players[i].canTimeout, false);
+    logger.debug("Prepared client slots: " + Arrays.toString(slots));
     send(new PrepareGameRequest(gameType, slots[0], slots[1]));
   }
 
