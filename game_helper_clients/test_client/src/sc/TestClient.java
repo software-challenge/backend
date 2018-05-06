@@ -76,6 +76,11 @@ public class TestClient extends XStreamClient {
       players[i].executable = (String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar");
       players[i].isJar = isJar(players[i].executable);
     }
+    if (players[0].displayName.equals(players[1].displayName)) {
+      logger.warn("Both players have the same name, adding suffixes.");
+      players[0].displayName = players[0].displayName + "-1";
+      players[1].displayName = players[1].displayName + "-2";
+    }
 
     try {
       if (startServer) {
@@ -215,10 +220,10 @@ public class TestClient extends XStreamClient {
     Player player = players[id];
     ProcessBuilder builder;
     if (player.isJar) {
-      logger.info("Invoking client {} {} with Java", id + 1, player);
+      logger.info("Invoking client {} with Java", player);
       builder = new ProcessBuilder("java", "-jar", "-mx1500m", player.executable, "-r", reservation, "-h", host, "-p", Integer.toString(port));
     } else {
-      logger.info("Invoking client {} {}", id + 1, player);
+      logger.info("Invoking client {}", player);
       builder = new ProcessBuilder(player.executable, "--reservation", reservation, "--host", host, "--port", Integer.toString(port));
     }
 
