@@ -133,7 +133,7 @@ public class TestClient extends XStreamClient {
     // Parameter laden
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (Integer) parser.getOptionValue(portOption,
-            SharedConfiguration.DEFAULT_PORT);
+            SharedConfiguration.DEFAULT_PORT+1);
     int numberOfTests = (Integer) parser.getOptionValue(numberOfTestsOption, 10);
     canTimeout1 = (Boolean) parser.getOptionValue(p1CanTimeoutOption, true);
     canTimeout2 = (Boolean) parser.getOptionValue(p2CanTimeoutOption, true);
