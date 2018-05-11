@@ -43,9 +43,9 @@
     <copydir src="${lib.dir}" dest="${build.dir}/software-challenge-server/runnable/lib"/>
     <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
     <echo file="${build.dir}/software-challenge-server/runnable/start.bat"
-          message="java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xD;&#xA;" />
+          message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar&#xD;&#xA;" />
     <echo file="${build.dir}/software-challenge-server/runnable/start.sh"
-          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xA;" />
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar&#xA;" />
     <chmod file="${build.dir}/software-challenge-server/runnable/start.sh"
            perm="ugo+x" />
 
@@ -59,9 +59,9 @@
     <copydir src="${lib.dir}" dest="${build.dir}/test_client/runnable/lib"/>    <!-- test client -->
     <copy file="${build.dir}/software-challenge-server/runnable/server.properties" todir="${build.dir}/test_client/runnable/"/>
     <echo file="${build.dir}/test_client/runnable/start-tests.bat"
-          message="java -Dfile.encoding=UTF-8 -jar test_client.jar&#xD;&#xA;" />
+          message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test_client.jar&#xD;&#xA;" />
     <echo file="${build.dir}/test_client/runnable/start-tests.sh"
-          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar test_client.jar $@&#xA;"/>
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test_client.jar $@&#xA;"/>
     <chmod file="${build.dir}/test_client/runnable/start.sh" perm="ugo+x" />
 
 
@@ -69,9 +69,9 @@
     <copydir src="${build.dir}/${game_player}/jar" dest="${build.dir}/${game_player}/runnable"/>
     <copydir src="${lib.dir}" dest="${build.dir}/${game_player}/runnable/lib"/>
     <echo file="${build.dir}/${game_player}/runnable/start.sh"
-          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar ${game_player}.jar&#xA;" />
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar ${game_player}.jar&#xA;" />
     <echo file="${build.dir}/${game_player}/runnable/start.bat"
-          message="java -Dfile.encoding=UTF-8 -jar ${game_player}.jar&#xD;&#xA;" />
+          message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar ${game_player}.jar&#xD;&#xA;" />
     <chmod file="${build.dir}/${game_player}/runnable/start.sh" perm="ugo+x" />
 
   </target>

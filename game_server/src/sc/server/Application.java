@@ -13,12 +13,16 @@ import org.slf4j.LoggerFactory;
 import sc.shared.SharedConfiguration;
 
 public final class Application {
-  
-  static {System.setProperty("logback.configurationFile", System.getProperty("user.dir") + "logback.xml");}
+
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
   private static final Object SYNCOBJ = new Object();
+  static {
+    logger.debug("Loading config file ({})", System.getProperty("user.dir")+File.separator+"logback.xml");
+    System.setProperty("logback.configurationFile", System.getProperty("user.dir")+File.separator+"logback.xml");
+  }
 
   public static void main(String[] params) {
+
     // Setup Server
     System.setProperty("file.encoding", "UTF-8");
     try {
