@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.shared.SharedConfiguration;
 
 public final class Application {
   
@@ -75,6 +76,7 @@ public final class Application {
     CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
     CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
     CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY_OPTION);
+    CmdLineParser.Option openOnPortOption = parser.addIntegerOption(Configuration.PORT_KEY);
     parser.parse(params);
 
     Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
@@ -82,6 +84,10 @@ public final class Application {
     String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
     Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
     Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
+    Integer openOnPort = (Integer) parser.getOptionValue(openOnPortOption, SharedConfiguration.DEFAULT_PORT);
+
+    Configuration.set(Configuration.PORT_KEY, openOnPort.toString());
+
     if (loadGameFile != null) {
       Configuration.set(Configuration.GAMELOADFILE, loadGameFile);
       if (turnToLoad != 0) {
