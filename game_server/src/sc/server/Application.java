@@ -11,10 +11,13 @@ import java.io.File;
 import java.io.IOException;
 
 public final class Application {
-  static {System.setProperty("logback.configurationFile", System.getProperty("user.dir") + "logback.xml");}
+
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
-  
   private static final Object SYNCOBJ = new Object();
+  static {
+    logger.debug("Loading logback config from {}", System.getProperty("user.dir")+File.separator+"logback.xml");
+    System.setProperty("logback.configurationFile", System.getProperty("user.dir")+File.separator+"logback.xml");
+  }
 
   public static void main(String[] params) {
     // setup server
@@ -74,8 +77,9 @@ public final class Application {
     String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
     Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
     Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
-    Integer port = (Integer) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT);
-    Configuration.set(Configuration.PORT_KEY, String.valueOf(port));
+    String port = parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT).toString();
+
+    Configuration.set(Configuration.PORT_KEY, port);
     if (loadGameFile != null) {
       Configuration.set(Configuration.GAMELOADFILE, loadGameFile);
       if (turnToLoad != 0) {

@@ -27,8 +27,13 @@
     </layout>
   </appender>
 
-  <!-- Uncomment the following to enable debug logs: -->
-  <logger name="sc" level="DEBUG" />
+  <logger name="sc" level="WARN" />
+
+  <!-- Uncomment the following line to enable verbose logging -->
+  <!--<logger name="sc" level="INFO" />-->
+
+  <!-- Uncomment the following line to enable very verbose logging: -->
+  <!--<logger name="sc" level="DEBUG" />-->
 
   <root level="INFO">
     <appender-ref ref="FILE"/>

@@ -27,7 +27,7 @@ import java.util.List;
  * <p/>
  * Defaults:
  * <ul>
- * <li>starts on localhost 13050</li>
+ * <li>starts on localhost 13051</li>
  * <li>displayNames: player1, player2</li>
  * <li>client location: ./defaultplayer.jar</li>
  * <li>canTimeout: true</li>
@@ -68,7 +68,7 @@ public class TestClient extends XStreamClient {
     // Parameter laden
     boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
     String host = (String) parser.getOptionValue(hostOption, "localhost");
-    int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT);
+    int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_TESTSERVER_PORT);
     int numberOfTests = (int) parser.getOptionValue(numberOfTestsOption, 10);
     for (int i = 0; i < 2; i++) {
       players[i].canTimeout = (Boolean) parser.getOptionValue(canTimeoutOptions[i], true);
