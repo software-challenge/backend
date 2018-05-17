@@ -1,54 +1,59 @@
 package sc.plugin2018;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sc.framework.plugins.SimplePlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
 import sc.plugin2018.util.Configuration;
-import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
 import sc.shared.WelcomeMessage;
 
+import java.io.IOException;
+import java.net.ConnectException;
+
 /**
- * Abstrakter Client nach Vorschrift des SDKs. Beinhaltet einen LobbyClient, der
- * den tatsächlichen Client darstellt.
+ * Abstrakter Client nach Vorschrift des SDK.
+ * Beinhaltet einen LobbyClient, der den tatsächlichen Client darstellt.
  */
 public abstract class AbstractClient implements ILobbyClientListener {
   private static final Logger logger = LoggerFactory.getLogger(AbstractClient.class);
-  // The handler reacts to messages from the server received by the lobby
-  // client
+
+  /** The handler reacts to messages from the server received by the lobby client */
   protected IGameHandler handler;
 
-  // The lobby client, that connects to the room
+  /** The lobby client, that connects to the room */
   private LobbyClient client;
 
   private String gameType;
 
-  // If the client made an error (rule violation), store reason here
+  /** If the client made an error (rule violation), store reason here */
   private String error;
 
-  // current id to identify the client instance internal
+  /** current id to identify the client instance internal */
   private EPlayerId id;
-  // the current room in which the player is
+  /** the current room in which the player is */
   private String roomId;
-  // the current host
+  /** the current host */
   private String host;
-  // the current port
+  /** the current port */
   private int port;
-  // current figurecolor to identify which client belongs to which player
+  /** current figurecolor to identify which client belongs to which player */
   private PlayerColor color;
 
   public AbstractClient(String host, int port, EPlayerId id) throws IOException {
     this.gameType = GamePlugin.PLUGIN_UUID;
-    this.client = new LobbyClient(Configuration.getXStream(), Configuration.getClassesToRegister(), host, port);
+    try {
+      this.client = new LobbyClient(Configuration.getXStream(), Configuration.getClassesToRegister(), host, port);
+    } catch (ConnectException e) {
+      logger.error("Could not connect to Server: " + e.getMessage());
+      System.exit(1);
+    }
     this.client.addListener(this);
     this.client.start();
     this.id = id;
@@ -57,7 +62,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     this.error = null;
   }
 
-  // wenn es nur einen client gibt
+  /** wenn es nur einen client gibt */
   public AbstractClient(String host, int port) throws IOException {
     this(host, port, EPlayerId.PLAYER_ONE);
   }
@@ -85,8 +90,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     if (data instanceof MoveRequest) {
       this.handler.onRequestAction();
     } else if (data instanceof WelcomeMessage) {
-      WelcomeMessage welc = (WelcomeMessage) data;
-      this.color = welc.getPlayerColor();
+      this.color = ((WelcomeMessage) data).getPlayerColor();
     }
     this.roomId = roomId;
   }
@@ -100,9 +104,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     this.client.sendMessageToRoom(this.roomId, move);
   }
 
-  /**
-   * Called, when an error is sent to the room
-   */
+  /** Called when an error is sent to the room */
   @Override
   public void onError(String roomId, ProtocolErrorMessage response) {
     logger.debug("onError: Client {} received error {}", this, response.getMessage());
@@ -110,12 +112,11 @@ public abstract class AbstractClient implements ILobbyClientListener {
   }
 
   /**
-   * Called when game state has been received Happens, after a client made a
-   * move.
+   * Called when game state has been received.
+   * Happens after a client made a move.
    */
   @Override
   public void onNewState(String roomId, Object state) {
-
     GameState gameState = (GameState) state;
     logger.debug("{} got new state {}", this, gameState);
 
@@ -138,31 +139,20 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
   @Override
   public void onGameJoined(String roomId) {
+  }
 
+  @Override
+  public void onGamePrepared(PrepareGameProtocolMessage response) {
+  }
+
+  @Override
+  public void onGamePaused(String roomId, SimplePlayer nextPlayer) {
   }
 
   @Override
   public void onGameLeft(String roomId) {
     logger.info("{} got game left {}", this, roomId);
-
     this.client.stop();
-  }
-
-  public void joinPreparedGame(String reservation) {
-    this.client.joinPreparedGame(reservation);
-  }
-
-  @Override
-  public void onGamePrepared(PrepareGameProtocolMessage response) {
-    // not needed
-  }
-
-  public String getHost() {
-    return this.host;
-  }
-
-  public int getPort() {
-    return this.port;
   }
 
   @Override
@@ -173,9 +163,16 @@ public abstract class AbstractClient implements ILobbyClientListener {
     }
   }
 
-  @Override
-  public void onGamePaused(String roomId, SimplePlayer nextPlayer) {
-    // not needed
+  public void joinPreparedGame(String reservation) {
+    this.client.joinPreparedGame(reservation);
+  }
+
+  public String getHost() {
+    return this.host;
+  }
+
+  public int getPort() {
+    return this.port;
   }
 
   public String getError() {
