@@ -79,12 +79,7 @@ public class GameRuleLogic
 				valid = valid && player.getSalads() > 0;
 				break;
 			case HARE:
-				GameState state2 = null;
-        try {
-          state2 = state.clone();
-        } catch (CloneNotSupportedException e) {
-          e.printStackTrace();
-        }
+				GameState state2 = state.clone();
         state2.setLastAction(new Advance(distance));
         state2.getCurrentPlayer().setFieldIndex(newPosition);
         state2.getCurrentPlayer().changeCarrotsBy(-requiredCarrots);
@@ -295,12 +290,7 @@ public class GameRuleLogic
 				valid = valid && player.getSalads() > 0;
 				break;
 			case HARE:
-        GameState state2 = null;
-        try {
-          state2 = state.clone();
-        } catch (CloneNotSupportedException e) {
-          e.printStackTrace();
-        }
+        GameState state2 = state.clone();
         state2.setLastAction(new Card(CardType.FALL_BACK));
         state2.getCurrentPlayer().setFieldIndex(nextPos);
 				state2.getCurrentPlayer().setCards(player.getCardsWithout(CardType.FALL_BACK));
@@ -343,12 +333,7 @@ public class GameRuleLogic
 				valid = valid && player.getSalads() > 0;
 				break;
 			case HARE:
-        GameState state2 = null;
-        try {
-          state2 = state.clone();
-        } catch (CloneNotSupportedException e) {
-          e.printStackTrace();
-        }
+        GameState state2 = state.clone();
         state2.setLastAction(new Card(CardType.HURRY_AHEAD));
         state2.getCurrentPlayer().setFieldIndex(nextPos);
 				state2.getCurrentPlayer().setCards(player.getCardsWithout(CardType.HURRY_AHEAD));

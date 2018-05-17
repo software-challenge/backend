@@ -186,11 +186,9 @@ public class Board {
    * erzeugt eine Deepcopy dieses Objekts
    *
    * @return ein neues Objekt mit gleichen Eigenschaften
-   *
-   * @throws CloneNotSupportedException falls klonen fehlschlaegt
    */
   @Override
-  public Board clone() throws CloneNotSupportedException {
+  public Board clone() {
     Board clone = new Board();
     clone.track.clear();
     for (Field field : this.track) {

@@ -106,9 +106,10 @@ public class GameState implements Cloneable {
 
   /**
    * Erzeugt einen neuen {@code GameState} mit denselben Eigenschaften von
-   * stateToClone. Fuer eigene Implementierungen.
+   * stateToClone. Fuer eigene Implementierungen.<br>
+   * Hinweis: Es ist effizienter, direkt das Ergebnis von {@link #clone()} zu verwenden
    */
-  protected GameState(GameState stateToClone) throws CloneNotSupportedException {
+  protected GameState(GameState stateToClone) {
     GameState clone = stateToClone.clone();
     setRedPlayer(clone.getPlayer(PlayerColor.RED));
     setBluePlayer(clone.getPlayer(PlayerColor.BLUE));
@@ -121,17 +122,22 @@ public class GameState implements Cloneable {
    * erzeugt eine Deepcopy dieses Objekts
    *
    * @return ein neues Objekt mit gleichen Eigenschaften
-   * @throws CloneNotSupportedException falls das Klonen fehlschlaegt
    */
   @Override
-  public GameState clone() throws CloneNotSupportedException {
-    GameState clone = (GameState) super.clone();
+  public GameState clone()  {
+    GameState clone;
+    try {
+      clone = (GameState) super.clone();
+    } catch (CloneNotSupportedException e) {
+      // impossible
+      throw new RuntimeException("Cloning of GameState failed!", e);
+    }
     if (red != null)
       clone.red = this.red.clone();
     if (blue != null)
       clone.blue = this.blue.clone();
     if (lastMove != null)
-      clone.lastMove = (Move) this.lastMove.clone();
+      clone.lastMove = this.lastMove.clone();
     if (board != null)
       clone.board = this.board.clone();
     if (currentPlayer != null)
@@ -542,38 +548,25 @@ public class GameState implements Cloneable {
 
   public ArrayList<Move> getPossibleMoves() {
     ArrayList<Move> possibleMove = new ArrayList<>();
-    ArrayList<Action> actions = new ArrayList<>();
     if (GameRuleLogic.isValidToEat(this)) {
       // Wenn ein Salat gegessen werden kann, muss auch ein Salat gegessen werden
-      actions.add(new EatSalad());
-      Move move = new Move(actions);
+      Move move = new Move(new EatSalad());
       possibleMove.add(move);
       return possibleMove;
     }
     if (GameRuleLogic.isValidToExchangeCarrots(this, 10)) {
-      actions.add(new ExchangeCarrots(10));
-      possibleMove.add(new Move(actions));
-      actions.clear();
+      possibleMove.add(new Move(new ExchangeCarrots(10)));
     }
     if (GameRuleLogic.isValidToExchangeCarrots(this, -10)) {
-      actions.add(new ExchangeCarrots(-10));
-      possibleMove.add(new Move(actions));
-      actions.clear();
+      possibleMove.add(new Move(new ExchangeCarrots(-10)));
     }
     if (GameRuleLogic.isValidToFallBack(this)) {
-      actions.add(new FallBack());
-      possibleMove.add(new Move(actions));
-      actions.clear();
+      possibleMove.add(new Move(new FallBack()));
     }
     // Generiere mögliche Vorwärtszüge
     for (int i = 1; i <= GameRuleLogic.calculateMoveableFields(this.getCurrentPlayer().getCarrots()); i++) {
-      GameState clone = null;
-      try {
-        clone = this.clone();
-      } catch (CloneNotSupportedException e) {
-        e.printStackTrace();
-      }
-      // Überrüfe ob Vorwärtszug möglich ist
+      GameState clone = this.clone();
+      // Überprüfe ob Vorwärtszug möglich ist
       if (GameRuleLogic.isValidToAdvance(clone, i)) {
         Advance tryAdvance = new Advance(i);
         try {
@@ -583,6 +576,7 @@ public class GameState implements Cloneable {
           e.printStackTrace();
           break;
         }
+        ArrayList<Action> actions = new ArrayList<>();
         actions.add(tryAdvance);
         // überprüfe, ob eine Karte gespielt werden muss/kann
         if (clone != null && clone.getCurrentPlayer().mustPlayCard()) {
@@ -592,14 +586,10 @@ public class GameState implements Cloneable {
           possibleMove.add(new Move(actions));
         }
       }
-      actions.clear();
     }
     if (possibleMove.isEmpty()) {
-      Move move;
-      logger.warn("Muss aussetzen");
-      actions.add(new Skip());
-      move = new Move(actions);
-      possibleMove.add(move);
+      logger.debug("GameState" + this.hashCode() + ": Muss aussetzen");
+      possibleMove.add(new Move(new Skip()));
     }
     return possibleMove;
   }
@@ -641,12 +631,7 @@ public class GameState implements Cloneable {
         Card card = new Card(CardType.HURRY_AHEAD,  actions.size());
         actions.add(card);
         // Überprüfe ob wieder auf Hasenfeld gelandet:
-        GameState clone = null;
-        try {
-          clone = this.clone();
-        } catch (CloneNotSupportedException e) {
-          e.printStackTrace();
-        }
+        GameState clone = this.clone();
         try {
           card.perform(clone);
         } catch (InvalidMoveException e) {
@@ -668,12 +653,7 @@ public class GameState implements Cloneable {
         Card card = new Card(CardType.FALL_BACK,  actions.size());
         actions.add(card);
         // Überprüfe ob wieder auf Hasenfeld gelandet:
-        GameState clone = null;
-        try {
-          clone = this.clone();
-        } catch (CloneNotSupportedException e) {
-          e.printStackTrace();
-        }
+        GameState clone = this.clone();
         try {
           card.perform(clone);
         } catch (InvalidMoveException e) {
