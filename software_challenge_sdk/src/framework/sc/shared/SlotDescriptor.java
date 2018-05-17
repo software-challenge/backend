@@ -6,52 +6,54 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @XStreamAlias(value = "slotDescriptor")
 public class SlotDescriptor {
-	public static final SlotDescriptor DEFAULT_DESCRIPTOR = new SlotDescriptor(
-			"Unknown");
 
-	@XStreamAsAttribute
-	private final String displayName;
+  public static final SlotDescriptor DEFAULT_DESCRIPTOR = new SlotDescriptor("Unknown");
 
-	@XStreamAsAttribute
-	private final boolean canTimeout;
+  @XStreamAsAttribute
+  private final String displayName;
 
-	@XStreamAsAttribute
-	private final boolean shouldBePaused;
+  @XStreamAsAttribute
+  private final boolean canTimeout;
 
-        /**
-         * might be needed by XStream
-         */
-        public SlotDescriptor() {
-            this.displayName = null;
-            this.canTimeout = false;
-            this.shouldBePaused = false;
-        }
+  @XStreamAsAttribute
+  private final boolean shouldBePaused;
 
-	public SlotDescriptor(String displayName) {
-		this(displayName, true, true);
-	}
+  /** might be needed by XStream */
+  public SlotDescriptor() {
+    this.displayName = null;
+    this.canTimeout = false;
+    this.shouldBePaused = false;
+  }
 
-	public SlotDescriptor(String displayName, boolean canTimeout,
-			boolean shouldBePaused) {
-		this.displayName = displayName;
-		this.canTimeout = canTimeout;
-		this.shouldBePaused = shouldBePaused;
-	}
+  public SlotDescriptor(String displayName) {
+    this(displayName, true, true);
+  }
 
-	public SlotDescriptor(String displayName, boolean canTimeout) {
-		this(displayName, canTimeout, true);
-	}
+  public SlotDescriptor(String displayName, boolean canTimeout,
+                        boolean shouldBePaused) {
+    this.displayName = displayName;
+    this.canTimeout = canTimeout;
+    this.shouldBePaused = shouldBePaused;
+  }
 
-	public String getDisplayName() {
-		return this.displayName;
-	}
+  public SlotDescriptor(String displayName, boolean canTimeout) {
+    this(displayName, canTimeout, true);
+  }
 
-	public boolean isCanTimeout() {
-		return this.canTimeout;
-	}
+  public String getDisplayName() {
+    return this.displayName;
+  }
 
-	public boolean isShouldBePaused() {
-		return this.shouldBePaused;
-	}
+  public boolean isCanTimeout() {
+    return this.canTimeout;
+  }
 
+  public boolean isShouldBePaused() {
+    return this.shouldBePaused;
+  }
+
+  public String toString() {
+    return String.format("SlotDescriptor{displayName=%s, canTimeout=%s, shouldBePaused=%s}", displayName, canTimeout, shouldBePaused);
+  }
+  
 }
