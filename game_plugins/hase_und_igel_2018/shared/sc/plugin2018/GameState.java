@@ -12,6 +12,7 @@ import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Ein {@code GameState} beinhaltet alle Informationen, die den Spielstand zu
@@ -87,19 +88,14 @@ public class GameState implements Cloneable {
     this.blue = new Player(PlayerColor.BLUE);
   }
   
-  /**
-   * Erzeugt einen neuen {@link GameState} mit den Eigenschaften von {@code stateToClone}.
-   * <p>
-   * Nützlich für eigene Implementierungen.
-   */
-  protected GameState(GameState stateToClone) {
-    startPlayer = stateToClone.startPlayer;
-    for (PlayerColor color : PlayerColor.values())
-      setPlayer(color, stateToClone.getPlayer(color));
-    setTurn(stateToClone.getTurn());
-    setLastMove(stateToClone.getLastMove());
-    setBoard(stateToClone.getBoard());
-    setCurrentPlayer(stateToClone.getCurrentPlayerColor());
+  public GameState(int turn, PlayerColor startPlayer, PlayerColor currentPlayer, Player red, Player blue, Board board, Move lastMove) {
+    this.turn = turn;
+    this.startPlayer = startPlayer;
+    this.currentPlayer = currentPlayer;
+    this.red = red;
+    this.blue = blue;
+    this.board = board;
+    this.lastMove = lastMove;
   }
   
   /**
@@ -109,26 +105,7 @@ public class GameState implements Cloneable {
    */
   @Override
   public GameState clone() {
-    GameState clone;
-    try {
-      clone = (GameState) super.clone();
-    } catch (CloneNotSupportedException e) {
-      // impossible
-      throw new RuntimeException("Cloning of GameState failed!", e);
-    }
-    if (red != null)
-      clone.red = this.red.clone();
-    if (blue != null)
-      clone.blue = this.blue.clone();
-    if (lastMove != null)
-      clone.lastMove = this.lastMove.clone();
-    if (board != null)
-      clone.board = this.board.clone();
-    if (currentPlayer != null)
-      clone.currentPlayer = this.currentPlayer;
-    clone.startPlayer = this.startPlayer;
-    clone.turn = this.turn;
-    return clone;
+    return new GameState(turn, startPlayer, currentPlayer, red.clone(), blue.clone(), board, lastMove);
   }
   
   /**
@@ -238,12 +215,10 @@ public class GameState implements Cloneable {
     }
   }
   
-  /** Nur für den Server relevant */
   protected void setRedPlayer(Player red) {
     this.red = red;
   }
   
-  /** Nur für den Server relevant */
   protected void setBluePlayer(Player blue) {
     this.blue = blue;
   }
@@ -347,7 +322,8 @@ public class GameState implements Cloneable {
   }
   
   /**
-   * Setzt die aktuelle Zugzahl. Nur für den Server relevant
+   * Setzt die aktuelle Zugzahl.
+   * Nur für den Server relevant
    *
    * @param turn neue Zugzahl
    */
@@ -397,7 +373,7 @@ public class GameState implements Cloneable {
    * @return Array mit Statistiken
    */
   public int[] getPlayerStats(PlayerColor playerColor) {
-    assert playerColor != null;
+    Objects.requireNonNull(playerColor);
     
     if (playerColor == PlayerColor.RED) {
       return getGameStats()[Constants.GAME_STATS_RED_INDEX];
@@ -416,9 +392,7 @@ public class GameState implements Cloneable {
    * @see #getPlayerStats(PlayerColor)
    */
   public int[][] getGameStats() {
-    
     int[][] stats = new int[2][2];
-    
     stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] = this.red.getFieldIndex();
     stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] = this.red.getCarrots();
     stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX] = this.blue.getFieldIndex();
@@ -434,7 +408,6 @@ public class GameState implements Cloneable {
    */
   public String[] getPlayerNames() {
     return new String[]{red.getDisplayName(), blue.getDisplayName()};
-    
   }
   
   /**
