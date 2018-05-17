@@ -14,11 +14,10 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ServiceManager
 {
-	private static Logger		logger			= LoggerFactory
-														.getLogger(ServiceManager.class);
+	private static Logger logger = LoggerFactory.getLogger(ServiceManager.class);
 
-	private static Set<Thread>	threads			= new HashSet<Thread>();
-	private static Set<Thread>	killedThreads	= new HashSet<Thread>();
+	private static Set<Thread>	threads = new HashSet<Thread>();
+	private static Set<Thread>	killedThreads = new HashSet<Thread>();
 
 	/**
 	 * Creates a new Thread
@@ -63,4 +62,5 @@ public abstract class ServiceManager
 			kill(thread);
 		}
 	}
+
 }

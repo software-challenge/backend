@@ -21,4 +21,5 @@ public class StringHelperTest
 		String result2 = StringHelper.join(Arrays.asList(data2), "XYZ");
 		Assert.assertEquals("", result2);
 	}
+
 }

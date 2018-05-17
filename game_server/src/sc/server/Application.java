@@ -10,14 +10,19 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.shared.SharedConfiguration;
 
 public final class Application {
-  static {System.setProperty("logback.configurationFile", System.getProperty("user.dir") + "logback.xml");}
-  private static final Logger logger = LoggerFactory
-          .getLogger(Application.class);
-  private static final Object waitObj = new Object();
+
+  private static final Logger logger = LoggerFactory.getLogger(Application.class);
+  private static final Object SYNCOBJ = new Object();
+  static {
+    logger.debug("Loading config file ({})", System.getProperty("user.dir")+File.separator+"logback.xml");
+    System.setProperty("logback.configurationFile", System.getProperty("user.dir")+File.separator+"logback.xml");
+  }
 
   public static void main(String[] params) {
+
     // Setup Server
     System.setProperty("file.encoding", "UTF-8");
     try {
@@ -57,9 +62,9 @@ public final class Application {
     long end = System.currentTimeMillis();
     logger.info("Server has been initialized in {} ms.", end - start);
 
-    synchronized (waitObj) {
+    synchronized (SYNCOBJ) {
       try {
-        waitObj.wait();
+        SYNCOBJ.wait();
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -75,6 +80,7 @@ public final class Application {
     CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
     CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
     CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY_OPTION);
+    CmdLineParser.Option openOnPortOption = parser.addIntegerOption(Configuration.PORT_KEY);
     parser.parse(params);
 
     Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
@@ -82,6 +88,10 @@ public final class Application {
     String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
     Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
     Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
+    Integer openOnPort = (Integer) parser.getOptionValue(openOnPortOption, SharedConfiguration.DEFAULT_PORT);
+
+    Configuration.set(Configuration.PORT_KEY, openOnPort.toString());
+
     if (loadGameFile != null) {
       Configuration.set(Configuration.GAMELOADFILE, loadGameFile);
       if (turnToLoad != 0) {
@@ -116,8 +126,8 @@ public final class Application {
       Thread shutdown = new Thread(() -> {
         ServiceManager.killAll();
         // continues the main-method of this class
-        synchronized (waitObj) {
-          waitObj.notifyAll();
+        synchronized (SYNCOBJ) {
+          SYNCOBJ.notifyAll();
           logger.info("Exiting application...");
         }
       });
@@ -128,4 +138,5 @@ public final class Application {
       logger.warn("Could not install ShutdownHook", e);
     }
   }
+
 }

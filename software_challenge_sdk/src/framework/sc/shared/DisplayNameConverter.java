@@ -23,4 +23,5 @@ public class DisplayNameConverter implements Converter {
   public boolean canConvert(Class aClass) {
     return true;
   }
+
 }

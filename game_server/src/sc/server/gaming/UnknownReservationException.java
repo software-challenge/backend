@@ -10,7 +10,7 @@ public class UnknownReservationException extends RescuableClientException
   /**
    *  generated serialVersionUID
    */
-  private static final long	serialVersionUID	= 5547150944276458449L;
+  private static final long	serialVersionUID = 5547150944276458449L;
 
   /**
    * Constructor which creates object
@@ -19,4 +19,5 @@ public class UnknownReservationException extends RescuableClientException
   {
     super("Couldn't find a reservation for the provided token.");
   }
+
 }

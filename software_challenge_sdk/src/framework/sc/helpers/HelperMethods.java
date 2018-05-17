@@ -11,8 +11,7 @@ import java.util.List;
 
 public class HelperMethods {
 
-  private static final Logger logger = LoggerFactory
-          .getLogger(HelperMethods.class);
+  private static final Logger logger = LoggerFactory.getLogger(HelperMethods.class);
 
   private static final DateFormat dateTimeFormat = new SimpleDateFormat(
           "yyyy.MM.dd HH_mm_ss");
@@ -48,4 +47,5 @@ public class HelperMethods {
     logger.debug("Generated file name {}", replayFileName.toString());
     return replayFileName.toString();
   }
+
 }

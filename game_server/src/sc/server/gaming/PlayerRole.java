@@ -86,4 +86,5 @@ public class PlayerRole implements IClientRole, IPlayerListener
   {
     getPlayerSlot().close();
   }
+
 }

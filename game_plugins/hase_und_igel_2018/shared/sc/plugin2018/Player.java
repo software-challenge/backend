@@ -242,8 +242,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 * Überprüft, ob Spieler im Ziel. Für den Server für das Überprüfen der WinCondition relevant
 	 * @return true, falls Spieler auf Zielfeld steht, Sekundärkriterien werden nicht geprüft.
 	 */
-	public boolean inGoal()
-	{
+	public boolean inGoal() {
 		return index == Constants.NUM_FIELDS - 1;
 	}
 
@@ -256,5 +255,5 @@ public class Player extends SimplePlayer implements Cloneable {
 		res.append("LastAction ").append(lastNonSkipAction);
 		return res.toString();
 	}
-	
+  
 }

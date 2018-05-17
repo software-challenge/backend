@@ -133,7 +133,7 @@ public class TestClient extends XStreamClient {
     // Parameter laden
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (Integer) parser.getOptionValue(portOption,
-            SharedConfiguration.DEFAULT_PORT);
+            SharedConfiguration.DEFAULT_TESTSERVER_PORT);
     int numberOfTests = (Integer) parser.getOptionValue(numberOfTestsOption, 10);
     canTimeout1 = (Boolean) parser.getOptionValue(p1CanTimeoutOption, true);
     canTimeout2 = (Boolean) parser.getOptionValue(p2CanTimeoutOption, true);
@@ -183,8 +183,15 @@ public class TestClient extends XStreamClient {
         send(new GetScoreForPlayerRequest(displayName2));
 
 
-        proc1.destroyForcibly();
-        proc2.destroyForcibly();
+        //Wait until everything is finished and clear
+        try {
+	        proc1.waitFor();
+			    proc2.waitFor();
+		    } catch (InterruptedException e) {
+			    e.printStackTrace();
+		    }
+        proc1.destroy();
+        proc2.destroy();
         if (this.currentTests == this.numberOfTests) {
           terminateWhenPossible = true;
         }

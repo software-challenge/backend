@@ -8,57 +8,52 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TcpNetwork implements INetworkInterface
-{
-	private static Logger	logger	= LoggerFactory.getLogger(TcpNetwork.class);
-	private Socket			socket;
+public class TcpNetwork implements INetworkInterface {
+  private static Logger logger = LoggerFactory.getLogger(TcpNetwork.class);
+  private Socket socket;
 
-	/**
-	 * Constructs an implementation of <code>INetworkInterface</code> which
-	 * operates on Java's <code>Socket</code>.
-	 *
-	 * @param socket Socket to use for construction
-	 * @throws IOException thrown if socket is invalid
-	 */
-	public TcpNetwork(Socket socket) throws IOException
-	{
-		this.socket = socket;
-		this.socket.setTcpNoDelay(true);
-	}
+  /**
+   * Constructs an implementation of <code>INetworkInterface</code> which
+   * operates on Java's <code>Socket</code>.
+   *
+   * @param socket Socket to use for construction
+   *
+   * @throws IOException thrown if socket is invalid
+   */
+  public TcpNetwork(Socket socket) throws IOException {
+    this.socket = socket;
+    this.socket.setTcpNoDelay(true);
+  }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * edu.cau.sc.server.network.interfaces.INetworkInterface#getInputStream()
-	 */
-	@Override
-	public InputStream getInputStream() throws IOException
-	{
-		return this.socket.getInputStream();
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see edu.cau.sc.server.network.interfaces.INetworkInterface#getInputStream()
+   */
+  @Override
+  public InputStream getInputStream() throws IOException {
+    return this.socket.getInputStream();
+  }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * edu.cau.sc.server.network.interfaces.INetworkInterface#getOutputStream()
-	 */
-	@Override
-	public OutputStream getOutputStream() throws IOException
-	{
-		return this.socket.getOutputStream();
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see edu.cau.sc.server.network.interfaces.INetworkInterface#getOutputStream()
+   */
+  @Override
+  public OutputStream getOutputStream() throws IOException {
+    return this.socket.getOutputStream();
+  }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see edu.cau.sc.server.network.interfaces.INetworkInterface#close()
-	 */
-	@Override
-	public void close() throws IOException
-	{
-		logger.debug("Closing TcpNetwork Interface.");
-		this.socket.close();
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see edu.cau.sc.server.network.interfaces.INetworkInterface#close()
+   */
+  @Override
+  public void close() throws IOException {
+    logger.debug("Closing TcpNetwork Interface.");
+    this.socket.close();
+  }
+  
 }

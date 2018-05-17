@@ -22,4 +22,5 @@ public class TestTcpClient extends XStreamClient
 		// ignore it
 		// LoggerFactory.getLogger(this.getClass()).debug("Received: {}", o);
 	}
+
 }

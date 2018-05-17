@@ -39,8 +39,7 @@ import sc.shared.SlotDescriptor;
  * LobbyClient representing the client on the server-side.
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory {
-  private static final Logger logger = LoggerFactory
-          .getLogger(LobbyClient.class);
+  private static final Logger logger = LoggerFactory.getLogger(LobbyClient.class);
   private final List<String> rooms = new LinkedList<>();
   private final AsyncResultManager asyncManager = new AsyncResultManager();
   private final List<ILobbyClientListener> listeners = new LinkedList<>();
@@ -372,4 +371,5 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   public void freeReservation(String reservation) {
     send(new FreeReservationRequest(reservation));
   }
+
 }
