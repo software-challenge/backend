@@ -89,7 +89,8 @@ public class TestClient extends XStreamClient {
         logDir.mkdirs();
         builder.redirectOutput(new File(logDir, "server-" + port + ".log"));
         builder.redirectError(new File(logDir, "server-" + port + ".err"));
-        builder.start(); // server will automatically be terminated upon exit since it is a child process
+        Process server = builder.start();
+        Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         Thread.sleep(1000);
       }
       testclient = new TestClient(Configuration.getXStream(), sc.plugin2018.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
@@ -150,6 +151,7 @@ public class TestClient extends XStreamClient {
         for (SimplePlayer winner : result.getWinners())
           log.append(winner.getDisplayName()).append(", ");
         logger.info(log.substring(0, log.length() - 2), currentTests);
+        
         currentTests++;
         for (int i = 0; i < 2; i++)
           send(new GetScoreForPlayerRequest(players[i].displayName));
