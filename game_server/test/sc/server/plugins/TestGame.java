@@ -139,9 +139,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
     return null;
   }
 
-  /**
-   * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
-   */
+  /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests */
   @Override
   public void start() {
     for (final TestPlayer p : this.players) {

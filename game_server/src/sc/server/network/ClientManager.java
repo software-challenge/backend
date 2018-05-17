@@ -1,29 +1,24 @@
 package sc.server.network;
 
-import java.io.IOException;
-import java.util.LinkedList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.responses.ProtocolErrorMessage;
-import sc.protocol.responses.ProtocolMessage;
 import sc.server.Lobby;
 import sc.server.ServiceManager;
 
-/**
- * The ClientManager serves as a lookup table for all active connections.
- */
-public class ClientManager implements Runnable, IClientListener
-{
+import java.io.IOException;
+import java.util.LinkedList;
+
+/** The ClientManager serves as a lookup table for all active connections. */
+public class ClientManager implements Runnable, IClientListener {
 
 
   /* private fields */
 
   // Lobby which we are connected to
-  private Lobby	lobby;
-  private boolean	running;
+  private Lobby lobby;
+  private boolean running;
   private Thread thread;
 
 
@@ -31,17 +26,17 @@ public class ClientManager implements Runnable, IClientListener
   private static final Logger logger = LoggerFactory.getLogger(ClientManager.class);
 
   // List of all XStreamClients
-  protected final LinkedList<Client>			clients;
+  protected final LinkedList<Client> clients;
 
   // Listener waits for new clients to connect
-  private final NewClientListener				clientListener;
+  private final NewClientListener clientListener;
 
   /**
    * Create manager from {@link Lobby lobby}
+   *
    * @param lobby from which the manager is created
    */
-  public ClientManager(Lobby lobby)
-  {
+  public ClientManager(Lobby lobby) {
     this.clientListener = new NewClientListener();
     this.lobby = lobby;
     this.clients = new LinkedList<>();
@@ -56,8 +51,7 @@ public class ClientManager implements Runnable, IClientListener
    *
    * @param newClient
    */
-  public void add(Client newClient)
-  {
+  public void add(Client newClient) {
     this.clients.add(newClient);
 
     newClient.addClientListener(this);
@@ -69,36 +63,30 @@ public class ClientManager implements Runnable, IClientListener
 
   /**
    * Get clients as Linkedlist
+   *
    * @return clients as LinkedLsit
    */
   //Used for testing
-  public LinkedList<Client> getClients(){
+  public LinkedList<Client> getClients() {
     return this.clients;
   }
 
-  /**
-   * Fetch new clients
-   */
+  /** Fetch new clients */
   @Override
-  public void run()
-  {
+  public void run() {
     this.running = true;
 
     logger.info("ClientManager running.");
 
-    while (this.running && !Thread.interrupted())
-    {
-      try
-      {
+    while (this.running && !Thread.interrupted()) {
+      try {
         // Waits blocking for new Client
         Client client = this.clientListener.fetchNewSingleClient();
 
         logger.info("Delegating new client to ClientManager...");
         this.add(client);
         logger.info("Delegation done.");
-      }
-      catch (InterruptedException e)
-      {
+      } catch (InterruptedException e) {
         if (this.running) {
           logger.error("Interrupted while waiting for a new client.", e);
         } else {
@@ -117,8 +105,7 @@ public class ClientManager implements Runnable, IClientListener
    * Starts the ClientManager in it's own daemon thread. This method should be used only once.
    * clientListener starts SocketListener on defined port to watch for new connecting clients
    */
-  public void start() throws IOException
-  {
+  public void start() throws IOException {
     this.clientListener.start();
     if (this.thread == null) {
       this.thread = ServiceManager.createService(this.getClass().getSimpleName(), this);
@@ -128,25 +115,23 @@ public class ClientManager implements Runnable, IClientListener
 
   /**
    * Set the {@link Lobby lobby}.
+   *
    * @param lobby to be set
    */
-  public void setLobby(Lobby lobby)
-  {
+  public void setLobby(Lobby lobby) {
     this.lobby = lobby;
   }
 
-  public void close()
-  {
+  public void close() {
     this.running = false;
 
-    if(this.thread != null) {
+    if (this.thread != null) {
       this.thread.interrupt();
     }
 
     this.clientListener.close();
 
-    for (int i = 0; i < this.clients.size(); i++)
-    {
+    for (int i = 0; i < this.clients.size(); i++) {
       Client client = this.clients.get(i);
       client.stop();
     }
@@ -154,36 +139,37 @@ public class ClientManager implements Runnable, IClientListener
 
   /**
    * On client disconnect remove it from the list
+   *
    * @param source client which disconnected
    */
   @Override
-  public void onClientDisconnected(Client source)
-  {
+  public void onClientDisconnected(Client source) {
     logger.info("Removing client {} from client manager", source);
     ClientManager.this.clients.remove(source);
   }
 
   /**
    * Do nothing on error
-   * @param source client, which rose the error
+   *
+   * @param source  client, which rose the error
    * @param packet, which contains the error
    */
   @Override
-  public void onError(Client source, ProtocolErrorMessage packet)
-  {
+  public void onError(Client source, ProtocolErrorMessage packet) {
     // TODO Error handling needs to happen
   }
 
   /**
    * Ignore any request
+   *
    * @param source client, which send the package
    * @param packet to be handled
+   *
    * @throws RescuableClientException never
    */
   @Override
   public void onRequest(Client source, PacketCallback packet)
-          throws RescuableClientException
-  {
+          throws RescuableClientException {
     // XXX Handle Request?
 
   }

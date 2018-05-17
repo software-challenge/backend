@@ -49,9 +49,7 @@ public class Move extends ProtocolMove implements Cloneable {
   @XStreamImplicit(itemFieldName = "hint")
   private List<DebugHint> hints;
 
-  /**
-   * Default Konstruktor, der einen leeren Zug erzeugt.
-   */
+  /** Default Konstruktor, der einen leeren Zug erzeugt. */
   public Move() {
     // This list needs to be thread safe because the side bar may be iterating
     // over it while a new turn is started, resulting in a
@@ -253,9 +251,7 @@ public class Move extends ProtocolMove implements Cloneable {
     return b.toString();
   }
 
-  /**
-   * Setzt das order Attribut der Züge anhand ihrer Reihenfolge in actions
-   */
+  /** Setzt das order Attribut der Züge anhand ihrer Reihenfolge in actions */
   public void setOrderInActions() {
     int order = 0;
     for (Action action : getActions()) {
@@ -263,9 +259,7 @@ public class Move extends ProtocolMove implements Cloneable {
     }
   }
 
-  /**
-   * Sortiert die Aktionen aufsteigend anhand des order Attributs
-   */
+  /** Sortiert die Aktionen aufsteigend anhand des order Attributs */
   public void orderActions() {
     if (actions != null) {
       actions.sort(Action::compareTo);

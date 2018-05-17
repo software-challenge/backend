@@ -24,9 +24,7 @@ public final class PlayerScore
 	@XStreamAsAttribute
 	private String				reason;
 
-	/**
-	 * might be needed by XStream
-	 */
+	/** might be needed by XStream */
 	public PlayerScore()
 	{
 		parts = null;

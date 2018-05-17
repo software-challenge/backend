@@ -105,9 +105,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     }
   }
 
-  /**
-   * Server or an administrator requests the game to start now.
-   */
+  /** Server or an administrator requests the game to start now. */
   public void start() {
     next(this.players.get(0), true);
   }
@@ -126,9 +124,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     }
   }
 
-  /**
-   * Handle leave of player
-   */
+  /** Handle leave of player */
   public void onPlayerLeft(SimplePlayer player, ScoreCause cause) {
     Map<SimplePlayer, PlayerScore> res = generateScoreMap();
 
@@ -176,9 +172,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    */
   protected abstract Object getCurrentState();
 
-  /**
-   * Notifies the active player that it's his/her time to make a move.
-   */
+  /** Notifies the active player that it's his/her time to make a move. */
   protected final void notifyActivePlayer() {
     requestMove(activePlayer);
   }
@@ -221,9 +215,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
 
-  /**
-   * Notifies players about the new state, sends a MoveRequest to active player
-   */
+  /** Notifies players about the new state, sends a MoveRequest to active player */
   public void afterPause() {
     logger.info("Sending MoveRequest to player {}.", this.activePlayer);
     notifyOnNewState(getCurrentState());

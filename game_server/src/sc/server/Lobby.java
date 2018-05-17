@@ -59,9 +59,7 @@ public class Lobby implements IClientListener {
     source.removeClientListener(this);
   }
 
-  /**
-   * handle requests or moves of clients
-   */
+  /** * handle requests or moves of clients */
   @Override
   public void onRequest(Client source, PacketCallback callback)
           throws RescuableClientException, InvalidGameStateException {

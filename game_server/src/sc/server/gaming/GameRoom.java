@@ -231,9 +231,7 @@ public class GameRoom implements IGameListener {
     }
   }
 
-  /**
-   * Send {@link GameRoom#broadcast(ProtocolMessage, boolean) broadcast} message with {@link LeftGameEvent LeftGameEvent}
-   */
+  /** Send {@link GameRoom#broadcast(ProtocolMessage, boolean) broadcast} message with {@link LeftGameEvent LeftGameEvent} */
   private void kickAllClients() {
     logger.debug("Kicking clients (and observer)");
     broadcast(new LeftGameEvent(getId()), false);
@@ -637,9 +635,7 @@ public class GameRoom implements IGameListener {
     }
   }
 
-  /**
-   * Kick all Player and destroy game afterwards
-   */
+  /** Kick all Player and destroy game afterwards */
   public void cancel() {
     if (!isOver()) {
       kickAllClients();

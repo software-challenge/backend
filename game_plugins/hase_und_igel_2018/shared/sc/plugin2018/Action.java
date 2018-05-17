@@ -4,9 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.shared.InvalidMoveException;
 
-/**
- * Eine Aktion, die Bestandteil eines Zuges ist. Kann auch ohne den Zug mittels perform ausgeführt werden.
- */
+/** Eine Aktion, die Bestandteil eines Zuges ist. Kann auch ohne den Zug mittels perform ausgeführt werden. */
 @XStreamAlias(value = "action")
 public abstract class Action implements Comparable<Action>, Cloneable {
 

@@ -8,9 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Manages all threads
- */
+/** Manages all threads */
 
 public abstract class ServiceManager
 {

@@ -20,9 +20,7 @@ public class GameResult extends ProtocolMessage {
 	@XStreamImplicit(itemFieldName = "winner")
 	private List<SimplePlayer> winners;
 
-        /**
-         * might be needed by XStream
-         */
+        /** might be needed by XStream */
         public GameResult() {
             definition = null;
             scores = null;

@@ -8,9 +8,7 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-/**
- * Ein Spielbrett bestehend aus 65 Feldern.
- */
+/** Ein Spielbrett bestehend aus 65 Feldern. */
 @XStreamAlias(value = "board")
 public class Board {
   @XStreamImplicit(itemFieldName = "fields")

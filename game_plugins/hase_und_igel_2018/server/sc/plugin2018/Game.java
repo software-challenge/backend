@@ -13,18 +13,15 @@ import sc.plugin2018.util.Configuration;
 import sc.plugin2018.util.Constants;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
-import sc.shared.WelcomeMessage;
 
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Minimal game. Basis for new plugins. This class holds the game logic.
- */
+/** Minimal game. Basis for new plugins. This class holds the game logic. */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
-  private static final Logger logger =LoggerFactory.getLogger(Game.class);
+  private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
   @XStreamOmitField
   private List<PlayerColor> availableColors = new LinkedList<>();
@@ -106,9 +103,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     return player;
   }
 
-  /**
-   * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
-   */
+  /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests */
   @Override
   public void start() {
     for (final Player p : this.players) {
@@ -132,9 +127,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     if (winCondition != null) {
       reason = winCondition.getReason();
       if (player.getPlayerColor().equals(winCondition.getWinner())) {
-        matchPoints = 2;
+        matchPoints = Constants.WIN_SCORE;
       } else if (opponent.getPlayerColor().equals(winCondition.getWinner())) {
-        matchPoints = 0;
+        matchPoints = Constants.LOSE_SCORE;
       } else {
         // this should not happen
         logger.warn("winner has no known PlayerColor");
@@ -143,25 +138,25 @@ public class Game extends RoundBasedGameInstance<Player> {
     // opponent has done something wrong
     if (opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft()
             || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
-      matchPoints = 2;
+      matchPoints = Constants.WIN_SCORE;
     }
     ScoreCause cause;
     if (player.hasSoftTimeout()) { // Soft-Timeout
       cause = ScoreCause.SOFT_TIMEOUT;
       reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasHardTimeout()) { // Hard-Timeout
       cause = ScoreCause.HARD_TIMEOUT;
       reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getHardTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasViolated()) { // rule violation
       cause = ScoreCause.RULE_VIOLATION;
       reason = player.getViolationReason(); // message from InvalidMoveException
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasLeft()) { // player left
       cause = ScoreCause.LEFT;
       reason = "Der Spieler hat das Spiel verlassen";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else { // regular score or opponent violated
       cause = ScoreCause.REGULAR;
     }
@@ -328,9 +323,8 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
     } else {
       // No win condition met, player with highest score wins. Winning score is
-      // determined by matchpoints ("Siegpunkte"). The winning player has 2
-      // matchpoints. Find this player. If no player has 2 matchpoints, it is a
-      // draw.
+      // determined by matchpoints ("Siegpunkte"). The winning player has 2 matchpoints.
+      // Find this player. If no player has 2 matchpoints, it is a draw.
       for (Player player : this.players) {
         if (getScoreFor(player).getValues().get(0).intValueExact() == 2) {
           winners.add(player);

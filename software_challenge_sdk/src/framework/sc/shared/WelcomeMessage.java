@@ -16,9 +16,7 @@ public class WelcomeMessage extends ProtocolMessage {
 	@XStreamAsAttribute
 	private String color;
 
-	/**
-	 * might be needed by XStream
-	 */
+	/** might be needed by XStream */
 	public WelcomeMessage() {
 	}
 

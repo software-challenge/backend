@@ -9,9 +9,7 @@ public class TooManyPlayersException extends GameRoomException
 		super("This game is full already.");
 	}
 
-	/**
-	 * 
-	 */
+	/**  */
 	private static final long	serialVersionUID = 1800416641852939259L;
 
 }

@@ -13,9 +13,7 @@ import java.util.List;
  */
 public class PlayerTest
 {
-	/**
-	 * Überprüft das ein Spieler mit den richtigen Anfangswerten erstellt wird.
-	 */
+	/** Überprüft das ein Spieler mit den richtigen Anfangswerten erstellt wird. */
 	@Test
 	public void testPlayer()
 	{

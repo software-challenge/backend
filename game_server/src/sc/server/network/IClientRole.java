@@ -1,8 +1,6 @@
 package sc.server.network;
 
-/**
- * Interface for each Role there is
- */
+/** Interface for each Role there is */
 public interface IClientRole
 {
   /**
@@ -11,8 +9,6 @@ public interface IClientRole
    */
 	public IClient getClient();
 
-  /**
-   * Close the role.
-   */
+  /** Close the role. */
 	public void close();
 }

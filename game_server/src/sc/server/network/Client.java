@@ -173,9 +173,7 @@ public class Client extends XStreamClient implements IClient
     }
   }
 
-  /**
-   * Call listener if client has disconnected
-   */
+  /** Call listener if client has disconnected */
   private synchronized void notifyOnDisconnect()
   {
     if (!this.notifiedOnDisconnect)

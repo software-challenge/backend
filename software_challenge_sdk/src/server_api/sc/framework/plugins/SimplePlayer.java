@@ -48,9 +48,7 @@ public abstract class SimplePlayer {
     initListeners();
   }
 
-  /**
-   * @return Reason for violation
-   */
+  /** @return Reason for violation */
   public String getViolationReason() {
     return this.violationReason;
   }

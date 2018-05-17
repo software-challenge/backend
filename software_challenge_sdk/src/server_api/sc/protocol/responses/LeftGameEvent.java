@@ -8,9 +8,7 @@ public class LeftGameEvent extends ProtocolMessage {
   @XStreamAsAttribute
   private String roomId;
 
-  /**
-   * might be needed by XStream
-   */
+  /** might be needed by XStream */
   public LeftGameEvent() {
   }
 

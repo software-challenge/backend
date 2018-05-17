@@ -10,9 +10,7 @@ public class ProtocolErrorMessage extends ProtocolMessage {
   @XStreamAsAttribute
   private String message;
 
-  /**
-   * might be needed by XStream
-   */
+  /** might be needed by XStream */
   public ProtocolErrorMessage() {
   }
 

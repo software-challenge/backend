@@ -3,9 +3,7 @@ package sc.server.gaming;
 import sc.server.network.Client;
 import sc.server.network.IClientRole;
 
-/**
- * Client Role, which can watch, but not send any moves
- */
+/** Client Role, which can watch, but not send any moves */
 public class ObserverRole implements IClientRole
 {
   /* private fields */

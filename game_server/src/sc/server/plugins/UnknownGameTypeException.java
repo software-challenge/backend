@@ -6,9 +6,7 @@ import sc.helpers.StringHelper;
 public class UnknownGameTypeException extends RescuableClientException
 {
 
-	/**
-	 * 
-	 */
+	/**  */
 	private static final long	serialVersionUID = -6520842646313711672L;
 	private Iterable<String>	availableUUIDs;
 

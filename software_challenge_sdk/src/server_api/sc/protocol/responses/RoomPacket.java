@@ -5,9 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import sc.protocol.requests.ILobbyRequest;
 
-/**
- * Wrapper Class containing Room ID and data
- */
+/** Wrapper Class containing Room ID and data */
 @XStreamAlias("room")
 public final class RoomPacket extends ProtocolMessage implements ILobbyRequest {
   
@@ -16,9 +14,7 @@ public final class RoomPacket extends ProtocolMessage implements ILobbyRequest {
 
   private ProtocolMessage data;
 
-  /**
-   * might be needed by XStream
-   */
+  /** might be needed by XStream */
   public RoomPacket() {
   }
 

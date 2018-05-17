@@ -35,9 +35,7 @@ public class GameRoomManager {
 
   private LinkedList<Score> scores = new LinkedList<>();
 
-  /**
-   * Default constructor, initializes rooms, loads available plugins
-   */
+  /** Default constructor, initializes rooms, loads available plugins */
   public GameRoomManager() {
     this.rooms = new HashMap<>();
     this.pluginApi = new GamePluginApi();

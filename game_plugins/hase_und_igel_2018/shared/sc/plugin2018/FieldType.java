@@ -2,9 +2,7 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-/**
- * Die unterschiedlichen Spielfelder aus dem Hase und Igel Original
- */
+/** Die unterschiedlichen Spielfelder aus dem Hase und Igel Original */
 @XStreamAlias(value = "field")
 public enum FieldType {
     /**
@@ -13,32 +11,18 @@ public enum FieldType {
      * umgewandelt, und (1,5,6) sind jetzt Position-1-Felder.
      */
     POSITION_1, POSITION_2,
-    /**
-     * Igelfeld
-     */
+    /** Igelfeld */
     HEDGEHOG,
-    /**
-     * Salatfeld
-     */
+    /** Salatfeld */
     SALAD,
-    /**
-     * Karottenfeld
-     */
+    /** Karottenfeld */
     CARROT,
-    /**
-     * Hasenfeld
-     */
+    /** Hasenfeld */
     HARE,
-    /**
-     * Ungültig. Wird zurückgegeben, wenn ein Feld außerhalb des Spielfeldes von {@link Board#getTypeAt} angefordert wird.
-     */
+    /** Ungültig. Wird zurückgegeben, wenn ein Feld außerhalb des Spielfeldes von {@link Board#getTypeAt} angefordert wird. */
     INVALID,
-    /**
-     * Das Zielfeld
-     */
+    /** Das Zielfeld */
     GOAL,
-    /**
-     * Das Startfeld
-     */
+    /** Das Startfeld */
     START,
 }

@@ -4,9 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import sc.protocol.requests.ILobbyRequest;
 import sc.shared.Score;
 
-/**
- * Response to GetScoreForPlayerRequest.
- */
+/** Response to GetScoreForPlayerRequest. */
 
 @XStreamAlias("playerScore")
 public class PlayerScorePacket extends ProtocolMessage implements ILobbyRequest {
