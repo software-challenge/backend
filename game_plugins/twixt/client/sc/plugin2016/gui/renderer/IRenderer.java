@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2016.gui.renderer;
 
 import java.awt.Image;

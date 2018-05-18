@@ -241,9 +241,6 @@ public class RenderFacade {
 
 	}
 
-	/**
-	 * 
-	 */
 	public void switchToPlayer(EPlayerId id) {
 
 		if (id == null) {

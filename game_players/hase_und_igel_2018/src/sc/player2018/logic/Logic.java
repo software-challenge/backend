@@ -66,7 +66,7 @@ public class Logic implements IGameHandler {
       for (Action action : move.actions) {
         if (action instanceof Advance) {
           Advance advance = (Advance) action;
-          if (advance.getDistance() + index == Constants.NUM_FIELDS - 1) {
+          if (advance.getDistance() + index == Constants.LAST_FIELD_INDEX) {
             // Zug ins Ziel
             winningMoves.add(move);
 

@@ -4,12 +4,9 @@ import junit.framework.Assert;
 import org.junit.Test;
 import sc.shared.PlayerColor;
 
-import java.util.List;
-
 /**
  * @author rra
  * @since Jul 4, 2009
- * 
  */
 public class PlayerTest
 {

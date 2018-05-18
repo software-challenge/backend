@@ -116,7 +116,7 @@ public class Configuration {
     return get(PASSWORD_KEY);
   }
 
-  /** * Modifies a property within the configuration. */
+  /** Modifies a property within the configuration. */
   public static void set(final String key, final String value) {
     properties.setProperty(key, value);
   }

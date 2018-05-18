@@ -26,9 +26,6 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class GameControlBar extends JPanel implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -411501977458671630L;
 
 	private static final int INITIAL_SPEED = 10;

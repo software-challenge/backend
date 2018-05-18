@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2015.gui.renderer;
 
 import java.awt.Image;
@@ -38,9 +35,6 @@ import sc.plugin2015.util.Constants;
 
 public class FrameRenderer extends PApplet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory
 			.getLogger(FrameRenderer.class);

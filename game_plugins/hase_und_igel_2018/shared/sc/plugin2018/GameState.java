@@ -69,13 +69,12 @@ public class GameState implements Cloneable {
   private Move lastMove;
 
   /**
-   * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt
-   * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
-   * gueltig sind.
+   * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt sind,
+   * wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind, gueltig sind.
    * <p>
    * <p>
-   * Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
-   * Spielclient i.A. nicht aufgerufen werden!
+   * Dieser Konstruktor ist nur fuer den Server relevant und sollte vom
+   * Client nicht aufgerufen werden!
    * <p>
    * Das Spielfeld wird zufällig aufgebaut.
    */
@@ -275,7 +274,7 @@ public class GameState implements Cloneable {
    */
   public final boolean isOccupied(final int index) {
     return (red.getFieldIndex() == index || blue.getFieldIndex() == index)
-            && (index != Constants.LAST_FIELD);
+            && (index != Constants.LAST_FIELD_INDEX);
   }
 
   /**

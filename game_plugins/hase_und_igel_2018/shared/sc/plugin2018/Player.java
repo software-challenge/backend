@@ -256,7 +256,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return true, falls Spieler auf Zielfeld steht, Sekundärkriterien werden nicht geprüft.
    */
   public boolean inGoal() {
-    return index == Constants.LAST_FIELD;
+    return index == Constants.LAST_FIELD_INDEX;
   }
   
   @Override

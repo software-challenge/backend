@@ -352,9 +352,6 @@ public class GameState implements Cloneable {
 
 	}
 
-	/**
-	 * 
-	 */
 	private void performScoring() {
 
 		int[][] stats = getGameStats();

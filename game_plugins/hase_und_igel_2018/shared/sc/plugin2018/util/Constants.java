@@ -6,7 +6,7 @@ public class Constants {
   public static final int SALADS_TO_EAT = 5;
   public static final int INITIAL_CARROTS = 68;
   public static final int NUM_FIELDS = 65;
-  public static final int LAST_FIELD = 64;
+  public static final int LAST_FIELD_INDEX = 64;
   public static final String IN_GOAL_MESSAGE = "Das Spiel ist beendet.\nEin Spieler ist im Ziel";
   public static final String ROUND_LIMIT_MESSAGE = "Das Rundenlimit wurde erreicht.";
 

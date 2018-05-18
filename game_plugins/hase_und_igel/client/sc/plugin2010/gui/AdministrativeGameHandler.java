@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2010.gui;
 
 import sc.plugin2010.Board;
