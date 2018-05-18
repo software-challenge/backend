@@ -38,14 +38,15 @@ public class Player extends SimplePlayer implements Cloneable {
 	private ArrayList<CardType>	cards;
 
 	/** letzte Aktion, die kein <code>Skip</code> war */
-	private Action lastNonSkipAction;
+	private Action    lastNonSkipAction;
 
 	@XStreamOmitField
-	private boolean			mustPlayCard;
+	private boolean		mustPlayCard;
 
 	/**
-	 * Nur für den Server relevant. Wird innerhalb eines Zuges genutzt, um zu überpüfen, ob eine
-	 * Karte gespielt werden muss. Muss am nach einem Zug immer false sein, sonst war Zug ungültig.
+	 * Nur für den Server relevant. W
+   * Wird innerhalb eines Zuges genutzt, um zu überpüfen, ob eine Karte gespielt werden muss.
+   * Muss nach einem Zug immer false sein, sonst war Zug ungültig.
 	 * @param mustPlayCard zu setzender Wert
 	 */
 	public void setMustPlayCard(boolean mustPlayCard)
@@ -54,8 +55,9 @@ public class Player extends SimplePlayer implements Cloneable {
 	}
 
 	/**
-	 * Nur für den Server relevant. Wird innerhalb eines Zuges genutzt, um zu überpüfen, ob eine
-	 * Karte gespielt werden muss. Muss am nach einem Zug immer false sein, sonst war Zug ungültig.
+	 * Nur für den Server relevant.
+   * Wird innerhalb eines Zuges genutzt, um zu überpüfen, ob eine Karte gespielt werden muss.
+   * Muss nach einem Zug immer false sein, sonst war Zug ungültig.
 	 * @return true, falls eine Karte gespielt werden muss
 	 */
 	public boolean mustPlayCard()
@@ -79,8 +81,8 @@ public class Player extends SimplePlayer implements Cloneable {
 	protected Player(PlayerColor color, int position, int carrots, int salads, ArrayList<CardType> cards) {
 		this.index = position;
 		this.color = color;
-		this.carrots = Constants.INITIAL_CARROTS;
-		this.salads = Constants.SALADS_TO_EAT;
+		this.carrots = carrots;
+		this.salads = salads;
 		this.cards = cards;
 	}
 	
@@ -153,8 +155,8 @@ public class Player extends SimplePlayer implements Cloneable {
 	}
 
 	/**
-	 * Gibt Karten ohne bestimmten Typ zurück.
-	 * @param type Typ der zu entfernenden Karte
+	 * Gibt Karten ohne bestimmte Karte zurück.
+	 * @param type zu entfernende Karte
 	 * @return Liste der übrigen Karten
 	 */
 	public List<CardType> getCardsWithout(CardType type) {
@@ -168,7 +170,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
 	/**
 	 * Setzt verfügbare Karten des Spielers, wobei die gegebene Collection geklont wird.
-	 * Wird vom Server beim ausführen eines Zuges verwendet.
+	 * Wird vom Server beim Ausführen eines Zuges verwendet.
 	 * @param cards verfügbare Karten
 	 */
 	public void setCards(Collection<CardType> cards) {
