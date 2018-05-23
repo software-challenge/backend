@@ -35,26 +35,26 @@ import java.util.List;
  */
 public class TestClient extends XStreamClient {
   private static final Logger logger = LoggerFactory.getLogger(TestClient.class);
-
+  
   private static final String gameType = "swc_2018_hase_und_igel";
   private static final Player[] players = {new Player(), new Player()};
   private static final File logDir = new File("logs").getAbsoluteFile();
-
+  
   private static TestClient testclient;
-
+  
   public static void main(String[] args) {
     System.setProperty("file.encoding", "UTF-8");
-
+    
     // define commandline options
     CmdLineParser parser = new CmdLineParser();
     Option serverOption = parser.addBooleanOption("start-server");
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
-    Option numberOfTestsOption = parser.addIntegerOption("tests");
+    Option numberOfTestsOption = parser.addIntegerOption('t', "tests");
     Option[] execOptions = {parser.addStringOption("player1"), parser.addStringOption("player2")};
     Option[] nameOptions = {parser.addStringOption("name1"), parser.addStringOption("name2")};
     Option[] canTimeoutOptions = {parser.addBooleanOption("timeout1"), parser.addBooleanOption("timeout2")};
-
+    
     try {
       parser.parse(args);
     } catch (CmdLineParser.OptionException e) {
@@ -62,10 +62,10 @@ public class TestClient extends XStreamClient {
       e.printStackTrace();
       exit(2);
     }
-
+    
     Configuration.loadServerProperties();
-
-    // Parameter laden
+    
+    // read commandline options
     boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_TESTSERVER_PORT);
@@ -81,7 +81,7 @@ public class TestClient extends XStreamClient {
       players[0].displayName = players[0].displayName + "-1";
       players[1].displayName = players[1].displayName + "-2";
     }
-
+    
     try {
       if (startServer) {
         logger.info("Starting server...");
@@ -94,47 +94,48 @@ public class TestClient extends XStreamClient {
         Thread.sleep(1000);
       }
       testclient = new TestClient(Configuration.getXStream(), sc.plugin2018.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
+      Runtime.getRuntime().addShutdownHook(new Thread(testclient::printScores));
     } catch (Exception e) {
       logger.error("Error while initializing: " + e.toString());
       e.printStackTrace();
       exit(2);
     }
   }
-
+  
   private String host;
   private int port;
-
+  
   /** number of tests that have already been run */
-  private int currentTests;
+  private int finishedTests;
   /** total number of tests that should be executed */
-  private int numberOfTests;
-
+  private int totalTests;
+  
   private boolean terminateWhenPossible = false;
   private int gotLastPlayerScores = 0;
   private int irregularGames = 0;
-
+  
   public TestClient(XStream xstream, Collection<Class<?>> protocolClasses,
-                    String host, int port, int numberOfTests) throws IOException {
+                    String host, int port, int totalTests) throws IOException {
     super(xstream, createTcpNetwork(host, port));
     LobbyProtocol.registerMessages(xstream);
     LobbyProtocol.registerAdditionalMessages(xstream, protocolClasses);
     this.host = host;
     this.port = port;
-    this.numberOfTests = numberOfTests;
+    this.totalTests = totalTests;
     start();
     logger.debug("Authenticating as administrator, enabling TestMode");
     send(new AuthenticateRequest(Configuration.getAdministrativePassword()));
     send(new TestModeRequest(true));
     logger.info("Waiting for server...");
   }
-
+  
   @Override
   protected void onObject(ProtocolMessage message) {
     if (message == null) {
       logger.warn("Received null message");
       return;
     }
-
+    
     logger.trace("Received {}", message);
     if (message instanceof TestModeMessage) {
       boolean testMode = (((TestModeMessage) message).testMode);
@@ -147,15 +148,15 @@ public class TestClient extends XStreamClient {
         if (!result.isRegular())
           irregularGames++;
         StringBuilder log = new StringBuilder("Game {} " +
-                (result.isRegular() ? "ended regularly -" : "did not end regularly!") + " Winner: ");
+            (result.isRegular() ? "ended regularly -" : "ended abnormally!") + " Winner: ");
         for (SimplePlayer winner : result.getWinners())
           log.append(winner.getDisplayName()).append(", ");
-        logger.info(log.substring(0, log.length() - 2), currentTests);
+        logger.info(log.substring(0, log.length() - 2), finishedTests);
         
-        currentTests++;
+        finishedTests++;
         for (int i = 0; i < 2; i++)
           send(new GetScoreForPlayerRequest(players[i].displayName));
-
+        
         try {
           for (int i = 0; i < 2; i++)
             players[i].proc.waitFor();
@@ -164,52 +165,47 @@ public class TestClient extends XStreamClient {
         }
         for (int i = 0; i < 2; i++)
           players[i].proc.destroy();
-
-        if (currentTests == numberOfTests)
+        
+        if (finishedTests == totalTests)
           terminateWhenPossible = true;
-        prepareNewClients();
+        else
+          prepareNewClients();
       }
     } else if (message instanceof PlayerScorePacket) {
       if (terminateWhenPossible)
         gotLastPlayerScores++;
       Score score = ((PlayerScorePacket) message).getScore();
-
+      
       for (Player p : players) {
         if (p.displayName.equals(score.getDisplayName())) {
           p.score = score;
           break;
         }
       }
-
+      
       List<ScoreValue> val = score.getScoreValues();
       logger.warn(String.format("New score for %s: Siegpunkte %s, \u2205Feldnummer %5.2f, \u2205Karotten %5.2f after %s of %s tests",
-              score.getDisplayName(), val.get(0).getValue(), val.get(1).getValue(), val.get(2).getValue(), currentTests, numberOfTests));
-
+          score.getDisplayName(), val.get(0).getValue(), val.get(1).getValue(), val.get(2).getValue(), finishedTests, totalTests));
+      
       if (gotLastPlayerScores == 2) {
-        logger.warn(String.format("End results: \n" +
-                        "=============== SCORES ================\n" +
-                        "%s: %.0f\n%s: %.0f\n" +
-                        "=======================================",
-                players[0], players[0].score.getScoreValues().get(0).getValue(),
-                players[1], players[1].score.getScoreValues().get(0).getValue()));
-        logger.warn("{} of {} games did not end regularly!", irregularGames, currentTests);
+        printScores();
         exit(0);
       }
-
+      
     } else if (message instanceof PrepareGameProtocolMessage) {
       logger.debug("Received PrepareGame - starting clients");
       PrepareGameProtocolMessage pgm = (PrepareGameProtocolMessage) message;
       send(new ObservationRequest(pgm.getRoomId()));
       try {
         for (int i = 0; i < 2; i++)
-          startPlayer(i, pgm.getReservations().get((currentTests + i) % 2));
-
+          startPlayer(i, pgm.getReservations().get((finishedTests + i) % 2));
+        
         for (int i = 0; i < 2; i++)
           if (!players[i].proc.isAlive()) {
-            logger.error("{} could not be started, look into {}", players[0].displayName, logDir);
+            logger.error("{} could not be started, look into {}", players[i].displayName, logDir);
             exit(2);
           }
-
+        
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -217,7 +213,7 @@ public class TestClient extends XStreamClient {
       logger.debug("Received uninteresting " + message.getClass().getSimpleName());
     }
   }
-
+  
   private void startPlayer(int id, String reservation) throws IOException {
     Player player = players[id];
     ProcessBuilder builder;
@@ -228,63 +224,80 @@ public class TestClient extends XStreamClient {
       logger.info("Invoking client {}", player);
       builder = new ProcessBuilder(player.executable, "--reservation", reservation, "--host", host, "--port", Integer.toString(port));
     }
-
+    
     logDir.mkdirs();
-    builder.redirectOutput(new File(logDir, players[id].displayName + "_Test" + currentTests + ".log"));
-    builder.redirectError(new File(logDir, File.separator + players[id].displayName + "_Test" + currentTests + ".err"));
+    builder.redirectOutput(new File(logDir, players[id].displayName + "_Test" + finishedTests + ".log"));
+    builder.redirectError(new File(logDir, players[id].displayName + "_Test" + finishedTests + ".err"));
     players[id].proc = builder.start();
     try {
       Thread.sleep(100);
     } catch (InterruptedException ignored) {
     }
   }
-
-  /** prepares slots for new clients (if {@link #currentTests} is even player1 starts, otherwise player2) */
+  
+  /** prepares slots for new clients (if {@link #finishedTests} is even player1 starts, otherwise player2) */
   private void prepareNewClients() {
-    if (currentTests == numberOfTests)
-      return;
     SlotDescriptor[] slots = new SlotDescriptor[2];
     for (int i = 0; i < 2; i++)
-      slots[(currentTests + i) % 2] = new SlotDescriptor(players[i].displayName, players[i].canTimeout, false);
+      slots[(finishedTests + i) % 2] = new SlotDescriptor(players[i].displayName, players[i].canTimeout, false);
     logger.debug("Prepared client slots: " + Arrays.toString(slots));
     send(new PrepareGameRequest(gameType, slots[0], slots[1]));
   }
-
+  
   private static void exit(int status) {
     if (testclient != null)
       testclient.send(new CloseConnection());
-
+    
     for (Player p : players)
       if (p.proc != null)
         p.proc.destroyForcibly();
-
+    
     if (status != 0) {
       logger.warn("Terminating");
       System.exit(status);
     }
   }
-
+  
   private static boolean isJar(String f) {
     return f.endsWith("jar") && new File(f).exists();
   }
-
+  
   private static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
     logger.info("Creating TCP Network for {}:{}", host, port);
     return new TcpNetwork(new Socket(host, port));
   }
-
+  
+  private boolean scoresPrinted = false;
+  
+  private void printScores() {
+    if (scoresPrinted) return;
+    try {
+      logger.warn(String.format("\n" +
+              "=============== SCORES ================\n" +
+              "%s: %.0f\n" +
+              "%s: %.0f\n" +
+              "=======================================\n" +
+              "{} of {} games ended abnormally!",
+          players[0], players[0].score.getScoreValues().get(0).getValue(),
+          players[1], players[1].score.getScoreValues().get(0).getValue()),
+          irregularGames, finishedTests);
+      scoresPrinted = true;
+    } catch (Exception ignored) {
+    }
+  }
+  
 }
 
 class Player {
   String displayName;
   boolean canTimeout;
-
+  
   String executable;
   boolean isJar;
-
+  
   Process proc;
   Score score;
-
+  
   @Override
   public String toString() {
     return displayName;
