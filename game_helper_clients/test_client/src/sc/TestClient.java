@@ -166,17 +166,16 @@ public class TestClient extends XStreamClient {
         logger.warn(log.substring(0, log.length() - 2), finishedTests);
         
         finishedTests++;
-        for (int i = 0; i < 2; i++)
-          send(new GetScoreForPlayerRequest(players[i].displayName));
+        for (Player player : players)
+          send(new GetScoreForPlayerRequest(player.displayName));
         
         try {
-          for (int i = 0; i < 2; i++)
-            players[i].proc.waitFor();
-        } catch (InterruptedException e) {
-          e.printStackTrace();
+          for (Player player : players)
+            player.proc.waitFor();
+        } catch (InterruptedException ignored) {
         }
-        for (int i = 0; i < 2; i++)
-          players[i].proc.destroy();
+        for (Player player : players)
+          player.proc.destroy();
         
         if (finishedTests == totalTests)
           terminateWhenPossible = true;
@@ -216,18 +215,19 @@ public class TestClient extends XStreamClient {
           int tests = finishedTests;
           int slept = 0;
           while (tests == finishedTests) {
+            // Allow 10 seconds for detecting failed clients
             if (slept < 10)
-              for (int i = 0; i < 2; i++)
-                if (!players[i].proc.isAlive()) {
-                  logger.error("{} crashed, look into {}", players[i].displayName, logDir);
+              for (Player player : players)
+                if (!player.proc.isAlive()) {
+                  logger.error("{} crashed, look into {}", player.displayName, logDir);
                   exit(2);
                 }
             try {
               Thread.sleep(1000);
               slept++;
-            } catch (InterruptedException e) {
-              e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
+            // Max game length: Roundlimit * 2 * 2 seconds, one second buffer per round
             if (slept > Constants.ROUND_LIMIT * 5) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
@@ -279,9 +279,9 @@ public class TestClient extends XStreamClient {
       testclient.waiter.shutdownNow();
     }
     
-    for (Player p : players)
-      if (p.proc != null)
-        p.proc.destroyForcibly();
+    for (Player player : players)
+      if (player.proc != null)
+        player.proc.destroyForcibly();
     
     if (status != 0) {
       logger.warn("Terminating");
