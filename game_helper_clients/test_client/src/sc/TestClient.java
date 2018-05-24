@@ -1,14 +1,16 @@
 package sc;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.thoughtworks.xstream.XStream;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.framework.plugins.SimplePlayer;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
+import sc.plugin2018.util.Constants;
 import sc.protocol.LobbyProtocol;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
@@ -21,6 +23,9 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Class to start testing. Enables testMode on startup.
@@ -34,7 +39,7 @@ import java.util.List;
  * </ul>
  */
 public class TestClient extends XStreamClient {
-  private static final Logger logger = LoggerFactory.getLogger(TestClient.class);
+  private static final Logger logger = (Logger) LoggerFactory.getLogger(TestClient.class);
   
   private static final String gameType = "swc_2018_hase_und_igel";
   private static final Player[] players = {new Player(), new Player()};
@@ -47,6 +52,7 @@ public class TestClient extends XStreamClient {
     
     // define commandline options
     CmdLineParser parser = new CmdLineParser();
+    Option loglevelOption = parser.addStringOption("loglevel");
     Option serverOption = parser.addBooleanOption("start-server");
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
@@ -66,6 +72,10 @@ public class TestClient extends XStreamClient {
     Configuration.loadServerProperties();
     
     // read commandline options
+    String loglevel = (String) parser.getOptionValue(loglevelOption, null);
+    if (loglevel != null)
+      logger.setLevel(Level.toLevel(loglevel));
+    
     boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_TESTSERVER_PORT);
@@ -87,8 +97,8 @@ public class TestClient extends XStreamClient {
         logger.info("Starting server...");
         ProcessBuilder builder = new ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-jar", "software-challenge-server.jar", "--port", String.valueOf(port));
         logDir.mkdirs();
-        builder.redirectOutput(new File(logDir, "server-" + port + ".log"));
-        builder.redirectError(new File(logDir, "server-" + port + ".err"));
+        builder.redirectOutput(new File(logDir, "server_port" + port + ".log"));
+        builder.redirectError(new File(logDir, "server_port" + port + ".err"));
         Process server = builder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         Thread.sleep(1000);
@@ -113,6 +123,8 @@ public class TestClient extends XStreamClient {
   private boolean terminateWhenPossible = false;
   private int gotLastPlayerScores = 0;
   private int irregularGames = 0;
+  
+  private ExecutorService waiter = Executors.newSingleThreadExecutor();
   
   public TestClient(XStream xstream, Collection<Class<?>> protocolClasses,
                     String host, int port, int totalTests) throws IOException {
@@ -151,7 +163,7 @@ public class TestClient extends XStreamClient {
             (result.isRegular() ? "ended regularly -" : "ended abnormally!") + " Winner: ");
         for (SimplePlayer winner : result.getWinners())
           log.append(winner.getDisplayName()).append(", ");
-        logger.info(log.substring(0, log.length() - 2), finishedTests);
+        logger.warn(log.substring(0, log.length() - 2), finishedTests);
         
         finishedTests++;
         for (int i = 0; i < 2; i++)
@@ -184,7 +196,7 @@ public class TestClient extends XStreamClient {
       }
       
       List<ScoreValue> val = score.getScoreValues();
-      logger.warn(String.format("New score for %s: Siegpunkte %s, \u2205Feldnummer %5.2f, \u2205Karotten %5.2f after %s of %s tests",
+      logger.info(String.format("New score for %s: Siegpunkte %s, \u2205Feldnummer %5.2f, \u2205Karotten %5.2f after %s of %s tests",
           score.getDisplayName(), val.get(0).getValue(), val.get(1).getValue(), val.get(2).getValue(), finishedTests, totalTests));
       
       if (gotLastPlayerScores == 2) {
@@ -200,11 +212,28 @@ public class TestClient extends XStreamClient {
         for (int i = 0; i < 2; i++)
           startPlayer(i, pgm.getReservations().get((finishedTests + i) % 2));
         
-        for (int i = 0; i < 2; i++)
-          if (!players[i].proc.isAlive()) {
-            logger.error("{} could not be started, look into {}", players[i].displayName, logDir);
-            exit(2);
+        waiter.execute(() -> {
+          int tests = finishedTests;
+          int slept = 0;
+          while (tests == finishedTests) {
+            if (slept < 10)
+              for (int i = 0; i < 2; i++)
+                if (!players[i].proc.isAlive()) {
+                  logger.error("{} crashed, look into {}", players[i].displayName, logDir);
+                  exit(2);
+                }
+            try {
+              Thread.sleep(1000);
+              slept++;
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+            if (slept > Constants.ROUND_LIMIT * 5) {
+              logger.error("The game seems to hang, exiting!");
+              exit(2);
+            }
           }
+        });
         
       } catch (IOException e) {
         e.printStackTrace();
@@ -245,8 +274,10 @@ public class TestClient extends XStreamClient {
   }
   
   private static void exit(int status) {
-    if (testclient != null)
+    if (testclient != null) {
       testclient.send(new CloseConnection());
+      testclient.waiter.shutdownNow();
+    }
     
     for (Player p : players)
       if (p.proc != null)
