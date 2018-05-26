@@ -23,12 +23,11 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Class to start testing. Enables testMode on startup.
+ * A simple CLI to test clients. Enables TestMode on startup.
  * <p/>
  * Defaults:
  * <ul>
@@ -141,6 +140,8 @@ public class TestClient extends XStreamClient {
     logger.info("Waiting for server...");
   }
   
+  private boolean gameProgressing = false;
+  
   @Override
   protected void onObject(ProtocolMessage message) {
     if (message == null) {
@@ -156,6 +157,10 @@ public class TestClient extends XStreamClient {
     } else if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       if (packet.getData() instanceof GameResult) {
+        if (gameProgressing) {
+          gameProgressing = false;
+          System.out.println();
+        }
         GameResult result = (GameResult) packet.getData();
         if (!result.isRegular())
           irregularGames++;
@@ -181,6 +186,14 @@ public class TestClient extends XStreamClient {
           terminateWhenPossible = true;
         else
           prepareNewClients();
+      } else {
+        if (logger.isInfoEnabled() && !logger.isTraceEnabled()) {
+          if (!gameProgressing) {
+            System.out.print("Game progress: ");
+            gameProgressing = true;
+          }
+          System.out.print("#");
+        }
       }
     } else if (message instanceof PlayerScorePacket) {
       if (terminateWhenPossible)
@@ -222,15 +235,16 @@ public class TestClient extends XStreamClient {
                   logger.error("{} crashed, look into {}", player.displayName, logDir);
                   exit(2);
                 }
-            try {
-              Thread.sleep(1000);
-              slept++;
-            } catch (InterruptedException ignored) {
-            }
             // Max game length: Roundlimit * 2 * 2 seconds, one second buffer per round
             if (slept > Constants.ROUND_LIMIT * 5) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
+            }
+            try {
+              Thread.sleep(1000);
+              slept++;
+            } catch (InterruptedException ignored) {
+              break;
             }
           }
         });
@@ -238,6 +252,8 @@ public class TestClient extends XStreamClient {
       } catch (IOException e) {
         e.printStackTrace();
       }
+    } else if (message instanceof ObservationProtocolMessage) {
+      logger.debug("Successfully joined GameRoom as Observer");
     } else {
       logger.debug("Received uninteresting " + message.getClass().getSimpleName());
     }
@@ -247,10 +263,10 @@ public class TestClient extends XStreamClient {
     Player player = players[id];
     ProcessBuilder builder;
     if (player.isJar) {
-      logger.info("Invoking client {} with Java", player);
+      logger.debug("Invoking client {} with Java", player);
       builder = new ProcessBuilder("java", "-jar", "-mx1500m", player.executable, "-r", reservation, "-h", host, "-p", Integer.toString(port));
     } else {
-      logger.info("Invoking client {}", player);
+      logger.debug("Invoking client {}", player);
       builder = new ProcessBuilder(player.executable, "--reservation", reservation, "--host", host, "--port", Integer.toString(port));
     }
     
@@ -284,7 +300,7 @@ public class TestClient extends XStreamClient {
         player.proc.destroyForcibly();
     
     if (status != 0) {
-      logger.warn("Terminating");
+      logger.warn("Terminatingwith exit code " + status);
       System.exit(status);
     }
   }
