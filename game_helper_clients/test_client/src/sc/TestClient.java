@@ -81,15 +81,17 @@ public class TestClient extends XStreamClient {
     int numberOfTests = (int) parser.getOptionValue(numberOfTestsOption, 10);
     for (int i = 0; i < 2; i++) {
       players[i].canTimeout = (Boolean) parser.getOptionValue(canTimeoutOptions[i], true);
-      players[i].displayName = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
+      players[i].name = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
       players[i].executable = (String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar");
       players[i].isJar = isJar(players[i].executable);
     }
-    if (players[0].displayName.equals(players[1].displayName)) {
+    if (players[0].name.equals(players[1].name)) {
       logger.warn("Both players have the same name, adding suffixes.");
-      players[0].displayName = players[0].displayName + "-1";
-      players[1].displayName = players[1].displayName + "-2";
+      players[0].name = players[0].name + "-1";
+      players[1].name = players[1].name + "-2";
     }
+    logger.info("Player1: " + players[0]);
+    logger.info("Player2: " + players[1]);
     
     try {
       if (startServer) {
@@ -172,7 +174,7 @@ public class TestClient extends XStreamClient {
         
         finishedTests++;
         for (Player player : players)
-          send(new GetScoreForPlayerRequest(player.displayName));
+          send(new GetScoreForPlayerRequest(player.name));
         
         try {
           for (Player player : players)
@@ -200,9 +202,9 @@ public class TestClient extends XStreamClient {
         gotLastPlayerScores++;
       Score score = ((PlayerScorePacket) message).getScore();
       
-      for (Player p : players) {
-        if (p.displayName.equals(score.getDisplayName())) {
-          p.score = score;
+      for (Player player : players) {
+        if (player.name.equals(score.getDisplayName())) {
+          player.score = score;
           break;
         }
       }
@@ -232,7 +234,7 @@ public class TestClient extends XStreamClient {
             if (slept < 10)
               for (Player player : players)
                 if (!player.proc.isAlive()) {
-                  logger.error("{} crashed, look into {}", player.displayName, logDir);
+                  logger.error("{} crashed, look into {}", player.name, logDir);
                   exit(2);
                 }
             // Max game length: Roundlimit * 2 * 2 seconds, one second buffer per round
@@ -263,16 +265,16 @@ public class TestClient extends XStreamClient {
     Player player = players[id];
     ProcessBuilder builder;
     if (player.isJar) {
-      logger.debug("Invoking client {} with Java", player);
+      logger.debug("Invoking client {} with Java", player.name);
       builder = new ProcessBuilder("java", "-jar", "-mx1500m", player.executable, "-r", reservation, "-h", host, "-p", Integer.toString(port));
     } else {
-      logger.debug("Invoking client {}", player);
+      logger.debug("Invoking client {}", player.name);
       builder = new ProcessBuilder(player.executable, "--reservation", reservation, "--host", host, "--port", Integer.toString(port));
     }
     
     logDir.mkdirs();
-    builder.redirectOutput(new File(logDir, players[id].displayName + "_Test" + finishedTests + ".log"));
-    builder.redirectError(new File(logDir, players[id].displayName + "_Test" + finishedTests + ".err"));
+    builder.redirectOutput(new File(logDir, players[id].name + "_Test" + finishedTests + ".log"));
+    builder.redirectError(new File(logDir, players[id].name + "_Test" + finishedTests + ".err"));
     players[id].proc = builder.start();
     try {
       Thread.sleep(100);
@@ -284,7 +286,7 @@ public class TestClient extends XStreamClient {
   private void prepareNewClients() {
     SlotDescriptor[] slots = new SlotDescriptor[2];
     for (int i = 0; i < 2; i++)
-      slots[(finishedTests + i) % 2] = new SlotDescriptor(players[i].displayName, players[i].canTimeout, false);
+      slots[(finishedTests + i) % 2] = new SlotDescriptor(players[i].name, players[i].canTimeout, false);
     logger.debug("Prepared client slots: " + Arrays.toString(slots));
     send(new PrepareGameRequest(gameType, slots[0], slots[1]));
   }
@@ -300,7 +302,7 @@ public class TestClient extends XStreamClient {
         player.proc.destroyForcibly();
     
     if (status != 0) {
-      logger.warn("Terminatingwith exit code " + status);
+      logger.warn("Terminating with exit code " + status);
       System.exit(status);
     }
   }
@@ -325,8 +327,8 @@ public class TestClient extends XStreamClient {
               "%s: %.0f\n" +
               "=======================================\n" +
               "{} of {} games ended abnormally!",
-          players[0], players[0].score.getScoreValues().get(0).getValue(),
-          players[1], players[1].score.getScoreValues().get(0).getValue()),
+          players[0].name, players[0].score.getScoreValues().get(0).getValue(),
+          players[1].name, players[1].score.getScoreValues().get(0).getValue()),
           irregularGames, finishedTests);
       scoresPrinted = true;
     } catch (Exception ignored) {
@@ -336,17 +338,18 @@ public class TestClient extends XStreamClient {
 }
 
 class Player {
-  String displayName;
+  String name;
   boolean canTimeout;
   
   String executable;
   boolean isJar;
   
+  @Override
+  public String toString() {
+    return String.format("Player{name='%s', executable='%s', isJar=%s, canTimeout=%s}", name, executable, isJar, canTimeout);
+  }
+  
   Process proc;
   Score score;
   
-  @Override
-  public String toString() {
-    return displayName;
-  }
 }
