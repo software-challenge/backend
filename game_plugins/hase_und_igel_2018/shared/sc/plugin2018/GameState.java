@@ -42,32 +42,32 @@ import java.util.ArrayList;
  */
 @XStreamAlias(value = "state")
 public class GameState implements Cloneable {
-
+  
   @XStreamOmitField
   private static final Logger logger = LoggerFactory.getLogger(GameState.class);
   /** momentane Rundenzahl */
   @XStreamAsAttribute
   private int turn;
-
+  
   /** Farbe des Startspielers */
   @XStreamAsAttribute
   private PlayerColor startPlayer;
-
+  
   /** Farbe des aktuellen Spielers */
   @XStreamAsAttribute
   private PlayerColor currentPlayer;
-
+  
   /** der rote Spieler */
   private Player red;
   /** der blaue Spieler */
   private Player blue;
-
+  
   /** Das Spielbrett */
   private Board board;
-
+  
   /** letzter getaetigter Zug */
   private Move lastMove;
-
+  
   /**
    * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt sind,
    * wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind, gueltig sind.
@@ -86,21 +86,22 @@ public class GameState implements Cloneable {
     this.red = new Player(PlayerColor.RED);
     this.blue = new Player(PlayerColor.BLUE);
   }
-
+  
   /**
-   * Erzeugt einen neuen {@code GameState} mit denselben Eigenschaften von
-   * stateToClone. Fuer eigene Implementierungen.<br>
-   * Hinweis: Es ist effizienter, direkt das Ergebnis von {@link #clone()} zu verwenden
+   * Erzeugt einen neuen {@link GameState} mit den Eigenschaften von {@code stateToClone}.
+   * <p>
+   * Nützlich für eigene Implementierungen.
    */
   protected GameState(GameState stateToClone) {
-    GameState clone = stateToClone.clone();
-    setRedPlayer(clone.getPlayer(PlayerColor.RED));
-    setBluePlayer(clone.getPlayer(PlayerColor.BLUE));
-    setLastMove(clone.getLastMove());
-    setBoard(clone.getBoard());
-    setCurrentPlayer(clone.getCurrentPlayerColor());
+    startPlayer = stateToClone.startPlayer;
+    for (PlayerColor color : PlayerColor.values())
+      setPlayer(color, stateToClone.getPlayer(color));
+    setTurn(stateToClone.getTurn());
+    setLastMove(stateToClone.getLastMove());
+    setBoard(stateToClone.getBoard());
+    setCurrentPlayer(stateToClone.getCurrentPlayerColor());
   }
-
+  
   /**
    * erzeugt eine Deepcopy dieses Objekts
    *
@@ -129,7 +130,7 @@ public class GameState implements Cloneable {
     clone.turn = this.turn;
     return clone;
   }
-
+  
   /**
    * Fuegt einem Spiel einen weiteren Spieler hinzu.
    * <p>
@@ -146,7 +147,7 @@ public class GameState implements Cloneable {
       blue = player;
     }
   }
-
+  
   /**
    * Gibt das Spielfeld zurueck
    *
@@ -155,7 +156,11 @@ public class GameState implements Cloneable {
   public Board getBoard() {
     return this.board;
   }
-
+  
+  public Player[] getPlayers() {
+    return new Player[]{red, blue};
+  }
+  
   /**
    * Liefert den Spieler als {@code Player}-Objekt, der als die entsprechende Farbe spielt
    *
@@ -164,28 +169,26 @@ public class GameState implements Cloneable {
   public Player getPlayer(PlayerColor color) {
     return color == PlayerColor.RED ? red : blue;
   }
-
+  
   /**
-   * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
-   * ist.
+   * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug ist.
    *
    * @return Der Spieler, der momentan am Zug ist.
    */
   public Player getCurrentPlayer() {
     return getPlayer(currentPlayer);
   }
-
+  
   /**
-   * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
-   * ist. Dies ist aequivalent zum Aufruf
-   * {@code getCurrentPlayer().getPlayerColor()}, aber schneller.
+   * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug ist.
+   * Dies ist aequivalent zum Aufruf {@code getCurrentPlayer().getPlayerColor()}, aber schneller.
    *
    * @return Die Farbe des Spielers, der momentan am Zug ist.
    */
   public PlayerColor getCurrentPlayerColor() {
     return currentPlayer;
   }
-
+  
   /**
    * Nur für den Server relevant
    *
@@ -194,9 +197,9 @@ public class GameState implements Cloneable {
   protected void setCurrentPlayer(PlayerColor playerColor) {
     this.currentPlayer = playerColor;
   }
-
+  
   /**
-   * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
+   * Liefert den Spieler, also ein {@link Player}-Objekt, der momentan nicht am
    * Zug ist.
    *
    * @return Der Spieler, der momentan nicht am Zug ist.
@@ -204,7 +207,7 @@ public class GameState implements Cloneable {
   public Player getOtherPlayer() {
     return getPlayer(getOtherPlayerColor());
   }
-
+  
   /**
    * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan nicht am
    * Zug ist. Dies ist aequivalent zum Aufruf @
@@ -216,45 +219,45 @@ public class GameState implements Cloneable {
   public PlayerColor getOtherPlayerColor() {
     return currentPlayer.opponent();
   }
-
+  
   /** @deprecated ersetzt durch {@link #getPlayer(PlayerColor)} */
   public Player getRedPlayer() {
     return red;
   }
-
+  
   /** @deprecated ersetzt durch {@link #getPlayer(PlayerColor)} */
   public Player getBluePlayer() {
     return blue;
   }
-
-  /**
-   * Nur für den Server relevant
-   *
-   * @param red roter Spieler
-   */
+  
+  protected void setPlayer(PlayerColor color, Player player) {
+    if (color == PlayerColor.RED) {
+      setRedPlayer(player);
+    } else {
+      setBluePlayer(player);
+    }
+  }
+  
+  /** Nur für den Server relevant */
   protected void setRedPlayer(Player red) {
     this.red = red;
   }
-
-  /**
-   * Nur für den Server relevant
-   *
-   * @param blue blauer Spieler
-   */
+  
+  /** Nur für den Server relevant */
   protected void setBluePlayer(Player blue) {
     this.blue = blue;
   }
-
+  
   /** @return Der Spieler, der das Spiel begonnen hat. */
   public Player getStartPlayer() {
     return startPlayer == PlayerColor.RED ? red : blue;
   }
-
+  
   /** @return Die Farbe des Spielers, der das Spiel begonnen hat. */
   public PlayerColor getStartPlayerColor() {
     return startPlayer;
   }
-
+  
   /** wechselt den Spieler, der aktuell an der Reihe ist, anhand der Zugnummer({@link #turn}) */
   public void switchCurrentPlayer() {
     if (turn % 2 == 0) {
@@ -263,7 +266,7 @@ public class GameState implements Cloneable {
       currentPlayer = PlayerColor.BLUE;
     }
   }
-
+  
   /**
    * Überprüft, ob ein Feld durch einen Spieler belegt ist, sodass niemand darauf ziehen kann.
    * (da Zielfeld von mehreren betretbar, bei Zielfeld immer false)
@@ -274,9 +277,9 @@ public class GameState implements Cloneable {
    */
   public final boolean isOccupied(final int index) {
     return (red.getFieldIndex() == index || blue.getFieldIndex() == index)
-            && (index != Constants.LAST_FIELD_INDEX);
+        && (index != Constants.LAST_FIELD_INDEX);
   }
-
+  
   /**
    * Überprüft, ob der angegebene Spieler an erster Stelle ist. Wenn sich beide
    * Spieler im Ziel befinden wird zusätzlich überprüft, ob <code>player</code>
@@ -291,10 +294,10 @@ public class GameState implements Cloneable {
     boolean isFirst = o.getFieldIndex() <= player.getFieldIndex();
     if (player.inGoal() && o.getFieldIndex() == player.getFieldIndex())
       isFirst = isFirst
-              && player.getCarrots() < o.getCarrots();
+          && player.getCarrots() < o.getCarrots();
     return isFirst;
   }
-
+  
   /**
    * Gibt den Feldtypen an einem bestimmten Index zurück. Liegt der
    * gewählte Index vor dem Startpunkt oder hinter dem Ziel, so wird
@@ -307,7 +310,7 @@ public class GameState implements Cloneable {
   public final FieldType getTypeAt(final int index) {
     return board.getTypeAt(index);
   }
-
+  
   /**
    * Findet das nächste Spielfeld vom Typ <code>type</code> beginnend bei
    * Feldnummer <code>index</code> auf diesem Spielbrett.
@@ -320,7 +323,7 @@ public class GameState implements Cloneable {
   public final int getNextFieldByType(FieldType type, int index) {
     return this.board.getNextFieldByType(type, index);
   }
-
+  
   /**
    * Findet das vorherige Spielfeld vom Typ <code>type</code> beginnend an Index
    * <code>index</code> auf diesem Spielbrett.
@@ -333,7 +336,7 @@ public class GameState implements Cloneable {
   public final int getPreviousFieldByType(FieldType type, int index) {
     return this.board.getPreviousFieldByType(type, index);
   }
-
+  
   /**
    * liefert die aktuelle Zugzahl
    *
@@ -342,20 +345,19 @@ public class GameState implements Cloneable {
   public int getTurn() {
     return turn;
   }
-
+  
   /**
    * Setzt die aktuelle Zugzahl. Nur für den Server relevant
    *
    * @param turn neue Zugzahl
    */
-  public void setTurn(int turn) throws InvalidGameStateException {
+  public void setTurn(int turn) {
     int turnLimit = Constants.ROUND_LIMIT * 2;
-    if (turn > turnLimit) {
+    if (turn > turnLimit)
       throw new InvalidGameStateException("Turn " + turn + " exceeded maxTurn " + turnLimit);
-    }
     this.turn = turn;
   }
-
+  
   /**
    * liefert die aktuelle Rundenzahl
    *
@@ -364,7 +366,7 @@ public class GameState implements Cloneable {
   public int getRound() {
     return turn / 2;
   }
-
+  
   /**
    * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
    * Einträgen:
@@ -381,7 +383,7 @@ public class GameState implements Cloneable {
     assert player != null;
     return getPlayerStats(player.getPlayerColor());
   }
-
+  
   /**
    * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
    * Einträgen:
@@ -396,14 +398,14 @@ public class GameState implements Cloneable {
    */
   public int[] getPlayerStats(PlayerColor playerColor) {
     assert playerColor != null;
-
+    
     if (playerColor == PlayerColor.RED) {
       return getGameStats()[Constants.GAME_STATS_RED_INDEX];
     } else {
       return getGameStats()[Constants.GAME_STATS_BLUE_INDEX];
     }
   }
-
+  
   /**
    * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
    * {@link #getPlayerStats(PlayerColor) Spielerstats}, wobei getGameStats()[0],
@@ -414,17 +416,17 @@ public class GameState implements Cloneable {
    * @see #getPlayerStats(PlayerColor)
    */
   public int[][] getGameStats() {
-
+    
     int[][] stats = new int[2][2];
-
+    
     stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] = this.red.getFieldIndex();
     stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] = this.red.getCarrots();
     stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX] = this.blue.getFieldIndex();
     stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_CARROTS] = this.blue.getCarrots();
     return stats;
-
+    
   }
-
+  
   /**
    * liefert die Namen den beiden Spieler
    *
@@ -432,9 +434,9 @@ public class GameState implements Cloneable {
    */
   public String[] getPlayerNames() {
     return new String[]{red.getDisplayName(), blue.getDisplayName()};
-
+    
   }
-
+  
   /**
    * Gibt die angezeigte Punktzahl des Spielers zurueck.
    *
@@ -445,16 +447,16 @@ public class GameState implements Cloneable {
   public int getPointsForPlayer(PlayerColor playerColor) {
     return getPlayer(playerColor).getFieldIndex();
   }
-
+  
   /** Ueberschreibt das aktuelle Spielbrett. Fuer eigene Implementierungen. */
   protected void setBoard(Board newValue) {
     board = newValue;
   }
-
+  
   public Player getOpponent(Player player) {
     return getPlayer(player.getPlayerColor().opponent());
   }
-
+  
   /**
    * Setzt letzten Zug. Nur für den Server relevant.
    *
@@ -463,7 +465,7 @@ public class GameState implements Cloneable {
   protected void setLastMove(Move lastMove) {
     this.lastMove = lastMove;
   }
-
+  
   /**
    * Setzt letzte Aktion eines Spielers. Für den Server in der Zugvalidierung relevant.
    *
@@ -475,7 +477,7 @@ public class GameState implements Cloneable {
     }
     getCurrentPlayer().setLastNonSkipAction(action);
   }
-
+  
   /**
    * Gibt den letzten Zugzurück
    *
@@ -484,8 +486,8 @@ public class GameState implements Cloneable {
   public Move getLastMove() {
     return this.lastMove;
   }
-
-
+  
+  
   /**
    * Gibt die letzte Aktion des Spielers zurück. Nötig für das erkennen von ungültigen Zügen.
    *
@@ -496,7 +498,7 @@ public class GameState implements Cloneable {
   public Action getLastNonSkipAction(Player player) {
     return getLastNonSkipAction(player.getPlayerColor());
   }
-
+  
   /**
    * Gibt die letzte Aktion des Spielers der entsprechenden Farbe zurück. Nötig für das erkennen von ungültigen Zügen.
    *
@@ -507,7 +509,7 @@ public class GameState implements Cloneable {
   public Action getLastNonSkipAction(PlayerColor playerColor) {
     return getPlayer(playerColor).getLastNonSkipAction();
   }
-
+  
   /**
    * Git das Feld des derzeitigen Spielers zurück
    *
@@ -516,7 +518,7 @@ public class GameState implements Cloneable {
   public FieldType fieldOfCurrentPlayer() {
     return this.getTypeAt(this.getCurrentPlayer().getFieldIndex());
   }
-
+  
   /**
    * Überprüft ob sich der derzeitige Spieler auf einem Hasenfeld befindet.
    *
@@ -525,7 +527,7 @@ public class GameState implements Cloneable {
   public boolean isOnHareField() {
     return fieldOfCurrentPlayer().equals(FieldType.HARE);
   }
-
+  
   public ArrayList<Move> getPossibleMoves() {
     ArrayList<Move> possibleMove = new ArrayList<>();
     if (GameRuleLogic.isValidToEat(this)) {
@@ -573,7 +575,7 @@ public class GameState implements Cloneable {
     }
     return possibleMove;
   }
-
+  
   /**
    * Überprüft für übergebenen GameState und bisher getätigte Züge,
    * ob das Ausspielen einer Karte nötig/möglich ist
@@ -588,25 +590,25 @@ public class GameState implements Cloneable {
       if (GameRuleLogic.isValidToPlayEatSalad(this)) {
         actions.add(new Card(CardType.EAT_SALAD, actions.size()));
         possibleMove.add(new Move(actions));
-
+        
         actions.remove(new Card(CardType.EAT_SALAD, 1));
       }
       if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, 20)) {
         actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 20, actions.size()));
         possibleMove.add(new Move(actions));
-
+        
         actions.remove(new Card(CardType.TAKE_OR_DROP_CARROTS, 20, actions.size()));
       }
       if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, -20)) {
         actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, -20, actions.size()));
         possibleMove.add(new Move(actions));
-
+        
         actions.remove(new Card(CardType.TAKE_OR_DROP_CARROTS, -20, actions.size()));
       }
       if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, 0)) {
         actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 0, actions.size()));
         possibleMove.add(new Move(actions));
-
+        
         actions.remove(new Card(CardType.TAKE_OR_DROP_CARROTS, 0, actions.size()));
       }
       if (GameRuleLogic.isValidToPlayHurryAhead(this)) {
@@ -628,7 +630,7 @@ public class GameState implements Cloneable {
         } else {
           possibleMove.add(new Move(actions));
         }
-
+        
         actions.remove(new Card(CardType.HURRY_AHEAD, actions.size()));
       }
       if (GameRuleLogic.isValidToPlayFallBack(this)) {
@@ -655,15 +657,15 @@ public class GameState implements Cloneable {
     }
     return possibleMove;
   }
-
+  
   @Override
   public String toString() {
     return "GameState:\n"
-            + "turn=" + this.getTurn() + this.getCurrentPlayer()
-            + this.red + this.blue
-            + this.board
-            + this.getLastMove();
-
+        + "turn=" + this.getTurn() + this.getCurrentPlayer()
+        + this.red + this.blue
+        + this.board
+        + this.getLastMove();
+    
   }
-
+  
 }

@@ -1,17 +1,8 @@
 package sc.server.network;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-
+import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.thoughtworks.xstream.XStream;
-
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
@@ -22,278 +13,231 @@ import sc.protocol.responses.ProtocolMessage;
 import sc.server.Configuration;
 import sc.shared.InvalidGameStateException;
 
+import java.io.IOException;
+import java.util.*;
+
 /**
  * A generic client. This represents a client in the server. Clients which
  * connect to the server (as separate programs or running as threads started by
  * the server) are represented by {@link sc.networking.clients.LobbyClient}.
  */
-public class Client extends XStreamClient implements IClient
-{
-  /* private fields */
-  private boolean								notifiedOnDisconnect;
-
-
-  /* static fields */
+public class Client extends XStreamClient implements IClient {
   private static final Logger logger = LoggerFactory.getLogger(Client.class);
-
-  /* final fields */
-  private final LinkedList<IClientListener>	clientListeners;
-  private final Collection<IClientRole>		roles;
-
-  /* constructor */
-  public Client(INetworkInterface networkInterface, XStream configuredXStream)
-          throws IOException
-  {
+  
+  private boolean notifiedOnDisconnect = false;
+  private final List<IClientListener> clientListeners = new ArrayList<>();
+  private final Collection<IClientRole> roles = new ArrayList<>();
+  
+  public Client(INetworkInterface networkInterface, XStream configuredXStream) throws IOException {
     super(configuredXStream, networkInterface);
-    clientListeners = new LinkedList<>();
-    roles = new LinkedList<>();
-    notifiedOnDisconnect = false;
-
-
   }
-
-	/* methods */
-
+  
   /**
    * Getter for the roles. Roles can be {@link sc.server.gaming.PlayerRole PlayerRole},
    * {@link sc.server.gaming.ObserverRole ObserverRole} or {@link AdministratorRole AdministratorRole}
+   *
    * @return Collection of roles
    */
-  public Collection<IClientRole> getRoles()
-  {
+  public Collection<IClientRole> getRoles() {
     return Collections.unmodifiableCollection(this.roles);
   }
-
+  
   /**
    * Add another role to the client.Roles can be {@link sc.server.gaming.PlayerRole PlayerRole},
    * {@link sc.server.gaming.ObserverRole ObserverRole} or {@link AdministratorRole AdministratorRole}
+   *
    * @param role to be added
    */
   @Override
-  public void addRole(IClientRole role)
-  {
+  public void addRole(IClientRole role) {
     this.roles.add(role);
   }
-
+  
   /**
    * Send a package to the server
+   *
    * @param packet message to be send
    */
   @Override
-  public synchronized void send(ProtocolMessage packet)
-  {
-    if (!isClosed())
-    {
+  public synchronized void send(ProtocolMessage packet) {
+    if (!isClosed()) {
       super.send(packet);
-    }
-    else
-    {
+    } else {
       logger.warn(
-              "Writing on a closed Stream -> dropped the packet. (tried to send package of type {}) Thread: {}",
-              packet.getClass().getSimpleName(),
-              Thread.currentThread().getName());
+          "Writing on a closed Stream -> dropped the packet. (tried to send package of type {}) Thread: {}",
+          packet.getClass().getSimpleName(),
+          Thread.currentThread().getName());
     }
   }
-
+  
   /**
    * Call listener that handle new Packages
+   *
    * @param packet which just arrived
    */
   private void notifyOnPacket(Object packet) throws UnprocessedPacketException, InvalidGameStateException {
-		/*
-		 * NOTE that method is called in the receiver thread. Messages should
-		 * only be passed to listeners. No callbacks should be invoked directly
-		 * in the receiver thread.
-		 */
-
+    /*
+     * NOTE that method is called in the receiver thread. Messages should
+     * only be passed to listeners. No callbacks should be invoked directly
+     * in the receiver thread.
+     */
+    
     Set<RescuableClientException> errors = new HashSet<>();
-
+    
     PacketCallback callback = new PacketCallback(packet);
-
-    for (IClientListener listener : this.clientListeners)
-    {
-      try
-      {
+    
+    for (IClientListener listener : this.clientListeners) {
+      try {
         listener.onRequest(this, callback);
-      }
-      catch (RescuableClientException e)
-      {
+      } catch (RescuableClientException e) {
         errors.add(e);
       }
     }
-
-    if (errors.isEmpty() && !callback.isProcessed())
-    {
+    
+    if (errors.isEmpty() && !callback.isProcessed()) {
       String msg = String.format("Packet %s wasn't processed.", packet);
       logger.warn(msg);
       throw new UnprocessedPacketException(msg);
     }
-
-    for (RescuableClientException error : errors)
-    {
+    
+    for (RescuableClientException error : errors) {
       logger.warn("An error occured: ", error);
-      if (error.getMessage() != "It's not your turn yet.")
-      {
+      if (error.getMessage() != "It's not your turn yet.") {
         logger.warn(
-                "Game closed because of GameLogicException! The message is: "
-                        + error.getMessage());
+            "Game closed because of GameLogicException! The message is: "
+                + error.getMessage());
       }
     }
-    if (!errors.isEmpty())
-    {
+    if (!errors.isEmpty()) {
       logger.debug("stopping client because of error. Thread: {}",
-              Thread.currentThread().getName());
+          Thread.currentThread().getName());
       stop();
     }
-    if (packet instanceof LeftGameEvent)
-    {
+    if (packet instanceof LeftGameEvent) {
       logger.debug(
-              "stopping client because of LeftGameEvent received. Thread: {}",
-              Thread.currentThread().getName());
+          "stopping client because of LeftGameEvent received. Thread: {}",
+          Thread.currentThread().getName());
       stop();
     }
   }
-
+  
   /**
    * Call listener, if an error has occurred
+   *
    * @param packet which rose the error
    */
-  private synchronized void notifyOnError(ProtocolErrorMessage packet)
-  {
-    for (IClientListener listener : this.clientListeners)
-    {
-      try
-      {
+  private synchronized void notifyOnError(ProtocolErrorMessage packet) {
+    for (IClientListener listener : this.clientListeners) {
+      try {
         listener.onError(this, packet);
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
         logger.error("OnError Notification caused an exception.", e);
       }
     }
   }
-
+  
   /** Call listener if client has disconnected */
-  private synchronized void notifyOnDisconnect()
-  {
-    if (!this.notifiedOnDisconnect)
-    {
+  private synchronized void notifyOnDisconnect() {
+    if (!this.notifiedOnDisconnect) {
       this.notifiedOnDisconnect = true;
-      for (IClientListener listener : this.clientListeners)
-      {
-        try
-        {
+      for (IClientListener listener : this.clientListeners) {
+        try {
           listener.onClientDisconnected(this);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
           logger.error(
-                  "OnDisconnect Notification caused an exception.",
-                  e);
+              "OnDisconnect Notification caused an exception.",
+              e);
         }
       }
     }
   }
-
+  
   /**
    * Add another {@link IClientListener listener} to the client
+   *
    * @param listener to be added
    */
-  public void addClientListener(IClientListener listener)
-  {
+  public void addClientListener(IClientListener listener) {
     this.clientListeners.add(listener);
   }
-
-  public void removeClientListener(IClientListener listener)
-  {
+  
+  public void removeClientListener(IClientListener listener) {
     this.clientListeners.remove(listener);
   }
-
+  
   /**
    * Test if this client is a administrator
+   *
    * @return true, if this client has an AdministratorRole
    */
-  public boolean isAdministrator()
-  {
-    for (IClientRole role : this.roles)
-    {
-      if (role instanceof AdministratorRole)
-      {
+  public boolean isAdministrator() {
+    for (IClientRole role : this.roles) {
+      if (role instanceof AdministratorRole) {
         return true;
       }
     }
-
+    
     return false;
   }
-
+  
   /**
    * Authenticates a Client as Administrator
    *
-   * @param password
-   *            The secret which is required to gain administrative rights.
+   * @param password The secret which is required to gain administrative rights.
+   *
    * @throws AuthenticationFailedException
    */
   public void authenticate(String password)
-          throws AuthenticationFailedException
-  {
+      throws AuthenticationFailedException {
     String correctPassword = Configuration.getAdministrativePassword();
-
-    if (correctPassword != null && correctPassword.equals(password))
-    {
-      if (!isAdministrator())
-      {
+    
+    if (correctPassword != null && correctPassword.equals(password)) {
+      if (!isAdministrator()) {
         addRole(new AdministratorRole(this));
         logger.info("Client authenticated as administrator");
-      }
-      else
-      {
+      } else {
         logger.warn(
-                "Client tried to authenticate as administrator twice.");
+            "Client tried to authenticate as administrator twice.");
       }
-    }
-    else
-    {
+    } else {
       logger.warn("Client failed to authenticate as administrator.");
-
+      
       throw new AuthenticationFailedException();
     }
   }
-
+  
   /**
    * Disconnect the client and cleanup.
+   *
    * @param cause of disconnect
    */
   @Override
-  protected void onDisconnect(DisconnectCause cause)
-  {
+  protected void onDisconnect(DisconnectCause cause) {
     super.onDisconnect(cause);
-    for (IClientRole role : this.roles)
-    {
-      try
-      {
+    for (IClientRole role : this.roles) {
+      try {
         role.close();
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
         logger.warn("Couldn't close role.", e);
       }
     }
-
+    
     notifyOnDisconnect();
   }
-
+  
   /**
    * Received new package, which is send to all listener
+   *
    * @param o received package
    */
   @Override
   protected void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException {
-		/*
-		 * NOTE that this method is called in the receiver thread. Messages
-		 * should only be passed to listeners. No callbacks should be invoked
-		 * directly in the receiver thread.
-		 */
+    /*
+     * NOTE that this method is called in the receiver thread. Messages
+     * should only be passed to listeners. No callbacks should be invoked
+     * directly in the receiver thread.
+     */
     notifyOnPacket(o);
   }
-
+  
 }

@@ -37,7 +37,7 @@ public final class PlayerScore
 
 	public PlayerScore(ScoreCause cause, String reason, Integer... scores)
 	{
-		this(cause, reason, CollectionHelper.iterableToColleciton(
+		this(cause, reason, CollectionHelper.iterableToCollection(
 				CollectionHelper.intArrayToBigDecimalArray(scores)).toArray(
 				new BigDecimal[scores.length]));
 	}
@@ -71,7 +71,7 @@ public final class PlayerScore
 
 	public String[] toStrings()
 	{
-		return CollectionHelper.iterableToColleciton(
+		return CollectionHelper.iterableToCollection(
 				CollectionHelper.map(parts, new Function<BigDecimal, String>() {
 					@Override
 					public String operate(BigDecimal val)

@@ -1,6 +1,7 @@
 package sc.shared;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class Score implements Iterable<ScoreValue> {
   private int numberOfTests;
 
   @XStreamImplicit(itemFieldName = "values")
-  private List<ScoreValue> scoreValues = new LinkedList<>();
+  private List<ScoreValue> scoreValues = new ArrayList<>(2);
 
   public Score(ScoreDefinition scoreDefinition, String displayName) {
     for (ScoreFragment fragment : scoreDefinition) {

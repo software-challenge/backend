@@ -39,7 +39,7 @@ public class GameRoom implements IGameListener {
   private final GameRoomManager gameRoomManager;
   private final GamePluginInstance provider;
   private final IGameInstance game;
-  private List<ObserverRole> observers = new LinkedList<>();
+  private List<ObserverRole> observers = new ArrayList<>();
   private List<PlayerSlot> playerSlots = new ArrayList<>(2);
   private final boolean prepared;
   private GameStatus status = GameStatus.CREATED;
@@ -114,7 +114,7 @@ public class GameRoom implements IGameListener {
     broadcast(this.result);
     // save replay after game over
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
-      List<SlotDescriptor> slotDescriptors = new LinkedList<>();
+      List<SlotDescriptor> slotDescriptors = new ArrayList<>();
       for (PlayerSlot slot : this.getSlots()) {
         slotDescriptors.add(slot.getDescriptor());
       }
@@ -165,7 +165,7 @@ public class GameRoom implements IGameListener {
    */
   private GameResult generateGameResult(Map<SimplePlayer, PlayerScore> results) {
     ScoreDefinition definition = getProvider().getPlugin().getScoreDefinition();
-    List<PlayerScore> scores = new LinkedList<>();
+    List<PlayerScore> scores = new ArrayList<>();
 
     // restore order
     for (PlayerRole player : getPlayers()) {
@@ -545,7 +545,7 @@ public class GameRoom implements IGameListener {
    * @return List of PlayerRole Objects
    */
   private Collection<PlayerRole> getPlayers() {
-    LinkedList<PlayerRole> clients = new LinkedList<>();
+    ArrayList<PlayerRole> clients = new ArrayList<>();
     for (PlayerSlot slot : this.playerSlots) {
       if (!slot.isEmpty()) {
         clients.add(slot.getRole());
@@ -560,7 +560,7 @@ public class GameRoom implements IGameListener {
    * @return all Clients of the Players
    */
   public Collection<IClient> getClients() {
-    LinkedList<IClient> clients = new LinkedList<>();
+    ArrayList<IClient> clients = new ArrayList<>();
     for (PlayerRole slot : getPlayers()) {
       clients.add(slot.getClient());
     }

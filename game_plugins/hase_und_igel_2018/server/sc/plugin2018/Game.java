@@ -15,58 +15,52 @@ import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
 
 import java.io.*;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /** Minimal game. Basis for new plugins. This class holds the game logic. */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
   private static final Logger logger = LoggerFactory.getLogger(Game.class);
-
+  
   @XStreamOmitField
-  private List<PlayerColor> availableColors = new LinkedList<>();
-
+  private Deque<PlayerColor> availableColors = new ArrayDeque<>();
+  
   private GameState gameState = new GameState();
-
+  
   public Game() {
-    this.availableColors.add(PlayerColor.RED);
-    this.availableColors.add(PlayerColor.BLUE);
+    availableColors.add(PlayerColor.RED);
+    availableColors.add(PlayerColor.BLUE);
   }
-
+  
   public Game(String pluginUUID) {
-    this.availableColors.add(PlayerColor.RED);
-    this.availableColors.add(PlayerColor.BLUE);
+    this();
     this.pluginUUID = pluginUUID;
   }
-
+  
   public GameState getGameState() {
     return this.gameState;
   }
-
+  
   @Override
   protected Object getCurrentState() {
     return this.gameState; // return visible board for the players
   }
-
-  /**
-   * Someone did something, check out what it was (move maybe? Then check the
-   * move)
-   */
+  
+  /** Someone did something, check out what it was (move maybe? Then check the move) */
   @Override
   protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
-
+    
     Player author = (Player) fromPlayer;
-
+    
     /*
      * NOTE: Checking if right player sent move was already done by
      * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, ProtocolMove)}.
      * There is no need to do it here again.
      */
     try {
-      if (!(data instanceof Move)) {
+      if (!(data instanceof Move))
         throw new InvalidMoveException(author.getDisplayName() + " hat kein Zug-Objekt gesendet.");
-      }
-
+      
       final Move move = (Move) data;
       move.perform(this.gameState);
       next(this.gameState.getCurrentPlayer());
@@ -74,70 +68,56 @@ public class Game extends RoundBasedGameInstance<Player> {
       super.catchInvalidMove(e, author);
     }
   }
-
-  /**
-   * In this game, a new round begins when both players made one move. The order
-   * in which the players make their move may change.
-   */
-  protected boolean increaseTurnIfNecessary(Player nextPlayer) {
-    return getGameState().getTurn() % 2 == 0;
-  }
-
+  
   @Override
   public SimplePlayer onPlayerJoined() {
-    final Player player;
-    // When starting a game from a imported state the players should not be
-    // overwritten
-    PlayerColor playerColor = this.availableColors.remove(0);
-    if (PlayerColor.RED == playerColor && this.gameState.getRedPlayer() != null) {
-      player = this.gameState.getRedPlayer();
-    } else if (PlayerColor.BLUE == playerColor && this.gameState.getBluePlayer() != null) {
-      player = this.gameState.getBluePlayer();
-    } else {
+    PlayerColor playerColor = this.availableColors.remove();
+    // When starting a game from a imported state the players should not be overwritten
+    Player player = gameState.getPlayer(playerColor);
+    if (player == null)
       player = new Player(playerColor);
-    }
-
+    
     this.players.add(player);
     this.gameState.addPlayer(player);
-
+    
     return player;
   }
-
+  
   /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests */
   @Override
   public void start() {
     for (final Player p : this.players) {
       p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
     }
-
+    
     super.start();
   }
-
+  
   @Override
   public PlayerScore getScoreFor(Player player) {
-
     logger.debug("get score for player {}", player.getPlayerColor());
     logger.debug("player violated: {}", player.hasViolated());
-    int[] stats = this.gameState.getPlayerStats(player);
+    int[] stats = gameState.getPlayerStats(player);
+    
+    PlayerColor playerColor = player.getPlayerColor();
+    Player opponent = gameState.getPlayer(playerColor.opponent());
     int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
     String reason = null;
-    Player opponent = player.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
-            : this.gameState.getRedPlayer();
     if (winCondition != null) {
       reason = winCondition.getReason();
-      if (player.getPlayerColor().equals(winCondition.getWinner())) {
+      if (winCondition.getWinner() == playerColor) {
         matchPoints = Constants.WIN_SCORE;
-      } else if (opponent.getPlayerColor().equals(winCondition.getWinner())) {
+      } else if (winCondition.getWinner() == playerColor) {
         matchPoints = Constants.LOSE_SCORE;
       } else {
         // this should not happen
         logger.warn("winner has no known PlayerColor");
       }
     }
-    // opponent has done something wrong
     if (opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft()
-            || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
+        || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
+      // opponent has done something wrong
       matchPoints = Constants.WIN_SCORE;
     }
     ScoreCause cause;
@@ -160,15 +140,14 @@ public class Game extends RoundBasedGameInstance<Player> {
     } else { // regular score or opponent violated
       cause = ScoreCause.REGULAR;
     }
-    return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_FIELD_INDEX],
-            stats[Constants.GAME_STATS_CARROTS]);
+    return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_FIELD_INDEX], stats[Constants.GAME_STATS_CARROTS]);
   }
-
+  
   @Override
   protected ActionTimeout getTimeoutFor(Player player) {
     return new ActionTimeout(true, 10000L, 2000L);
   }
-
+  
   /**
    * Checks if a win condition in the current game state is met.
    * Checks round limit and end of round (and playerStats).
@@ -210,7 +189,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
     }
   }
-
+  
   /**
    * Checks if one player reached the goal (at the end of a round). If both player are in goal, the one with lesser carrots
    * wins, if they both have the same amount, red wins for first entering goal.
@@ -234,7 +213,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     }
     return null;
   }
-
+  
   @Override
   public void loadFromFile(String file) {
     logger.info("Loading game from: " + file);
@@ -244,15 +223,16 @@ public class Game extends RoundBasedGameInstance<Player> {
       loadGameInfo(gameInfo);
     }
   }
-
+  
   @Override
   public void loadFromFile(String file, int turn) {
     logger.info("Loading game from: " + file + " at turn: " + turn);
+    File tmp_replay = new File("./tmp_replay.xml");
     // only copy right gameState specified by turn
     try {
       FileReader fileReader = new FileReader(file);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
-      FileWriter fileWriter = new FileWriter("./tmp_replay.xml");
+      FileWriter fileWriter = new FileWriter(tmp_replay);
       BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
       String line;
       bufferedWriter.write("<protocol>"); // XXX since hui18 replays start with protocol instead of object-stream
@@ -263,12 +243,12 @@ public class Game extends RoundBasedGameInstance<Player> {
           bufferedWriter.newLine();
           // case a gameState with specified turn was found
           while ((line = bufferedReader.readLine()) != null
-                  && !line.contains("turn=\"" + (turn + 1) + "\"")) {
+              && !line.contains("turn=\"" + (turn + 1) + "\"")) {
             bufferedWriter.write(line);
             bufferedWriter.newLine();
           }
         }
-
+        
       }
       bufferedWriter.write("</protocol>");
       bufferedWriter.flush();
@@ -281,10 +261,9 @@ public class Game extends RoundBasedGameInstance<Player> {
       loadGameInfo(gameInfo);
     }
     // delete copied
-    File tmp_replay = new File("./tmp_replay.xml");
     tmp_replay.delete();
   }
-
+  
   // XXX test this
   @Override
   public void loadGameInfo(Object gameInfo) {
@@ -292,28 +271,25 @@ public class Game extends RoundBasedGameInstance<Player> {
     if (gameInfo instanceof GameState) {
       this.gameState = (GameState) gameInfo;
       // when loading from a state the listeners are not initialized
-      this.gameState.getRedPlayer().initListeners();
-      this.gameState.getBluePlayer().initListeners();
-      // the currentPlayer has to be RED (else the Move request is send to the
-      // wrong player)
-      // if it isn't red, the players have to be switched and red is made
-      // currentPlayer
+      for (PlayerColor color : PlayerColor.values())
+        gameState.getPlayer(color).initListeners();
+      // the currentPlayer has to be RED (else the Move request is send to the wrong player)
+      // if it isn't RED, the players have to be switched and RED is made currentPlayer
       if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
         this.gameState.setCurrentPlayer(PlayerColor.RED);
-        Player newRed = this.gameState.getBluePlayer().clone();
-        newRed.setPlayerColor(PlayerColor.RED);
-        Player newBlue = this.gameState.getRedPlayer().clone();
-        newBlue.setPlayerColor(PlayerColor.BLUE);
-        this.gameState.setRedPlayer(newRed);
-        this.gameState.setBluePlayer(newBlue);
+        for (PlayerColor color : PlayerColor.values()) {
+          Player newPlayer = this.gameState.getPlayer(color.opponent());
+          newPlayer.setPlayerColor(color);
+          gameState.setPlayer(color, newPlayer);
+        }
       }
     }
   }
-
+  
   @Override
   public List<SimplePlayer> getWinners() {
     WinCondition win = checkWinCondition();
-    List<SimplePlayer> winners = new LinkedList<>();
+    List<SimplePlayer> winners = new ArrayList<>();
     if (win != null) {
       for (Player player : this.players) {
         if (player.getPlayerColor() == win.getWinner()) {
@@ -334,20 +310,18 @@ public class Game extends RoundBasedGameInstance<Player> {
     }
     return winners;
   }
-
+  
   /**
-   * Returns all players. This should always be 2 the startplayer should be first in the List.
+   * Returns all players. This should always be 2.
+   * The startPlayer should be first in the List.
    *
    * @return List of all players
    */
   @Override
   public List<SimplePlayer> getPlayers() {
-    List<SimplePlayer> players = new LinkedList<>();
-    players.add(this.gameState.getRedPlayer());
-    players.add(this.gameState.getBluePlayer());
-    return players;
+    return Arrays.asList(gameState.getPlayers());
   }
-
+  
   /**
    * Returns the PlayerScore for both players
    *
@@ -355,10 +329,10 @@ public class Game extends RoundBasedGameInstance<Player> {
    */
   @Override
   public List<PlayerScore> getPlayerScores() {
-    LinkedList<PlayerScore> playerScores = new LinkedList<>();
-    playerScores.add(getScoreFor(this.gameState.getRedPlayer()));
-    playerScores.add(getScoreFor(this.gameState.getBluePlayer()));
+    List<PlayerScore> playerScores = new ArrayList<>();
+    for (Player player : gameState.getPlayers())
+      playerScores.add(getScoreFor(player));
     return playerScores;
   }
-
+  
 }

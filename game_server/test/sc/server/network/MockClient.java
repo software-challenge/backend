@@ -1,6 +1,8 @@
 package sc.server.network;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -21,8 +23,8 @@ import sc.shared.InvalidGameStateException;
 public class MockClient extends Client
 {
 	private final static Logger logger = LoggerFactory.getLogger(MockClient.class);
-	private final Queue<Object>		outgoingMessages = new LinkedList<Object>();
-	private BlockingQueue<Object>	objects = new LinkedBlockingQueue<Object>();
+	private final Queue<Object>		outgoingMessages = new ArrayDeque<>();
+	private BlockingQueue<Object>	objects = new LinkedBlockingQueue<>();
 	private final XStream			xStream;
 
 	public MockClient(StringNetworkInterface stringInterface, XStream xStream)
@@ -56,7 +58,7 @@ public class MockClient extends Client
 	public <T> T seekMessage(Class<T> type)
 	{
 		int i = -1;
-		Object current = null;
+		Object current;
 		do
 		{
 			i++;
