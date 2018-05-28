@@ -56,9 +56,11 @@ public class TestClient extends XStreamClient {
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
     Option numberOfTestsOption = parser.addIntegerOption('t', "tests");
+    
+    Option noTimeoutOption = parser.addBooleanOption("no-timeout");
     Option[] execOptions = {parser.addStringOption("player1"), parser.addStringOption("player2")};
     Option[] nameOptions = {parser.addStringOption("name1"), parser.addStringOption("name2")};
-    Option[] canTimeoutOptions = {parser.addBooleanOption("timeout1"), parser.addBooleanOption("timeout2")};
+    Option[] noTimeoutOptions = {parser.addBooleanOption("no-timeout1"), parser.addBooleanOption("no-timeout2")};
     
     try {
       parser.parse(args);
@@ -78,15 +80,17 @@ public class TestClient extends XStreamClient {
     boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_TESTSERVER_PORT);
-    int numberOfTests = (int) parser.getOptionValue(numberOfTestsOption, 10);
+    int numberOfTests = (int) parser.getOptionValue(numberOfTestsOption, 100);
+    
+    boolean noTimeout = (boolean) parser.getOptionValue(noTimeoutOption, false);
     for (int i = 0; i < 2; i++) {
-      players[i].canTimeout = (Boolean) parser.getOptionValue(canTimeoutOptions[i], true);
+      players[i].canTimeout = !(noTimeout || (boolean) parser.getOptionValue(noTimeoutOptions[i], false));
       players[i].name = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
       players[i].executable = (String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar");
       players[i].isJar = isJar(players[i].executable);
     }
     if (players[0].name.equals(players[1].name)) {
-      logger.warn("Both players have the same name, adding suffixes.");
+      logger.warn("Both players have the same name, adding suffixes!");
       players[0].name = players[0].name + "-1";
       players[1].name = players[1].name + "-2";
     }
@@ -209,9 +213,9 @@ public class TestClient extends XStreamClient {
         }
       }
       
-      List<ScoreValue> val = score.getScoreValues();
+      List<ScoreValue> values = score.getScoreValues();
       logger.info(String.format("New score for %s: Siegpunkte %s, \u2205Feldnummer %5.2f, \u2205Karotten %5.2f after %s of %s tests",
-          score.getDisplayName(), val.get(0).getValue(), val.get(1).getValue(), val.get(2).getValue(), finishedTests, totalTests));
+          score.getDisplayName(), values.get(0).getValue(), values.get(1).getValue(), values.get(2).getValue(), finishedTests, totalTests));
       
       if (gotLastPlayerScores == 2) {
         printScores();
@@ -301,10 +305,9 @@ public class TestClient extends XStreamClient {
       if (player.proc != null)
         player.proc.destroyForcibly();
     
-    if (status != 0) {
+    if (status != 0)
       logger.warn("Terminating with exit code " + status);
-      System.exit(status);
-    }
+    System.exit(status);
   }
   
   private static boolean isJar(String f) {
