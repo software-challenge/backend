@@ -25,6 +25,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.IntToDoubleFunction;
+
+import static java.lang.Math.pow;
+import static sc.Util.factorial;
 
 /**
  * A simple CLI to test clients. Enables TestMode on startup.
@@ -45,6 +49,8 @@ public class TestClient extends XStreamClient {
   private static final File logDir = new File("logs").getAbsoluteFile();
   
   private static TestClient testclient;
+  private static Double significance;
+  private static int minTests;
   
   public static void main(String[] args) {
     System.setProperty("file.encoding", "UTF-8");
@@ -55,7 +61,10 @@ public class TestClient extends XStreamClient {
     Option serverOption = parser.addBooleanOption("start-server");
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
+    
     Option numberOfTestsOption = parser.addIntegerOption('t', "tests");
+    Option minTestsOption = parser.addIntegerOption("min-tests");
+    Option significanceOption = parser.addDoubleOption("significance");
     
     Option noTimeoutOption = parser.addBooleanOption("no-timeout");
     Option[] execOptions = {parser.addStringOption("player1"), parser.addStringOption("player2")};
@@ -80,14 +89,23 @@ public class TestClient extends XStreamClient {
     boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_TESTSERVER_PORT);
+    
     int numberOfTests = (int) parser.getOptionValue(numberOfTestsOption, 100);
+    significance = (Double) parser.getOptionValue(significanceOption);
+    if (significance != null) {
+      minTests = (int) parser.getOptionValue(minTestsOption, 20);
+      if (numberOfTests > 170) {
+        logger.error("With significance testing the number of tests must not exceed 170!");
+        exit(2);
+      }
+    }
     
     boolean noTimeout = (boolean) parser.getOptionValue(noTimeoutOption, false);
     for (int i = 0; i < 2; i++) {
       players[i].canTimeout = !(noTimeout || (boolean) parser.getOptionValue(noTimeoutOptions[i], false));
       players[i].name = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
       players[i].executable = (String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar");
-      players[i].isJar = isJar(players[i].executable);
+      players[i].isJar = Util.isJar(players[i].executable);
     }
     if (players[0].name.equals(players[1].name)) {
       logger.warn("Both players have the same name, adding suffixes!");
@@ -126,7 +144,7 @@ public class TestClient extends XStreamClient {
   private int totalTests;
   
   private boolean terminateWhenPossible = false;
-  private int gotLastPlayerScores = 0;
+  private int playerScores = 0;
   private int irregularGames = 0;
   
   private ExecutorService waiter = Executors.newSingleThreadExecutor();
@@ -202,8 +220,7 @@ public class TestClient extends XStreamClient {
         }
       }
     } else if (message instanceof PlayerScorePacket) {
-      if (terminateWhenPossible)
-        gotLastPlayerScores++;
+      playerScores++;
       Score score = ((PlayerScorePacket) message).getScore();
       
       for (Player player : players) {
@@ -217,13 +234,14 @@ public class TestClient extends XStreamClient {
       logger.info(String.format("New score for %s: Siegpunkte %s, \u2205Feldnummer %5.2f, \u2205Karotten %5.2f after %s of %s tests",
           score.getDisplayName(), values.get(0).getValue(), values.get(1).getValue(), values.get(2).getValue(), finishedTests, totalTests));
       
-      if (gotLastPlayerScores == 2) {
+      if (playerScores == 2 && (isSignificant() || terminateWhenPossible)) {
         printScores();
         exit(0);
       }
       
     } else if (message instanceof PrepareGameProtocolMessage) {
       logger.debug("Received PrepareGame - starting clients");
+      playerScores = 0;
       PrepareGameProtocolMessage pgm = (PrepareGameProtocolMessage) message;
       send(new ObservationRequest(pgm.getRoomId()));
       try {
@@ -234,13 +252,12 @@ public class TestClient extends XStreamClient {
           int tests = finishedTests;
           int slept = 0;
           while (tests == finishedTests) {
-            // Allow 10 seconds for detecting failed clients
-            if (slept < 10)
-              for (Player player : players)
-                if (!player.proc.isAlive()) {
-                  logger.error("{} crashed, look into {}", player.name, logDir);
-                  exit(2);
-                }
+            // Detect failed clients
+            for (Player player : players)
+              if (!player.proc.isAlive()) {
+                logger.error("{} crashed, look into {}", player.name, logDir);
+                exit(2);
+              }
             // Max game length: Roundlimit * 2 * 2 seconds, one second buffer per round
             if (slept > Constants.ROUND_LIMIT * 5) {
               logger.error("The game seems to hang, exiting!");
@@ -310,10 +327,6 @@ public class TestClient extends XStreamClient {
     System.exit(status);
   }
   
-  private static boolean isJar(String f) {
-    return f.endsWith("jar") && new File(f).exists();
-  }
-  
   private static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
     logger.info("Creating TCP Network for {}:{}", host, port);
     return new TcpNetwork(new Socket(host, port));
@@ -338,6 +351,25 @@ public class TestClient extends XStreamClient {
     }
   }
   
+  private boolean isSignificant() {
+    if (significance == null || finishedTests < minTests)
+      return false;
+    int n = finishedTests;
+    IntToDoubleFunction binominalPD = (int k) -> pow(0.5, k) * pow(0.5, n - k) * (factorial(n, k) / factorial(n - k));
+    players:
+    for (int i = 0; i < 2; i++) {
+      double binominalCD = 0.0;
+      for (int k = 0; k <= players[i].score.getScoreValues().get(0).getValue().intValue() / Constants.WIN_SCORE; k++) {
+        binominalCD += binominalPD.applyAsDouble(k);
+        if (binominalCD > significance)
+          continue players;
+      }
+      logger.warn(String.format("%s is significantly better! Uncertainty: %.2f%%", players[(i + 1) % 2].name, binominalCD * 100));
+      return true;
+    }
+    return false;
+  }
+  
 }
 
 class Player {
@@ -354,5 +386,21 @@ class Player {
   
   Process proc;
   Score score;
+  
+}
+
+class Util {
+  
+  static boolean isJar(String f) {
+    return f.endsWith("jar") && new File(f).exists();
+  }
+  
+  static double factorial(int n) {
+    return n <= 1 ? 1 : factorial(n - 1) * n;
+  }
+  
+  static double factorial(int n, int downTo) {
+    return n <= downTo ? 1 : factorial(n - 1, downTo) * n;
+  }
   
 }
