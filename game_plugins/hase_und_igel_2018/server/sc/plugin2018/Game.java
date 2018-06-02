@@ -42,8 +42,9 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
   
   @Override
+  /** @return board visible for the players */
   protected Object getCurrentState() {
-    return this.gameState; // return visible board for the players
+    return this.gameState;
   }
   
   /** Someone did something, check out what it was (move maybe? Then check the move) */
@@ -52,7 +53,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     
     Player author = (Player) fromPlayer;
     
-    /*
+    /**
      * NOTE: Checking if right player sent move was already done by
      * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, ProtocolMove)}.
      * There is no need to do it here again.
@@ -108,7 +109,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       reason = winCondition.getReason();
       if (winCondition.getWinner() == playerColor) {
         matchPoints = Constants.WIN_SCORE;
-      } else if (winCondition.getWinner() == playerColor) {
+      } else if (winCondition.getWinner() == playerColor.opponent()) {
         matchPoints = Constants.LOSE_SCORE;
       } else {
         // this should not happen
