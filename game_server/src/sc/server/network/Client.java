@@ -14,7 +14,10 @@ import sc.server.Configuration;
 import sc.shared.InvalidGameStateException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A generic client. This represents a client in the server. Clients which
@@ -63,8 +66,7 @@ public class Client extends XStreamClient implements IClient {
     if (!isClosed()) {
       super.send(packet);
     } else {
-      logger.warn(
-          "Writing on a closed Stream -> dropped the packet. (tried to send package of type {}) Thread: {}",
+      logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {}) Thread: {}",
           packet.getClass().getSimpleName(),
           Thread.currentThread().getName());
     }
@@ -82,7 +84,7 @@ public class Client extends XStreamClient implements IClient {
      * in the receiver thread.
      */
     
-    Set<RescuableClientException> errors = new HashSet<>();
+    Collection<RescuableClientException> errors = new ArrayList<>();
     
     PacketCallback callback = new PacketCallback(packet);
     
@@ -102,27 +104,25 @@ public class Client extends XStreamClient implements IClient {
     
     for (RescuableClientException error : errors) {
       logger.warn("An error occured: ", error);
-      if (error.getMessage() != "It's not your turn yet.") {
-        logger.warn(
-            "Game closed because of GameLogicException! The message is: "
-                + error.getMessage());
+      if (!error.getMessage().equals("It's not your turn yet.")) {
+        logger.warn("Game closed because of GameLogicException: " + error.getMessage());
       }
     }
     if (!errors.isEmpty()) {
-      logger.debug("stopping client because of error. Thread: {}",
+      logger.debug("Stopping client because of error. Thread: {}",
           Thread.currentThread().getName());
       stop();
     }
+    
     if (packet instanceof LeftGameEvent) {
-      logger.debug(
-          "stopping client because of LeftGameEvent received. Thread: {}",
+      logger.debug("Stopping client because of LeftGameEvent received. Thread: {}",
           Thread.currentThread().getName());
       stop();
     }
   }
   
   /**
-   * Call listener, if an error has occurred
+   * Call listeners upon error
    *
    * @param packet which rose the error
    */
@@ -136,27 +136,23 @@ public class Client extends XStreamClient implements IClient {
     }
   }
   
-  /** Call listener if client has disconnected */
+  /** Call listeners upon disconnect */
   private synchronized void notifyOnDisconnect() {
     if (!this.notifiedOnDisconnect) {
       this.notifiedOnDisconnect = true;
-      for (IClientListener listener : this.clientListeners) {
+      // Avoid ConcurrentModificationException
+      final List<IClientListener> listeners = new ArrayList<>(clientListeners);
+      for (IClientListener listener : listeners) {
         try {
           listener.onClientDisconnected(this);
         } catch (Exception e) {
-          logger.error(
-              "OnDisconnect Notification caused an exception.",
-              e);
+          logger.error("OnDisconnect Notification caused an exception.", e);
         }
       }
     }
   }
   
-  /**
-   * Add another {@link IClientListener listener} to the client
-   *
-   * @param listener to be added
-   */
+  /** Add a {@link IClientListener listener} to the client */
   public void addClientListener(IClientListener listener) {
     this.clientListeners.add(listener);
   }
@@ -168,7 +164,7 @@ public class Client extends XStreamClient implements IClient {
   /**
    * Test if this client is a administrator
    *
-   * @return true, if this client has an AdministratorRole
+   * @return true iff this client has an AdministratorRole
    */
   public boolean isAdministrator() {
     for (IClientRole role : this.roles) {
@@ -176,19 +172,14 @@ public class Client extends XStreamClient implements IClient {
         return true;
       }
     }
-    
     return false;
   }
   
   /**
    * Authenticates a Client as Administrator
-   *
-   * @param password The secret which is required to gain administrative rights.
-   *
-   * @throws AuthenticationFailedException
+   * @param password The secret that is required to gain administrative rights.
    */
-  public void authenticate(String password)
-      throws AuthenticationFailedException {
+  public void authenticate(String password) throws AuthenticationFailedException {
     String correctPassword = Configuration.getAdministrativePassword();
     
     if (correctPassword != null && correctPassword.equals(password)) {
@@ -196,8 +187,7 @@ public class Client extends XStreamClient implements IClient {
         addRole(new AdministratorRole(this));
         logger.info("Client authenticated as administrator");
       } else {
-        logger.warn(
-            "Client tried to authenticate as administrator twice.");
+        logger.warn("Client tried to authenticate as administrator twice.");
       }
     } else {
       logger.warn("Client failed to authenticate as administrator.");

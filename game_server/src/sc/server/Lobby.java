@@ -55,7 +55,7 @@ public class Lobby implements IClientListener {
 
   @Override
   public void onClientDisconnected(Client source) {
-    this.logger.info("{} disconnected.", source);
+    logger.info("{} disconnected.", source);
     source.removeClientListener(this);
   }
 

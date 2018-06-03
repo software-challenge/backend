@@ -128,7 +128,7 @@ public class ClientManager implements Runnable, IClientListener {
   @Override
   public void onClientDisconnected(Client source) {
     logger.info("Removing client {} from client manager", source);
-    ClientManager.this.clients.remove(source);
+    clients.remove(source);
   }
   
   /**
