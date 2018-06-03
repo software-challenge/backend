@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.IntToDoubleFunction;
 
 import static java.lang.Math.pow;
@@ -188,8 +189,8 @@ public class TestClient extends XStreamClient {
         GameResult result = (GameResult) packet.getData();
         if (!result.isRegular())
           irregularGames++;
-        StringBuilder log = new StringBuilder("Game {} " +
-            (result.isRegular() ? "ended regularly -" : "ended abnormally!") + " Winner: ");
+        StringBuilder log = new StringBuilder("Game {} ended " +
+            (result.isRegular() ? "regularly -" : "abnormally!") + " Winner: ");
         for (SimplePlayer winner : result.getWinners())
           log.append(winner.getDisplayName()).append(", ");
         logger.warn(log.substring(0, log.length() - 2), finishedTests);
@@ -200,11 +201,14 @@ public class TestClient extends XStreamClient {
         
         try {
           for (Player player : players)
-            player.proc.waitFor();
+            player.proc.waitFor(5, TimeUnit.SECONDS);
         } catch (InterruptedException ignored) {
         }
         for (Player player : players)
-          player.proc.destroy();
+          if(player.proc.isAlive()) {
+            logger.warn("Player {} is not responding anymore. Killing...", player.name);
+            player.proc.destroyForcibly();
+          }
         
         if (finishedTests == totalTests)
           terminateWhenPossible = true;
