@@ -7,14 +7,13 @@ import sc.protocol.responses.ProtocolMessage;
 /** Send by administrative client to enable or disable testMode */
 
 @XStreamAlias("testMode")
-public class TestModeRequest extends ProtocolMessage  implements ILobbyRequest {
-
-
+public class TestModeRequest implements ILobbyRequest {
+  
   @XStreamAsAttribute
   public boolean testMode;
-
+  
   public TestModeRequest(boolean testMode) {
     this.testMode = testMode;
   }
-
+  
 }

@@ -7,7 +7,7 @@ import sc.protocol.requests.ILobbyRequest;
 /** Response to TestModeRequest containing the current status of testMode */
 
 @XStreamAlias(value = "testing")
-public class TestModeMessage extends ProtocolMessage implements ILobbyRequest {
+public class TestModeMessage implements ILobbyRequest {
 
   @XStreamAsAttribute
   public boolean testMode;

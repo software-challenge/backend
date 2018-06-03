@@ -10,7 +10,7 @@ import sc.protocol.responses.ProtocolMessage;
  */
 
 @XStreamAlias("join")
-public class JoinRoomRequest extends ProtocolMessage implements ILobbyRequest {
+public class JoinRoomRequest implements ILobbyRequest {
   @XStreamAsAttribute
   private String gameType = null;
 

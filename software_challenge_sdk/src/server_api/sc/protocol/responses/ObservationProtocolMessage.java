@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /** Sent to client as response to successfully joining a GameRoom as Observer */
 @XStreamAlias(value = "observed")
-public class ObservationProtocolMessage extends ProtocolMessage {
+public class ObservationProtocolMessage implements ProtocolMessage{
   @XStreamAsAttribute
   private String roomId;
   

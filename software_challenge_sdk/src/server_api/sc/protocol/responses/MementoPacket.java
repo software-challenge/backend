@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /** Wrapper for two objects: state and perspective */
 @XStreamAlias("memento")
-public final class MementoPacket extends ProtocolMessage implements IPerspectiveProvider {
+public final class MementoPacket implements ProtocolMessage, IPerspectiveProvider {
   private Object state;
 
   @XStreamOmitField

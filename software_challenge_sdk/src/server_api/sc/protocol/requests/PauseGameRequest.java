@@ -13,7 +13,7 @@ import sc.protocol.responses.ProtocolMessage;
  */
 
 @XStreamAlias("pause")
-public class PauseGameRequest extends ProtocolMessage implements ILobbyRequest {
+public class PauseGameRequest implements ILobbyRequest {
   @XStreamAsAttribute
   public String roomId;
 

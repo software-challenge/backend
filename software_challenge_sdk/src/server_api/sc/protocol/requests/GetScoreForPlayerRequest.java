@@ -9,7 +9,7 @@ import sc.protocol.responses.ProtocolMessage;
  * Only useful if testMode was enabled before game ended.
  */
 @XStreamAlias("scoreForPlayer")
-public class GetScoreForPlayerRequest extends ProtocolMessage implements ILobbyRequest {
+public class GetScoreForPlayerRequest implements ILobbyRequest {
 
   @XStreamAsAttribute
   private String displayName;

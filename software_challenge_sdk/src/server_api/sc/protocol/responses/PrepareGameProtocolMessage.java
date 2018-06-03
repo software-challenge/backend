@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 /** Response to PrepareGameRequest */
 
 @XStreamAlias(value = "prepared")
-public class PrepareGameProtocolMessage extends ProtocolMessage {
+public class PrepareGameProtocolMessage implements ProtocolMessage {
   @XStreamImplicit(itemFieldName = "reservation")
   private List<String> reservations;
 

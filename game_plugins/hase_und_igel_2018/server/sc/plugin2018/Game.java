@@ -218,11 +218,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public void loadFromFile(String file) {
     logger.info("Loading game from: " + file);
-    GameLoader gl = new GameLoader(new Class<?>[]{GameState.class});
-    Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
-    if (gameInfo != null) {
-      loadGameInfo(gameInfo);
-    }
+    loadReplay(file);
   }
   
   @Override
@@ -256,16 +252,16 @@ public class Game extends RoundBasedGameInstance<Player> {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    GameLoader gl = new GameLoader(new Class<?>[]{GameState.class});
-    Object gameInfo = gl.loadGame(Configuration.getXStream(), "./tmp_replay.xml");
-    if (gameInfo != null) {
-      loadGameInfo(gameInfo);
-    }
-    // delete copied
+    loadReplay("./tmp_replay.xml");
     tmp_replay.delete();
   }
   
-  // XXX test this
+  public void loadReplay(String replayFile) {
+    Object info = new GameLoader(GameState.class).loadGame(Configuration.getXStream(), replayFile);
+    if (info != null)
+      loadGameInfo(info);
+  }
+  
   @Override
   public void loadGameInfo(Object gameInfo) {
     logger.info("Processing game information");
@@ -278,10 +274,10 @@ public class Game extends RoundBasedGameInstance<Player> {
       // if it isn't RED, the players have to be switched and RED is made currentPlayer
       if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
         this.gameState.setCurrentPlayer(PlayerColor.RED);
-        for (PlayerColor color : PlayerColor.values()) {
-          Player newPlayer = this.gameState.getPlayer(color.opponent());
-          newPlayer.setPlayerColor(color);
-          gameState.setPlayer(color, newPlayer);
+        for (Player player : gameState.getPlayers()) {
+          PlayerColor newColor = player.getPlayerColor().opponent();
+          player.setPlayerColor(newColor);
+          gameState.setPlayer(newColor, player);
         }
       }
     }

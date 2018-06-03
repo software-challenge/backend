@@ -5,6 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGameState;
 import sc.plugin2018.util.Constants;
 import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidGameStateException;
@@ -42,10 +43,10 @@ import java.util.Objects;
  * @author Niklas, Sören
  */
 @XStreamAlias(value = "state")
-public class GameState implements Cloneable {
-  
+public class GameState implements Cloneable, IGameState {
   @XStreamOmitField
   private static final Logger logger = LoggerFactory.getLogger(GameState.class);
+  
   /** momentane Rundenzahl */
   @XStreamAsAttribute
   private int turn;
