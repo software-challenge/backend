@@ -1,7 +1,10 @@
 package sc.plugin2019;
 
+import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.plugin2019.util.GameRuleLogic;
@@ -10,11 +13,9 @@ import sc.shared.DebugHint;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Ein Spielzug. Ein Spielzug wird von dem derzeitgen Spieler eines GameStates ausgeführt. Er hat folgende Form:
@@ -25,11 +26,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Move extends ProtocolMove implements Cloneable {
   // TODO maybe add argument that piranha was removed for lastMove in Gamestate to use commando pattern
 
+  @XStreamOmitField
   private static final Logger logger = LoggerFactory.getLogger(Move.class);
+
+  @XStreamAsAttribute
   private int x = -1;
 
+  @XStreamAsAttribute
   private int y = -1;
 
+  @XStreamAsAttribute
   private Direction direction = Direction.INVALID;
 
   /**
@@ -131,7 +137,7 @@ public class Move extends ProtocolMove implements Cloneable {
   public void perform(GameState state) throws InvalidMoveException, InvalidGameStateException {
     // TODO perform move
     int distance = state.calculateMoveDistance(x, y, direction);
-    if (GameRuleLogic.isValidToMove(x, y, direction, distance)) {
+    if (GameRuleLogic.isValidToMove(x, y, direction, distance, state)) {
       Field start = state.getField(x,y);
       Field destination = state.getFieldInDirection(x,y,direction, distance);
       start.setPiranha(null);

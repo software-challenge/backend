@@ -19,15 +19,25 @@ public class Field {
 
   @XStreamAsAttribute
   private PlayerColor piranha;
+
+  @XStreamAsAttribute
+  private boolean obstructed;
   
   public Field(int x, int y) {
     this.x = x;
     this.y = y;
+    this.piranha = null;
   }
   
   public Field(int x, int y, PlayerColor piranha) {
     this(x,y);
     this.piranha = piranha;
+  }
+
+  public Field(int x, int y, boolean isObstructed) {
+    this(x,y);
+    this.obstructed = isObstructed;
+    this.piranha = null;
   }
   
   @Override
@@ -69,5 +79,25 @@ public class Field {
    */
   public void setPiranha(PlayerColor piranha) {
     this.piranha = piranha;
+  }
+
+  public boolean isObstructed() {
+    return obstructed;
+  }
+
+  @Override
+  public String toString(){
+    StringBuilder builder = new StringBuilder();
+    builder.append(super.toString());
+    builder.append("{x:");
+    builder.append(getX());
+    builder.append(", y:");
+    builder.append(getY());
+    builder.append(", PlayerColor:");
+    builder.append(getPiranha());
+    builder.append(", obstructed:");
+    builder.append(isObstructed());
+    builder.append("}");
+    return builder.toString();
   }
 }

@@ -21,7 +21,7 @@ public class Board {
   private Field[][] track;
 
   public Board() {
-    this.track = new Field[8][8];
+    this.track = new Field[10][10];
     initialize();
   }
 
@@ -29,25 +29,25 @@ public class Board {
    * Erstellt eine zufällige Spielbrett. Dazu werden
    */
   private void initialize() {
-    for (int x = 0; x < Constants.FIELD_SIZE; x++) {
-      for (int y = 0; y < Constants.FIELD_SIZE; y++) {
+    for (int x = 0; x < Constants.BOARD_SIZE; x++) {
+      for (int y = 0; y < Constants.BOARD_SIZE; y++) {
         track[x][y] = new Field(x,y);
       }
     }
     // place piranhas
-    for (int index = 1; index < Constants.FIELD_SIZE - 1; index++) {
+    for (int index = 1; index < Constants.BOARD_SIZE - 1; index++) {
       track[0][index].setPiranha(PlayerColor.RED);
-      track[8][index].setPiranha(PlayerColor.RED);
+      track[Constants.BOARD_SIZE -1][index].setPiranha(PlayerColor.RED);
       track[index][0].setPiranha(PlayerColor.BLUE);
-      track[index][8].setPiranha(PlayerColor.BLUE);
+      track[index][Constants.BOARD_SIZE -1].setPiranha(PlayerColor.BLUE);
     }
     // TODO generate separators
-    int x1 = ThreadLocalRandom.current().nextInt(0, Constants.FIELD_SIZE);
-    int y1 = ThreadLocalRandom.current().nextInt(0, Constants.FIELD_SIZE - 1);
-    this.vertical = new Separator(Direction.TOP, x1, y1);
+    int x1 = ThreadLocalRandom.current().nextInt(0, Constants.BOARD_SIZE);
+    int y1 = ThreadLocalRandom.current().nextInt(0, Constants.BOARD_SIZE - 1);
+    this.vertical = new Separator(Direction.UP, x1, y1);
 
-    int x2 = ThreadLocalRandom.current().nextInt(0, Constants.FIELD_SIZE - 1);
-    int y2 = ThreadLocalRandom.current().nextInt(0, Constants.FIELD_SIZE );
+    int x2 = ThreadLocalRandom.current().nextInt(0, Constants.BOARD_SIZE - 1);
+    int y2 = ThreadLocalRandom.current().nextInt(0, Constants.BOARD_SIZE);
     this.horizontal = new Separator(Direction.RIGHT, x2, y2);
   }
 
@@ -59,8 +59,8 @@ public class Board {
   @Override
   public Board clone() {
     Board clone = new Board();
-    for (int x = 0; x < Constants.FIELD_SIZE; x++) {
-      for (int y = 0; y < Constants.FIELD_SIZE; y++) {
+    for (int x = 0; x < Constants.BOARD_SIZE; x++) {
+      for (int y = 0; y < Constants.BOARD_SIZE; y++) {
         clone.track[x][y] = track[x][y].clone();
       }
     }
@@ -71,8 +71,8 @@ public class Board {
   public String toString() {
     String toString = "Board:\n";
     StringBuilder b = new StringBuilder(toString);
-    for (int x = 0; x < Constants.FIELD_SIZE; x++) {
-      for (int y = 0; y < Constants.FIELD_SIZE; y++) {
+    for (int x = 0; x < Constants.BOARD_SIZE; x++) {
+      for (int y = 0; y < Constants.BOARD_SIZE; y++) {
         b.append(track[x][y].getPiranha());
       }
     }
