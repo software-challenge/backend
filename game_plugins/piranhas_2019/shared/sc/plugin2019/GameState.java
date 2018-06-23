@@ -1,19 +1,25 @@
 package sc.plugin2019;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sc.plugin2019.util.Constants;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import static sc.plugin2019.Direction.INVALID;
+import static sc.plugin2019.Direction.RIGHT;
+import static sc.plugin2019.util.Constants.BOARD_SIZE;
+import static sc.plugin2019.util.Constants.MAX_FISH;
+import static sc.plugin2019.util.GameRuleLogic.isValidToMove;
 
 /**
  * Ein {@code GameState} beinhaltet alle Informationen, die den Spielstand zu
@@ -359,7 +365,7 @@ public class GameState implements Cloneable {
    */
   public int[][] getGameStats() {
 
-    int[][] stats = new int[1][1];
+    int[][] stats = new int[2][1];
 
     stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_SWARM_SIZE] = this.getPointsForPlayer(PlayerColor.RED);
     stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_SWARM_SIZE] = this.getPointsForPlayer(PlayerColor.BLUE);
@@ -382,8 +388,7 @@ public class GameState implements Cloneable {
    * @return Punktzahl des Spielers
    */
   public int getPointsForPlayer(PlayerColor playerColor) {
-    // TODO
-    return 0;
+    return greatestSwarm(playerColor);
   }
 
   /**
@@ -413,10 +418,30 @@ public class GameState implements Cloneable {
     return this.lastMove;
   }
 
+   /**
+    * Gibt eine Liste aller möglichen Züge zurück
+    * @return Liste von Move Objekten
+    */
   public ArrayList<Move> getPossibleMoves() {
-    ArrayList<Move> possibleMove = new ArrayList<>();
-    // TODO
-    return possibleMove;
+    ArrayList<Move> possibleMoves = new ArrayList<>();
+    List<Field> fields = getOwnFields(getCurrentPlayer());
+
+    for(Field field : fields){
+      for(Direction direction : Direction.values()){
+         if (direction == INVALID)continue;
+         int x = field.getX();
+         int y = field.getY();
+         int dist = calculateMoveDistance(x, y, direction);
+         try {
+            if (dist > 0 && isValidToMove(x,y,direction,dist,this)){
+               Move m = new Move(x,y,direction);
+               possibleMoves.add(m);
+            }
+         } catch (InvalidMoveException ignore) {}
+      }
+    }
+
+    return possibleMoves;
   }
 
   @Override
@@ -429,14 +454,176 @@ public class GameState implements Cloneable {
 
   }
 
-  public boolean isSwarmConnected(Player player) {
-    // TODO
-    return false;
+  public List<Field> getOwnFields(PlayerColor player){
+    List<Field> fields = new ArrayList<>(MAX_FISH);
+    int size = 0;
+    for(int i = 0; i < BOARD_SIZE && MAX_FISH > size; i++){
+      for(int j = 0; j < BOARD_SIZE && MAX_FISH > size; j++){
+        Field curField = getBoard().getField(i,j);
+        if (curField.getPiranha() == player){
+          fields.add(curField);
+          size++;
+        }
+      }
+    }
+    return fields;
+  }
+  public List<Field> getOwnFields(Player player){
+     return getOwnFields(player.getPlayerColor());
   }
 
+  private int greatestSwarmHelper(List<Field> found, List<Field> swarm){
+     if (swarm.isEmpty() && !found.isEmpty()) {
+        swarm.add(found.get(0));
+        found.remove(0);
+     }
+     //
+     List<Field> tmpSwarm = new LinkedList<>();
+     for(Field field : found){
+        for(Field swarmField : swarm){
+         if (isDirectNeighbour(field, swarmField)){
+            tmpSwarm.add(field);
+         }
+        }
+        swarm.addAll(tmpSwarm);
+        tmpSwarm.clear();
+     }
+     found.removeAll(swarm);
+     return swarm.size();
+  }
+
+   public int greatestSwarm(List<Field> fieldsToCheck){
+      // Make a copy, so there will be no conflict with direct calls.
+      List<Field> occupiedFields = new LinkedList<>(fieldsToCheck);
+      int maxSize = -1;
+
+      // this is a maximum of MAX_FISH iterations, so it is a linear iteration altogether
+      while(!occupiedFields.isEmpty() && occupiedFields.size() > maxSize) {
+         List<Field> swarm = new LinkedList<>();
+         int size = greatestSwarmHelper(occupiedFields, swarm);
+         maxSize = Math.max(size, maxSize);
+      }
+      Move m = new Move(0,0,RIGHT);
+      return maxSize;
+   }
+
+  public int greatestSwarm(PlayerColor player){
+    List<Field> occupiedFields = getOwnFields(player);
+
+    return greatestSwarm(occupiedFields);
+  }
+
+  private boolean isDirectNeighbour(Field field1, Field field2){
+    int x1 = field1.getX();
+    int x2 = field2.getX();
+    int y1 = field1.getY();
+    int y2 = field2.getY();
+    return Math.abs(x1-x2) <= 1 && Math.abs(y1-y2) <= 1;
+  }
+
+  public boolean isSwarmConnected(Player player) {
+    List<Field> fieldsWithFish = getOwnFields(player);
+    int numGreatestSwarm = greatestSwarm(fieldsWithFish);
+    return numGreatestSwarm == fieldsWithFish.size();
+  }
+
+  private int moveDistanceHorizontal(int ignore, int y){
+     int count = 0;
+     for(int i = 0; i < BOARD_SIZE; i++){
+        if (board.getField(i,y).getPiranha() != null){
+           count++;
+        }
+     }
+     return count;
+  }
+
+  private int moveDistanceVertical(int x, int ignore){
+     int count = 0;
+     for(int i = 0; i < BOARD_SIZE; i++){
+        if (board.getField(x,i).getPiranha() != null){
+           count++;
+        }
+     }
+     return count;
+  }
+
+  private int moveDistanceDiagonalTopRight(int x,int y){
+     int count = 0;
+     int cX = x;
+     int cY = y;
+     // Move down left
+     while(cX > 0 && cY > 0) {
+        if (board.getField(cX,cY).getPiranha() != null){
+           count++;
+        }
+        cY--;
+        cX--;
+     }
+
+
+     // Move up right
+     cX = x+1;
+     cY = y+1;
+     while(cX < BOARD_SIZE && cY < BOARD_SIZE) {
+        if (board.getField(cX,cY).getPiranha() != null){
+           count++;
+        }
+        cY++;
+        cX++;
+     }
+     return count;
+  }
+
+   private int moveDistanceDiagonalBottomRight(int x,int y){
+      int count = 0;
+      int cX = x;
+      int cY = y;
+      // Move down left
+      while(cX < BOARD_SIZE && cY > 0) {
+         if (board.getField(cX,cY).getPiranha() != null){
+            count++;
+         }
+         cY--;
+         cX++;
+      }
+
+
+      // Move up right
+      cX = x-1;
+      cY = y+1;
+      while(cX > 0  && cY < BOARD_SIZE) {
+         if (board.getField(cX,cY).getPiranha() != null){
+            count++;
+         }
+         cY++;
+         cX--;
+      }
+      return count;
+   }
+
+   /**
+    * Calculate the minimum steps to take from given position in given direction
+    * @param x coordinate to calculate from
+    * @param y coordinate to calculate from
+    * @param direction of the calcualtion
+    * @return -1 if Invalid move, else the steps to take
+    */
   public int calculateMoveDistance(int x, int y, Direction direction) {
-    // TODO
-    return 1;
+    switch(direction){
+       case LEFT:
+       case RIGHT:
+          return moveDistanceHorizontal(x,y);
+       case UP:
+       case DOWN:
+          return moveDistanceVertical(x,y);
+       case UP_RIGHT:
+       case DOWN_LEFT:
+          return moveDistanceDiagonalTopRight(x,y);
+       case DOWN_RIGHT:
+       case UP_LEFT:
+          return moveDistanceDiagonalBottomRight(x,y);
+    }
+    return -1;
   }
 
   public Field getField(int x, int y) {
@@ -455,9 +642,9 @@ public class GameState implements Cloneable {
     int shiftX = 0;
     int shiftY = 0;
     switch (direction){
-      case TOP_RIGHT:
+      case UP_RIGHT:
         shiftX = 1;
-      case TOP:
+      case UP:
         shiftY = 1;
         break;
       case DOWN_RIGHT:
@@ -470,7 +657,7 @@ public class GameState implements Cloneable {
       case DOWN:
         shiftY = -1;
         break;
-      case TOP_LEFT:
+      case UP_LEFT:
         shiftY = 1;
       case LEFT:
         shiftX = -1;

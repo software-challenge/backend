@@ -93,7 +93,7 @@ public class TestClient extends XStreamClient {
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         Thread.sleep(1000);
       }
-      testclient = new TestClient(Configuration.getXStream(), sc.plugin2018.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
+      testclient = new TestClient(Configuration.getXStream(), sc.plugin2019.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
     } catch (Exception e) {
       logger.error("Error while initializing: " + e.toString());
       e.printStackTrace();

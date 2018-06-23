@@ -1,13 +1,13 @@
 package sc.plugin2019;
 
 public enum Direction {
-  TOP,
-  TOP_RIGHT,
+  UP,
+   UP_RIGHT,
   RIGHT,
   DOWN_RIGHT,
   DOWN,
   DOWN_LEFT,
   LEFT,
-  TOP_LEFT,
+  UP_LEFT,
   INVALID
 }

@@ -1,7 +1,7 @@
 <project name="Complete" basedir="." default="main">
   <import file="git-build.xml" />
 
-  <property name="game_name" value="hase_und_igel_2018" />
+  <property name="game_name" value="piranhas_2019" />
   <property name="out.dir" value="${basedir}/deploy" />
   <property name="build.dir" value="${basedir}/build" />
   <property name="sdk.dir" value="${basedir}/software_challenge_sdk" />
@@ -52,7 +52,7 @@
     <echo message="Make test client runnable..."/>
     <copydir src="${build.dir}/test_client/jar" dest="${build.dir}/test_client/runnable"/>
     <copy file="${build.dir}/software-challenge-server/jar/software-challenge-server.jar" todir="${build.dir}/test_client/runnable" />
-    <copy file="${build.dir}/${game_player}/jar/${game_player}.jar"
+    <copy file="${build.dir}/${game_player}/jar/${game_name}.jar"
           tofile="${build.dir}/test_client/runnable/defaultplayer.jar"/>
     <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
           todir="${build.dir}/test_client/runnable/plugins"/>

@@ -8,7 +8,7 @@ public class Separator {
   private int y;
 
   public Separator(Direction direction, int x, int y) {
-    if (direction != Direction.TOP && direction != Direction.RIGHT) {
+    if (direction != Direction.UP && direction != Direction.RIGHT) {
       throw new IllegalArgumentException("Direction has to be top or right");
     }
     this.x = x;

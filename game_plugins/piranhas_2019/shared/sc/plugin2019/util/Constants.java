@@ -13,5 +13,6 @@ public class Constants {
   public static final int LOSE_SCORE = 0;
   public static final int DRAW_SCORE = 1;
 
-  public static final int FIELD_SIZE = 8;
+  public static final int BOARD_SIZE = 10;
+  public static final int MAX_FISH = (BOARD_SIZE -2)*2;
 }

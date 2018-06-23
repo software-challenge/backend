@@ -169,8 +169,9 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
+  //TODO set canTimeout to true
   protected ActionTimeout getTimeoutFor(Player player) {
-    return new ActionTimeout(true, 10000L, 2000L);
+    return new ActionTimeout(false, 10000L, 2000L);
   }
 
   /**
@@ -213,7 +214,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   private Player getWinner() {
     if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.RED))) {
+      System.out.println("Swarm is connected for red");
       if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.BLUE))) {
+        System.out.println("Swarm is connected for blue");
         if (gameState.getPointsForPlayer(PlayerColor.RED) > gameState.getPointsForPlayer(PlayerColor.BLUE)) {
           return gameState.getPlayer(PlayerColor.RED);
         } else if (gameState.getPointsForPlayer(PlayerColor.RED) < gameState.getPointsForPlayer(PlayerColor.BLUE)) {
@@ -224,6 +227,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
       return gameState.getPlayer(PlayerColor.RED);
     } else if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.BLUE))) {
+      System.out.println("Swarm is not connected for red");
       return gameState.getPlayer(PlayerColor.BLUE);
     }
     return null;
