@@ -137,12 +137,18 @@ public class Move extends ProtocolMove implements Cloneable {
   public void perform(GameState state) throws InvalidMoveException, InvalidGameStateException {
     // TODO perform move
     int distance = state.calculateMoveDistance(x, y, direction);
+    System.out.println("distance: "+distance);
     if (GameRuleLogic.isValidToMove(x, y, direction, distance, state)) {
       Field start = state.getField(x,y);
       Field destination = state.getFieldInDirection(x,y,direction, distance);
       start.setPiranha(null);
+
       destination.setPiranha(state.getCurrentPlayerColor());
+
     }
+
+    System.out.println(state.getField(x,y));
+
     // Bereite nächsten Zug vor:
     state.setLastMove(this);
     state.setTurn(state.getTurn() + 1);

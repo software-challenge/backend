@@ -44,17 +44,15 @@ public class GameRuleLogic
           newY -= distance;
 
 
-     if (newX >= Constants.BOARD_SIZE || newY >= Constants.BOARD_SIZE || newX < 0 || newY < 0) return false;
+      if (newX >= Constants.BOARD_SIZE || newY >= Constants.BOARD_SIZE || newX < 0 || newY < 0) throw new InvalidMoveException("The new position would be out of range");
 
-     Field nextField = state.getField(newX, newY);
-     if(nextField.getPiranha() == state.getCurrentPlayerColor()
-           || nextField.isObstructed()) return false;
-
-
-
-
-
-    // TODO throw Exception, if no piranha of current player, if move out of board or on own piranha
-    return true;
+      Field nextField = state.getField(newX, newY);
+      if (nextField.getPiranha() == state.getCurrentPlayerColor()){
+        throw new InvalidMoveException("Field obstructed with own piranha");
+      }
+      if (nextField.isObstructed()){
+        throw new InvalidMoveException("Field is obstructed by a blockade");
+      }
+      return true;
   }
 }
