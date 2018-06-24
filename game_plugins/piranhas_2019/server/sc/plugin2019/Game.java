@@ -71,6 +71,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
 
       final Move move = (Move) data;
+      System.out.println("move perform");
       move.perform(this.gameState);
       next(this.gameState.getCurrentPlayer());
     } catch (InvalidMoveException e) {
