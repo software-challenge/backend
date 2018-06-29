@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.networking.clients.LobbyClient;
 import sc.protocol.LobbyProtocol;
 import sc.protocol.responses.PrepareGameProtocolMessage;
@@ -182,7 +182,7 @@ public class RequestTest extends RealServerTest{
 
     // Room was created
     GameRoom room = lobby.getGameManager().getGames().iterator().next();
-    SimplePlayer sp1 = room.getSlots().get(0).getRole().getPlayer();
+    AbstractPlayer sp1 = room.getSlots().get(0).getRole().getPlayer();
     sp1.addPlayerListener(p1Listener);
     admin.send(new PauseGameRequest(room.getId(),true));
     admin.observe(room.getId());
@@ -237,7 +237,7 @@ public class RequestTest extends RealServerTest{
 
     // Room was created
     GameRoom room = lobby.getGameManager().getGames().iterator().next();
-    SimplePlayer sp1 = room.getSlots().get(0).getRole().getPlayer();
+    AbstractPlayer sp1 = room.getSlots().get(0).getRole().getPlayer();
     sp1.addPlayerListener(p1Listener);
     admin.send(new PauseGameRequest(room.getId(),true));
     admin.observe(room.getId());
@@ -401,7 +401,7 @@ public class RequestTest extends RealServerTest{
     player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
     TestHelper.waitUntilEqual(2, ()->room.getSlots().size(), 2000);
     TestHelper.waitMills(500);
-    SimplePlayer splayer2 = room.getSlots().get(1).getRole().getPlayer();
+    AbstractPlayer splayer2 = room.getSlots().get(1).getRole().getPlayer();
     splayer2.addPlayerListener(p2Listener);
     splayer2.setDisplayName("player2...");
 

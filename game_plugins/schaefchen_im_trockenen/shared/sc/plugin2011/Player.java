@@ -1,6 +1,6 @@
 package sc.plugin2011;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -14,7 +14,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  */
 @XStreamAlias(value = "sit:player")
-public final class Player extends SimplePlayer {
+public final class Player extends AbstractPlayer {
 
 	// spielerfarbe des spielers
 	@XStreamAsAttribute

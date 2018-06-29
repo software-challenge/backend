@@ -3,7 +3,7 @@ package sc.plugin2019;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.shared.PlayerColor;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
  * 
  */
 @XStreamAlias(value = "player")
-public class Player extends SimplePlayer implements Cloneable {
+public class Player extends AbstractPlayer implements Cloneable {
 
   /** Farbe der Spielfiguren */
 	@XStreamAsAttribute

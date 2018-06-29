@@ -1,11 +1,11 @@
 package sc.sample.server;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.sample.shared.Player;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
-public class PlayerImpl extends SimplePlayer
+public class PlayerImpl extends AbstractPlayer
 {
 	private Player	data;
 

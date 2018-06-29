@@ -2,7 +2,7 @@ package sc.plugin2019;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
@@ -146,7 +146,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePaused(String roomId, SimplePlayer nextPlayer) {
+  public void onGamePaused(String roomId, AbstractPlayer nextPlayer) {
   }
 
   @Override

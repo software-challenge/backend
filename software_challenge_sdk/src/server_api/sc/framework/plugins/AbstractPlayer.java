@@ -11,8 +11,8 @@ import sc.protocol.responses.ProtocolMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SimplePlayer {
-  public static final Logger logger = LoggerFactory.getLogger(SimplePlayer.class);
+public abstract class AbstractPlayer {
+  public static final Logger logger = LoggerFactory.getLogger(AbstractPlayer.class);
   
   @XStreamOmitField
   protected List<IPlayerListener> listeners;
@@ -41,7 +41,7 @@ public abstract class SimplePlayer {
   @XStreamOmitField
   protected String violationReason = null;
   
-  public SimplePlayer() {
+  public AbstractPlayer() {
     initListeners();
   }
   

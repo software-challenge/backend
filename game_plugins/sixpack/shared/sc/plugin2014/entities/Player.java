@@ -3,7 +3,7 @@ package sc.plugin2014.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.plugin2014.moves.Move;
 
 import com.thoughtworks.xstream.annotations.*;
@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.annotations.*;
  * 
  */
 @XStreamAlias(value = "player")
-public class Player extends SimplePlayer implements Cloneable {
+public class Player extends AbstractPlayer implements Cloneable {
 
 	@XStreamOmitField
 	private PlayerColor color;

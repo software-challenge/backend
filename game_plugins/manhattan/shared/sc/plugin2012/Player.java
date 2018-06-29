@@ -3,7 +3,7 @@ package sc.plugin2012;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * 
  */
 @XStreamAlias(value = "manhattan:player")
-public class Player extends SimplePlayer implements Cloneable {
+public class Player extends AbstractPlayer implements Cloneable {
 
 	// spielerfarbe des spielers
 	@XStreamOmitField

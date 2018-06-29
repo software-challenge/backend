@@ -8,7 +8,7 @@ import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.plugin2019.util.Configuration;
 import sc.plugin2019.util.Constants;
 import sc.protocol.responses.ProtocolMessage;
@@ -56,13 +56,13 @@ public class Game extends RoundBasedGameInstance<Player> {
    * move)
    */
   @Override
-  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
+  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
 
     Player author = (Player) fromPlayer;
 
     /*
      * NOTE: Checking if right player sent move was already done by
-     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, ProtocolMove)}.
+     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(AbstractPlayer, ProtocolMove)}.
      * There is no need to do it here again.
      */
     try {
@@ -88,7 +88,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public SimplePlayer onPlayerJoined() {
+  public AbstractPlayer onPlayerJoined() {
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
@@ -310,9 +310,9 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public List<SimplePlayer> getWinners() {
+  public List<AbstractPlayer> getWinners() {
     WinCondition win = checkWinCondition();
-    List<SimplePlayer> winners = new LinkedList<>();
+    List<AbstractPlayer> winners = new LinkedList<>();
     if (win != null) {
       for (Player player : this.players) {
         if (player.getPlayerColor() == win.getWinner()) {
@@ -341,8 +341,8 @@ public class Game extends RoundBasedGameInstance<Player> {
    * @return List of all players
    */
   @Override
-  public List<SimplePlayer> getPlayers() {
-    List<SimplePlayer> players = new LinkedList<>();
+  public List<AbstractPlayer> getPlayers() {
+    List<AbstractPlayer> players = new LinkedList<>();
     players.add(this.gameState.getPlayer(PlayerColor.RED));
     players.add(this.gameState.getPlayer(PlayerColor.BLUE));
     return players;

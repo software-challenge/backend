@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.plugin2017.util.Constants;
 
 /**
@@ -13,7 +13,7 @@ import sc.plugin2017.util.Constants;
  * Position des Schiffes, sowie Attribute des Schiffes
  */
 @XStreamAlias(value = "player")
-public class Player extends SimplePlayer implements Cloneable {
+public class Player extends AbstractPlayer implements Cloneable {
 
 	/**
 	 * Farbe des Spielers

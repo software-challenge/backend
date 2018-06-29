@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.XStream;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
 import org.slf4j.LoggerFactory;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
@@ -191,7 +191,7 @@ public class TestClient extends XStreamClient {
           irregularGames++;
         StringBuilder log = new StringBuilder("Game {} ended " +
             (result.isRegular() ? "regularly -" : "abnormally!") + " Winner: ");
-        for (SimplePlayer winner : result.getWinners())
+        for (AbstractPlayer winner : result.getWinners())
           log.append(winner.getDisplayName()).append(", ");
         logger.warn(log.substring(0, log.length() - 2), finishedTests);
         

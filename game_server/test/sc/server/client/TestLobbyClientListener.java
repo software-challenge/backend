@@ -1,6 +1,6 @@
 package sc.server.client;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.networking.clients.ILobbyClientListener;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
@@ -19,7 +19,7 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   public boolean newStateReceived = false;
 
   public String roomid;
-  public SimplePlayer player;
+  public AbstractPlayer player;
   public GameResult result;
   public PrepareGameProtocolMessage prepareGameResponse;
   public Object roomMessage;
@@ -91,7 +91,7 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePaused(String roomId, SimplePlayer nextPlayer) {
+  public void onGamePaused(String roomId, AbstractPlayer nextPlayer) {
     gamePausedReceived = true;
     this.roomid = roomId;
     this.player = nextPlayer;

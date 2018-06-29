@@ -5,7 +5,7 @@ import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.player2019.logic.Logic;
 import sc.plugin2019.AbstractClient;
 import sc.plugin2019.IGameHandler;
@@ -102,7 +102,7 @@ public class Starter extends AbstractClient {
   }
 
   @Override
-  public void onGamePaused(String roomId, SimplePlayer nextPlayer) {
+  public void onGamePaused(String roomId, AbstractPlayer nextPlayer) {
 
   }
 

@@ -1,8 +1,8 @@
 package sc.networking.clients;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 
 public interface IAdministrativeListener
 {
-	void onGamePaused(String roomId, SimplePlayer nextPlayer);
+	void onGamePaused(String roomId, AbstractPlayer nextPlayer);
 }

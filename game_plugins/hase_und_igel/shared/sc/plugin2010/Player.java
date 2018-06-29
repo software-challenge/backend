@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  */
 // FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
 @XStreamAlias(value = "hui:player")
-public final class Player extends SimplePlayer implements Cloneable
+public final class Player extends AbstractPlayer implements Cloneable
 {
 	// Farbe der Spielfigure
 	private FigureColor		color;

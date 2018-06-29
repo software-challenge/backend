@@ -1,30 +1,24 @@
 package sc.server;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.server.gaming.*;
-import sc.server.network.Client;
-import sc.server.network.ClientManager;
-import sc.server.network.IClientListener;
-import sc.server.network.IClientRole;
-import sc.server.network.PacketCallback;
+import sc.server.network.*;
 import sc.shared.InvalidGameStateException;
 import sc.shared.Score;
-import sc.shared.SlotDescriptor;
+
+import java.io.IOException;
 
 /**
  * The lobby will help clients find a open game or create new games to play with
  * another client.
  */
 public class Lobby implements IClientListener {
-  private final Logger logger = LoggerFactory
-          .getLogger(Lobby.class);
+  private final Logger logger = LoggerFactory.getLogger(Lobby.class);
+
   private final GameRoomManager gameManager;
   private final ClientManager clientManager;
 
@@ -96,11 +90,11 @@ public class Lobby implements IClientListener {
           FreeReservationRequest request = (FreeReservationRequest) packet;
           ReservationManager.freeReservation(request.getReservation());
         }
-      } else if (packet instanceof RoomPacket)  // i.e. new move
-      {
-        RoomPacket casted = (RoomPacket) packet;
-        GameRoom room = this.gameManager.findRoom(casted.getRoomId());
-        room.onEvent(source, casted.getData());
+      } else if (packet instanceof RoomPacket) {
+        // i.e. new move
+        RoomPacket roomPacket = (RoomPacket) packet;
+        GameRoom room = this.gameManager.findRoom(roomPacket.getRoomId());
+        room.onEvent(source, roomPacket.getData());
       } else if (packet instanceof ObservationRequest) {
         if (source.isAdministrator()) {
           ObservationRequest observe = (ObservationRequest) packet;

@@ -6,7 +6,7 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.plugin2013.PlayerColor;
 
 /**Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>
@@ -18,7 +18,7 @@ import sc.plugin2013.PlayerColor;
  */
 @XStreamAlias(value = "player")
 //@XStreamConverter(PlayerConverter.class)
-public class Player extends SimplePlayer implements Cloneable {
+public class Player extends AbstractPlayer implements Cloneable {
 
 	
 	/**

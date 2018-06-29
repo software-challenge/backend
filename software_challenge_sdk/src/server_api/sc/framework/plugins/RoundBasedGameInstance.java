@@ -14,7 +14,7 @@ import sc.shared.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance {
+public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implements IGameInstance {
   private static final Logger logger = LoggerFactory.getLogger(RoundBasedGameInstance.class);
   
   protected P activePlayer = null;
@@ -48,7 +48,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    *
    * @throws GameLogicException if any invalid action is done, i.e. game rule violation
    */
-  public final void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
+  public final void onAction(AbstractPlayer fromPlayer, ProtocolMessage data)
       throws GameLogicException, InvalidGameStateException, InvalidMoveException {
     Optional<String> errorMsg = Optional.empty();
     if (fromPlayer.equals(this.activePlayer)) {
@@ -78,7 +78,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     return this.requestTimeout != null;
   }
   
-  protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data)
+  protected abstract void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data)
       throws GameLogicException, InvalidGameStateException, InvalidMoveException;
   
   /**
@@ -115,7 +115,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    *
    * @param player left player
    */
-  public void onPlayerLeft(SimplePlayer player) {
+  public void onPlayerLeft(AbstractPlayer player) {
     if (!player.hasViolated()) {
       player.setLeft(true);
       onPlayerLeft(player, ScoreCause.LEFT);
@@ -125,10 +125,10 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
   
   /** Handle leave of player */
-  public void onPlayerLeft(SimplePlayer player, ScoreCause cause) {
-    Map<SimplePlayer, PlayerScore> res = generateScoreMap();
+  public void onPlayerLeft(AbstractPlayer player, ScoreCause cause) {
+    Map<AbstractPlayer, PlayerScore> res = generateScoreMap();
     
-    for (Entry<SimplePlayer, PlayerScore> entry : res.entrySet()) {
+    for (Entry<AbstractPlayer, PlayerScore> entry : res.entrySet()) {
       PlayerScore score = entry.getValue();
       
       if (entry.getKey() == player) {
@@ -240,8 +240,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     }
   }
   
-  public Map<SimplePlayer, PlayerScore> generateScoreMap() {
-    Map<SimplePlayer, PlayerScore> map = new HashMap<SimplePlayer, PlayerScore>();
+  public Map<AbstractPlayer, PlayerScore> generateScoreMap() {
+    Map<AbstractPlayer, PlayerScore> map = new HashMap<AbstractPlayer, PlayerScore>();
     
     for (final P p : this.players) {
       map.put(p, getScoreFor(p));
@@ -268,7 +268,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     this.listeners.remove(listener);
   }
   
-  protected void notifyOnGameOver(Map<SimplePlayer, PlayerScore> map) {
+  protected void notifyOnGameOver(Map<AbstractPlayer, PlayerScore> map) {
     for (IGameListener listener : this.listeners) {
       try {
         listener.onGameOver(map);
@@ -297,7 +297,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    *
    * @throws GameLogicException Always thrown
    */
-  public void catchInvalidMove(InvalidMoveException e, SimplePlayer author) throws InvalidMoveException {
+  public void catchInvalidMove(InvalidMoveException e, AbstractPlayer author) throws InvalidMoveException {
     author.setViolated(true);
     String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
     author.setViolationReason(e.getMessage());

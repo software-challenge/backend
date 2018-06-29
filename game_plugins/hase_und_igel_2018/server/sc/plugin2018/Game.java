@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.GameLoader;
+import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.framework.plugins.SimplePlayer;
 import sc.plugin2018.util.Configuration;
 import sc.plugin2018.util.Constants;
 import sc.protocol.responses.ProtocolMessage;
@@ -49,13 +49,13 @@ public class Game extends RoundBasedGameInstance<Player> {
   
   /** Someone did something, check out what it was (move maybe? Then check the move) */
   @Override
-  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
+  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
     
     Player author = (Player) fromPlayer;
     
     /**
      * NOTE: Checking if right player sent move was already done by
-     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, ProtocolMove)}.
+     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(AbstractPlayer, ProtocolMove)}.
      * There is no need to do it here again.
      */
     try {
@@ -71,7 +71,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
   
   @Override
-  public SimplePlayer onPlayerJoined() {
+  public AbstractPlayer onPlayerJoined() {
     PlayerColor playerColor = this.availableColors.remove();
     // When starting a game from a imported state the players should not be overwritten
     Player player = gameState.getPlayer(playerColor);
@@ -261,7 +261,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     if (info != null)
       loadGameInfo(info);
   }
-  
+
   @Override
   public void loadGameInfo(Object gameInfo) {
     logger.info("Processing game information");
@@ -285,9 +285,9 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
   
   @Override
-  public List<SimplePlayer> getWinners() {
+  public List<AbstractPlayer> getWinners() {
     WinCondition win = checkWinCondition();
-    List<SimplePlayer> winners = new ArrayList<>();
+    List<AbstractPlayer> winners = new ArrayList<>();
     if (win != null) {
       for (Player player : this.players) {
         if (player.getPlayerColor() == win.getWinner()) {
@@ -316,7 +316,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    * @return List of all players
    */
   @Override
-  public List<SimplePlayer> getPlayers() {
+  public List<AbstractPlayer> getPlayers() {
     return Arrays.asList(gameState.getPlayers());
   }
   

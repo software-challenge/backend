@@ -1,6 +1,6 @@
 package sc.networking.clients;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.GameResult;
@@ -21,7 +21,7 @@ public interface ILobbyClientListener {
 
   void onGameOver(String roomId, GameResult data);
 
-  void onGamePaused(String roomId, SimplePlayer nextPlayer);
+  void onGamePaused(String roomId, AbstractPlayer nextPlayer);
 
   void onGameObserved(String roomId);
 

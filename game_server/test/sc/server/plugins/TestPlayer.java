@@ -1,15 +1,11 @@
 package sc.server.plugins;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import sc.api.plugins.host.IPlayerListener;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.shared.PlayerColor;
 
-public class TestPlayer extends SimplePlayer {
+public class TestPlayer extends AbstractPlayer {
   
   @XStreamAsAttribute
   PlayerColor color;

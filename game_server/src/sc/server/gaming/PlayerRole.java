@@ -1,7 +1,7 @@
 package sc.server.gaming;
 
 import sc.api.plugins.host.IPlayerListener;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.protocol.responses.ProtocolMessage;
 import sc.protocol.responses.RoomPacket;
 import sc.server.network.IClient;
@@ -16,7 +16,7 @@ public class PlayerRole implements IClientRole, IPlayerListener
   /* private fields */
   private IClient		client;		//Actual Server-client, to send Packages
 
-  private SimplePlayer		player;  //XStream player Object, basically a wrapper
+  private AbstractPlayer player;  //XStream player Object, basically a wrapper
 
   private PlayerSlot	playerSlot; //The slot in GameRoom, which it occupies
 
@@ -40,10 +40,10 @@ public class PlayerRole implements IClientRole, IPlayerListener
   }
 
   /**
-   * Getter for {@link SimplePlayer player}.
+   * Getter for {@link AbstractPlayer player}.
    * @return the player
    */
-  public SimplePlayer getPlayer()
+  public AbstractPlayer getPlayer()
   {
     return this.player;
   }
@@ -71,7 +71,7 @@ public class PlayerRole implements IClientRole, IPlayerListener
    * Setter for the player.
    * @param player
    */
-  public void setPlayer(SimplePlayer player)
+  public void setPlayer(AbstractPlayer player)
   {
     this.player = player;
     this.player.addPlayerListener(this);

@@ -3,7 +3,7 @@ package sc.api.plugins;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
@@ -19,11 +19,11 @@ public interface IGameInstance
 	 * @return SimpleClient
 	 * @throws TooManyPlayersException Thrown when already enough player
 	 */
-	public SimplePlayer onPlayerJoined() throws TooManyPlayersException;
+	public AbstractPlayer onPlayerJoined() throws TooManyPlayersException;
 
-	public void onPlayerLeft(SimplePlayer player);
+	public void onPlayerLeft(AbstractPlayer player);
 	
-	public void onPlayerLeft(SimplePlayer player, ScoreCause cause);
+	public void onPlayerLeft(AbstractPlayer player, ScoreCause cause);
 
 	/**
 	 * Called by the Server once an action was received.
@@ -34,7 +34,7 @@ public interface IGameInstance
 	 *            The plugin-secific data.
 	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
 	 */
-	public void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
+	public void onAction(AbstractPlayer fromPlayer, ProtocolMessage data)
           throws GameLogicException, InvalidGameStateException, InvalidMoveException;
 
 	/**
@@ -83,9 +83,9 @@ public interface IGameInstance
 	/**
 	 * Returns the players that have won the game, empty if the game has no winners,
 	 * or null if the game has not finished.
-	 * @return List of SimplePlayers, which won the game
+	 * @return List of AbstractPlayers, which won the game
 	 */
-	public List<SimplePlayer> getWinners();
+	public List<AbstractPlayer> getWinners();
 
 	/**
 	 * Returns pluginUUID. Only used for generating replay name.
@@ -97,7 +97,7 @@ public interface IGameInstance
    * Returns all players. This should always be 2 and the startplayer should be first in the List.
    * @return List of all players
    */
-	public List<SimplePlayer> getPlayers();
+	public List<AbstractPlayer> getPlayers();
 
   /**
    * Returns the PlayerScore for both players

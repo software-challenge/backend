@@ -1,6 +1,6 @@
 package sc.server.client;
 
-import sc.framework.plugins.SimplePlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.networking.clients.ILobbyClientListener;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
@@ -45,7 +45,7 @@ public class TestObserverListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePaused(String roomId, SimplePlayer nextPlayer) {
+  public void onGamePaused(String roomId, AbstractPlayer nextPlayer) {
 
   }
 
