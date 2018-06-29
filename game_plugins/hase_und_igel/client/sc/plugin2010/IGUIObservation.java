@@ -14,9 +14,6 @@ public interface IGUIObservation
 	 */
 	void newTurn(int activePlayerId, String actionFromOther);
 
-	/**
-	 * 
-	 */
 	void ready();
 
 }

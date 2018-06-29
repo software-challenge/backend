@@ -5,18 +5,14 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
-/**
- * Eine Karte die auf einem Hasenfeld gespielt werden kann.
- */
+/** Eine Karte die auf einem Hasenfeld gespielt werden kann. */
 @XStreamAlias(value = "card")
 public class Card extends Action {
 
   @XStreamAsAttribute
   private CardType type;
 
-  /**
-   * Nur für TAKE_OR_DROP_CARROTS genutzt. Muss 20, 0 oder -20 sein.
-   */
+  /** Nur für TAKE_OR_DROP_CARROTS genutzt. Muss 20, 0 oder -20 sein. */
   @XStreamAsAttribute
   private int value;
 

@@ -82,9 +82,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     return this.client.observe(handle);
   }
 
-  /**
-   * Called when a new message is sent to the room, e.g. move requests
-   */
+  /** Called when a new message is sent to the room, e.g. move requests */
   @Override
   public void onRoomMessage(String roomId, Object data) {
     if (data instanceof MoveRequest) {

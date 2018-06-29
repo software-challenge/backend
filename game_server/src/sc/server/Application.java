@@ -50,7 +50,7 @@ public final class Application {
     }
 
     long end = System.currentTimeMillis();
-    logger.info("Server has been initialized in {} ms.", end - start);
+    logger.debug("Server has been initialized in {} ms.", end - start);
 
     synchronized (SYNCOBJ) {
       try {
@@ -64,7 +64,6 @@ public final class Application {
   public static void parseArguments(String[] params)
           throws IllegalOptionValueException, UnknownOptionException {
     CmdLineParser parser = new CmdLineParser();
-    CmdLineParser.Option debug = parser.addBooleanOption(Configuration.DEBUG_SHORT_OPTION, Configuration.DEBUG_OPTION);
     CmdLineParser.Option pluginDirectory = parser.addStringOption(Configuration.PLUGINS_OPTION);
     CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
     CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
@@ -72,7 +71,6 @@ public final class Application {
     CmdLineParser.Option portOption = parser.addIntegerOption('p', Configuration.PORT_KEY);
     parser.parse(params);
 
-    Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
     String path = (String) parser.getOptionValue(pluginDirectory, null);
     String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
     Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
@@ -86,9 +84,6 @@ public final class Application {
         Configuration.set(Configuration.TURN_TO_LOAD, turnToLoad.toString());
       }
     }
-    if (debugMode) {
-      logger.info("Running in DebugMode now.");
-    }
 
     if (saveReplay) {
       Configuration.set(Configuration.SAVE_REPLAY, saveReplay.toString());
@@ -101,14 +96,13 @@ public final class Application {
         Configuration.set(Configuration.PLUGIN_PATH_KEY, path);
         logger.info("Loading plugins from {}", f.getAbsoluteFile());
       } else {
-        logger.warn("Could not find {} to load plugins from", f
-                .getAbsoluteFile());
+        logger.warn("Could not find {} to load plugins from", f.getAbsoluteFile());
       }
     }
   }
 
   public static void addShutdownHook() {
-    logger.info("Registering ShutdownHook (Ctrl+C)...");
+    logger.debug("Registering ShutdownHook...");
 
     try {
       Thread shutdown = new Thread(() -> {
@@ -119,11 +113,10 @@ public final class Application {
           logger.info("Exiting application...");
         }
       });
-
       shutdown.setName("ShutdownHook");
       Runtime.getRuntime().addShutdownHook(shutdown);
     } catch (Exception e) {
-      logger.warn("Could not install ShutdownHook", e);
+      logger.warn("Registering the ShutdownHook failed!", e);
     }
   }
 

@@ -39,9 +39,7 @@ public class ClientXmlReadTest
 		}
 	}
 
-	/**
-	 * Denotes an empty ObjectStream (to be used with XStream).
-	 */
+	/** Denotes an empty ObjectStream (to be used with XStream). */
 	private static final String	EMPTY_OBJECT_STREAM = "<protocol></protocol>";
 
 	@Before

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.player2012.logic;
 
 import java.security.SecureRandom;

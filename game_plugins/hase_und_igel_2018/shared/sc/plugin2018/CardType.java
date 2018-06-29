@@ -9,20 +9,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias(value = "type")
 public enum CardType
 {
-	/**
-	 * Nehme Karotten auf, oder leg sie ab
-	 */
+	/** Nehme Karotten auf, oder leg sie ab */
 	TAKE_OR_DROP_CARROTS,
-	/**
-	 * Iß sofort einen Salat
-	 */
+	/** Iß sofort einen Salat */
 	EAT_SALAD,
-	/**
-	 * Falle eine Position zurück
-	 */
+	/** Falle eine Position zurück */
 	FALL_BACK,
-	/**
-	 * Rücke eine Position vor
-	 */
+	/** Rücke eine Position vor */
 	HURRY_AHEAD
 }

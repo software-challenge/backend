@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2014.gui.abstractgame;
 
 import sc.plugin2014.GameState;

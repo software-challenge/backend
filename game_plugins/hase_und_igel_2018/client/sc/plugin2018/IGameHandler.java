@@ -32,9 +32,7 @@ public interface IGameHandler {
 	 */
 	void onUpdate(GameState gameState);
 
-	/**
-	 * wird aufgreufen, wenn der Spieler zum Zug aufgefordert wurde.
-	 */
+	/** wird aufgreufen, wenn der Spieler zum Zug aufgefordert wurde. */
 	void onRequestAction();
 
 	/**

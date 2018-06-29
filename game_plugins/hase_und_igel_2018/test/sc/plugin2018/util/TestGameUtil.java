@@ -11,9 +11,7 @@ import org.junit.Test;
  */
 public class TestGameUtil
 {
-	/**
-	 * Überprüft die Berechnungen der <code>calculateCarrots()</code> Hilfsfunktion
-	 */
+	/** Überprüft die Berechnungen der <code>calculateCarrots()</code> Hilfsfunktion */
 	@Test
 	public void testCalculateCarrots()
 	{
@@ -21,9 +19,7 @@ public class TestGameUtil
 		Assert.assertEquals(55, GameRuleLogic.calculateCarrots(10));
 	}
 	
-	/**
-	 * Überprüft die Berechnung der <code>calculateMoveableFields()</code> Hilfsfunktion
-	 */
+	/** Überprüft die Berechnung der <code>calculateMoveableFields()</code> Hilfsfunktion */
 	@Test
 	public void testCalculateMoveableFields() {
 		Assert.assertEquals(0, GameRuleLogic.calculateMoveableFields(0));

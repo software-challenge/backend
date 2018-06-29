@@ -4,9 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.protocol.responses.ProtocolMessage;
 
-/**
- * Request of administrative client to observe a gameRoom specified by given roomId.
- */
+/** Request of administrative client to observe a gameRoom specified by given roomId. */
 
 @XStreamAlias("observe")
 public class ObservationRequest extends ProtocolMessage implements ILobbyRequest {

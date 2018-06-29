@@ -14,9 +14,7 @@ public class JoinRoomRequest extends ProtocolMessage implements ILobbyRequest {
   @XStreamAsAttribute
   private String gameType = null;
 
-  /**
-   * Needed by JoinPreparedGameRequest
-   */
+  /** Needed by JoinPreparedGameRequest */
   protected JoinRoomRequest() {
     // nothing to do
   }

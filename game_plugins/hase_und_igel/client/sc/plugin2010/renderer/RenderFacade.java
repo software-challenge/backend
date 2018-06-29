@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2010.renderer;
 
 import java.awt.CardLayout;
@@ -284,9 +281,6 @@ public class RenderFacade
 		return null;
 	}
 
-	/**
-	 * 
-	 */
 	public void switchToPlayer(EPlayerId playerView)
 	{
 		if (panel != null)

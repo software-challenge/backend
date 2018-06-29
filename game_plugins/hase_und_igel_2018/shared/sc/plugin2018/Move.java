@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @XStreamAlias(value = "move")
 public class Move extends ProtocolMove implements Cloneable {
-
+  
   private static final Logger logger = LoggerFactory.getLogger(Move.class);
   /**
    * Liste von Aktionen aus denen der Zug besteht. Die Reihenfolge, in der die
@@ -33,7 +33,7 @@ public class Move extends ProtocolMove implements Cloneable {
    */
   @XStreamImplicit
   public List<Action> actions;
-
+  
   public List<Action> getActions() {
     if (actions == null) {
       return Collections.emptyList();
@@ -41,46 +41,42 @@ public class Move extends ProtocolMove implements Cloneable {
       return actions;
     }
   }
-
+  
   /**
    * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe
    * {@link DebugHint}
    */
   @XStreamImplicit(itemFieldName = "hint")
   private List<DebugHint> hints;
-
-  /**
-   * Default Konstruktor, der einen leeren Zug erzeugt.
-   */
+  
+  /** Default Konstruktor, der einen leeren Zug erzeugt. */
   public Move() {
     // This list needs to be thread safe because the side bar may be iterating
     // over it while a new turn is started, resulting in a
     // ConcurrentModificationException.
     actions = new CopyOnWriteArrayList<>();
   }
-
+  
   /**
    * Erzeugt einen neuen Zug aus Liste von Aktionen. Die Liste der Aktionen wird kopiert
    * (d.h. eine Änderung der Liste nach Erstellung des Zuges ändert den Zug nicht mehr).
    *
-   * @param actions
-   *          Aktionen des Zuges
+   * @param actions Aktionen des Zuges
    */
   public Move(List<Action> actions) {
     assert actions != null;
     this.actions = new CopyOnWriteArrayList<>(actions);
   }
-
+  
   /**
    * Erzeugt einen neuen Zug aus den Aktionen
    *
-   * @param actions
-   *          Aktionen des Zuges
+   * @param actions Aktionen des Zuges
    */
   public Move(Action... actions) {
     this.actions = new CopyOnWriteArrayList<>(actions);
   }
-
+  
   /**
    * erzeugt eine Deepcopy dieses Objektes
    *
@@ -97,46 +93,41 @@ public class Move extends ProtocolMove implements Cloneable {
       clone.hints = new LinkedList<>(this.hints);
     return clone;
   }
-
+  
   /**
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param hint
-   *          hinzuzufuegende Debug-Hilfestellung
+   * @param hint hinzuzufuegende Debug-Hilfestellung
    */
   public void addHint(DebugHint hint) {
     if (hints == null) {
-      hints = new LinkedList<>();
+      hints = new ArrayList<>();
     }
     hints.add(hint);
   }
-
+  
   /**
-   *
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param key
-   *          Schluessel
-   * @param value
-   *          zugehöriger Wert
+   * @param key   Schluessel
+   * @param value zugehöriger Wert
    */
   public void addHint(String key, String value) {
     addHint(new DebugHint(key, value));
   }
-
+  
   /**
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param string
-   *          Debug-Hilfestellung
+   * @param string Debug-Hilfestellung
    */
   public void addHint(String string) {
     addHint(new DebugHint(string));
   }
-
+  
   /**
    * Gibt die Liste der hinzugefuegten Debug-Hilfestellungen zurueck
    *
@@ -145,17 +136,17 @@ public class Move extends ProtocolMove implements Cloneable {
   public List<DebugHint> getHints() {
     return hints == null ? Collections.emptyList() : hints;
   }
-
+  
   /**
    * Führt einen Zug aus, indem alle Aktionen aufsteigend anand des order Attributes ausgeführt werden.
    * Dabei werden zusätzlich folgende Informationen geupdated:
    * lastMove wird gesetzt, lastNonSkipAktion wird gesetzt, turn wird um eins erhöht.
    * der currentPlayer wird getauscht, falls sich der nächste Spieler auf entsprechendem
    * Positionsfeld befindet werden seine Karotten erhöht.
-   * @param state
-   *          Spielstatus
-   * @throws InvalidMoveException
-   *           wird geworfen, wenn der Zug nicht den Regeln entspricht
+   *
+   * @param state Spielstatus
+   *
+   * @throws InvalidMoveException wird geworfen, wenn der Zug nicht den Regeln entspricht
    */
   public void perform(GameState state) throws InvalidMoveException, InvalidGameStateException {
     // Sortiere Aktionen
@@ -172,12 +163,12 @@ public class Move extends ProtocolMove implements Cloneable {
       if (index != action.order) {
         throw new InvalidMoveException("Das order Attribut wurde nicht richtig gesetzt.", this);
       }
-      if (action instanceof Advance || action instanceof Skip || action instanceof FallBack||
+      if (action instanceof Advance || action instanceof Skip || action instanceof FallBack ||
           action instanceof EatSalad || action instanceof ExchangeCarrots) {
         if (action.order != 0) {
           throw new InvalidMoveException("Nach der ersten Aktion können nur noch Karten folgen.", this);
         }
-
+        
       }
       try {
         action.perform(state);
@@ -201,7 +192,7 @@ public class Move extends ProtocolMove implements Cloneable {
       state.getCurrentPlayer().changeCarrotsBy(30);
     }
   }
-
+  
   /**
    * Vergleichsmethode fuer einen Zug. Zwei Züge sind gleich, wenn sie die
    * gleichen Teilaktionen beinhalten
@@ -224,7 +215,7 @@ public class Move extends ProtocolMove implements Cloneable {
     }
     return false;
   }
-
+  
   @Override
   public String toString() {
     String toString = "Zug mit folgenden Aktionen \n";
@@ -252,24 +243,20 @@ public class Move extends ProtocolMove implements Cloneable {
     }
     return b.toString();
   }
-
-  /**
-   * Setzt das order Attribut der Züge anhand ihrer Reihenfolge in actions
-   */
+  
+  /** Setzt das order Attribut der Züge anhand ihrer Reihenfolge in actions */
   public void setOrderInActions() {
     int order = 0;
     for (Action action : getActions()) {
       action.order = order++;
     }
   }
-
-  /**
-   * Sortiert die Aktionen aufsteigend anhand des order Attributs
-   */
+  
+  /** Sortiert die Aktionen aufsteigend anhand des order Attributs */
   public void orderActions() {
     if (actions != null) {
       actions.sort(Action::compareTo);
     }
   }
-
+  
 }

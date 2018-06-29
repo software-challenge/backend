@@ -31,9 +31,7 @@ public class GamePlayTest
 		blue = state.getBluePlayer();
 	}
 
-	/**
-   * Both players start on the start field (index 0), red has to make the first move
-	 */
+	/** Both players start on the start field (index 0), red has to make the first move */
 	@Test
 	public void firstRound()
 	{
@@ -48,9 +46,7 @@ public class GamePlayTest
 		Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, null, 1, 0, 68), game.getScoreFor(red));
 	}
 
-	/**
-	 * There is only one possible move at the start of a game
-	 */
+	/** There is only one possible move at the start of a game */
 	@Test
 	public void justStarted()
 	{
@@ -65,9 +61,7 @@ public class GamePlayTest
     Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, state.getNextFieldByType(FieldType.CARROT, 0)));
 	}
 
-	/**
-	 * Tests the cases in which takeOrDrop10Carrots is invalid
-	 */
+	/** Tests the cases in which takeOrDrop10Carrots is invalid */
 	@Test
 	public void takeOrDropCarrots()
 	{
@@ -308,9 +302,7 @@ public class GamePlayTest
 				.getCarrots()); // assert that red got 30 carrots for being second
 	}
 
-	/**
-	 * Checks whether it is only allowed to drop 20 carrots iff player has at least 20
-	 */
+	/** Checks whether it is only allowed to drop 20 carrots iff player has at least 20 */
 	@Test
 	public void playDropCarrotsCard() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
@@ -330,9 +322,7 @@ public class GamePlayTest
     }
 	}
 
-	/**
-	 * Checks the conditions for advancing to the goal field
-	 */
+	/** Checks the conditions for advancing to the goal field */
 	@Test
 	public void enterGoal()
 	{
@@ -350,9 +340,7 @@ public class GamePlayTest
     Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, toGoal));
 	}
 
-	/**
-	 * Checks whether game ends only after a round (blue has last move)
-	 */
+	/** Checks whether game ends only after a round (blue has last move) */
 	@Test
 	public void blueHasLastMove() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
@@ -367,9 +355,7 @@ public class GamePlayTest
     Assert.assertEquals(null, game.checkWinCondition());
 	}
 
-	/**
-	 * Checks whether game ends only after a round (red has no last move)
-	 */
+	/** Checks whether game ends only after a round (red has no last move) */
 	@Test
 	public void redHasNoLastMove() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
@@ -389,9 +375,7 @@ public class GamePlayTest
     Assert.assertEquals(blue.getPlayerColor(), game.checkWinCondition().getWinner());
 	}
 
-	/**
-	 * Checks the conditions for eating a salad on a salad field
-	 */
+	/** Checks the conditions for eating a salad on a salad field */
 	@Test
 	public void eatSalad()
 	{
@@ -402,9 +386,7 @@ public class GamePlayTest
 		Assert.assertFalse(GameRuleLogic.isValidToEat(state));
 	}
 
-  /**
-   * Checks the conditions for eating a salad on a salad field
-   */
+  /** Checks the conditions for eating a salad on a salad field */
   @Test
   public void mustEatSalad()
   {
@@ -461,9 +443,7 @@ public class GamePlayTest
     Assert.assertEquals(carrotsBefore + 10, red.getCarrots());
 	}
 
-	/**
-	 * Checks the perform method when using a hare joker
-	 */
+	/** Checks the perform method when using a hare joker */
 	@Test
 	public void playCardCycle() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
@@ -532,9 +512,7 @@ public class GamePlayTest
 		Assert.assertEquals(carrotsBefore - 10, red.getCarrots());
 	}
 
-	/**
-	 * Checks that a hare joker can only be played on a hare field
-	 */
+	/** Checks that a hare joker can only be played on a hare field */
 	@Test
 	public void actioncardOnField()
 	{
@@ -566,9 +544,7 @@ public class GamePlayTest
 
 	}
 
-	/**
-	 * It is not allowed to advance to a hedgehog field or to use a card to move to it
-	 */
+	/** It is not allowed to advance to a hedgehog field or to use a card to move to it */
 	@Test
 	public void directMoveOntoHedgehog() {
 		int hedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, 0);
@@ -591,9 +567,7 @@ public class GamePlayTest
 		Assert.assertFalse(GameRuleLogic.isValidToPlayHurryAhead(state));
 	}
 
-	/**
-	 * It is not allowed to enter a hare field without a card
-	 */
+	/** It is not allowed to enter a hare field without a card */
 	@Test
 	public void moveOntoHareWithoutCard()
 	{
@@ -602,9 +576,7 @@ public class GamePlayTest
 		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, hare));
 	}
 
-	/**
-	 * It is not allowed a use a hare koker to enter a hare field, if no other hare card is available
-	 */
+	/** It is not allowed a use a hare koker to enter a hare field, if no other hare card is available */
 	@Test
 	public void indirectHurryAheadOntoHare()
 	{
@@ -622,9 +594,7 @@ public class GamePlayTest
 		Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, firstHare));
 	}
 
-	/**
-	 * Checks if a player is allowed to fall back to a hedgehog field
-	 */
+	/** Checks if a player is allowed to fall back to a hedgehog field */
 	@Test
 	public void fallback()
 	{
@@ -636,9 +606,7 @@ public class GamePlayTest
 		Assert.assertTrue(GameRuleLogic.isValidToFallBack(state));
 	}
 
-	/**
-	 * Checks to perform method when falling back
-	 */
+	/** Checks to perform method when falling back */
 	@Test
 	public void fallbackCycle() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
@@ -665,9 +633,7 @@ public class GamePlayTest
 		Assert.assertEquals(carrotsBefore + diff * 10, red.getCarrots());
 	}
 
-	/**
-	 * A player is allowed to fall back, even if he did the same last turn
-	 */
+	/** A player is allowed to fall back, even if he did the same last turn */
 	@Test
 	public void fallbackTwice() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();

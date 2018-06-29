@@ -4,9 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.protocol.responses.ProtocolMessage;
 
-/**
- * Send by administrative client to free claimed reservation.
- */
+/** Send by administrative client to free claimed reservation. */
 
 @XStreamAlias("freeReservation")
 public class FreeReservationRequest extends ProtocolMessage implements ILobbyRequest {

@@ -13,9 +13,7 @@ public class ScoreFragment {
 
   private final boolean relevantForRanking;
 
-  /**
-   * might be needed by XStream
-   */
+  /** might be needed by XStream */
   public ScoreFragment() {
     this.name = null;
     this.aggregation = null;

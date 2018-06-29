@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2013.gui;
 
 import java.io.IOException;
@@ -139,9 +136,6 @@ public class Observation implements IObservation, IUpdateListener,
 		conGame.unpause();
 	}
 
-	/**
-	 * 
-	 */
 	public void ready() {
 		for (IReadyListener list : readyListeners) {
 			list.ready();
@@ -287,9 +281,6 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public void newTurn(int id, String info) {
 		notifyOnNewTurn(id, info);
 	}

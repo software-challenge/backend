@@ -4,9 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
-/**
- * Ein Aussetzzug. Ist nur erlaubt, sollten keine anderen Züge möglich sein.
- */
+/** Ein Aussetzzug. Ist nur erlaubt, sollten keine anderen Züge möglich sein. */
 @XStreamAlias(value = "skip")
 public class Skip extends Action {
 

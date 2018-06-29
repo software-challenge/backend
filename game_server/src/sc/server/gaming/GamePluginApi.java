@@ -22,7 +22,7 @@ public class GamePluginApi implements IGamePluginHost
 	@Override
 	public void registerProtocolClass(Class<?> clazz)
 	{
-		logger.info("Processing XStream annotations for {}", clazz);
+		logger.debug("Processing XStream annotations for {}", clazz);
 		Configuration.getXStream().processAnnotations(clazz);
 	}
 

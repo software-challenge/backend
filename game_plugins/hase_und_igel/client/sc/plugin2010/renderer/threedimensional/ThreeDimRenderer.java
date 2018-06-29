@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2010.renderer.threedimensional;
 
 import java.awt.Image;

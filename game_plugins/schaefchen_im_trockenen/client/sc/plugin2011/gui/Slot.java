@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2011.gui;
 
 import java.io.IOException;

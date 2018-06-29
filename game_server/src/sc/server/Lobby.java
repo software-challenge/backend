@@ -55,13 +55,11 @@ public class Lobby implements IClientListener {
 
   @Override
   public void onClientDisconnected(Client source) {
-    this.logger.info("{} disconnected.", source);
+    logger.info("{} disconnected.", source);
     source.removeClientListener(this);
   }
 
-  /**
-   * handle requests or moves of clients
-   */
+  /** handle requests or moves of clients */
   @Override
   public void onRequest(Client source, PacketCallback callback)
           throws RescuableClientException, InvalidGameStateException {

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.Component;

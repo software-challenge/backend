@@ -46,9 +46,7 @@ public interface IGameInstance
 
 	public void removeGameListener(IGameListener listener);
 
-	/**
-	 * Server or an administrator requests the game to start now.
-	 */
+	/** Server or an administrator requests the game to start now. */
 	public void start();
 
 	/**

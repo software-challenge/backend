@@ -4,9 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.protocol.responses.ProtocolMessage;
 
-/**
- * Only has effect on paused games. Send by administrative client to send a MoveRequest to current player.
- */
+/** Only has effect on paused games. Send by administrative client to send a MoveRequest to current player. */
 
 @XStreamAlias("step")
 public class StepRequest extends ProtocolMessage implements ILobbyRequest {

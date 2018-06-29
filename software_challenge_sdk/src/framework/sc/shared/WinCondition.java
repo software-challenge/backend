@@ -2,14 +2,10 @@ package sc.shared;
 
 public class WinCondition implements Cloneable {
 
-  /**
-   * Farbe des Gewinners
-   */
+  /** Farbe des Gewinners */
   private final PlayerColor winner;
 
-  /**
-   * Sieggrund
-   */
+  /** Sieggrund */
   private final String reason;
 
   public PlayerColor getWinner() {

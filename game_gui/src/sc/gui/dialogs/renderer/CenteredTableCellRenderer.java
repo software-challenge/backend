@@ -10,9 +10,6 @@ import javax.swing.table.TableCellRenderer;
 public class CenteredTableCellRenderer extends DefaultTableCellRenderer implements
 		TableCellRenderer {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7375210077755610734L;
 
 	@Override

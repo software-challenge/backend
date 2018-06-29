@@ -16,9 +16,7 @@ public final class ReservationManager
   private static Logger logger = LoggerFactory.getLogger(ReservationManager.class);
   private static Map<String, PlayerSlot>	reservations = new HashMap<String, PlayerSlot>();
 
-  /**
-   * create Object as singleton
-   */
+  /** create Object as singleton */
   private ReservationManager()
   {
     // singleton

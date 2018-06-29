@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -40,11 +40,11 @@ import sc.shared.SlotDescriptor;
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private static final Logger logger = LoggerFactory.getLogger(LobbyClient.class);
-  private final List<String> rooms = new LinkedList<>();
+  private final List<String> rooms = new ArrayList<>();
   private final AsyncResultManager asyncManager = new AsyncResultManager();
-  private final List<ILobbyClientListener> listeners = new LinkedList<>();
-  private final List<IHistoryListener> historyListeners = new LinkedList<>();
-  private final List<IAdministrativeListener> administrativeListeners = new LinkedList<>();
+  private final List<ILobbyClientListener> listeners = new ArrayList<>();
+  private final List<IHistoryListener> historyListeners = new ArrayList<>();
+  private final List<IAdministrativeListener> administrativeListeners = new ArrayList<>();
 
   public static final String DEFAULT_HOST = "127.0.0.1";
 

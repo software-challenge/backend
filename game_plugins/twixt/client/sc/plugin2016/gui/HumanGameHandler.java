@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2016.gui;
 
 import sc.plugin2016.GameState;

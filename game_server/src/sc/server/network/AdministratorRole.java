@@ -1,8 +1,6 @@
 package sc.server.network;
 
-/**
- * Client Role with all rights
- */
+/** Client Role with all rights */
 public class AdministratorRole implements IClientRole
 {
   /* private fields */
@@ -26,9 +24,7 @@ public class AdministratorRole implements IClientRole
     return this.client;
   }
 
-  /**
-   * Close the Administrator
-   */
+  /** Close the Administrator */
   @Override
   public void close()
   {

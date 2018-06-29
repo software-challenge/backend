@@ -16,9 +16,7 @@ public class JoinGameProtocolMessage extends ProtocolMessage {
   @XStreamAsAttribute
   private String roomId;
 
-  /**
-   * might be needed by XStream
-   */
+  /** might be needed by XStream */
   public JoinGameProtocolMessage() {
   }
 

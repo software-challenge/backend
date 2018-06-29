@@ -15,9 +15,7 @@ import sc.networking.TcpNetwork;
 import sc.server.Configuration;
 import sc.server.ServiceManager;
 
-/**
- * Listener, which waits for new clients
- */
+/** Listener, which waits for new clients */
 public class NewClientListener implements Runnable, Closeable	{
 
 
@@ -53,9 +51,7 @@ public class NewClientListener implements Runnable, Closeable	{
     return this.queue.take();
   }
 
-  /**
-   * Accept clients in blocking mode
-   */
+  /** Accept clients in blocking mode */
   private void acceptClient()
   {
     try
@@ -90,9 +86,7 @@ public class NewClientListener implements Runnable, Closeable	{
     }
   }
 
-  /**
-   * infinite loop to wait asynchronously for clients
-   */
+  /** infinite loop to wait asynchronously for clients */
   @Override
   public void run()
   {
@@ -144,9 +138,7 @@ public class NewClientListener implements Runnable, Closeable	{
     }
   }
 
-  /**
-   * close the socket
-   */
+  /** close the socket */
   @Override
   public void close()
   {

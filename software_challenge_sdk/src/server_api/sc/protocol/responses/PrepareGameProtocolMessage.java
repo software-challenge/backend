@@ -6,9 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-/**
- * Response to PrepareGameRequest
- */
+/** Response to PrepareGameRequest */
 
 @XStreamAlias(value = "prepared")
 public class PrepareGameProtocolMessage extends ProtocolMessage {
@@ -18,9 +16,7 @@ public class PrepareGameProtocolMessage extends ProtocolMessage {
   @XStreamAsAttribute
   private String roomId;
 
-  /**
-   * might be needed by XStream
-   */
+  /** might be needed by XStream */
   public PrepareGameProtocolMessage() {
   }
 

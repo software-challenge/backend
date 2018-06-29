@@ -1,6 +1,3 @@
-/**
- *
- */
 package sc.plugin2017.gui;
 
 import java.io.IOException;
@@ -129,9 +126,6 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     this.conGame.unpause();
   }
 
-  /**
-   *
-   */
   @Override
   public void ready() {
     logger.debug("got ready event");
@@ -276,9 +270,6 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     }
   }
 
-  /**
-   *
-   */
   @Override
   public void newTurn(int id, String info) {
     notifyOnNewTurn(id, info);

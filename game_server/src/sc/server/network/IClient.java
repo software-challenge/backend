@@ -2,9 +2,7 @@ package sc.server.network;
 
 import sc.protocol.responses.ProtocolMessage;
 
-/**
- * Client interface, which is used to send packages to the server
- */
+/** Client interface, which is used to send packages to the server */
 public interface IClient
 {
   /**
