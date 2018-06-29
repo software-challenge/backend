@@ -74,7 +74,7 @@ public class Player extends SimplePlayer implements Cloneable {
   }
   
   protected Player(PlayerColor color, int position) {
-    this(color, position, Constants.INITIAL_CARROTS, Constants.SALADS_TO_EAT, cards());
+    this(color, position, Constants.INITIAL_CARROTS, Constants.SALADS_TO_EAT, generateCards());
   }
   
   protected Player(PlayerColor color, int position, int carrots, int salads, ArrayList<CardType> cards) {
@@ -85,7 +85,7 @@ public class Player extends SimplePlayer implements Cloneable {
     this.cards = cards;
   }
   
-  private static ArrayList<CardType> cards() {
+  private static ArrayList<CardType> generateCards() {
     ArrayList<CardType> cards = new ArrayList<>(4);
     cards.add(CardType.TAKE_OR_DROP_CARROTS);
     cards.add(CardType.EAT_SALAD);

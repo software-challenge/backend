@@ -49,7 +49,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   
   /** Someone did something, check out what it was (move maybe? Then check the move) */
   @Override
-  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
+  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
     
     Player author = (Player) fromPlayer;
     
@@ -266,13 +266,14 @@ public class Game extends RoundBasedGameInstance<Player> {
   public void loadGameInfo(Object gameInfo) {
     logger.info("Processing game information");
     if (gameInfo instanceof GameState) {
-      this.gameState = (GameState) gameInfo;
+      gameState = (GameState) gameInfo;
       // when loading from a state the listeners are not initialized
-      for (PlayerColor color : PlayerColor.values())
-        gameState.getPlayer(color).initListeners();
+      for (Player player : gameState.getPlayers())
+        player.initListeners();
       // the currentPlayer has to be RED (else the Move request is send to the wrong player)
       // if it isn't RED, the players have to be switched and RED is made currentPlayer
       if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
+        gameState.setStartPlayer(PlayerColor.BLUE);
         this.gameState.setCurrentPlayer(PlayerColor.RED);
         for (Player player : gameState.getPlayers()) {
           PlayerColor newColor = player.getPlayerColor().opponent();

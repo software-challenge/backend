@@ -210,18 +210,10 @@ public class GameState implements Cloneable, IGameState {
   
   protected void setPlayer(PlayerColor color, Player player) {
     if (color == PlayerColor.RED) {
-      setRedPlayer(player);
+      red = player;
     } else {
-      setBluePlayer(player);
+      blue = player;
     }
-  }
-  
-  protected void setRedPlayer(Player red) {
-    this.red = red;
-  }
-  
-  protected void setBluePlayer(Player blue) {
-    this.blue = blue;
   }
   
   /** @return Der Spieler, der das Spiel begonnen hat. */
@@ -234,12 +226,17 @@ public class GameState implements Cloneable, IGameState {
     return startPlayer;
   }
   
+  /** @return Die Farbe des Spielers, der das Spiel begonnen hat. */
+  void setStartPlayer(PlayerColor color) {
+    startPlayer = color;
+  }
+  
   /** wechselt den Spieler, der aktuell an der Reihe ist, anhand der Zugnummer({@link #turn}) */
   public void switchCurrentPlayer() {
     if (turn % 2 == 0) {
-      currentPlayer = PlayerColor.RED;
+      currentPlayer = startPlayer;
     } else {
-      currentPlayer = PlayerColor.BLUE;
+      currentPlayer = startPlayer.opponent();
     }
   }
   
