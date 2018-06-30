@@ -36,7 +36,7 @@ public class Move extends ProtocolMove implements Cloneable {
   private int y = -1;
 
   @XStreamAsAttribute
-  private Direction direction = Direction.INVALID;
+  private Direction direction;
 
   /**
    * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe

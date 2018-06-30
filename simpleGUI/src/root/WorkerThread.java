@@ -1,6 +1,7 @@
 package root;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.StreamException;
 import com.thoughtworks.xstream.io.xml.KXml2Driver;
 import sc.plugin2019.Board;
 import sc.plugin2019.Direction;
@@ -15,10 +16,12 @@ import sc.shared.WelcomeMessage;
 import root.IStateUpdate;
 
 import javax.swing.*;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -81,7 +84,9 @@ class WorkerThread {
       GameState.class,
       GameResult.class,
       LeftGameEvent.class,
-      ProtocolErrorMessage.class
+      ProtocolErrorMessage.class,
+      PauseGameRequest.class,
+      ControlTimeoutRequest.class
   };
 
   WorkerThread(JTextArea output, Socket socket, int type) {
@@ -108,6 +113,14 @@ class WorkerThread {
     this.stateChangeListener.add(stateUpdate);
   }
 
+  public void close(){
+    try {
+      this.socket.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   private void work0() {
 
     try {
@@ -115,7 +128,7 @@ class WorkerThread {
       outputStream.writeObject(new AuthenticateRequest("examplepassword"));
       outputStream.flush();
       outputStream.writeObject(new PrepareGameRequest("swc_2019_piranhas"));
-      outputStream.flush();;
+      outputStream.flush();
 
 
       PrepareGameProtocolMessage protocolMessage = (PrepareGameProtocolMessage)read();
@@ -126,6 +139,7 @@ class WorkerThread {
       outputStream.flush();
 
       roomId = protocolMessage.getRoomId();
+
 
       addLine("room: "+protocolMessage.getRoomId());
       addLine("reservation1: "+reserveration1);
@@ -141,12 +155,20 @@ class WorkerThread {
         Thread.sleep(10);
       }
 
+
+      outputStream.writeObject(new PauseGameRequest(roomId, false));
+      outputStream.flush();
+
+      outputStream.writeObject(new ControlTimeoutRequest(roomId, false, 0));
+      outputStream.writeObject(new ControlTimeoutRequest(roomId, false, 1));
+      outputStream.flush();
+
       addLine("Both clients are connected");
 
       outputStream.writeObject(new StepRequest(obs.getRoomId()));
       outputStream.flush();
 
-      while(!Thread.interrupted()){
+      while(!Thread.interrupted() && !socket.isClosed()){
         System.out.println("read new object in T"+type);
         Object o = read();
         addLine("new object: " + o);
@@ -166,16 +188,9 @@ class WorkerThread {
             for(IStateUpdate listener : stateChangeListener){
               listener.onStateChanged(state);
             }
-
-            Thread.sleep(2000);
-            outputStream.writeObject(new StepRequest(roomId));
-            outputStream.flush();
           }
         }
       }
-
-
-      Thread.sleep(100000);
       if (socket.isClosed()) System.out.println("that makes sense");
       addLine("Request a move");
 
@@ -204,7 +219,7 @@ class WorkerThread {
       System.out.println("memento? "+read());
 
       Object o;
-      while(true){
+      while(!Thread.interrupted() && !socket.isClosed()){
         o = read();
         if (o instanceof RoomPacket){
 
@@ -249,7 +264,7 @@ class WorkerThread {
 
       clientState[1] = "connected";
       Object o;
-      while(true){
+      while(!Thread.interrupted() && !socket.isClosed()){
         o = read();
         if (o instanceof RoomPacket){
 
@@ -274,7 +289,8 @@ class WorkerThread {
   }
 
   private synchronized Object read(){
-    while (queue.size() == 0);
+    while (queue.size() == 0 && !socket.isClosed() && !Thread.interrupted());
+    System.out.println("done waiting "+type);
     return queue.poll();
   }
 
@@ -284,16 +300,22 @@ class WorkerThread {
       try {
         is = stream.createObjectInputStream(socket.getInputStream());
 
-        while(!read.isInterrupted()){
-          Object o = is.readObject();
-          queue.add(o);
-          System.out.println("added object to queue "+type+": "+o);
-          if (o instanceof RoomPacket){
-            Object roomObj = ((RoomPacket)o).getData();
-            System.out.println("|---"+roomObj);
-            if (roomObj instanceof ProtocolErrorMessage){
-              read.interrupt();
+        while(!read.isInterrupted() && !Thread.interrupted()){
+          try {
+
+            Object o = is.readObject();
+            queue.add(o);
+            System.out.println("added object to queue "+type+": "+o);
+            if (o instanceof RoomPacket){
+              Object roomObj = ((RoomPacket)o).getData();
+              System.out.println("|---"+roomObj);
+              if (roomObj instanceof ProtocolErrorMessage){
+                read.interrupt();
+              }
             }
+          } catch (EOFException | StreamException e){
+            System.err.println("socket closed");
+            break;
           }
         }
       } catch (IOException | ClassNotFoundException e) {

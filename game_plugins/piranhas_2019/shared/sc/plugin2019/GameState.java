@@ -10,13 +10,8 @@ import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-import static sc.plugin2019.Direction.INVALID;
-import static sc.plugin2019.Direction.RIGHT;
 import static sc.plugin2019.util.Constants.BOARD_SIZE;
 import static sc.plugin2019.util.Constants.MAX_FISH;
 import static sc.plugin2019.util.GameRuleLogic.isValidToMove;
@@ -388,7 +383,7 @@ public class GameState implements Cloneable {
    * @return Punktzahl des Spielers
    */
   public int getPointsForPlayer(PlayerColor playerColor) {
-    return greatestSwarm(playerColor);
+    return greatestSwarmSize(playerColor);
   }
 
   /**
@@ -397,7 +392,7 @@ public class GameState implements Cloneable {
   protected void setBoard(Board newValue) {
     board = newValue;
   }
-  
+
   public Player getOpponent(Player player) {
     return getPlayer(player.getPlayerColor().opponent());
   }
@@ -418,26 +413,25 @@ public class GameState implements Cloneable {
     return this.lastMove;
   }
 
-   /**
-    * Gibt eine Liste aller möglichen Züge zurück
-    * @return Liste von Move Objekten
-    */
+  /**
+   * Gibt eine Liste aller möglichen Züge zurück
+   * @return Liste von Move Objekten
+   */
   public ArrayList<Move> getPossibleMoves() {
     ArrayList<Move> possibleMoves = new ArrayList<>();
-    List<Field> fields = getOwnFields(getCurrentPlayer());
+    Set<Field> fields = getOwnFields(getCurrentPlayer());
 
     for(Field field : fields){
       for(Direction direction : Direction.values()){
-         if (direction == INVALID)continue;
-         int x = field.getX();
-         int y = field.getY();
-         int dist = calculateMoveDistance(x, y, direction);
-         try {
-            if (dist > 0 && isValidToMove(x,y,direction,dist,this)){
-               Move m = new Move(x,y,direction);
-               possibleMoves.add(m);
-            }
-         } catch (InvalidMoveException ignore) {}
+        int x = field.getX();
+        int y = field.getY();
+        int dist = calculateMoveDistance(x, y, direction);
+        try {
+          if (dist > 0 && isValidToMove(x,y,direction,dist,this)){
+            Move m = new Move(x,y,direction);
+            possibleMoves.add(m);
+          }
+        } catch (InvalidMoveException ignore) {}
       }
     }
 
@@ -447,20 +441,20 @@ public class GameState implements Cloneable {
   @Override
   public String toString() {
     return "GameState:\n"
-            + "turn=" + this.getTurn() + this.getCurrentPlayer()
-            + this.red + this.blue
-            + this.board
-            + this.getLastMove();
+        + "turn=" + this.getTurn() + this.getCurrentPlayer()
+        + this.red + this.blue
+        + this.board
+        + this.getLastMove();
 
   }
 
-  public List<Field> getOwnFields(PlayerColor player){
-    List<Field> fields = new ArrayList<>(MAX_FISH);
+  public Set<Field> getOwnFields(PlayerColor player){
+    Set<Field> fields = new HashSet<>();
     int size = 0;
     for(int i = 0; i < BOARD_SIZE && MAX_FISH > size; i++){
       for(int j = 0; j < BOARD_SIZE && MAX_FISH > size; j++){
         Field curField = getBoard().getField(i,j);
-        if (curField.getPiranha() == player){
+        if (curField.getPiranha() != null && curField.getPiranha().equals(player)){
           fields.add(curField);
           size++;
         }
@@ -468,160 +462,188 @@ public class GameState implements Cloneable {
     }
     return fields;
   }
-  public List<Field> getOwnFields(Player player){
-     return getOwnFields(player.getPlayerColor());
-  }
 
-  private int greatestSwarmHelper(List<Field> found, List<Field> swarm){
-     if (swarm.isEmpty() && !found.isEmpty()) {
-        swarm.add(found.get(0));
-        found.remove(0);
-     }
-     //
-     List<Field> tmpSwarm = new LinkedList<>();
-     for(Field field : found){
-        for(Field swarmField : swarm){
-         if (isDirectNeighbour(field, swarmField)){
-            tmpSwarm.add(field);
-         }
+  private Set<Field> getDirectNeighbour(Field f, Set<Field> parentSet){
+    Set<Field> returnSet = new HashSet<>();
+    Board b = getBoard();
+    for(int i = -1; i <= 1; i++){
+      for(int j = -1; j <= 1; j++){
+        int x = f.getX()+i;
+        int y = f.getY()+j;
+        if (x < 0 || x >= Constants.BOARD_SIZE || y < 0 || y >= Constants.BOARD_SIZE || (i==0 && j==0)) continue;
+
+        Field field = b.getField(x,y);
+        if (parentSet.contains(field)){
+          returnSet.add(field);
         }
-        swarm.addAll(tmpSwarm);
-        tmpSwarm.clear();
-     }
-     found.removeAll(swarm);
-     return swarm.size();
+      }
+    }
+    return returnSet;
   }
 
-   public int greatestSwarm(List<Field> fieldsToCheck){
-      // Make a copy, so there will be no conflict with direct calls.
-      List<Field> occupiedFields = new LinkedList<>(fieldsToCheck);
-      int maxSize = -1;
+  public Set<Field> getOwnFields(Player player){
+    return getOwnFields(player.getPlayerColor());
+  }
 
-      // this is a maximum of MAX_FISH iterations, so it is a linear iteration altogether
-      while(!occupiedFields.isEmpty() && occupiedFields.size() > maxSize) {
-         List<Field> swarm = new LinkedList<>();
-         int size = greatestSwarmHelper(occupiedFields, swarm);
-         maxSize = Math.max(size, maxSize);
+  private Set<Field> getSwarm(Set<Field> found, Set<Field> swarm){
+    if (swarm.isEmpty() && !found.isEmpty()) {
+      Field field = found.iterator().next();
+      swarm.add(field);
+      found.remove(field);
+    }
+
+    Set<Field> tmpSwarm = new HashSet<>(swarm);
+    // O(swarm.size()) time
+    for(Field field : swarm){
+      // Constant time for both calls (max of 8 neighbors)
+      Set<Field> neighbours = getDirectNeighbour(field, found);
+      tmpSwarm.addAll(neighbours);
+    }
+
+    // O(found.size()*swarm.size()) time
+    // FIXME: Might be improved O(swarm.size()) should be possible
+    if (swarm.size() != tmpSwarm.size())
+      tmpSwarm = getSwarm(found, tmpSwarm);
+
+
+    swarm.addAll(tmpSwarm);
+
+    found.removeAll(swarm);
+    return swarm;
+  }
+
+  public Set<Field> greatestSwarm(Set<Field> fieldsToCheck){
+    // Make a copy, so there will be no conflict with direct calls.
+    Set<Field> occupiedFields = new HashSet<>(fieldsToCheck);
+    Set<Field> greatestSwarm = new HashSet<>();
+    int maxSize = -1;
+
+    // this is a maximum of MAX_FISH iterations, so it is a linear iteration altogether
+    while(!occupiedFields.isEmpty() && occupiedFields.size() > maxSize) {
+      Set<Field> empty = new HashSet<>();
+      Set<Field> swarm = getSwarm(occupiedFields, empty);
+      if (maxSize < swarm.size()){
+        maxSize = swarm.size();
+        greatestSwarm = swarm;
       }
-      Move m = new Move(0,0,RIGHT);
-      return maxSize;
-   }
+    }
+    return greatestSwarm;
+  }
 
-  public int greatestSwarm(PlayerColor player){
-    List<Field> occupiedFields = getOwnFields(player);
+  public Set<Field> greatestSwarm(PlayerColor player){
+    Set<Field> occupiedFields = getOwnFields(player);
 
     return greatestSwarm(occupiedFields);
   }
 
-  private boolean isDirectNeighbour(Field field1, Field field2){
-    int x1 = field1.getX();
-    int x2 = field2.getX();
-    int y1 = field1.getY();
-    int y2 = field2.getY();
-    return Math.abs(x1-x2) <= 1 && Math.abs(y1-y2) <= 1;
+  public int greatestSwarmSize(PlayerColor player){
+    return greatestSwarm(player).size();
+  }
+  public int greatestSwarmSize(Set<Field> set){
+    return greatestSwarm(set).size();
   }
 
   public boolean isSwarmConnected(Player player) {
-    List<Field> fieldsWithFish = getOwnFields(player);
-    int numGreatestSwarm = greatestSwarm(fieldsWithFish);
+    Set<Field> fieldsWithFish = getOwnFields(player);
+    int numGreatestSwarm = greatestSwarmSize(fieldsWithFish);
     return numGreatestSwarm == fieldsWithFish.size();
   }
 
   private int moveDistanceHorizontal(int ignore, int y){
-     int count = 0;
-     for(int i = 0; i < BOARD_SIZE; i++){
-        if (board.getField(i,y).getPiranha() != null){
-           count++;
-        }
-     }
-     return count;
+    int count = 0;
+    for(int i = 0; i < BOARD_SIZE; i++){
+      if (board.getField(i,y).getPiranha() != null){
+        count++;
+      }
+    }
+    return count;
   }
 
   private int moveDistanceVertical(int x, int ignore){
-     int count = 0;
-     for(int i = 0; i < BOARD_SIZE; i++){
-        if (board.getField(x,i).getPiranha() != null){
-           count++;
-        }
-     }
-     return count;
+    int count = 0;
+    for(int i = 0; i < BOARD_SIZE; i++){
+      if (board.getField(x,i).getPiranha() != null){
+        count++;
+      }
+    }
+    return count;
   }
 
-  private int moveDistanceDiagonalTopRight(int x,int y){
-     int count = 0;
-     int cX = x;
-     int cY = y;
-     // Move down left
-     while(cX > 0 && cY > 0) {
-        if (board.getField(cX,cY).getPiranha() != null){
-           count++;
-        }
-        cY--;
-        cX--;
-     }
+  private int moveDistanceDiagonalRising(int x, int y){
+    int count = 0;
+    int cX = x;
+    int cY = y;
+    // Move down left
+    while(cX >= 0 && cY >= 0) {
+      if (board.getField(cX,cY).getPiranha() != null){
+        count++;
+      }
+      cY--;
+      cX--;
+    }
 
 
-     // Move up right
-     cX = x+1;
-     cY = y+1;
-     while(cX < BOARD_SIZE && cY < BOARD_SIZE) {
-        if (board.getField(cX,cY).getPiranha() != null){
-           count++;
-        }
-        cY++;
-        cX++;
-     }
-     return count;
+    // Move up right
+    cX = x+1;
+    cY = y+1;
+    while(cX < BOARD_SIZE && cY < BOARD_SIZE) {
+      if (board.getField(cX,cY).getPiranha() != null){
+        count++;
+      }
+      cY++;
+      cX++;
+    }
+    return count;
   }
 
-   private int moveDistanceDiagonalBottomRight(int x,int y){
-      int count = 0;
-      int cX = x;
-      int cY = y;
-      // Move down left
-      while(cX < BOARD_SIZE && cY > 0) {
-         if (board.getField(cX,cY).getPiranha() != null){
-            count++;
-         }
-         cY--;
-         cX++;
+  private int moveDistanceDiagonalFalling(int x, int y){
+    int count = 0;
+    int cX = x;
+    int cY = y;
+    // Move down left
+    while(cX < BOARD_SIZE && cY >= 0) {
+      if (board.getField(cX,cY).getPiranha() != null){
+        count++;
       }
+      cY--;
+      cX++;
+    }
 
 
-      // Move up right
-      cX = x-1;
-      cY = y+1;
-      while(cX > 0  && cY < BOARD_SIZE) {
-         if (board.getField(cX,cY).getPiranha() != null){
-            count++;
-         }
-         cY++;
-         cX--;
+    // Move up right
+    cX = x-1;
+    cY = y+1;
+    while(cX >= 0  && cY < BOARD_SIZE) {
+      if (board.getField(cX,cY).getPiranha() != null){
+        count++;
       }
-      return count;
-   }
+      cY++;
+      cX--;
+    }
+    return count;
+  }
 
-   /**
-    * Calculate the minimum steps to take from given position in given direction
-    * @param x coordinate to calculate from
-    * @param y coordinate to calculate from
-    * @param direction of the calcualtion
-    * @return -1 if Invalid move, else the steps to take
-    */
+  /**
+   * Calculate the minimum steps to take from given position in given direction
+   * @param x coordinate to calculate from
+   * @param y coordinate to calculate from
+   * @param direction of the calcualtion
+   * @return -1 if Invalid move, else the steps to take
+   */
   public int calculateMoveDistance(int x, int y, Direction direction) {
     switch(direction){
-       case LEFT:
-       case RIGHT:
-          return moveDistanceHorizontal(x,y);
-       case UP:
-       case DOWN:
-          return moveDistanceVertical(x,y);
-       case UP_RIGHT:
-       case DOWN_LEFT:
-          return moveDistanceDiagonalTopRight(x,y);
-       case DOWN_RIGHT:
-       case UP_LEFT:
-          return moveDistanceDiagonalBottomRight(x,y);
+      case LEFT:
+      case RIGHT:
+        return moveDistanceHorizontal(x,y);
+      case UP:
+      case DOWN:
+        return moveDistanceVertical(x,y);
+      case UP_RIGHT:
+      case DOWN_LEFT:
+        return moveDistanceDiagonalRising(x,y);
+      case DOWN_RIGHT:
+      case UP_LEFT:
+        return moveDistanceDiagonalFalling(x,y);
     }
     return -1;
   }
@@ -639,9 +661,14 @@ public class GameState implements Cloneable {
    * @return
    */
   public Field getFieldInDirection(int x, int y, Direction direction, int distance) {
+    Map.Entry<Integer, Integer> shift = directionShift(direction);
+    return this.getBoard().getField(x + shift.getKey() * distance, y + shift.getValue() * distance);
+  }
+
+  private Map.Entry<Integer, Integer> directionShift(Direction d){
     int shiftX = 0;
     int shiftY = 0;
-    switch (direction){
+    switch (d){
       case UP_RIGHT:
         shiftX = 1;
       case UP:
@@ -662,9 +689,19 @@ public class GameState implements Cloneable {
       case LEFT:
         shiftX = -1;
         break;
-      case INVALID:
-        throw new IllegalArgumentException("Direction mustn't be INVALID");
     }
-    return this.getBoard().getField(x + shiftX * distance, y + shiftY * distance);
+    return new AbstractMap.SimpleEntry<>(shiftX, shiftY);
+  }
+
+  public List<Field> getFieldsInDirection(int x, int y, Direction d) {
+    int distance = calculateMoveDistance(x, y, d);
+    List<Field> fields = new LinkedList<>();
+    Board b = getBoard();
+    Map.Entry<Integer, Integer> shift = directionShift(d);
+
+    for (int i = 0; i < distance; i++){
+      fields.add(b.getField(x+shift.getKey()*i, y+shift.getValue()*i));
+    }
+    return fields;
   }
 }

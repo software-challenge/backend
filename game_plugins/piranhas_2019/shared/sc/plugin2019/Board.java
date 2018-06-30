@@ -5,7 +5,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import sc.plugin2019.util.Constants;
 import sc.shared.PlayerColor;
 
-import java.util.concurrent.ThreadLocalRandom;
+import static sc.plugin2019.FieldState.EMPTY;
+import static sc.plugin2019.FieldState.OBSTRUCTED;
 
 /**
  * Ein Spielbrett bestehend aus 8x8 Feldern
@@ -13,15 +14,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @XStreamAlias(value = "board")
 public class Board {
 
-  private Separator vertical;
-
-  private  Separator horizontal;
-
   @XStreamImplicit(itemFieldName = "fields")
-  private Field[][] track;
+  private Field[][] fields;
 
   public Board() {
-    this.track = new Field[10][10];
+    this.fields = new Field[Constants.BOARD_SIZE][Constants.BOARD_SIZE];
     initialize();
   }
 
@@ -31,24 +28,29 @@ public class Board {
   private void initialize() {
     for (int x = 0; x < Constants.BOARD_SIZE; x++) {
       for (int y = 0; y < Constants.BOARD_SIZE; y++) {
-        track[x][y] = new Field(x,y);
+        fields[x][y] = new Field(x,y);
       }
     }
     // place piranhas
     for (int index = 1; index < Constants.BOARD_SIZE - 1; index++) {
-      track[0][index].setPiranha(PlayerColor.RED);
-      track[Constants.BOARD_SIZE -1][index].setPiranha(PlayerColor.RED);
-      track[index][0].setPiranha(PlayerColor.BLUE);
-      track[index][Constants.BOARD_SIZE -1].setPiranha(PlayerColor.BLUE);
+      fields[0][index].setPiranha(PlayerColor.RED);
+      fields[Constants.BOARD_SIZE -1][index].setPiranha(PlayerColor.RED);
+      fields[index][0].setPiranha(PlayerColor.BLUE);
+      fields[index][Constants.BOARD_SIZE -1].setPiranha(PlayerColor.BLUE);
     }
-    // TODO generate separators
-    int x1 = ThreadLocalRandom.current().nextInt(0, Constants.BOARD_SIZE);
-    int y1 = ThreadLocalRandom.current().nextInt(0, Constants.BOARD_SIZE - 1);
-    this.vertical = new Separator(Direction.UP, x1, y1);
 
-    int x2 = ThreadLocalRandom.current().nextInt(0, Constants.BOARD_SIZE - 1);
-    int y2 = ThreadLocalRandom.current().nextInt(0, Constants.BOARD_SIZE);
-    this.horizontal = new Separator(Direction.RIGHT, x2, y2);
+    for(int i = 0; i < Constants.NUM_OBSTICLES; i++){
+      int x,y;
+
+      // Generate x y coordinate on empty field
+      do{
+        x = (int) (Math.random()*8+1);
+        y = (int) (Math.random()*8+1);
+      } while(fields[x][y].getState() != EMPTY);
+
+      fields[x][y].setState(OBSTRUCTED);
+    }
+
   }
 
   /**
@@ -61,7 +63,7 @@ public class Board {
     Board clone = new Board();
     for (int x = 0; x < Constants.BOARD_SIZE; x++) {
       for (int y = 0; y < Constants.BOARD_SIZE; y++) {
-        clone.track[x][y] = track[x][y].clone();
+        clone.fields[x][y] = fields[x][y].clone();
       }
     }
     return clone;
@@ -73,22 +75,14 @@ public class Board {
     StringBuilder b = new StringBuilder(toString);
     for (int x = 0; x < Constants.BOARD_SIZE; x++) {
       for (int y = 0; y < Constants.BOARD_SIZE; y++) {
-        b.append(track[x][y].getPiranha());
+        b.append(fields[x][y].getPiranha());
       }
     }
     return b.toString();
   }
 
-  public Separator getVertical() {
-    return vertical;
-  }
-
-  public Separator getHorizontal() {
-    return horizontal;
-  }
-
   public Field getField(int x, int y) {
-    return this.track[x][y];
+    return this.fields[x][y];
   }
 }
 

@@ -14,5 +14,6 @@ public class Constants {
   public static final int DRAW_SCORE = 1;
 
   public static final int BOARD_SIZE = 10;
+  public static final int NUM_OBSTICLES = 2;
   public static final int MAX_FISH = (BOARD_SIZE -2)*2;
 }

@@ -8,8 +8,6 @@ import sc.shared.PlayerColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.Socket;
 import java.util.Objects;
 
@@ -60,10 +58,7 @@ public class Window {
     }
 
     for(Direction dir : Direction.values()){
-      if (dir != Direction.INVALID){
-
-        direction.addItem(dir);
-      }
+      direction.addItem(dir);
     }
 
 
@@ -71,6 +66,30 @@ public class Window {
     acceptButton.addActionListener(actionEvent -> {
       port = Integer.parseInt((String) Objects.requireNonNull(portSelection.getSelectedItem()));
       host = hostTextField.getText();
+      outputAdmin.setText("");
+      outputCli1.setText("");
+      outputCli2.setText("");
+      try {
+        if (t[0] != null && t[0].isAlive()) {
+          thread0.close();
+          t[0].interrupt();
+          t[0].join();
+
+        }
+        if (t[1] != null && t[1].isAlive()) {
+          thread1.close();
+          t[1].interrupt();
+          t[1].join();
+        }
+        if (t[2] != null && t[2].isAlive()) {
+          thread2.close();
+          t[2].interrupt();
+          t[2].join();
+        }
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
 
       try {
         thread0 = new WorkerThread(outputAdmin, new Socket(host, port), 0);
@@ -83,7 +102,7 @@ public class Window {
             for(int i = 0; i < 10; i++){
               Field field = board.getField(i,j);
               String value = "<html>("+(i)+","+(j)+")<br>";
-              value += field.getPiranha()==null?"_":field.getPiranha().toString();
+              value += field.getState();
               value += "</html>";
               fieldState.add(new JLabel(value));
             }
@@ -107,9 +126,7 @@ public class Window {
       t[2] = null;
 
       // Admin client
-      t[0] = new Thread(() -> {
-        thread0.work();
-      });
+      t[0] = new Thread(() -> thread0.work());
       t[0].setDaemon(true);
       t[0].start();
 
