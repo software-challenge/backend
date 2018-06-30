@@ -7,11 +7,7 @@ import sc.plugin2019.GameState;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import static sc.plugin2019.Direction.*;
 
 public class GameRuleLogic
 {
@@ -29,8 +25,6 @@ public class GameRuleLogic
   public static boolean isSwarmConnected(GameState state) {
     return state.isSwarmConnected(state.getCurrentPlayer());
   }
-
-
 
   public static boolean isValidToMove(int x, int y, Direction direction, int distance, GameState state) throws InvalidMoveException {
     if (x >= Constants.BOARD_SIZE || y >= Constants.BOARD_SIZE || x < 0 || y < 0) throw new InvalidMoveException("x or y are not within the field range");
@@ -60,7 +54,7 @@ public class GameRuleLogic
     }
 
     for (Field f : fieldsInDirection){
-      if (f.getState() == oponentFieldColor || f.getState() == FieldState.OBSTRUCTED ){
+      if (f.getState() == oponentFieldColor){
         throw new InvalidMoveException("Path to the new position is not clear");
       }
     }

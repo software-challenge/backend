@@ -85,7 +85,7 @@ public class GamePlayTest
 		assertThrows(InvalidMoveException.class, ()->isValidToMove(0,4,RIGHT, 3, state), "Move distance was incorrect");
 		assertThrows(InvalidMoveException.class, ()->isValidToMove(0,4,LEFT, 2, state), "Move in that direction would not be on the board");
 		assertThrows(InvalidMoveException.class, ()->isValidToMove(0,1,RIGHT, 3, state), "Path to the new position is not clear");
-		assertThrows(InvalidMoveException.class, ()->isValidToMove(0,2,RIGHT, 2, state), "Path to the new position is not clear");
+		assertTrue(isValidToMove(0,2,RIGHT, 2, state));
 		assertThrows(InvalidMoveException.class, ()->isValidToMove(0,3,RIGHT, 2, state), "Field is obstructed");
 
 	}
