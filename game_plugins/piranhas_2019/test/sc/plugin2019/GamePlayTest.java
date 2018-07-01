@@ -89,4 +89,34 @@ public class GamePlayTest
 		assertThrows(InvalidMoveException.class, ()->isValidToMove(0,3,RIGHT, 2, state), "Field is obstructed");
 
 	}
+
+	@Test
+  public void testObstructedFieldGeneration() {
+	  int obstructedX = -1, obstructedY = -1;
+	  int count = 0;
+	  for (int x = 0; x < Constants.BOARD_SIZE; x++) {
+	    for (int y = 0; y < Constants.BOARD_SIZE; y++) {
+	      if (state.getBoard().getField(x,y).isObstructed()) {
+	        if (count < 2) {
+	          count++;
+          } else {
+	          fail("More than two obstructed fields found");
+          }
+          assertTrue(x < 2);
+          assertTrue(y < 2);
+          assertTrue(x > Constants.BOARD_SIZE - 2);
+          assertTrue(y > Constants.BOARD_SIZE - 2);
+          if (obstructedX > 0) {
+            // check whether second field is in same line (diagonal, vertical or horizontal as first one)
+            assertNotEquals(obstructedX, x); // horitontal
+            assertNotEquals(obstructedY, y); // vertical
+            assertNotEquals(obstructedX - obstructedY, x - y); // downleft to topright diagonal
+            assertNotEquals(obstructedX + obstructedY, x + y); // downright to topleft diagonal
+          }
+          obstructedX = x;
+          obstructedY = y;
+        }
+      }
+    }
+  }
 }

@@ -38,17 +38,24 @@ public class Board {
       fields[index][0].setPiranha(PlayerColor.BLUE);
       fields[index][Constants.BOARD_SIZE -1].setPiranha(PlayerColor.BLUE);
     }
-
+    int firstX = 0, firstY = 0;
     for(int i = 0; i < Constants.NUM_OBSTICLES; i++){
       int x,y;
 
       // Generate x y coordinate on empty field
+      // obstructed fields are in the inner 6x6 field and are not allowed to be in same vertical, diagonal or horizontal line
       do{
-        x = (int) (Math.random()*8+1);
-        y = (int) (Math.random()*8+1);
-      } while(fields[x][y].getState() != EMPTY);
+        x = (int) (Math.random()*6+2);
+        y = (int) (Math.random()*6+2);
+      } while(fields[x][y].getState() != EMPTY &&
+              (i == 0 || // if first field was generated
+                      (firstX == x || firstY == y || // check the generation conditions for second field
+                        firstX - firstY == x - y ||
+                        firstX + firstY == x + y)));
 
       fields[x][y].setState(OBSTRUCTED);
+      firstX = x;
+      firstY = y;
     }
 
   }
