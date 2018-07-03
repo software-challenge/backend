@@ -7,16 +7,16 @@ import sc.protocol.responses.ProtocolMessage;
 /** Send by administrative client to free claimed reservation. */
 
 @XStreamAlias("freeReservation")
-public class FreeReservationRequest extends ProtocolMessage implements ILobbyRequest {
+public class FreeReservationRequest implements ILobbyRequest {
   @XStreamAsAttribute
   private String reservation;
-
+  
   public FreeReservationRequest(String reservation) {
     this.reservation = reservation;
   }
-
+  
   public String getReservation() {
     return this.reservation;
   }
-
+  
 }

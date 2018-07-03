@@ -49,7 +49,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   
   /** Someone did something, check out what it was (move maybe? Then check the move) */
   @Override
-  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
+  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
     
     Player author = (Player) fromPlayer;
     
@@ -218,11 +218,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public void loadFromFile(String file) {
     logger.info("Loading game from: " + file);
-    GameLoader gl = new GameLoader(new Class<?>[]{GameState.class});
-    Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
-    if (gameInfo != null) {
-      loadGameInfo(gameInfo);
-    }
+    loadReplay(file);
   }
   
   @Override
@@ -256,32 +252,33 @@ public class Game extends RoundBasedGameInstance<Player> {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    GameLoader gl = new GameLoader(new Class<?>[]{GameState.class});
-    Object gameInfo = gl.loadGame(Configuration.getXStream(), "./tmp_replay.xml");
-    if (gameInfo != null) {
-      loadGameInfo(gameInfo);
-    }
-    // delete copied
+    loadReplay("./tmp_replay.xml");
     tmp_replay.delete();
   }
   
-  // XXX test this
+  public void loadReplay(String replayFile) {
+    Object info = new GameLoader(GameState.class).loadGame(Configuration.getXStream(), replayFile);
+    if (info != null)
+      loadGameInfo(info);
+  }
+  
   @Override
   public void loadGameInfo(Object gameInfo) {
     logger.info("Processing game information");
     if (gameInfo instanceof GameState) {
-      this.gameState = (GameState) gameInfo;
+      gameState = (GameState) gameInfo;
       // when loading from a state the listeners are not initialized
-      for (PlayerColor color : PlayerColor.values())
-        gameState.getPlayer(color).initListeners();
+      for (Player player : gameState.getPlayers())
+        player.initListeners();
       // the currentPlayer has to be RED (else the Move request is send to the wrong player)
       // if it isn't RED, the players have to be switched and RED is made currentPlayer
       if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
+        gameState.setStartPlayer(PlayerColor.BLUE);
         this.gameState.setCurrentPlayer(PlayerColor.RED);
-        for (PlayerColor color : PlayerColor.values()) {
-          Player newPlayer = this.gameState.getPlayer(color.opponent());
-          newPlayer.setPlayerColor(color);
-          gameState.setPlayer(color, newPlayer);
+        for (Player player : gameState.getPlayers()) {
+          PlayerColor newColor = player.getPlayerColor().opponent();
+          player.setPlayerColor(newColor);
+          gameState.setPlayer(newColor, player);
         }
       }
     }

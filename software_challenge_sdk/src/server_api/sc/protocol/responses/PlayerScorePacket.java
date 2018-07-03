@@ -5,9 +5,8 @@ import sc.protocol.requests.ILobbyRequest;
 import sc.shared.Score;
 
 /** Response to GetScoreForPlayerRequest. */
-
 @XStreamAlias("playerScore")
-public class PlayerScorePacket extends ProtocolMessage implements ILobbyRequest {
+public class PlayerScorePacket implements ILobbyRequest {
 
   private Score score;
 

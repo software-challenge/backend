@@ -64,14 +64,14 @@ public final class Application {
   public static void parseArguments(String[] params)
           throws IllegalOptionValueException, UnknownOptionException {
     CmdLineParser parser = new CmdLineParser();
-    CmdLineParser.Option pluginDirectory = parser.addStringOption(Configuration.PLUGINS_OPTION);
+    CmdLineParser.Option pluginDirOption = parser.addStringOption(Configuration.PLUGINS_OPTION);
     CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
     CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
     CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY);
     CmdLineParser.Option portOption = parser.addIntegerOption('p', Configuration.PORT_KEY);
     parser.parse(params);
 
-    String path = (String) parser.getOptionValue(pluginDirectory, null);
+    String path = (String) parser.getOptionValue(pluginDirOption, null);
     String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
     Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
     Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
@@ -80,23 +80,20 @@ public final class Application {
     Configuration.set(Configuration.PORT_KEY, port);
     if (loadGameFile != null) {
       Configuration.set(Configuration.GAMELOADFILE, loadGameFile);
-      if (turnToLoad != 0) {
+      if (turnToLoad != 0)
         Configuration.set(Configuration.TURN_TO_LOAD, turnToLoad.toString());
-      }
     }
 
-    if (saveReplay) {
+    if (saveReplay)
       Configuration.set(Configuration.SAVE_REPLAY, saveReplay.toString());
-    }
 
     if (path != null) {
-      File f = new File(path);
-
-      if (f.exists() && f.isDirectory()) {
+      File pluginDir = new File(path).getAbsoluteFile();
+      if (pluginDir.exists() && pluginDir.isDirectory()) {
         Configuration.set(Configuration.PLUGIN_PATH_KEY, path);
-        logger.info("Loading plugins from {}", f.getAbsoluteFile());
+        logger.info("Loading plugins from {}", pluginDir);
       } else {
-        logger.warn("Could not find {} to load plugins from", f.getAbsoluteFile());
+        logger.warn("Could not find {} to load plugins from", pluginDir);
       }
     }
   }

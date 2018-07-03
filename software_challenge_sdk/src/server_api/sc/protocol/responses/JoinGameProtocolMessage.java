@@ -12,7 +12,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * }
  */
 @XStreamAlias(value = "joined")
-public class JoinGameProtocolMessage extends ProtocolMessage {
+public class JoinGameProtocolMessage implements ProtocolMessage{
   @XStreamAsAttribute
   private String roomId;
 

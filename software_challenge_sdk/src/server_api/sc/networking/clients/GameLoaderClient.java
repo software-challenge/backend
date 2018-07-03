@@ -26,7 +26,7 @@ public final class GameLoaderClient extends XStreamClient implements IPollsHisto
   
   public GameLoaderClient(XStream xstream, InputStream inputStream) throws IOException {
     super(xstream, new FileSystemInterface(inputStream));
-    //logger.info("Loading game from {}", inputStream);
+    logger.trace("Loading game from {}", inputStream);
   }
   
   @Override

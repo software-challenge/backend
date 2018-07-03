@@ -54,10 +54,15 @@ public class GameLoader implements IHistoryListener {
   }
   
   public Object loadGame(XStream xstream, InputStream file) throws IOException {
-    this.client = new GameLoaderClient(xstream, file);
-    this.client.addListener(this);
-    this.client.start();
-    while (!this.finished && !this.client.isClosed()) {
+    client = new GameLoaderClient(xstream, file);
+    client.addListener(this);
+    client.start();
+    while (!finished && !client.isClosed()) {
+      try {
+        Thread.sleep(50);
+      } catch (InterruptedException e) {
+        logger.warn("Interrupted while waiting for game to load", e);
+      }
     }
     return this.obj;
   }

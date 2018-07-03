@@ -7,7 +7,7 @@ import sc.protocol.responses.ProtocolMessage;
 /** Request of administrative client to observe a gameRoom specified by given roomId. */
 
 @XStreamAlias("observe")
-public class ObservationRequest extends ProtocolMessage implements ILobbyRequest {
+public class ObservationRequest implements ILobbyRequest {
   @XStreamAsAttribute
   private String roomId;
 

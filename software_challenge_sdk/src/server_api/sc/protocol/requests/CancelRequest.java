@@ -7,12 +7,12 @@ import sc.protocol.responses.ProtocolMessage;
 /** Used to cancel game and deleting GameRoom. Used by administrative client. */
 
 @XStreamAlias("cancel")
-public class CancelRequest extends ProtocolMessage implements ILobbyRequest {
+public class CancelRequest implements ILobbyRequest {
   @XStreamAsAttribute
   public String roomId;
-
+  
   public CancelRequest(String roomId) {
     this.roomId = roomId;
   }
-
+  
 }

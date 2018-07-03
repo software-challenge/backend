@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XStreamAlias("prepare")
-public class PrepareGameRequest extends ProtocolMessage implements ILobbyRequest,
-    IRequest<PrepareGameProtocolMessage> {
+public class PrepareGameRequest implements ILobbyRequest, IRequest<PrepareGameProtocolMessage> {
+  
   @XStreamAsAttribute
   private final String gameType;
   

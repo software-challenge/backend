@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XStreamAlias(value = "result")
-public class GameResult extends ProtocolMessage {
+public class GameResult implements ProtocolMessage {
   private final ScoreDefinition definition;
   
   @XStreamImplicit(itemFieldName = "score")

@@ -61,8 +61,7 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if creation of game failed
    */
-  public synchronized GameRoom createGame(String gameType)
-      throws RescuableClientException {
+  public synchronized GameRoom createGame(String gameType) throws RescuableClientException {
     return createGame(gameType, false);
   }
   
@@ -87,8 +86,7 @@ public class GameRoomManager {
     logger.info("Created new game of type " + gameType);
     
     String roomId = generateRoomId();
-    GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(),
-        prepared);
+    GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(), prepared);
     // pause room if specified in server.properties on joinRoomRequest
     if (!prepared) {
       boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));

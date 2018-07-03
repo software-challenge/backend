@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("error")
-public class ProtocolErrorMessage extends ProtocolMessage {
+public class ProtocolErrorMessage implements ProtocolMessage{
   private ProtocolMessage originalRequest;
 
   @XStreamAsAttribute
