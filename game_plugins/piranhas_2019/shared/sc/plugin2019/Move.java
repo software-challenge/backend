@@ -30,13 +30,13 @@ public class Move extends ProtocolMove implements Cloneable {
   private static final Logger logger = LoggerFactory.getLogger(Move.class);
 
   @XStreamAsAttribute
-  private int x = -1;
+  public int x = -1;
 
   @XStreamAsAttribute
-  private int y = -1;
+  public int y = -1;
 
   @XStreamAsAttribute
-  private Direction direction;
+  public Direction direction;
 
   /**
    * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe
