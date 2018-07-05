@@ -36,9 +36,9 @@ public class Field {
   public Field(int x, int y, PlayerColor piranha) {
     this(x,y);
     if (piranha == PlayerColor.RED)
-      this.state = PLAYER_RED;
+      this.state = RED;
     else
-      this.state = PLAYER_BLUE;
+      this.state = BLUE;
   }
 
   public Field(int x, int y, boolean isObstructed) {
@@ -80,9 +80,9 @@ public class Field {
   }
 
   public PlayerColor getPiranha() {
-    if (state == PLAYER_RED)
+    if (state == RED)
       return PlayerColor.RED;
-    else if (state == PLAYER_BLUE)
+    else if (state == BLUE)
       return PlayerColor.BLUE;
 
     return null;
@@ -94,9 +94,9 @@ public class Field {
    */
   public void setPiranha(PlayerColor piranha) {
     if (piranha == PlayerColor.RED){
-      state = PLAYER_RED;
+      state = RED;
     } else if (piranha == PlayerColor.BLUE) {
-      state = PLAYER_BLUE;
+      state = BLUE;
     } else {
       state = EMPTY;
     }

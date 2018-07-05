@@ -46,15 +46,15 @@ public class GameRuleLogic
 
     List<Field> fieldsInDirection = state.getFieldsInDirection(x,y,direction);
 
-    FieldState oponentFieldColor;
+    FieldState opponentFieldColor;
     if (state.getCurrentPlayerColor() == PlayerColor.RED) {
-      oponentFieldColor = FieldState.PLAYER_BLUE;
+      opponentFieldColor = FieldState.BLUE;
     } else {
-      oponentFieldColor = FieldState.PLAYER_RED;
+      opponentFieldColor = FieldState.RED;
     }
 
     for (Field f : fieldsInDirection){
-      if (f.getState() == oponentFieldColor){
+      if (f.getState() == opponentFieldColor){
         throw new InvalidMoveException("Path to the new position is not clear");
       }
     }

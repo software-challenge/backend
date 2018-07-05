@@ -55,7 +55,7 @@ public class GamePlayTest
 
 		assertEquals(16, state.getOwnFields(PlayerColor.RED).size());
 		for (Field field : state.getOwnFields(PlayerColor.RED)){
-			assertEquals(PLAYER_RED, field.getState());
+			assertEquals(RED, field.getState());
 		}
 		assertEquals(16,state.greatestSwarmSize(PlayerColor.RED));
 

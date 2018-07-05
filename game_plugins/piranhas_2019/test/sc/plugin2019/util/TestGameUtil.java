@@ -13,9 +13,9 @@ public class TestGameUtil {
         int index = i+j*Constants.BOARD_SIZE;
         char c = boardString.charAt(index);
         if (c == 'R'){
-          board.getField(i,j).setState(FieldState.PLAYER_RED);
+          board.getField(i,j).setState(FieldState.RED);
         } else if (c == 'B'){
-          board.getField(i,j).setState(FieldState.PLAYER_BLUE);
+          board.getField(i,j).setState(FieldState.BLUE);
         } else if (c == 'O') {
           board.getField(i,j).setState(FieldState.OBSTRUCTED);
         } else {
