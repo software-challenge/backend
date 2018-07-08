@@ -5,7 +5,10 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import sc.plugin2019.util.Constants;
 import sc.shared.PlayerColor;
 
-import static sc.plugin2019.FieldState.EMPTY;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static sc.plugin2019.FieldState.OBSTRUCTED;
 
 /**
@@ -38,26 +41,28 @@ public class Board {
       fields[index][0].setPiranha(PlayerColor.BLUE);
       fields[index][Constants.BOARD_SIZE -1].setPiranha(PlayerColor.BLUE);
     }
-    int firstX = 0, firstY = 0;
-    for(int i = 0; i < Constants.NUM_OBSTICLES; i++){
-      int x,y;
-
-      // Generate x y coordinate on empty field
-      // obstructed fields are in the inner 6x6 field and are not allowed to be in same vertical, diagonal or horizontal line
-      do{
-        x = (int) (Math.random()*6+2);
-        y = (int) (Math.random()*6+2);
-      } while(fields[x][y].getState() != EMPTY &&
-              (i == 0 || // if first field was generated
-                      (firstX == x || firstY == y || // check the generation conditions for second field
-                        firstX - firstY == x - y ||
-                        firstX + firstY == x + y)));
-
-      fields[x][y].setState(OBSTRUCTED);
-      firstX = x;
-      firstY = y;
+    // place obstacles
+    // create a list of coordinates for fields which may be blocked
+    List<Field> blockableFields = new ArrayList<>();
+    for (int x = Constants.OBSTACLES_START; x < Constants.OBSTACLES_END; x++) {
+      for (int y = Constants.OBSTACLES_START; y < Constants.OBSTACLES_END; y++) {
+        blockableFields.add(this.getField(x, y));
+      }
     }
-
+    // set fields with randomly selected coordinates to blocked
+    // coordinates may not lay on same horizontal, vertical or diagonal lines with other selected coordinates
+    for (int i = 0; i < Constants.NUM_OBSTACLES; i++) {
+      int indexOfFieldToBlock = (int) Math.floor(Math.random() * blockableFields.size());
+      Field selectedField = blockableFields.get(indexOfFieldToBlock);
+      selectedField.setState(OBSTRUCTED);
+      blockableFields = blockableFields.stream().filter(
+              field -> (
+                      !(field.getX() == selectedField.getX() ||
+                              field.getY() == selectedField.getY() ||
+                              field.getX() - field.getY() == selectedField.getX() - selectedField.getY() ||
+                              field.getX() + field.getY() == selectedField.getX() + selectedField.getY()))
+      ).collect(Collectors.toList());
+    }
   }
 
   /**
