@@ -135,5 +135,5 @@
   <target name="build-clean" depends="clean,build" description="Build and clean all projects"/>
   <target name="build-deploy" depends="deploy" description="Build, clean, generate Javadoc and Zip files for all projects" />
 
-  <target name="main" depends="build-deploy" description="Build, clean, generate Javadoc and Zip files for all projects" />
+  <target name="main" depends="clean,build-deploy" description="Build, clean, generate Javadoc and Zip files for all projects" />
 </project>
