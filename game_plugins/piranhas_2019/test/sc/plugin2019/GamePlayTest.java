@@ -7,6 +7,9 @@ import sc.plugin2019.util.TestGameUtil;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static sc.plugin2019.Direction.LEFT;
 import static sc.plugin2019.Direction.RIGHT;
 import static sc.plugin2019.FieldState.*;
@@ -89,4 +92,33 @@ public class GamePlayTest
 		assertThrows(InvalidMoveException.class, ()->isValidToMove(0,3,RIGHT, 2, state), "Field is obstructed");
 
 	}
+
+	@Test
+  public void testObstructedFieldGeneration() {
+	  int count = 0;
+	  List<Field> obstructedFields = new ArrayList<>();
+	  for (int x = 0; x < Constants.BOARD_SIZE; x++) {
+	    for (int y = 0; y < Constants.BOARD_SIZE; y++) {
+	      if (state.getBoard().getField(x,y).isObstructed()) {
+	        if (count < Constants.NUM_OBSTACLES) {
+	          count++;
+          } else {
+	          fail("More than two obstructed fields found");
+          }
+          assertTrue(x > 1);
+          assertTrue(y > 1);
+          assertTrue(x < Constants.BOARD_SIZE - 2);
+          assertTrue(y < Constants.BOARD_SIZE - 2);
+          for (Field field: obstructedFields) {
+            // check whether second field is in same line (diagonal, vertical or horizontal as first one)
+            assertNotEquals(field.getX(), x); // horizontal
+            assertNotEquals(field.getY(), y); // vertical
+            assertNotEquals(field.getX() - field.getY(), x - y); // downleft to topright diagonal
+            assertNotEquals(field.getX() + field.getY(), x + y); // downright to topleft diagonal
+          }
+          obstructedFields.add(state.getBoard().getField(x,y));
+        }
+      }
+    }
+  }
 }

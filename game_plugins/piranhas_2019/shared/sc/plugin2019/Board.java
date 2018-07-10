@@ -5,7 +5,10 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import sc.plugin2019.util.Constants;
 import sc.shared.PlayerColor;
 
-import static sc.plugin2019.FieldState.EMPTY;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static sc.plugin2019.FieldState.OBSTRUCTED;
 
 /**
@@ -38,19 +41,28 @@ public class Board {
       fields[index][0].setPiranha(PlayerColor.BLUE);
       fields[index][Constants.BOARD_SIZE -1].setPiranha(PlayerColor.BLUE);
     }
-
-    for(int i = 0; i < Constants.NUM_OBSTICLES; i++){
-      int x,y;
-
-      // Generate x y coordinate on empty field
-      do{
-        x = (int) (Math.random()*8+1);
-        y = (int) (Math.random()*8+1);
-      } while(fields[x][y].getState() != EMPTY);
-
-      fields[x][y].setState(OBSTRUCTED);
+    // place obstacles
+    // create a list of coordinates for fields which may be blocked
+    List<Field> blockableFields = new ArrayList<>();
+    for (int x = Constants.OBSTACLES_START; x < Constants.OBSTACLES_END; x++) {
+      for (int y = Constants.OBSTACLES_START; y < Constants.OBSTACLES_END; y++) {
+        blockableFields.add(this.getField(x, y));
+      }
     }
-
+    // set fields with randomly selected coordinates to blocked
+    // coordinates may not lay on same horizontal, vertical or diagonal lines with other selected coordinates
+    for (int i = 0; i < Constants.NUM_OBSTACLES; i++) {
+      int indexOfFieldToBlock = (int) Math.floor(Math.random() * blockableFields.size());
+      Field selectedField = blockableFields.get(indexOfFieldToBlock);
+      selectedField.setState(OBSTRUCTED);
+      blockableFields = blockableFields.stream().filter(
+              field -> (
+                      !(field.getX() == selectedField.getX() ||
+                              field.getY() == selectedField.getY() ||
+                              field.getX() - field.getY() == selectedField.getX() - selectedField.getY() ||
+                              field.getX() + field.getY() == selectedField.getX() + selectedField.getY()))
+      ).collect(Collectors.toList());
+    }
   }
 
   /**
