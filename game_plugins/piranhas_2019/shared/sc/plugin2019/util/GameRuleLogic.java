@@ -1,13 +1,11 @@
 package sc.plugin2019.util;
 
-import sc.plugin2019.Direction;
-import sc.plugin2019.Field;
-import sc.plugin2019.FieldState;
-import sc.plugin2019.GameState;
+import sc.plugin2019.*;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
 import java.util.List;
+import java.util.Optional;
 
 public class GameRuleLogic
 {
@@ -29,7 +27,8 @@ public class GameRuleLogic
   public static boolean isValidToMove(int x, int y, Direction direction, int distance, GameState state) throws InvalidMoveException {
     if (x >= Constants.BOARD_SIZE || y >= Constants.BOARD_SIZE || x < 0 || y < 0) throw new InvalidMoveException("x or y are not within the field range");
     Field curField = state.getField(x,y);
-    if (curField.getPiranha() != state.getCurrentPlayerColor()){
+    Optional<PlayerColor> curFieldPlayer = curField.getPiranha();
+    if (!curFieldPlayer.isPresent() || curFieldPlayer.get() != state.getCurrentPlayerColor()){
       throw new InvalidMoveException("Field does not belong to the current player");
     }
 
@@ -59,7 +58,8 @@ public class GameRuleLogic
       }
     }
 
-    if (nextField.getPiranha() == state.getCurrentPlayerColor()){
+    Optional<PlayerColor> nextFieldPlayer = nextField.getPiranha();
+    if (nextFieldPlayer.isPresent() && nextFieldPlayer.get() == state.getCurrentPlayerColor()){
       throw new InvalidMoveException("Field obstructed with own piranha");
     }
     if (nextField.isObstructed()){

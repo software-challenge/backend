@@ -9,6 +9,7 @@ import sc.shared.PlayerColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static sc.plugin2019.Direction.LEFT;
 import static sc.plugin2019.Direction.RIGHT;
@@ -35,6 +36,32 @@ public class GamePlayTest
 	}
 
 	@Test
+  public void fieldTest(){
+    Board board = TestGameUtil.createCustomBoard(""+
+        "-BBBBBBB--"+
+        "RB-------R"+
+        "RO-------R"+
+        "R-O------R"+
+        "R--------R"+
+        "R--------R"+
+        "R--------R"+
+        "R--------R"+
+        "R--------R"+
+        "-BBBBBBBB-"
+    );
+    state.setBoard(board);
+    Field fieldRed = board.getField(0,5);
+    Field fieldEmpty = board.getField(5,5);
+
+    assertThrows(IllegalStateException.class, ()->fieldRed.setPiranha(null));
+    fieldRed.setPiranha(PlayerColor.RED);
+    assertTrue(fieldRed.getPiranha().isPresent());
+    assertEquals(PlayerColor.RED,fieldRed.getPiranha().get());
+
+    assertFalse(fieldEmpty.getPiranha().isPresent());
+  }
+
+	@Test
 	public void testMoveDirection(){
 		assertEquals(2, state.calculateMoveDistance(0,1, RIGHT));
 		assertEquals(2, state.calculateMoveDistance(0,8, Direction.UP_RIGHT));
@@ -49,19 +76,53 @@ public class GamePlayTest
 		assertEquals(8,state.greatestSwarmSize(PlayerColor.RED));
 		assertEquals(8,state.greatestSwarmSize(PlayerColor.BLUE));
 
-		Board board = state.getBoard();
-		for(int i = 0; i < Constants.BOARD_SIZE; i++){
-			board.getField(i,5).setPiranha(PlayerColor.RED);
-			board.getField(9,i).setState(EMPTY);
-		}
-
+    Board board = TestGameUtil.createCustomBoard(""+
+        "-BBBBBBB--"+
+        "RB--------"+
+        "RO--------"+
+        "R-O-------"+
+        "RRRRRRRRRR"+
+        "R---------"+
+        "R---------"+
+        "R---------"+
+        "----------"+
+        "-BBBBBBBB-"
+    );
+    state.setBoard(board);
 
 		assertEquals(16, state.getOwnFields(PlayerColor.RED).size());
 		for (Field field : state.getOwnFields(PlayerColor.RED)){
 			assertEquals(RED, field.getState());
 		}
-		assertEquals(16,state.greatestSwarmSize(PlayerColor.RED));
 
+    board = TestGameUtil.createCustomBoard(""+
+        "BBBBBBBBBB"+
+        "-B-B--B---"+
+        "RO-B--B---"+
+        "R-O---B---"+
+        "RRRRRRRRRR"+
+        "R---------"+
+        "R---------"+
+        "R---------"+
+        "----------"+
+        "----------"
+    );
+    state.setBoard(board);
+		assertEquals(16,state.greatestSwarmSize(PlayerColor.BLUE));
+
+    board = TestGameUtil.createCustomBoard(""+
+        "BBBBBBBBBB"+
+        "-B-B--B---"+
+        "RO-B--B---"+
+        "R-O---B---"+
+        "R-RRRRRRRR"+
+        "R---------"+
+        "R---------"+
+        "R---------"+
+        "----------"+
+        "----------"
+    );
+    state.setBoard(board);
 		board.getField(1,5).setState(EMPTY);
 		assertEquals(8, state.greatestSwarmSize(PlayerColor.RED));
 

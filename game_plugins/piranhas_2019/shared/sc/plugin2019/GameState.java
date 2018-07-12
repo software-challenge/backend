@@ -454,7 +454,7 @@ public class GameState implements Cloneable {
     for(int i = 0; i < BOARD_SIZE && MAX_FISH > size; i++){
       for(int j = 0; j < BOARD_SIZE && MAX_FISH > size; j++){
         Field curField = getBoard().getField(i,j);
-        if (curField.getPiranha() != null && curField.getPiranha().equals(player)){
+        if (curField.getPiranha().isPresent() && curField.getPiranha().get().equals(player)){
           fields.add(curField);
           size++;
         }
@@ -552,7 +552,7 @@ public class GameState implements Cloneable {
   private int moveDistanceHorizontal(int ignore, int y){
     int count = 0;
     for(int i = 0; i < BOARD_SIZE; i++){
-      if (board.getField(i,y).getPiranha() != null){
+      if (board.getField(i,y).getPiranha().isPresent()){
         count++;
       }
     }
@@ -562,7 +562,7 @@ public class GameState implements Cloneable {
   private int moveDistanceVertical(int x, int ignore){
     int count = 0;
     for(int i = 0; i < BOARD_SIZE; i++){
-      if (board.getField(x,i).getPiranha() != null){
+      if (board.getField(x,i).getPiranha().isPresent()){
         count++;
       }
     }
@@ -575,7 +575,7 @@ public class GameState implements Cloneable {
     int cY = y;
     // Move down left
     while(cX >= 0 && cY >= 0) {
-      if (board.getField(cX,cY).getPiranha() != null){
+      if (board.getField(cX,cY).getPiranha().isPresent()){
         count++;
       }
       cY--;
@@ -587,7 +587,7 @@ public class GameState implements Cloneable {
     cX = x+1;
     cY = y+1;
     while(cX < BOARD_SIZE && cY < BOARD_SIZE) {
-      if (board.getField(cX,cY).getPiranha() != null){
+      if (board.getField(cX,cY).getPiranha().isPresent()){
         count++;
       }
       cY++;
@@ -602,7 +602,7 @@ public class GameState implements Cloneable {
     int cY = y;
     // Move down left
     while(cX < BOARD_SIZE && cY >= 0) {
-      if (board.getField(cX,cY).getPiranha() != null){
+      if (board.getField(cX,cY).getPiranha().isPresent()){
         count++;
       }
       cY--;
@@ -614,7 +614,7 @@ public class GameState implements Cloneable {
     cX = x-1;
     cY = y+1;
     while(cX >= 0  && cY < BOARD_SIZE) {
-      if (board.getField(cX,cY).getPiranha() != null){
+      if (board.getField(cX,cY).getPiranha().isPresent()){
         count++;
       }
       cY++;

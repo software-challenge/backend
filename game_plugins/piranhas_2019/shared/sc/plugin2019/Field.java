@@ -4,6 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.shared.PlayerColor;
 
+import java.util.Optional;
+
+import static java.util.Optional.of;
 import static sc.plugin2019.FieldState.*;
 
 /**
@@ -79,13 +82,13 @@ public class Field {
     this.y = y;
   }
 
-  public PlayerColor getPiranha() {
+  public Optional<PlayerColor> getPiranha() {
     if (state == RED)
-      return PlayerColor.RED;
+      return Optional.of(PlayerColor.RED);
     else if (state == BLUE)
-      return PlayerColor.BLUE;
+      return Optional.of(PlayerColor.BLUE);
 
-    return null;
+    return Optional.empty();
   }
 
   /**
@@ -98,7 +101,7 @@ public class Field {
     } else if (piranha == PlayerColor.BLUE) {
       state = BLUE;
     } else {
-      state = EMPTY;
+      throw new IllegalStateException("The given PlayerColor does not exist");
     }
   }
 

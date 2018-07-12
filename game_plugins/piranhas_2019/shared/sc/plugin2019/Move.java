@@ -141,7 +141,7 @@ public class Move extends ProtocolMove implements Cloneable {
     if (GameRuleLogic.isValidToMove(x, y, direction, distance, state)) {
       Field start = state.getField(x,y);
       Field destination = state.getFieldInDirection(x,y,direction, distance);
-      start.setPiranha(null);
+      start.setState(FieldState.EMPTY);
 
       destination.setPiranha(state.getCurrentPlayerColor());
 

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import static sc.plugin2019.FieldState.OBSTRUCTED;
 
 /**
- * Ein Spielbrett bestehend aus 8x8 Feldern
+ * Ein Spielbrett bestehend aus 10x10 Feldern
  */
 @XStreamAlias(value = "board")
 public class Board {

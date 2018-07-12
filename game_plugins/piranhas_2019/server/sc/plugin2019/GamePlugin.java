@@ -10,8 +10,7 @@ import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 
 /**
- * Die Beschreibung des Hase- und Igel Core-Plugins für die Software-Challenge
- * 2018.
+ * Abstrakte Beschreibung des Spieles Prianahs für die Software-Challenge 2019
  *
  */
 @PluginDescriptor(name = "Piranhas", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)

@@ -3,7 +3,6 @@ package root;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.StreamException;
 import com.thoughtworks.xstream.io.xml.KXml2Driver;
-import sc.plugin2019.Board;
 import sc.plugin2019.Direction;
 import sc.plugin2019.GameState;
 import sc.plugin2019.Move;
@@ -13,7 +12,6 @@ import sc.protocol.responses.*;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 import sc.shared.WelcomeMessage;
-import root.IStateUpdate;
 
 import javax.swing.*;
 import java.io.EOFException;
@@ -21,7 +19,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -34,8 +31,6 @@ class WorkerThread {
   private Socket socket;
   private XStream stream;
   private Thread read;
-  private boolean shouldRead;
-  private Object readAvailable;
   private ObjectOutputStream outputStream;
   private ObjectInputStream is;
   private ConcurrentLinkedQueue<Object> queue = new ConcurrentLinkedQueue<>();
@@ -44,7 +39,6 @@ class WorkerThread {
   private static String roomId;
   private static String clientState[] = new String[2];
   private int type;
-  private final Object readLock = new Object();
   private List<IStateUpdate> stateChangeListener = new LinkedList<>();
   private List<IErrorHandler> errorListener = new LinkedList<>();
 
