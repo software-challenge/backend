@@ -79,10 +79,6 @@ game_helper_clients/lib/
 
 game_helper_clients/test_client/lib/
 
-game_players/hase_und_igel_new/lib/
-
-game_plugins/hase_und_igel_new/lib/
-
 game_server/lib/
 
 build_all/
@@ -91,8 +87,6 @@ game_server/\.externalToolBuilders/
 
 software_challenge_sdk/lib/software_challenge_sdk\.jar
 
-game_players/hase_und_igel_2018/lib/
+game_players/**/lib/
 
-game_plugins/hase_und_igel_2018/lib/
-
-game_plugins/lib
+game_plugins/**/lib/

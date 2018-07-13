@@ -10,7 +10,7 @@ import sc.framework.plugins.SimplePlayer;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
-import sc.plugin2018.util.Constants;
+import sc.plugin2019.util.Constants;
 import sc.protocol.LobbyProtocol;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
@@ -127,7 +127,7 @@ public class TestClient extends XStreamClient {
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         Thread.sleep(1000);
       }
-      testclient = new TestClient(Configuration.getXStream(), sc.plugin2018.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
+      testclient = new TestClient(Configuration.getXStream(), sc.plugin2019.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
       Runtime.getRuntime().addShutdownHook(new Thread(testclient::printScores));
     } catch (Exception e) {
       logger.error("Error while initializing: " + e.toString());
