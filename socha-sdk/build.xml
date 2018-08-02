@@ -1,0 +1,55 @@
+<project name="socha-sdk" basedir="." default="main">
+	<property name="src.dir" value="src" />
+	<!-- Copy libs to all sub-projects -->
+	<property name="build.dir" value="../build"/>
+	<property name="build.sdk.dir" value="${build.dir}/${ant.project.name}" />
+  <property name="doc.dir" value="${build.sdk.dir}/doc" />
+	<property name="classes.dir" value="${build.sdk.dir}/bin" />
+	<property name="jar.dir" value="${build.sdk.dir}/jar" />
+	<property name="lib.dir" value="lib" />
+
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.sdk.dir}" />
+		<delete dir="${doc.dir}" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac source="1.8" target="1.8" encoding="utf8"
+			   srcdir="${src.dir}"
+			   destdir="${classes.dir}"
+			   classpathref="classpath"
+			   debug="true"
+			   debuglevel="lines,vars,source"
+			   includeantruntime="false"/>
+	</target>
+
+	<target name="doc" description="generate documentation">
+        <javadoc destdir="${doc.dir}"
+                 classpathref="classpath"
+                 packagenames="sc.*"
+                 linksource="true">
+            <fileset dir="${src.dir}/framework" />
+            <fileset dir="${src.dir}/server-api" />
+        </javadoc>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" />
+	</target>
+
+
+	<target name="build" depends="jar"  description="Build only"/>
+	<target name="build-doc" depends="doc" description="Generate Javadoc only"/>
+
+	<target name="build-clean" depends="clean,build" description="Clean and build"/>
+	<target name="build-all" depends="build-clean,doc" description="Clean, build and generate Javadoc" />
+
+	<target name="main" depends="build" description="Clean, build and generate Javadoc" />
+</project>

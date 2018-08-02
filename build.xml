@@ -1,12 +1,12 @@
-<project name="Complete" basedir="." default="main">
+<project name="socha" basedir="." default="main">
   <import file="git-build.xml" />
 
   <property name="game_name" value="piranhas_2019" />
   <property name="out.dir" value="${basedir}/deploy" />
   <property name="build.dir" value="${basedir}/build" />
-  <property name="sdk.dir" value="${basedir}/software_challenge_sdk" />
-  <property name="plugins.dir" value="${basedir}/game_plugins" />
-  <property name="lib.dir" value="${basedir}/software_challenge_sdk/lib" />
+  <property name="sdk.dir" value="${basedir}/socha-sdk" />
+  <property name="plugins.dir" value="${basedir}/plugins" />
+  <property name="lib.dir" value="${basedir}/socha-sdk/lib" />
 
   <!-- Plugin to compile (i.e. "hase_und_igel", "missippi_queen") -->
   <property name="game_plugin" value="${game_name}_plugin" />
@@ -15,23 +15,23 @@
   <target name="clean">
     <delete dir="${build.dir}" />
     <delete dir="${out.dir}" />
-    <delete dir="game_server/lib"/>
-    <delete dir="game_players/${game_name}/lib"/>
-    <delete dir="game_plugins/${game_name}/lib"/>
-    <delete dir="game_helper_clients/test_client/lib"/>
+    <delete dir="server/lib"/>
+    <delete dir="players/${game_name}/lib"/>
+    <delete dir="plugins/${game_name}/lib"/>
+    <delete dir="helpers/test-client/lib"/>
   </target>
 
   <target name="dependencies">
     <echo message="Compiling SDK..." />
-    <ant dir="software_challenge_sdk" target="main" inheritAll="false" />
+    <ant dir="socha-sdk" target="main" inheritAll="false" />
 
     <echo message="Copy libraries..."/>
     <!-- Copy libs to all sub-projects -->
-    <copy todir="${lib.dir}" file="${build.dir}/software_challenge_sdk/jar/software_challenge_sdk.jar"/>
-    <copy todir="game_players/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
-    <copy todir="game_plugins/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
-    <copy todir="game_server/lib"><fileset dir="${lib.dir}" /></copy>
-    <copy todir="game_helper_clients/test_client/lib"><fileset dir="${lib.dir}" /></copy>
+    <copy todir="${lib.dir}" file="${build.dir}/socha-sdk/jar/socha-sdk.jar"/>
+    <copy todir="players/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
+    <copy todir="plugins/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
+    <copy todir="server/lib"><fileset dir="${lib.dir}" /></copy>
+    <copy todir="helpers/test-client/lib"><fileset dir="${lib.dir}" /></copy>
   </target>
 
   <target name="runnable">
@@ -50,19 +50,19 @@
            perm="ugo+x" />
 
     <echo message="Make test client runnable..."/>
-    <copydir src="${build.dir}/test_client/jar" dest="${build.dir}/test_client/runnable"/>
-    <copy file="${build.dir}/software-challenge-server/jar/software-challenge-server.jar" todir="${build.dir}/test_client/runnable" />
+    <copydir src="${build.dir}/test-client/jar" dest="${build.dir}/test-client/runnable"/>
+    <copy file="${build.dir}/software-challenge-server/jar/software-challenge-server.jar" todir="${build.dir}/test-client/runnable" />
     <copy file="${build.dir}/${game_player}/jar/${game_name}.jar"
-          tofile="${build.dir}/test_client/runnable/defaultplayer.jar"/>
+          tofile="${build.dir}/test-client/runnable/defaultplayer.jar"/>
     <copy file="${build.dir}/${game_plugin}/jar/${game_name}.jar"
-          todir="${build.dir}/test_client/runnable/plugins"/>
-    <copydir src="${lib.dir}" dest="${build.dir}/test_client/runnable/lib"/>    <!-- test client -->
-    <copy file="${build.dir}/software-challenge-server/runnable/server.properties" todir="${build.dir}/test_client/runnable/"/>
-    <echo file="${build.dir}/test_client/runnable/start-tests.bat"
-          message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test_client.jar&#xD;&#xA;" />
-    <echo file="${build.dir}/test_client/runnable/start-tests.sh"
-          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test_client.jar $@&#xA;"/>
-    <chmod file="${build.dir}/test_client/runnable/start.sh" perm="ugo+x" />
+          todir="${build.dir}/test-client/runnable/plugins"/>
+    <copydir src="${lib.dir}" dest="${build.dir}/test-client/runnable/lib"/>    <!-- test client -->
+    <copy file="${build.dir}/software-challenge-server/runnable/server.properties" todir="${build.dir}/test-client/runnable/"/>
+    <echo file="${build.dir}/test-client/runnable/start-tests.bat"
+          message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar&#xD;&#xA;" />
+    <echo file="${build.dir}/test-client/runnable/start-tests.sh"
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar $@&#xA;"/>
+    <chmod file="${build.dir}/test-client/runnable/start.sh" perm="ugo+x" />
 
 
     <echo message="Make Player runnable"/>
@@ -79,21 +79,21 @@
   <target name="build" depends="scmversion,dependencies" description="Build and only build for all projects">
 
     <echo message="Compiling Plugins..." />
-    <ant dir="game_plugins/${game_name}" target="main" />
+    <ant dir="plugins/${game_name}" target="main" />
 
     <echo message="Compiling Server..." />
-    <ant dir="game_server" target="main" inheritAll="false" />
-    <ant dir="game_helper_clients/test_client" target="main"/>
+    <ant dir="server" target="main" inheritAll="false" />
+    <ant dir="helpers/test-client" target="main"/>
 
     <echo message="Compiling Player..." />
-    <ant dir="game_players/${game_name}" target="main"/>
+    <ant dir="players/${game_name}" target="main"/>
   </target>
 
   <target name="build-jar" depends="dependencies,build" description="Build and create jars for all projects">
-    <ant dir="game_plugins/${game_name}" target="build-jar" />
-    <ant dir="game_players/${game_name}" target="build-jar" />
-    <ant dir="game_server" target="build-jar"/>
-    <ant dir="game_helper_clients/test_client" target="build-jar" />
+    <ant dir="plugins/${game_name}" target="build-jar" />
+    <ant dir="players/${game_name}" target="build-jar" />
+    <ant dir="server" target="build-jar"/>
+    <ant dir="helpers/test-client" target="build-jar" />
   </target>
 
   <target name="deploy" depends="build-jar,runnable,build-doc">
@@ -105,13 +105,13 @@
 
     <!-- Simple Client Source -->
     <zip destfile="${out.dir}/zipped/simple_client_${game_name}_src.zip">
-      <zipfileset file="game_players/${game_name}/src" includes="**/*.java, **/logback.xml"/>
+      <zipfileset file="players/${game_name}/src" includes="**/*.java, **/logback.xml"/>
       <mappedresources>
-        <fileset file="game_players/${game_name}/build-deploy.xml"/>
+        <fileset file="players/${game_name}/build-deploy.xml"/>
         <globmapper from="build-deploy.xml" to="build.xml"/>
       </mappedresources>
       <zipfileset dir="${build.dir}/${game_plugin}/jar" includes="**/*.jar" prefix="lib"/>
-      <zipfileset dir="game_players/${game_name}" includes="**/*.jar"/>
+      <zipfileset dir="players/${game_name}" includes="**/*.jar"/>
       <zipfileset dir="${build.dir}/${game_plugin}/doc" prefix="doc/simple_client"/>
       <zipfileset dir="${build.dir}/software-challenge-server/doc/" prefix="doc/sdk"/>
     </zip>
@@ -119,17 +119,17 @@
     <!-- Software Challenge Server -->
     <zip destfile="${out.dir}/zipped/software-challenge-server.zip">
       <zipfileset dir="${build.dir}/software-challenge-server/runnable/"/>
-      <zipfileset file="${build.dir}/test_client/runnable/*.*" excludes="server.properties, software-challenge-server.jar"/>
+      <zipfileset file="${build.dir}/test-client/runnable/*.*" excludes="server.properties, software-challenge-server.jar"/>
       <zipfileset file="${build.dir}/version"/>
     </zip>
   </target>
 
   <target name="build-doc" description="Generate Javadoc for all projects">
-    <ant dir="game_server" target="build-doc"/>
-    <ant dir="game_helper_clients/test_client" target="build-doc"/>
-    <ant dir="software_challenge_sdk" target="build-doc"/>
-    <ant dir="./game_plugins/${game_name}" target="build-doc"/>
-    <ant dir="./game_players/${game_name}" target="build-doc"/>
+    <ant dir="server" target="build-doc"/>
+    <ant dir="helpers/test-client" target="build-doc"/>
+    <ant dir="socha-sdk" target="build-doc"/>
+    <ant dir="./plugins/${game_name}" target="build-doc"/>
+    <ant dir="./players/${game_name}" target="build-doc"/>
   </target>
 
   <target name="build-clean" depends="clean,build" description="Build and clean all projects"/>
