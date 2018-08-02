@@ -20,7 +20,8 @@ log/
 *.recommenders
 
 # IntelliJ project files
-.idea
+.idea/*
+!.idea/codeStyles/
 *.iml
 
 # Latex artifacts
