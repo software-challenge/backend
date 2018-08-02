@@ -12,96 +12,101 @@ import sc.shared.ScoreCause;
 
 import java.util.List;
 
-public interface IGameInstance
-{
-	/**
-	 * XXX can be unique for GamePlugin, adds-player-to-game has to work for imported gameState too
-	 * @return SimpleClient
-	 * @throws TooManyPlayersException Thrown when already enough player
-	 */
-	public AbstractPlayer onPlayerJoined() throws TooManyPlayersException;
+public interface IGameInstance {
 
-	public void onPlayerLeft(AbstractPlayer player);
-	
-	public void onPlayerLeft(AbstractPlayer player, ScoreCause cause);
+    /**
+     * @return the player that joined
+     * @throws TooManyPlayersException thrown when a player can't join
+     */
+    AbstractPlayer onPlayerJoined() throws TooManyPlayersException;
 
-	/**
-	 * Called by the Server once an action was received.
-	 * 
-	 * @param fromPlayer
-	 *            The player who invoked this action.
-	 * @param data
-	 *            The plugin-secific data.
-	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
-	 */
-	public void onAction(AbstractPlayer fromPlayer, ProtocolMessage data)
-          throws GameLogicException, InvalidGameStateException, InvalidMoveException;
+    void onPlayerLeft(AbstractPlayer player);
 
-	/**
-	 * Extends the set of listeners.
-	 * 
-	 * @param listener GameListener to be added
-	 */
-	public void addGameListener(IGameListener listener);
+    void onPlayerLeft(AbstractPlayer player, ScoreCause cause);
 
-	public void removeGameListener(IGameListener listener);
+    /**
+     * Called by the Server once an action was received.
+     *
+     * @param fromPlayer The player who invoked this action.
+     * @param data       The plugin-secific data.
+     * @throws GameLogicException if any invalid action is done
+     * @throws InvalidMoveException if the received move violates the rules
+     */
+    void onAction(AbstractPlayer fromPlayer, ProtocolMessage data)
+            throws GameLogicException, InvalidGameStateException, InvalidMoveException;
 
-	/** Server or an administrator requests the game to start now. */
-	public void start();
+    /**
+     * Extends the set of listeners.
+     *
+     * @param listener GameListener to be added
+     */
+    void addGameListener(IGameListener listener);
 
-	/**
-	 * At any time this method might be invoked by the server. Any open handles
-	 * should be removed. No events should be sent out (GameOver etc) after this
-	 * method has been called.
-	 */
-	public void destroy();
-	
-	/**
-	 * The game is requested to load itself from a file (the board i.e.). This is
-	 * like a replay but with actual clients.
-	 *
-	 * @param file File where the game should be loaded from
-	 */
-	public void loadFromFile(String file);
+    void removeGameListener(IGameListener listener);
 
-	/**
-	 * The game is requested to load itself from a file (the board i.e.). This is
-	 * like a replay but with actual clients. Turn is used to specify the turn to
-	 * load from replay (e.g. if more than one gameState in replay)
-	 *
-	 * @param file File where the game should be loaded from
-	 * @param turn The turn to load
-	 */
-	public void loadFromFile(String file, int turn);
-	
-	/**
-	 * The game is requested to load itself from a given game information object (could be a board instance for example)
-	 * @param gameInfo the stored gameInformation
-	 */
-	public void loadGameInfo(Object gameInfo);
-	
-	/**
-	 * Returns the players that have won the game, empty if the game has no winners,
-	 * or null if the game has not finished.
-	 * @return List of AbstractPlayers, which won the game
-	 */
-	public List<AbstractPlayer> getWinners();
+    /**
+     * Server or an administrator requests the game to start now.
+     */
+    void start();
 
-	/**
-	 * Returns pluginUUID. Only used for generating replay name.
-	 * @return uuid of plugin
-	 */
-	public String getPluginUUID();
+    /**
+     * At any time this method might be invoked by the server. Any open handles
+     * should be removed. No events should be sent out (GameOver etc) after this
+     * method has been called.
+     */
+    void destroy();
 
-  /**
-   * Returns all players. This should always be 2 and the startplayer should be first in the List.
-   * @return List of all players
-   */
-	public List<AbstractPlayer> getPlayers();
+    /**
+     * The game is requested to load itself from a file (the board i.e.). This is
+     * like a replay but with actual clients.
+     *
+     * @param file File where the game should be loaded from
+     */
+    void loadFromFile(String file);
 
-  /**
-   * Returns the PlayerScore for both players
-   * @return List of PlayerScores
-   */
-	public List<PlayerScore> getPlayerScores();
+    /**
+     * The game is requested to load itself from a file (the board i.e.). This is
+     * like a replay but with actual clients. Turn is used to specify the turn to
+     * load from replay (e.g. if more than one gameState in replay)
+     *
+     * @param file File where the game should be loaded from
+     * @param turn The turn to load
+     */
+    void loadFromFile(String file, int turn);
+
+    /**
+     * The game is requested to load itself from a given game information object (could be a board instance for example)
+     *
+     * @param gameInfo the stored gameInformation
+     */
+    void loadGameInfo(Object gameInfo);
+
+    /**
+     * Returns the players that have won the game, empty if the game has no winners,
+     * or null if the game has not finished.
+     *
+     * @return List of AbstractPlayers, which won the game
+     */
+    List<AbstractPlayer> getWinners();
+
+    /**
+     * Returns pluginUUID. Only used for generating replay name.
+     *
+     * @return uuid of plugin
+     */
+    String getPluginUUID();
+
+    /**
+     * Returns all players. This should always be 2 and the startplayer should be first in the List.
+     *
+     * @return List of all players
+     */
+    List<AbstractPlayer> getPlayers();
+
+    /**
+     * Returns the PlayerScore for both players
+     *
+     * @return List of PlayerScores
+     */
+    List<PlayerScore> getPlayerScores();
 }
