@@ -2,7 +2,7 @@ package sc.sample.server;
 
 import java.util.List;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.RoundBasedGameInstance;
@@ -25,7 +25,7 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	}
 
 	@Override
-	public IPlayer onPlayerJoined() throws TooManyPlayersException
+	public AbstractPlayer onPlayerJoined() throws TooManyPlayersException
 	{
 		PlayerImpl newPlayer = new PlayerImpl(this.players.size() == 0 ? "X"
 				: "O");
@@ -34,7 +34,7 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	}
 
 	@Override
-	public void onPlayerLeft(IPlayer player)
+	public void onPlayerLeft(AbstractPlayer player)
 	{
 		this.players.remove(player);
 	}
@@ -46,7 +46,7 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	}
 
 	@Override
-	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
+	protected void onRoundBasedAction(AbstractPlayer fromPlayer, Object data)
 			throws GameLogicException
 	{
 		if (data instanceof Move)
@@ -56,7 +56,7 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 		}
 	}
 
-	protected Player resolve(IPlayer player)
+	protected Player resolve(AbstractPlayer player)
 	{
 		return ((PlayerImpl) player).getData();
 	}
@@ -101,14 +101,14 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	}
 
 	@Override
-	public void onPlayerLeft(IPlayer player, ScoreCause cause)
+	public void onPlayerLeft(AbstractPlayer player, ScoreCause cause)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public List<IPlayer> getWinners()
+	public List<AbstractPlayer> getWinners()
 	{
 		// TODO Auto-generated method stub
 		return null;

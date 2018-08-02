@@ -5,6 +5,8 @@ plugins {
     application
 }
 
+apply(plugin = "kotlin")
+
 java.sourceSets {
     "main" { java.srcDir("src") }
     "test" { java.srcDir("test") }

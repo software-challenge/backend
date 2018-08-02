@@ -2,7 +2,7 @@ package sc.plugin2013;
 
 import java.io.IOException;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
@@ -211,7 +211,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	}
 
 	@Override
-	public void onGamePaused(String roomId, IPlayer nextPlayer) {
+	public void onGamePaused(String roomId, AbstractPlayer nextPlayer) {
 		// not needed
 	}
 

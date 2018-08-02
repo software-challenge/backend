@@ -2,6 +2,7 @@ package sc.plugin2019;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import sc.api.plugins.IBoard;
 import sc.plugin2019.util.Constants;
 import sc.shared.PlayerColor;
 
@@ -15,7 +16,7 @@ import static sc.plugin2019.FieldState.OBSTRUCTED;
  * Ein Spielbrett bestehend aus 10x10 Feldern
  */
 @XStreamAlias(value = "board")
-public class Board {
+public class Board implements IBoard {
 
   @XStreamImplicit(itemFieldName = "fields")
   private Field[][] fields;

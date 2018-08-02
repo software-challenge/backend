@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.thoughtworks.xstream.XStream;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
 import sc.protocol.responses.ErrorResponse;
@@ -108,7 +108,7 @@ public class SimpleClient implements ILobbyClientListener
 	}
 
 	@Override
-	public void onGamePaused(String roomId, IPlayer nextPlayer)
+	public void onGamePaused(String roomId, AbstractPlayer nextPlayer)
 	{
 		// TODO Auto-generated method stub
 

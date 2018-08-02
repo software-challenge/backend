@@ -3,11 +3,11 @@ Plugin:
 Ordner "Client"
 	sc.plugin2015.*
 	sc.plugin2015.gui
-	(außer sc.plugin2015.gui.renderer.*)
+	(auï¿½er sc.plugin2015.gui.renderer.*)
 
 Ordner "Server"
 	Game.java
-		-außer getScoreFor(Player) und onRoundBasedAction(IPlayer, Object)
+		-auï¿½er getScoreFor(Player) und onRoundBasedAction(AbstractPlayer, Object)
 	GamePlugin.java
 		-davon: createGame(), getMaximumPlayerCount(), initialize(IGamePluginHost),
 		unload(), getScoreDefinition()

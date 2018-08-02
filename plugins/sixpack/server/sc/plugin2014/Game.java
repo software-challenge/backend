@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
@@ -65,7 +65,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * move)
 	 */
 	@Override
-	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
+	protected void onRoundBasedAction(AbstractPlayer fromPlayer, Object data)
 			throws GameLogicException {
 
 		final Player author = (Player) fromPlayer;
@@ -126,7 +126,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	}
 
 	@Override
-	public IPlayer onPlayerJoined() throws TooManyPlayersException {
+	public AbstractPlayer onPlayerJoined() throws TooManyPlayersException {
 		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT) {
 			throw new TooManyPlayersException();
 		}
@@ -145,7 +145,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	}
 
 	@Override
-	public void onPlayerLeft(IPlayer player) {
+	public void onPlayerLeft(AbstractPlayer player) {
 		if (!player.hasViolated()) {
 			onPlayerLeft(player, ScoreCause.LEFT);
 		} else {
@@ -154,10 +154,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 	}
 
 	@Override
-	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-		Map<IPlayer, PlayerScore> res = generateScoreMap();
+	public void onPlayerLeft(AbstractPlayer player, ScoreCause cause) {
+		Map<AbstractPlayer, PlayerScore> res = generateScoreMap();
 
-		for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
+		for (Entry<AbstractPlayer, PlayerScore> entry : res.entrySet()) {
 			PlayerScore score = entry.getValue();
 
 			if (entry.getKey() == player) {
@@ -259,9 +259,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 	}
 
 	@Override
-	public List<IPlayer> getWinners() {
+	public List<AbstractPlayer> getWinners() {
 		if (gameState.gameEnded()) {
-			List<IPlayer> winners = new LinkedList<IPlayer>();
+			List<AbstractPlayer> winners = new LinkedList<AbstractPlayer>();
 			if (gameState.winner() != null) {
 				for (Player player : players) {
 					if (player.getPlayerColor() == gameState.winner()) {

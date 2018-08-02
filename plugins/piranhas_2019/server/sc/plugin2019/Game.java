@@ -4,16 +4,16 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.GameLoader;
+import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.framework.plugins.AbstractPlayer;
 import sc.plugin2019.util.Configuration;
 import sc.plugin2019.util.Constants;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
-import sc.shared.WelcomeMessage;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -37,8 +37,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   public Game(String pluginUUID) {
-    this.availableColors.add(PlayerColor.RED);
-    this.availableColors.add(PlayerColor.BLUE);
+    this();
     this.pluginUUID = pluginUUID;
   }
 
@@ -47,7 +46,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  protected Object getCurrentState() {
+  protected IGameState getCurrentState() {
     return this.gameState; // return visible board for the players
   }
 
@@ -121,15 +120,13 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public PlayerScore getScoreFor(Player player) {
-
     logger.debug("get score for player {}", player.getPlayerColor());
-    logger.debug("player violated: {}", player.hasViolated());
+    logger.debug("player violated: {}", player.getViolated());
     int[] stats = this.gameState.getPlayerStats(player);
     int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
     String reason = null;
-    Player opponent = player.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getPlayer(PlayerColor.BLUE)
-            : this.gameState.getPlayer(PlayerColor.BLUE);
+    AbstractPlayer opponent = gameState.getOpponent(player);
     if (winCondition != null) {
       reason = winCondition.getReason();
       if (player.getPlayerColor().equals(winCondition.getWinner())) {
@@ -188,7 +185,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     int[][] stats = this.gameState.getGameStats();
     if (this.gameState.getTurn() < 2 * Constants.ROUND_LIMIT) {
       // round limit not reached
-      Player winningPlayer = getWinner();
+      AbstractPlayer winningPlayer = getWinner();
       if (winningPlayer != null) {
         return new WinCondition(winningPlayer.getPlayerColor(), Constants.WINNING_MESSAGE);
       } else {
@@ -196,7 +193,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
     } else {
       // round limit reached
-      Player winningPlayer = getWinner();
+      AbstractPlayer winningPlayer = getWinner();
       if (winningPlayer != null) {
         return new WinCondition(winningPlayer.getPlayerColor(), Constants.WINNING_MESSAGE);
       } else {
@@ -213,7 +210,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     }
   }
 
-  private Player getWinner() {
+  private AbstractPlayer getWinner() {
     if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.RED))) {
       System.out.println("Swarm is connected for red");
       if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.BLUE))) {
@@ -290,21 +287,18 @@ public class Game extends RoundBasedGameInstance<Player> {
     logger.info("Processing game information");
     if (gameInfo instanceof GameState) {
       this.gameState = (GameState) gameInfo;
-      // when loading from a state the listeners are not initialized
-      this.gameState.getPlayer(PlayerColor.RED).initListeners();
-      this.gameState.getPlayer(PlayerColor.BLUE).initListeners();
       // the currentPlayer has to be RED (else the Move request is send to the
       // wrong player)
       // if it isn't red, the players have to be switched and red is made
       // currentPlayer
       if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
-        this.gameState.setCurrentPlayer(PlayerColor.RED);
+        this.gameState.setCurrentPlayerColor(PlayerColor.RED);
         Player newRed = this.gameState.getPlayer(PlayerColor.BLUE).clone();
         newRed.setPlayerColor(PlayerColor.RED);
         Player newBlue = this.gameState.getPlayer(PlayerColor.RED).clone();
         newBlue.setPlayerColor(PlayerColor.BLUE);
-        this.gameState.setRedPlayer(newRed);
-        this.gameState.setBluePlayer(newBlue);
+        this.gameState.setRed(newRed);
+        this.gameState.setBlue(newBlue);
       }
     }
   }

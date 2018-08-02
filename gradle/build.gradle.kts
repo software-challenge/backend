@@ -1,5 +1,6 @@
 plugins {
     java
+    kotlin("jvm") version "1.2.60"
 }
 
 val year = property("socha.year").toString()
@@ -63,6 +64,8 @@ allprojects {
 
 project("sdk") {
     apply(plugin = "java")
+    apply(plugin = "kotlin")
+
     java.sourceSets {
         "main" {
             java.srcDirs("src/framework", "src/server-api")
@@ -70,6 +73,7 @@ project("sdk") {
     }
 
     dependencies {
+        compile(kotlin("stdlib"))
         compile("org.hamcrest", "hamcrest-core", "1.3")
         compile("jargs", "jargs", "1.0")
         compile("ch.qos.logback", "logback-classic", "0.9.15")
@@ -88,6 +92,8 @@ project("sdk") {
 
 project("plugins") {
     apply(plugin = "java")
+    apply(plugin = "kotlin")
+
     java.sourceSets {
         "main" { java.srcDirs("$game/client", "$game/server", "$game/shared") }
         "test" { java.srcDir("test") }

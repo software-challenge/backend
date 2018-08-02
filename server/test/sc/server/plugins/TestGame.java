@@ -1,17 +1,17 @@
 package sc.server.plugins;
 
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.LoggerFactory;
-
+import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.framework.plugins.AbstractPlayer;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
+
+import java.util.List;
+import java.util.Map;
 
 public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   private TestGameState state = new TestGameState();
@@ -20,8 +20,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   }
 
   @Override
-  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data)
-          throws GameLogicException {
+  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) {
     if (data instanceof TestMove) {
 
       /*
@@ -30,10 +29,9 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
        * There is no need to do it here again.
        */
 
-
       final TestMove move = (TestMove) data;
       move.perform(this.state);
-      next(this.state.currentPlayer == PlayerColor.RED ? state.red : state.blue);
+      next(this.state.getCurrentPlayer() == PlayerColor.RED ? state.getRed() : state.getBlue());
     }
   }
 
@@ -42,7 +40,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
     if (this.getRound() > 1) {
       System.out.println("Someone won");
       return new WinCondition(
-              ((TestGameState) this.getCurrentState()).state % 2 == 0 ? PlayerColor.RED : PlayerColor.BLUE, "Round limit reached");
+              ((TestGameState) this.getCurrentState()).getState() % 2 == 0 ? PlayerColor.RED : PlayerColor.BLUE, "Round limit reached");
     }
     return null;
   }
@@ -51,13 +49,13 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   public AbstractPlayer onPlayerJoined() throws TooManyPlayersException {
     if (this.players.size() < 2) {
       if (players.size() == 0) {
-        state.red = new TestPlayer(PlayerColor.RED);
-        players.add(state.red);
-        return state.red;
+        state.setRed(new TestPlayer(PlayerColor.RED));
+        players.add(state.getRed());
+        return state.getRed();
       } else {
-        state.blue = new TestPlayer(PlayerColor.BLUE);
-        players.add(state.blue);
-        return state.blue;
+        state.setBlue(new TestPlayer(PlayerColor.BLUE));
+        players.add(state.getBlue());
+        return state.getBlue();
       }
     }
 
@@ -80,7 +78,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   }
 
   @Override
-  protected Object getCurrentState() {
+  protected IGameState getCurrentState() {
     return this.state;
   }
 

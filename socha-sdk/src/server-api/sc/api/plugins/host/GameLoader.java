@@ -3,6 +3,7 @@ package sc.api.plugins.host;
 import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGameState;
 import sc.networking.clients.GameLoaderClient;
 import sc.networking.clients.IHistoryListener;
 import sc.protocol.responses.ProtocolErrorMessage;
@@ -22,16 +23,16 @@ public class GameLoader implements IHistoryListener {
   private Object obj = null;
   private List<Class<?>> clazzes;
   private GameLoaderClient client;
-  
+
   public GameLoader(List<Class<?>> clazzes) {
     this.finished = false;
     this.clazzes = clazzes;
   }
-  
+
   public GameLoader(Class<?>... clazz) {
     this(Arrays.asList(clazz));
   }
-  
+
   public Object loadGame(XStream xstream, String filename) {
     try {
       return loadGame(xstream, new File(filename));
@@ -40,11 +41,11 @@ public class GameLoader implements IHistoryListener {
       return null;
     }
   }
-  
+
   public Object loadGame(XStream xstream, File file) throws IOException {
     return loadGame(xstream, new FileInputStream(file), file.getName().endsWith(".gz"));
   }
-  
+
   public Object loadGame(XStream xstream, FileInputStream stream, boolean gzip) throws IOException {
     if (gzip) {
       return loadGame(xstream, new GZIPInputStream(stream));
@@ -52,7 +53,7 @@ public class GameLoader implements IHistoryListener {
       return loadGame(xstream, stream);
     }
   }
-  
+
   public Object loadGame(XStream xstream, InputStream file) throws IOException {
     client = new GameLoaderClient(xstream, file);
     client.addListener(this);
@@ -66,18 +67,18 @@ public class GameLoader implements IHistoryListener {
     }
     return this.obj;
   }
-  
+
   @Override
   public void onGameError(String roomId, ProtocolErrorMessage error) {
   }
-  
+
   @Override
   public void onGameOver(String roomId, GameResult o) {
     this.finished = true;
   }
-  
+
   @Override
-  public void onNewState(String roomId, Object o) {
+  public void onNewState(String roomId, IGameState o) {
     logger.debug("Received new state");
     if (!this.finished) {
       for (Class<?> clazz : this.clazzes) {
@@ -90,6 +91,6 @@ public class GameLoader implements IHistoryListener {
       }
     }
   }
-  
+
 }
 

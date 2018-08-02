@@ -1,14 +1,13 @@
 package sc.plugin2019;
 
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IMove;
 import sc.plugin2019.util.GameRuleLogic;
-import sc.protocol.responses.ProtocolMove;
 import sc.shared.DebugHint;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
@@ -23,7 +22,7 @@ import java.util.List;
  * - er besteht aus einer Advance Aktion und eventuell darauf folgende Kartenaktionen
  */
 @XStreamAlias(value = "move")
-public class Move extends ProtocolMove implements Cloneable {
+public class Move implements Cloneable, IMove {
   // TODO maybe add argument that piranha was removed for lastMove in Gamestate to use commando pattern
 
   @XStreamOmitField
@@ -55,8 +54,7 @@ public class Move extends ProtocolMove implements Cloneable {
    * Erzeugt einen neuen Zug aus Liste von Aktionen. Die Liste der Aktionen wird kopiert
    * (d.h. eine Änderung der Liste nach Erstellung des Zuges ändert den Zug nicht mehr).
    *
-   * @param x
-   *          Aktionen des Zuges
+   * @param x Aktionen des Zuges
    */
   public Move(int x, int y, Direction direction) {
     this.x = x;
@@ -79,8 +77,7 @@ public class Move extends ProtocolMove implements Cloneable {
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param hint
-   *          hinzuzufuegende Debug-Hilfestellung
+   * @param hint hinzuzufuegende Debug-Hilfestellung
    */
   public void addHint(DebugHint hint) {
     if (hints == null) {
@@ -90,14 +87,11 @@ public class Move extends ProtocolMove implements Cloneable {
   }
 
   /**
-   *
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param key
-   *          Schluessel
-   * @param value
-   *          zugehöriger Wert
+   * @param key   Schluessel
+   * @param value zugehöriger Wert
    */
   public void addHint(String key, String value) {
     addHint(new DebugHint(key, value));
@@ -107,8 +101,7 @@ public class Move extends ProtocolMove implements Cloneable {
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param string
-   *          Debug-Hilfestellung
+   * @param string Debug-Hilfestellung
    */
   public void addHint(String string) {
     addHint(new DebugHint(string));
@@ -129,25 +122,25 @@ public class Move extends ProtocolMove implements Cloneable {
    * lastMove wird gesetzt, lastNonSkipAktion wird gesetzt, turn wird um eins erhöht.
    * der currentPlayer wird getauscht, falls sich der nächste Spieler auf entsprechendem
    * Positionsfeld befindet werden seine Karotten erhöht.
-   * @param state
-   *          Spielstatus
-   * @throws InvalidMoveException
-   *           wird geworfen, wenn der Zug nicht den Regeln entspricht
+   *
+   * @param state Spielstatus
+   *
+   * @throws InvalidMoveException wird geworfen, wenn der Zug nicht den Regeln entspricht
    */
   public void perform(GameState state) throws InvalidMoveException, InvalidGameStateException {
     // TODO perform move
     int distance = state.calculateMoveDistance(x, y, direction);
-    System.out.println("distance: "+distance);
+    System.out.println("distance: " + distance);
     if (GameRuleLogic.isValidToMove(x, y, direction, distance, state)) {
-      Field start = state.getField(x,y);
-      Field destination = state.getFieldInDirection(x,y,direction, distance);
+      Field start = state.getField(x, y);
+      Field destination = state.getFieldInDirection(x, y, direction, distance);
       start.setState(FieldState.EMPTY);
 
       destination.setPiranha(state.getCurrentPlayerColor());
 
     }
 
-    System.out.println(state.getField(x,y));
+    System.out.println(state.getField(x, y));
 
     // Bereite nächsten Zug vor:
     state.setLastMove(this);
@@ -173,7 +166,7 @@ public class Move extends ProtocolMove implements Cloneable {
 
   @Override
   public String toString() {
-    String toString = "Zug: \nx = "+ x + ", y = " + y + ", direction = " + direction;
+    String toString = "Zug: \nx = " + x + ", y = " + y + ", direction = " + direction;
     return toString;
   }
 
