@@ -1,11 +1,8 @@
 import java.util.Scanner
 
 plugins {
-    java
     application
 }
-
-apply(plugin = "kotlin")
 
 java.sourceSets {
     "main" { java.srcDir("src") }

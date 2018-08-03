@@ -55,10 +55,14 @@ tasks {
 }
 
 allprojects {
+    apply(plugin = "java")
+    apply(plugin = "kotlin")
+
     repositories {
         maven("http://dist.wso2.org/maven2")
         jcenter()
     }
+
     tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
     tasks.withType<Javadoc> {
         val silence = buildDir.resolve("tmp").resolve("silence")
@@ -68,9 +72,6 @@ allprojects {
 }
 
 project("sdk") {
-    apply(plugin = "java")
-    apply(plugin = "kotlin")
-
     java.sourceSets {
         "main" {
             java.srcDirs("src/framework", "src/server-api")
@@ -96,9 +97,6 @@ project("sdk") {
 }
 
 project("plugins") {
-    apply(plugin = "java")
-    apply(plugin = "kotlin")
-
     java.sourceSets {
         "main" { java.srcDirs("$game/client", "$game/server", "$game/shared") }
         "test" { java.srcDir("test") }
