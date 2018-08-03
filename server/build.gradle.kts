@@ -20,6 +20,7 @@ application {
 
 dependencies {
     compile(project(":sdk"))
+    compile(kotlin("stdlib"))
     testCompile("junit", "junit", "4.12")
 }
 
