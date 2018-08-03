@@ -73,9 +73,6 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
   /**
    * Tell this client to observe the game given by the preparation handler
-   *
-   * @param handle Handle
-   *
    * @return controllable game
    */
   public IControllableGame observeGame(PrepareGameProtocolMessage handle) {

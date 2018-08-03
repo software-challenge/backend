@@ -1,34 +1,22 @@
 package sc.server.network;
 
 /** Client Role with all rights */
-public class AdministratorRole implements IClientRole
-{
-  /* private fields */
-  private Client	client;
+public class AdministratorRole implements IClientRole {
+  private Client client;
 
-  /* constructor */
-  public AdministratorRole(Client client)
-  {
+  public AdministratorRole(Client client) {
     this.client = client;
   }
 
-  /* methods */
-
-  /**
-   * Getter for the Client
-   * @return
-   */
+  /** Getter for the Client */
   @Override
-  public Client getClient()
-  {
+  public Client getClient() {
     return this.client;
   }
 
   /** Close the Administrator */
   @Override
-  public void close()
-  {
-    // TODO Auto-generated method stub
+  public void close() {
   }
 
 }
