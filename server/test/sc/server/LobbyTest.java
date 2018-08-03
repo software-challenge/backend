@@ -32,8 +32,7 @@ public class LobbyTest extends RealServerTest{
       ClientManager clientManager = lobby.getClientManager();
 
       player1.stop();
-      Thread.sleep(1000);
-      TestHelper.assertEqualsWithTimeout(0,()->lobby.getGameManager().getGames().size(), 2000);
+      TestHelper.assertEqualsWithTimeout(0,()->lobby.getGameManager().getGames().size(), 3000);
     } catch (Exception e){
       e.printStackTrace();
       Assert.fail();

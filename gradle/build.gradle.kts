@@ -27,8 +27,8 @@ tasks {
         group = mainGroup
         description = "Prepares a new Release by creating a git tag"
         doLast {
-            val tagDescription = properties["desc"]?.toString() ?:
-                    throw InvalidUserDataException("Die Flag -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
+            val tagDescription = properties["desc"]?.toString()
+                    ?: throw InvalidUserDataException("Die Flag -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
             println("Beschreibung: $tagDescription")
             exec { commandLine("git", "tag", version, "-m", tagDescription) }
             exec { commandLine("git", "push", "--tags") }
@@ -58,7 +58,12 @@ allprojects {
         maven("http://dist.wso2.org/maven2")
         jcenter()
     }
-    tasks.forEach { if(it.name != "clean") it.mustRunAfter("clean") }
+    tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
+    tasks.withType<Javadoc> {
+        val silence = buildDir.resolve("tmp").resolve("silence")
+        options.optionFiles!!.add(silence)
+        doFirst { silence.writeText("-Xdoclint:none") }
+    }
 }
 
 project("sdk") {

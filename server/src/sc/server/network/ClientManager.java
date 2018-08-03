@@ -135,7 +135,7 @@ public class ClientManager implements Runnable, IClientListener {
    * Do nothing on error
    *
    * @param source  client, which rose the error
-   * @param packet, which contains the error
+   * @param packet which contains the error
    */
   @Override
   public void onError(Client source, ProtocolErrorMessage packet) {

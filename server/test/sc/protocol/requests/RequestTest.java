@@ -68,7 +68,7 @@ public class RequestTest extends RealServerTest{
     player1.authenticate(PASSWORD);
     TestHelper.waitMills(200);
     LinkedList<Client> clients = lobby.getClientManager().getClients();
-    Assert.assertEquals(true, clients.get(0).isAdministrator());
+    Assert.assertTrue(clients.get(0).isAdministrator());
     Assert.assertEquals(3,lobby.getClientManager().getClients().size());
 
     player2.authenticate("PASSWORD_FAIL_TEST");
@@ -76,8 +76,7 @@ public class RequestTest extends RealServerTest{
 
     //Player2 got kicked
     Assert.assertEquals(2,lobby.getClientManager().getClients().size());
-    Assert.assertEquals(false, clients.get(1).isAdministrator());
-
+    Assert.assertFalse(clients.get(1).isAdministrator());
   }
 
   @Test
@@ -93,7 +92,7 @@ public class RequestTest extends RealServerTest{
 
     Assert.assertEquals(1,  lobby.getGameManager().getGames().size());
     Assert.assertEquals(0, lobby.getGameManager().getGames().iterator().next().getClients().size());
-    Assert.assertEquals(true, lobby.getGameManager().getGames().iterator().next().isPauseRequested());
+    Assert.assertTrue(lobby.getGameManager().getGames().iterator().next().isPauseRequested());
 
   }
 
@@ -140,10 +139,8 @@ public class RequestTest extends RealServerTest{
 
   @Test
   public void observationRequest(){
-
     player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
     player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
-
 
     TestHelper.waitMills(200);
 
@@ -161,7 +158,7 @@ public class RequestTest extends RealServerTest{
         hasRole = true;
       }
     }
-    Assert.assertEquals(true, hasRole);
+    Assert.assertTrue(hasRole);
   }
 
   @Test
@@ -196,13 +193,13 @@ public class RequestTest extends RealServerTest{
     room.getSlots().get(1).getRole().getPlayer().addPlayerListener(p2Listener);
 
     // Wait for the server to register that
-    TestHelper.waitUntilTrue(()->room.isPauseRequested(), 2000);
+    TestHelper.waitUntilTrue(room::isPauseRequested, 2000);
 
-    Assert.assertEquals(true, room.isPauseRequested());
+    Assert.assertTrue(room.isPauseRequested());
     PlayerRole pr1 = room.getSlots().get(0).getRole();
     PlayerRole pr2 = room.getSlots().get(1).getRole();
-    Assert.assertEquals(true, pr1.getPlayer().isShouldBePaused());
-    Assert.assertEquals(true, pr2.getPlayer().isShouldBePaused());
+    Assert.assertTrue(pr1.getPlayer().isShouldBePaused());
+    Assert.assertTrue(pr2.getPlayer().isShouldBePaused());
 
 
     // Wait for it to register
@@ -220,7 +217,7 @@ public class RequestTest extends RealServerTest{
   }
 
   @Test
-  public void stepRequest() throws IOException, PluginLoaderException {
+  public void stepRequest() {
     LobbyClient admin = player1;
     LobbyClient player1 = this.player2;
     LobbyClient player2 = this.player3;
@@ -251,12 +248,12 @@ public class RequestTest extends RealServerTest{
     room.getSlots().get(1).getRole().getPlayer().addPlayerListener(p2Listener);
 
     // Wait for the server to register that
-    TestHelper.waitUntilTrue(()->room.isPauseRequested(), 2000);
+    TestHelper.waitUntilTrue(room::isPauseRequested, 2000);
 
     PlayerRole pr1 = room.getSlots().get(0).getRole();
     PlayerRole pr2 = room.getSlots().get(1).getRole();
-    Assert.assertEquals(true, pr1.getPlayer().isShouldBePaused());
-    Assert.assertEquals(true, pr2.getPlayer().isShouldBePaused());
+    Assert.assertTrue(pr1.getPlayer().isShouldBePaused());
+    Assert.assertTrue(pr2.getPlayer().isShouldBePaused());
 
 
     // Wait for it to register
@@ -291,7 +288,6 @@ public class RequestTest extends RealServerTest{
     // Request a move
     admin.send(new StepRequest(room.getId()));
     TestHelper.waitMills(100);
-
 
     // Should register as a new state
     TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000);
@@ -413,7 +409,7 @@ public class RequestTest extends RealServerTest{
     listener.newStateReceived = false;
 
     player1.send(new PauseGameRequest(room.getId(), true));
-    TestHelper.waitUntilEqual(true,()->room.isPauseRequested(), 2000);
+    TestHelper.waitUntilEqual(true, room::isPauseRequested, 2000);
 
     player1.sendMessageToRoom(room.getId(), new TestMove(42));
     TestHelper.waitMills(1000);

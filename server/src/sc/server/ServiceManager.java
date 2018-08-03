@@ -21,7 +21,6 @@ public abstract class ServiceManager
 	 * Creates a new Thread
 	 * @param name Name of new Thread
 	 * @param target instance of Runnable
-	 * @return
 	 */
 	public static Thread createService(String name, Runnable target)
 	{
