@@ -1,55 +1,30 @@
-## This file generated from the list of files ignored by SVN!
+build/
+deploy/
+bin/
+doc/
+log/
 
-# Ignore RVM Project Config
-.rvmrc
+# Copied files
+/server/configuration/server.properties
+/server/plugins
+/server/lib/
+/socha-sdk/lib/socha-sdk\.jar
+/players/**/lib/
+/plugins/**/lib/
+/helpers/test-client/lib/
 
-# Ignore .project files from eclipse
-*.project
-*.metadata
+# Eclipse Project files
+.project
+.metadata
+.classpath
 *.recommenders
 
-# Ignore files from IntelliJ
-.idea
+# IntelliJ project files
+.idea/*
+!.idea/codeStyles/
 *.iml
 
-# Ignore temporary VIM files
-.*.sw*
-
-# Ignore deploy and build dirs
-/deploy
-/game_gui/build
-/game_server/build
-/software_challenge_sdk/build
-/software_challenge_sdk/bin
-/game_players/*/build
-/game_plugins/*/build
-/game_players/*/bin
-/game_plugins/*/bin
-/game_plugins/*/src
-/game_helper_clients/test_client/build
-
-# Ignore java doc
-game_players/*/doc
-game_plugins/*/doc
-game_helper_clients/*/doc
-software_challenge_sdk/*/doc
-
-# game server
-/game_server/log
-/game_server/plugins
-/game_server/bin
-
-# game gui
-/game_gui/build
-/game_gui/bin
-/game_gui/plugins
-
-# /vm_administration/
-/vm_administration/build
-/vm_administration/bin
-/vm_administration/jars
-
-# latex artifacts
+# Latex artifacts
 *.dvi
 *.aux
 *.idx
@@ -57,36 +32,9 @@ software_challenge_sdk/*/doc
 *.out
 *.log
 
-# Ignore VSCode configuration files
+# VSCode configuration files
 .vscode
+# RVM Project Config
+.rvmrc
 
-\.idea/
-
-*.iml
-
-game_server/doc/
-
-software_challenge_sdk/doc/
-
-*.class
-
-# ignore server.properties
-/game_server/configuration/server.properties
-
-build/
-
-game_helper_clients/lib/
-
-game_helper_clients/test_client/lib/
-
-game_server/lib/
-
-build_all/
-
-game_server/\.externalToolBuilders/
-
-software_challenge_sdk/lib/software_challenge_sdk\.jar
-
-game_players/**/lib/
-
-game_plugins/**/lib/
+!gradle.properties

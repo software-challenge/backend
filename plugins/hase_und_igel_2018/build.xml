@@ -1,0 +1,71 @@
+<project name="hase_und_igel_2018_plugin" basedir="." default="main">
+	<import file="../../git-build.xml" />
+	<!-- Defaults to value from build.xml in root directory (cannot override properties) -->
+  <property name="game_name" value="hase_und_igel_2018"/>
+	<property name="build.dir" value="../../build" />
+	<property name="lib.dir" value="lib" />
+	<property name="sdk.dir" value="./../../socha-sdk" />
+
+	<!-- Local Properties -->
+	<property name="src.dir" value="src" />
+  <property name="game_plugin" value="${game_name}_plugin"/>
+	<property name="plugin.build.dir" value="${build.dir}/${game_plugin}" />
+	<property name="doc.dir" value="${build.dir}/${game_plugin}/doc" />
+	<property name="classes.dir" value="${plugin.build.dir}/bin" />
+	<property name="jar.dir" value="${plugin.build.dir}/jar" />
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<pathelement location="${build.dir}/socha-sdk/bin" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}/${game_plugin}" />
+		<delete dir="${doc.dir}" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="server;client;shared"
+               destdir="${classes.dir}"
+               encoding="utf8"
+               classpathref="classpath"
+               debug="true"
+               debuglevel="lines,vars,source"
+               includeantruntime="false"/>
+	</target>
+
+	<target name="build-jar" depends="scmversion,compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${game_name}.jar">
+			<manifest>
+				<attribute name="${manifest.code.version.key}" value="${code.version}" />
+			</manifest>
+			<fileset dir="${classes.dir}" />
+			<fileset dir=".">
+				<include name="resource/**/*" />
+			</fileset>
+		</jar>
+	</target>
+
+  <target name="doc">
+    <mkdir dir="${doc.dir}" />
+    <mkdir dir="tmp" />
+
+    <javadoc destdir="${doc.dir}"
+             classpathref="classpath"
+             packagenames="sc.*"
+             linksource="true">
+      <fileset dir="client" />
+      <fileset dir="server" />
+      <fileset dir="shared" />
+    </javadoc>
+  </target>
+
+	<target name="build" depends="build-jar" description="Build only" />
+	<target name="build-clean" depends="clean, build" description="Clean and build" />
+	<target name="build-doc" depends="doc" description="Generate Javadoc only" />
+  <target name="build-all" depends="build-clean,build-doc" description="Clean, build and generate Javadoc" />
+
+	<target name="main" depends="build" description="Clean, build and generate Javadoc"/>
+</project>
