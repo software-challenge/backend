@@ -87,8 +87,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
         logger.info("Received game result");
         onGameOver(roomId, (GameResult) data);
       } else if (data instanceof GamePausedEvent) {
-        onGamePaused(roomId,
-                ((GamePausedEvent) data).getNextPlayer());
+        onGamePaused(roomId, ((GamePausedEvent) data).getNextPlayer());
       } else if (data instanceof ProtocolErrorMessage) {
         logger.debug("Received error packet");
         onError(roomId, ((ProtocolErrorMessage) data));
@@ -178,9 +177,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   @SuppressWarnings("unchecked")
-  public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(
-          String gameType) throws InterruptedException {
-
+  public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(String gameType) throws InterruptedException {
     return blockingRequest(new PrepareGameRequest(gameType), PrepareGameProtocolMessage.class);
   }
 

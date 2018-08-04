@@ -9,13 +9,12 @@ import java.io.OutputStream;
  * easier to write tests (with Mock-objects) so that you don't need a working
  * TCP/IP client.
  */
-public interface INetworkInterface
-{
+public interface INetworkInterface {
 
-	public abstract InputStream getInputStream() throws IOException;
+  InputStream getInputStream() throws IOException;
 
-	public abstract OutputStream getOutputStream() throws IOException;
+  OutputStream getOutputStream() throws IOException;
 
-	public abstract void close() throws IOException;
+  void close() throws IOException;
 
 }

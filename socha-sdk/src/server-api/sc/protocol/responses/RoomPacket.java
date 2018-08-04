@@ -30,5 +30,9 @@ public final class RoomPacket implements ILobbyRequest {
   public ProtocolMessage getData() {
     return this.data;
   }
-  
+
+  @Override
+  public String toString() {
+    return String.format("RoomPacket{roomId=%s, data=%s}", roomId, data);
+  }
 }

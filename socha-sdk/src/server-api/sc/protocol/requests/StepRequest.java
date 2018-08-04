@@ -22,5 +22,10 @@ public class StepRequest implements ILobbyRequest {
     this.roomId = roomId;
     this.forced = forced;
   }
-  
+
+  @Override
+  public String toString() {
+    return String.format("StepRequest{roomId=%s, forced=%s}", roomId, forced);
+  }
+
 }

@@ -69,6 +69,9 @@ allprojects {
         options.optionFiles!!.add(silence)
         doFirst { silence.writeText("-Xdoclint:none") }
     }
+    tasks.withType<Test> {
+        testLogging { showStandardStreams = System.getProperty("verbose") != null }
+    }
 }
 
 project("sdk") {

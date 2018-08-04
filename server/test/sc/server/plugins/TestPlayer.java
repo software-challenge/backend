@@ -17,7 +17,7 @@ public class TestPlayer extends AbstractPlayer {
 
   public void requestMove() {
     TestTurnRequest request = new TestTurnRequest();
-    System.out.println("Player: " + color + " requested a move");
+    System.out.println(color + " Player is requesting a move");
     notifyListeners(request);
   }
 
