@@ -12,7 +12,7 @@ java.sourceSets {
 
 application {
     mainClassName = "sc.server.Application"
-    applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml",
+    applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8",
             "-XX:+PrintGC", "-XX:+PrintGCDetails", "-XX:+PrintGCDateStamps", "-Xloggc:gc.log")
 }
 
@@ -39,7 +39,7 @@ tasks {
         classpath = files(configurations.compile, runnable.resolve("software-challenge-server.jar"))
         main = "sc.server.Application"
         workingDir = runnable
-        jvmArgs = listOf("-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback-production.xml", "-Djava.security.egd=file:/dev/./urandom", "-XX:MaxGCPauseMillis=100", "-XX:GCPauseIntervalMillis=2050", "-XX:+UseConcMarkSweepGC", "-XX:+CMSParallelRemarkEnabled", "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:CMSInitiatingOccupancyFraction=70", "-XX:+ScavengeBeforeFullGC", "-XX:+CMSScavengeBeforeRemark")
+        jvmArgs = listOf("-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=../../logback-production.xml", "-Djava.security.egd=file:/dev/./urandom", "-XX:MaxGCPauseMillis=100", "-XX:GCPauseIntervalMillis=2050", "-XX:+UseConcMarkSweepGC", "-XX:+CMSParallelRemarkEnabled", "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:CMSInitiatingOccupancyFraction=70", "-XX:+ScavengeBeforeFullGC", "-XX:+CMSScavengeBeforeRemark")
     }
 
     "dockerImage"(Exec::class) {
@@ -52,14 +52,6 @@ tasks {
         dependsOn("jar", "copyPlugin", "createScripts")
         from(configurations.compile)
         into(runnable.resolve("lib"))
-        doFirst {
-            copy {
-                from("configuration/logback-release.xml", "configuration/server.properties.example")
-                into(runnable)
-                rename("logback-release.xml", "logback.xml")
-                rename("server.properties.example", "server.properties")
-            }
-        }
     }
 
     "createScripts"(ScriptsTask::class) {
@@ -72,6 +64,14 @@ tasks {
         dependsOn(":plugins:jar")
         from(project(":plugins").buildDir.resolve("libs"))
         into(runnable.resolve("plugins"))
+        doLast {
+            copy {
+                from("configuration/logback-release.xml", "configuration/server.properties.example")
+                into(runnable)
+                rename("logback-release.xml", "logback.xml")
+                rename("server.properties.example", "server.properties")
+            }
+        }
     }
 
     "jar"(Jar::class) {
@@ -82,6 +82,7 @@ tasks {
     "run"(JavaExec::class) {
         dependsOn("copyPlugin")
         workingDir = runnable
+        jvmArgs = listOf("-Dlogback.configurationFile=../../configuration/logback.xml")
         args = System.getProperty("args", "").split(" ")
     }
 

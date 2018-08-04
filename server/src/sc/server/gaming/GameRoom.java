@@ -102,15 +102,13 @@ public class GameRoom implements IGameListener {
   @Override
   public synchronized void onGameOver(Map<AbstractPlayer, PlayerScore> results) throws InvalidScoreDefinitionException {
     if (isOver()) {
-      logger
-              .warn("Game was already over but received another GameOver-Event.");
+      logger.warn("Game was already over but received another GameOver-Event.");
       return;
     }
 
     setStatus(GameStatus.OVER);
     this.result = generateGameResult(results);
-    logger.info("The game {} is over. (regular={})", getId(), this.result
-            .isRegular());
+    logger.info("The game {} is over. (regular={})", getId(), this.result.isRegular());
     broadcast(this.result);
     // save replay after game over
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
@@ -147,8 +145,7 @@ public class GameRoom implements IGameListener {
     // save playerScore if test mode enabled
     if (Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE))) {
       List<AbstractPlayer> players = game.getPlayers();
-      gameRoomManager.addResultToScore(this.getResult(), game.getPlayerScores(), players.get(0).getDisplayName()
-              , players.get(1).getDisplayName());
+      gameRoomManager.addResultToScore(this.getResult(), game.getPlayerScores(), players.get(0).getDisplayName(), players.get(1).getDisplayName());
     }
     kickAllClients();
     this.game.destroy();
@@ -208,8 +205,7 @@ public class GameRoom implements IGameListener {
 
     // Send to all Players
     for (PlayerRole player : getPlayers()) {
-      logger.debug("sending {} to {}", o.getClass().getSimpleName(),
-              player.getClient().getClass().getSimpleName());
+      logger.debug("Sending {} to {}", o, player);
       player.getClient().send(toSend);
     }
 
@@ -224,9 +220,7 @@ public class GameRoom implements IGameListener {
    */
   private void observerBroadcast(ProtocolMessage toSend) {
     for (ObserverRole observer : Collections.unmodifiableCollection(this.observers)) {
-      logger.debug("sending {} to observer {}",
-              toSend.getClass().getSimpleName(),
-              observer.getClient().getClass().getSimpleName());
+      logger.debug("Sending {} to observer {}", toSend, observer.getClient().getClass().getSimpleName());
       observer.getClient().send(toSend);
     }
   }
@@ -354,7 +348,7 @@ public class GameRoom implements IGameListener {
    */
   synchronized void fillSlot(PlayerSlot openSlot, Client client)
           throws RescuableClientException {
-    
+
     openSlot.setClient(client); // set role of Slot as PlayerRole
 
     if (!isPrepared()) // is set when game is game is created or prepared
@@ -495,12 +489,9 @@ public class GameRoom implements IGameListener {
    *
    * @throws RescuableClientException
    */
-  public synchronized void onEvent(Client source, ProtocolMessage data)
-          throws RescuableClientException, InvalidGameStateException {
-    if (isOver()) {
-      throw new RescuableClientException(
-              "Game is already over, but got data: " + data.getClass());
-    }
+  public synchronized void onEvent(Client source, ProtocolMessage data) throws RescuableClientException, InvalidGameStateException {
+    if (isOver())
+      throw new RescuableClientException("Game is already over, but got data: " + data.getClass());
 
     try {
       this.game.onAction(resolvePlayer(source), data);
@@ -508,7 +499,6 @@ public class GameRoom implements IGameListener {
       this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.getMove(), e.getMessage())));
       throw new GameLogicException(e.toString());
     }
-
   }
 
   /**
@@ -591,8 +581,7 @@ public class GameRoom implements IGameListener {
 
     // Unnecessary Pause event
     if (pause == isPauseRequested()) {
-      logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.",
-              isPauseRequested(), pause);
+      logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.", isPauseRequested(), pause);
       return;
     }
 

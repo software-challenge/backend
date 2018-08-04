@@ -9,7 +9,10 @@ plugins {
 val game = property("game").toString()
 
 java.sourceSets {
-    "main" { java.srcDir("$game/src") }
+    "main" {
+        java.srcDir("$game/src")
+        resources.srcDir("$game/src")
+    }
 }
 
 application {

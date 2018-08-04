@@ -11,47 +11,41 @@ import sc.shared.ScoreFragment;
 
 /**
  * Abstrakte Beschreibung des Spieles Prianahs für die Software-Challenge 2019
- *
  */
 @PluginDescriptor(name = "Piranhas", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
-public class GamePlugin implements IGamePlugin
-{
+public class GamePlugin implements IGamePlugin {
 
-	public static final String			PLUGIN_AUTHOR = "";
-	public static final String			PLUGIN_UUID = "swc_2019_piranhas";
+  public static final String PLUGIN_AUTHOR = "";
+  public static final String PLUGIN_UUID = "swc_2019_piranhas";
 
-	public static final ScoreDefinition	SCORE_DEFINITION;
+  public static final ScoreDefinition SCORE_DEFINITION;
 
-	static
-	{
-		SCORE_DEFINITION = new ScoreDefinition();
-		SCORE_DEFINITION.add("Gewinner");
-		// NOTE: Always write the XML representation of unicode characters, not the character directly, as it confuses the
-		// parsers which consume the server messages!
-		SCORE_DEFINITION.add(new ScoreFragment("\u2205 Schwarm",
-				ScoreAggregation.AVERAGE));
-	}
+  static {
+    SCORE_DEFINITION = new ScoreDefinition();
+    SCORE_DEFINITION.add("Gewinner");
+    // NOTE: Always write the XML representation of unicode characters, not the character directly, as it confuses the
+    // parsers which consume the server messages!
+    SCORE_DEFINITION.add(new ScoreFragment("\u2205 Schwarm", ScoreAggregation.AVERAGE));
+  }
 
-	@Override
-	public IGameInstance createGame()
-	{
-	  return new Game(PLUGIN_UUID);
-	}
+  @Override
+  public IGameInstance createGame() {
+    return new Game(PLUGIN_UUID);
+  }
 
-	@Override
-	public void initialize(IGamePluginHost host) {
-		host.registerProtocolClasses(Configuration.getClassesToRegister());
-	}
+  @Override
+  public void initialize(IGamePluginHost host) {
+    host.registerProtocolClasses(Configuration.getClassesToRegister());
+  }
 
-	@Override
-	public void unload() {
-		// TODO Plugin entladen
-	}
+  @Override
+  public void unload() {
+    // TODO Plugin entladen
+  }
 
-	@Override
-	public ScoreDefinition getScoreDefinition()
-	{
-		return SCORE_DEFINITION;
-	}
+  @Override
+  public ScoreDefinition getScoreDefinition() {
+    return SCORE_DEFINITION;
+  }
 
 }

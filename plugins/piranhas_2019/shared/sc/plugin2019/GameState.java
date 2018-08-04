@@ -25,19 +25,19 @@ import static sc.plugin2019.util.GameRuleLogic.isValidToMove;
  * die Informationen ueber die beiden Spieler und das Spielfeld zum Zustand.
  * Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf. ueber das
  * Spielende informiert.
- *
- *
+ * <p>
+ * <p>
  * Der {@code GameState} ist damit das zentrale Objekt ueber das auf alle
  * wesentlichen Informationen des aktuellen Spiels zugegriffen werden kann.
- *
- *
+ * <p>
+ * <p>
  * Der Spielserver sendet an beide teilnehmenden Spieler nach jedem getaetigten
  * Zug eine neue Kopie des {@code GameState}, in dem der dann aktuelle Zustand
  * beschrieben wird. Informationen ueber den Spielverlauf sind nur bedingt ueber
  * den {@code GameState} erfragbar und muessen von einem Spielclient daher bei
  * Bedarf selbst mitgeschrieben werden.
- *
- *
+ * <p>
+ * <p>
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen abgefragt werden.
  *
@@ -89,11 +89,11 @@ public class GameState implements Cloneable {
    * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt
    * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
    * gueltig sind.
-   *
-   *
+   * <p>
+   * <p>
    * Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
    * Spielclient i.A. nicht aufgerufen werden!
-   *
+   * <p>
    * Das Spielfeld wird zufällig aufgebaut.
    */
   public GameState() {
@@ -125,7 +125,7 @@ public class GameState implements Cloneable {
    * @return ein neues Objekt mit gleichen Eigenschaften
    */
   @Override
-  public GameState clone()  {
+  public GameState clone() {
     GameState clone;
     try {
       clone = (GameState) super.clone();
@@ -150,13 +150,12 @@ public class GameState implements Cloneable {
 
   /**
    * Fuegt einem Spiel einen weiteren Spieler hinzu.
-   *
-   *
+   * <p>
+   * <p>
    * Diese Methode ist nur fuer den Spielserver relevant und sollte vom
    * Spielclient i.A. nicht aufgerufen werden!
    *
-   * @param player
-   *          Der hinzuzufuegende Spieler.
+   * @param player Der hinzuzufuegende Spieler.
    */
   public void addPlayer(Player player) {
     if (player.getPlayerColor() == PlayerColor.RED) {
@@ -177,6 +176,7 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert den Spieler als {@code Player}-Objekt, der als die entsprechende Farbe spielt
+   *
    * @param color die Farbe des gefragten Spielers
    */
   public Player getPlayer(PlayerColor color) {
@@ -206,6 +206,7 @@ public class GameState implements Cloneable {
 
   /**
    * Nur für den Server relevant
+   *
    * @param playerColor PlayerColor of new currentPlayer
    */
   protected void setCurrentPlayer(PlayerColor playerColor) {
@@ -236,6 +237,7 @@ public class GameState implements Cloneable {
 
   /**
    * Nur für den Server relevant
+   *
    * @param red roter Spieler
    */
   protected void setRedPlayer(Player red) {
@@ -244,6 +246,7 @@ public class GameState implements Cloneable {
 
   /**
    * Nur für den Server relevant
+   *
    * @param blue blauer Spieler
    */
   protected void setBluePlayer(Player blue) {
@@ -265,8 +268,7 @@ public class GameState implements Cloneable {
    * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf
    * {@code getStartPlayer().getPlayerColor()}, aber etwas effizienter.
    *
-   * @return Die Farbe des Spielers, der den aktuellen Abschnitt begonnen
-   *         hat.
+   * @return Die Farbe des Spielers, der den aktuellen Abschnitt begonnen hat.
    */
   public PlayerColor getStartPlayerColor() {
     return startPlayer;
@@ -285,6 +287,7 @@ public class GameState implements Cloneable {
 
   /**
    * liefert die aktuelle Zugzahl
+   *
    * @return Nummer des aktuellen Zuges (Zaehlung beginnt mit 0)
    */
   public int getTurn() {
@@ -293,6 +296,7 @@ public class GameState implements Cloneable {
 
   /**
    * Setzt die aktuelle Zugzahl. Nur für den Server relevant
+   *
    * @param turn neue Zugzahl
    */
   public void setTurn(int turn) throws InvalidGameStateException {
@@ -320,8 +324,8 @@ public class GameState implements Cloneable {
    * <li>[1] - Anzahl eingesammelter Passagiere
    * </ul>
    *
-   * @param player
-   *          Spieler
+   * @param player Spieler
+   *
    * @return Array mit Statistiken
    */
   public int[] getPlayerStats(Player player) {
@@ -336,8 +340,8 @@ public class GameState implements Cloneable {
    * <li>[0] - Punktekonto des Spielers (Größe des Schwarms)
    * </ul>
    *
-   * @param playerColor
-   *          Farbe des Spielers
+   * @param playerColor Farbe des Spielers
+   *
    * @return Array mit Statistiken
    */
   public int[] getPlayerStats(PlayerColor playerColor) {
@@ -355,8 +359,9 @@ public class GameState implements Cloneable {
    * {@link #getPlayerStats(PlayerColor) Spielerstats}, wobei getGameStats()[0],
    * einem Aufruf von getPlayerStats(PlayerColor.RED) entspricht.
    *
-   * @see #getPlayerStats(PlayerColor)
    * @return Statusinformationen beider Spieler
+   *
+   * @see #getPlayerStats(PlayerColor)
    */
   public int[][] getGameStats() {
 
@@ -370,16 +375,19 @@ public class GameState implements Cloneable {
 
   /**
    * liefert die Namen den beiden Spieler
+   *
    * @return Namen der Spieler
    */
   public String[] getPlayerNames() {
-    return new String[] { red.getDisplayName(), blue.getDisplayName() };
+    return new String[]{red.getDisplayName(), blue.getDisplayName()};
 
   }
 
   /**
    * Gibt die angezeigte Punktzahl des Spielers zurueck.
+   *
    * @param playerColor Farbe des Spielers
+   *
    * @return Punktzahl des Spielers
    */
   public int getPointsForPlayer(PlayerColor playerColor) {
@@ -399,6 +407,7 @@ public class GameState implements Cloneable {
 
   /**
    * Setzt letzten Zug. Nur für den Server relevant.
+   *
    * @param lastMove letzter Zug
    */
   protected void setLastMove(Move lastMove) {
@@ -407,6 +416,7 @@ public class GameState implements Cloneable {
 
   /**
    * Gibt den letzten Zugzurück
+   *
    * @return letzter Zug
    */
   public Move getLastMove() {
@@ -415,23 +425,25 @@ public class GameState implements Cloneable {
 
   /**
    * Gibt eine Liste aller möglichen Züge zurück
+   *
    * @return Liste von Move Objekten
    */
   public ArrayList<Move> getPossibleMoves() {
     ArrayList<Move> possibleMoves = new ArrayList<>();
     Set<Field> fields = getOwnFields(getCurrentPlayer());
 
-    for(Field field : fields){
-      for(Direction direction : Direction.values()){
+    for (Field field : fields) {
+      for (Direction direction : Direction.values()) {
         int x = field.getX();
         int y = field.getY();
         int dist = calculateMoveDistance(x, y, direction);
         try {
-          if (dist > 0 && isValidToMove(x,y,direction,dist,this)){
-            Move m = new Move(x,y,direction);
+          if (dist > 0 && isValidToMove(x, y, direction, dist, this)) {
+            Move m = new Move(x, y, direction);
             possibleMoves.add(m);
           }
-        } catch (InvalidMoveException ignore) {}
+        } catch (InvalidMoveException ignore) {
+        }
       }
     }
 
@@ -441,20 +453,20 @@ public class GameState implements Cloneable {
   @Override
   public String toString() {
     return "GameState:\n"
-        + "turn=" + this.getTurn() + this.getCurrentPlayer()
-        + this.red + this.blue
-        + this.board
-        + this.getLastMove();
+            + "turn=" + this.getTurn() + this.getCurrentPlayer()
+            + this.red + this.blue
+            + this.board
+            + this.getLastMove();
 
   }
 
-  public Set<Field> getOwnFields(PlayerColor player){
+  public Set<Field> getOwnFields(PlayerColor player) {
     Set<Field> fields = new HashSet<>();
     int size = 0;
-    for(int i = 0; i < BOARD_SIZE && MAX_FISH > size; i++){
-      for(int j = 0; j < BOARD_SIZE && MAX_FISH > size; j++){
-        Field curField = getBoard().getField(i,j);
-        if (curField.getPiranha().isPresent() && curField.getPiranha().get().equals(player)){
+    for (int i = 0; i < BOARD_SIZE && MAX_FISH > size; i++) {
+      for (int j = 0; j < BOARD_SIZE && MAX_FISH > size; j++) {
+        Field curField = getBoard().getField(i, j);
+        if (curField.getPiranha().isPresent() && curField.getPiranha().get().equals(player)) {
           fields.add(curField);
           size++;
         }
@@ -463,17 +475,17 @@ public class GameState implements Cloneable {
     return fields;
   }
 
-  private Set<Field> getDirectNeighbour(Field f, Set<Field> parentSet){
+  private Set<Field> getDirectNeighbour(Field f, Set<Field> parentSet) {
     Set<Field> returnSet = new HashSet<>();
     Board b = getBoard();
-    for(int i = -1; i <= 1; i++){
-      for(int j = -1; j <= 1; j++){
-        int x = f.getX()+i;
-        int y = f.getY()+j;
-        if (x < 0 || x >= Constants.BOARD_SIZE || y < 0 || y >= Constants.BOARD_SIZE || (i==0 && j==0)) continue;
+    for (int i = -1; i <= 1; i++) {
+      for (int j = -1; j <= 1; j++) {
+        int x = f.getX() + i;
+        int y = f.getY() + j;
+        if (x < 0 || x >= Constants.BOARD_SIZE || y < 0 || y >= Constants.BOARD_SIZE || (i == 0 && j == 0)) continue;
 
-        Field field = b.getField(x,y);
-        if (parentSet.contains(field)){
+        Field field = b.getField(x, y);
+        if (parentSet.contains(field)) {
           returnSet.add(field);
         }
       }
@@ -481,11 +493,11 @@ public class GameState implements Cloneable {
     return returnSet;
   }
 
-  public Set<Field> getOwnFields(Player player){
+  public Set<Field> getOwnFields(Player player) {
     return getOwnFields(player.getPlayerColor());
   }
 
-  private Set<Field> getSwarm(Set<Field> found, Set<Field> swarm){
+  private Set<Field> getSwarm(Set<Field> found, Set<Field> swarm) {
     if (swarm.isEmpty() && !found.isEmpty()) {
       Field field = found.iterator().next();
       swarm.add(field);
@@ -494,7 +506,7 @@ public class GameState implements Cloneable {
 
     Set<Field> tmpSwarm = new HashSet<>(swarm);
     // O(swarm.size()) time
-    for(Field field : swarm){
+    for (Field field : swarm) {
       // Constant time for both calls (max of 8 neighbors)
       Set<Field> neighbours = getDirectNeighbour(field, found);
       tmpSwarm.addAll(neighbours);
@@ -512,17 +524,17 @@ public class GameState implements Cloneable {
     return swarm;
   }
 
-  public Set<Field> greatestSwarm(Set<Field> fieldsToCheck){
+  public Set<Field> greatestSwarm(Set<Field> fieldsToCheck) {
     // Make a copy, so there will be no conflict with direct calls.
     Set<Field> occupiedFields = new HashSet<>(fieldsToCheck);
     Set<Field> greatestSwarm = new HashSet<>();
     int maxSize = -1;
 
     // this is a maximum of MAX_FISH iterations, so it is a linear iteration altogether
-    while(!occupiedFields.isEmpty() && occupiedFields.size() > maxSize) {
+    while (!occupiedFields.isEmpty() && occupiedFields.size() > maxSize) {
       Set<Field> empty = new HashSet<>();
       Set<Field> swarm = getSwarm(occupiedFields, empty);
-      if (maxSize < swarm.size()){
+      if (maxSize < swarm.size()) {
         maxSize = swarm.size();
         greatestSwarm = swarm;
       }
@@ -530,16 +542,17 @@ public class GameState implements Cloneable {
     return greatestSwarm;
   }
 
-  public Set<Field> greatestSwarm(PlayerColor player){
+  public Set<Field> greatestSwarm(PlayerColor player) {
     Set<Field> occupiedFields = getOwnFields(player);
 
     return greatestSwarm(occupiedFields);
   }
 
-  public int greatestSwarmSize(PlayerColor player){
+  public int greatestSwarmSize(PlayerColor player) {
     return greatestSwarm(player).size();
   }
-  public int greatestSwarmSize(Set<Field> set){
+
+  public int greatestSwarmSize(Set<Field> set) {
     return greatestSwarm(set).size();
   }
 
@@ -549,33 +562,33 @@ public class GameState implements Cloneable {
     return numGreatestSwarm == fieldsWithFish.size();
   }
 
-  private int moveDistanceHorizontal(int ignore, int y){
+  private int moveDistanceHorizontal(int ignore, int y) {
     int count = 0;
-    for(int i = 0; i < BOARD_SIZE; i++){
-      if (board.getField(i,y).getPiranha().isPresent()){
+    for (int i = 0; i < BOARD_SIZE; i++) {
+      if (board.getField(i, y).getPiranha().isPresent()) {
         count++;
       }
     }
     return count;
   }
 
-  private int moveDistanceVertical(int x, int ignore){
+  private int moveDistanceVertical(int x, int ignore) {
     int count = 0;
-    for(int i = 0; i < BOARD_SIZE; i++){
-      if (board.getField(x,i).getPiranha().isPresent()){
+    for (int i = 0; i < BOARD_SIZE; i++) {
+      if (board.getField(x, i).getPiranha().isPresent()) {
         count++;
       }
     }
     return count;
   }
 
-  private int moveDistanceDiagonalRising(int x, int y){
+  private int moveDistanceDiagonalRising(int x, int y) {
     int count = 0;
     int cX = x;
     int cY = y;
     // Move down left
-    while(cX >= 0 && cY >= 0) {
-      if (board.getField(cX,cY).getPiranha().isPresent()){
+    while (cX >= 0 && cY >= 0) {
+      if (board.getField(cX, cY).getPiranha().isPresent()) {
         count++;
       }
       cY--;
@@ -584,10 +597,10 @@ public class GameState implements Cloneable {
 
 
     // Move up right
-    cX = x+1;
-    cY = y+1;
-    while(cX < BOARD_SIZE && cY < BOARD_SIZE) {
-      if (board.getField(cX,cY).getPiranha().isPresent()){
+    cX = x + 1;
+    cY = y + 1;
+    while (cX < BOARD_SIZE && cY < BOARD_SIZE) {
+      if (board.getField(cX, cY).getPiranha().isPresent()) {
         count++;
       }
       cY++;
@@ -596,13 +609,13 @@ public class GameState implements Cloneable {
     return count;
   }
 
-  private int moveDistanceDiagonalFalling(int x, int y){
+  private int moveDistanceDiagonalFalling(int x, int y) {
     int count = 0;
     int cX = x;
     int cY = y;
     // Move down left
-    while(cX < BOARD_SIZE && cY >= 0) {
-      if (board.getField(cX,cY).getPiranha().isPresent()){
+    while (cX < BOARD_SIZE && cY >= 0) {
+      if (board.getField(cX, cY).getPiranha().isPresent()) {
         count++;
       }
       cY--;
@@ -611,10 +624,10 @@ public class GameState implements Cloneable {
 
 
     // Move up right
-    cX = x-1;
-    cY = y+1;
-    while(cX >= 0  && cY < BOARD_SIZE) {
-      if (board.getField(cX,cY).getPiranha().isPresent()){
+    cX = x - 1;
+    cY = y + 1;
+    while (cX >= 0 && cY < BOARD_SIZE) {
+      if (board.getField(cX, cY).getPiranha().isPresent()) {
         count++;
       }
       cY++;
@@ -625,39 +638,43 @@ public class GameState implements Cloneable {
 
   /**
    * Calculate the minimum steps to take from given position in given direction
-   * @param x coordinate to calculate from
-   * @param y coordinate to calculate from
+   *
+   * @param x         coordinate to calculate from
+   * @param y         coordinate to calculate from
    * @param direction of the calcualtion
+   *
    * @return -1 if Invalid move, else the steps to take
    */
   public int calculateMoveDistance(int x, int y, Direction direction) {
-    switch(direction){
+    switch (direction) {
       case LEFT:
       case RIGHT:
-        return moveDistanceHorizontal(x,y);
+        return moveDistanceHorizontal(x, y);
       case UP:
       case DOWN:
-        return moveDistanceVertical(x,y);
+        return moveDistanceVertical(x, y);
       case UP_RIGHT:
       case DOWN_LEFT:
-        return moveDistanceDiagonalRising(x,y);
+        return moveDistanceDiagonalRising(x, y);
       case DOWN_RIGHT:
       case UP_LEFT:
-        return moveDistanceDiagonalFalling(x,y);
+        return moveDistanceDiagonalFalling(x, y);
     }
     return -1;
   }
 
   public Field getField(int x, int y) {
-    return this.getBoard().getField(x,y);
+    return this.getBoard().getField(x, y);
   }
 
   /**
    * Überprüft nicht, ob Feld innerhalb der Feldgrenzen
+   *
    * @param x
    * @param y
    * @param direction
    * @param distance
+   *
    * @return
    */
   public Field getFieldInDirection(int x, int y, Direction direction, int distance) {
@@ -665,10 +682,10 @@ public class GameState implements Cloneable {
     return this.getBoard().getField(x + shift.getKey() * distance, y + shift.getValue() * distance);
   }
 
-  private Map.Entry<Integer, Integer> directionShift(Direction d){
+  private Map.Entry<Integer, Integer> directionShift(Direction d) {
     int shiftX = 0;
     int shiftY = 0;
-    switch (d){
+    switch (d) {
       case UP_RIGHT:
         shiftX = 1;
       case UP:
@@ -695,12 +712,12 @@ public class GameState implements Cloneable {
 
   public List<Field> getFieldsInDirection(int x, int y, Direction d) {
     int distance = calculateMoveDistance(x, y, d);
-    List<Field> fields = new LinkedList<>();
+    List<Field> fields = new ArrayList<>();
     Board b = getBoard();
     Map.Entry<Integer, Integer> shift = directionShift(d);
 
-    for (int i = 0; i < distance; i++){
-      fields.add(b.getField(x+shift.getKey()*i, y+shift.getValue()*i));
+    for (int i = 0; i < distance; i++) {
+      fields.add(b.getField(x + shift.getKey() * i, y + shift.getValue() * i));
     }
     return fields;
   }

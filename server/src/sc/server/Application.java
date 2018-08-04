@@ -15,13 +15,15 @@ public final class Application {
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
   private static final Object SYNCOBJ = new Object();
   static {
-    logger.debug("Loading logback config from {}", System.getProperty("user.dir")+File.separator+"logback.xml");
-    System.setProperty("logback.configurationFile", System.getProperty("user.dir")+File.separator+"logback.xml");
+    String config = System.getProperty("logback.configurationFile");
+    logger.debug("Loading logback config from {}", config != null ? config : System.getProperty("user.dir")+File.separator+"logback.xml");
+    if(config == null)
+      System.setProperty("logback.configurationFile", System.getProperty("user.dir")+File.separator+"logback.xml");
+    System.setProperty("file.encoding", "UTF-8");
   }
 
   public static void main(String[] params) {
     // setup server
-    System.setProperty("file.encoding", "UTF-8");
     try {
       parseArguments(params);
     } catch (IllegalOptionValueException e) {

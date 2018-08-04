@@ -16,30 +16,30 @@ import java.util.Map.Entry;
 
 public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implements IGameInstance {
   private static final Logger logger = LoggerFactory.getLogger(RoundBasedGameInstance.class);
-  
+
   protected P activePlayer = null;
-  
+
   private int turn = 0;
-  
+
   @XStreamOmitField
   private Optional<Integer> paused = Optional.empty();
-  
+
   @XStreamOmitField
   private ActionTimeout requestTimeout = null;
-  
+
   @XStreamOmitField
   protected final List<IGameListener> listeners = new ArrayList<>();
-  
+
   @XStreamImplicit(itemFieldName = "player")
   protected final List<P> players = new ArrayList<>();
-  
+
   @XStreamOmitField
   protected String pluginUUID;
-  
+
   public int getRound() {
     return this.turn / 2;
   }
-  
+
   /**
    * Called by the Server once an action was received.
    *
@@ -49,12 +49,12 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
    * @throws GameLogicException if any invalid action is done, i.e. game rule violation
    */
   public final void onAction(AbstractPlayer fromPlayer, ProtocolMessage data)
-      throws GameLogicException, InvalidGameStateException, InvalidMoveException {
+          throws GameLogicException, InvalidGameStateException, InvalidMoveException {
     Optional<String> errorMsg = Optional.empty();
     if (fromPlayer.equals(this.activePlayer)) {
       if (wasMoveRequested()) {
         this.requestTimeout.stop();
-        
+
         if (this.requestTimeout.didTimeout()) {
           logger.warn("Client hit soft-timeout.");
           fromPlayer.setSoftTimeout(true);
@@ -73,14 +73,14 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
       throw new GameLogicException(errorMsg.get());
     }
   }
-  
+
   private boolean wasMoveRequested() {
     return this.requestTimeout != null;
   }
-  
+
   protected abstract void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data)
-      throws GameLogicException, InvalidGameStateException, InvalidMoveException;
-  
+          throws GameLogicException, InvalidGameStateException, InvalidMoveException;
+
   /**
    * Checks if a win condition in the current game state is met.
    * Checks round limit and end of round (and playerStats).
@@ -90,7 +90,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
    * yet met.
    */
   protected abstract WinCondition checkWinCondition();
-  
+
   /**
    * At any time this method might be invoked by the server. Any open handles
    * should be removed. No events should be sent out (GameOver etc) after this
@@ -98,18 +98,18 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
    */
   public void destroy() {
     logger.info("Destroying Game");
-    
+
     if (this.requestTimeout != null) {
       this.requestTimeout.stop();
       this.requestTimeout = null;
     }
   }
-  
+
   /** Server or an administrator requests the game to start now. */
   public void start() {
     next(this.players.get(0), true);
   }
-  
+
   /**
    * On violation player is removed forcefully, if player has not violated, he has left by himself (i.e. Exception)
    *
@@ -123,26 +123,26 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
       onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
     }
   }
-  
+
   /** Handle leave of player */
   public void onPlayerLeft(AbstractPlayer player, ScoreCause cause) {
     Map<AbstractPlayer, PlayerScore> res = generateScoreMap();
-    
+
     for (Entry<AbstractPlayer, PlayerScore> entry : res.entrySet()) {
       PlayerScore score = entry.getValue();
-      
+
       if (entry.getKey() == player) {
         score.setCause(cause);
       }
     }
-    
+
     notifyOnGameOver(res);
   }
-  
+
   protected final void next(P nextPlayer) {
     next(nextPlayer, false);
   }
-  
+
   protected final void next(P nextPlayer, boolean firstTurn) {
     logger.debug("next round ({}) for player {}", getRound(), nextPlayer);
     if (!firstTurn) {
@@ -153,7 +153,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
     if (!this.isPaused()) {
       notifyOnNewState(getCurrentState());
     }
-    
+
     if (checkWinCondition() != null) {
       notifyOnGameOver(generateScoreMap());
     } else {
@@ -162,21 +162,21 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
       }
     }
   }
-  
+
   public abstract PlayerScore getScoreFor(P p);
-  
+
   /**
    * Gets the current state representation.
    *
    * @return current state
    */
   protected abstract Object getCurrentState();
-  
+
   /** Notifies the active player that it's his/her time to make a move. */
   protected final void notifyActivePlayer() {
     requestMove(activePlayer);
   }
-  
+
   /**
    * Sends a MoveRequest directly to the player (does not take PAUSE into
    * account)
@@ -185,43 +185,43 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
    */
   protected synchronized final void requestMove(P player) {
     final ActionTimeout timeout = player.isCanTimeout() ? getTimeoutFor(player)
-        : new ActionTimeout(false);
-    
+            : new ActionTimeout(false);
+
     final Logger logger = RoundBasedGameInstance.logger;
     final P playerToTimeout = player;
-    
+
     // Signal the JVM to do a GC run now and lower the propability that the GC
     // runs when the player sends back its move, resulting in disqualification
     // because of soft timeout.
     System.gc();
-    
+
     this.requestTimeout = timeout;
     timeout.start(() -> {
       logger.warn("Player {} reached the timeout of {}ms",
-          playerToTimeout, timeout.getHardTimeout());
+              playerToTimeout, timeout.getHardTimeout());
       playerToTimeout.setHardTimeout(true);
       onPlayerLeft(playerToTimeout, ScoreCause.HARD_TIMEOUT);
     });
-    
+
     player.requestMove();
   }
-  
+
   protected ActionTimeout getTimeoutFor(P player) {
     return new ActionTimeout(true);
   }
-  
+
   public final boolean isPaused() {
     return this.paused.map(inTurn -> this.turn >= inTurn).orElse(false);
   }
-  
-  
+
+
   /** Notifies players about the new state, sends a MoveRequest to active player */
   public void afterPause() {
     logger.info("Sending MoveRequest to player {}.", this.activePlayer);
     notifyOnNewState(getCurrentState());
     notifyActivePlayer();
   }
-  
+
   /**
    * Pauses game
    *
@@ -239,17 +239,17 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
       this.paused = Optional.empty();
     }
   }
-  
+
   public Map<AbstractPlayer, PlayerScore> generateScoreMap() {
     Map<AbstractPlayer, PlayerScore> map = new HashMap<AbstractPlayer, PlayerScore>();
-    
+
     for (final P p : this.players) {
       map.put(p, getScoreFor(p));
     }
-    
+
     return map;
   }
-  
+
   /**
    * Extends the set of listeners.
    *
@@ -258,7 +258,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
   public void addGameListener(IGameListener listener) {
     this.listeners.add(listener);
   }
-  
+
   /**
    * Removes listener TODO check whether this is right/complete?
    *
@@ -267,7 +267,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
   public void removeGameListener(IGameListener listener) {
     this.listeners.remove(listener);
   }
-  
+
   protected void notifyOnGameOver(Map<AbstractPlayer, PlayerScore> map) {
     for (IGameListener listener : this.listeners) {
       try {
@@ -277,7 +277,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
       }
     }
   }
-  
+
   protected void notifyOnNewState(Object mementoState) {
     for (IGameListener listener : this.listeners) {
       logger.debug("notifying {} about new game state", listener);
@@ -288,7 +288,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
       }
     }
   }
-  
+
   /**
    * Catch block, after an invalid move was performed
    *
@@ -305,9 +305,9 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
     author.notifyListeners(new ProtocolErrorMessage(e.getMove(), err));
     throw e;
   }
-  
+
   public String getPluginUUID() {
     return pluginUUID;
   }
-  
+
 }

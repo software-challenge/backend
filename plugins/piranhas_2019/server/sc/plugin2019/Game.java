@@ -4,30 +4,26 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.GameLoader;
+import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.framework.plugins.AbstractPlayer;
 import sc.plugin2019.util.Configuration;
 import sc.plugin2019.util.Constants;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
-import sc.shared.WelcomeMessage;
 
 import java.io.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Minimal game. Basis for new plugins. This class holds the game logic.
- */
+/** Minimal game. Basis for new plugins. This class holds the game logic. */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
-  private static final Logger logger =LoggerFactory.getLogger(Game.class);
+  private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
   @XStreamOmitField
-  private List<PlayerColor> availableColors = new LinkedList<>();
+  private List<PlayerColor> availableColors = new ArrayList<>();
 
   private GameState gameState = new GameState();
 
@@ -56,22 +52,19 @@ public class Game extends RoundBasedGameInstance<Player> {
    * move)
    */
   @Override
-  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
+  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
 
     Player author = (Player) fromPlayer;
 
     /*
-     * NOTE: Checking if right player sent move was already done by
-     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(AbstractPlayer, ProtocolMove)}.
+     * NOTE: Checking if right player sent move was already done by onAction(AbstractPlayer, ProtocolMove)}.
      * There is no need to do it here again.
      */
     try {
-      if (!(data instanceof Move)) {
+      if (!(data instanceof Move))
         throw new InvalidMoveException(author.getDisplayName() + " hat kein Zug-Objekt gesendet.");
-      }
-
       final Move move = (Move) data;
-      System.out.println("move perform");
+      logger.debug("Performing Move");
       move.perform(this.gameState);
       next(this.gameState.getCurrentPlayer());
     } catch (InvalidMoveException e) {
@@ -121,9 +114,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public PlayerScore getScoreFor(Player player) {
-
-    logger.debug("get score for player {}", player.getPlayerColor());
-    logger.debug("player violated: {}", player.hasViolated());
+    logger.debug("get score for player {} (violated: {})", player.getPlayerColor(), player.hasViolated());
     int[] stats = this.gameState.getPlayerStats(player);
     int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
@@ -142,27 +133,26 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
     }
     // opponent has done something wrong
-    if (opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft()
-            || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
-      matchPoints = 2;
+    if (opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft() || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
+      matchPoints = Constants.WIN_SCORE;
     }
     ScoreCause cause;
     if (player.hasSoftTimeout()) { // Soft-Timeout
       cause = ScoreCause.SOFT_TIMEOUT;
       reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasHardTimeout()) { // Hard-Timeout
       cause = ScoreCause.HARD_TIMEOUT;
       reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getHardTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasViolated()) { // rule violation
       cause = ScoreCause.RULE_VIOLATION;
       reason = player.getViolationReason(); // message from InvalidMoveException
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasLeft()) { // player left
       cause = ScoreCause.LEFT;
       reason = "Der Spieler hat das Spiel verlassen";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else { // regular score or opponent violated
       cause = ScoreCause.REGULAR;
     }
@@ -312,7 +302,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public List<AbstractPlayer> getWinners() {
     WinCondition win = checkWinCondition();
-    List<AbstractPlayer> winners = new LinkedList<>();
+    List<AbstractPlayer> winners = new ArrayList<>();
     if (win != null) {
       for (Player player : this.players) {
         if (player.getPlayerColor() == win.getWinner()) {
@@ -342,7 +332,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    */
   @Override
   public List<AbstractPlayer> getPlayers() {
-    List<AbstractPlayer> players = new LinkedList<>();
+    List<AbstractPlayer> players = new ArrayList<>();
     players.add(this.gameState.getPlayer(PlayerColor.RED));
     players.add(this.gameState.getPlayer(PlayerColor.BLUE));
     return players;
@@ -355,7 +345,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    */
   @Override
   public List<PlayerScore> getPlayerScores() {
-    LinkedList<PlayerScore> playerScores = new LinkedList<>();
+    List<PlayerScore> playerScores = new ArrayList<>();
     playerScores.add(getScoreFor(this.gameState.getPlayer(PlayerColor.RED)));
     playerScores.add(getScoreFor(this.gameState.getPlayer(PlayerColor.BLUE)));
     return playerScores;

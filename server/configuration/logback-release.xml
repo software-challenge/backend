@@ -27,7 +27,7 @@
     </layout>
   </appender>
 
-  <logger name="sc" level="WARN" />
+  <logger name="sc" level="INFO" />
 
   <!-- Uncomment the following line to enable verbose logging -->
   <!--<logger name="sc" level="INFO" />-->

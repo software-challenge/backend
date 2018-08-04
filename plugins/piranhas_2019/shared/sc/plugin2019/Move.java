@@ -1,6 +1,5 @@
 package sc.plugin2019;
 
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -13,8 +12,8 @@ import sc.shared.DebugHint;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -30,33 +29,23 @@ public class Move extends ProtocolMove implements Cloneable {
   private static final Logger logger = LoggerFactory.getLogger(Move.class);
 
   @XStreamAsAttribute
-  public int x = -1;
+  public final int x;
 
   @XStreamAsAttribute
-  public int y = -1;
+  public final int y;
 
   @XStreamAsAttribute
   public Direction direction;
 
   /**
-   * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe
-   * {@link DebugHint}
+   * Liste von Debughints, die dem Zug beigefügt werden koennen.
+   * Siehe {@link DebugHint}
    */
   @XStreamImplicit(itemFieldName = "hint")
   private List<DebugHint> hints;
 
   /**
-   * Default Konstruktor, der einen leeren Zug erzeugt.
-   */
-  public Move() {
-  }
-
-  /**
-   * Erzeugt einen neuen Zug aus Liste von Aktionen. Die Liste der Aktionen wird kopiert
-   * (d.h. eine Änderung der Liste nach Erstellung des Zuges ändert den Zug nicht mehr).
-   *
-   * @param x
-   *          Aktionen des Zuges
+   * Erzeugt einen neuen Zug aus von der gegebenen Position in die gegebene Richtung.
    */
   public Move(int x, int y, Direction direction) {
     this.x = x;
@@ -71,33 +60,28 @@ public class Move extends ProtocolMove implements Cloneable {
    */
   @Override
   public Move clone() {
-    Move clone = new Move(this.x, this.y, this.direction);
-    return clone;
+    return new Move(this.x, this.y, this.direction);
   }
 
   /**
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param hint
-   *          hinzuzufuegende Debug-Hilfestellung
+   * @param hint hinzuzufuegende Debug-Hilfestellung
    */
   public void addHint(DebugHint hint) {
     if (hints == null) {
-      hints = new LinkedList<>();
+      hints = new ArrayList<>();
     }
     hints.add(hint);
   }
 
   /**
-   *
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param key
-   *          Schluessel
-   * @param value
-   *          zugehöriger Wert
+   * @param key   Schluessel
+   * @param value zugehöriger Wert
    */
   public void addHint(String key, String value) {
     addHint(new DebugHint(key, value));
@@ -107,8 +91,7 @@ public class Move extends ProtocolMove implements Cloneable {
    * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
    * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
-   * @param string
-   *          Debug-Hilfestellung
+   * @param string Debug-Hilfestellung
    */
   public void addHint(String string) {
     addHint(new DebugHint(string));
@@ -124,35 +107,27 @@ public class Move extends ProtocolMove implements Cloneable {
   }
 
   /**
-   * Führt einen Zug aus, indem alle Aktionen aufsteigend anand des order Attributes ausgeführt werden.
+   * Führt einen Zug aus, indem alle Aktionen aufsteigend anhand des order Attributes ausgeführt werden.
    * Dabei werden zusätzlich folgende Informationen geupdated:
    * lastMove wird gesetzt, lastNonSkipAktion wird gesetzt, turn wird um eins erhöht.
-   * der currentPlayer wird getauscht, falls sich der nächste Spieler auf entsprechendem
-   * Positionsfeld befindet werden seine Karotten erhöht.
-   * @param state
-   *          Spielstatus
-   * @throws InvalidMoveException
-   *           wird geworfen, wenn der Zug nicht den Regeln entspricht
+   * der currentPlayer wird getauscht
+   *
+   * @throws InvalidMoveException wird geworfen, wenn der Zug nicht den Regeln entspricht
    */
   public void perform(GameState state) throws InvalidMoveException, InvalidGameStateException {
-    // TODO perform move
     int distance = state.calculateMoveDistance(x, y, direction);
-    System.out.println("distance: "+distance);
     if (GameRuleLogic.isValidToMove(x, y, direction, distance, state)) {
-      Field start = state.getField(x,y);
-      Field destination = state.getFieldInDirection(x,y,direction, distance);
+      Field start = state.getField(x, y);
+      Field destination = state.getFieldInDirection(x, y, direction, distance);
       start.setState(FieldState.EMPTY);
-
       destination.setPiranha(state.getCurrentPlayerColor());
-
     }
+    logger.debug("Distance: " + distance + " to Field " + state.getField(x, y));
 
-    System.out.println(state.getField(x,y));
-
-    // Bereite nächsten Zug vor:
+    // Bereite nächsten Zug vor
     state.setLastMove(this);
     state.setTurn(state.getTurn() + 1);
-    state.switchCurrentPlayer(); // depends on turn
+    state.switchCurrentPlayer();
   }
 
   /**
@@ -173,8 +148,7 @@ public class Move extends ProtocolMove implements Cloneable {
 
   @Override
   public String toString() {
-    String toString = "Zug: \nx = "+ x + ", y = " + y + ", direction = " + direction;
-    return toString;
+    return "Zug von (x=" + x + ", y=" + y + ") in Richtung " + direction;
   }
 
   public int getX() {
@@ -188,4 +162,5 @@ public class Move extends ProtocolMove implements Cloneable {
   public Direction getDirection() {
     return direction;
   }
+
 }
