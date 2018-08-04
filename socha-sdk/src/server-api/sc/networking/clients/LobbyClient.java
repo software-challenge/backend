@@ -3,6 +3,7 @@ package sc.networking.clients;
 import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGameState;
 import sc.api.plugins.host.IRequestResult;
 import sc.framework.plugins.AbstractPlayer;
 import sc.networking.INetworkInterface;
@@ -79,20 +80,19 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     if (o instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) o;
       String roomId = packet.getRoomId();
-      if (packet.getData() instanceof MementoPacket) {
-        MementoPacket statePacket = (MementoPacket) packet.getData();
-        onNewState(roomId, statePacket.getState());
-      } else if (packet.getData() instanceof GameResult) {
+      ProtocolMessage data = packet.getData();
+      if (data instanceof MementoPacket) {
+        onNewState(roomId, ((MementoPacket) data).getState());
+      } else if (data instanceof GameResult) {
         logger.info("Received game result");
-        onGameOver(roomId, (GameResult) packet.getData());
-      } else if (packet.getData() instanceof GamePausedEvent) {
-        onGamePaused(roomId,
-                ((GamePausedEvent) packet.getData()).getNextPlayer());
-      } else if (packet.getData() instanceof ProtocolErrorMessage) {
+        onGameOver(roomId, (GameResult) data);
+      } else if (data instanceof GamePausedEvent) {
+        onGamePaused(roomId, ((GamePausedEvent) data).getNextPlayer());
+      } else if (data instanceof ProtocolErrorMessage) {
         logger.debug("Received error packet");
-        onError(roomId, ((ProtocolErrorMessage) packet.getData()));
+        onError(roomId, ((ProtocolErrorMessage) data));
       } else {
-        onRoomMessage(roomId, packet.getData());
+        onRoomMessage(roomId, data);
       }
     } else if (o instanceof PrepareGameProtocolMessage) {
       PrepareGameProtocolMessage preparation = (PrepareGameProtocolMessage) o;
@@ -177,9 +177,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   @SuppressWarnings("unchecked")
-  public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(
-          String gameType) throws InterruptedException {
-
+  public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(String gameType) throws InterruptedException {
     return blockingRequest(new PrepareGameRequest(gameType), PrepareGameProtocolMessage.class);
   }
 
@@ -213,11 +211,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     logger.warn("Couldn't process message {}.", o);
   }
 
-  protected void onNewState(String roomId, Object state) {
+  protected void onNewState(String roomId, IGameState state) {
     for (ILobbyClientListener listener : this.listeners) {
       listener.onNewState(roomId, state);
     }
-
     for (IHistoryListener listener : this.historyListeners) {
       listener.onNewState(roomId, state);
     }
@@ -322,10 +319,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   public IControllableGame observeAndControl(PrepareGameProtocolMessage handle) {
     IControllableGame result = new ControllingClient(this,
-        handle.getRoomId());
+            handle.getRoomId());
     start();
     logger.debug("sending observation request with handle.roomId {}",
-        handle.getRoomId());
+            handle.getRoomId());
     send(new ObservationRequest(handle.getRoomId()));
     result.pause();
     return result;

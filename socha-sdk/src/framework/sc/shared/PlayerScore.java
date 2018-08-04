@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import sc.helpers.CollectionHelper;
-import sc.helpers.Function;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -60,23 +59,17 @@ public final class PlayerScore {
   }
 
   public String[] toStrings() {
-    return CollectionHelper.iterableToCollection(
-            CollectionHelper.map(parts, new Function<BigDecimal, String>() {
-              @Override
-              public String operate(BigDecimal val) {
-                return val.toString();
-              }
-            })).toArray(new String[parts.size()]);
+    return CollectionHelper.iterableToCollection(CollectionHelper.map(parts, val -> val.toString())).toArray(new String[parts.size()]);
   }
 
   public String toString() {
-    String result = "";
+    StringBuilder result = new StringBuilder();
     String[] strings = this.toStrings();
     for (int i = 0; i < strings.length; i++) {
-      if (i > 0) result += "; ";
-      result += strings[i];
+      if (i > 0) result.append("; ");
+      result.append(strings[i]);
     }
-    return result;
+    return result.toString();
   }
 
   public void setCause(ScoreCause cause) {
@@ -107,7 +100,7 @@ public final class PlayerScore {
               !(this.getValues().size() == score.getValues().size())) {
         return false;
       }
-      if (!(this.getReason() == score.getReason())) { // may be null
+      if (!this.getReason().equals(score.getReason())) { // may be null
         return false;
       }
       for (int i = 0; i < this.parts.size(); i++) {

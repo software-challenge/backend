@@ -1,11 +1,11 @@
 package sc.server.plugins;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.helpers.CollectionHelper;
-import sc.helpers.Function;
 import sc.server.Configuration;
 import sc.server.gaming.GamePluginApi;
 
@@ -56,11 +56,9 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
 
   public Collection<String> supportedGames() {
     Collection<String> result = new HashSet<String>();
-
     for (GamePluginInstance plugin : getAvailablePlugins()) {
       result.add(plugin.getDescription().uuid());
     }
-
     return result;
   }
 
@@ -70,7 +68,6 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
         return plugin;
       }
     }
-
     return null;
   }
 
@@ -85,13 +82,7 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
   }
 
   public Iterable<String> getPluginUUIDs() {
-    return CollectionHelper.map(this.getAvailablePlugins(),
-            new Function<GamePluginInstance, String>() {
-              @Override
-              public String operate(GamePluginInstance val) {
-                return val.getDescription().uuid();
-              }
-            });
+    return CollectionHelper.map(this.getAvailablePlugins(), val -> val.getDescription().uuid());
   }
 
   @Override

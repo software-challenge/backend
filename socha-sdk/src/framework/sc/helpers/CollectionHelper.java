@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Function;
 
 public abstract class CollectionHelper {
-  public static <FROM, TO> Iterable<TO> map(final Iterable<FROM> source,
-                                            final Function<FROM, TO> func) {
+  public static <FROM, TO> Iterable<TO> map(final Iterable<FROM> source, final Function<FROM, TO> func) {
     return () -> {
       final Iterator<FROM> sourceIterator = source.iterator();
       return new Iterator<TO>() {
@@ -20,7 +20,7 @@ public abstract class CollectionHelper {
         
         @Override
         public TO next() {
-          return func.operate((sourceIterator.next()));
+          return func.apply(sourceIterator.next());
         }
         
         @Override

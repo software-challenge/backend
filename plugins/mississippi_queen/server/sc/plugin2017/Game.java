@@ -64,13 +64,13 @@ public class Game extends RoundBasedGameInstance<Player> {
    * move)
    */
   @Override
-  protected void onRoundBasedAction(IPlayer fromPlayer, Object data) throws GameLogicException {
+  protected void onRoundBasedAction(AbstractPlayer fromPlayer, Object data) throws GameLogicException {
 
     Player author = (Player) fromPlayer;
 
     /**
      * NOTE: Checking if right player sent move was already done by
-     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(IPlayer, Object)}.
+     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(AbstractPlayer, Object)}.
      * There is no need to do it here again.
      */
     try {
@@ -102,7 +102,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public IPlayer onPlayerJoined() throws TooManyPlayersException {
+  public AbstractPlayer onPlayerJoined() throws TooManyPlayersException {
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
@@ -353,9 +353,9 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public List<IPlayer> getWinners() {
+  public List<AbstractPlayer> getWinners() {
     WinCondition win = checkWinCondition();
-    List<IPlayer> winners = new LinkedList<IPlayer>();
+    List<AbstractPlayer> winners = new LinkedList<AbstractPlayer>();
     if (win != null) {
       for (Player player : this.players) {
         if (player.getPlayerColor() == win.getWinner()) {

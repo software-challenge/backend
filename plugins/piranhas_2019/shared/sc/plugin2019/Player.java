@@ -25,27 +25,17 @@ public class Player extends AbstractPlayer implements Cloneable {
     return color;
   }
 
-  /**
-   * Nur für den Server relevant. Setzt Spielerfarbe des Spielers.
-   *
-   * @param playerColor Spielerfarbe
-   */
   public void setPlayerColor(PlayerColor playerColor) {
     this.color = playerColor;
   }
 
-  /**
-   * Erzeugt eine deepcopy dieses Spielers
-   *
-   * @return Klon des Spielers
-   */
   public Player clone() {
     return new Player(color);
   }
 
   @Override
   public String toString() {
-    return String.format("Player %s (color: %s)", getDisplayName(), color);
+    return String.format("%s Player - %s", color, getDisplayName());
   }
 
 }

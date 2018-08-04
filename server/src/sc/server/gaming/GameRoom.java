@@ -3,6 +3,7 @@ package sc.server.gaming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
+import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
@@ -122,10 +123,13 @@ public class GameRoom implements IGameListener {
         f.getParentFile().mkdirs();
         f.createNewFile();
 
-        List<Object> replayHistory = replayObserver.getHistory();
+        List<ProtocolMessage> replayHistory = replayObserver.getHistory();
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         writer.write("<protocol>\n");
-        for (Object state : replayHistory) {
+        for (ProtocolMessage element : replayHistory) {
+          if(!(element instanceof IGameState))
+            continue;
+          IGameState state = (IGameState) element;
           MementoPacket data = new MementoPacket(state, null);
           RoomPacket roomPacket = new RoomPacket(this.getId(), data);
           String xmlReplay = Configuration.getXStream().toXML(roomPacket);
@@ -237,7 +241,7 @@ public class GameRoom implements IGameListener {
    * @param data State Object that derives Object
    */
   @Override
-  public void onStateChanged(Object data) {
+  public void onStateChanged(IGameState data) {
     sendStateToObservers(data);
     sendStateToPlayers(data);
   }
@@ -253,26 +257,17 @@ public class GameRoom implements IGameListener {
     broadcast(errorPacket, true);
   }
 
-  /**
-   * Sends the given ProtocolMessage to all Players
-   *
-   * @param data state send to players
-   */
-  private void sendStateToPlayers(Object data) {
+  /** Sends the given IGameState to all Players */
+  private void sendStateToPlayers(IGameState data) {
     for (PlayerRole player : getPlayers()) {
-      RoomPacket packet = createRoomPacket(new MementoPacket(data, player
-              .getPlayer()));
+      RoomPacket packet = createRoomPacket(new MementoPacket(data, player.getPlayer()));
       player.getClient().send(packet);
     }
   }
 
 
-  /**
-   * Sends the given Object to all Observers
-   *
-   * @param data Object that represents a GameState
-   */
-  private void sendStateToObservers(Object data) {
+  /** Sends the given IGameState to all Observers */
+  private void sendStateToObservers(IGameState data) {
     RoomPacket packet = createRoomPacket(new MementoPacket(data, null));
 
     for (ObserverRole observer : this.observers) {
@@ -496,7 +491,7 @@ public class GameRoom implements IGameListener {
     try {
       this.game.onAction(resolvePlayer(source), data);
     } catch (InvalidMoveException e) {
-      this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.getMove(), e.getMessage())));
+      this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.move, e.getMessage())));
       throw new GameLogicException(e.toString());
     }
   }

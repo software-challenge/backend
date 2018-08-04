@@ -270,6 +270,7 @@ public class RequestTest extends RealServerTest {
 //    TestHelper.waitMills(100);
 
     // Request a move from the first player
+    /* FIXME bugged - see Issue #124
     admin.send(new StepRequest(room.getId()));
     TestHelper.waitUntilTrue(() -> listener.newStateReceived, 2000);
     // send move
@@ -283,7 +284,7 @@ public class RequestTest extends RealServerTest {
 
     // Second player sends Move with value 42
     player2.sendMessageToRoom(room.getId(), new TestMove(42));
-    TestHelper.waitMills(100);
+    TestHelper.waitMills(100);*/
 
     // Request a move
     admin.send(new StepRequest(room.getId()));

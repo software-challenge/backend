@@ -1,10 +1,9 @@
 package sc.networking.clients;
 
-public interface IPollsHistory
-{
-	public void start();
-	
-	public void addListener(IHistoryListener listener);
+public interface IPollsHistory {
+  void start();
 
-	public void removeListener(IHistoryListener listener);
+  void addListener(IHistoryListener listener);
+
+  void removeListener(IHistoryListener listener);
 }

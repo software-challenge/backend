@@ -1,5 +1,6 @@
 plugins {
     java
+    kotlin("jvm") version "1.2.60"
 }
 
 val year = property("socha.year").toString()
@@ -54,20 +55,26 @@ tasks {
 }
 
 allprojects {
+    apply(plugin = "java")
+    apply(plugin = "kotlin")
+
     repositories {
         maven("http://dist.wso2.org/maven2")
         jcenter()
     }
+
     tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
     tasks.withType<Javadoc> {
         val silence = buildDir.resolve("tmp").resolve("silence")
         options.optionFiles!!.add(silence)
         doFirst { silence.writeText("-Xdoclint:none") }
     }
+    tasks.withType<Test> {
+        testLogging { showStandardStreams = System.getProperty("verbose") != null }
+    }
 }
 
 project("sdk") {
-    apply(plugin = "java")
     java.sourceSets {
         "main" {
             java.srcDirs("src/framework", "src/server-api")
@@ -75,6 +82,7 @@ project("sdk") {
     }
 
     dependencies {
+        compile(kotlin("stdlib"))
         compile("org.hamcrest", "hamcrest-core", "1.3")
         compile("jargs", "jargs", "1.0")
         compile("ch.qos.logback", "logback-classic", "0.9.15")
@@ -92,7 +100,6 @@ project("sdk") {
 }
 
 project("plugins") {
-    apply(plugin = "java")
     java.sourceSets {
         "main" { java.srcDirs("$game/client", "$game/server", "$game/shared") }
         "test" { java.srcDir("test") }

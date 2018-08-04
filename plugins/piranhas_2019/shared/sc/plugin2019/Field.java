@@ -2,6 +2,7 @@ package sc.plugin2019;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import sc.api.plugins.IField;
 import sc.shared.PlayerColor;
 
 import java.util.Optional;
@@ -14,7 +15,7 @@ import static sc.plugin2019.FieldState.*;
  * Das type Attribut gibt an, um welchen Feldtyp es sich handelt.
  */
 @XStreamAlias(value = "field")
-public class Field {
+public class Field implements IField {
 
   @XStreamAsAttribute
   private int x;

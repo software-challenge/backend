@@ -7,7 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.AbstractPlayer;
 import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
@@ -218,7 +218,7 @@ public class Observation implements IObservation, IUpdateListener,
 		result += res1 + "\n";
 		result += res2;
 		
-		List<IPlayer> winners = data.getWinners();
+		List<AbstractPlayer> winners = data.getWinners();
 		if (winners.size() > 0) {
 			PlayerColor winner = ((Player)data.getWinners().get(0)).getPlayerColor();
 			if (winner == PlayerColor.RED) {

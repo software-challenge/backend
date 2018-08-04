@@ -6,8 +6,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IMove;
 import sc.plugin2019.util.GameRuleLogic;
-import sc.protocol.responses.ProtocolMove;
 import sc.shared.DebugHint;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
@@ -22,7 +22,7 @@ import java.util.List;
  * - er besteht aus einer Advance Aktion und eventuell darauf folgende Kartenaktionen
  */
 @XStreamAlias(value = "move")
-public class Move extends ProtocolMove implements Cloneable {
+public class Move implements Cloneable, IMove {
   // TODO maybe add argument that piranha was removed for lastMove in Gamestate to use commando pattern
 
   @XStreamOmitField
@@ -44,9 +44,7 @@ public class Move extends ProtocolMove implements Cloneable {
   @XStreamImplicit(itemFieldName = "hint")
   private List<DebugHint> hints;
 
-  /**
-   * Erzeugt einen neuen Zug aus von der gegebenen Position in die gegebene Richtung.
-   */
+  /** Erzeugt einen neuen Zug aus von der gegebenen Position in die gegebene Richtung. */
   public Move(int x, int y, Direction direction) {
     this.x = x;
     this.y = y;
@@ -136,14 +134,10 @@ public class Move extends ProtocolMove implements Cloneable {
    */
   @Override
   public boolean equals(Object o) {
-    if (o instanceof Move) {
-      if (this.x == ((Move) o).x &&
-              this.y == ((Move) o).y &&
-              this.direction == ((Move) o).direction) {
-        return true;
-      }
-    }
-    return false;
+    return o instanceof Move &&
+            this.x == ((Move) o).x &&
+            this.y == ((Move) o).y &&
+            this.direction == ((Move) o).direction;
   }
 
   @Override

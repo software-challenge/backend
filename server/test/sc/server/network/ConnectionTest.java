@@ -2,7 +2,6 @@ package sc.server.network;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import sc.helpers.Generator;
 import sc.networking.clients.XStreamClient.DisconnectCause;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.responses.ProtocolMessage;
@@ -16,58 +15,50 @@ public class ConnectionTest extends RealServerTest {
   private static class DontYouKnowJack implements ProtocolMessage {
     public int test = 25;
   }
-  
+
   @Test //TODO works for me
   public void connectionTest() throws IOException, InterruptedException {
     TestTcpClient client = connectClient();
     waitForConnect(1);
-    
+
     client.send(new JoinRoomRequest(TestPlugin.TEST_PLUGIN_UUID));
-    TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
-      @Override
-      public Integer operate() {
-        return ConnectionTest.this.lobby.getGameManager().getGames()
-            .size();
-      }
-    }, 1, TimeUnit.SECONDS);
+    TestHelper.assertEqualsWithTimeout(1, () -> ConnectionTest.this.lobby.getGameManager().getGames().size(), 1, TimeUnit.SECONDS);
   }
-  
+
   @Ignore //TODO seems so fail sometimes
-  public void protocolViolationTestWithCorruptedXml() throws IOException,
-      InterruptedException {
+  public void protocolViolationTestWithCorruptedXml() throws IOException {
     TestTcpClient client = connectClient();
     waitForConnect(1);
     client.sendCustomData("<>/I-do/>NOT<CARE".getBytes("utf-8"));
-    
+
     TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR, () -> ConnectionTest.this.lobby.getClientManager().getClients()
-        .getFirst().getDisconnectCause(), 5, TimeUnit.SECONDS);
+            .get(0).getDisconnectCause(), 5, TimeUnit.SECONDS);
   }
-  
+
   @Ignore //TODO seems so fail sometimes
-  public void protocolViolationTestWithUnknownClass() throws IOException,
-      InterruptedException {
+  public void protocolViolationTestWithUnknownClass() throws IOException {
     TestTcpClient client = connectClient();
     waitForConnect(1);
     client.sendCustomData("<object-stream>".getBytes("utf-8"));
-    
+
     client
-        .sendCustomData("<NoSuchClass foo=\"aaa\"><base val=\"arr\" /></NoSuchClass>"
-            .getBytes("utf-8"));
+            .sendCustomData("<NoSuchClass foo=\"aaa\"><base val=\"arr\" /></NoSuchClass>"
+                    .getBytes("utf-8"));
     waitForConnect(1);
     TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
-        () -> this.lobby.getClientManager().getClients().getFirst().getDisconnectCause(),
-        5, TimeUnit.SECONDS);
+            () -> this.lobby.getClientManager().getClients().get(0).getDisconnectCause(),
+            5, TimeUnit.SECONDS);
   }
-  
+
   @Ignore //TODO Should be tested, but fails sometimes, client is removed when sending unknown class
-  public void protocolViolationTestWithUnknownClasses() throws IOException, InterruptedException {
+  public void protocolViolationTestWithUnknownClasses() {
     TestTcpClient client = connectClient();
     waitForConnect(1);
     client.send(new DontYouKnowJack());
     waitForConnect(1);
-    DisconnectCause disconnect = this.lobby.getClientManager().getClients().getFirst().getDisconnectCause();
+    DisconnectCause disconnect = this.lobby.getClientManager().getClients().get(0).getDisconnectCause();
     TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
-        () -> this.lobby.getClientManager().getClients().getFirst().getDisconnectCause(), 1, TimeUnit.SECONDS);
+            () -> this.lobby.getClientManager().getClients().get(0).getDisconnectCause(), 1, TimeUnit.SECONDS);
   }
-  
+
 }

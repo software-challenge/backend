@@ -7,6 +7,7 @@ import sc.framework.plugins.AbstractPlayer;
 import sc.protocol.requests.CancelRequest;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.StepRequest;
+import sc.protocol.responses.ProtocolMessage;
 
 public class ControllingClient extends ObservingClient implements IAdministrativeListener {
   private static final Logger logger = LoggerFactory.getLogger(ControllingClient.class);
@@ -22,7 +23,7 @@ public class ControllingClient extends ObservingClient implements IAdministrativ
   }
 
   @Override
-  protected void addObservation(Object observation) {
+  protected void addObservation(ProtocolMessage observation) {
     super.addObservation(observation);
 
     if (this.allowOneStep) {

@@ -5,6 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
+import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
 import sc.protocol.responses.ProtocolErrorMessage;
@@ -116,7 +117,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
    * @param player left player
    */
   public void onPlayerLeft(AbstractPlayer player) {
-    if (!player.hasViolated()) {
+    if (!player.getViolated()) {
       player.setLeft(true);
       onPlayerLeft(player, ScoreCause.LEFT);
     } else {
@@ -170,7 +171,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
    *
    * @return current state
    */
-  protected abstract Object getCurrentState();
+  protected abstract IGameState getCurrentState();
 
   /** Notifies the active player that it's his/her time to make a move. */
   protected final void notifyActivePlayer() {
@@ -278,7 +279,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
     }
   }
 
-  protected void notifyOnNewState(Object mementoState) {
+  protected void notifyOnNewState(IGameState mementoState) {
     for (IGameListener listener : this.listeners) {
       logger.debug("notifying {} about new game state", listener);
       try {
@@ -302,7 +303,7 @@ public abstract class RoundBasedGameInstance<P extends AbstractPlayer> implement
     String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
     author.setViolationReason(e.getMessage());
     logger.error(err, e);
-    author.notifyListeners(new ProtocolErrorMessage(e.getMove(), err));
+    author.notifyListeners(new ProtocolErrorMessage(e.move, err));
     throw e;
   }
 

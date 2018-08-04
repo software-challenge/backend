@@ -4,6 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGameState;
+import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.ActionTimeout;
@@ -33,8 +35,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   public Game(String pluginUUID) {
-    this.availableColors.add(PlayerColor.RED);
-    this.availableColors.add(PlayerColor.BLUE);
+    this();
     this.pluginUUID = pluginUUID;
   }
 
@@ -43,8 +44,8 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  protected Object getCurrentState() {
-    return this.gameState; // return visible board for the players
+  protected IGameState getCurrentState() {
+    return this.gameState;
   }
 
   /**
@@ -53,9 +54,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    */
   @Override
   protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
-
     Player author = (Player) fromPlayer;
-
     /*
      * NOTE: Checking if right player sent move was already done by onAction(AbstractPlayer, ProtocolMove)}.
      * There is no need to do it here again.
@@ -81,7 +80,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public AbstractPlayer onPlayerJoined() {
+  public Player onPlayerJoined() {
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
@@ -119,8 +118,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
     String reason = null;
-    Player opponent = player.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getPlayer(PlayerColor.BLUE)
-            : this.gameState.getPlayer(PlayerColor.BLUE);
+    AbstractPlayer opponent = gameState.getOpponent(player);
     if (winCondition != null) {
       reason = winCondition.getReason();
       if (player.getPlayerColor().equals(winCondition.getWinner())) {
@@ -280,21 +278,18 @@ public class Game extends RoundBasedGameInstance<Player> {
     logger.info("Processing game information");
     if (gameInfo instanceof GameState) {
       this.gameState = (GameState) gameInfo;
-      // when loading from a state the listeners are not initialized
-      this.gameState.getPlayer(PlayerColor.RED).initListeners();
-      this.gameState.getPlayer(PlayerColor.BLUE).initListeners();
       // the currentPlayer has to be RED (else the Move request is send to the
       // wrong player)
       // if it isn't red, the players have to be switched and red is made
       // currentPlayer
       if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
-        this.gameState.setCurrentPlayer(PlayerColor.RED);
+        this.gameState.setCurrentPlayerColor(PlayerColor.RED);
         Player newRed = this.gameState.getPlayer(PlayerColor.BLUE).clone();
         newRed.setPlayerColor(PlayerColor.RED);
         Player newBlue = this.gameState.getPlayer(PlayerColor.RED).clone();
         newBlue.setPlayerColor(PlayerColor.BLUE);
-        this.gameState.setRedPlayer(newRed);
-        this.gameState.setBluePlayer(newBlue);
+        this.gameState.setRed(newRed);
+        this.gameState.setBlue(newBlue);
       }
     }
   }

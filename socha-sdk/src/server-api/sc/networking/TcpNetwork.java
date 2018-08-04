@@ -25,35 +25,28 @@ public class TcpNetwork implements INetworkInterface {
     this.socket.setTcpNoDelay(true);
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see edu.cau.sc.server.network.interfaces.INetworkInterface#getInputStream()
-   */
+  // @see edu.cau.sc.server.network.interfaces.INetworkInterface#getInputStream()
   @Override
   public InputStream getInputStream() throws IOException {
     return this.socket.getInputStream();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see edu.cau.sc.server.network.interfaces.INetworkInterface#getOutputStream()
-   */
+  // @see edu.cau.sc.server.network.interfaces.INetworkInterface#getOutputStream()
   @Override
   public OutputStream getOutputStream() throws IOException {
     return this.socket.getOutputStream();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see edu.cau.sc.server.network.interfaces.INetworkInterface#close()
-   */
+  // @see edu.cau.sc.server.network.interfaces.INetworkInterface#close()
   @Override
   public void close() throws IOException {
     logger.debug("Closing TcpNetwork Interface.");
     this.socket.close();
   }
-  
+
+  @Override
+  public String toString() {
+    return "TcpNetwork{socket=" + socket + "}";
+  }
+
 }

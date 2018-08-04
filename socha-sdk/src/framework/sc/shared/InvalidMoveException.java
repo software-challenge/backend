@@ -1,22 +1,18 @@
 package sc.shared;
 
-import sc.protocol.responses.ProtocolMove;
+import sc.api.plugins.IMove;
 
 public class InvalidMoveException extends Exception {
 
-	private ProtocolMove move;
+  public final IMove move;
 
   public InvalidMoveException(String reason) {
-    super(reason);
+    this(reason, null);
   }
 
-  public InvalidMoveException(String reason, ProtocolMove move) {
+  public InvalidMoveException(String reason, IMove move) {
     super(reason);
     this.move = move;
-  }
-
-  public ProtocolMove getMove() {
-    return move;
   }
 
 }
