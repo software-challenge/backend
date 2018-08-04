@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.framework.plugins.AbstractPlayer;
 import sc.shared.PlayerColor;
 
-/** Ein Spieler aus Hase- und Igel. */
+/** Ein Spieler für Piranhas */
 @XStreamAlias(value = "player")
 public class Player extends AbstractPlayer implements Cloneable {
 
@@ -35,7 +35,7 @@ public class Player extends AbstractPlayer implements Cloneable {
 
   @Override
   public String toString() {
-    return String.format("Player %s{color: %s}", getDisplayName(), color);
+    return String.format("%s Player - %s", color, getDisplayName());
   }
 
 }

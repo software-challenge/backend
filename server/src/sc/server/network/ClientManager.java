@@ -20,7 +20,7 @@ public class ClientManager implements Runnable, IClientListener {
   private Thread thread;
   
   // List of all XStreamClients
-  protected final LinkedList<Client> clients;
+  protected final List<Client> clients;
   
   // Listener waits for new clients to connect
   private final NewClientListener clientListener;
@@ -33,7 +33,7 @@ public class ClientManager implements Runnable, IClientListener {
   public ClientManager(Lobby lobby) {
     this.clientListener = new NewClientListener();
     this.lobby = lobby;
-    this.clients = new LinkedList<>();
+    this.clients = new ArrayList<>();
     this.running = false;
     this.thread = null;
   }
@@ -50,7 +50,7 @@ public class ClientManager implements Runnable, IClientListener {
   }
   
   /** Used for testing */
-  public LinkedList<Client> getClients() {
+  public List<Client> getClients() {
     return this.clients;
   }
   

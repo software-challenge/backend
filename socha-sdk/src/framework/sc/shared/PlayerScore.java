@@ -63,13 +63,13 @@ public final class PlayerScore {
   }
 
   public String toString() {
-    String result = "";
+    StringBuilder result = new StringBuilder();
     String[] strings = this.toStrings();
     for (int i = 0; i < strings.length; i++) {
-      if (i > 0) result += "; ";
-      result += strings[i];
+      if (i > 0) result.append("; ");
+      result.append(strings[i]);
     }
-    return result;
+    return result.toString();
   }
 
   public void setCause(ScoreCause cause) {
@@ -100,7 +100,7 @@ public final class PlayerScore {
               !(this.getValues().size() == score.getValues().size())) {
         return false;
       }
-      if (!(this.getReason() == score.getReason())) { // may be null
+      if (!this.getReason().equals(score.getReason())) { // may be null
         return false;
       }
       for (int i = 0; i < this.parts.size(); i++) {

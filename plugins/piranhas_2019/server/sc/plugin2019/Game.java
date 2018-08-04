@@ -16,18 +16,16 @@ import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
 
 import java.io.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Minimal game. Basis for new plugins. This class holds the game logic.
- */
+/** Minimal game. Basis for new plugins. This class holds the game logic. */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
-  private static final Logger logger =LoggerFactory.getLogger(Game.class);
+  private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
   @XStreamOmitField
-  private List<PlayerColor> availableColors = new LinkedList<>();
+  private List<PlayerColor> availableColors = new ArrayList<>();
 
   private GameState gameState = new GameState();
 
@@ -47,7 +45,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   protected IGameState getCurrentState() {
-    return this.gameState; // return visible board for the players
+    return this.gameState;
   }
 
   /**
@@ -55,22 +53,17 @@ public class Game extends RoundBasedGameInstance<Player> {
    * move)
    */
   @Override
-  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException, InvalidMoveException {
-
+  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
     Player author = (Player) fromPlayer;
-
     /*
-     * NOTE: Checking if right player sent move was already done by
-     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(AbstractPlayer, ProtocolMove)}.
+     * NOTE: Checking if right player sent move was already done by onAction(AbstractPlayer, ProtocolMove)}.
      * There is no need to do it here again.
      */
     try {
-      if (!(data instanceof Move)) {
+      if (!(data instanceof Move))
         throw new InvalidMoveException(author.getDisplayName() + " hat kein Zug-Objekt gesendet.");
-      }
-
       final Move move = (Move) data;
-      System.out.println("move perform");
+      logger.debug("Performing Move");
       move.perform(this.gameState);
       next(this.gameState.getCurrentPlayer());
     } catch (InvalidMoveException e) {
@@ -87,7 +80,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public AbstractPlayer onPlayerJoined() {
+  public Player onPlayerJoined() {
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
@@ -120,8 +113,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public PlayerScore getScoreFor(Player player) {
-    logger.debug("get score for player {}", player.getPlayerColor());
-    logger.debug("player violated: {}", player.getViolated());
+    logger.debug("get score for player {} (violated: {})", player.getPlayerColor(), player.hasViolated());
     int[] stats = this.gameState.getPlayerStats(player);
     int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
@@ -139,27 +131,26 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
     }
     // opponent has done something wrong
-    if (opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft()
-            || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
-      matchPoints = 2;
+    if (opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft() || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
+      matchPoints = Constants.WIN_SCORE;
     }
     ScoreCause cause;
     if (player.hasSoftTimeout()) { // Soft-Timeout
       cause = ScoreCause.SOFT_TIMEOUT;
       reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasHardTimeout()) { // Hard-Timeout
       cause = ScoreCause.HARD_TIMEOUT;
       reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getHardTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasViolated()) { // rule violation
       cause = ScoreCause.RULE_VIOLATION;
       reason = player.getViolationReason(); // message from InvalidMoveException
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else if (player.hasLeft()) { // player left
       cause = ScoreCause.LEFT;
       reason = "Der Spieler hat das Spiel verlassen";
-      matchPoints = 0;
+      matchPoints = Constants.LOSE_SCORE;
     } else { // regular score or opponent violated
       cause = ScoreCause.REGULAR;
     }
@@ -185,7 +176,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     int[][] stats = this.gameState.getGameStats();
     if (this.gameState.getTurn() < 2 * Constants.ROUND_LIMIT) {
       // round limit not reached
-      AbstractPlayer winningPlayer = getWinner();
+      Player winningPlayer = getWinner();
       if (winningPlayer != null) {
         return new WinCondition(winningPlayer.getPlayerColor(), Constants.WINNING_MESSAGE);
       } else {
@@ -193,7 +184,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
     } else {
       // round limit reached
-      AbstractPlayer winningPlayer = getWinner();
+      Player winningPlayer = getWinner();
       if (winningPlayer != null) {
         return new WinCondition(winningPlayer.getPlayerColor(), Constants.WINNING_MESSAGE);
       } else {
@@ -210,7 +201,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     }
   }
 
-  private AbstractPlayer getWinner() {
+  private Player getWinner() {
     if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.RED))) {
       System.out.println("Swarm is connected for red");
       if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.BLUE))) {
@@ -306,7 +297,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public List<AbstractPlayer> getWinners() {
     WinCondition win = checkWinCondition();
-    List<AbstractPlayer> winners = new LinkedList<>();
+    List<AbstractPlayer> winners = new ArrayList<>();
     if (win != null) {
       for (Player player : this.players) {
         if (player.getPlayerColor() == win.getWinner()) {
@@ -336,7 +327,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    */
   @Override
   public List<AbstractPlayer> getPlayers() {
-    List<AbstractPlayer> players = new LinkedList<>();
+    List<AbstractPlayer> players = new ArrayList<>();
     players.add(this.gameState.getPlayer(PlayerColor.RED));
     players.add(this.gameState.getPlayer(PlayerColor.BLUE));
     return players;
@@ -349,7 +340,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    */
   @Override
   public List<PlayerScore> getPlayerScores() {
-    LinkedList<PlayerScore> playerScores = new LinkedList<>();
+    List<PlayerScore> playerScores = new ArrayList<>();
     playerScores.add(getScoreFor(this.gameState.getPlayer(PlayerColor.RED)));
     playerScores.add(getScoreFor(this.gameState.getPlayer(PlayerColor.BLUE)));
     return playerScores;

@@ -12,8 +12,8 @@ import sc.shared.DebugHint;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -29,33 +29,22 @@ public class Move implements Cloneable, IMove {
   private static final Logger logger = LoggerFactory.getLogger(Move.class);
 
   @XStreamAsAttribute
-  public int x = -1;
+  public final int x;
 
   @XStreamAsAttribute
-  public int y = -1;
+  public final int y;
 
   @XStreamAsAttribute
   public Direction direction;
 
   /**
-   * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe
-   * {@link DebugHint}
+   * Liste von Debughints, die dem Zug beigefügt werden koennen.
+   * Siehe {@link DebugHint}
    */
   @XStreamImplicit(itemFieldName = "hint")
   private List<DebugHint> hints;
 
-  /**
-   * Default Konstruktor, der einen leeren Zug erzeugt.
-   */
-  public Move() {
-  }
-
-  /**
-   * Erzeugt einen neuen Zug aus Liste von Aktionen. Die Liste der Aktionen wird kopiert
-   * (d.h. eine Änderung der Liste nach Erstellung des Zuges ändert den Zug nicht mehr).
-   *
-   * @param x Aktionen des Zuges
-   */
+  /** Erzeugt einen neuen Zug aus von der gegebenen Position in die gegebene Richtung. */
   public Move(int x, int y, Direction direction) {
     this.x = x;
     this.y = y;
@@ -69,8 +58,7 @@ public class Move implements Cloneable, IMove {
    */
   @Override
   public Move clone() {
-    Move clone = new Move(this.x, this.y, this.direction);
-    return clone;
+    return new Move(this.x, this.y, this.direction);
   }
 
   /**
@@ -81,7 +69,7 @@ public class Move implements Cloneable, IMove {
    */
   public void addHint(DebugHint hint) {
     if (hints == null) {
-      hints = new LinkedList<>();
+      hints = new ArrayList<>();
     }
     hints.add(hint);
   }
@@ -117,35 +105,27 @@ public class Move implements Cloneable, IMove {
   }
 
   /**
-   * Führt einen Zug aus, indem alle Aktionen aufsteigend anand des order Attributes ausgeführt werden.
+   * Führt einen Zug aus, indem alle Aktionen aufsteigend anhand des order Attributes ausgeführt werden.
    * Dabei werden zusätzlich folgende Informationen geupdated:
    * lastMove wird gesetzt, lastNonSkipAktion wird gesetzt, turn wird um eins erhöht.
-   * der currentPlayer wird getauscht, falls sich der nächste Spieler auf entsprechendem
-   * Positionsfeld befindet werden seine Karotten erhöht.
-   *
-   * @param state Spielstatus
+   * der currentPlayer wird getauscht
    *
    * @throws InvalidMoveException wird geworfen, wenn der Zug nicht den Regeln entspricht
    */
   public void perform(GameState state) throws InvalidMoveException, InvalidGameStateException {
-    // TODO perform move
     int distance = state.calculateMoveDistance(x, y, direction);
-    System.out.println("distance: " + distance);
     if (GameRuleLogic.isValidToMove(x, y, direction, distance, state)) {
       Field start = state.getField(x, y);
       Field destination = state.getFieldInDirection(x, y, direction, distance);
       start.setState(FieldState.EMPTY);
-
       destination.setPiranha(state.getCurrentPlayerColor());
-
     }
+    logger.debug("Distance: " + distance + " to Field " + state.getField(x, y));
 
-    System.out.println(state.getField(x, y));
-
-    // Bereite nächsten Zug vor:
+    // Bereite nächsten Zug vor
     state.setLastMove(this);
     state.setTurn(state.getTurn() + 1);
-    state.switchCurrentPlayer(); // depends on turn
+    state.switchCurrentPlayer();
   }
 
   /**
@@ -154,20 +134,15 @@ public class Move implements Cloneable, IMove {
    */
   @Override
   public boolean equals(Object o) {
-    if (o instanceof Move) {
-      if (this.x == ((Move) o).x &&
-              this.y == ((Move) o).y &&
-              this.direction == ((Move) o).direction) {
-        return true;
-      }
-    }
-    return false;
+    return o instanceof Move &&
+            this.x == ((Move) o).x &&
+            this.y == ((Move) o).y &&
+            this.direction == ((Move) o).direction;
   }
 
   @Override
   public String toString() {
-    String toString = "Zug: \nx = " + x + ", y = " + y + ", direction = " + direction;
-    return toString;
+    return "Zug von (x=" + x + ", y=" + y + ") in Richtung " + direction;
   }
 
   public int getX() {
@@ -181,4 +156,5 @@ public class Move implements Cloneable, IMove {
   public Direction getDirection() {
     return direction;
   }
+
 }

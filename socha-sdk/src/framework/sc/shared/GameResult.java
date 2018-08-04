@@ -41,27 +41,22 @@ public class GameResult implements ProtocolMessage {
   }
   
   public List<AbstractPlayer> getWinners() {
-    if (this.winners == null) {
-      this.winners = new ArrayList<AbstractPlayer>(2);
-    }
+    if (this.winners == null)
+      this.winners = new ArrayList<>(2);
     return this.winners;
   }
   
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder();
-    
+    StringBuilder builder = new StringBuilder("Winner: ").append(winners);
     int playerIndex = 0;
     for (PlayerScore score : this.scores) {
-      builder.append("--------------------------\n");
-      builder.append(" Player " + playerIndex + "\n");
-      builder.append("--------------------------\n");
+      builder.append("\n").append("Player ").append(playerIndex).append(": ");
       String[] scoreParts = score.toStrings();
       for (int i = 0; i < scoreParts.length; i++) {
-        String key = StringHelper.pad(this.definition.get(i).getName(),
-            10);
-        String value = scoreParts[i];
-        builder.append(" " + key + " = " + value + "\n");
+        builder.append(this.definition.get(i).getName()).append("=").append(scoreParts[i]);
+        if(i + 1 < scoreParts.length)
+          builder.append("; ");
       }
       playerIndex++;
     }
@@ -75,7 +70,6 @@ public class GameResult implements ProtocolMessage {
         return false;
       }
     }
-    
     return true;
   }
   

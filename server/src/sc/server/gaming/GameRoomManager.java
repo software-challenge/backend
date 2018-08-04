@@ -27,13 +27,13 @@ public class GameRoomManager {
   /* Private fields  */
   private Map<String, GameRoom> rooms;
   private GamePluginApi pluginApi;
-  
+
   private final GamePluginManager gamePluginManager = new GamePluginManager();
-  
+
   private static final Logger logger = LoggerFactory.getLogger(GameRoomManager.class);
-  
+
   private List<Score> scores = new ArrayList<>();
-  
+
   /** Default constructor, initializes rooms, loads available plugins */
   public GameRoomManager() {
     this.rooms = new HashMap<>();
@@ -41,7 +41,7 @@ public class GameRoomManager {
     this.gamePluginManager.reload();
     this.gamePluginManager.activateAllPlugins(this.pluginApi);
   }
-  
+
   /**
    * Adds an active game to the <code>GameManager</code>
    *
@@ -51,7 +51,7 @@ public class GameRoomManager {
     logger.debug("Adding room with id {}", room.getId());
     this.rooms.put(room.getId(), room);
   }
-  
+
   /**
    * Create a not prepared {@link GameRoom GameRoom} of given type
    *
@@ -64,7 +64,7 @@ public class GameRoomManager {
   public synchronized GameRoom createGame(String gameType) throws RescuableClientException {
     return createGame(gameType, false);
   }
-  
+
   /**
    * make new PluginManager, generate roomId, create Game and GameRoom. If gameFile is set, load gameState from file
    *
@@ -77,14 +77,14 @@ public class GameRoomManager {
    */
   public synchronized GameRoom createGame(String gameType, boolean prepared) throws RescuableClientException {
     GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
-    
+
     if (plugin == null) {
       logger.warn("Couldn't find a game of type " + gameType);
       throw new UnknownGameTypeException(gameType, this.gamePluginManager.getPluginUUIDs());
     }
-    
+
     logger.info("Created new game of type " + gameType);
-    
+
     String roomId = generateRoomId();
     GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(), prepared);
     // pause room if specified in server.properties on joinRoomRequest
@@ -93,7 +93,7 @@ public class GameRoomManager {
       room.pause(paused);
       logger.info("Pause is set to {}", paused);
     }
-    
+
     String gameFile = Configuration.get(Configuration.GAMELOADFILE);
     if (gameFile != null && !gameFile.equals("")) {
       logger.info("Request plugin to load game from file: " + gameFile);
@@ -112,16 +112,16 @@ public class GameRoomManager {
         room.getGame().loadFromFile(gameFile);
       }
     }
-    
+
     this.add(room);
-    
+
     return room;
   }
-  
+
   private static synchronized String generateRoomId() {
     return UUID.randomUUID().toString();
   }
-  
+
   /**
    * Open new GameRoom and join Client
    *
@@ -133,14 +133,14 @@ public class GameRoomManager {
    * @throws RescuableClientException if game could not be created
    */
   public synchronized GameRoomMessage createAndJoinGame(Client client, String gameType)
-      throws RescuableClientException {
+          throws RescuableClientException {
     GameRoom room = createGame(gameType);
     if (room.join(client)) {
       return new GameRoomMessage(room.getId(), false);
     }
     return null;
   }
-  
+
   /**
    * Called after JoinRoomRequest. Client joins already existing GameRoom or opens new one
    *
@@ -152,16 +152,16 @@ public class GameRoomManager {
    * @throws RescuableClientException if client could not join room
    */
   public synchronized GameRoomMessage joinOrCreateGame(Client client, String gameType)
-      throws RescuableClientException {
+          throws RescuableClientException {
     for (GameRoom gameRoom : getGames()) {
       if (gameRoom.join(client)) {
         return new GameRoomMessage(gameRoom.getId(), true);
       }
     }
-    
+
     return createAndJoinGame(client, gameType);
   }
-  
+
   /** Create an unmodifiable Collection of the {@link GameRoom GameRooms} */
   public synchronized Collection<GameRoom> getGames() {
     return Collections.unmodifiableCollection(this.rooms.values());
@@ -174,7 +174,7 @@ public class GameRoomManager {
   public GamePluginApi getPluginApi() {
     return this.pluginApi;
   }
-  
+
   /**
    * Creates a new GameRoom {@link #createGame(String) createGame}, set descriptors of PlayerSlots,
    * if exists load state of game from file
@@ -188,17 +188,17 @@ public class GameRoomManager {
    * @throws RescuableClientException if game could not be created
    */
   public synchronized PrepareGameProtocolMessage prepareGame(String gameType, List<SlotDescriptor> descriptors, Object loadGameInfo)
-      throws RescuableClientException {
+          throws RescuableClientException {
     GameRoom room = createGame(gameType, true);
     room.openSlots(descriptors);
-    
+
     if (loadGameInfo != null) {
       room.getGame().loadGameInfo(loadGameInfo);
     }
-    
+
     return new PrepareGameProtocolMessage(room.getId(), room.reserveAllSlots());
   }
-  
+
   /**
    * Calls {@link #prepareGame(String, List, Object) prepareGame}
    *
@@ -210,10 +210,10 @@ public class GameRoomManager {
    */
   public synchronized PrepareGameProtocolMessage prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
     return prepareGame(
-        prepared.getGameType(),
-        prepared.getSlotDescriptors(), prepared.getLoadGameInfo());
+            prepared.getGameType(),
+            prepared.getSlotDescriptors(), prepared.getLoadGameInfo());
   }
-  
+
   /**
    * Getter for GameRoom
    *
@@ -224,16 +224,16 @@ public class GameRoomManager {
    * @throws RescuableClientException if no room could be found
    */
   public synchronized GameRoom findRoom(String roomId)
-      throws RescuableClientException {
+          throws RescuableClientException {
     GameRoom room = this.rooms.get(roomId);
-    
+
     if (room == null) {
       throw new RescuableClientException("Couldn't find a room with id " + roomId);
     }
-    
+
     return room;
   }
-  
+
   /**
    * Remove specified room from game
    *
@@ -242,11 +242,11 @@ public class GameRoomManager {
   public void remove(GameRoom gameRoom) {
     this.rooms.remove(gameRoom.getId());
   }
-  
+
   public List<Score> getScores() {
     return scores;
   }
-  
+
   /**
    * Called by gameRoom after game ended and test mode enabled to save results in playerScores
    *
@@ -259,7 +259,7 @@ public class GameRoomManager {
    */
   public void addResultToScore(GameResult result, List<PlayerScore> playerScores, String name1, String name2) throws InvalidScoreDefinitionException {
     if (name1.equals(name2)) {
-      logger.warn("Both player playerScores have the same displayName. Won#t save test relevant data");
+      logger.warn("Both player playerScores have the same displayName. Won't save test relevant data");
       return;
     }
     ScoreDefinition scoreDefinition = result.getDefinition();
@@ -280,7 +280,7 @@ public class GameRoomManager {
       secondScore = new Score(scoreDefinition, name2);
       this.scores.add(secondScore);
     }
-    
+
     firstScore.setNumberOfTests(firstScore.getNumberOfTests() + 1);
     secondScore.setNumberOfTests(secondScore.getNumberOfTests() + 1);
     for (int i = 0; i < scoreDefinition.size(); i++) {
@@ -294,17 +294,17 @@ public class GameRoomManager {
       // average = oldaverage * ((#tests - 1)/ #tests) + newValue / #tests
       if (fragment.getAggregation().equals(ScoreAggregation.AVERAGE)) {
         firstValue.setValue((firstValue.getValue().
-            multiply(
-                (new BigDecimal(firstScore.getNumberOfTests() - 1)
-                    .divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
-            )).add(
-            playerScores.get(0).getValues().get(i).divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
+                multiply(
+                        (new BigDecimal(firstScore.getNumberOfTests() - 1)
+                                .divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+                )).add(
+                playerScores.get(0).getValues().get(i).divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
         secondValue.setValue((secondValue.getValue().
-            multiply(
-                (new BigDecimal(secondScore.getNumberOfTests() - 1)
-                    .divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
-            )).add(
-            playerScores.get(1).getValues().get(i).divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
+                multiply(
+                        (new BigDecimal(secondScore.getNumberOfTests() - 1)
+                                .divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+                )).add(
+                playerScores.get(1).getValues().get(i).divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
         firstValue.setValue(firstValue.getValue().round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2)));
         secondValue.setValue(secondValue.getValue().round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2)));
       } else if (fragment.getAggregation().equals(ScoreAggregation.SUM)) {
@@ -313,5 +313,5 @@ public class GameRoomManager {
       }
     }
   }
-  
+
 }
