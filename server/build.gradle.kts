@@ -77,6 +77,10 @@ tasks {
     "jar"(Jar::class) {
         destinationDir = runnable
         baseName = "software-challenge-server"
+        manifest {
+            attributes["Main-Class"] = application.mainClassName
+            attributes["Class-Path"] = configurations.compile.joinToString(" ") { "lib/" + it.name }
+        }
     }
 
     "run"(JavaExec::class) {
