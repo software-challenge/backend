@@ -1,3 +1,6 @@
+import org.gradle.internal.os.OperatingSystem
+import java.util.zip.ZipInputStream
+
 plugins {
     java
     kotlin("jvm") version "1.2.60"
@@ -50,6 +53,45 @@ tasks {
         }
     }
 
+    "testDeployed" {
+        dependsOn("deploy")
+        doFirst {
+            val server = ProcessBuilder("./start." + if (OperatingSystem.current().isWindows) "bat" else "sh").directory(project("server").buildDir.resolve("runnable")).start()
+            Thread.sleep(200)
+            val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
+            val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
+            var line = ""
+            mapOf("client1" to client1, "client2" to client2).forEach { clientName, process ->
+                val reader = process.inputStream.bufferedReader()
+                val lines = ArrayList<String>()
+                while (!line.contains("Received game result", true)) {
+                    if(!server.isAlive)
+                        break
+                    line = reader.readLine() ?: break
+                    lines.add(line)
+                }
+                if (!server.isAlive || !line.contains("Received game result", true)) {
+                    println("server stdin:")
+                    println(server.inputStream.readBytes(server.inputStream.available()).joinToString("") { it.toChar().toString() })
+                    if(server.isAlive) {
+                        println()
+                        println("$clientName stdin:")
+                        println(lines)
+                        println()
+                        println("$clientName stderr:")
+                        process.errorStream.bufferedReader().forEachLine { println(it) }
+                        throw Exception("$clientName did not receive the game result!")
+                    } else {
+                        throw Exception("Server terminated unexpectedly!")
+                    }
+                }
+            }
+            println("Successfully played a game using the deployed server & client!")
+            server.destroy()
+        }
+    }
+
+    getByName("test").dependsOn("testDeployed")
     getByName("build").dependsOn("deploy")
     getByName("jar").enabled = false
 }
