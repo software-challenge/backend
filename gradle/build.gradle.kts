@@ -21,7 +21,7 @@ tasks {
     }
 
     "deploy" {
-        dependsOn("clean", ":players:zip", ":server:zip")
+        dependsOn("clean")
         group = mainGroup
         description = "Zips everything up for release into build/deploy"
     }
@@ -65,7 +65,7 @@ tasks {
                 val reader = process.inputStream.bufferedReader()
                 val lines = ArrayList<String>()
                 while (!line.contains("Received game result", true)) {
-                    if(!server.isAlive)
+                    if (!server.isAlive)
                         break
                     line = reader.readLine() ?: break
                     lines.add(line)
@@ -73,7 +73,7 @@ tasks {
                 if (!server.isAlive || !line.contains("Received game result", true)) {
                     println("server stdin:")
                     println(server.inputStream.readBytes(server.inputStream.available()).joinToString("") { it.toChar().toString() })
-                    if(server.isAlive) {
+                    if (server.isAlive) {
                         println()
                         println("$clientName stdin:")
                         println(lines)
@@ -91,6 +91,20 @@ tasks {
         }
     }
 
+    tasks.replace("run").run {
+        dependsOn("testDeployed")
+    }
+
+    "clean" {
+        subprojects.forEach {
+            it.afterEvaluate {
+                val cleanTask = it.tasks.findByName("clean")
+                if (cleanTask != null)
+                    dependsOn(cleanTask)
+            }
+        }
+    }
+
     getByName("test").dependsOn("testDeployed")
     getByName("build").dependsOn("deploy")
     getByName("jar").enabled = false
@@ -105,7 +119,6 @@ allprojects {
         jcenter()
     }
 
-    tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
     tasks.withType<Javadoc> {
         val silence = buildDir.resolve("tmp").resolve("silence")
         options.optionFiles!!.add(silence)

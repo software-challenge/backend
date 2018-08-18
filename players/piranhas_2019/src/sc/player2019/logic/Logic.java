@@ -10,13 +10,12 @@ import sc.plugin2019.Player;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
- * Das Herz des Simpleclients: Eine sehr simple Logik, die ihre Zuege zufaellig
- * waehlt, aber gueltige Zuege macht. Ausserdem werden zum Spielverlauf
+ * Das Herz des Clients:
+ * Eine sehr simple Logik, die ihre Zuege zufaellig waehlt,
+ * aber gueltige Zuege macht. Ausserdem werden zum Spielverlauf
  * Konsolenausgaben gemacht.
  */
 public class Logic implements IGameHandler {
@@ -26,17 +25,12 @@ public class Logic implements IGameHandler {
   private Player currentPlayer;
 
   private static final Logger log = LoggerFactory.getLogger(Logic.class);
-  /*
-   * Klassenweit verfuegbarer Zufallsgenerator der beim Laden der klasse
-   * einmalig erzeugt wird und darn immer zur Verfuegung steht.
-   */
-  private static final Random rand = new SecureRandom();
 
   /**
    * Erzeugt ein neues Strategieobjekt, das zufaellige Zuege taetigt.
    *
-   * @param client Der Zugrundeliegende Client der mit dem Spielserver
-   *               kommunizieren kann.
+   * @param client Der zugrundeliegende Client, der mit dem Spielserver
+   *               kommuniziert.
    */
   public Logic(Starter client) {
     this.client = client;
@@ -45,8 +39,7 @@ public class Logic implements IGameHandler {
   /**
    * {@inheritDoc}
    */
-  public void gameEnded(GameResult data, PlayerColor color,
-                        String errorMessage) {
+  public void gameEnded(GameResult data, PlayerColor color, String errorMessage) {
     log.info("Das Spiel ist beendet.");
   }
 
@@ -57,9 +50,9 @@ public class Logic implements IGameHandler {
   public void onRequestAction() {
     long startTime = System.nanoTime();
     log.info("Es wurde ein Zug angefordert.");
-    ArrayList<Move> possibleMove = gameState.getPossibleMoves(); // Enthält mindestens ein Element
+    ArrayList<Move> possibleMoves = gameState.getPossibleMoves();
 
-    sendAction(possibleMove.get((int)(Math.random()*possibleMove.size())));
+    sendAction(possibleMoves.get((int) (Math.random() * possibleMoves.size())));
   }
 
   /**
@@ -78,8 +71,7 @@ public class Logic implements IGameHandler {
   public void onUpdate(GameState gameState) {
     this.gameState = gameState;
     currentPlayer = gameState.getCurrentPlayer();
-    log.info("Das Spiel geht voran: Zug: {}", gameState.getTurn());
-    log.info("Spieler: {}", currentPlayer.getPlayerColor());
+    log.info("Zug: {} Spieler: {}", gameState.getTurn(), currentPlayer.getPlayerColor());
   }
 
   /**

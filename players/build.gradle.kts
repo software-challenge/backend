@@ -25,41 +25,47 @@ dependencies {
 
 tasks {
     "shadowJar"(ShadowJar::class) {
-        baseName = "simpleclient-$game"
-        classifier = rootProject.version.toString()
-        destinationDir = file("../build/deploy")
-    }
-
-    "jar"(Jar::class) {
         baseName = "defaultplayer"
+        classifier = ""
     }
 
-    "zip"(Zip::class) {
-        dependsOn("shadowJar", "javadoc", ":sdk:javadoc", "copySrc")
+    tasks.replace("jar").dependsOn("shadowJar")
+
+    val zipDir = buildDir.resolve("zip")
+
+    "deploy"(Zip::class) {
+        dependsOn("jar", "javadoc", ":sdk:javadoc", "prepareZip")
         baseName = "simpleclient-$game"
         classifier = "src"
-        from("build/deploy")
+        from(zipDir)
         destinationDir = file("../build/deploy")
+        doFirst {
+            copy {
+                from("build/libs")
+                into(rootProject.buildDir.resolve("deploy"))
+                rename("defaultplayer.jar", "simpleclient-$game-${rootProject.version}.jar")
+            }
+        }
     }
 
-    "copySrc" {
+    "prepareZip" {
         doFirst {
-            file("build/deploy").mkdirs()
+            zipDir.mkdirs()
             copy {
                 from(configurations.compile)
-                into("build/deploy/lib")
+                into(zipDir.resolve("lib"))
             }
             copy {
                 from("build/docs/javadoc")
-                into("build/deploy/doc/simple-client")
+                into(zipDir.resolve("doc").resolve("client"))
             }
             copy {
                 from("../socha-sdk/build/docs/javadoc")
-                into("build/deploy/doc/sdk")
+                into(zipDir.resolve("doc").resolve("sdk"))
             }
             copy {
                 from("$game/src")
-                into("build/deploy/src")
+                into(zipDir.resolve("src"))
             }
         }
     }

@@ -24,7 +24,7 @@ dependencies {
 tasks {
     val runnable = file("build/runnable")
 
-    "zip"(Zip::class) {
+    "deploy"(Zip::class) {
         dependsOn(":test-client:jar", ":players:jar", "makeRunnable")
         destinationDir = file("../build/deploy")
         baseName = "software-challenge-server"
