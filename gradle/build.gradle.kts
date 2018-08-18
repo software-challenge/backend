@@ -22,6 +22,7 @@ tasks {
 
     "deploy" {
         dependsOn("clean")
+        dependOnSubprojects()
         group = mainGroup
         description = "Zips everything up for release into build/deploy"
     }
@@ -95,19 +96,18 @@ tasks {
         dependsOn("testDeployed")
     }
 
-    "clean" {
-        subprojects.forEach {
-            it.afterEvaluate {
-                val cleanTask = it.tasks.findByName("clean")
-                if (cleanTask != null)
-                    dependsOn(cleanTask)
-            }
-        }
-    }
-
+    getByName("clean").dependOnSubprojects()
     getByName("test").dependsOn("testDeployed")
     getByName("build").dependsOn("deploy")
     getByName("jar").enabled = false
+}
+
+fun Task.dependOnSubprojects() {
+    subprojects.forEach {
+        it.afterEvaluate {
+            dependsOn(it.tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
+        }
+    }
 }
 
 allprojects {
@@ -119,6 +119,7 @@ allprojects {
         jcenter()
     }
 
+    tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
     tasks.withType<Javadoc> {
         val silence = buildDir.resolve("tmp").resolve("silence")
         options.optionFiles!!.add(silence)
