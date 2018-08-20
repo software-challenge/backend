@@ -56,6 +56,7 @@ tasks {
 
     "testDeployed" {
         dependsOn("deploy")
+        group = mainGroup
         doFirst {
             val server = ProcessBuilder("./start." + if (OperatingSystem.current().isWindows) "bat" else "sh").directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(200)
@@ -96,9 +97,18 @@ tasks {
         dependsOn("testDeployed")
     }
 
-    getByName("clean").dependOnSubprojects()
-    getByName("test").dependsOn("testDeployed")
-    getByName("build").dependsOn("deploy")
+    "clean" {
+        dependOnSubprojects()
+        group = mainGroup
+    }
+    "test" {
+        dependsOn("testDeployed")
+        group = mainGroup
+    }
+   "build" {
+        dependsOn("deploy")
+        group = mainGroup
+    }
     getByName("jar").enabled = false
 }
 
@@ -168,6 +178,16 @@ project("plugins") {
     tasks {
         "jar"(Jar::class) {
             baseName = game
+        }
+    }
+}
+
+// fix run task to not be recursive, see https://stackoverflow.com/q/51903863/6723250
+gradle.taskGraph.whenReady {
+    val hasRootRunTask = hasTask(":run")
+    if (hasRootRunTask) {
+        allTasks.forEach { task ->
+            task.enabled = task.name != "run"
         }
     }
 }
