@@ -3,7 +3,7 @@ import java.util.zip.ZipInputStream
 
 plugins {
     java
-    kotlin("jvm") version "1.2.60"
+    kotlin("jvm") version "1.2.61"
 }
 
 val year = property("socha.year").toString()
@@ -30,27 +30,38 @@ tasks {
     "release" {
         dependsOn("deploy")
         group = mainGroup
-        description = "Prepares a new Release by creating a git tag"
+        description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
         doLast {
-            val tagDescription = properties["desc"]?.toString()
+            val v = properties["v"]?.toString()?.takeIf { it.count { it == '.' } == 1 }
+                    ?: throw InvalidUserDataException("Die Flag -Pv=\"Version\" wird im Format X.X benötigt")
+            val desc = properties["desc"]?.toString()
                     ?: throw InvalidUserDataException("Die Flag -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
-            println("Beschreibung: $tagDescription")
-            exec { commandLine("git", "tag", version, "-m", tagDescription) }
+            val version = "${year.substring(2)}.$v"
+            println("Version: $version")
+            println("Beschreibung: $desc")
+            file("gradle.properties").writeText(file("gradle.properties").readText().replace(Regex("socha.version.*"), "socha.version = $v"))
+            exec { commandLine("git", "add", "gradle.properties") }
+            exec { commandLine("git", "commit", "-m", version) }
+            exec { commandLine("git", "tag", version, "-m", desc) }
             exec { commandLine("git", "push", "--tags") }
-            println("""===================================================
+            println("""
+    ===================================================
     Fertig! Jetzt noch folgende Schritte ausfuehren:
+     - einen Release für die GUI erstellen
      - auf der Website (http://www.software-challenge.de/wp-admin) unter Medien die Dateien ersetzen
      - unter Seiten die Downloadseite aktualisieren (neue Version in Versionshistorie eintragen)
 
-    Dann auf der Wettkampfseite (http://contest.software-challenge.de) was unter Aktuelles schreiben und auf die Downloadseite verlinken:
+    Dann auf der Wettkampfseite (http://contest.software-challenge.de) was unter Aktuelles schreiben:
 
-    Eine neue Version der Software ist verfügbar! $description
+    Eine neue Version der Software ist verfügbar: $desc
     Dafür gibt es einen neuen Server und Simpleclient im [Download-Bereich der Website][1].
 
     [1]: http://www.software-challenge.de/downloads/
 
     Dann noch etwas im Discord-Chat in #news schreiben:
-    Good news @everyone! Neue Version der Software mit Fehlerbehebungen! http://www.software-challenge.de/downloads/""")
+    Good news @everyone! Neue Version der Software: http://www.software-challenge.de/downloads/
+    Highlights: $desc
+    ===================================================""".trimIndent())
         }
     }
 
@@ -93,22 +104,19 @@ tasks {
         }
     }
 
-    tasks.replace("run").run {
-        dependsOn("testDeployed")
-    }
-
     "clean" {
         dependOnSubprojects()
         group = mainGroup
     }
     "test" {
-        dependsOn("testDeployed")
+        //dependsOn("testDeployed")
         group = mainGroup
     }
    "build" {
         dependsOn("deploy")
         group = mainGroup
     }
+    tasks.replace("run")//.dependsOn("testDeployed")
     getByName("jar").enabled = false
 }
 

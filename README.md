@@ -1,4 +1,5 @@
 # Software-Challenge
+
 Das offizielle Repository der [Software-Challenge](https://www.software-challenge.de/), welches aus Server, Client und Spiel-Plugins besteht.
 
 ## Struktur
@@ -11,6 +12,7 @@ Das offizielle Repository der [Software-Challenge](https://www.software-challeng
 | socha-sdk | Projektübergreifend verwendete Klassen |
 
 ## Build
+
 Als Build-Tool wird [Gradle](https://gradle.org/) verwendet.
 
 Das gesamte Projekt kann sofort nach dem checkout per `./gradlew build` 
@@ -36,3 +38,16 @@ wechselt und dort `./gradlew run` ausführt.
 
 Wenn notwendig, können bei der Ausführung eines Subprojektes via `run` per `-Dargs="Argument1 Argument2"`
 Argumente mitgegeben werden.
+
+## Release
+
+Ein Release kann durch dieses Command initiiert werden:
+
+`./gradlew release -Pv=X.X -Pdesc="Versionsbeschreibung"`
+
+- `-Pv` gibt die Version an, beginnend bei 0.0 - die Jahresnummer wird automatisch davorgesetzt
+- `-Pdesc` ist eine kurze Beschreibung der Version. Sie wird als Nachricht des Tags verwendet und 
+  im vorgeschlagenen Text für Ankündigungen auf verschiedenen Platformen eingefügt.
+
+Dann wird die Version (in `gradle.properties`) automatisch angepasst, ein commit gemacht, git tag gesetzt und gepusht.  
+Im Anschluss gibt das Skript Hinweise, wie weiter zu verfahren ist.
