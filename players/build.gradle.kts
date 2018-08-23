@@ -6,6 +6,7 @@ plugins {
 }
 
 val game = property("game").toString()
+val gameName = game.substringBefore("_")
 
 java.sourceSets {
     "main" {
@@ -34,8 +35,8 @@ tasks {
     val zipDir = buildDir.resolve("zip")
 
     "deploy"(Zip::class) {
-        dependsOn("jar", "javadoc", ":sdk:javadoc", "prepareZip")
-        baseName = "simpleclient-$game"
+        dependsOn("jar", "prepareZip")
+        baseName = "simpleclient-$gameName"
         classifier = "src"
         from(zipDir)
         destinationDir = file("../build/deploy")
@@ -43,12 +44,17 @@ tasks {
             copy {
                 from("build/libs")
                 into(rootProject.buildDir.resolve("deploy"))
-                rename("defaultplayer.jar", "simpleclient-$game-${rootProject.version}.jar")
+                rename("defaultplayer.jar", "simpleclient-$gameName-${rootProject.version}.jar")
+            }
+            copy {
+                from("build/zip/doc")
+                into(rootProject.buildDir.resolve("deploy").resolve("doc"))
             }
         }
     }
 
     "prepareZip" {
+        dependsOn("javadoc", ":sdk:javadoc", ":plugins:javadoc")
         doFirst {
             zipDir.mkdirs()
             copy {
@@ -57,7 +63,11 @@ tasks {
             }
             copy {
                 from("build/docs/javadoc")
-                into(zipDir.resolve("doc").resolve("client"))
+                into(zipDir.resolve("doc").resolve("player-$gameName"))
+            }
+            copy {
+                from("../plugins/build/docs/javadoc")
+                into(zipDir.resolve("doc").resolve("plugin-$gameName"))
             }
             copy {
                 from("../socha-sdk/build/docs/javadoc")
