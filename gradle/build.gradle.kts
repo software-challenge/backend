@@ -69,8 +69,19 @@ tasks {
         dependsOn("deploy")
         group = mainGroup
         doFirst {
-            val server = ProcessBuilder("./start." + if (OperatingSystem.current().isWindows) "bat" else "sh").directory(project("server").buildDir.resolve("runnable")).start()
-            Thread.sleep(200)
+            var f = project("server").buildDir.resolve("runnable").resolve("start.bat")
+            println("file " + f.absolutePath + " exists: " + f.exists())
+            var test = ProcessBuilder("echo \"if exist ./server/build/runnable/start.bat echo file exists else echo file doesn't exist\" >test.bat").start()
+            println(test.inputStream.bufferedReader().readLines())
+            println(test.errorStream.bufferedReader().readLines())
+            f = file("test.bat")
+            println("file " + f.absolutePath + " exists: " + f.exists())
+            f.writeText("if exist ./server/build/runnable/start.bat echo file exists else echo file doesn't exist")
+            test = ProcessBuilder("cmd test.bat").start()
+            println(test.inputStream.bufferedReader().readLines())
+            println(test.errorStream.bufferedReader().readLines())
+            val server = ProcessBuilder("cmd start." + if (OperatingSystem.current().isWindows) "bat" else "sh").directory(project("server").buildDir.resolve("runnable")).start()
+            Thread.sleep(500)
             val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
             val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
             var line = ""
@@ -84,14 +95,14 @@ tasks {
                     lines.add(line)
                 }
                 if (!server.isAlive || !line.contains("Received game result", true)) {
-                    println("server stdin:")
+                    println("\nserver stdout:")
                     println(server.inputStream.readBytes(server.inputStream.available()).joinToString("") { it.toChar().toString() })
+                    println("\nserver stderr:")
+                    println(server.errorStream.readBytes(server.errorStream.available()).joinToString("") { it.toChar().toString() })
                     if (server.isAlive) {
-                        println()
-                        println("$clientName stdin:")
+                        println("\n$clientName stdout:")
                         println(lines)
-                        println()
-                        println("$clientName stderr:")
+                        println("\n$clientName stderr:")
                         process.errorStream.bufferedReader().forEachLine { println(it) }
                         throw Exception("$clientName did not receive the game result!")
                     } else {
@@ -109,14 +120,14 @@ tasks {
         group = mainGroup
     }
     "test" {
-        //dependsOn("testDeployed")
+        dependsOn("testDeployed")
         group = mainGroup
     }
    "build" {
         dependsOn("deploy")
         group = mainGroup
     }
-    tasks.replace("run")//.dependsOn("testDeployed")
+    tasks.replace("run").dependsOn("testDeployed")
     getByName("jar").enabled = false
 }
 
