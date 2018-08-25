@@ -109,14 +109,14 @@ tasks {
         group = mainGroup
     }
     "test" {
-        //dependsOn("testDeployed")
+        //dependsOn("run")
         group = mainGroup
     }
    "build" {
         dependsOn("deploy")
         group = mainGroup
     }
-    tasks.replace("run")//.dependsOn("testDeployed")
+    tasks.replace("run").dependsOn("testDeployed")
     getByName("jar").enabled = false
 }
 
@@ -176,11 +176,12 @@ project("sdk") {
 project("plugins") {
     java.sourceSets {
         "main" { java.srcDirs("$game/client", "$game/server", "$game/shared") }
-        "test" { java.srcDir("test") }
+        "test" { java.srcDir("$game/test") }
     }
 
     dependencies {
         compile(project(":sdk"))
+        testCompile("junit", "junit", "4.12")
     }
 
     tasks {
