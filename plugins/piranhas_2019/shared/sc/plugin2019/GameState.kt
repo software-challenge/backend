@@ -17,7 +17,7 @@ import java.util.*
 class GameState(
         override var red: Player = Player(PlayerColor.RED),
         override var blue: Player = Player(PlayerColor.BLUE),
-        override val board: Board = Board()) : TwoPlayerGameState<Player, Move>(), Cloneable {
+        override var board: Board = Board()) : TwoPlayerGameState<Player, Move>(), Cloneable {
 
     constructor(state: GameState) : this(state.red.clone(), state.blue.clone(), state.board.clone()) {
         lastMove = state.lastMove?.clone()

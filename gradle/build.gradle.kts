@@ -83,7 +83,7 @@ tasks {
             test = ProcessBuilder("test.bat").start()
             println(test.inputStream.bufferedReader().readLines())
             println(test.errorStream.bufferedReader().readLines())
-            val server = ProcessBuilder(if (OperatingSystem.current().isWindows) "cmd /c start start.bat" else "./start.sh").directory(project("server").buildDir.resolve("runnable")).start()
+            val server = ProcessBuilder(if (OperatingSystem.current().isWindows) "cmd /c start ${project("server").buildDir.resolve("runnable").resolve("start.bat").absolutePath}" else "./start.sh").directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(500)
             val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
             val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
@@ -123,7 +123,7 @@ tasks {
         group = mainGroup
     }
     "test" {
-        dependsOn("testDeployed")
+        dependsOn("run")
         group = mainGroup
     }
    "build" {
@@ -190,11 +190,12 @@ project("sdk") {
 project("plugins") {
     java.sourceSets {
         "main" { java.srcDirs("$game/client", "$game/server", "$game/shared") }
-        "test" { java.srcDir("test") }
+        "test" { java.srcDir("$game/test") }
     }
 
     dependencies {
         compile(project(":sdk"))
+        testCompile("junit", "junit", "4.12")
     }
 
     tasks {
@@ -204,7 +205,7 @@ project("plugins") {
     }
 }
 
-// fix run task to not be recursive, see https://stackoverflow.com/q/51903863/6723250
+// "run" task doesn't work if recursive, see https://stackoverflow.com/q/51903863/6723250
 gradle.taskGraph.whenReady {
     val hasRootRunTask = hasTask(":run")
     if (hasRootRunTask) {
