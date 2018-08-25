@@ -6,6 +6,7 @@ import sc.plugin2019.util.Constants;
 import sc.plugin2019.util.TestGameUtil;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
+import sc.shared.WinCondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static sc.plugin2019.Direction.LEFT;
 import static sc.plugin2019.Direction.RIGHT;
+import static sc.plugin2019.Direction.UP_LEFT;
 import static sc.plugin2019.FieldState.EMPTY;
 import static sc.plugin2019.FieldState.RED;
 import static sc.plugin2019.util.GameRuleLogic.isValidToMove;
@@ -33,6 +35,33 @@ public class GamePlayTest {
     red = state.getPlayer(PlayerColor.RED);
     blue = state.getPlayer(PlayerColor.BLUE);
     state.setCurrentPlayerColor(PlayerColor.RED);
+  }
+
+  @Test
+  public void onlyEndAfterRoundTest() throws InvalidMoveException {
+    Board board = TestGameUtil.createCustomBoard(""+
+            "-BBBBBBBB-"+
+            "----B----R"+
+            "----BBB--R"+
+            "----B----R"+
+            "----BO---R"+
+            "----B--BRR"+
+            "----R-O--R"+
+            "------R--R"+
+            "---------R"+
+            "----------"
+    );
+    state.setBoard(board);
+    {
+      Move move = new Move(9, 3, UP_LEFT);
+      move.perform(state);
+      assertEquals(null, game.checkWinCondition());
+    }
+    {
+      Move move = new Move(1, 0, RIGHT);
+      move.perform(state);
+      assertEquals(new WinCondition(PlayerColor.BLUE, Constants.WINNING_MESSAGE), game.checkWinCondition());
+    }
   }
 
   @Test
