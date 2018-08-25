@@ -36,8 +36,31 @@ Tasks der Subprojekte können in zwei Wegen aufgerufen werden:
 Das gleiche kann auch erreicht werden, in dem man in das server-Verzeichnis 
 wechselt und dort `./gradlew run` ausführt.
 
-Wenn notwendig, können bei der Ausführung eines Subprojektes via `run` per `-Dargs="Argument1 Argument2"`
-Argumente mitgegeben werden.
+Wenn notwendig, können bei der Ausführung eines Subprojektes via `run` 
+per `-Dargs="Argument1 Argument2"`Argumente mitgegeben werden.
+
+### Arbeiten mit Intellij IDEA
+
+Zuerst sollte sichergestellt werden, dass die neuste Version von
+Intellij IDEA verwendet wird, da es ansonsten Probleme mit Kotlin
+geben kann.
+
+In Intellij kann man das Projekt bequem von Gradle importieren, 
+wodurch alle Module und Bibliotheken automatisch geladen werden.
+Dazu sind folgende Schritte notwendig:
+
+- Projekt klonen `git clone git@github.com:CAU-Kiel-Tech-Inf/socha.git`
+- In IDEA auf "File" > "New" > "Project from existing sources" > socha Verzeichnis auswählen
+  - Import project from external model, Gradle auswählen
+  - Im folgenden Fenster:
+    - Use auto-import ankreuzen
+    - bei "Gradle JVM" JDK 8 auswählen, wenn sie nicht schon ausgewählt ist
+    - "Finish" drücken
+- Warten, bis das Gradle build fertig ist
+- Einmal im Terminal `git checkout .idea` ausführen, um sich die codeStyles zurückzuholen
+
+Nun können Gradle tasks auch direkt in IDEA vom Gradle Tool Window
+(befindet sich normalerweise in der rechten Andockleiste) ausgeführt werden.
 
 ## Release
 
@@ -46,8 +69,9 @@ Ein Release kann durch dieses Command initiiert werden:
 `./gradlew release -Pv=X.X -Pdesc="Versionsbeschreibung"`
 
 - `-Pv` gibt die Version an, beginnend bei 0.0 - die Jahresnummer wird automatisch davorgesetzt
-- `-Pdesc` ist eine kurze Beschreibung der Version. Sie wird als Nachricht des Tags verwendet und 
-  im vorgeschlagenen Text für Ankündigungen auf verschiedenen Platformen eingefügt.
+- `-Pdesc` ist eine kurze Beschreibung der Version. Sie wird als Nachricht des Tags verwendet 
+  und im vorgeschlagenen Text für Ankündigungen auf verschiedenen Platformen eingefügt.
 
-Dann wird die Version (in `gradle.properties`) automatisch angepasst, ein commit gemacht, git tag gesetzt und gepusht.  
+Dann wird die Version (in `gradle.properties`) automatisch angepasst, ein commit gemacht, 
+git tag gesetzt und gepusht.  
 Im Anschluss gibt das Skript Hinweise, wie weiter zu verfahren ist.
