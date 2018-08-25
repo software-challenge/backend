@@ -69,6 +69,8 @@ tasks {
         dependsOn("deploy")
         group = mainGroup
         doFirst {
+            println(gradle.gradleHomeDir)
+            println(gradle.gradleUserHomeDir)
             var f = project("server").buildDir.resolve("runnable").resolve("start.bat")
             println("file " + f.absolutePath + " exists: " + f.exists())
             var test = ProcessBuilder("echo \"if exist ./server/build/runnable/start.bat echo file exists else echo file doesn't exist\" >test.bat").start()
@@ -77,10 +79,11 @@ tasks {
             f = file("test.bat")
             println("file " + f.absolutePath + " exists: " + f.exists())
             f.writeText("if exist ./server/build/runnable/start.bat echo file exists else echo file doesn't exist")
-            test = ProcessBuilder("cmd test.bat").start()
+            println("file " + f.absolutePath + " exists: " + f.exists())
+            test = ProcessBuilder("test.bat").start()
             println(test.inputStream.bufferedReader().readLines())
             println(test.errorStream.bufferedReader().readLines())
-            val server = ProcessBuilder("cmd start." + if (OperatingSystem.current().isWindows) "bat" else "sh").directory(project("server").buildDir.resolve("runnable")).start()
+            val server = ProcessBuilder(if (OperatingSystem.current().isWindows) "cmd /c start start.bat" else "./start.sh").directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(500)
             val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
             val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
