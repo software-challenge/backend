@@ -1,5 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
-import java.util.zip.ZipInputStream
+import java.io.InputStream
 
 plugins {
     java
@@ -69,24 +69,10 @@ tasks {
         dependsOn("deploy")
         group = mainGroup
         doFirst {
-            println(gradle.gradleHomeDir)
-            println(gradle.gradleUserHomeDir)
-            var f = project("server").buildDir.resolve("runnable").resolve("start.bat")
-            println("file " + f.absolutePath + " exists: " + f.exists())
-            var test = ProcessBuilder("echo \"if exist ./server/build/runnable/start.bat echo file exists else echo file doesn't exist\" >test.bat").start()
-            println(test.inputStream.bufferedReader().readLines())
-            println(test.errorStream.bufferedReader().readLines())
-            f = file("test.bat")
-            println("file " + f.absolutePath + " exists: " + f.exists())
-            f.writeText("if exist ./server/build/runnable/start.bat echo file exists else echo file doesn't exist")
-            println("file " + f.absolutePath + " exists: " + f.exists())
-            test = ProcessBuilder("test.bat").start()
-            println(test.inputStream.bufferedReader().readLines())
-            println(test.errorStream.bufferedReader().readLines())
-            val server = ProcessBuilder(if (OperatingSystem.current().isWindows) "cmd /c start ${project("server").buildDir.resolve("runnable").resolve("start.bat").absolutePath}" else "./start.sh").directory(project("server").buildDir.resolve("runnable")).start()
-            Thread.sleep(500)
-            val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
-            val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
+            val server = ProcessBuilder(if (OperatingSystem.current().isWindows) project("server").buildDir.resolve("runnable").resolve("start.bat").absolutePath else "./start.sh").directory(project("server").buildDir.resolve("runnable")).start()
+            Thread.sleep(300)
+            val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$gameName-$version.jar"))
+            val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$gameName-$version.jar"))
             var line = ""
             mapOf("client1" to client1, "client2" to client2).forEach { clientName, process ->
                 val reader = process.inputStream.bufferedReader()
@@ -98,10 +84,9 @@ tasks {
                     lines.add(line)
                 }
                 if (!server.isAlive || !line.contains("Received game result", true)) {
-                    println("\nserver stdout:")
-                    println(server.inputStream.readBytes(server.inputStream.available()).joinToString("") { it.toChar().toString() })
-                    println("\nserver stderr:")
-                    println(server.errorStream.readBytes(server.errorStream.available()).joinToString("") { it.toChar().toString() })
+                    println("server alive: " + server.isAlive)
+                    server.inputStream.dump("server stdout")
+                    server.errorStream.dump("server stderr")
                     if (server.isAlive) {
                         println("\n$clientName stdout:")
                         println(lines)
@@ -126,7 +111,7 @@ tasks {
         dependsOn("run")
         group = mainGroup
     }
-   "build" {
+    "build" {
         dependsOn("deploy")
         group = mainGroup
     }
@@ -140,6 +125,13 @@ fun Task.dependOnSubprojects() {
             dependsOn(it.tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
         }
     }
+}
+
+fun InputStream.dump(name: String? = null) {
+    if(name != null)
+        println("\n$name:")
+    while(available() > 0)
+        print(read().toChar())
 }
 
 allprojects {
@@ -205,7 +197,7 @@ project("plugins") {
     }
 }
 
-// "run" task doesn't work if recursive, see https://stackoverflow.com/q/51903863/6723250
+// "run" task should not be recursive, see https://stackoverflow.com/q/51903863/6723250
 gradle.taskGraph.whenReady {
     val hasRootRunTask = hasTask(":run")
     if (hasRootRunTask) {
