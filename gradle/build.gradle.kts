@@ -13,6 +13,14 @@ version = year.substring(2) + "." + property("socha.version").toString()
 project.ext.set("game", game)
 println("Current version: $version  Game: $game")
 
+val deployDir = buildDir.resolve("deploy")
+project.ext.set("deployDir", deployDir)
+
+allprojects {
+    apply(plugin = "java")
+    apply(plugin = "kotlin")
+}
+
 val mainGroup = "_main"
 tasks {
     "startServer" {
@@ -21,7 +29,7 @@ tasks {
     }
 
     "deploy" {
-        dependsOn("clean")
+        dependsOn("clean", "doc")
         dependOnSubprojects()
         group = mainGroup
         description = "Zips everything up for release into build/deploy"
@@ -71,8 +79,8 @@ tasks {
         doFirst {
             val server = ProcessBuilder("./start." + if (OperatingSystem.current().isWindows) "bat" else "sh").directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(200)
-            val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
-            val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$game-$version.jar"))
+            val client1 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$game-$version.jar"))
+            val client2 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$game-$version.jar"))
             var line = ""
             mapOf("client1" to client1, "client2" to client2).forEach { clientName, process ->
                 val reader = process.inputStream.bufferedReader()
@@ -108,11 +116,17 @@ tasks {
         dependOnSubprojects()
         group = mainGroup
     }
+    val doc by creating(Javadoc::class) {
+        val projects = arrayOf("players", "plugins", "sdk").map { project(it) }
+        source(projects.map { it.java.sourceSets.getByName("main").allJava })
+        classpath = files(projects.map { it.java.sourceSets.getByName("main").compileClasspath })
+        setDestinationDir(deployDir.resolve("doc"))
+    }
     "test" {
         //dependsOn("run")
         group = mainGroup
     }
-   "build" {
+    "build" {
         dependsOn("deploy")
         group = mainGroup
     }
@@ -120,18 +134,9 @@ tasks {
     getByName("jar").enabled = false
 }
 
-fun Task.dependOnSubprojects() {
-    subprojects.forEach {
-        it.afterEvaluate {
-            dependsOn(it.tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
-        }
-    }
-}
+// == Cross-project configuration ==
 
 allprojects {
-    apply(plugin = "java")
-    apply(plugin = "kotlin")
-
     repositories {
         maven("http://dist.wso2.org/maven2")
         jcenter()
@@ -139,9 +144,9 @@ allprojects {
 
     tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
     tasks.withType<Javadoc> {
-        val silence = buildDir.resolve("tmp").resolve("silence")
-        options.optionFiles!!.add(silence)
-        doFirst { silence.writeText("-Xdoclint:none") }
+        val silenceDoc = buildDir.resolve("tmp").resolve("silence")
+        doFirst { silenceDoc.apply { parentFile.mkdirs(); writeText("-Xdoclint:none") } }
+        options.optionFiles!!.add(silenceDoc)
     }
     tasks.withType<Test> {
         testLogging { showStandardStreams = System.getProperty("verbose") != null }
@@ -187,6 +192,16 @@ project("plugins") {
     tasks {
         "jar"(Jar::class) {
             baseName = game
+        }
+    }
+}
+
+// == Utilities ==
+
+fun Task.dependOnSubprojects() {
+    subprojects.forEach {
+        it.afterEvaluate {
+            dependsOn(it.tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
         }
     }
 }
