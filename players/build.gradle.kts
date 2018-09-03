@@ -72,8 +72,8 @@ tasks {
                 into(zipDir.resolve("doc").resolve("sdk"))
             }
             copy {
-                from("$game/src")
-                into(zipDir.resolve("src"))
+                from(game)
+                into(zipDir)
             }
         }
     }
