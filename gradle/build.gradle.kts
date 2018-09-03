@@ -69,7 +69,7 @@ tasks {
         dependsOn("deploy")
         group = mainGroup
         doFirst {
-            val server = ProcessBuilder(if (OperatingSystem.current().isWindows) project("server").buildDir.resolve("runnable").resolve("start.bat").absolutePath else "./start.sh").directory(project("server").buildDir.resolve("runnable")).start()
+            val server = ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").buildDir.resolve("runnable").resolve("software-challenge-server.jar").absolutePath).directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(300)
             val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$gameName-$version.jar"))
             val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$gameName-$version.jar"))
@@ -81,6 +81,7 @@ tasks {
                     if (!server.isAlive)
                         break
                     line = reader.readLine() ?: break
+                    println(line)
                     lines.add(line)
                 }
                 if (!server.isAlive || !line.contains("Received game result", true)) {
@@ -128,9 +129,9 @@ fun Task.dependOnSubprojects() {
 }
 
 fun InputStream.dump(name: String? = null) {
-    if(name != null)
+    if (name != null)
         println("\n$name:")
-    while(available() > 0)
+    while (available() > 0)
         print(read().toChar())
 }
 
