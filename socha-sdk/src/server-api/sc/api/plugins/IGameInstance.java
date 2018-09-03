@@ -87,12 +87,13 @@ public interface IGameInstance {
    */
   List<AbstractPlayer> getWinners();
 
-  /** Returns pluginUUID. Only used for generating replay name. */
+  /** Used for generating replay name. */
   String getPluginUUID();
 
-  /** Returns all players. This should always be 2 and the startplayer should be first in the List. */
+  /** @return the two players, the startplayer will be first in the List */
   List<AbstractPlayer> getPlayers();
 
-  /** Returns the PlayerScores for both players */
+  /** @return the PlayerScores for both players */
   List<PlayerScore> getPlayerScores();
+
 }

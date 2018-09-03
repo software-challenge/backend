@@ -24,6 +24,8 @@ dependencies {
     compile(project(":plugins"))
 }
 
+val deployDir = property("deployDir") as File
+
 tasks {
     "shadowJar"(ShadowJar::class) {
         baseName = "defaultplayer"
@@ -39,16 +41,12 @@ tasks {
         baseName = "simpleclient-$gameName"
         classifier = "src"
         from(zipDir)
-        destinationDir = file("../build/deploy")
+        destinationDir = deployDir
         doFirst {
             copy {
                 from("build/libs")
-                into(rootProject.buildDir.resolve("deploy"))
+                into(deployDir)
                 rename("defaultplayer.jar", "simpleclient-$gameName-${rootProject.version}.jar")
-            }
-            copy {
-                from("build/zip/doc")
-                into(rootProject.buildDir.resolve("deploy").resolve("doc"))
             }
         }
     }

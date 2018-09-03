@@ -13,6 +13,14 @@ version = year.substring(2) + "." + property("socha.version").toString()
 project.ext.set("game", game)
 println("Current version: $version  Game: $game")
 
+val deployDir = buildDir.resolve("deploy")
+project.ext.set("deployDir", deployDir)
+
+allprojects {
+    apply(plugin = "java")
+    apply(plugin = "kotlin")
+}
+
 val mainGroup = "_main"
 tasks {
     "startServer" {
@@ -21,7 +29,7 @@ tasks {
     }
 
     "deploy" {
-        dependsOn("clean")
+        dependsOn("clean", "doc")
         dependOnSubprojects()
         group = mainGroup
         description = "Zips everything up for release into build/deploy"
@@ -71,8 +79,8 @@ tasks {
         doFirst {
             val server = ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").buildDir.resolve("runnable").resolve("software-challenge-server.jar").absolutePath).directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(300)
-            val client1 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$gameName-$version.jar"))
-            val client2 = Runtime.getRuntime().exec("java -jar " + buildDir.resolve("deploy").resolve("simpleclient-$gameName-$version.jar"))
+            val client1 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar"))
+            val client2 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar"))
             var line = ""
             mapOf("client1" to client1, "client2" to client2).forEach { clientName, process ->
                 val reader = process.inputStream.bufferedReader()
@@ -81,7 +89,6 @@ tasks {
                     if (!server.isAlive)
                         break
                     line = reader.readLine() ?: break
-                    println(line)
                     lines.add(line)
                 }
                 if (!server.isAlive || !line.contains("Received game result", true)) {
@@ -108,6 +115,12 @@ tasks {
         dependOnSubprojects()
         group = mainGroup
     }
+    val doc by creating(Javadoc::class) {
+        val projects = arrayOf("players", "plugins", "sdk").map { project(it) }
+        source(projects.map { it.java.sourceSets.getByName("main").allJava })
+        classpath = files(projects.map { it.java.sourceSets.getByName("main").compileClasspath })
+        setDestinationDir(deployDir.resolve("doc"))
+    }
     "test" {
         dependsOn("run")
         group = mainGroup
@@ -120,13 +133,7 @@ tasks {
     getByName("jar").enabled = false
 }
 
-fun Task.dependOnSubprojects() {
-    subprojects.forEach {
-        it.afterEvaluate {
-            dependsOn(it.tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
-        }
-    }
-}
+// == Cross-project configuration ==
 
 fun InputStream.dump(name: String? = null) {
     if (name != null)
@@ -136,9 +143,6 @@ fun InputStream.dump(name: String? = null) {
 }
 
 allprojects {
-    apply(plugin = "java")
-    apply(plugin = "kotlin")
-
     repositories {
         maven("http://dist.wso2.org/maven2")
         jcenter()
@@ -146,9 +150,9 @@ allprojects {
 
     tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
     tasks.withType<Javadoc> {
-        val silence = buildDir.resolve("tmp").resolve("silence")
-        options.optionFiles!!.add(silence)
-        doFirst { silence.writeText("-Xdoclint:none") }
+        val silenceDoc = buildDir.resolve("tmp").resolve("silence")
+        doFirst { silenceDoc.apply { parentFile.mkdirs(); writeText("-Xdoclint:none") } }
+        options.optionFiles!!.add(silenceDoc)
     }
     tasks.withType<Test> {
         testLogging { showStandardStreams = System.getProperty("verbose") != null }
@@ -198,7 +202,17 @@ project("plugins") {
     }
 }
 
-// "run" task should not be recursive, see https://stackoverflow.com/q/51903863/6723250
+// == Utilities ==
+
+fun Task.dependOnSubprojects() {
+    subprojects.forEach {
+        it.afterEvaluate {
+            dependsOn(it.tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
+        }
+    }
+}
+
+// "run" task won't work when recursive, see https://stackoverflow.com/q/51903863/6723250
 gradle.taskGraph.whenReady {
     val hasRootRunTask = hasTask(":run")
     if (hasRootRunTask) {

@@ -21,12 +21,14 @@ dependencies {
     testCompile("junit", "junit", "4.12")
 }
 
+val deployDir = property("deployDir") as File
+
 tasks {
     val runnable = file("build/runnable")
 
     "deploy"(Zip::class) {
         dependsOn(":test-client:jar", ":players:jar", "makeRunnable")
-        destinationDir = file("../build/deploy")
+        destinationDir = deployDir
         baseName = "software-challenge-server"
         from(project(":test-client").buildDir.resolve("libs"), project(":players").buildDir.resolve("libs"), runnable)
         doFirst {

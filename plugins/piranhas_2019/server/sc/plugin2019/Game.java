@@ -174,6 +174,9 @@ public class Game extends RoundBasedGameInstance<Player> {
   public WinCondition checkWinCondition() {
     // TODO check whether this is right
     int[][] stats = this.gameState.getGameStats();
+    if (this.gameState.getTurn() % 2 == 1) {
+      return null;
+    }
     if (this.gameState.getTurn() < 2 * Constants.ROUND_LIMIT) {
       // round limit not reached
       Player winningPlayer = getWinner();
