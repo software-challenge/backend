@@ -36,7 +36,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   private String error;
 
   /** current id to identify the client instance internal */
-  private EPlayerId id;
+  private PlayerType id;
   /** the current room in which the player is */
   private String roomId;
   /** the current host */
@@ -46,7 +46,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   /** current figurecolor to identify which client belongs to which player */
   private PlayerColor color;
 
-  public AbstractClient(String host, int port, EPlayerId id) throws IOException {
+  public AbstractClient(String host, int port, PlayerType id) throws IOException {
     this.gameType = GamePlugin.PLUGIN_UUID;
     try {
       this.client = new LobbyClient(Configuration.getXStream(), Configuration.getClassesToRegister(), host, port);
@@ -64,7 +64,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
   /** wenn es nur einen client gibt */
   public AbstractClient(String host, int port) throws IOException {
-    this(host, port, EPlayerId.PLAYER_ONE);
+    this(host, port, PlayerType.PLAYER_ONE);
   }
 
   public void setHandler(IGameHandler handler) {
@@ -73,6 +73,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
   /**
    * Tell this client to observe the game given by the preparation handler
+   *
    * @return controllable game
    */
   public IControllableGame observeGame(PrepareGameProtocolMessage handle) {
@@ -117,7 +118,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     sc.plugin2019.GameState gameState = (GameState) state;
     logger.debug("{} got new state {}", this, gameState);
 
-    if (this.id != EPlayerId.OBSERVER) {
+    if (this.id != PlayerType.OBSERVER) {
       this.handler.onUpdate(gameState);
 
       if (gameState.getCurrentPlayer().getPlayerColor() == this.color) {

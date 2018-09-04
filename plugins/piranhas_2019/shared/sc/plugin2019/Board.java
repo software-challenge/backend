@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static sc.plugin2019.FieldState.OBSTRUCTED;
 
 /**
- * Ein Spielbrett bestehend aus 10x10 Feldern
+ * Spielbrett für Piranhas mit 10x10 Feldern.
  */
 @XStreamAlias(value = "board")
 public class Board implements IBoard {
@@ -26,21 +26,19 @@ public class Board implements IBoard {
     initialize();
   }
 
-  /**
-   * Erstellt eine zufällige Spielbrett. Dazu werden
-   */
+  /** Erstellt eine zufälliges Spielbrett. */
   private void initialize() {
     for (int x = 0; x < Constants.BOARD_SIZE; x++) {
       for (int y = 0; y < Constants.BOARD_SIZE; y++) {
-        fields[x][y] = new Field(x,y);
+        fields[x][y] = new Field(x, y);
       }
     }
     // place piranhas
     for (int index = 1; index < Constants.BOARD_SIZE - 1; index++) {
       fields[0][index].setPiranha(PlayerColor.RED);
-      fields[Constants.BOARD_SIZE -1][index].setPiranha(PlayerColor.RED);
+      fields[Constants.BOARD_SIZE - 1][index].setPiranha(PlayerColor.RED);
       fields[index][0].setPiranha(PlayerColor.BLUE);
-      fields[index][Constants.BOARD_SIZE -1].setPiranha(PlayerColor.BLUE);
+      fields[index][Constants.BOARD_SIZE - 1].setPiranha(PlayerColor.BLUE);
     }
     // place obstacles
     // create a list of coordinates for fields which may be blocked
@@ -84,14 +82,13 @@ public class Board implements IBoard {
 
   @Override
   public String toString() {
-    String toString = "Board:\n";
-    StringBuilder b = new StringBuilder(toString);
+    StringBuilder b = new StringBuilder("Board {");
     for (int x = 0; x < Constants.BOARD_SIZE; x++) {
       for (int y = 0; y < Constants.BOARD_SIZE; y++) {
         b.append(fields[x][y].getPiranha());
       }
     }
-    return b.toString();
+    return b.append('}').toString();
   }
 
   public Field getField(int x, int y) {

@@ -19,20 +19,14 @@ public interface IGameHandler {
    */
   void onUpdate(Player player, Player otherPlayer);
 
-  /**
-   * wird aufgerufen, wenn sich das Spielbrett aendert.
-   *
-   * @param gameState der Spielstatus
-   */
+  /** wird aufgerufen, wenn sich das Spielbrett aendert. */
   void onUpdate(GameState gameState);
 
-  /**
-   * wird aufgreufen, wenn der Spieler zum Zug aufgefordert wurde.
-   */
+  /** wird aufgerufen, wenn der Spieler zum Zug aufgefordert wurde. */
   void onRequestAction();
 
   /**
-   * sendet dem Spielserver den uebergebenen Zug
+   * sendet dem Spielserver den übergebenen Zug
    *
    * @param move zu taetigender Zug
    */
@@ -43,7 +37,7 @@ public interface IGameHandler {
    *
    * @param data         mit getScores() kann man die Punkte erfragen
    * @param color        Playercolor
-   * @param errorMessage String mit Fehler
+   * @param errorMessage Fehlernachricht
    */
   void gameEnded(GameResult data, PlayerColor color, String errorMessage);
 }

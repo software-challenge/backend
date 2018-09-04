@@ -1,7 +1,6 @@
 package sc.plugin2019
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import org.slf4j.LoggerFactory
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.AbstractPlayer
 import sc.plugin2019.util.Constants

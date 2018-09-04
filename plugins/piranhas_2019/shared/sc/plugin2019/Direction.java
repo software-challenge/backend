@@ -1,8 +1,9 @@
 package sc.plugin2019;
 
+/** Bewegungsrichtung für Move */
 public enum Direction {
   UP,
-   UP_RIGHT,
+  UP_RIGHT,
   RIGHT,
   DOWN_RIGHT,
   DOWN,

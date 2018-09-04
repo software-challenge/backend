@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.ActionTimeout;
@@ -48,7 +47,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     return this.gameState;
   }
 
-  /** Jemand hat etwas gesendet, testen was es war (wenn es ein Zug war, dann validieren) */
+  /** Jemand hat etwas gesendet -> testen was es war (wenn es ein Zug war, dann validieren) */
   @Override
   protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
     Player author = (Player) fromPlayer;
@@ -68,19 +67,10 @@ public class Game extends RoundBasedGameInstance<Player> {
     }
   }
 
-  /**
-   * In this game, a new round begins when both players made one move. The order
-   * in which the players make their move may change.
-   */
-  protected boolean increaseTurnIfNecessary(Player nextPlayer) {
-    return getGameState().getTurn() % 2 == 0;
-  }
-
   @Override
   public Player onPlayerJoined() {
     final Player player;
-    // When starting a game from a imported state the players should not be
-    // overwritten
+    // When starting a game from a imported state the players should not be overwritten
     PlayerColor playerColor = this.availableColors.remove(0);
     if (PlayerColor.RED == playerColor && this.gameState.getPlayer(PlayerColor.RED) != null) {
       player = this.gameState.getPlayer(PlayerColor.RED);
@@ -160,10 +150,9 @@ public class Game extends RoundBasedGameInstance<Player> {
   /**
    * Checks if a win condition in the current game state is met.
    * Checks round limit and end of round (and playerStats).
-   * Checks if goal is reached
+   * Checks if goal is reached.
    *
-   * @return WinCondition with winner and reason or null, if no win condition is
-   * yet met.
+   * @return WinCondition with winner and reason or null if no win condition is yet met.
    */
   public WinCondition checkWinCondition() {
     // TODO check whether this is right

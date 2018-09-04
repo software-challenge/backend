@@ -13,7 +13,7 @@ public class Player extends AbstractPlayer implements Cloneable {
   @XStreamAsAttribute
   private PlayerColor color;
 
-  /** only for XStream */
+  /** XStream */
   protected Player() {
   }
 
