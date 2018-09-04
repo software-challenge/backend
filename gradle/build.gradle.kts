@@ -4,6 +4,7 @@ import java.io.InputStream
 plugins {
     java
     kotlin("jvm") version "1.2.61"
+    id("com.github.ben-manes.versions") version "0.19.0"
 }
 
 val year = property("socha.year").toString()
@@ -23,24 +24,29 @@ allprojects {
 
 val mainGroup = "_main"
 tasks {
-    "startServer" {
+    create("startServer") {
         dependsOn(":server:run")
         group = mainGroup
     }
 
-    "deploy" {
+    create("deploy") {
         dependsOn("clean", "doc")
         dependOnSubprojects()
         group = mainGroup
         description = "Zips everything up for release into build/deploy"
     }
 
-    "release" {
+    "clean"(Delete::class) {
+        delete(allprojects.map { it.buildDir })
+        group = mainGroup
+    }
+
+    create("release") {
         dependsOn("deploy")
         group = mainGroup
         description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
         doLast {
-            val v = properties["v"]?.toString()?.takeIf { it.count { it == '.' } == 1 }
+            val v = properties["v"]?.toString()?.takeIf { it.count { char -> char == '.' } == 1 }
                     ?: throw InvalidUserDataException("Die Flag -Pv=\"Version\" wird im Format X.X benötigt")
             val desc = properties["desc"]?.toString()
                     ?: throw InvalidUserDataException("Die Flag -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
@@ -73,7 +79,7 @@ tasks {
         }
     }
 
-    "testDeployed" {
+    create("testDeployed") {
         dependsOn("deploy")
         group = mainGroup
         doFirst {
@@ -111,14 +117,10 @@ tasks {
         }
     }
 
-    "clean" {
-        dependOnSubprojects()
-        group = mainGroup
-    }
-    val doc by creating(Javadoc::class) {
+    create<Javadoc>("doc") {
         val projects = arrayOf("players", "plugins", "sdk").map { project(it) }
-        source(projects.map { it.java.sourceSets.getByName("main").allJava })
-        classpath = files(projects.map { it.java.sourceSets.getByName("main").compileClasspath })
+        source(projects.map { it.sourceSets.getByName("main").allJava })
+        classpath = files(projects.map { it.sourceSets.getByName("main").compileClasspath })
         setDestinationDir(deployDir.resolve("doc"))
     }
     "test" {
@@ -129,41 +131,40 @@ tasks {
         dependsOn("deploy")
         group = mainGroup
     }
-    tasks.replace("run").dependsOn("testDeployed")
+    replace("run").dependsOn("testDeployed")
     getByName("jar").enabled = false
 }
 
 // == Cross-project configuration ==
 
-fun InputStream.dump(name: String? = null) {
-    if (name != null)
-        println("\n$name:")
-    while (available() > 0)
-        print(read().toChar())
-}
-
 allprojects {
     repositories {
-        maven("http://dist.wso2.org/maven2")
         jcenter()
+        maven("http://dist.wso2.org/maven2")
     }
-
-    tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
-    tasks.withType<Javadoc> {
-        val silenceDoc = buildDir.resolve("tmp").resolve("silence")
-        doFirst { silenceDoc.apply { parentFile.mkdirs(); writeText("-Xdoclint:none -encoding UTF-8 -charset UTF-8 -docencoding UTF-8") } }
-        options.optionFiles!!.add(silenceDoc)
-    }
-    tasks.withType<Test> {
-        testLogging { showStandardStreams = System.getProperty("verbose") != null }
+    afterEvaluate {
+        tasks {
+            forEach { if (it.name != "clean") it.mustRunAfter("clean") }
+            withType<Javadoc> {
+                val silenceDoc = buildDir.resolve("tmp").resolve("silence")
+                doFirst { silenceDoc.apply { parentFile.mkdirs(); writeText("-Xdoclint:none -encoding UTF-8 -charset UTF-8 -docencoding UTF-8") } }
+                options.optionFiles!!.add(silenceDoc)
+            }
+            withType<Test> {
+                testLogging { showStandardStreams = System.getProperty("verbose") != null }
+            }
+            withType<Jar> {
+                if (plugins.hasPlugin("application")) {
+                    manifest.attributes["Main-Class"] = ((this@allprojects as org.gradle.api.plugins.ExtensionAware).extensions.getByName("application") as org.gradle.api.plugins.JavaApplication).mainClassName
+                }
+            }
+        }
     }
 }
 
 project("sdk") {
-    java.sourceSets {
-        "main" {
-            java.srcDirs("src/framework", "src/server-api")
-        }
+    sourceSets {
+        getByName("main").java.srcDirs("src/framework", "src/server-api")
     }
 
     dependencies {
@@ -177,17 +178,13 @@ project("sdk") {
         compile("com.thoughtworks.xstream", "xstream", "1.4.10")
     }
 
-    tasks {
-        "jar"(Jar::class) {
-            baseName = "software-challenge-sdk"
-        }
-    }
+    tasks.getByName<Jar>("jar").baseName = "software-challenge-sdk"
 }
 
 project("plugins") {
-    java.sourceSets {
-        "main" { java.srcDirs("$game/client", "$game/server", "$game/shared") }
-        "test" { java.srcDir("$game/test") }
+    sourceSets {
+        getByName("main").java.srcDirs("$game/client", "$game/server", "$game/shared")
+        getByName("test").java.srcDir("$game/test")
     }
 
     dependencies {
@@ -195,19 +192,22 @@ project("plugins") {
         testCompile("junit", "junit", "4.12")
     }
 
-    tasks {
-        "jar"(Jar::class) {
-            baseName = game
-        }
-    }
+    tasks.getByName<Jar>("jar").baseName = game
 }
 
 // == Utilities ==
 
+fun InputStream.dump(name: String? = null) {
+    if (name != null)
+        println("\n$name:")
+    while (available() > 0)
+        print(read().toChar())
+}
+
 fun Task.dependOnSubprojects() {
     subprojects.forEach {
         it.afterEvaluate {
-            dependsOn(it.tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
+            dependsOn(tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
         }
     }
 }

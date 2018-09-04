@@ -2,8 +2,8 @@ package sc.server.client;
 
 import sc.framework.plugins.AbstractPlayer;
 import sc.networking.clients.ILobbyClientListener;
-import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 
 public class TestLobbyClientListener implements ILobbyClientListener {
@@ -28,9 +28,9 @@ public class TestLobbyClientListener implements ILobbyClientListener {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof TestLobbyClientListener)) return false;
+    if (!(obj instanceof TestLobbyClientListener)) return false;
 
-    TestLobbyClientListener o = (TestLobbyClientListener)obj;
+    TestLobbyClientListener o = (TestLobbyClientListener) obj;
     return observedReceived == o.observedReceived &&
             gamePausedReceived == o.gamePausedReceived &&
             gameOverReceived == o.gameOverReceived &&

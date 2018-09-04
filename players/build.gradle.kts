@@ -8,8 +8,8 @@ plugins {
 val game = property("game").toString()
 val gameName = game.substringBefore("_")
 
-java.sourceSets {
-    "main" {
+sourceSets {
+    getByName("main") {
         java.srcDir("$game/src")
         resources.srcDir("$game/src")
     }
@@ -36,7 +36,7 @@ tasks {
 
     val zipDir = buildDir.resolve("zip")
 
-    "deploy"(Zip::class) {
+    create<Zip>("deploy") {
         dependsOn("jar", "prepareZip")
         baseName = "simpleclient-$gameName"
         classifier = "src"
@@ -51,7 +51,7 @@ tasks {
         }
     }
 
-    "prepareZip" {
+    create("prepareZip") {
         dependsOn("javadoc", ":sdk:javadoc", ":plugins:javadoc")
         doFirst {
             zipDir.mkdirs()

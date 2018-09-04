@@ -1,20 +1,21 @@
 package sc.server;
 
-import java.io.*;
-import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Properties;
-
+import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.KXml2Driver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sc.helpers.RuntimeJarLoader;
 import sc.protocol.LobbyProtocol;
 import sc.shared.SharedConfiguration;
 
-import com.thoughtworks.xstream.XStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Properties;
 
 /**
  * Server configuration.

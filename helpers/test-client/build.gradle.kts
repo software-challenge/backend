@@ -3,8 +3,8 @@ plugins {
     application
 }
 
-java.sourceSets {
-    "main" { java.srcDir("src") }
+sourceSets {
+    getByName("main").java.srcDir("src")
 }
 
 application {
@@ -17,7 +17,7 @@ dependencies {
 }
 
 tasks {
-    "jar" {
+    "jar"(Jar::class) {
         dependsOn("createScripts")
         doFirst {
             copy {
@@ -25,9 +25,10 @@ tasks {
                 into("build/libs")
             }
         }
+        manifest.attributes["Class-Path"] = configurations.compile.joinToString(" ") { "lib/" + it.name } + " plugins/${project.property("game")}.jar software-challenge-server.jar"
     }
 
-    "createScripts"(ScriptsTask::class) {
+    create<ScriptsTask>("createScripts") {
         destinationDir = file("build/libs")
         fileName = "start-tests"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"

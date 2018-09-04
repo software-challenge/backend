@@ -9,6 +9,7 @@ import sc.server.helpers.TestHelper;
 import sc.server.plugins.TestPlugin;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 public class ConnectionTest extends RealServerTest {
@@ -22,43 +23,44 @@ public class ConnectionTest extends RealServerTest {
     waitForConnect(1);
 
     client.send(new JoinRoomRequest(TestPlugin.TEST_PLUGIN_UUID));
-    TestHelper.assertEqualsWithTimeout(1, () -> ConnectionTest.this.lobby.getGameManager().getGames().size(), 1, TimeUnit.SECONDS);
+    TestHelper.INSTANCE.assertEqualsWithTimeout(1, () -> ConnectionTest.this.getLobby().getGameManager().getGames().size(), 1, TimeUnit.SECONDS);
   }
 
-  @Ignore //TODO seems so fail sometimes
+  @Ignore
+  @Test //TODO seems so fail sometimes
   public void protocolViolationTestWithCorruptedXml() throws IOException {
     TestTcpClient client = connectClient();
     waitForConnect(1);
-    client.sendCustomData("<>/I-do/>NOT<CARE".getBytes("utf-8"));
+    client.sendCustomData("<>/I-do/>NOT<CARE".getBytes(StandardCharsets.UTF_8));
 
-    TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR, () -> ConnectionTest.this.lobby.getClientManager().getClients()
+    TestHelper.INSTANCE.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR, () -> ConnectionTest.this.getLobby().getClientManager().getClients()
             .get(0).getDisconnectCause(), 5, TimeUnit.SECONDS);
   }
 
-  @Ignore //TODO seems so fail sometimes
+  @Ignore
+  @Test //TODO seems so fail sometimes
   public void protocolViolationTestWithUnknownClass() throws IOException {
     TestTcpClient client = connectClient();
     waitForConnect(1);
-    client.sendCustomData("<object-stream>".getBytes("utf-8"));
+    client.sendCustomData("<object-stream>".getBytes(StandardCharsets.UTF_8));
 
-    client
-            .sendCustomData("<NoSuchClass foo=\"aaa\"><base val=\"arr\" /></NoSuchClass>"
-                    .getBytes("utf-8"));
+    client.sendCustomData("<NoSuchClass foo=\"aaa\"><base val=\"arr\" /></NoSuchClass>".getBytes(StandardCharsets.UTF_8));
     waitForConnect(1);
-    TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
-            () -> this.lobby.getClientManager().getClients().get(0).getDisconnectCause(),
+    TestHelper.INSTANCE.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
+            () -> this.getLobby().getClientManager().getClients().get(0).getDisconnectCause(),
             5, TimeUnit.SECONDS);
   }
 
-  @Ignore //TODO Should be tested, but fails sometimes, client is removed when sending unknown class
+  @Ignore
+  @Test //TODO Should be tested, but fails sometimes, client is removed when sending unknown class
   public void protocolViolationTestWithUnknownClasses() {
     TestTcpClient client = connectClient();
     waitForConnect(1);
     client.send(new DontYouKnowJack());
     waitForConnect(1);
-    DisconnectCause disconnect = this.lobby.getClientManager().getClients().get(0).getDisconnectCause();
-    TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
-            () -> this.lobby.getClientManager().getClients().get(0).getDisconnectCause(), 1, TimeUnit.SECONDS);
+    DisconnectCause disconnect = this.getLobby().getClientManager().getClients().get(0).getDisconnectCause();
+    TestHelper.INSTANCE.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
+            () -> this.getLobby().getClientManager().getClients().get(0).getDisconnectCause(), 1, TimeUnit.SECONDS);
   }
 
 }

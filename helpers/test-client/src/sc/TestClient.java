@@ -45,7 +45,7 @@ import static sc.Util.factorial;
 public class TestClient extends XStreamClient {
   private static final Logger logger = (Logger) LoggerFactory.getLogger(TestClient.class);
   
-  private static final String gameType = "swc_2018_hase_und_igel";
+  private static final String gameType = "swc_2019_piranhas";
   private static final Player[] players = {new Player(), new Player()};
   private static final File logDir = new File("logs").getAbsoluteFile();
   
@@ -235,8 +235,8 @@ public class TestClient extends XStreamClient {
       }
       
       List<ScoreValue> values = score.getScoreValues();
-      logger.info(String.format("New score for %s: Siegpunkte %s, \u2205Feldnummer %5.2f, \u2205Karotten %5.2f after %s of %s tests",
-          score.getDisplayName(), values.get(0).getValue(), values.get(1).getValue(), values.get(2).getValue(), finishedTests, totalTests));
+      logger.info(String.format("New score for %s: Siegpunkte %s, \u2205Wert 1 %5.2f after %s of %s tests",
+          score.getDisplayName(), values.get(0).getValue(), values.get(1).getValue(), finishedTests, totalTests));
       
       if (playerScores == 2 && (isSignificant() || terminateWhenPossible)) {
         printScores();

@@ -9,19 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CollectionHelperTest {
+
   @Test
   public void mapTest() {
     Integer[] ints = new Integer[]{0, 1, 2, 3};
     List<Integer> list = Arrays.asList(ints);
 
     Iterable<String> converted = CollectionHelper.map(list,
-            val -> {
-              if (val > 0) {
-                return "+" + val.toString();
-              } else {
-                return val.toString();
-              }
-            });
+            val -> val > 0 ? "+" + val.toString() : val.toString());
 
     List<String> convertedList = new ArrayList<>();
     for (String aConverted : converted) {
