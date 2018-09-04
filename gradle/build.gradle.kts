@@ -145,7 +145,7 @@ allprojects {
     tasks.forEach { if (it.name != "clean") it.mustRunAfter("clean") }
     tasks.withType<Javadoc> {
         val silenceDoc = buildDir.resolve("tmp").resolve("silence")
-        doFirst { silenceDoc.apply { parentFile.mkdirs(); writeText("-Xdoclint:none\n-charset UTF-8") } }
+        doFirst { silenceDoc.apply { parentFile.mkdirs(); writeText("-Xdoclint:none -encoding UTF-8 -charset UTF-8 -docencoding UTF-8") } }
         options.optionFiles!!.add(silenceDoc)
     }
     tasks.withType<Test> {
