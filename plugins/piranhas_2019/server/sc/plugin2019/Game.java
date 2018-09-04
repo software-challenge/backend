@@ -19,7 +19,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Minimal game. Basis for new plugins. This class holds the game logic. */
+/** Minimales Spiel als Basis für neue Plugins. Diese Klasse enthält die Spielelogik. */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
   private static final Logger logger = LoggerFactory.getLogger(Game.class);
@@ -48,10 +48,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     return this.gameState;
   }
 
-  /**
-   * Someone did something, check out what it was (move maybe? Then check the
-   * move)
-   */
+  /** Jemand hat etwas gesendet, testen was es war (wenn es ein Zug war, dann validieren) */
   @Override
   protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
     Player author = (Player) fromPlayer;
@@ -99,15 +96,12 @@ public class Game extends RoundBasedGameInstance<Player> {
     return player;
   }
 
-  /**
-   * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
-   */
+  /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests */
   @Override
   public void start() {
     for (final Player p : this.players) {
       p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
     }
-
     super.start();
   }
 
@@ -323,11 +317,6 @@ public class Game extends RoundBasedGameInstance<Player> {
     return winners;
   }
 
-  /**
-   * Returns all players. This should always be 2 the startplayer should be first in the List.
-   *
-   * @return List of all players
-   */
   @Override
   public List<AbstractPlayer> getPlayers() {
     List<AbstractPlayer> players = new ArrayList<>();
@@ -336,11 +325,6 @@ public class Game extends RoundBasedGameInstance<Player> {
     return players;
   }
 
-  /**
-   * Returns the PlayerScore for both players
-   *
-   * @return List of PlayerScores
-   */
   @Override
   public List<PlayerScore> getPlayerScores() {
     List<PlayerScore> playerScores = new ArrayList<>();

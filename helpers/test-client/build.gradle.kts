@@ -37,14 +37,3 @@ tasks {
         args = System.getProperty("args", "").split(" ")
     }
 }
-
-fun createScript(dir: File, name: String, content: String) {
-    dir.resolve("$name.bat").run {
-        writeText(content)
-        setExecutable(true)
-    }
-    dir.resolve("$name.sh").run {
-        writeText("#!/bin/sh\n$content")
-        setExecutable(true)
-    }
-}
