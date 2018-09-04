@@ -1,5 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
-import java.util.zip.ZipInputStream
+import java.io.InputStream
 
 plugins {
     java
@@ -77,10 +77,10 @@ tasks {
         dependsOn("deploy")
         group = mainGroup
         doFirst {
-            val server = ProcessBuilder("./start." + if (OperatingSystem.current().isWindows) "bat" else "sh").directory(project("server").buildDir.resolve("runnable")).start()
-            Thread.sleep(200)
-            val client1 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$game-$version.jar"))
-            val client2 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$game-$version.jar"))
+            val server = ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").buildDir.resolve("runnable").resolve("software-challenge-server.jar").absolutePath).directory(project("server").buildDir.resolve("runnable")).start()
+            Thread.sleep(300)
+            val client1 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar"))
+            val client2 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar"))
             var line = ""
             mapOf("client1" to client1, "client2" to client2).forEach { clientName, process ->
                 val reader = process.inputStream.bufferedReader()
@@ -92,14 +92,13 @@ tasks {
                     lines.add(line)
                 }
                 if (!server.isAlive || !line.contains("Received game result", true)) {
-                    println("server stdin:")
-                    println(server.inputStream.readBytes(server.inputStream.available()).joinToString("") { it.toChar().toString() })
+                    println("server alive: " + server.isAlive)
+                    server.inputStream.dump("server stdout")
+                    server.errorStream.dump("server stderr")
                     if (server.isAlive) {
-                        println()
-                        println("$clientName stdin:")
+                        println("\n$clientName stdout:")
                         println(lines)
-                        println()
-                        println("$clientName stderr:")
+                        println("\n$clientName stderr:")
                         process.errorStream.bufferedReader().forEachLine { println(it) }
                         throw Exception("$clientName did not receive the game result!")
                     } else {
@@ -123,7 +122,7 @@ tasks {
         setDestinationDir(deployDir.resolve("doc"))
     }
     "test" {
-        //dependsOn("run")
+        dependsOn("run")
         group = mainGroup
     }
     "build" {
@@ -135,6 +134,13 @@ tasks {
 }
 
 // == Cross-project configuration ==
+
+fun InputStream.dump(name: String? = null) {
+    if (name != null)
+        println("\n$name:")
+    while (available() > 0)
+        print(read().toChar())
+}
 
 allprojects {
     repositories {
@@ -206,7 +212,7 @@ fun Task.dependOnSubprojects() {
     }
 }
 
-// fix run task to not be recursive, see https://stackoverflow.com/q/51903863/6723250
+// "run" task won't work when recursive, see https://stackoverflow.com/q/51903863/6723250
 gradle.taskGraph.whenReady {
     val hasRootRunTask = hasTask(":run")
     if (hasRootRunTask) {
