@@ -20,8 +20,7 @@ application {
 }
 
 dependencies {
-    compile(project(":sdk"))
-    compile(project(":plugins"))
+    implementation(project(":plugins"))
 }
 
 val deployDir = property("deployDir") as File
@@ -56,7 +55,7 @@ tasks {
         doFirst {
             zipDir.mkdirs()
             copy {
-                from(configurations.compile)
+                from(configurations.default)
                 into(zipDir.resolve("lib"))
             }
             copy {

@@ -1,0 +1,71 @@
+<project name="piranhas_2019_client" basedir="." default="main">
+    <property name="game_name" value="piranhas_2019"/>
+    <property name="build.dir" value="build"/>
+    <property name="lib.dir" value="lib"/>
+
+    <!-- Local properties -->
+    <property name="src.dir" value="src"/>
+    <property name="classes.dir" value="${build.dir}/bin"/>
+    <property name="jar.dir" value="${build.dir}/jar"/>
+    <property name="main-class" value="sc.player2019.Starter"/>
+
+    <path id="classpath.libs">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <path id="classpath.base">
+        <path refid="classpath.libs"/>
+        <pathelement location="${classes.dir}"/>
+    </path>
+
+    <pathconvert property="jar.classpath" pathsep="">
+        <mapper>
+            <chainedmapper>
+                <!-- remove absolute path -->
+                <flattenmapper/>
+                <!-- add lib/ prefix -->
+                <globmapper from="*" to="lib/* "/>
+            </chainedmapper>
+        </mapper>
+
+        <path refid="classpath.libs"/>
+    </pathconvert>
+
+    <pathconvert property="base.classpath" pathsep=":">
+        <path refid="classpath.base"/>
+    </pathconvert>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac source="1.8"
+               target="1.8"
+               srcdir="${src.dir}"
+               encoding="utf8"
+               destdir="${classes.dir}"
+               classpathref="classpath.base"
+               debug="true"
+               debuglevel="lines,vars,source"
+               includeantruntime="false"/>
+    </target>
+
+    <target name="build-jar" depends="compile">
+        <jar destfile="${jar.dir}/${ant.project.name}.jar"
+             basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Class-Path" value="${jar.classpath}"/>
+            </manifest>
+        </jar>
+
+        <copy tofile="${jar.dir}/logback.xml"
+              file="src/logback.xml"/>
+    </target>
+
+    <target name="build" depends="build-jar" description="Build only"/>
+
+    <target name="main" depends="clean, build" description="Clean and build"/>
+</project>

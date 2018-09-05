@@ -16,9 +16,9 @@ application {
 }
 
 dependencies {
-    compile(project(":sdk"))
-    compile(kotlin("stdlib"))
-    testCompile("junit", "junit", "4.12")
+    implementation(project(":sdk"))
+
+    testImplementation("junit", "junit", "4.12")
 }
 
 val deployDir = property("deployDir") as File
@@ -38,7 +38,7 @@ tasks {
 
     create<JavaExec>("startProduction") {
         dependsOn("makeRunnable")
-        classpath = files(configurations.compile, runnable.resolve("software-challenge-server.jar"))
+        classpath = files(configurations.default, runnable.resolve("software-challenge-server.jar"))
         main = "sc.server.Application"
         workingDir = runnable
         jvmArgs = listOf("-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=../../logback-production.xml", "-Djava.security.egd=file:/dev/./urandom", "-XX:MaxGCPauseMillis=100", "-XX:GCPauseIntervalMillis=2050", "-XX:+UseConcMarkSweepGC", "-XX:+CMSParallelRemarkEnabled", "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:CMSInitiatingOccupancyFraction=70", "-XX:+ScavengeBeforeFullGC", "-XX:+CMSScavengeBeforeRemark")
@@ -52,7 +52,7 @@ tasks {
 
     create<Copy>("makeRunnable") {
         dependsOn("jar", "copyPlugin", "createScripts")
-        from(configurations.compile)
+        from(configurations.default)
         into(runnable.resolve("lib"))
     }
 
@@ -79,7 +79,7 @@ tasks {
     "jar"(Jar::class) {
         destinationDir = runnable
         baseName = "software-challenge-server"
-        manifest.attributes["Class-Path"] = configurations.compile.joinToString(" ") { "lib/" + it.name }
+        manifest.attributes["Class-Path"] = configurations.default.joinToString(" ") { "lib/" + it.name }
     }
 
     "run"(JavaExec::class) {

@@ -25,7 +25,7 @@ tasks {
                 into("build/libs")
             }
         }
-        manifest.attributes["Class-Path"] = configurations.compile.joinToString(" ") { "lib/" + it.name } + " plugins/${project.property("game")}.jar software-challenge-server.jar"
+        manifest.attributes["Class-Path"] = configurations.default.joinToString(" ") { "lib/" + it.name } + " plugins/${project.property("game")}.jar software-challenge-server.jar"
     }
 
     create<ScriptsTask>("createScripts") {
