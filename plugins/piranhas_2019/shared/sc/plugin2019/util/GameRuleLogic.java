@@ -31,9 +31,9 @@ public class GameRuleLogic {
     }
 
 
-    if (state.calculateMoveDistance(x, y, direction) != distance) {
+    if (state.calculateMoveDistance(x, y, direction) != distance)
       throw new InvalidMoveException("Move distance was incorrect");
-    }
+
     Field nextField;
     try {
       nextField = state.getFieldInDirection(x, y, direction, distance);

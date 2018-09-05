@@ -10,3 +10,5 @@ dependencies {
     implementation(gradleApi())
     implementation(kotlin("stdlib"))
 }
+
+sourceSets["main"].java.srcDir("src")

@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.AbstractPlayer;
 import sc.framework.plugins.ActionTimeout;
@@ -19,7 +18,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Minimal game. Basis for new plugins. This class holds the game logic. */
+/** Minimales Spiel als Basis für neue Plugins. Diese Klasse enthält die Spielelogik. */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
   private static final Logger logger = LoggerFactory.getLogger(Game.class);
@@ -48,10 +47,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     return this.gameState;
   }
 
-  /**
-   * Someone did something, check out what it was (move maybe? Then check the
-   * move)
-   */
+  /** Jemand hat etwas gesendet -> testen was es war (wenn es ein Zug war, dann validieren) */
   @Override
   protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
     Player author = (Player) fromPlayer;
@@ -71,19 +67,10 @@ public class Game extends RoundBasedGameInstance<Player> {
     }
   }
 
-  /**
-   * In this game, a new round begins when both players made one move. The order
-   * in which the players make their move may change.
-   */
-  protected boolean increaseTurnIfNecessary(Player nextPlayer) {
-    return getGameState().getTurn() % 2 == 0;
-  }
-
   @Override
   public Player onPlayerJoined() {
     final Player player;
-    // When starting a game from a imported state the players should not be
-    // overwritten
+    // When starting a game from a imported state the players should not be overwritten
     PlayerColor playerColor = this.availableColors.remove(0);
     if (PlayerColor.RED == playerColor && this.gameState.getPlayer(PlayerColor.RED) != null) {
       player = this.gameState.getPlayer(PlayerColor.RED);
@@ -99,15 +86,12 @@ public class Game extends RoundBasedGameInstance<Player> {
     return player;
   }
 
-  /**
-   * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
-   */
+  /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests */
   @Override
   public void start() {
     for (final Player p : this.players) {
       p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
     }
-
     super.start();
   }
 
@@ -166,10 +150,9 @@ public class Game extends RoundBasedGameInstance<Player> {
   /**
    * Checks if a win condition in the current game state is met.
    * Checks round limit and end of round (and playerStats).
-   * Checks if goal is reached
+   * Checks if goal is reached.
    *
-   * @return WinCondition with winner and reason or null, if no win condition is
-   * yet met.
+   * @return WinCondition with winner and reason or null if no win condition is yet met.
    */
   public WinCondition checkWinCondition() {
     // TODO check whether this is right
@@ -323,11 +306,6 @@ public class Game extends RoundBasedGameInstance<Player> {
     return winners;
   }
 
-  /**
-   * Returns all players. This should always be 2 the startplayer should be first in the List.
-   *
-   * @return List of all players
-   */
   @Override
   public List<AbstractPlayer> getPlayers() {
     List<AbstractPlayer> players = new ArrayList<>();
@@ -336,11 +314,6 @@ public class Game extends RoundBasedGameInstance<Player> {
     return players;
   }
 
-  /**
-   * Returns the PlayerScore for both players
-   *
-   * @return List of PlayerScores
-   */
   @Override
   public List<PlayerScore> getPlayerScores() {
     List<PlayerScore> playerScores = new ArrayList<>();

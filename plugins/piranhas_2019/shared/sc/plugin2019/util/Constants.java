@@ -2,7 +2,7 @@ package sc.plugin2019.util;
 
 public class Constants {
 
-	public static final int ROUND_LIMIT = 30;
+  public static final int ROUND_LIMIT = 30;
   public static final String WINNING_MESSAGE = "Das Spiel ist beendet.\nEin Spieler hat seinen Schwarm vereint.";
   public static final String ROUND_LIMIT_MESSAGE = "Das Rundenlimit wurde erreicht.";
   // for gamestats array
@@ -15,7 +15,7 @@ public class Constants {
 
   public static final int BOARD_SIZE = 10;
   public static final int NUM_OBSTACLES = 2;
-  public static final int MAX_FISH = (BOARD_SIZE -2)*2;
+  public static final int MAX_FISH = (BOARD_SIZE - 2) * 2;
   public static final int OBSTACLES_START = 2; // refers to the lowest index at which a obstructed field might be placed
   public static final int OBSTACLES_END = 7; // refers to the highest index at which a obstructed field might be placed
 }

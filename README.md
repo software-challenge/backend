@@ -53,7 +53,7 @@ Dazu sind folgende Schritte notwendig:
 - In IDEA auf "File" > "New" > "Project from existing sources" > socha Verzeichnis auswählen
   - Import project from external model, Gradle auswählen
   - Im folgenden Fenster:
-    - Use auto-import ankreuzen
+    - "Use auto-import" ankreuzen
     - bei "Gradle JVM" JDK 8 auswählen, wenn sie nicht schon ausgewählt ist
     - "Finish" drücken
 - Warten, bis das Gradle build fertig ist

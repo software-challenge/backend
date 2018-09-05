@@ -10,7 +10,7 @@ import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 
 /**
- * Abstrakte Beschreibung des Spieles Prianahs für die Software-Challenge 2019
+ * Abstrakte Beschreibung des Spiels Piranhas für die Software-Challenge 2019
  */
 @PluginDescriptor(name = "Piranhas", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin {

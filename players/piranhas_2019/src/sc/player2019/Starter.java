@@ -1,8 +1,6 @@
 package sc.player2019;
 
 import jargs.gnu.CmdLineParser;
-import jargs.gnu.CmdLineParser.IllegalOptionValueException;
-import jargs.gnu.CmdLineParser.UnknownOptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.framework.plugins.AbstractPlayer;
@@ -12,7 +10,6 @@ import sc.plugin2019.IGameHandler;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Hauptklasse des Clients, die ueber Konsolenargumente gesteuert werden kann.
@@ -72,8 +69,7 @@ public class Starter extends AbstractClient {
       new Starter(host, port, reservation);
     } catch (Exception e) {
       logger.error("Beim Starten den Clients ist ein Fehler aufgetreten:", e);
-      //System.err
-      //		.println("Beim Starten den Clients ist ein Fehler aufgetreten:");
+      //System.err.println("Beim Starten den Clients ist ein Fehler aufgetreten:");
       e.printStackTrace();
     }
 
@@ -84,7 +80,7 @@ public class Starter extends AbstractClient {
     System.out.println(errorMsg);
     System.out
             .println("\nBitte das Programm mit folgenden Parametern (optional) aufrufen: \n"
-                    + "java -jar "+ new File(Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getName() +" [{-h,--host} hostname]\n"
+                    + "java -jar " + new File(Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getName() + " [{-h,--host} hostname]\n"
                     + "                               [{-p,--port} port]\n"
                     + "                               [{-r,--reservation} reservierung]");
     System.out

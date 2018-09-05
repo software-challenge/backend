@@ -11,11 +11,11 @@ open class ScriptsTask : DefaultTask() {
     @TaskAction
     fun createScripts() {
         destinationDir.resolve("$fileName.bat").run {
-            writeText(content)
+            writeText(content + " %*")
             setExecutable(true)
         }
         destinationDir.resolve("$fileName.sh").run {
-            writeText("#!/bin/sh\n$content")
+            writeText("#!/bin/sh\n$content \"$@\"")
             setExecutable(true)
         }
     }

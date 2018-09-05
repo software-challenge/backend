@@ -7,7 +7,6 @@ import sc.shared.PlayerColor;
 
 import java.util.Optional;
 
-import static java.util.Optional.of;
 import static sc.plugin2019.FieldState.*;
 
 /**
@@ -25,7 +24,7 @@ public class Field implements IField {
 
   @XStreamAsAttribute
   private FieldState state;
-  
+
   public Field(int x, int y) {
     this.x = x;
     this.y = y;
@@ -33,12 +32,12 @@ public class Field implements IField {
   }
 
   public Field(int x, int y, FieldState state) {
-    this(x,y);
+    this(x, y);
     this.state = state;
   }
 
   public Field(int x, int y, PlayerColor piranha) {
-    this(x,y);
+    this(x, y);
     if (piranha == PlayerColor.RED)
       this.state = RED;
     else
@@ -46,14 +45,14 @@ public class Field implements IField {
   }
 
   public Field(int x, int y, boolean isObstructed) {
-    this(x,y);
-    if (isObstructed){
+    this(x, y);
+    if (isObstructed) {
       this.state = OBSTRUCTED;
     } else {
       this.state = EMPTY;
     }
   }
-  
+
   @Override
   public Field clone() {
     return new Field(this.x, this.y, this.state);
@@ -63,11 +62,7 @@ public class Field implements IField {
     return x;
   }
 
-  /**
-   * Nur für den Server (für Test) relevant.
-   * @param x x-Koordniate des Feldes
-   */
-  public void setX(int x) {
+  void setX(int x) {
     this.x = x;
   }
 
@@ -75,11 +70,7 @@ public class Field implements IField {
     return y;
   }
 
-  /**
-   * Nur für den Server (für Test) relevant.
-   * @param y y-Koordinate des Feldes
-   */
-  public void setY(int y) {
+  void setY(int y) {
     this.y = y;
   }
 
@@ -94,10 +85,11 @@ public class Field implements IField {
 
   /**
    * Nur für den Server (für Test) relevant.
-   * @param piranha Farbe des Piranhas (null falls leer)
+   *
+   * @param piranha Farbe des Piranhas
    */
   public void setPiranha(PlayerColor piranha) {
-    if (piranha == PlayerColor.RED){
+    if (piranha == PlayerColor.RED) {
       state = RED;
     } else if (piranha == PlayerColor.BLUE) {
       state = BLUE;
@@ -110,22 +102,13 @@ public class Field implements IField {
     return state == OBSTRUCTED;
   }
 
-  public FieldState getState(){
+  public FieldState getState() {
     return state;
   }
 
   @Override
-  public String toString(){
-    StringBuilder builder = new StringBuilder();
-    builder.append(super.toString());
-    builder.append("{x:");
-    builder.append(getX());
-    builder.append(", y:");
-    builder.append(getY());
-    builder.append(", state:");
-    builder.append(state);
-    builder.append("}");
-    return builder.toString();
+  public String toString() {
+    return String.format("Field(%d|%d){%s}", x, y, state);
   }
 
   public void setState(FieldState state) {

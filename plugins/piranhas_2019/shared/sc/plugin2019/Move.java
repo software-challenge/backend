@@ -17,9 +17,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Ein Spielzug. Ein Spielzug wird von dem derzeitgen Spieler eines GameStates ausgeführt. Er hat folgende Form:
- * - er besteht aus einer Koordinate (für einen Piranha)
- * - er besteht aus einer Advance Aktion und eventuell darauf folgende Kartenaktionen
+ * Ein Spielzug. Ein Spielzug wird von dem derzeitigen Spieler eines GameStates ausgeführt. Er hat folgende Form:
+ * - Koordinate des Piranhas
+ * - Direction in die sich bewegt wird
  */
 @XStreamAlias(value = "move")
 public class Move implements Cloneable, IMove {
@@ -142,7 +142,7 @@ public class Move implements Cloneable, IMove {
 
   @Override
   public String toString() {
-    return "Zug von (x=" + x + ", y=" + y + ") in Richtung " + direction;
+    return String.format("Zug von (%d|%d) in Richtung %s", x, y, direction);
   }
 
   public int getX() {
