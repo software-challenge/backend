@@ -12,7 +12,7 @@ application {
 }
 
 dependencies {
-    compile(project(":plugins"))
+    compile(project(":plugin"))
     compile(project(":server"))
 }
 

@@ -27,10 +27,10 @@ tasks {
     val runnable = file("build/runnable")
 
     create<Zip>("deploy") {
-        dependsOn(":test-client:jar", ":players:jar", "makeRunnable")
+        dependsOn(":test-client:jar", ":player:jar", "makeRunnable")
         destinationDir = deployDir
         baseName = "software-challenge-server"
-        from(project(":test-client").buildDir.resolve("libs"), project(":players").buildDir.resolve("libs"), runnable)
+        from(project(":test-client").buildDir.resolve("libs"), project(":player").buildDir.resolve("libs"), runnable)
         doFirst {
             runnable.resolve("version").writeText(Scanner(Runtime.getRuntime().exec("git rev-parse HEAD").inputStream).next())
         }
@@ -63,8 +63,8 @@ tasks {
     }
 
     create<Copy>("copyPlugin") {
-        dependsOn(":plugins:jar")
-        from(project(":plugins").buildDir.resolve("libs"))
+        dependsOn(":plugin:jar")
+        from(project(":plugin").buildDir.resolve("libs"))
         into(runnable.resolve("plugins"))
         doLast {
             copy {

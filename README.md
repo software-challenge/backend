@@ -6,9 +6,9 @@ Das offizielle Repository der [Software-Challenge](https://www.software-challeng
 | Ordner | Beschreibung |
 | ------ | ------------ |
 | helpers | Zusätzliche Tools (z.B. der TestClient) |
-| players | Spielspezifische Clients |
-| plugins | Spielspezifische Plugins |
-| server | Der Spielserver |
+| player | Simpleclient dieses Jahres |
+| plugin | Plugin dieses Jahres |
+| server | Spielserver |
 | socha-sdk | Projektübergreifend verwendete Klassen |
 
 ## Build
@@ -28,7 +28,7 @@ Die wichtigsten Tasks:
 | `run` oder `testDeployed` | startet den server und 2 simpleclients und überpüft, ob das Spiel normal endet
 | `startServer` oder `:server:run` | führt den Server direkt vom Quellcode aus
 | `:server:startProduction` | startet den gepackten Server
-| `:players:run` | startet den SimpleClient direkt vom Sourcecode
+| `:player:run` | startet den SimpleClient direkt vom Sourcecode
 | `:test-client:run` | startet den Testclient
 
 Tasks der Subprojekte können in zwei Wegen aufgerufen werden:

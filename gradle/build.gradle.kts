@@ -2,6 +2,7 @@ import org.gradle.internal.os.OperatingSystem
 import java.io.InputStream
 
 plugins {
+    maven
     `java-library`
     kotlin("jvm") version "1.2.61"
     id("com.github.ben-manes.versions") version "0.19.0"
@@ -118,7 +119,7 @@ tasks {
     }
 
     create<Javadoc>("doc") {
-        val projects = arrayOf("players", "plugins", "sdk").map { project(it) }
+        val projects = arrayOf("player", "plugin", "sdk").map { project(it) }
         source(projects.map { it.sourceSets.getByName("main").allJava })
         classpath = files(projects.map { it.sourceSets.getByName("main").compileClasspath })
         setDestinationDir(deployDir.resolve("doc"))
@@ -181,10 +182,10 @@ project("sdk") {
     tasks.getByName<Jar>("jar").baseName = "software-challenge-sdk"
 }
 
-project("plugins") {
+project("plugin") {
     sourceSets {
-        getByName("main").java.srcDirs("$game/client", "$game/server", "$game/shared")
-        getByName("test").java.srcDir("$game/test")
+        getByName("main").java.srcDirs("src/client", "src/server", "src/shared")
+        getByName("test").java.srcDir("src/test")
     }
 
     dependencies {
