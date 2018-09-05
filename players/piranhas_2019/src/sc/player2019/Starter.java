@@ -3,7 +3,6 @@ package sc.player2019;
 import jargs.gnu.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.framework.plugins.AbstractPlayer;
 import sc.player2019.logic.Logic;
 import sc.plugin2019.AbstractClient;
 import sc.plugin2019.IGameHandler;
@@ -76,28 +75,14 @@ public class Starter extends AbstractClient {
   }
 
   private static void showHelp(String errorMsg) {
-    System.out.println();
-    System.out.println(errorMsg);
-    System.out
-            .println("\nBitte das Programm mit folgenden Parametern (optional) aufrufen: \n"
-                    + "java -jar " + new File(Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getName() + " [{-h,--host} hostname]\n"
-                    + "                               [{-p,--port} port]\n"
-                    + "                               [{-r,--reservation} reservierung]");
-    System.out
-            .println("\nBeispiel: \n"
-                    + "java -jar hase_und_igel_player_new.jar --host 127.0.0.1 --port 10500 --reservation MQ");
-    System.out.println();
-  }
-
-  @Override
-  public void onGamePaused(String roomId, AbstractPlayer nextPlayer) {
-
-  }
-
-  @Override
-  public void onGameObserved(String roomId) {
-    // is called when a observation request is acknowledged by the server
-    // this is a newly added method, I am not sure if it fits into the architecture
+    String jarName = new File(Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getName();
+    System.out.println("\n" + errorMsg);
+    System.out.println("\nBitte das Programm mit folgenden Parametern (optional) aufrufen: \n"
+            + "java -jar " + jarName + " [{-h,--host} hostname]\n"
+            + "                               [{-p,--port} port]\n"
+            + "                               [{-r,--reservation} reservierung]");
+    System.out.println("\nBeispiel: \n"
+            + "java -jar " + jarName + " --host 127.0.0.1 --port 10500 --reservation 1234\n");
   }
 
 }

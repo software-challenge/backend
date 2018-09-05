@@ -2,7 +2,7 @@ import org.gradle.internal.os.OperatingSystem
 import java.io.InputStream
 
 plugins {
-    java
+    `java-library`
     kotlin("jvm") version "1.2.61"
     id("com.github.ben-manes.versions") version "0.19.0"
 }
@@ -18,7 +18,7 @@ val deployDir = buildDir.resolve("deploy")
 project.ext.set("deployDir", deployDir)
 
 allprojects {
-    apply(plugin = "java")
+    apply(plugin = "java-library")
     apply(plugin = "kotlin")
 }
 
@@ -168,14 +168,14 @@ project("sdk") {
     }
 
     dependencies {
-        compile(kotlin("stdlib"))
-        compile("org.hamcrest", "hamcrest-core", "1.3")
-        compile("jargs", "jargs", "1.0")
-        compile("ch.qos.logback", "logback-classic", "0.9.15")
+        api(kotlin("stdlib"))
+        api("com.thoughtworks.xstream", "xstream", "1.4.10")
+        api("jargs", "jargs", "1.0")
+        api("ch.qos.logback", "logback-classic", "0.9.15")
 
-        compile("net.sf.kxml", "kxml2", "2.3.0")
-        compile("xmlpull", "xmlpull", "1.1.3.1")
-        compile("com.thoughtworks.xstream", "xstream", "1.4.10")
+        implementation("org.hamcrest", "hamcrest-core", "1.3")
+        implementation("net.sf.kxml", "kxml2", "2.3.0")
+        implementation("xmlpull", "xmlpull", "1.1.3.1")
     }
 
     tasks.getByName<Jar>("jar").baseName = "software-challenge-sdk"
@@ -188,8 +188,9 @@ project("plugins") {
     }
 
     dependencies {
-        compile(project(":sdk"))
-        testCompile("junit", "junit", "4.12")
+        api(project(":sdk"))
+
+        testImplementation("junit", "junit", "4.12")
     }
 
     tasks.getByName<Jar>("jar").baseName = game

@@ -148,6 +148,10 @@ public abstract class AbstractClient implements ILobbyClientListener {
   }
 
   @Override
+  public void onGameObserved(String roomId) {
+  }
+
+  @Override
   public void onGameLeft(String roomId) {
     logger.info("{} got game left {}", this, roomId);
     this.client.stop();
