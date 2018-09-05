@@ -75,13 +75,14 @@ public class Starter extends AbstractClient {
   }
 
   private static void showHelp(String errorMsg) {
+    String jarName = new File(Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getName();
     System.out.println("\n" + errorMsg);
     System.out.println("\nBitte das Programm mit folgenden Parametern (optional) aufrufen: \n"
-            + "java -jar " + new File(Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getName() + " [{-h,--host} hostname]\n"
+            + "java -jar " + jarName + " [{-h,--host} hostname]\n"
             + "                               [{-p,--port} port]\n"
             + "                               [{-r,--reservation} reservierung]");
     System.out.println("\nBeispiel: \n"
-            + "java -jar " + new File(Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getName() + " --host 127.0.0.1 --port 10500 --reservation 1234\n");
+            + "java -jar " + jarName + " --host 127.0.0.1 --port 10500 --reservation 1234\n");
   }
 
 }

@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     java
     application
@@ -20,4 +22,10 @@ dependencies {
     } else {
         implementation("com.github.CAU-Kiel-Tech-Inf", "socha", "19.2.0")
     }
+}
+
+tasks.getByName<ShadowJar>("shadowJar") {
+    baseName = "piranhas_2019_client"
+    classifier = ""
+    destinationDir = rootDir
 }
