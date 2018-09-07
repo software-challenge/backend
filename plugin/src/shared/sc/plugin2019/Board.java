@@ -55,11 +55,10 @@ public class Board implements IBoard {
       Field selectedField = blockableFields.get(indexOfFieldToBlock);
       selectedField.setState(OBSTRUCTED);
       blockableFields = blockableFields.stream().filter(
-              field -> (
-                      !(field.getX() == selectedField.getX() ||
-                              field.getY() == selectedField.getY() ||
-                              field.getX() - field.getY() == selectedField.getX() - selectedField.getY() ||
-                              field.getX() + field.getY() == selectedField.getX() + selectedField.getY()))
+              field -> (!(field.getX() == selectedField.getX() ||
+                      field.getY() == selectedField.getY() ||
+                      field.getX() - field.getY() == selectedField.getX() - selectedField.getY() ||
+                      field.getX() + field.getY() == selectedField.getX() + selectedField.getY()))
       ).collect(Collectors.toList());
     }
   }
@@ -94,5 +93,6 @@ public class Board implements IBoard {
   public Field getField(int x, int y) {
     return this.fields[x][y];
   }
+
 }
 

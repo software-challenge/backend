@@ -5,9 +5,8 @@ import sc.shared.GameResult;
 import sc.shared.PlayerColor;
 
 /**
- * Ein allgemeines Interface fuer spielfaehige Klassen.
- * Eine Spielstrategie / Logik muss dieses Interface implementieren,
- * damit sie in der LogicFactory verwaltet werden kann.
+ * Ein allgemeines Interface für spielfähige Klassen.
+ * Eine Spielstrategie / Logik muss dieses Interface implementieren.
  *
  * @author sven
  */

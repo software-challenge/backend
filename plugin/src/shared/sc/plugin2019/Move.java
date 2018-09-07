@@ -7,7 +7,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IMove;
-import sc.plugin2019.util.GameRuleLogic;
 import sc.shared.DebugHint;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
@@ -15,6 +14,8 @@ import sc.shared.InvalidMoveException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static sc.plugin2019.util.GameRuleLogic.*;
 
 /**
  * Ein Spielzug. Ein Spielzug wird von dem derzeitigen Spieler eines GameStates ausgeführt. Er hat folgende Form:
@@ -113,10 +114,10 @@ public class Move implements Cloneable, IMove {
    * @throws InvalidMoveException wird geworfen, wenn der Zug nicht den Regeln entspricht
    */
   public void perform(GameState state) throws InvalidMoveException, InvalidGameStateException {
-    int distance = state.calculateMoveDistance(x, y, direction);
-    if (GameRuleLogic.isValidToMove(x, y, direction, distance, state)) {
+    int distance = calculateMoveDistance(state.getBoard(), x, y, direction);
+    if (isValidToMove(state, x, y, direction, distance)) {
       Field start = state.getField(x, y);
-      Field destination = state.getFieldInDirection(x, y, direction, distance);
+      Field destination = getFieldInDirection(state.getBoard(), x, y, direction, distance);
       start.setState(FieldState.EMPTY);
       destination.setPiranha(state.getCurrentPlayerColor());
     }
@@ -143,18 +144,6 @@ public class Move implements Cloneable, IMove {
   @Override
   public String toString() {
     return String.format("Zug von (%d|%d) in Richtung %s", x, y, direction);
-  }
-
-  public int getX() {
-    return x;
-  }
-
-  public int getY() {
-    return y;
-  }
-
-  public Direction getDirection() {
-    return direction;
   }
 
 }

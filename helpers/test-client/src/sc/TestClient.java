@@ -399,7 +399,6 @@ class ClientPlayer {
 
   Process proc;
   Score score;
-
 }
 
 class Util {
