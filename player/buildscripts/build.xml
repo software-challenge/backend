@@ -1,5 +1,5 @@
-<project name="piranhas_2019_client" basedir="../../players/piranhas_2019" default="main">
-    <property name="game_name" value="piranhas_2019"/>
+<project name="GAME_client" default="main">
+    <property name="game_name" value="GAME"/>
     <property name="build.dir" value="build"/>
     <property name="lib.dir" value="lib"/>
 
@@ -7,7 +7,7 @@
     <property name="src.dir" value="src"/>
     <property name="classes.dir" value="${build.dir}/bin"/>
     <property name="jar.dir" value="${build.dir}/jar"/>
-    <property name="main-class" value="sc.player2019.Starter"/>
+    <property name="main-class" value="sc.playerYEAR.Starter"/>
 
     <path id="classpath.libs">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>

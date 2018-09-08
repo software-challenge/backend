@@ -21,6 +21,8 @@ project.ext.set("deployDir", deployDir)
 allprojects {
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
+    if (this.name != "player")
+        apply(plugin = "maven")
 }
 
 val mainGroup = "_main"
@@ -119,9 +121,10 @@ tasks {
     }
 
     create<Javadoc>("doc") {
-        val projects = arrayOf("player", "plugin", "sdk").map { project(it) }
-        source(projects.map { it.sourceSets.getByName("main").allJava })
-        classpath = files(projects.map { it.sourceSets.getByName("main").compileClasspath })
+        title = "Software-Challenge API $version"
+        val sourceSets = arrayOf("plugin", "sdk").map { project(it).sourceSets.getByName("main") }
+        source(sourceSets.map { it.allJava })
+        classpath = files(sourceSets.map { it.runtimeClasspath })
         setDestinationDir(deployDir.resolve("doc"))
     }
     "test" {
@@ -133,7 +136,6 @@ tasks {
         group = mainGroup
     }
     replace("run").dependsOn("testDeployed")
-    getByName("jar").enabled = false
 }
 
 // == Cross-project configuration ==
@@ -178,8 +180,6 @@ project("sdk") {
         implementation("net.sf.kxml", "kxml2", "2.3.0")
         implementation("xmlpull", "xmlpull", "1.1.3.1")
     }
-
-    tasks.getByName<Jar>("jar").baseName = "software-challenge-sdk"
 }
 
 project("plugin") {

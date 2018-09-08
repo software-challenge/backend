@@ -9,10 +9,12 @@ plugins {
 sourceSets.getByName("main").java.srcDir("src")
 
 application {
-    mainClassName = "sc.player2019.Starter"
+    mainClassName = "sc.playerYEAR.Starter"
 }
 
 repositories {
+    jcenter()
+    maven("http://dist.wso2.org/maven2")
     maven("https://jitpack.io")
 }
 
@@ -20,12 +22,12 @@ dependencies {
     if (properties["offline"] != null) {
         implementation(fileTree("lib"))
     } else {
-        implementation("com.github.CAU-Kiel-Tech-Inf.socha", "plugin", "19.2.0")
+        implementation("com.github.CAU-Kiel-Tech-Inf.socha", "GAME", "VERSION")
     }
 }
 
 tasks.getByName<ShadowJar>("shadowJar") {
-    baseName = "piranhas_2019_client"
+    baseName = "GAME_client"
     classifier = ""
     destinationDir = rootDir
 }
