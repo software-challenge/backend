@@ -66,6 +66,7 @@ tasks {
         dependsOn(":plugin:jar")
         from(project(":plugin").buildDir.resolve("libs"))
         into(runnable.resolve("plugins"))
+        rename("server.jar", "software-challenge-server.jar")
         doLast {
             copy {
                 from("configuration/logback-release.xml", "configuration/server.properties.example")
@@ -78,7 +79,6 @@ tasks {
 
     "jar"(Jar::class) {
         destinationDir = runnable
-        baseName = "software-challenge-server"
         manifest.attributes["Class-Path"] = configurations.default.joinToString(" ") { "lib/" + it.name }
     }
 

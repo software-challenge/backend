@@ -8,6 +8,7 @@ plugins {
 
 val game = property("game").toString()
 val gameName = game.substringBefore("_")
+val year = game.substringAfter("_")
 
 sourceSets {
     getByName("main") {
@@ -53,17 +54,21 @@ tasks {
 
     create<Copy>("prepareZip") {
         dependsOn("javadoc", ":sdk:javadoc", ":plugin:javadoc")
-        from("buildscripts")
         into(zipDir)
         with(copySpec {
+            from("buildscripts")
+            filter {
+                it.replace("VERSION", rootProject.version.toString()).replace("GAME", game).replace("YEAR", year)
+            }
+        }, copySpec {
+            from(rootDir.resolve("gradlew"), rootDir.resolve("gradlew.bat"))
+            filter { it.replace(Regex("gradle([/\\\\])wrapper"), "lib$1gradle-wrapper") }
+        }, copySpec {
             from("src")
             into("src")
         }, copySpec {
             from(configurations.default)
             into("lib")
-        }, copySpec {
-            from(buildDir.resolve("docs/javadoc"))
-            into("doc/player-$gameName")
         }, copySpec {
             from(project(":plugin").buildDir.resolve("docs/javadoc"))
             into("doc/plugin-$gameName")
@@ -71,15 +76,14 @@ tasks {
             from(project(":sdk").buildDir.resolve("docs/javadoc"))
             into("doc/sdk")
         }, copySpec {
-            from(rootDir.resolve("gradlew"), rootDir.resolve("gradlew.bat"))
-            filter { it.replace(Regex("gradle([/\\\\])wrapper"), "lib$1gradle-wrapper") }
-        }, copySpec {
             from(rootDir.resolve("gradle").resolve("wrapper"))
             into("lib/gradle-wrapper")
         })
+
     }
 
     "run"(JavaExec::class) {
         args = System.getProperty("args", "").split(" ")
     }
+
 }
