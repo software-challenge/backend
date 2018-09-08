@@ -86,10 +86,20 @@ tasks {
         dependsOn("deploy")
         group = mainGroup
         doFirst {
-            val server = ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").buildDir.resolve("runnable").resolve("software-challenge-server.jar").absolutePath).directory(project("server").buildDir.resolve("runnable")).start()
+            val server = ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").tasks["jar"].outputs.files.first().absolutePath).directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(300)
-            val client1 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar"))
-            val client2 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar"))
+            val newClient = { Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar")) }
+            val client1 = newClient()
+            val client2 = newClient()
+            val t = Thread.currentThread()
+            Thread {
+                Thread.sleep(60_000)
+                println("Build is taking to long - interrupting!")
+                t.interrupt()
+            }.run {
+                isDaemon = true
+                start()
+            }
             mapOf("client1" to client1, "client2" to client2).forEach { clientName, process ->
                 val reader = process.inputStream.bufferedReader()
                 val lines = ArrayList<String>()
@@ -97,8 +107,12 @@ tasks {
                 while (!line.contains("Received game result", true)) {
                     if (!server.isAlive)
                         break
-                    line = reader.readLine() ?: break
-                    lines.add(line)
+                    try {
+                        line = reader.readLine() ?: break
+                        lines.add(line)
+                    } catch(t: Throwable) {
+                        break
+                    }
                 }
                 if (!server.isAlive || !line.contains("Received game result", true)) {
                     println("server alive: " + server.isAlive)
