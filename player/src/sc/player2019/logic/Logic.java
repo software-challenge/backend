@@ -49,7 +49,7 @@ public class Logic implements IGameHandler {
    */
   @Override
   public void onRequestAction() {
-    long startTime = System.nanoTime();
+    long startTime = System.currentTimeMillis();
     log.info("Es wurde ein Zug angefordert.");
     ArrayList<Move> possibleMoves = GameRuleLogic.getPossibleMoves(gameState);
 

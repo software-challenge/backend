@@ -91,11 +91,11 @@ tasks {
             val newClient = { Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar")) }
             val client1 = newClient()
             val client2 = newClient()
-            val t = Thread.currentThread()
             Thread {
                 Thread.sleep(60_000)
-                println("Build is taking to long - interrupting!")
-                t.interrupt()
+                println("testDeployed is taking too long - interrupting!")
+                client2.destroy()
+                client1.destroy()
             }.run {
                 isDaemon = true
                 start()
@@ -111,6 +111,7 @@ tasks {
                         line = reader.readLine() ?: break
                         lines.add(line)
                     } catch(t: Throwable) {
+                        println("Error while waiting for $clientName: $t")
                         break
                     }
                 }
@@ -218,6 +219,7 @@ fun InputStream.dump(name: String? = null) {
         println("\n$name:")
     while (available() > 0)
         print(read().toChar())
+    close()
 }
 
 fun Task.dependOnSubprojects() {
