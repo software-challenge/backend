@@ -1,6 +1,6 @@
 package sc.plugin2019;
 
-import java.awt.*;
+import sc.plugin2019.util.Point;
 
 /** Bewegungsrichtung für Move */
 public enum Direction {
@@ -40,4 +40,5 @@ public enum Direction {
     }
     return new Point(shiftX, shiftY);
   }
+
 }

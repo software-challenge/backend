@@ -4,9 +4,7 @@ import sc.plugin2019.*;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 import static sc.plugin2019.util.Constants.BOARD_SIZE;
 import static sc.plugin2019.util.Constants.MAX_FISH;
@@ -188,7 +186,7 @@ public class GameRuleLogic {
   /** Überprüft nicht, ob Feld innerhalb der Feldgrenzen */
   public static Field getFieldInDirection(Board board, int x, int y, Direction direction, int distance) {
     Point shift = direction.shift();
-    return board.getField(x + shift.x * distance, y + shift.y * distance);
+    return board.getField(x + shift.getX() * distance, y + shift.getY() * distance);
   }
 
   public static List<Field> getFieldsInDirection(Board board, int x, int y, Direction d) {
@@ -197,7 +195,7 @@ public class GameRuleLogic {
     Point shift = d.shift();
 
     for (int i = 0; i < distance; i++) {
-      fields.add(board.getField(x + shift.x * i, y + shift.y * i));
+      fields.add(board.getField(x + shift.getX() * i, y + shift.getY() * i));
     }
     return fields;
   }
