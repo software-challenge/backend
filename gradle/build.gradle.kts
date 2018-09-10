@@ -25,6 +25,8 @@ allprojects {
         apply(plugin = "maven")
 }
 
+val verbose = properties["verbose"] != null
+
 val mainGroup = "_main"
 tasks {
     create("startServer") {
@@ -130,8 +132,16 @@ tasks {
                         throw Exception("Server terminated unexpectedly!")
                     }
                 }
+                if(verbose) {
+                    println("\n$clientName stdout:")
+                    println(lines)
+                }
             }
             println("Successfully played a game using the deployed server & client!")
+            if(verbose) {
+                server.inputStream.dump("server stdout")
+                server.errorStream.dump("server stderr")
+            }
             server.destroy()
         }
     }
@@ -170,7 +180,7 @@ allprojects {
                 options.optionFiles!!.add(silenceDoc)
             }
             withType<Test> {
-                testLogging { showStandardStreams = properties["verbose"] != null }
+                testLogging { showStandardStreams = verbose }
             }
             withType<Jar> {
                 if (plugins.hasPlugin("application")) {
