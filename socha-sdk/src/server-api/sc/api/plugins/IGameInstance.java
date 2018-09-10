@@ -3,7 +3,7 @@ package sc.api.plugins;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
@@ -19,11 +19,11 @@ public interface IGameInstance {
    *
    * @throws TooManyPlayersException thrown when a player can't join
    */
-  AbstractPlayer onPlayerJoined() throws TooManyPlayersException;
+  Player onPlayerJoined() throws TooManyPlayersException;
 
-  void onPlayerLeft(AbstractPlayer player);
+  void onPlayerLeft(Player player);
 
-  void onPlayerLeft(AbstractPlayer player, ScoreCause cause);
+  void onPlayerLeft(Player player, ScoreCause cause);
 
   /**
    * Called by the Server once an action was received.
@@ -34,7 +34,7 @@ public interface IGameInstance {
    * @throws GameLogicException   if any invalid action is done
    * @throws InvalidMoveException if the received move violates the rules
    */
-  void onAction(AbstractPlayer fromPlayer, ProtocolMessage data)
+  void onAction(Player fromPlayer, ProtocolMessage data)
           throws GameLogicException, InvalidGameStateException, InvalidMoveException;
 
   /**
@@ -85,13 +85,13 @@ public interface IGameInstance {
    * Returns the players that have won the game, empty if the game has no winners,
    * or null if the game has not finished.
    */
-  List<AbstractPlayer> getWinners();
+  List<Player> getWinners();
 
   /** Used for generating replay name. */
   String getPluginUUID();
 
   /** @return the two players, the startplayer will be first in the List */
-  List<AbstractPlayer> getPlayers();
+  List<Player> getPlayers();
 
   /** @return the PlayerScores for both players */
   List<PlayerScore> getPlayerScores();

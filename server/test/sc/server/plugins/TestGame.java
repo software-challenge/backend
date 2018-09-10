@@ -2,9 +2,8 @@ package sc.server.plugins;
 
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.protocol.responses.ProtocolMessage;
@@ -20,12 +19,12 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   }
 
   @Override
-  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) {
+  protected void onRoundBasedAction(Player fromPlayer, ProtocolMessage data) {
     if (data instanceof TestMove) {
 
       /*
        * NOTE: Checking if right player sent move was already done by
-       * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(AbstractPlayer, Object)}.
+       * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(Player, Object)}.
        * There is no need to do it here again.
        */
 
@@ -46,7 +45,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   }
 
   @Override
-  public AbstractPlayer onPlayerJoined() throws TooManyPlayersException {
+  public Player onPlayerJoined() throws TooManyPlayersException {
     if (this.players.size() < 2) {
       if (players.size() == 0) {
         state.setRed(new TestPlayer(PlayerColor.RED));
@@ -83,18 +82,18 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   }
 
   @Override
-  public void onPlayerLeft(AbstractPlayer player, ScoreCause cause) {
+  public void onPlayerLeft(Player player, ScoreCause cause) {
     // this.players.remove(player);
     LoggerFactory.getLogger(this.getClass())
             .debug("Player left {}", player);
-    Map<AbstractPlayer, PlayerScore> result = generateScoreMap();
+    Map<Player, PlayerScore> result = generateScoreMap();
     result.put(player, new PlayerScore(false, "Spieler hat das Spiel verlassen."));
     result.get(player).setCause(cause);
     notifyOnGameOver(result);
   }
 
   @Override
-  public void onPlayerLeft(AbstractPlayer player) {
+  public void onPlayerLeft(Player player) {
     onPlayerLeft(player, ScoreCause.LEFT);
   }
 
@@ -122,7 +121,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   }
 
   @Override
-  public List<AbstractPlayer> getWinners() {
+  public List<Player> getWinners() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -133,7 +132,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
    * @return List of all players
    */
   @Override
-  public List<AbstractPlayer> getPlayers() {
+  public List<Player> getPlayers() {
     return null;
   }
 

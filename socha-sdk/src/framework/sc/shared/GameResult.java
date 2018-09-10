@@ -2,8 +2,7 @@ package sc.shared;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import sc.framework.plugins.AbstractPlayer;
-import sc.helpers.StringHelper;
+import sc.framework.plugins.Player;
 import sc.protocol.responses.ProtocolMessage;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class GameResult implements ProtocolMessage {
   private final List<PlayerScore> scores;
   
   @XStreamImplicit(itemFieldName = "winner")
-  private List<AbstractPlayer> winners;
+  private List<Player> winners;
   
   /** might be needed by XStream */
   public GameResult() {
@@ -26,7 +25,7 @@ public class GameResult implements ProtocolMessage {
     winners = null;
   }
   
-  public GameResult(ScoreDefinition definition, List<PlayerScore> scores, List<AbstractPlayer> winners) {
+  public GameResult(ScoreDefinition definition, List<PlayerScore> scores, List<Player> winners) {
     this.definition = definition;
     this.scores = scores;
     this.winners = winners;
@@ -40,7 +39,7 @@ public class GameResult implements ProtocolMessage {
     return this.scores;
   }
   
-  public List<AbstractPlayer> getWinners() {
+  public List<Player> getWinners() {
     if (this.winners == null)
       this.winners = new ArrayList<>(2);
     return this.winners;

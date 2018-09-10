@@ -2,11 +2,10 @@ package sc.server.plugins;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.jetbrains.annotations.NotNull;
-import sc.api.plugins.host.IPlayerListener;
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.shared.PlayerColor;
 
-public class TestPlayer extends AbstractPlayer {
+public class TestPlayer extends Player {
   
   @XStreamAsAttribute
   PlayerColor color;
@@ -23,7 +22,7 @@ public class TestPlayer extends AbstractPlayer {
 
   @NotNull
   @Override
-  public AbstractPlayer clone() {
+  public Player clone() {
     return null;
   }
 

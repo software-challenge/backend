@@ -4,11 +4,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
-import sc.framework.plugins.AbstractPlayer
+import sc.framework.plugins.Player
 import sc.shared.PlayerColor
 
 @XStreamAlias(value = "state")
-abstract class TwoPlayerGameState<P : AbstractPlayer, M : IMove> : IGameState {
+abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
 
     abstract val red: P
     abstract val blue: P
@@ -52,7 +52,7 @@ abstract class TwoPlayerGameState<P : AbstractPlayer, M : IMove> : IGameState {
     var lastMove: M? = null
 
     fun getOpponent(player: P) =
-            getPlayer(player.playerColor.opponent())
+            getPlayer(player.color.opponent())
 
     fun getPlayer(color: PlayerColor): P =
             if (color == PlayerColor.RED) red else blue

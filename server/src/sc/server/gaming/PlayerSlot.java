@@ -1,6 +1,6 @@
 package sc.server.gaming;
 
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.server.network.IClient;
 import sc.shared.SlotDescriptor;
 
@@ -54,7 +54,7 @@ public class PlayerSlot {
     client.addRole(this.role);
   }
 
-  public void setPlayer(AbstractPlayer player) {
+  public void setPlayer(Player player) {
     if (this.role == null) {
       throw new IllegalStateException(
               "Slot isn't linked to a Client yet.");

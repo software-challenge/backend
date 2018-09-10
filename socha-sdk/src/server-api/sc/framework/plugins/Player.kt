@@ -1,5 +1,6 @@
 package sc.framework.plugins
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
@@ -9,13 +10,12 @@ import sc.protocol.responses.ProtocolMessage
 import sc.shared.PlayerColor
 import java.util.*
 
-private val logger = LoggerFactory.getLogger(AbstractPlayer::class.java)
+private val logger = LoggerFactory.getLogger(Player::class.java)
 
-abstract class AbstractPlayer : Cloneable {
+@XStreamAlias(value = "player")
+open class Player(@XStreamAsAttribute var color: PlayerColor) : Cloneable {
 
-    abstract override fun clone(): AbstractPlayer
-
-    abstract val playerColor: PlayerColor
+    public override fun clone() = Player(color)
 
     @XStreamOmitField
     protected var listeners: MutableList<IPlayerListener> = ArrayList()
@@ -71,7 +71,9 @@ abstract class AbstractPlayer : Cloneable {
     open fun requestMove() {
         val request = MoveRequest()
         notifyListeners(request)
-        logger.debug("Move requested.")
+        logger.debug("Move requested from $this")
     }
+
+    override fun toString(): String = "%s Player - %s".format(color, displayName)
 
 }

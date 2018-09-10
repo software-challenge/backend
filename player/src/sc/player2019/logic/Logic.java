@@ -2,11 +2,11 @@ package sc.player2019.logic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.framework.plugins.Player;
 import sc.player2019.Starter;
 import sc.plugin2019.GameState;
 import sc.plugin2019.IGameHandler;
 import sc.plugin2019.Move;
-import sc.plugin2019.Player;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
 
@@ -61,7 +61,7 @@ public class Logic implements IGameHandler {
   @Override
   public void onUpdate(Player player, Player otherPlayer) {
     currentPlayer = player;
-    log.info("Spielerwechsel: " + player.getPlayerColor());
+    log.info("Spielerwechsel: " + player.getColor());
   }
 
   /**
@@ -71,7 +71,7 @@ public class Logic implements IGameHandler {
   public void onUpdate(GameState gameState) {
     this.gameState = gameState;
     currentPlayer = gameState.getCurrentPlayer();
-    log.info("Zug: {} Spieler: {}", gameState.getTurn(), currentPlayer.getPlayerColor());
+    log.info("Zug: {} Spieler: {}", gameState.getTurn(), currentPlayer.getColor());
   }
 
   /**

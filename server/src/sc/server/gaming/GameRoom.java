@@ -8,7 +8,7 @@ import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.helpers.HelperMethods;
 import sc.networking.InvalidScoreDefinitionException;
@@ -101,7 +101,7 @@ public class GameRoom implements IGameListener {
    * @param results result of game
    */
   @Override
-  public synchronized void onGameOver(Map<AbstractPlayer, PlayerScore> results) throws InvalidScoreDefinitionException {
+  public synchronized void onGameOver(Map<Player, PlayerScore> results) throws InvalidScoreDefinitionException {
     if (isOver()) {
       logger.warn("Game was already over but received another GameOver-Event.");
       return;
@@ -148,7 +148,7 @@ public class GameRoom implements IGameListener {
     }
     // save playerScore if test mode enabled
     if (Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE))) {
-      List<AbstractPlayer> players = game.getPlayers();
+      List<Player> players = game.getPlayers();
       gameRoomManager.addResultToScore(this.getResult(), game.getPlayerScores(), players.get(0).getDisplayName(), players.get(1).getDisplayName());
     }
     kickAllClients();
@@ -164,7 +164,7 @@ public class GameRoom implements IGameListener {
    *
    * @return GameResult, containing all PlayerScores and
    */
-  private GameResult generateGameResult(Map<AbstractPlayer, PlayerScore> results) {
+  private GameResult generateGameResult(Map<Player, PlayerScore> results) {
     ScoreDefinition definition = getProvider().getPlugin().getScoreDefinition();
     List<PlayerScore> scores = new ArrayList<>();
 
@@ -366,7 +366,7 @@ public class GameRoom implements IGameListener {
    * @throws RescuableClientException
    */
   private void syncSlot(PlayerSlot slot) throws RescuableClientException {
-    AbstractPlayer player = getGame().onPlayerJoined(); // make new player in gameState of game
+    Player player = getGame().onPlayerJoined(); // make new player in gameState of game
     // set attributes for player XXX check whether this is needed for prepared games
     player.setDisplayName(slot.getDescriptor().getDisplayName());
     player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
@@ -501,15 +501,15 @@ public class GameRoom implements IGameListener {
    *
    * @param source Client to find corresponding Player to
    *
-   * @return AbstractPlayer instance
+   * @return Player instance
    *
    * @throws RescuableClientException
    */
-  private AbstractPlayer resolvePlayer(Client source)
+  private Player resolvePlayer(Client source)
           throws RescuableClientException {
     for (PlayerRole role : getPlayers()) {
       if (role.getClient().equals(source)) {
-        AbstractPlayer resolvedPlayer = role.getPlayer();
+        Player resolvedPlayer = role.getPlayer();
 
         if (resolvedPlayer == null) {
           throw new RescuableClientException(
@@ -582,7 +582,7 @@ public class GameRoom implements IGameListener {
 
     logger.info("Switching PAUSE from {} to {}.", isPauseRequested(), pause);
     this.pauseRequested = pause;
-    RoundBasedGameInstance<AbstractPlayer> pausableGame = (RoundBasedGameInstance<AbstractPlayer>) this.game;
+    RoundBasedGameInstance<Player> pausableGame = (RoundBasedGameInstance<Player>) this.game;
     // pause game after current turn has finished
     pausableGame.setPauseMode(pause);
 
@@ -613,7 +613,7 @@ public class GameRoom implements IGameListener {
     }
     if (isPauseRequested()) {
       logger.info("Stepping.");
-      ((RoundBasedGameInstance<AbstractPlayer>) this.game).afterPause();
+      ((RoundBasedGameInstance<Player>) this.game).afterPause();
     } else {
       logger.warn("Can't step if the game is not paused.");
     }
@@ -633,7 +633,7 @@ public class GameRoom implements IGameListener {
    * @param nextPlayer Player to do the next move
    */
   @Override
-  public void onPaused(AbstractPlayer nextPlayer) {
+  public void onPaused(Player nextPlayer) {
     observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(nextPlayer)));
   }
 
@@ -708,11 +708,11 @@ public class GameRoom implements IGameListener {
   }
 
   /**
-   * Remove specific player by calling {@link IGameInstance#onPlayerLeft(AbstractPlayer) onPlayerLeft(player)}
+   * Remove specific player by calling {@link IGameInstance#onPlayerLeft(Player) onPlayerLeft(player)}
    *
    * @param player to be removed
    */
-  public void removePlayer(AbstractPlayer player) {
+  public void removePlayer(Player player) {
     logger.info("Removing {} from {}", player, this);
     this.game.onPlayerLeft(player);
   }

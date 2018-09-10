@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.host.GameLoader;
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2019.util.Configuration;
@@ -49,10 +49,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   /** Jemand hat etwas gesendet -> testen was es war (wenn es ein Zug war, dann validieren) */
   @Override
-  protected void onRoundBasedAction(AbstractPlayer fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
+  protected void onRoundBasedAction(Player fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
     Player author = (Player) fromPlayer;
     /*
-     * NOTE: Checking if right player sent move was already done by onAction(AbstractPlayer, ProtocolMove)}.
+     * NOTE: Checking if right player sent move was already done by onAction(Player, ProtocolMove)}.
      * There is no need to do it here again.
      */
     try {
@@ -90,24 +90,24 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public void start() {
     for (final Player p : this.players) {
-      p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
+      p.notifyListeners(new WelcomeMessage(p.getColor()));
     }
     super.start();
   }
 
   @Override
   public PlayerScore getScoreFor(Player player) {
-    logger.debug("get score for player {} (violated: {})", player.getPlayerColor(), player.hasViolated());
+    logger.debug("get score for player {} (violated: {})", player.getColor(), player.hasViolated());
     int[] stats = this.gameState.getPlayerStats(player);
     int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
     String reason = null;
-    AbstractPlayer opponent = gameState.getOpponent(player);
+    Player opponent = gameState.getOpponent(player);
     if (winCondition != null) {
       reason = winCondition.getReason();
-      if (player.getPlayerColor().equals(winCondition.getWinner())) {
+      if (player.getColor().equals(winCondition.getWinner())) {
         matchPoints = Constants.WIN_SCORE;
-      } else if (opponent.getPlayerColor().equals(winCondition.getWinner())) {
+      } else if (opponent.getColor().equals(winCondition.getWinner())) {
         matchPoints = Constants.LOSE_SCORE;
       } else {
         // draw
@@ -164,7 +164,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       // round limit not reached
       Player winningPlayer = getWinner();
       if (winningPlayer != null) {
-        return new WinCondition(winningPlayer.getPlayerColor(), Constants.WINNING_MESSAGE);
+        return new WinCondition(winningPlayer.getColor(), Constants.WINNING_MESSAGE);
       } else {
         return null;
       }
@@ -172,7 +172,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       // round limit reached
       Player winningPlayer = getWinner();
       if (winningPlayer != null) {
-        return new WinCondition(winningPlayer.getPlayerColor(), Constants.WINNING_MESSAGE);
+        return new WinCondition(winningPlayer.getColor(), Constants.WINNING_MESSAGE);
       } else {
         PlayerColor winner;
         if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_SWARM_SIZE] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_SWARM_SIZE]) {
@@ -271,9 +271,9 @@ public class Game extends RoundBasedGameInstance<Player> {
       if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
         this.gameState.setCurrentPlayerColor(PlayerColor.RED);
         Player newRed = this.gameState.getPlayer(PlayerColor.BLUE).clone();
-        newRed.setPlayerColor(PlayerColor.RED);
+        newRed.setColor(PlayerColor.RED);
         Player newBlue = this.gameState.getPlayer(PlayerColor.RED).clone();
-        newBlue.setPlayerColor(PlayerColor.BLUE);
+        newBlue.setColor(PlayerColor.BLUE);
         this.gameState.setRed(newRed);
         this.gameState.setBlue(newBlue);
       }
@@ -281,12 +281,12 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public List<AbstractPlayer> getWinners() {
+  public List<Player> getWinners() {
     WinCondition win = checkWinCondition();
-    List<AbstractPlayer> winners = new ArrayList<>();
+    List<Player> winners = new ArrayList<>();
     if (win != null) {
       for (Player player : this.players) {
-        if (player.getPlayerColor() == win.getWinner()) {
+        if (player.getColor() == win.getWinner()) {
           winners.add(player);
           break;
         }
@@ -307,8 +307,8 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public List<AbstractPlayer> getPlayers() {
-    List<AbstractPlayer> players = new ArrayList<>();
+  public List<Player> getPlayers() {
+    List<Player> players = new ArrayList<>();
     players.add(this.gameState.getPlayer(PlayerColor.RED));
     players.add(this.gameState.getPlayer(PlayerColor.BLUE));
     return players;
