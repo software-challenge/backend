@@ -205,13 +205,13 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
       return gameState.getPlayer(PlayerColor.RED);
     } else {
-      logger.info("Swarm is not connected for red");
+      logger.debug("Swarm is not connected for red");
       if (isSwarmConnected(gameState.getBoard(), PlayerColor.BLUE)) {
         logger.info("Swarm is connected for blue");
         return gameState.getPlayer(PlayerColor.BLUE);
       }
     }
-    logger.info("Swarm is not connected for blue");
+    logger.debug("Swarm is not connected for blue");
     return null;
   }
 

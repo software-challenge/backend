@@ -88,10 +88,10 @@ tasks {
             Thread.sleep(300)
             val client1 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar"))
             val client2 = Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar"))
-            var line = ""
             mapOf("client1" to client1, "client2" to client2).forEach { clientName, process ->
                 val reader = process.inputStream.bufferedReader()
                 val lines = ArrayList<String>()
+                var line = ""
                 while (!line.contains("Received game result", true)) {
                     if (!server.isAlive)
                         break
