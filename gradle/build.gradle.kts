@@ -25,8 +25,6 @@ allprojects {
         apply(plugin = "maven")
 }
 
-val verbose = properties["verbose"] != null
-
 val mainGroup = "_main"
 tasks {
     create("startServer") {
@@ -87,62 +85,43 @@ tasks {
     create("testDeployed") {
         dependsOn("deploy")
         group = mainGroup
-        doFirst {
-            val server = ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").tasks["jar"].outputs.files.first().absolutePath).directory(project("server").buildDir.resolve("runnable")).start()
+        val testDir = buildDir.resolve("test")
+        doLast {
+            testDir.mkdirs()
+            val server = ProcessBuilder("java", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").tasks["jar"].outputs.files.first().absolutePath)
+                    .redirectOutput(testDir.resolve("server.log")).redirectError(testDir.resolve("server-err.log"))
+                    .directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(300)
-            val newClient = { Runtime.getRuntime().exec("java -jar " + deployDir.resolve("simpleclient-$gameName-$version.jar")) }
-            val client1 = newClient()
-            val client2 = newClient()
+            val startClient: (Int) -> Process = {
+                ProcessBuilder("java", "-jar", deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath)
+                        .redirectOutput(testDir.resolve("client$it.log")).redirectError(testDir.resolve("client$it-err.log")).start()
+            }
+            startClient(1)
+            startClient(2)
             Thread {
-                Thread.sleep(20_000)
+                Thread.sleep(60_000)
                 println("testDeployed is taking too long - interrupting!")
-                client2.destroy()
-                client1.destroy()
+                server.destroy()
             }.run {
                 isDaemon = true
                 start()
             }
-            mapOf("client1" to client1, "client2" to client2).forEach { clientName, process ->
-                val reader = process.inputStream.bufferedReader()
-                val lines = ArrayList<String>()
-                var line = ""
-                while (!line.contains("Received game result", true)) {
-                    if (!server.isAlive)
-                        break
-                    try {
-                        line = reader.readLine() ?: break
-                        lines.add(line)
-                    } catch(t: Throwable) {
-                        println("Error while waiting for $clientName: $t")
-                        break
-                    }
+            try {
+                for(i in 1..2) {
+                    println("Waiting for client $i to receive game result")
+                    do {
+                        if (!server.isAlive)
+                            throw Exception("Server terminated unexpectedly!")
+                        Thread.sleep(200)
+                    } while (!testDir.resolve("client$i.log").readText().contains("Received game result", true))
                 }
-                if (!server.isAlive || !line.contains("Received game result", true)) {
-                    println("server alive: " + server.isAlive)
-                    server.inputStream.dump("server stdout")
-                    server.errorStream.dump("server stderr")
-                    if (server.isAlive) {
-                        println("\n$clientName stdout:")
-                        println(lines)
-                        println("\n$clientName stderr:")
-                        process.errorStream.bufferedReader().forEachLine { println(it) }
-                        server.destroy()
-                        throw Exception("$clientName did not receive the game result!")
-                    } else {
-                        throw Exception("Server terminated unexpectedly!")
-                    }
-                }
-                if(verbose) {
-                    println("\n$clientName stdout:")
-                    println(lines)
-                }
+            } catch(t: Throwable) {
+                println("Error in testDeployed - check the logs in $testDir")
+                throw t
+            } finally {
+                server.destroy()
             }
             println("Successfully played a game using the deployed server & client!")
-            if(verbose) {
-                server.inputStream.dump("server stdout")
-                server.errorStream.dump("server stderr")
-            }
-            server.destroy()
         }
     }
 
@@ -166,6 +145,7 @@ tasks {
 
 // == Cross-project configuration ==
 
+val verbose = properties["verbose"] != null
 allprojects {
     repositories {
         jcenter()
