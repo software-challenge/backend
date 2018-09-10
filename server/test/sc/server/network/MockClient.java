@@ -78,8 +78,7 @@ public class MockClient extends Client {
     } while (current != null && current.getClass() != type);
 
     if (current == null) {
-      throw new RuntimeException(
-              "Could not find a message of the specified type");
+      throw new RuntimeException("Could not find a message of the specified type");
     } else {
       if (i > 0) {
         logger.info("Skipped {} messages.", i);

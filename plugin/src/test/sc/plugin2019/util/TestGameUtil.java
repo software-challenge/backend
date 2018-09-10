@@ -4,6 +4,7 @@ import sc.plugin2019.Board;
 import sc.plugin2019.FieldState;
 
 public class TestGameUtil {
+
   public static Board createCustomBoard(String boardString) {
     if (boardString.length() != Constants.BOARD_SIZE * Constants.BOARD_SIZE) return null;
 
@@ -25,4 +26,5 @@ public class TestGameUtil {
     }
     return board;
   }
+  
 }

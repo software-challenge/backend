@@ -2,11 +2,11 @@ package sc.server.client;
 
 import sc.framework.plugins.Player;
 import sc.networking.clients.ILobbyClientListener;
-import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 
-public class TestPreparedGameResponseListener implements ILobbyClientListener{
+public class TestPreparedGameResponseListener implements ILobbyClientListener {
   public PrepareGameProtocolMessage response;
 
   @Override
@@ -17,42 +17,34 @@ public class TestPreparedGameResponseListener implements ILobbyClientListener{
 
   @Override
   public void onNewState(String roomId, Object state) {
-
   }
 
   @Override
   public void onError(String roomId, ProtocolErrorMessage error) {
-
   }
 
   @Override
   public void onRoomMessage(String roomId, Object data) {
-
   }
-
+  
   @Override
   public void onGameLeft(String roomId) {
-
   }
 
   @Override
   public void onGameJoined(String roomId) {
-
   }
 
   @Override
   public void onGameOver(String roomId, GameResult data) {
-
   }
 
   @Override
   public void onGamePaused(String roomId, Player nextPlayer) {
-
   }
 
   @Override
   public void onGameObserved(String roomId) {
-
   }
 
 }

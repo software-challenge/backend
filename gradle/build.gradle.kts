@@ -152,7 +152,7 @@ allprojects {
                 options.optionFiles!!.add(silenceDoc)
             }
             withType<Test> {
-                testLogging { showStandardStreams = System.getProperty("verbose") != null }
+                testLogging { showStandardStreams = properties["verbose"] != null }
             }
             withType<Jar> {
                 if (plugins.hasPlugin("application")) {
