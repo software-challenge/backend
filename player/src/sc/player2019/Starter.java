@@ -37,12 +37,6 @@ public class Starter extends AbstractClient {
   public static void main(String[] args) {
     System.setProperty("file.encoding", "UTF-8");
 
-    // you may use this code to enable debug output:
-    Logger rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-    ((ch.qos.logback.classic.Logger) rootLogger).setLevel(ch.qos.logback.classic.Level.WARN);
-    Logger randomlogiclogger = LoggerFactory.getLogger(Logic.class);
-    ((ch.qos.logback.classic.Logger) randomlogiclogger).setLevel(ch.qos.logback.classic.Level.WARN);
-
     // parameter definieren
     CmdLineParser parser = new CmdLineParser();
     CmdLineParser.Option hostOption = parser.addStringOption('h', "host");
@@ -68,7 +62,6 @@ public class Starter extends AbstractClient {
       new Starter(host, port, reservation);
     } catch (Exception e) {
       logger.error("Beim Starten den Clients ist ein Fehler aufgetreten:", e);
-      //System.err.println("Beim Starten den Clients ist ein Fehler aufgetreten:");
       e.printStackTrace();
     }
 

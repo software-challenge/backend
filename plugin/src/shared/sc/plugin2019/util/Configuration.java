@@ -1,7 +1,6 @@
 package sc.plugin2019.util;
 
 import com.thoughtworks.xstream.XStream;
-import sc.framework.plugins.Player;
 import sc.plugin2019.*;
 import sc.protocol.LobbyProtocol;
 import sc.shared.WelcomeMessage;
