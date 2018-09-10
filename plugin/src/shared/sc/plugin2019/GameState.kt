@@ -2,7 +2,7 @@ package sc.plugin2019
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.TwoPlayerGameState
-import sc.framework.plugins.AbstractPlayer
+import sc.framework.plugins.Player
 import sc.plugin2019.util.Constants
 import sc.plugin2019.util.Constants.BOARD_SIZE
 import sc.plugin2019.util.Constants.MAX_FISH
@@ -44,7 +44,7 @@ class GameState(
 
     override fun getPointsForPlayer(playerColor: PlayerColor) = greatestSwarmSize(playerColor)
 
-    fun getPlayerStats(player: AbstractPlayer): IntArray = getPlayerStats(player.playerColor)
+    fun getPlayerStats(player: Player): IntArray = getPlayerStats(player.color)
 
     /**
      * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
@@ -79,9 +79,9 @@ class GameState(
      * Spielclient i.A. nicht aufgerufen werden!
      */
     fun addPlayer(player: Player) {
-        if (player.playerColor == PlayerColor.RED) {
+        if (player.color == PlayerColor.RED) {
             red = player
-        } else if (player.playerColor == PlayerColor.BLUE) {
+        } else if (player.color == PlayerColor.BLUE) {
             blue = player
         }
     }
@@ -112,7 +112,7 @@ class GameState(
         return possibleMoves
     }
 
-    fun getOwnFields(player: AbstractPlayer) = getOwnFields(player.playerColor)
+    fun getOwnFields(player: Player) = getOwnFields(player.color)
 
     fun getOwnFields(player: PlayerColor): Set<Field> {
         val fields = HashSet<Field>()
@@ -209,7 +209,7 @@ class GameState(
         return greatestSwarm(set).size
     }
 
-    fun isSwarmConnected(player: AbstractPlayer): Boolean {
+    fun isSwarmConnected(player: Player): Boolean {
         val fieldsWithFish = getOwnFields(player)
         val numGreatestSwarm = greatestSwarmSize(fieldsWithFish)
         return numGreatestSwarm == fieldsWithFish.size

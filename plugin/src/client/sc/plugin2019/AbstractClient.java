@@ -2,7 +2,7 @@ package sc.plugin2019;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
@@ -121,7 +121,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     if (this.id != PlayerType.OBSERVER) {
       this.handler.onUpdate(gameState);
 
-      if (gameState.getCurrentPlayer().getPlayerColor() == this.color) {
+      if (gameState.getCurrentPlayer().getColor() == this.color) {
         // active player is own
         this.handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
       } else {
@@ -144,7 +144,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePaused(String roomId, AbstractPlayer nextPlayer) {
+  public void onGamePaused(String roomId, Player nextPlayer) {
   }
 
   @Override

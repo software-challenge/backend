@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.host.IRequestResult;
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.protocol.LobbyProtocol;
@@ -121,7 +121,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     }
   }
 
-  private void onGamePaused(String roomId, AbstractPlayer nextPlayer) {
+  private void onGamePaused(String roomId, Player nextPlayer) {
     for (IAdministrativeListener listener : this.administrativeListeners) {
       listener.onGamePaused(roomId, nextPlayer);
     }

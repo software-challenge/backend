@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.XStream;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
 import org.slf4j.LoggerFactory;
-import sc.framework.plugins.AbstractPlayer;
+import sc.framework.plugins.Player;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
@@ -46,7 +46,7 @@ public class TestClient extends XStreamClient {
   private static final Logger logger = (Logger) LoggerFactory.getLogger(TestClient.class);
 
   private static final String gameType = "swc_2019_piranhas";
-  private static final Player[] players = {new Player(), new Player()};
+  private static final ClientPlayer[] players = {new ClientPlayer(), new ClientPlayer()};
   private static final File logDir = new File("logs").getAbsoluteFile();
 
   private static TestClient testclient;
@@ -196,22 +196,22 @@ public class TestClient extends XStreamClient {
           irregularGames++;
         StringBuilder log = new StringBuilder("Game {} ended " +
                 (result.isRegular() ? "regularly -" : "abnormally!") + " Winner: ");
-        for (AbstractPlayer winner : result.getWinners())
+        for (Player winner : result.getWinners())
           log.append(winner.getDisplayName()).append(", ");
         logger.warn(log.substring(0, log.length() - 2), finishedTests);
 
         finishedTests++;
-        for (Player player : players)
+        for (ClientPlayer player : players)
           send(new GetScoreForPlayerRequest(player.name));
 
         try {
-          for (Player player : players)
+          for (ClientPlayer player : players)
             player.proc.waitFor(5, TimeUnit.SECONDS);
         } catch (InterruptedException ignored) {
         }
-        for (Player player : players)
+        for (ClientPlayer player : players)
           if (player.proc.isAlive()) {
-            logger.warn("Player {} is not responding anymore. Killing...", player.name);
+            logger.warn("ClientPlayer {} is not responding anymore. Killing...", player.name);
             player.proc.destroyForcibly();
           }
 
@@ -232,7 +232,7 @@ public class TestClient extends XStreamClient {
       playerScores++;
       Score score = ((PlayerScorePacket) message).getScore();
 
-      for (Player player : players) {
+      for (ClientPlayer player : players) {
         if (player.name.equals(score.getDisplayName())) {
           player.score = score;
           break;
@@ -262,7 +262,7 @@ public class TestClient extends XStreamClient {
           int slept = 0;
           while (tests == finishedTests) {
             // Detect failed clients
-            for (Player player : players)
+            for (ClientPlayer player : players)
               if (!player.proc.isAlive()) {
                 logger.error("{} crashed, look into {}", player.name, logDir);
                 exit(2);
@@ -292,7 +292,7 @@ public class TestClient extends XStreamClient {
   }
 
   private void startPlayer(int id, String reservation) throws IOException {
-    Player player = players[id];
+    ClientPlayer player = players[id];
     ProcessBuilder builder;
     if (player.isJar) {
       logger.debug("Invoking client {} with Java", player.name);
@@ -327,7 +327,7 @@ public class TestClient extends XStreamClient {
       testclient.waiter.shutdownNow();
     }
 
-    for (Player player : players)
+    for (ClientPlayer player : players)
       if (player.proc != null)
         player.proc.destroyForcibly();
 
@@ -385,7 +385,7 @@ public class TestClient extends XStreamClient {
   }
 }
 
-class Player {
+class ClientPlayer {
   String name;
   boolean canTimeout;
 
@@ -394,7 +394,7 @@ class Player {
 
   @Override
   public String toString() {
-    return String.format("Player{name='%s', executable='%s', isJar=%s, canTimeout=%s}", name, executable, isJar, canTimeout);
+    return String.format("ClientPlayer{name='%s', executable='%s', isJar=%s, canTimeout=%s}", name, executable, isJar, canTimeout);
   }
 
   Process proc;

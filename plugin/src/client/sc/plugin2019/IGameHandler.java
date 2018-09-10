@@ -1,5 +1,6 @@
 package sc.plugin2019;
 
+import sc.framework.plugins.Player;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
 
