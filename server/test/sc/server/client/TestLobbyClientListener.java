@@ -101,7 +101,6 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   public void onGameObserved(String roomId) {
     observedReceived = true;
     this.roomid = roomId;
-
   }
 
 }

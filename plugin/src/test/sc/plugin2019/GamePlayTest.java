@@ -2,6 +2,7 @@ package sc.plugin2019;
 
 import org.junit.Before;
 import org.junit.Test;
+import sc.framework.plugins.Player;
 import sc.plugin2019.util.Constants;
 import sc.plugin2019.util.TestGameUtil;
 import sc.shared.InvalidMoveException;
@@ -12,9 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static sc.plugin2019.Direction.LEFT;
-import static sc.plugin2019.Direction.RIGHT;
-import static sc.plugin2019.Direction.UP_LEFT;
+import static sc.plugin2019.Direction.*;
 import static sc.plugin2019.FieldState.EMPTY;
 import static sc.plugin2019.FieldState.RED;
 import static sc.plugin2019.util.GameRuleLogic.isValidToMove;
@@ -39,16 +38,16 @@ public class GamePlayTest {
 
   @Test
   public void onlyEndAfterRoundTest() throws InvalidMoveException {
-    Board board = TestGameUtil.createCustomBoard(""+
-            "-BBBBBBBB-"+
-            "----B----R"+
-            "----BBB--R"+
-            "----B----R"+
-            "----BO---R"+
-            "----B--BRR"+
-            "----R-O--R"+
-            "------R--R"+
-            "---------R"+
+    Board board = TestGameUtil.createCustomBoard("" +
+            "-BBBBBBBB-" +
+            "----B----R" +
+            "----BBB--R" +
+            "----B----R" +
+            "----BO---R" +
+            "----B--BRR" +
+            "----R-O--R" +
+            "------R--R" +
+            "---------R" +
             "----------"
     );
     state.setBoard(board);

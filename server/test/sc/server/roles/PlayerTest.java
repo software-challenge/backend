@@ -69,22 +69,15 @@ public class PlayerTest extends AbstractRoleTest {
     SlotDescriptor slot1 = new SlotDescriptor("player1", true, false);
     SlotDescriptor slot2 = new SlotDescriptor("player2", true, false);
 
-
-    this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
-            TestPlugin.TEST_PLUGIN_UUID, slot1, slot2)));
-    PrepareGameProtocolMessage prepared = admin
-            .seekMessage(PrepareGameProtocolMessage.class);
+    this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, slot1, slot2)));
+    PrepareGameProtocolMessage prepared = admin.seekMessage(PrepareGameProtocolMessage.class);
 
     this.lobby.onRequest(observer, new PacketCallback(
             new ObservationRequest(prepared.getRoomId())));
-    this.lobby
-            .onRequest(player1, new PacketCallback(
-                    new JoinPreparedRoomRequest(prepared.getReservations()
-                            .get(0))));
-    this.lobby
-            .onRequest(player2, new PacketCallback(
-                    new JoinPreparedRoomRequest(prepared.getReservations()
-                            .get(1))));
+    this.lobby.onRequest(player1, new PacketCallback(
+            new JoinPreparedRoomRequest(prepared.getReservations().get(0))));
+    this.lobby.onRequest(player2, new PacketCallback(
+            new JoinPreparedRoomRequest(prepared.getReservations().get(1))));
 
     String roomId = player1.seekMessage(JoinGameProtocolMessage.class).getRoomId();
     String roomId2 = player2.seekMessage(JoinGameProtocolMessage.class)
@@ -92,38 +85,28 @@ public class PlayerTest extends AbstractRoleTest {
     Assert.assertEquals(roomId, roomId2);
 
     shouldInitializeCorrectly(roomId, player1, player2, observer);
-    shouldPropagadeFirstPlayersMove(roomId, player1, player2, observer);
-    shouldPropagadeSecondPlayersMove(roomId, player1, player2, observer);
+    shouldPropagateFirstPlayersMove(roomId, player1, player2, observer);
+    shouldPropagateSecondPlayersMove(roomId, player1, player2, observer);
     makeMoveAfterRequest(roomId, player1);
     makeMoveAfterRequest(roomId, player2);
     player1.seekMessage(LeftGameEvent.class);
     player2.seekMessage(LeftGameEvent.class);
   }
 
-  private void shouldInitializeCorrectly(String roomId, MockClient player1,
-                                         MockClient player2, MockClient observer) {
-    MementoPacket memento1 = player1.seekRoomMessage(roomId,
-            MementoPacket.class);
-    MementoPacket memento2 = player2.seekRoomMessage(roomId,
-            MementoPacket.class);
-    MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
-            MementoPacket.class);
+  private void shouldInitializeCorrectly(String roomId, MockClient player1, MockClient player2, MockClient observer) {
+    MementoPacket memento1 = player1.seekRoomMessage(roomId, MementoPacket.class);
+    MementoPacket memento2 = player2.seekRoomMessage(roomId, MementoPacket.class);
+    MementoPacket mementoObserver = observer.seekRoomMessage(roomId, MementoPacket.class);
 
-    Assert.assertEquals(0,
-            ((TestGameState) memento1.getState()).getState());
-    Assert.assertEquals(0,
-            ((TestGameState) memento1.getState()).getState());
-    Assert.assertEquals(0,
-            ((TestGameState) memento2.getState()).getState());
-    Assert.assertEquals(0,
-            ((TestGameState) memento2.getState()).getState());
-    Assert.assertEquals(0, ((TestGameState) mementoObserver
-            .getState()).getState());
-    Assert.assertEquals(0, ((TestGameState) mementoObserver
-            .getState()).getState());
+    Assert.assertEquals(0, ((TestGameState) memento1.getState()).getState());
+    Assert.assertEquals(0, ((TestGameState) memento1.getState()).getState());
+    Assert.assertEquals(0, ((TestGameState) memento2.getState()).getState());
+    Assert.assertEquals(0, ((TestGameState) memento2.getState()).getState());
+    Assert.assertEquals(0, ((TestGameState) mementoObserver.getState()).getState());
+    Assert.assertEquals(0, ((TestGameState) mementoObserver.getState()).getState());
   }
 
-  private void shouldPropagadeFirstPlayersMove(String roomId,
+  private void shouldPropagateFirstPlayersMove(String roomId,
                                                MockClient player1, MockClient player2, MockClient observer)
           throws RescuableClientException, InvalidGameStateException {
     // Do the move
@@ -154,7 +137,7 @@ public class PlayerTest extends AbstractRoleTest {
             new TestMove(123456))));
   }
 
-  private void shouldPropagadeSecondPlayersMove(String roomId,
+  private void shouldPropagateSecondPlayersMove(String roomId,
                                                 MockClient player1, MockClient player2, MockClient observer)
           throws RescuableClientException, InvalidGameStateException {
     // Do the move
