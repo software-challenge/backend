@@ -145,7 +145,6 @@ tasks {
 
 // == Cross-project configuration ==
 
-val verbose = properties["verbose"] != null
 allprojects {
     repositories {
         jcenter()
@@ -160,7 +159,7 @@ allprojects {
                 options.optionFiles!!.add(silenceDoc)
             }
             withType<Test> {
-                testLogging { showStandardStreams = verbose }
+                testLogging { showStandardStreams = properties["verbose"] != null }
             }
             withType<Jar> {
                 if (plugins.hasPlugin("application")) {
