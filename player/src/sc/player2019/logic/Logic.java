@@ -7,6 +7,7 @@ import sc.player2019.Starter;
 import sc.plugin2019.GameState;
 import sc.plugin2019.IGameHandler;
 import sc.plugin2019.Move;
+import sc.plugin2019.util.GameRuleLogic;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
 
@@ -48,9 +49,9 @@ public class Logic implements IGameHandler {
    */
   @Override
   public void onRequestAction() {
-    long startTime = System.nanoTime();
+    long startTime = System.currentTimeMillis();
     log.info("Es wurde ein Zug angefordert.");
-    ArrayList<Move> possibleMoves = gameState.getPossibleMoves();
+    ArrayList<Move> possibleMoves = GameRuleLogic.getPossibleMoves(gameState);
 
     sendAction(possibleMoves.get((int) (Math.random() * possibleMoves.size())));
   }

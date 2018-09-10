@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 import static sc.plugin2019.Direction.*;
 import static sc.plugin2019.FieldState.EMPTY;
 import static sc.plugin2019.FieldState.RED;
-import static sc.plugin2019.util.GameRuleLogic.isValidToMove;
+import static sc.plugin2019.util.GameRuleLogic.*;
 import static sc.plugin2019.util.TestJUnitUtil.assertThrows;
 
 public class GamePlayTest {
@@ -91,20 +91,21 @@ public class GamePlayTest {
 
   @Test
   public void testMoveDirection() {
-    assertEquals(2, state.calculateMoveDistance(0, 1, RIGHT));
-    assertEquals(2, state.calculateMoveDistance(0, 8, Direction.UP_RIGHT));
-    assertEquals(0, state.calculateMoveDistance(9, 9, Direction.UP_RIGHT));
-    assertEquals(2, state.calculateMoveDistance(0, 1, Direction.DOWN_RIGHT));
-    assertEquals(0, state.calculateMoveDistance(0, 0, Direction.DOWN_RIGHT));
+    Board board = state.getBoard();
+    assertEquals(2, calculateMoveDistance(board, 0, 1, RIGHT));
+    assertEquals(2, calculateMoveDistance(board, 0, 8, Direction.UP_RIGHT));
+    assertEquals(0, calculateMoveDistance(board, 9, 9, Direction.UP_RIGHT));
+    assertEquals(2, calculateMoveDistance(board, 0, 1, Direction.DOWN_RIGHT));
+    assertEquals(0, calculateMoveDistance(board, 0, 0, Direction.DOWN_RIGHT));
   }
 
   @Test
   public void testGreatestSwarm() {
+    Board board = state.getBoard();
+    assertEquals(8, greatestSwarmSize(board, PlayerColor.RED));
+    assertEquals(8, greatestSwarmSize(board, PlayerColor.BLUE));
 
-    assertEquals(8, state.greatestSwarmSize(PlayerColor.RED));
-    assertEquals(8, state.greatestSwarmSize(PlayerColor.BLUE));
-
-    Board board = TestGameUtil.createCustomBoard("" +
+    board = TestGameUtil.createCustomBoard("" +
             "-BBBBBBB--" +
             "RB--------" +
             "RO--------" +
@@ -118,8 +119,8 @@ public class GamePlayTest {
     );
     state.setBoard(board);
 
-    assertEquals(16, state.getOwnFields(PlayerColor.RED).size());
-    for (Field field : state.getOwnFields(PlayerColor.RED)) {
+    assertEquals(16, getOwnFields(board, PlayerColor.RED).size());
+    for (Field field : getOwnFields(board, PlayerColor.RED)) {
       assertEquals(RED, field.getState());
     }
 
@@ -136,7 +137,7 @@ public class GamePlayTest {
             "----------"
     );
     state.setBoard(board);
-    assertEquals(16, state.greatestSwarmSize(PlayerColor.BLUE));
+    assertEquals(16, greatestSwarmSize(board, PlayerColor.BLUE));
 
     board = TestGameUtil.createCustomBoard("" +
             "BBBBBBBBBB" +
@@ -152,7 +153,7 @@ public class GamePlayTest {
     );
     state.setBoard(board);
     board.getField(1, 5).setState(EMPTY);
-    assertEquals(8, state.greatestSwarmSize(PlayerColor.RED));
+    assertEquals(8, greatestSwarmSize(board, PlayerColor.RED));
 
   }
 
@@ -172,13 +173,13 @@ public class GamePlayTest {
     );
     state.setBoard(board);
 
-    assertTrue(isValidToMove(0, 4, RIGHT, 2, state));
-    assertThrows(InvalidMoveException.class, () -> isValidToMove(0, 0, RIGHT, 2, state), "Field does not belong to the current player");
-    assertThrows(InvalidMoveException.class, () -> isValidToMove(0, 4, RIGHT, 3, state), "Move distance was incorrect");
-    assertThrows(InvalidMoveException.class, () -> isValidToMove(0, 4, LEFT, 2, state), "Move in that direction would not be on the board");
-    assertThrows(InvalidMoveException.class, () -> isValidToMove(0, 1, RIGHT, 3, state), "Path to the new position is not clear");
-    assertTrue(isValidToMove(0, 2, RIGHT, 2, state));
-    assertThrows(InvalidMoveException.class, () -> isValidToMove(0, 3, RIGHT, 2, state), "Field is obstructed");
+    assertTrue(isValidToMove(state, 0, 4, RIGHT, 2));
+    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 0, RIGHT, 2), "Field does not belong to the current player");
+    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 4, RIGHT, 3), "Move distance was incorrect");
+    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 4, LEFT, 2), "Move in that direction would not be on the board");
+    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 1, RIGHT, 3), "Path to the new position is not clear");
+    assertTrue(isValidToMove(state, 0, 2, RIGHT, 2));
+    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 3, RIGHT, 2), "Field is obstructed");
 
   }
 

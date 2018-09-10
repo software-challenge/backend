@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.host.GameLoader;
-import sc.framework.plugins.Player;
 import sc.framework.plugins.ActionTimeout;
+import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2019.util.Configuration;
 import sc.plugin2019.util.Constants;
@@ -17,6 +17,8 @@ import sc.shared.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static sc.plugin2019.util.GameRuleLogic.isSwarmConnected;
 
 /** Minimales Spiel als Basis für neue Plugins. Diese Klasse enthält die Spielelogik. */
 @XStreamAlias(value = "game")
@@ -50,20 +52,17 @@ public class Game extends RoundBasedGameInstance<Player> {
   /** Jemand hat etwas gesendet -> testen was es war (wenn es ein Zug war, dann validieren) */
   @Override
   protected void onRoundBasedAction(Player fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
-    Player author = (Player) fromPlayer;
-    /*
-     * NOTE: Checking if right player sent move was already done by onAction(Player, ProtocolMove)}.
-     * There is no need to do it here again.
-     */
+    // NOTE: Checking if right player sent move was already done by onAction(Player, ProtocolMove)}.
+    // There is no need to do it here again.
     try {
       if (!(data instanceof Move))
-        throw new InvalidMoveException(author.getDisplayName() + " hat kein Zug-Objekt gesendet.");
+        throw new InvalidMoveException(fromPlayer.getDisplayName() + " hat kein Zug-Objekt gesendet.");
       final Move move = (Move) data;
       logger.debug("Performing Move");
       move.perform(this.gameState);
       next(this.gameState.getCurrentPlayer());
     } catch (InvalidMoveException e) {
-      super.catchInvalidMove(e, author);
+      super.catchInvalidMove(e, fromPlayer);
     }
   }
 
@@ -188,30 +187,35 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   private Player getWinner() {
-    if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.RED))) {
-      System.out.println("Swarm is connected for red");
-      if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.BLUE))) {
-        System.out.println("Swarm is connected for blue");
+    if (isSwarmConnected(gameState.getBoard(), PlayerColor.RED)) {
+      logger.info("Swarm is connected for red");
+      if (isSwarmConnected(gameState.getBoard(), PlayerColor.BLUE)) {
+        logger.info("Swarm is connected for blue");
         if (gameState.getPointsForPlayer(PlayerColor.RED) > gameState.getPointsForPlayer(PlayerColor.BLUE)) {
           return gameState.getPlayer(PlayerColor.RED);
         } else if (gameState.getPointsForPlayer(PlayerColor.RED) < gameState.getPointsForPlayer(PlayerColor.BLUE)) {
           return gameState.getPlayer(PlayerColor.BLUE);
         } else {
+          logger.info("Both Players have equal Points, no Winner");
           return null;
         }
       }
       return gameState.getPlayer(PlayerColor.RED);
-    } else if (gameState.isSwarmConnected(gameState.getPlayer(PlayerColor.BLUE))) {
-      System.out.println("Swarm is not connected for red");
-      return gameState.getPlayer(PlayerColor.BLUE);
+    } else {
+      logger.debug("Swarm is not connected for red");
+      if (isSwarmConnected(gameState.getBoard(), PlayerColor.BLUE)) {
+        logger.info("Swarm is connected for blue");
+        return gameState.getPlayer(PlayerColor.BLUE);
+      }
     }
+    logger.debug("Swarm is not connected for blue");
     return null;
   }
 
   @Override
   public void loadFromFile(String file) {
     logger.info("Loading game from: " + file);
-    GameLoader gl = new GameLoader(new Class<?>[]{GameState.class});
+    GameLoader gl = new GameLoader(GameState.class);
     Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
     if (gameInfo != null) {
       loadGameInfo(gameInfo);
@@ -222,10 +226,11 @@ public class Game extends RoundBasedGameInstance<Player> {
   public void loadFromFile(String file, int turn) {
     logger.info("Loading game from: " + file + " at turn: " + turn);
     // only copy right gameState specified by turn
+    File tmp_replay = new File("./tmp_replay.xml");
     try {
       FileReader fileReader = new FileReader(file);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
-      FileWriter fileWriter = new FileWriter("./tmp_replay.xml");
+      FileWriter fileWriter = new FileWriter(tmp_replay);
       BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
       String line;
       bufferedWriter.write("<protocol>"); // XXX since hui18 replays start with protocol instead of object-stream
@@ -248,13 +253,12 @@ public class Game extends RoundBasedGameInstance<Player> {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    GameLoader gl = new GameLoader(new Class<?>[]{GameState.class});
+    GameLoader gl = new GameLoader(GameState.class);
     Object gameInfo = gl.loadGame(Configuration.getXStream(), "./tmp_replay.xml");
     if (gameInfo != null) {
       loadGameInfo(gameInfo);
     }
     // delete copied
-    File tmp_replay = new File("./tmp_replay.xml");
     tmp_replay.delete();
   }
 

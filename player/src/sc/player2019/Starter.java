@@ -22,7 +22,7 @@ public class Starter extends AbstractClient {
     super(host, port);
 
     // Strategie zuweisen
-    IGameHandler logic = (IGameHandler) new Logic(this);
+    IGameHandler logic = new Logic(this);
     setHandler(logic);
 
     // einem Spiel beitreten
