@@ -92,7 +92,7 @@ tasks {
             val client1 = newClient()
             val client2 = newClient()
             Thread {
-                Thread.sleep(60_000)
+                Thread.sleep(20_000)
                 println("testDeployed is taking too long - interrupting!")
                 client2.destroy()
                 client1.destroy()
@@ -124,6 +124,7 @@ tasks {
                         println(lines)
                         println("\n$clientName stderr:")
                         process.errorStream.bufferedReader().forEachLine { println(it) }
+                        server.destroy()
                         throw Exception("$clientName did not receive the game result!")
                     } else {
                         throw Exception("Server terminated unexpectedly!")
