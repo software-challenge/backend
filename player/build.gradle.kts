@@ -67,7 +67,7 @@ tasks {
             from("src")
             into("src")
         }, copySpec {
-            from(configurations.default)
+            from(configurations.default, arrayOf("plugin", "sdk").map { project(":$it").tasks.getByName("sourcesJar").outputs.files })
             into("lib")
         }, copySpec {
             from(project(":plugin").buildDir.resolve("docs/javadoc"))

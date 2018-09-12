@@ -21,10 +21,9 @@ project.ext.set("deployDir", deployDir)
 allprojects {
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
-    if (this.name != "player")
-        apply(plugin = "maven")
 }
 
+val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 val mainGroup = "_main"
 tasks {
     create("startServer") {
@@ -107,7 +106,7 @@ tasks {
                 start()
             }
             try {
-                for(i in 1..2) {
+                for (i in 1..2) {
                     println("Waiting for client $i to receive game result")
                     do {
                         if (!server.isAlive)
@@ -115,7 +114,7 @@ tasks {
                         Thread.sleep(200)
                     } while (!testDir.resolve("client$i.log").readText().contains("Received game result", true))
                 }
-            } catch(t: Throwable) {
+            } catch (t: Throwable) {
                 println("Error in testDeployed - check the logs in $testDir")
                 throw t
             } finally {
@@ -150,7 +149,28 @@ allprojects {
         jcenter()
         maven("http://dist.wso2.org/maven2")
     }
+    if (this.name in arrayOf("sdk", "plugin")) {
+        apply(plugin = "maven")
+        tasks {
+            val sourcesJar by creating(Jar::class) {
+                baseName = tasks.getByName<Jar>("jar").baseName
+                classifier = "sources"
+                from(sourceSets.getByName("main").allSource)
+            }
+            val javadocJar by creating(Jar::class) {
+                baseName = tasks.getByName<Jar>("jar").baseName
+                classifier = "javadoc"
+                from(tasks.getByName<Javadoc>("javadoc").destinationDir)
+            }
+            getByName("install").dependsOn("javadocJar", "sourcesJar")
+            artifacts {
+                add("archives", sourcesJar.outputs.files.first()) { classifier = "sources" }
+                add("archives", javadocJar.outputs.files.first()) { classifier = "javadoc" }
+            }
+        }
+    }
     afterEvaluate {
+        doAfterEvaluate.forEach { it(this) }
         tasks {
             forEach { if (it.name != "clean") it.mustRunAfter("clean") }
             withType<Javadoc> {
@@ -162,9 +182,8 @@ allprojects {
                 testLogging { showStandardStreams = properties["verbose"] != null }
             }
             withType<Jar> {
-                if (plugins.hasPlugin("application")) {
+                if (plugins.hasPlugin("application"))
                     manifest.attributes["Main-Class"] = ((this@allprojects as org.gradle.api.plugins.ExtensionAware).extensions.getByName("application") as org.gradle.api.plugins.JavaApplication).mainClassName
-                }
             }
         }
     }
@@ -213,11 +232,11 @@ fun InputStream.dump(name: String? = null) {
 }
 
 fun Task.dependOnSubprojects() {
-    subprojects.forEach {
-        it.afterEvaluate {
-            dependsOn(tasks.findByName(this@dependOnSubprojects.name) ?: return@afterEvaluate)
+    if (this.project == rootProject)
+        doAfterEvaluate.add {
+            if (this.project != rootProject)
+                dependsOn(it.tasks.findByName(name) ?: return@add)
         }
-    }
 }
 
 // "run" task won't work when recursive, see https://stackoverflow.com/q/51903863/6723250
