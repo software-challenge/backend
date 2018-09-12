@@ -234,7 +234,7 @@ fun InputStream.dump(name: String? = null) {
 fun Task.dependOnSubprojects() {
     if (this.project == rootProject)
         doAfterEvaluate.add {
-            if (this.project != rootProject)
+            if (it != rootProject)
                 dependsOn(it.tasks.findByName(name) ?: return@add)
         }
 }
