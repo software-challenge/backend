@@ -1,4 +1,4 @@
-<project name="GAME_client" default="main">
+<project name="GAME_client" basedir="." default="main">
     <property name="game_name" value="GAME"/>
     <property name="build.dir" value="build"/>
     <property name="lib.dir" value="lib"/>
@@ -60,9 +60,11 @@
                 <attribute name="Class-Path" value="${jar.classpath}"/>
             </manifest>
         </jar>
-
-        <copy tofile="${jar.dir}/logback.xml"
-              file="src/logback.xml"/>
+        <copy todir="${jar.dir}/lib" >
+            <path refid="classpath.libs" />
+        </copy>
+        <copy file="src/logback.xml"
+              tofile="${jar.dir}/logback.xml"/>
     </target>
 
     <target name="build" depends="build-jar" description="Build only"/>
