@@ -59,7 +59,7 @@ tasks {
     create<ScriptsTask>("createScripts") {
         destinationDir = runnable
         fileName = "start"
-        content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar"
+        content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar server.jar"
     }
 
     create<Copy>("copyPlugin") {
