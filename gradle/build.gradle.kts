@@ -1,4 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.InputStream
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     `java-library`
     kotlin("jvm") version "1.2.61"
     id("com.github.ben-manes.versions") version "0.19.0"
+    id("org.jetbrains.dokka") version "0.9.17"
 }
 
 val year = property("socha.year").toString()
@@ -124,12 +126,14 @@ tasks {
         }
     }
 
-    create<Javadoc>("doc") {
-        title = "Software-Challenge API $version"
+    create<DokkaTask>("doc") {
+        moduleName = "Software-Challenge API $version"
         val sourceSets = arrayOf("plugin", "sdk").map { project(it).sourceSets.getByName("main") }
-        source(sourceSets.map { it.allJava })
+        sourceDirs = files(sourceSets.map { it.java.sourceDirectories })
         classpath = files(sourceSets.map { it.runtimeClasspath })
-        setDestinationDir(deployDir.resolve("doc"))
+        outputDirectory = deployDir.resolve("doc").toString()
+        outputFormat = "javadoc"
+        jdkVersion = 8
     }
     "test" {
         dependsOn("run")
