@@ -20,7 +20,7 @@ println("Current version: $version  Game: $game")
 val deployDir = buildDir.resolve("deploy")
 project.ext.set("deployDir", deployDir)
 
-allprojects {
+subprojects {
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
 }
@@ -128,7 +128,7 @@ tasks {
 
     create<DokkaTask>("doc") {
         moduleName = "Software-Challenge API $version"
-        val sourceSets = arrayOf("plugin", "sdk").map { project(it).sourceSets.getByName("main") }
+        val sourceSets = arrayOf("sdk", "plugin").map { project(it).sourceSets.getByName("main") }
         sourceDirs = files(sourceSets.map { it.java.sourceDirectories })
         classpath = files(sourceSets.map { it.runtimeClasspath })
         outputDirectory = deployDir.resolve("doc").toString()
@@ -156,20 +156,28 @@ allprojects {
     if (this.name in arrayOf("sdk", "plugin")) {
         apply(plugin = "maven")
         tasks {
+            create<DokkaTask>("doc") {
+                moduleName = "Software-Challenge API $version"
+                classpath = sourceSets.getByName("main").runtimeClasspath
+                outputDirectory = buildDir.resolve("doc").toString()
+                outputFormat = "javadoc"
+                jdkVersion = 8
+            }
             val sourcesJar by creating(Jar::class) {
                 baseName = tasks.getByName<Jar>("jar").baseName
                 classifier = "sources"
                 from(sourceSets.getByName("main").allSource)
             }
-            val javadocJar by creating(Jar::class) {
+            val docJar by creating(Jar::class) {
+                dependsOn("doc")
                 baseName = tasks.getByName<Jar>("jar").baseName
                 classifier = "javadoc"
-                from(tasks.getByName<Javadoc>("javadoc").destinationDir)
+                from(tasks.getByName<DokkaTask>("doc").outputDirectory)
             }
             getByName("install").dependsOn("javadocJar", "sourcesJar")
             artifacts {
                 add("archives", sourcesJar.outputs.files.first()) { classifier = "sources" }
-                add("archives", javadocJar.outputs.files.first()) { classifier = "javadoc" }
+                add("archives", docJar.outputs.files.first()) { classifier = "javadoc" }
             }
         }
     }
@@ -177,11 +185,6 @@ allprojects {
         doAfterEvaluate.forEach { it(this) }
         tasks {
             forEach { if (it.name != "clean") it.mustRunAfter("clean") }
-            withType<Javadoc> {
-                val silenceDoc = buildDir.resolve("tmp").resolve("silence")
-                doFirst { silenceDoc.apply { parentFile.mkdirs(); writeText("-Xdoclint:none -encoding UTF-8 -charset UTF-8 -docencoding UTF-8") } }
-                options.optionFiles!!.add(silenceDoc)
-            }
             withType<Test> {
                 testLogging { showStandardStreams = properties["verbose"] != null }
             }

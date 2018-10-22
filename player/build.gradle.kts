@@ -53,7 +53,7 @@ tasks {
     }
 
     create<Copy>("prepareZip") {
-        dependsOn("javadoc", ":sdk:javadoc", ":plugin:javadoc")
+        dependsOn(":sdk:doc", ":plugin:doc")
         into(zipDir)
         with(copySpec {
             from("buildscripts")
@@ -70,10 +70,10 @@ tasks {
             from(configurations.default, arrayOf("plugin", "sdk").map { project(":$it").tasks.getByName("sourcesJar").outputs.files })
             into("lib")
         }, copySpec {
-            from(project(":plugin").buildDir.resolve("docs/javadoc"))
+            from(project(":plugin").buildDir.resolve("doc"))
             into("doc/plugin-$gameName")
         }, copySpec {
-            from(project(":sdk").buildDir.resolve("docs/javadoc"))
+            from(project(":sdk").buildDir.resolve("doc"))
             into("doc/sdk")
         }, copySpec {
             from(rootDir.resolve("gradle").resolve("wrapper"))
