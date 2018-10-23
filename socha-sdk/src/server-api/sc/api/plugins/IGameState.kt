@@ -1,18 +1,15 @@
 package sc.api.plugins
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.protocol.responses.ProtocolMessage
-import sc.shared.InvalidGameStateException
 
 /**
  * Ein `GameState` beinhaltet alle Informationen, die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
- * Dies umfasst eine fortlaufende Zugnummer ([getRound()][.getTurn]), die
- * der Spielserver als Antwort von einem der beiden Spieler (
- * [getCurrentPlayer()][.getCurrentPlayer]) erwartet. Weiterhin gehoeren
- * die Informationen ueber die beiden Spieler und das Spielfeld zum Zustand.
- * Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf. ueber das
- * Spielende informiert.
+ * Dies umfasst eine fortlaufende Zugnummer ([round] & [turn]), die
+ * der Spielserver als Antwort von einem der beiden Spieler erwartet.
+ * Weiterhin gehoeren die Informationen ueber die beiden Spieler und das Spielfeld
+ * zum Zustand. Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf.
+ * ueber das Spielende informiert.
  *
  * Der `GameState` ist damit das zentrale Objekt ueber das auf alle
  * wesentlichen Informationen des aktuellen Spiels zugegriffen werden kann.
