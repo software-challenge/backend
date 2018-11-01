@@ -100,8 +100,8 @@ tasks {
             startClient(1)
             startClient(2)
             Thread {
-                Thread.sleep(60_000)
-                println("testDeployed is taking too long - interrupting!")
+                Thread.sleep(150_000)
+                println("testDeployed has been running for over 150 seconds - interrupting!")
                 server.destroy()
             }.run {
                 isDaemon = true

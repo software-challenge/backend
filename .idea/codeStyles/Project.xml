@@ -9,6 +9,9 @@
     <MarkdownNavigatorCodeStyleSettings>
       <option name="RIGHT_MARGIN" value="72" />
     </MarkdownNavigatorCodeStyleSettings>
+    <yaml>
+      <option name="INDENT_SEQUENCE_VALUE" value="true" />
+    </yaml>
     <codeStyleSettings language="JAVA">
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
