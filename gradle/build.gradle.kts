@@ -92,7 +92,7 @@ tasks {
             val server = ProcessBuilder("java", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").tasks["jar"].outputs.files.first().absolutePath)
                     .redirectOutput(testDir.resolve("server.log")).redirectError(testDir.resolve("server-err.log"))
                     .directory(project("server").buildDir.resolve("runnable")).start()
-            Thread.sleep(300)
+            Thread.sleep(1000)
             val startClient: (Int) -> Process = {
                 ProcessBuilder("java", "-jar", deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath)
                         .redirectOutput(testDir.resolve("client$it.log")).redirectError(testDir.resolve("client$it-err.log")).start()
