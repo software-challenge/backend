@@ -17,7 +17,7 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
-  - ./gradlew run || (exitcode=$?; find build/test | while read f; do echo \033[4m\$f\033[0m; cat $f; done && return $exitcode)
+  - ./gradlew run || (exitcode=$?; find build/test | while read f; do echo "\033[4m\$f\033[0m"; cat $f; done && return $exitcode)
 
 deploy:
   provider: releases
