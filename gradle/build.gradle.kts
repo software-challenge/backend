@@ -5,8 +5,8 @@ import java.io.InputStream
 plugins {
     maven
     `java-library`
-    kotlin("jvm") version "1.2.61"
-    id("com.github.ben-manes.versions") version "0.19.0"
+    kotlin("jvm") version "1.3.0"
+    id("com.github.ben-manes.versions") version "0.20.0"
     id("org.jetbrains.dokka") version "0.9.17"
 }
 
@@ -61,7 +61,7 @@ tasks {
             exec { commandLine("git", "add", "gradle.properties") }
             exec { commandLine("git", "commit", "-m", version) }
             exec { commandLine("git", "tag", version, "-m", desc) }
-            exec { commandLine("git", "push", "--tags") }
+            exec { commandLine("git", "push", "--follow-tags") }
             println("""
     ===================================================
     Fertig! Jetzt noch folgende Schritte ausfuehren:
@@ -130,17 +130,18 @@ tasks {
         moduleName = "Software-Challenge API $version"
         val sourceSets = arrayOf("sdk", "plugin").map { project(it).sourceSets.getByName("main") }
         sourceDirs = files(sourceSets.map { it.java.sourceDirectories })
-        classpath = files(sourceSets.map { it.runtimeClasspath })
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
         jdkVersion = 8
+        doFirst {
+            classpath = files(sourceSets.map { it.runtimeClasspath }.flatMap { it.files }.filter { it.exists() })
+        }
     }
     "test" {
         dependsOn("run")
         group = mainGroup
     }
     "build" {
-        dependsOn("deploy")
         group = mainGroup
     }
     replace("run").dependsOn("testDeployed")
@@ -162,6 +163,9 @@ allprojects {
                 outputDirectory = buildDir.resolve("doc").toString()
                 outputFormat = "javadoc"
                 jdkVersion = 8
+                doFirst {
+                    classpath = files(sourceSets.getByName("main").runtimeClasspath.files.filter { it.exists() })
+                }
             }
             val sourcesJar by creating(Jar::class) {
                 baseName = tasks.getByName<Jar>("jar").baseName
@@ -203,9 +207,9 @@ project("sdk") {
 
     dependencies {
         api(kotlin("stdlib"))
-        api("com.thoughtworks.xstream", "xstream", "1.4.10")
+        api("com.thoughtworks.xstream", "xstream", "1.4.11.1")
         api("jargs", "jargs", "1.0")
-        api("ch.qos.logback", "logback-classic", "0.9.15")
+        api("ch.qos.logback", "logback-classic", "1.2.3")
 
         implementation("org.hamcrest", "hamcrest-core", "1.3")
         implementation("net.sf.kxml", "kxml2", "2.3.0")

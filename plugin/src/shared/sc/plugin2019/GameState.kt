@@ -45,7 +45,7 @@ class GameState(
      * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
      * Einträgen:
      *
-     *  * [0] - Punktekonto des Spielers (Größe des Schwarms)
+     *  * `[0]` - Punktekonto des Spielers (Größe des Schwarms)
      *
      */
     fun getPlayerStats(playerColor: PlayerColor): IntArray =
@@ -53,8 +53,8 @@ class GameState(
 
     /**
      * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
-     * [Spielerstats][getPlayerStats], wobei getGameStats()[0],
-     * einem Aufruf von getPlayerStats(PlayerColor.RED) entspricht.
+     * [getPlayerStats], wobei `getGameStats()[0]`,
+     * einem Aufruf von `getPlayerStats(PlayerColor.RED)` entspricht.
      *
      * @return Statusinformationen beider Spieler
      *
