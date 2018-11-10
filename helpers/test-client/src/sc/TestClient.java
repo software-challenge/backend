@@ -124,7 +124,7 @@ public class TestClient extends XStreamClient {
     try {
       if (startServer) {
         logger.info("Starting server...");
-        ProcessBuilder builder = new ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-jar", "software-challenge-server.jar", "--port", String.valueOf(port));
+        ProcessBuilder builder = new ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-jar", "server.jar", "--port", String.valueOf(port));
         logDir.mkdirs();
         builder.redirectOutput(new File(logDir, "server_port" + port + ".log"));
         builder.redirectError(new File(logDir, "server_port" + port + ".err"));
