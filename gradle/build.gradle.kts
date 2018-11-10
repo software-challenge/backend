@@ -1,6 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.InputStream
+import java.util.concurrent.TimeUnit
 
 plugins {
     maven
@@ -34,7 +35,7 @@ tasks {
     }
 
     create("deploy") {
-        dependsOn("clean", "doc")
+        dependsOn("doc")
         dependOnSubprojects()
         group = mainGroup
         description = "Zips everything up for release into build/deploy"
@@ -86,8 +87,9 @@ tasks {
     create("testDeployed") {
         dependsOn("deploy")
         group = mainGroup
-        val testDir = buildDir.resolve("test")
+        val testDir = buildDir.resolve("tests")
         doLast {
+            testDir.deleteRecursively()
             testDir.mkdirs()
             val server = ProcessBuilder("java", "-Dlogback.configurationFile=logback.xml", "-jar", project("server").tasks["jar"].outputs.files.first().absolutePath)
                     .redirectOutput(testDir.resolve("server.log")).redirectError(testDir.resolve("server-err.log"))
@@ -99,11 +101,15 @@ tasks {
             }
             startClient(1)
             startClient(2)
-            Thread {
-                Thread.sleep(150_000)
-                println("testDeployed has been running for over 150 seconds - interrupting!")
+            val thread = Thread {
+                try {
+                    Thread.sleep(150_000)
+                } catch(e: InterruptedException) {
+                    return@Thread
+                }
+                println("testDeployed has been running for over 500 seconds - interrupting!")
                 server.destroy()
-            }.run {
+            }.apply {
                 isDaemon = true
                 start()
             }
@@ -122,7 +128,28 @@ tasks {
             } finally {
                 server.destroy()
             }
+            thread.interrupt()
             println("Successfully played a game using the deployed server & client!")
+
+            val unzipped = deployDir.resolve("software-challenge-server")
+            unzipped.deleteRecursively()
+            Runtime.getRuntime().exec("unzip software-challenge-server.zip -d $unzipped", null, deployDir).waitFor()
+
+            println("Testing TestClient...")
+            val testclient = ProcessBuilder(
+                    project("test-client").tasks.getByName("createScripts", ScriptsTask::class).content.split(" ") +
+                            listOf("--start-server", "--tests", "3"))
+                    .redirectOutput(testDir.resolve("test-client.log")).redirectError(testDir.resolve("test-client-err.log"))
+                    .directory(unzipped).start()
+            if(testclient.waitFor(6, TimeUnit.MINUTES)) {
+                val value = testclient.exitValue()
+                if(value == 0)
+                    println("TestClient successfully tested!")
+                else
+                    throw Exception("TestClient exited with $value!")
+            } else {
+                throw Exception("TestClient exceeded timeout!")
+            }
         }
     }
 
@@ -138,7 +165,7 @@ tasks {
         }
     }
     "test" {
-        dependsOn("run")
+        dependsOn("testDeployed")
         group = mainGroup
     }
     "build" {
