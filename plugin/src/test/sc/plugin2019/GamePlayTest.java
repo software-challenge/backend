@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import sc.framework.plugins.Player;
 import sc.plugin2019.util.Constants;
+import sc.plugin2019.util.GameRuleLogic;
 import sc.plugin2019.util.TestGameUtil;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
@@ -210,5 +211,39 @@ public class GamePlayTest {
         }
       }
     }
+  }
+
+  @Test
+  public void testNoWinAfterPiranhaEaten() throws InvalidMoveException {
+    Board board = TestGameUtil.createCustomBoard("" +
+            "-BBBBBBB--" +
+            "R---------" +
+            "R-R-------" +
+            "R-O-------" +
+            "R---------" +
+            "R---------" +
+            "R---------" +
+            "R---------" +
+            "-R--------" +
+            "-B--------"
+    );
+    state.setBoard(board);
+    assertEquals(7, GameRuleLogic.greatestSwarmSize(board, PlayerColor.BLUE));
+    assertEquals(8, GameRuleLogic.greatestSwarmSize(board, PlayerColor.RED));
+
+    {
+      Move move = new Move(1, 8, Direction.LEFT);
+      move.perform(state);
+      assertEquals(null,  game.checkWinCondition());
+    }
+
+    {
+      Move move = new Move(2, 0, Direction.UP);
+      move.perform(state);
+      assertNotEquals(null, game.checkWinCondition());
+    }
+    assertEquals(5, GameRuleLogic.greatestSwarmSize(board, PlayerColor.BLUE));
+    assertEquals(8, GameRuleLogic.greatestSwarmSize(board, PlayerColor.RED));
+    assertEquals(PlayerColor.BLUE, board.getField(2,2).getPiranha().get());
   }
 }
