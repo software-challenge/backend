@@ -3,6 +3,8 @@ deploy/
 bin/
 doc/
 log/
+out/
+.gradle/
 
 # Copied files
 /server/configuration/server.properties

@@ -16,22 +16,20 @@ import java.util.ArrayList;
 /**
  * Das Herz des Clients:
  * Eine sehr simple Logik, die ihre Zuege zufaellig waehlt,
- * aber gueltige Zuege macht. Ausserdem werden zum Spielverlauf
- * Konsolenausgaben gemacht.
+ * aber gueltige Zuege macht.
+ * Ausserdem werden zum Spielverlauf Konsolenausgaben gemacht.
  */
 public class Logic implements IGameHandler {
+  private static final Logger log = LoggerFactory.getLogger(Logic.class);
 
   private Starter client;
   private GameState gameState;
   private Player currentPlayer;
 
-  private static final Logger log = LoggerFactory.getLogger(Logic.class);
-
   /**
    * Erzeugt ein neues Strategieobjekt, das zufaellige Zuege taetigt.
    *
-   * @param client Der zugrundeliegende Client, der mit dem Spielserver
-   *               kommuniziert.
+   * @param client Der zugrundeliegende Client, der mit dem Spielserver kommuniziert.
    */
   public Logic(Starter client) {
     this.client = client;

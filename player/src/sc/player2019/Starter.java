@@ -31,7 +31,6 @@ public class Starter extends AbstractClient {
     } else {
       joinPreparedGame(reservation);
     }
-
   }
 
   public static void main(String[] args) {
@@ -44,15 +43,15 @@ public class Starter extends AbstractClient {
     CmdLineParser.Option reservationOption = parser.addStringOption('r', "reservation");
 
     try {
-      // Parameter auslesen
+      // parameter auslesen
       parser.parse(args);
     } catch (CmdLineParser.OptionException e) {
-      // Bei Fehler die Hilfe anzeigen
+      // bei Fehler die Hilfe anzeigen
       showHelp(e.getMessage());
       System.exit(2);
     }
 
-    // Parameter laden
+    // parameter laden
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (Integer) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT);
     String reservation = (String) parser.getOptionValue(reservationOption, "");
