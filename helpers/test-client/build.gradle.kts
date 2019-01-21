@@ -3,8 +3,8 @@ plugins {
     application
 }
 
-sourceSets {
-    getByName("main").java.srcDir("src")
+sourceSets.main {
+    java.srcDir("src")
 }
 
 application {
@@ -17,24 +17,26 @@ dependencies {
 }
 
 tasks {
-    "jar"(Jar::class) {
-        dependsOn("createScripts")
+    val createScripts by creating(ScriptsTask::class) {
+        destinationDir = file("build/libs")
+        fileName = "start-tests"
+        content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
+    }
+
+    jar {
+        dependsOn(createScripts)
         doFirst {
             copy {
                 from("src/logback-tests.xml")
                 into("build/libs")
             }
         }
-        manifest.attributes["Class-Path"] = configurations.default.joinToString(" ") { "lib/" + it.name } + " plugins/${project.property("game")}.jar software-challenge-server.jar server.jar"
+        val libs = arrayListOf("plugins/${project.property("game")}.jar", "software-challenge-server.jar", "server.jar")
+        libs.addAll(configurations.default.get().map  { "lib/" + it.name })
+        manifest.attributes["Class-Path"] = libs.joinToString(" ")
     }
 
-    create<ScriptsTask>("createScripts") {
-        destinationDir = file("build/libs")
-        fileName = "start-tests"
-        content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
-    }
-
-    "run"(JavaExec::class) {
+    run.configure {
         args = System.getProperty("args", "").split(" ")
     }
 }

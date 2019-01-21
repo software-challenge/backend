@@ -3,10 +3,10 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     java
     application
-    id("com.github.johnrengelman.shadow") version "2.0.4"
+    id("com.github.johnrengelman.shadow") version "4.0.2"
 }
 
-sourceSets.getByName("main").java.srcDir("src")
+sourceSets.main.get().java.srcDir("src")
 
 application {
     mainClassName = "sc.playerYEAR.Starter"
@@ -26,8 +26,8 @@ dependencies {
     }
 }
 
-tasks.getByName<ShadowJar>("shadowJar") {
-    baseName = "GAME_client"
-    classifier = ""
-    destinationDir = rootDir
+tasks.shadowJar {
+    archiveBaseName.set("GAME_client")
+    archiveClassifier.set("")
+    destinationDirectory.set(rootDir)
 }
