@@ -46,8 +46,9 @@ tasks {
 
     create<Exec>("dockerImage") {
         dependsOn("makeRunnable")
-        val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD")).inputStream.reader().readText()
-        commandLine("docker", "build", "--no-cache", "-t", "swc_game-server:latest", "-t", "swc_game-server:$tag", "--build-arg", "game_server_dir=$runnable", ".")
+        val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD")).inputStream.reader().readText().trim()
+        val relativeRunnable = runnable.relativeTo(project.projectDir)
+        commandLine("docker", "build", "--no-cache", "-t", "swc_game-server:latest", "-t", "swc_game-server:$tag", "--build-arg", "game_server_dir=$relativeRunnable", ".")
     }
 
     create<Copy>("makeRunnable") {
