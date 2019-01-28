@@ -15,7 +15,7 @@ Das offizielle Repository der [Software-Challenge](https://www.software-challeng
 
 Als Build-Tool wird [Gradle](https://gradle.org/) verwendet.
 
-Das gesamte Projekt kann sofort nach dem checkout per `./gradlew build` 
+Das gesamte Projekt kann sofort nach dem checkout per `./gradlew build`
 gebaut werden, es ist keine Installation von Programmen nötig.
 
 Die wichtigsten Tasks:
@@ -32,11 +32,11 @@ Die wichtigsten Tasks:
 | `:test-client:run` | startet den Testclient
 
 Tasks der Subprojekte können in zwei Wegen aufgerufen werden:
-`./gradlew :server:run` führt die Task "run" des Subprojektes "server" aus.  
-Das gleiche kann auch erreicht werden, in dem man in das server-Verzeichnis 
+`./gradlew :server:run` führt die Task "run" des Subprojektes "server" aus.
+Das gleiche kann auch erreicht werden, in dem man in das server-Verzeichnis
 wechselt und dort `./gradlew run` ausführt.
 
-Wenn notwendig, können bei der Ausführung eines Subprojektes via `run` 
+Wenn notwendig, können bei der Ausführung eines Subprojektes via `run`
 per `-Dargs="Argument1 Argument2"`Argumente mitgegeben werden.
 
 ### Arbeiten mit Intellij IDEA
@@ -45,7 +45,7 @@ Zuerst sollte sichergestellt werden, dass die neuste Version von
 Intellij IDEA verwendet wird, da es ansonsten Probleme mit Kotlin
 geben kann.
 
-In Intellij kann man das Projekt bequem von Gradle importieren, 
+In Intellij kann man das Projekt bequem von Gradle importieren,
 wodurch alle Module und Bibliotheken automatisch geladen werden.
 Dazu sind folgende Schritte notwendig:
 
@@ -69,9 +69,13 @@ Ein Release kann durch dieses Command initiiert werden:
 `./gradlew release -Pv=X.X -Pdesc="Versionsbeschreibung"`
 
 - `-Pv` gibt die Version an, beginnend bei 0.0 - die Jahresnummer wird automatisch davorgesetzt
-- `-Pdesc` ist eine kurze Beschreibung der Version. Sie wird als Nachricht des Tags verwendet 
+- `-Pdesc` ist eine kurze Beschreibung der Version. Sie wird als Nachricht des Tags verwendet
   und im vorgeschlagenen Text für Ankündigungen auf verschiedenen Platformen eingefügt.
 
-Dann wird die Version (in `gradle.properties`) automatisch angepasst, ein commit gemacht, 
-git tag gesetzt und gepusht.  
+Dann wird die Version (in `gradle.properties`) automatisch angepasst, ein commit gemacht,
+git tag gesetzt und gepusht.
 Im Anschluss gibt das Skript Hinweise, wie weiter zu verfahren ist.
+
+## Deploy im Wettkampfsystem
+
+siehe https://github.com/CAU-Kiel-Tech-Inf/socha-sysops/wiki/General-infrastructure#game-server

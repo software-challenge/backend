@@ -5,10 +5,23 @@ ARG game_server_dir
 
 ADD $game_server_dir /app
 WORKDIR /app
-ADD game_server_start_production.sh /app/start.sh
 ADD configuration/logback-production.xml /app/logback-production.xml
 # This will be overwritten by the docker secret with the real password in production:
 ADD configuration/server.properties.production /run/secrets/gameserver_properties
 RUN rm /app/server.properties && ln -s /run/secrets/gameserver_properties /app/server.properties
-RUN chmod +x /app/start.sh
-CMD ["./start.sh"]
+
+ENTRYPOINT ["java"]
+CMD ["-Dfile.encoding=UTF-8", \
+     "-Dlogback.configurationFile=logback-production.xml", \
+     "-Djava.security.egd=file:/dev/./urandom", \
+     "-server", \
+     "-XX:MaxGCPauseMillis=100", \
+     "-XX:GCPauseIntervalMillis=2050", \
+     "-XX:+UseConcMarkSweepGC", \
+     "-XX:+CMSParallelRemarkEnabled", \
+     "-XX:+UseCMSInitiatingOccupancyOnly", \
+     "-XX:CMSInitiatingOccupancyFraction=70", \
+     "-XX:+ScavengeBeforeFullGC", \
+     "-XX:+CMSScavengeBeforeRemark", \
+     "-jar", \
+     "./server.jar"]
