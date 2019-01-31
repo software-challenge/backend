@@ -139,7 +139,6 @@ public class GameRuleLogic {
     if (swarm.size() != tmpSwarm.size())
       tmpSwarm = getSwarm(board, found, tmpSwarm);
 
-
     swarm.addAll(tmpSwarm);
 
     found.removeAll(swarm);

@@ -1,4 +1,4 @@
 package sc.api.plugins;
 
-public interface IField {
+public interface IField extends Cloneable {
 }

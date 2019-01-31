@@ -38,7 +38,7 @@ public class Field implements IField {
 
   public Field(int x, int y, PlayerColor piranha) {
     this(x, y);
-    if (piranha == PlayerColor.RED)
+    if(piranha == PlayerColor.RED)
       this.state = RED;
     else
       this.state = BLUE;
@@ -46,16 +46,20 @@ public class Field implements IField {
 
   public Field(int x, int y, boolean isObstructed) {
     this(x, y);
-    if (isObstructed) {
+    if(isObstructed) {
       this.state = OBSTRUCTED;
     } else {
       this.state = EMPTY;
     }
   }
 
+  public Field(Field fieldToClone) {
+    this(fieldToClone.x, fieldToClone.y, fieldToClone.state);
+  }
+
   @Override
   public Field clone() {
-    return new Field(this.x, this.y, this.state);
+    return new Field(this);
   }
 
   public int getX() {
@@ -75,9 +79,9 @@ public class Field implements IField {
   }
 
   public Optional<PlayerColor> getPiranha() {
-    if (state == RED)
+    if(state == RED)
       return Optional.of(PlayerColor.RED);
-    else if (state == BLUE)
+    else if(state == BLUE)
       return Optional.of(PlayerColor.BLUE);
 
     return Optional.empty();
@@ -89,9 +93,9 @@ public class Field implements IField {
    * @param piranha Farbe des Piranhas
    */
   public void setPiranha(PlayerColor piranha) {
-    if (piranha == PlayerColor.RED) {
+    if(piranha == PlayerColor.RED) {
       state = RED;
-    } else if (piranha == PlayerColor.BLUE) {
+    } else if(piranha == PlayerColor.BLUE) {
       state = BLUE;
     } else {
       throw new IllegalStateException("The given PlayerColor does not exist");
