@@ -20,13 +20,13 @@ class GameState(
         startPlayerColor = state.startPlayerColor
     }
 
-    override fun clone() = GameState(this)
+    public override fun clone() = GameState(this)
 
     @XStreamAsAttribute
     override var turn = 0
         set(value) {
             val turnLimit = Constants.ROUND_LIMIT * 2
-            if (value > turnLimit) throw InvalidGameStateException("Turn $value exceeded maxTurn $turnLimit")
+            if(value > turnLimit) throw InvalidGameStateException("Turn $value exceeds turnLimit($turnLimit)")
             field = value
         }
 
@@ -34,7 +34,7 @@ class GameState(
 
     /** wechselt den Spieler, der aktuell an der Reihe ist, anhand der Zugzahl [turn]  */
     fun switchCurrentPlayer() {
-        currentPlayerColor = if (turn % 2 == 0) PlayerColor.RED else PlayerColor.BLUE
+        currentPlayerColor = if(turn % 2 == 0) PlayerColor.RED else PlayerColor.BLUE
     }
 
     override fun getPointsForPlayer(playerColor: PlayerColor) = GameRuleLogic.greatestSwarmSize(board, playerColor)
@@ -49,7 +49,7 @@ class GameState(
      *
      */
     fun getPlayerStats(playerColor: PlayerColor): IntArray =
-            getGameStats()[if (playerColor == PlayerColor.RED) Constants.GAME_STATS_RED_INDEX else Constants.GAME_STATS_BLUE_INDEX]
+            getGameStats()[if(playerColor == PlayerColor.RED) Constants.GAME_STATS_RED_INDEX else Constants.GAME_STATS_BLUE_INDEX]
 
     /**
      * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
@@ -74,9 +74,9 @@ class GameState(
      * Spielclient i.A. nicht aufgerufen werden!
      */
     fun addPlayer(player: Player) {
-        if (player.color == PlayerColor.RED) {
+        if(player.color == PlayerColor.RED) {
             red = player
-        } else if (player.color == PlayerColor.BLUE) {
+        } else if(player.color == PlayerColor.BLUE) {
             blue = player
         }
     }
