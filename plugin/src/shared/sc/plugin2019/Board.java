@@ -20,18 +20,12 @@ public class Board implements IBoard {
   @XStreamImplicit(itemFieldName = "fields")
   private Field[][] fields;
 
-  private Board(boolean doInit) {
-    this.fields = new Field[Constants.BOARD_SIZE][Constants.BOARD_SIZE];
-    if(doInit)
-      initialize();
-  }
-
   public Board() {
-    this(true);
+    this.fields = randomFields();
   }
 
   public Board(Board boardToClone) {
-    this(false);
+    this.fields = emptyFields();
     for(int x = 0; x < Constants.BOARD_SIZE; x++) {
       for(int y = 0; y < Constants.BOARD_SIZE; y++) {
         fields[x][y] = boardToClone.fields[x][y].clone();
@@ -49,8 +43,13 @@ public class Board implements IBoard {
     return obj instanceof Board && Arrays.equals(((Board) obj).fields, this.fields);
   }
 
+  private static Field[][] emptyFields() {
+   return new Field[Constants.BOARD_SIZE][Constants.BOARD_SIZE];
+  }
+
   /** Erstellt eine zufälliges Spielbrett. */
-  private void initialize() {
+  private static Field[][] randomFields() {
+    Field[][] fields = emptyFields();
     for(int x = 0; x < Constants.BOARD_SIZE; x++) {
       for(int y = 0; y < Constants.BOARD_SIZE; y++) {
         fields[x][y] = new Field(x, y);
@@ -67,9 +66,7 @@ public class Board implements IBoard {
     // create a list of coordinates for fields which may be blocked
     List<Field> blockableFields = new ArrayList<>();
     for(int x = Constants.OBSTACLES_START; x < Constants.OBSTACLES_END; x++) {
-      for(int y = Constants.OBSTACLES_START; y < Constants.OBSTACLES_END; y++) {
-        blockableFields.add(this.getField(x, y));
-      }
+      blockableFields.addAll(Arrays.asList(fields[x]).subList(Constants.OBSTACLES_START, Constants.OBSTACLES_END));
     }
     // set fields with randomly selected coordinates to blocked
     // coordinates may not lay on same horizontal, vertical or diagonal lines with other selected coordinates
@@ -84,6 +81,7 @@ public class Board implements IBoard {
                       field.getX() + field.getY() == selectedField.getX() + selectedField.getY()))
       ).collect(Collectors.toList());
     }
+    return fields;
   }
 
   @Override
