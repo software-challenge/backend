@@ -95,13 +95,7 @@ public class Field implements IField {
    * @param piranha Farbe des Piranhas
    */
   public void setPiranha(PlayerColor piranha) {
-    if(piranha == PlayerColor.RED) {
-      state = RED;
-    } else if(piranha == PlayerColor.BLUE) {
-      state = BLUE;
-    } else {
-      throw new IllegalStateException("The given PlayerColor does not exist");
-    }
+    state = FieldState.from(piranha);
   }
 
   public boolean isObstructed() {
