@@ -10,8 +10,7 @@ import java.util.Optional;
 import static sc.plugin2019.FieldState.*;
 
 /**
- * Ein Feld des Spielfelds. Ein Spielfeld ist durch den index eindeutig identifiziert.
- * Das type Attribut gibt an, um welchen Feldtyp es sich handelt.
+ * Ein Feld des Spielfelds. Ein Spielfeld hat eine x- und y-Koordinate und einen {@link FieldState}.
  */
 @XStreamAlias(value = "field")
 public class Field implements IField {
@@ -25,37 +24,44 @@ public class Field implements IField {
   @XStreamAsAttribute
   private FieldState state;
 
-  public Field(int x, int y) {
+  public Field(int x, int y, FieldState state) {
     this.x = x;
     this.y = y;
-    this.state = EMPTY;
-  }
-
-  public Field(int x, int y, FieldState state) {
-    this(x, y);
     this.state = state;
   }
 
+  public Field(int x, int y) {
+    this(x, y, EMPTY);
+  }
+
   public Field(int x, int y, PlayerColor piranha) {
-    this(x, y);
-    if (piranha == PlayerColor.RED)
-      this.state = RED;
-    else
-      this.state = BLUE;
+    this(x, y, FieldState.from(piranha));
   }
 
   public Field(int x, int y, boolean isObstructed) {
-    this(x, y);
-    if (isObstructed) {
-      this.state = OBSTRUCTED;
-    } else {
-      this.state = EMPTY;
-    }
+    this(x, y, isObstructed ? OBSTRUCTED : EMPTY);
+  }
+
+  public Field(Field fieldToClone) {
+    this(fieldToClone.x, fieldToClone.y, fieldToClone.state);
   }
 
   @Override
   public Field clone() {
-    return new Field(this.x, this.y, this.state);
+    return new Field(this);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(!(obj instanceof Field))
+      return false;
+    Field field = (Field) obj;
+    return x == field.x && y == field.y && state == field.state;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Field(%d|%d){%s}", x, y, state);
   }
 
   public int getX() {
@@ -75,9 +81,9 @@ public class Field implements IField {
   }
 
   public Optional<PlayerColor> getPiranha() {
-    if (state == RED)
+    if(state == RED)
       return Optional.of(PlayerColor.RED);
-    else if (state == BLUE)
+    else if(state == BLUE)
       return Optional.of(PlayerColor.BLUE);
 
     return Optional.empty();
@@ -89,13 +95,7 @@ public class Field implements IField {
    * @param piranha Farbe des Piranhas
    */
   public void setPiranha(PlayerColor piranha) {
-    if (piranha == PlayerColor.RED) {
-      state = RED;
-    } else if (piranha == PlayerColor.BLUE) {
-      state = BLUE;
-    } else {
-      throw new IllegalStateException("The given PlayerColor does not exist");
-    }
+    state = FieldState.from(piranha);
   }
 
   public boolean isObstructed() {
@@ -104,11 +104,6 @@ public class Field implements IField {
 
   public FieldState getState() {
     return state;
-  }
-
-  @Override
-  public String toString() {
-    return String.format("Field(%d|%d){%s}", x, y, state);
   }
 
   public void setState(FieldState state) {

@@ -64,12 +64,7 @@ public class GameRuleLogic {
 
     List<Field> fieldsInDirection = getFieldsInDirection(board, x, y, direction);
 
-    FieldState opponentFieldColor;
-    if (state.getCurrentPlayerColor() == PlayerColor.RED) {
-      opponentFieldColor = FieldState.BLUE;
-    } else {
-      opponentFieldColor = FieldState.RED;
-    }
+    FieldState opponentFieldColor = FieldState.from(state.getCurrentPlayerColor().opponent());
 
     for (Field f : fieldsInDirection) {
       if (f.getState() == opponentFieldColor) {
@@ -138,7 +133,6 @@ public class GameRuleLogic {
     // FIXME: Might be improved O(swarm.size()) should be possible
     if (swarm.size() != tmpSwarm.size())
       tmpSwarm = getSwarm(board, found, tmpSwarm);
-
 
     swarm.addAll(tmpSwarm);
 
