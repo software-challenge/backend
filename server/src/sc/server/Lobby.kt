@@ -25,8 +25,10 @@ import java.io.IOException
 class Lobby : IClientListener {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
 
-    val gameManager: GameRoomManager = GameRoomManager()
-    val clientManager: ClientManager = ClientManager(this)
+    val gameManager = GameRoomManager()
+    val clientManager = ClientManager().also {
+        it.setOnClientConnected(this::onClientConnected)
+    }
 
     /**
      * Starts the ClientManager in it's own daemon thread. This method should be used only once.
@@ -63,7 +65,6 @@ class Lobby : IClientListener {
                 is JoinPreparedRoomRequest -> ReservationManager.redeemReservationCode(source, packet.reservationCode)
                 is JoinRoomRequest -> {
                     val gameRoomMessage = this.gameManager.joinOrCreateGame(source, packet.gameType)
-                    // null is returned if join was unsuccessful
                     if (gameRoomMessage != null) {
                         for (admin in clientManager.clients) {
                             if (admin.isAdministrator) {
