@@ -83,8 +83,6 @@ public class NewClientListener implements Runnable, Closeable {
 
   /**
    * Start the listener and create a daemon thread from this object
-   *
-   * @throws IOException
    */
   public void start() throws IOException {
     startSocketListener();
