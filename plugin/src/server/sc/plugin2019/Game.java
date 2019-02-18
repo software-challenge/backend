@@ -141,9 +141,8 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  //TODO set canTimeout to true
   protected ActionTimeout getTimeoutFor(Player player) {
-    return new ActionTimeout(false, 10000L, 2000L);
+    return new ActionTimeout(true, 10000L, 2000L);
   }
 
   /**
