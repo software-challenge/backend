@@ -17,6 +17,7 @@ application {
 
 dependencies {
     implementation(project(":sdk"))
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.1.1")
 
     testImplementation("junit", "junit", "4.12")
 }
