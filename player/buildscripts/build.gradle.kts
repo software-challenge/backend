@@ -5,6 +5,7 @@ plugins {
 }
 
 sourceSets.main.get().java.srcDir("src")
+sourceSets.main.get().resources.srcDir("src")
 
 application {
     mainClassName = "sc.playerYEAR.Starter"
