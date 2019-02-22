@@ -121,7 +121,7 @@ public class Move implements Cloneable, IMove {
       start.setState(FieldState.EMPTY);
       destination.setPiranha(state.getCurrentPlayerColor());
     }
-    logger.debug("Distance: " + distance + " to Field " + state.getField(x, y));
+    //logger.debug("Move from " + state.getField(x, y) + " " + distance + " in " + direction);
 
     // Bereite nächsten Zug vor
     state.setLastMove(this);
