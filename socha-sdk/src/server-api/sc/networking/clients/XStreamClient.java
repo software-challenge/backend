@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 
 public abstract class XStreamClient {
   private static Logger logger = LoggerFactory.getLogger(XStreamClient.class);
@@ -152,8 +153,8 @@ public abstract class XStreamClient {
   }
 
   public void sendCustomData(String data) throws IOException {
-    logger.info(data);
-    sendCustomData(data.getBytes("utf-8"));
+    logger.info("Sending Custom data: {}", data);
+    sendCustomData(data.getBytes(StandardCharsets.UTF_8));
   }
 
   public void sendCustomData(byte[] data) throws IOException {
