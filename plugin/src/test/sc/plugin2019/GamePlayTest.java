@@ -82,7 +82,7 @@ public class GamePlayTest {
     Field fieldRed = board.getField(0, 5);
     Field fieldEmpty = board.getField(5, 5);
 
-    assertThrows(IllegalStateException.class, () -> fieldRed.setPiranha(null));
+    assertThrows(RuntimeException.class, () -> fieldRed.setPiranha(null));
     fieldRed.setPiranha(PlayerColor.RED);
     assertTrue(fieldRed.getPiranha().isPresent());
     assertEquals(PlayerColor.RED, fieldRed.getPiranha().get());
@@ -139,23 +139,10 @@ public class GamePlayTest {
     );
     state.setBoard(board);
     assertEquals(16, greatestSwarmSize(board, PlayerColor.BLUE));
-
-    board = TestGameUtil.createCustomBoard("" +
-            "BBBBBBBBBB" +
-            "-B-B--B---" +
-            "RO-B--B---" +
-            "R-O---B---" +
-            "R-RRRRRRRR" +
-            "R---------" +
-            "R---------" +
-            "R---------" +
-            "----------" +
-            "----------"
-    );
-    state.setBoard(board);
-    board.getField(1, 5).setState(EMPTY);
+    assertEquals(15, greatestSwarmSize(board, PlayerColor.RED));
+    board.getField(1, 4).setState(EMPTY);
+    assertEquals(16, greatestSwarmSize(board, PlayerColor.BLUE));
     assertEquals(8, greatestSwarmSize(board, PlayerColor.RED));
-
   }
 
   @Test

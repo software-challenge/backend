@@ -10,7 +10,7 @@ import java.util.Optional;
 import static sc.plugin2019.FieldState.*;
 
 /**
- * Ein Feld des Spielfelds. Ein Spielfeld hat eine x- und y-Koordinate und einen {@link FieldState}.
+ * Ein Feld des Spielfelds. Ein Spielfeld hat eine x- und y-Koordinate und einen {@link FieldState}, der anzeigt ob sich etwas auf diesem Feld befindet.
  */
 @XStreamAlias(value = "field")
 public class Field implements IField {
@@ -35,7 +35,7 @@ public class Field implements IField {
   }
 
   public Field(int x, int y, PlayerColor piranha) {
-    this(x, y, FieldState.from(piranha));
+    this(x, y, FieldState.Companion.from(piranha));
   }
 
   public Field(int x, int y, boolean isObstructed) {
@@ -89,13 +89,9 @@ public class Field implements IField {
     return Optional.empty();
   }
 
-  /**
-   * Nur für den Server (für Test) relevant.
-   *
-   * @param piranha Farbe des Piranhas
-   */
+  /** Nur für den Server relevant. */
   public void setPiranha(PlayerColor piranha) {
-    state = FieldState.from(piranha);
+    state = FieldState.Companion.from(piranha);
   }
 
   public boolean isObstructed() {

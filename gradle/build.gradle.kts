@@ -49,7 +49,7 @@ tasks {
         dependsOn(doc)
         dependOnSubprojects()
         group = mainGroup
-        description = "Zips everything up for release into build/deploy"
+        description = "Zips everything up for release into ./build/deploy"
     }
 
     create("release") {

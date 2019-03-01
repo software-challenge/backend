@@ -64,7 +64,7 @@ public class GameRuleLogic {
 
     List<Field> fieldsInDirection = getFieldsInDirection(board, x, y, direction);
 
-    FieldState opponentFieldColor = FieldState.from(state.getCurrentPlayerColor().opponent());
+    FieldState opponentFieldColor = FieldState.Companion.from(state.getCurrentPlayerColor().opponent());
 
     for (Field f : fieldsInDirection) {
       if (f.getState() == opponentFieldColor) {
