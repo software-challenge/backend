@@ -8,12 +8,6 @@ import sc.plugin2019.util.Constants
 import sc.shared.PlayerColor
 import java.util.*
 
-fun main() {
-    println(Board().prettyString())
-    println(Board().getField(1, 0))
-    println(Board().getField(0, 1))
-}
-
 /** Spielbrett für Piranhas mit [Constants.BOARD_SIZE]² Feldern.  */
 @XStreamAlias(value = "board")
 class Board : IBoard {
@@ -75,8 +69,15 @@ class Board : IBoard {
             "Board " + fields.joinToString(" ", "[", "]") { column -> column.joinToString(", ", prefix = "[", postfix = "]") { it.toString() } }
 
     val line = "-".repeat(Constants.BOARD_SIZE + 2)
-    fun prettyString() =
-            fields.joinToString("\n", line + "\n", "\n" + line) { column -> column.joinToString("", prefix = "|", postfix = "|") { it.state.asLetter() } }
+    fun prettyString(): String {
+        val map = Array(Constants.BOARD_SIZE) { StringBuilder("|") }
+        fields.forEach {
+            it.forEachIndexed { index, field ->
+                map[index].append(field.state.asLetter())
+            }
+        }
+        return map.joinToString("\n", line + "\n", "\n" + line) { it.append('|').toString() }
+    }
 
     override fun getField(x: Int, y: Int): Field =
             this.fields[x][y]

@@ -49,8 +49,7 @@ public class GamePlayTest {
             "----R-O--R" +
             "------R--R" +
             "---------R" +
-            "----------"
-    );
+            "----------");
     state.setBoard(board);
     {
       Move move = new Move(9, 3, UP_LEFT);
@@ -76,8 +75,7 @@ public class GamePlayTest {
             "R--------R" +
             "R--------R" +
             "R--------R" +
-            "-BBBBBBBB-"
-    );
+            "-BBBBBBBB-");
     state.setBoard(board);
     Field fieldRed = board.getField(0, 5);
     Field fieldEmpty = board.getField(5, 5);
@@ -116,12 +114,11 @@ public class GamePlayTest {
             "R---------" +
             "R---------" +
             "----------" +
-            "-BBBBBBBB-"
-    );
+            "-BBBBBBBB-");
     state.setBoard(board);
 
     assertEquals(16, getOwnFields(board, PlayerColor.RED).size());
-    for (Field field : getOwnFields(board, PlayerColor.RED)) {
+    for(Field field : getOwnFields(board, PlayerColor.RED)) {
       assertEquals(RED, field.getState());
     }
 
@@ -135,8 +132,7 @@ public class GamePlayTest {
             "R---------" +
             "R---------" +
             "----------" +
-            "----------"
-    );
+            "----------");
     state.setBoard(board);
     assertEquals(16, greatestSwarmSize(board, PlayerColor.BLUE));
     assertEquals(15, greatestSwarmSize(board, PlayerColor.RED));
@@ -157,8 +153,7 @@ public class GamePlayTest {
             "R--------R" +
             "R--------R" +
             "R--------R" +
-            "-BBBBBBBB-"
-    );
+            "-BBBBBBBB-");
     state.setBoard(board);
 
     assertTrue(isValidToMove(state, 0, 4, RIGHT, 2));
@@ -175,10 +170,10 @@ public class GamePlayTest {
   public void testObstructedFieldGeneration() {
     int count = 0;
     List<Field> obstructedFields = new ArrayList<>();
-    for (int x = 0; x < Constants.BOARD_SIZE; x++) {
-      for (int y = 0; y < Constants.BOARD_SIZE; y++) {
-        if (state.getBoard().getField(x, y).isObstructed()) {
-          if (count < Constants.NUM_OBSTACLES) {
+    for(int x = 0; x < Constants.BOARD_SIZE; x++) {
+      for(int y = 0; y < Constants.BOARD_SIZE; y++) {
+        if(state.getBoard().getField(x, y).isObstructed()) {
+          if(count < Constants.NUM_OBSTACLES) {
             count++;
           } else {
             fail("More than two obstructed fields found");
@@ -187,7 +182,7 @@ public class GamePlayTest {
           assertTrue(y > 1);
           assertTrue(x < Constants.BOARD_SIZE - 2);
           assertTrue(y < Constants.BOARD_SIZE - 2);
-          for (Field field : obstructedFields) {
+          for(Field field : obstructedFields) {
             // check whether second field is in same line (diagonal, vertical or horizontal as first one)
             assertNotEquals(field.getX(), x); // horizontal
             assertNotEquals(field.getY(), y); // vertical
@@ -221,7 +216,7 @@ public class GamePlayTest {
     {
       Move move = new Move(1, 8, Direction.LEFT);
       move.perform(state);
-      assertEquals(null,  game.checkWinCondition());
+      assertEquals(null, game.checkWinCondition());
     }
 
     {
@@ -231,6 +226,6 @@ public class GamePlayTest {
     }
     assertEquals(5, GameRuleLogic.greatestSwarmSize(board, PlayerColor.BLUE));
     assertEquals(8, GameRuleLogic.greatestSwarmSize(board, PlayerColor.RED));
-    assertEquals(PlayerColor.BLUE, board.getField(2,2).getPiranha().get());
+    assertEquals(PlayerColor.BLUE, board.getField(2, 2).getPiranha().get());
   }
 }

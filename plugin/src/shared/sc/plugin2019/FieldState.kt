@@ -16,10 +16,10 @@ enum class FieldState {
     }
 
     fun asLetter() = when(this) {
-        OBSTRUCTED -> "O"
-        RED -> "R"
-        BLUE -> "B"
-        else -> " "
+        OBSTRUCTED -> 'O'
+        RED -> 'R'
+        BLUE -> 'B'
+        else -> ' '
     }
 
     companion object {
