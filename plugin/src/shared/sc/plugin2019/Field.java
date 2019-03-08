@@ -35,7 +35,7 @@ public class Field implements IField {
   }
 
   public Field(int x, int y, PlayerColor piranha) {
-    this(x, y, FieldState.Companion.from(piranha));
+    this(x, y, FieldState.from(piranha));
   }
 
   public Field(int x, int y, boolean isObstructed) {
@@ -91,7 +91,7 @@ public class Field implements IField {
 
   /** Nur für den Server relevant. */
   public void setPiranha(PlayerColor piranha) {
-    state = FieldState.Companion.from(piranha);
+    state = FieldState.from(piranha);
   }
 
   public boolean isObstructed() {

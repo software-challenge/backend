@@ -23,6 +23,7 @@ enum class FieldState {
     }
 
     companion object {
+        @JvmStatic
         fun from(color: PlayerColor): FieldState {
             return when(color) {
                 PlayerColor.RED -> RED
