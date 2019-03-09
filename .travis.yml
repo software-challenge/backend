@@ -21,7 +21,7 @@ script:
 
 before_deploy:
   - cd ..
-  - git clone "https://xerus2000:$GH_TOKEN@github.com/CAU-Kiel-Tech-Inf/not-so-simple-client.git"
+  - git clone "https://socha-bot:$GH_TOKEN@github.com/CAU-Kiel-Tech-Inf/not-so-simple-client.git"
   - cd not-so-simple-client
   - ./gradlew shadowJar
   - cd "$TRAVIS_BUILD_DIR"
