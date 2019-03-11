@@ -82,7 +82,7 @@ public class GamePlayTest {
     Field fieldRed = board.getField(0, 5);
     Field fieldEmpty = board.getField(5, 5);
 
-    assertThrows(IllegalStateException.class, () -> fieldRed.setPiranha(null));
+    assertThrows(RuntimeException.class, () -> fieldRed.setPiranha(null));
     fieldRed.setPiranha(PlayerColor.RED);
     assertTrue(fieldRed.getPiranha().isPresent());
     assertEquals(PlayerColor.RED, fieldRed.getPiranha().get());

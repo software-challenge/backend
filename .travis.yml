@@ -17,7 +17,14 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
-  - ./gradlew run || (exitcode=$?; find build/tests | while read f; do echo -e "\033[4m\$f\033[0m"; cat $f; done && return $exitcode)
+  - ./gradlew build || (exitcode=$?; find build/tests | while read f; do echo -e "\033[4m\$f\033[0m"; cat $f; done && return $exitcode)
+
+before_deploy:
+  - cd ..
+  - git clone "https://socha-bot:$GH_TOKEN@github.com/CAU-Kiel-Tech-Inf/not-so-simple-client.git"
+  - cd not-so-simple-client
+  - ./gradlew shadowJar
+  - cd "$TRAVIS_BUILD_DIR"
 
 deploy:
   provider: releases
@@ -26,6 +33,7 @@ deploy:
   file:
     - build/deploy/*.jar
     - build/deploy/*.zip
+    - ../not-so-simple-client/*.jar
   skip_cleanup: true
   on:
     tags: true

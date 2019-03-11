@@ -1,6 +1,6 @@
 plugins {
     application
-    id("com.github.johnrengelman.shadow") version "4.0.2"
+    id("com.github.johnrengelman.shadow") version "5.0.0"
 }
 
 val game: String by project
