@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit
 plugins {
     maven
     `java-library`
-    kotlin("jvm") version "1.3.11"
-    id("com.github.ben-manes.versions") version "0.20.0"
+    kotlin("jvm") version "1.3.21"
+    id("com.github.ben-manes.versions") version "0.21.0"
     id("org.jetbrains.dokka") version "0.9.17"
 }
 
@@ -28,7 +28,7 @@ subprojects {
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 val mainGroup = "_main"
 tasks {
-    create("startServer") {
+    val startServer by creating {
         dependsOn(":server:run")
         group = mainGroup
     }
@@ -52,7 +52,7 @@ tasks {
         description = "Zips everything up for release into ./build/deploy"
     }
 
-    create("release") {
+    val release by creating {
         dependsOn(deploy)
         group = mainGroup
         description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
