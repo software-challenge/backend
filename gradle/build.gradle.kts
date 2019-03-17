@@ -73,7 +73,7 @@ tasks {
             println("""
             ===================================================
             Fertig! Jetzt noch folgende Schritte ausfuehren:
-             - einen Release für die GUI erstellen
+             - ein Release für die GUI erstellen
              - auf der Website (http://www.software-challenge.de/wp-admin) unter Medien die Dateien ersetzen
              - unter Seiten die Downloadseite aktualisieren (neue Version in Versionshistorie eintragen)
 
