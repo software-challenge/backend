@@ -61,9 +61,6 @@ abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
     abstract fun getPointsForPlayer(playerColor: PlayerColor): Int
 
     override fun toString() =
-            ("GameState{turn=" + turn + ",currentPlayer=" + currentPlayer + "}"
-                    + red + blue
-                    + board
-                    + lastMove)
+            "GameState(turn=$turn,currentPlayer=${currentPlayer.color})"
 
 }

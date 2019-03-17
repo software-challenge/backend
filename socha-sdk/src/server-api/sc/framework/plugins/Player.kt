@@ -74,6 +74,6 @@ open class Player(@XStreamAsAttribute var color: PlayerColor) : Cloneable {
         logger.debug("Move requested from $this")
     }
 
-    override fun toString(): String = "%s Player - %s".format(color, displayName)
+    override fun toString(): String = "Player %s(%s)".format(color, displayName)
 
 }
