@@ -1,4 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
@@ -19,6 +18,7 @@ println("Current version: $version Game: $game")
 
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedClient: String by extra { deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath }
+val testLogDir by extra { buildDir.resolve("tests") }
 
 subprojects {
     apply(plugin = "java-library")
@@ -94,21 +94,20 @@ tasks {
     val testDeployed by creating {
         dependsOn(deploy)
         group = mainGroup
-        val testDir = buildDir.resolve("tests")
         doLast {
             val gameWaitSeconds = 150L
             val testClientGames = 3
 
-            testDir.deleteRecursively()
-            testDir.mkdirs()
+            testLogDir.deleteRecursively()
+            testLogDir.mkdirs()
             val server = ProcessBuilder("java", "-Dlogback.configurationFile=logback.xml", "-jar",
                     project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath)
-                    .redirectOutput(testDir.resolve("server.log")).redirectError(testDir.resolve("server-err.log"))
+                    .redirectOutput(testLogDir.resolve("server.log")).redirectError(testLogDir.resolve("server-err.log"))
                     .directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(1000)
             val startClient: (Int) -> Process = {
                 ProcessBuilder("java", "-jar", deployedClient)
-                        .redirectOutput(testDir.resolve("client$it.log")).redirectError(testDir.resolve("client$it-err.log")).start()
+                        .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
             startClient(2)
@@ -131,10 +130,10 @@ tasks {
                         if(!server.isAlive)
                             throw Exception("Server terminated unexpectedly!")
                         Thread.sleep(200)
-                    } while(!testDir.resolve("client$i.log").readText().contains("Received game result", true))
+                    } while(!testLogDir.resolve("client$i.log").readText().contains("Received game result", true))
                 }
             } catch(t: Throwable) {
-                println("Error in testDeployed - check the logs in $testDir")
+                println("Error in testDeployed - check the logs in $testLogDir")
                 throw t
             } finally {
                 server.destroy()
@@ -150,7 +149,7 @@ tasks {
             val testClient = ProcessBuilder(
                     project("test-client").tasks.getByName("createScripts", ScriptsTask::class).content.split(" ") +
                             listOf("--start-server", "--tests", "$testClientGames"))
-                    .redirectOutput(testDir.resolve("test-client.log")).redirectError(testDir.resolve("test-client-err.log"))
+                    .redirectOutput(testLogDir.resolve("test-client.log")).redirectError(testLogDir.resolve("test-client-err.log"))
                     .directory(unzipped).start()
             if(testClient.waitFor(gameWaitSeconds * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
