@@ -103,7 +103,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     String reason = null;
     Player opponent = gameState.getOpponent(player);
     if (winCondition != null) {
-      reason = winCondition.getReason();
+      reason = winCondition.getReason().message;
       if (player.getColor().equals(winCondition.getWinner())) {
         matchPoints = Constants.WIN_SCORE;
       } else if (opponent.getColor().equals(winCondition.getWinner())) {
@@ -162,7 +162,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       // round limit not reached
       Player winningPlayer = getWinner();
       if (winningPlayer != null) {
-        return new WinCondition(winningPlayer.getColor(), Constants.WINNING_MESSAGE);
+        return new WinCondition(winningPlayer.getColor(), WinReason.SWARM);
       } else {
         return null;
       }
@@ -170,7 +170,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       // round limit reached
       Player winningPlayer = getWinner();
       if (winningPlayer != null) {
-        return new WinCondition(winningPlayer.getColor(), Constants.WINNING_MESSAGE);
+        return new WinCondition(winningPlayer.getColor(), WinReason.SWARM);
       } else {
         PlayerColor winner;
         if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_SWARM_SIZE] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_SWARM_SIZE]) {
@@ -180,7 +180,7 @@ public class Game extends RoundBasedGameInstance<Player> {
         } else {
           winner = null;
         }
-        return new WinCondition(winner, Constants.ROUND_LIMIT_MESSAGE);
+        return new WinCondition(winner, WinReason.ROUND_LIMIT);
       }
     }
   }
@@ -285,11 +285,11 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public List<Player> getWinners() {
-    WinCondition win = checkWinCondition();
+    WinCondition winCondition = checkWinCondition();
     List<Player> winners = new ArrayList<>();
-    if (win != null) {
+    if (winCondition != null) {
       for (Player player : this.players) {
-        if (player.getColor() == win.getWinner()) {
+        if (player.getColor() == winCondition.getWinner()) {
           winners.add(player);
           break;
         }

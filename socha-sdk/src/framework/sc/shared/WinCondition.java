@@ -6,25 +6,23 @@ public class WinCondition implements Cloneable {
   private final PlayerColor winner;
 
   /** Sieggrund */
-  private final String reason;
+  private final WinReason reason;
 
   public PlayerColor getWinner() {
     return winner;
   }
 
-  public String getReason() {
+  public WinReason getReason() {
     return reason;
   }
 
   /**
    * Erzeugt eine neue Condition mit Sieger und Gewinngrund
    *
-   * @param winner
-   *            Farbe des Siegers
-   * @param reason
-   *            Text, der Sieg beschreibt
+   * @param winner Farbe des Siegers
+   * @param reason Text, der Sieg beschreibt
    */
-  public WinCondition(PlayerColor winner, String reason) {
+  public WinCondition(PlayerColor winner, WinReason reason) {
     this.winner = winner;
     this.reason = reason;
   }
@@ -45,7 +43,7 @@ public class WinCondition implements Cloneable {
       if (this.getWinner() != wq.getWinner()) {
         return false;
       }
-      return this.getReason() == wq.getReason();
+      return this.getReason().equals(wq.getReason());
     } else {
       return false;
     }

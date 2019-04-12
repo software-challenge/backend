@@ -9,6 +9,7 @@ import sc.plugin2019.util.TestGameUtil;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 import sc.shared.WinCondition;
+import sc.shared.WinReason;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class GamePlayTest {
     {
       Move move = new Move(1, 0, RIGHT);
       move.perform(state);
-      assertEquals(new WinCondition(PlayerColor.BLUE, Constants.WINNING_MESSAGE), game.checkWinCondition());
+      assertEquals(new WinCondition(PlayerColor.BLUE, WinReason.SWARM), game.checkWinCondition());
     }
   }
 
