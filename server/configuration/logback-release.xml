@@ -30,9 +30,6 @@
   <logger name="sc" level="INFO" />
 
   <!-- Uncomment the following line to enable verbose logging -->
-  <!--<logger name="sc" level="INFO" />-->
-
-  <!-- Uncomment the following line to enable very verbose logging: -->
   <!--<logger name="sc" level="DEBUG" />-->
 
   <root level="INFO">
