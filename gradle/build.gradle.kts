@@ -97,7 +97,7 @@ tasks {
     val clearTestLogs by creating(Delete::class) {
         delete(testLogDir)
     }
-    
+
     val testGame by creating {
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {

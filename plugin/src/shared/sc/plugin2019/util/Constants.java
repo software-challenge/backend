@@ -6,8 +6,6 @@ public class Constants {
 
   // for gamestats array
   public static final int GAME_STATS_SWARM_SIZE = 0;
-  public static final int GAME_STATS_RED_INDEX = 0;
-  public static final int GAME_STATS_BLUE_INDEX = 1;
   public static final int LOSE_SCORE = 0;
   public static final int DRAW_SCORE = 1;
   public static final int WIN_SCORE = 2;

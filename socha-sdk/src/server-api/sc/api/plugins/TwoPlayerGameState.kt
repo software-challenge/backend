@@ -25,6 +25,7 @@ abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
     @XStreamAsAttribute
     open var currentPlayerColor: PlayerColor = PlayerColor.RED
 
+    /** Liste der Spieler. Reihenfolge: RED, BLUE */
     val players: List<P>
         get() = listOf(red, blue)
 
