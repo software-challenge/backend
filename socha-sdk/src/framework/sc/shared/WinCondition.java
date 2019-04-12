@@ -51,7 +51,7 @@ public class WinCondition implements Cloneable {
 
   @Override
   public String toString() {
-    return "winner: " + this.getWinner() +" reason: " + this.getReason();
+    return getReason().getMessage(getWinner());
   }
 
 }

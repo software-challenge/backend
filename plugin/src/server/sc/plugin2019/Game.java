@@ -103,7 +103,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     String reason = null;
     Player opponent = gameState.getOpponent(player);
     if(winCondition != null) {
-      reason = winCondition.getReason().message;
+      reason = winCondition.toString();
       if(player.getColor().equals(winCondition.getWinner())) {
         matchPoints = Constants.WIN_SCORE;
       } else if(opponent.getColor().equals(winCondition.getWinner())) {
@@ -150,64 +150,52 @@ public class Game extends RoundBasedGameInstance<Player> {
    * Checks round limit and end of round (and playerStats).
    * Checks if goal is reached.
    *
-   * @return WinCondition with winner and reason or null if no win condition is yet met.
+   * @return WinCondition with winner and reason or null if no win condition is met yet.
    */
   public WinCondition checkWinCondition() {
-    // TODO check whether this is right
     int[][] stats = this.gameState.getGameStats();
     if(this.gameState.getTurn() % 2 == 1) {
       return null;
     }
-    if(this.gameState.getTurn() < 2 * Constants.ROUND_LIMIT) {
-      // round limit not reached
-      Player winningPlayer = getWinner();
-      if(winningPlayer != null) {
-        return new WinCondition(winningPlayer.getColor(), WinReason.SWARM);
-      } else {
-        return null;
-      }
-    } else {
-      // round limit reached
-      Player winningPlayer = getWinner();
-      if(winningPlayer != null) {
-        return new WinCondition(winningPlayer.getColor(), WinReason.SWARM);
-      } else {
-        PlayerColor winner;
-        if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_SWARM_SIZE] > stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_SWARM_SIZE]) {
-          winner = PlayerColor.RED;
-        } else if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_SWARM_SIZE] < stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_SWARM_SIZE]) {
-          winner = PlayerColor.BLUE;
-        } else {
-          winner = null;
-        }
-        return new WinCondition(winner, WinReason.ROUND_LIMIT);
-      }
-    }
-  }
 
-  private Player getWinner() {
-    if(isSwarmConnected(gameState.getBoard(), PlayerColor.RED)) {
+    boolean redConnected = isSwarmConnected(gameState.getBoard(), PlayerColor.RED);
+    boolean blueConnected = isSwarmConnected(gameState.getBoard(), PlayerColor.BLUE);
+    if(redConnected) {
       logger.info("Swarm is connected for red");
-      if(isSwarmConnected(gameState.getBoard(), PlayerColor.BLUE)) {
+      if(blueConnected) {
         logger.info("Swarm is connected for blue");
         if(gameState.getPointsForPlayer(PlayerColor.RED) > gameState.getPointsForPlayer(PlayerColor.BLUE)) {
-          return gameState.getPlayer(PlayerColor.RED);
+          return new WinCondition(PlayerColor.RED, WinReason.SWARM_LARGER);
         } else if(gameState.getPointsForPlayer(PlayerColor.RED) < gameState.getPointsForPlayer(PlayerColor.BLUE)) {
-          return gameState.getPlayer(PlayerColor.BLUE);
+          return new WinCondition(PlayerColor.BLUE, WinReason.SWARM_LARGER);
         } else {
           logger.info("Both Players have equal Points, no Winner");
           return null;
         }
       }
-      return gameState.getPlayer(PlayerColor.RED);
+      return new WinCondition(PlayerColor.RED, WinReason.SWARM_CONNECTED);
     } else {
       logger.debug("Swarm is not connected for red");
-      if(isSwarmConnected(gameState.getBoard(), PlayerColor.BLUE)) {
+      if(blueConnected) {
         logger.info("Swarm is connected for blue");
-        return gameState.getPlayer(PlayerColor.BLUE);
+        return new WinCondition(PlayerColor.BLUE, WinReason.SWARM_CONNECTED);
       }
     }
     logger.debug("Swarm is not connected for blue");
+
+    if(this.gameState.getTurn() == 2 * Constants.ROUND_LIMIT) {
+      // round limit reached
+      PlayerColor winner;
+      if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_SWARM_SIZE] > stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_SWARM_SIZE]) {
+        winner = PlayerColor.RED;
+      } else if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_SWARM_SIZE] < stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_SWARM_SIZE]) {
+        winner = PlayerColor.BLUE;
+      } else {
+        winner = null;
+      }
+      return new WinCondition(winner, WinReason.ROUND_LIMIT);
+    }
+
     return null;
   }
 
@@ -300,7 +288,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       // matchpoints. Find this player. If no player has 2 matchpoints, it is a
       // draw.
       for(Player player : this.players) {
-        if(getScoreFor(player).getValues().get(0).intValueExact() == 2) {
+        if(getScoreFor(player).getValues().get(0).intValueExact() == Constants.WIN_SCORE) {
           winners.add(player);
           break;
         }
