@@ -72,10 +72,9 @@ class GameState(
      * Spielclient i.A. nicht aufgerufen werden!
      */
     fun addPlayer(player: Player) {
-        if(player.color == PlayerColor.RED) {
-            red = player
-        } else if(player.color == PlayerColor.BLUE) {
-            blue = player
+        when(player.color) {
+            PlayerColor.RED -> red = player
+            PlayerColor.BLUE -> blue = player
         }
     }
 

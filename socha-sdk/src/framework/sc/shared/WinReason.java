@@ -11,7 +11,7 @@ public enum WinReason {
     this.message = message;
   }
 
-  public String getMessage(PlayerColor color) {
-    return String.format(message, color);
+  public String getMessage(String playerName) {
+    return String.format(message, playerName);
   }
 }

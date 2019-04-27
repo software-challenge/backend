@@ -49,9 +49,13 @@ public class WinCondition implements Cloneable {
     }
   }
 
+  public String toString(String playerName) {
+    return getReason().getMessage(String.format("%s (%s)", playerName, getWinner().getDisplayName()));
+  }
+
   @Override
   public String toString() {
-    return getReason().getMessage(getWinner());
+    return getReason().getMessage(getWinner().getDisplayName());
   }
 
 }
