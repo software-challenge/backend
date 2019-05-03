@@ -1,6 +1,5 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.InputStream
-import java.util.concurrent.TimeUnit
 
 plugins {
     maven
@@ -34,8 +33,10 @@ tasks {
     }
 
     val doc by creating(DokkaTask::class) {
+        val includedProjects = arrayOf("sdk", "plugin")
+        mustRunAfter(includedProjects.map { "$it:classes" })
         moduleName = "Software-Challenge API $version"
-        val sourceSets = arrayOf("sdk", "plugin").map { project(it).sourceSets.main.get() }
+        val sourceSets = includedProjects.map { project(it).sourceSets.main.get() }
         sourceDirs = files(sourceSets.map { it.java.sourceDirectories })
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
