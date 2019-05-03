@@ -68,7 +68,7 @@ tasks {
             copy {
                 from("build/libs")
                 into(deployDir)
-                rename("defaultplayer.jar", project.property("deployedClient").toString())
+                rename("defaultplayer.jar", project.property("deployedPlayer").toString())
             }
         }
     }

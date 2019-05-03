@@ -16,7 +16,7 @@ version = year.substring(2) + "." + property("socha.version")
 println("Current version: $version Game: $game")
 
 val deployDir by extra { buildDir.resolve("deploy") }
-val deployedClient: String by extra { deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath }
+val deployedPlayer: String by extra { deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath }
 val testLogDir by extra { buildDir.resolve("tests") }
 
 subprojects {
@@ -92,14 +92,15 @@ tasks {
         }
     }
 
-    val testDeployed by creating {
-        dependsOn(deploy)
-        group = mainGroup
-        doLast {
-            val gameWaitSeconds = 150L
-            val testClientGames = 3
+    val maxGameLength = 150L
 
-            testLogDir.deleteRecursively()
+    val clearTestLogs by creating(Delete::class) {
+        delete(testLogDir)
+    }
+    
+    val testGame by creating {
+        dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
+        doFirst {
             testLogDir.mkdirs()
             val server = ProcessBuilder("java", "-Dlogback.configurationFile=logback.xml", "-jar",
                     project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath)
@@ -107,18 +108,18 @@ tasks {
                     .directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(1000)
             val startClient: (Int) -> Process = {
-                ProcessBuilder("java", "-jar", deployedClient)
+                ProcessBuilder("java", "-jar", deployedPlayer)
                         .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
             startClient(2)
             val thread = Thread {
                 try {
-                    Thread.sleep(gameWaitSeconds * 1000)
+                    Thread.sleep(maxGameLength * 1000)
                 } catch(e: InterruptedException) {
                     return@Thread
                 }
-                println("testDeployed has been running for over $gameWaitSeconds seconds - killing server!")
+                println("$this has been running for over $maxGameLength seconds - killing server!")
                 server.destroyForcibly()
             }.apply {
                 isDaemon = true
@@ -134,34 +135,46 @@ tasks {
                     } while(!testLogDir.resolve("client$i.log").readText().contains("Received game result", true))
                 }
             } catch(t: Throwable) {
-                println("Error in testDeployed - check the logs in $testLogDir")
+                println("Error in $this - check the logs in $testLogDir")
                 throw t
             } finally {
                 server.destroy()
             }
             thread.interrupt()
             println("Successfully played a game using the deployed server & client!")
+        }
+    }
 
-            val unzipped = deployDir.resolve("software-challenge-server")
+    val testTestClient by creating {
+        dependsOn(clearTestLogs, ":server:deploy")
+        val testClientGames = 3
+        doLast {
+            testLogDir.mkdirs()
+            val unzipped = testLogDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
             Runtime.getRuntime().exec("unzip software-challenge-server.zip -d $unzipped", null, deployDir).waitFor()
 
             println("Testing TestClient...")
             val testClient = ProcessBuilder(
-                    project("test-client").tasks.getByName("createScripts", ScriptsTask::class).content.split(" ") +
+                    project("test-client").tasks.getByName<ScriptsTask>("createScripts").content.split(" ") +
                             listOf("--start-server", "--tests", "$testClientGames"))
                     .redirectOutput(testLogDir.resolve("test-client.log")).redirectError(testLogDir.resolve("test-client-err.log"))
                     .directory(unzipped).start()
-            if(testClient.waitFor(gameWaitSeconds * testClientGames, TimeUnit.SECONDS)) {
+            if(testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
                 if(value == 0)
                     println("TestClient successfully tested!")
                 else
                     throw Exception("TestClient exited with exit code $value!")
             } else {
-                throw Exception("TestClient exceeded timeout of ${gameWaitSeconds * testClientGames} seconds!")
+                throw Exception("TestClient exceeded timeout of ${maxGameLength * testClientGames} seconds!")
             }
         }
+    }
+
+    val integrationTest by creating {
+        dependsOn(testGame, testTestClient)
+        group = mainGroup
     }
 
     clean {
@@ -170,13 +183,13 @@ tasks {
     }
     test {
         dependOnSubprojects()
-        dependsOn(testDeployed)
+        dependsOn(integrationTest)
         group = mainGroup
     }
     build {
         group = mainGroup
     }
-    replace("run").dependsOn(testDeployed)
+    replace("run").dependsOn(integrationTest)
 }
 
 // == Cross-project configuration ==
