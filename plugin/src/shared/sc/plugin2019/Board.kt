@@ -2,6 +2,7 @@ package sc.plugin2019
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamImplicit
+import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.IBoard
 import sc.plugin2019.FieldState.OBSTRUCTED
 import sc.plugin2019.util.Constants
@@ -68,7 +69,8 @@ class Board : IBoard {
     override fun toString() =
             "Board " + fields.joinToString(" ", "[", "]") { column -> column.joinToString(", ", prefix = "[", postfix = "]") { it.toString() } }
 
-    val line = "-".repeat(Constants.BOARD_SIZE + 2)
+    @XStreamOmitField
+    private val line = "-".repeat(Constants.BOARD_SIZE + 2)
     fun prettyString(): String {
         val map = Array(Constants.BOARD_SIZE) { StringBuilder("|") }
         fields.forEach {
