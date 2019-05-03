@@ -112,25 +112,31 @@ public class Game extends RoundBasedGameInstance<Player> {
         // draw
         matchPoints = Constants.DRAW_SCORE;
       }
+    } else {
+      if(gameState.getTurn() == 2 * Constants.ROUND_LIMIT) {
+        reason = WinReason.ROUND_LIMIT.getMessage(null);
+        matchPoints = Constants.DRAW_SCORE;
+      }
     }
     // opponent has done something wrong
     if(opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft() || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
       matchPoints = Constants.WIN_SCORE;
     }
     ScoreCause cause;
-    if(player.hasSoftTimeout()) { // Soft-Timeout
+    if(player.hasSoftTimeout()) {
       cause = ScoreCause.SOFT_TIMEOUT;
       reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
       matchPoints = Constants.LOSE_SCORE;
-    } else if(player.hasHardTimeout()) { // Hard-Timeout
+    } else if(player.hasHardTimeout()) {
       cause = ScoreCause.HARD_TIMEOUT;
       reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getHardTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
       matchPoints = Constants.LOSE_SCORE;
-    } else if(player.hasViolated()) { // rule violation
+    } else if(player.hasViolated()) {
       cause = ScoreCause.RULE_VIOLATION;
-      reason = player.getViolationReason(); // message from InvalidMoveException
+      // message from InvalidMoveException
+      reason = player.getViolationReason();
       matchPoints = Constants.LOSE_SCORE;
-    } else if(player.hasLeft()) { // player left
+    } else if(player.hasLeft()) {
       cause = ScoreCause.LEFT;
       reason = "Der Spieler hat das Spiel verlassen";
       matchPoints = Constants.LOSE_SCORE;
@@ -191,7 +197,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       } else if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_SWARM_SIZE] < stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_SWARM_SIZE]) {
         winner = PlayerColor.BLUE;
       } else {
-        winner = null;
+        return null;
       }
       return new WinCondition(winner, WinReason.ROUND_LIMIT);
     }

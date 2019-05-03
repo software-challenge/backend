@@ -3,26 +3,22 @@ package sc.shared;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias(value = "scoreCause")
-public enum ScoreCause
-{
+public enum ScoreCause {
 	/** The player didn't violate against the rules or left the game early. */
 	REGULAR,
 
-	/** The player left the game early (connection loss) */
+	/** The player left the game early (connection loss). */
 	LEFT,
 
-	/** The player violated against the games rules */
+	/** The player violated against the games rules. */
 	RULE_VIOLATION,
 	
-	/** The player needed to long to move */
+	/** The player took to long to respond to the move request. */
 	SOFT_TIMEOUT,
 	
-	/** The player doesn't answer anymore */
+	/** The player didn't respond to the move request. */
 	HARD_TIMEOUT,
 
-	/**
-	 * An error occured during communication. This could indicate a bug in the
-	 * server's code.
-	 */
+	/** An error occurred during communication. This could indicate a bug in the server's code. */
 	UNKNOWN
 }
