@@ -25,6 +25,7 @@ abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
     @XStreamAsAttribute
     open var currentPlayerColor: PlayerColor = PlayerColor.RED
 
+    /** Liste der Spieler. Reihenfolge: RED, BLUE */
     val players: List<P>
         get() = listOf(red, blue)
 
@@ -55,7 +56,10 @@ abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
             getPlayer(player.color.opponent())
 
     fun getPlayer(color: PlayerColor): P =
-            if (color == PlayerColor.RED) red else blue
+            when (color) {
+                PlayerColor.RED -> red
+                PlayerColor.BLUE -> blue
+            }
 
     /** Gibt die angezeigte Punktzahl des Spielers zurueck. */
     abstract fun getPointsForPlayer(playerColor: PlayerColor): Int

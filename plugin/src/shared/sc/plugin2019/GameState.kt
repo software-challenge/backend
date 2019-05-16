@@ -39,7 +39,8 @@ class GameState(
 
     override fun getPointsForPlayer(playerColor: PlayerColor) = GameRuleLogic.greatestSwarmSize(board, playerColor)
 
-    fun getPlayerStats(player: Player): IntArray = getPlayerStats(player.color)
+    fun getPlayerStats(player: Player): IntArray =
+            getPlayerStats(player.color)
 
     /**
      * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
@@ -49,7 +50,7 @@ class GameState(
      *
      */
     fun getPlayerStats(playerColor: PlayerColor): IntArray =
-            getGameStats()[if(playerColor == PlayerColor.RED) Constants.GAME_STATS_RED_INDEX else Constants.GAME_STATS_BLUE_INDEX]
+            intArrayOf(this.getPointsForPlayer(playerColor))
 
     /**
      * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
@@ -61,10 +62,7 @@ class GameState(
      * @see [getPlayerStats]
      */
     fun getGameStats(): Array<IntArray> {
-        val stats = Array(2) { IntArray(1) }
-        stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_SWARM_SIZE] = this.getPointsForPlayer(PlayerColor.RED)
-        stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_SWARM_SIZE] = this.getPointsForPlayer(PlayerColor.BLUE)
-        return stats
+        return Array(2) { index -> getPlayerStats(PlayerColor.values().first { it.index == index }) }
     }
 
     /**
@@ -74,10 +72,9 @@ class GameState(
      * Spielclient i.A. nicht aufgerufen werden!
      */
     fun addPlayer(player: Player) {
-        if(player.color == PlayerColor.RED) {
-            red = player
-        } else if(player.color == PlayerColor.BLUE) {
-            blue = player
+        when(player.color) {
+            PlayerColor.RED -> red = player
+            PlayerColor.BLUE -> blue = player
         }
     }
 

@@ -1,15 +1,16 @@
 package sc.shared
 
-enum class PlayerColor {
+enum class PlayerColor(val index: Int, private val letter: String, val displayName: String) {
 
-    RED, BLUE;
+    RED(0, "R", "Rot"), BLUE(1, "B", "Blau");
 
-    /**
-     * liefert die Spielerfarbe des Gegners dieses Spielers
-     * @return Spielerfarbe des Gegners
-     */
-    fun opponent(): PlayerColor = if(this == RED) BLUE else RED
+    /** Die Spielerfarbe des Gegners dieses Spielers */
+    fun opponent(): PlayerColor =
+            when(this) {
+                RED -> BLUE
+                BLUE -> RED
+            }
 
-    fun asLetter(): String = if(this == RED) "R" else "B"
+    fun asLetter(): String = letter
 
 }

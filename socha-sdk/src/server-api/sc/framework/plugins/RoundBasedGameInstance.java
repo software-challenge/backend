@@ -243,11 +243,9 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
 
   public Map<Player, PlayerScore> generateScoreMap() {
     Map<Player, PlayerScore> map = new HashMap<Player, PlayerScore>();
-
     for (final P p : this.players) {
       map.put(p, getScoreFor(p));
     }
-
     return map;
   }
 
