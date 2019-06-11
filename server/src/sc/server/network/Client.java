@@ -26,15 +26,15 @@ import java.util.List;
  */
 public class Client extends XStreamClient implements IClient {
   private static final Logger logger = LoggerFactory.getLogger(Client.class);
-  
+
   private boolean notifiedOnDisconnect = false;
   private final List<IClientListener> clientListeners = new ArrayList<>();
   private final Collection<IClientRole> roles = new ArrayList<>();
-  
+
   public Client(INetworkInterface networkInterface, XStream configuredXStream) throws IOException {
     super(configuredXStream, networkInterface);
   }
-  
+
   /**
    * Getter for the roles. Roles can be {@link sc.server.gaming.PlayerRole PlayerRole},
    * {@link sc.server.gaming.ObserverRole ObserverRole} or {@link AdministratorRole AdministratorRole}
@@ -44,7 +44,7 @@ public class Client extends XStreamClient implements IClient {
   public Collection<IClientRole> getRoles() {
     return Collections.unmodifiableCollection(this.roles);
   }
-  
+
   /**
    * Add another role to the client.Roles can be {@link sc.server.gaming.PlayerRole PlayerRole},
    * {@link sc.server.gaming.ObserverRole ObserverRole} or {@link AdministratorRole AdministratorRole}
@@ -55,7 +55,7 @@ public class Client extends XStreamClient implements IClient {
   public void addRole(IClientRole role) {
     this.roles.add(role);
   }
-  
+
   /**
    * Send a package to the server
    *
@@ -71,7 +71,7 @@ public class Client extends XStreamClient implements IClient {
           Thread.currentThread().getName());
     }
   }
-  
+
   /**
    * Call listener that handle new Packages
    *
@@ -83,11 +83,11 @@ public class Client extends XStreamClient implements IClient {
      * only be passed to listeners. No callbacks should be invoked directly
      * in the receiver thread.
      */
-    
+
     Collection<RescuableClientException> errors = new ArrayList<>();
-    
+
     PacketCallback callback = new PacketCallback(packet);
-    
+
     for (IClientListener listener : this.clientListeners) {
       try {
         listener.onRequest(this, callback);
@@ -95,13 +95,13 @@ public class Client extends XStreamClient implements IClient {
         errors.add(e);
       }
     }
-    
+
     if (errors.isEmpty() && !callback.isProcessed()) {
       String msg = String.format("Packet %s wasn't processed.", packet);
       logger.warn(msg);
       throw new UnprocessedPacketException(msg);
     }
-    
+
     for (RescuableClientException error : errors) {
       logger.warn("An error occured: ", error);
       if (!error.getMessage().equals("It's not your turn yet.")) {
@@ -113,14 +113,14 @@ public class Client extends XStreamClient implements IClient {
           Thread.currentThread().getName());
       stop();
     }
-    
+
     if (packet instanceof LeftGameEvent) {
       logger.debug("Stopping client because of LeftGameEvent received. Thread: {}",
           Thread.currentThread().getName());
       stop();
     }
   }
-  
+
   /**
    * Call listeners upon error
    *
@@ -135,7 +135,7 @@ public class Client extends XStreamClient implements IClient {
       }
     }
   }
-  
+
   /** Call listeners upon disconnect */
   private synchronized void notifyOnDisconnect() {
     if (!this.notifiedOnDisconnect) {
@@ -151,16 +151,16 @@ public class Client extends XStreamClient implements IClient {
       }
     }
   }
-  
+
   /** Add a {@link IClientListener listener} to the client */
   public void addClientListener(IClientListener listener) {
     this.clientListeners.add(listener);
   }
-  
+
   public void removeClientListener(IClientListener listener) {
     this.clientListeners.remove(listener);
   }
-  
+
   /**
    * Test if this client is a administrator
    *
@@ -174,14 +174,14 @@ public class Client extends XStreamClient implements IClient {
     }
     return false;
   }
-  
+
   /**
    * Authenticates a Client as Administrator
    * @param password The secret that is required to gain administrative rights.
    */
   public void authenticate(String password) throws AuthenticationFailedException {
     String correctPassword = Configuration.getAdministrativePassword();
-    
+
     if (correctPassword != null && correctPassword.equals(password)) {
       if (!isAdministrator()) {
         addRole(new AdministratorRole(this));
@@ -191,11 +191,11 @@ public class Client extends XStreamClient implements IClient {
       }
     } else {
       logger.warn("Client failed to authenticate as administrator.");
-      
+
       throw new AuthenticationFailedException();
     }
   }
-  
+
   /**
    * Disconnect the client and cleanup.
    *
@@ -206,15 +206,15 @@ public class Client extends XStreamClient implements IClient {
     super.onDisconnect(cause);
     for (IClientRole role : this.roles) {
       try {
-        role.close();
+        role.disconnect(cause);
       } catch (Exception e) {
         logger.warn("Couldn't close role.", e);
       }
     }
-    
+
     notifyOnDisconnect();
   }
-  
+
   /**
    * Received new package, which is send to all listener
    *
@@ -229,5 +229,5 @@ public class Client extends XStreamClient implements IClient {
      */
     notifyOnPacket(o);
   }
-  
+
 }
