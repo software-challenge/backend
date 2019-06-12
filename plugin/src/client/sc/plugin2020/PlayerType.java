@@ -1,4 +1,4 @@
-package sc.plugin2019;
+package sc.plugin2020;
 
 /** Die Rolle eines Clients */
 public enum PlayerType {

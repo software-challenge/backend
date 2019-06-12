@@ -4,8 +4,8 @@ import jargs.gnu.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.player2019.logic.Logic;
-import sc.plugin2019.AbstractClient;
-import sc.plugin2019.IGameHandler;
+import sc.plugin2020.AbstractClient;
+import sc.plugin2020.IGameHandler;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;

@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.framework.plugins.Player;
 import sc.player2019.Starter;
-import sc.plugin2019.GameState;
-import sc.plugin2019.IGameHandler;
-import sc.plugin2019.Move;
-import sc.plugin2019.util.GameRuleLogic;
+import sc.plugin2020.GameState;
+import sc.plugin2020.IGameHandler;
+import sc.plugin2020.Move;
+import sc.plugin2020.util.GameRuleLogic;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
 

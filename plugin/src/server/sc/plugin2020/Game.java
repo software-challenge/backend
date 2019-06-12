@@ -1,4 +1,4 @@
-package sc.plugin2019;
+package sc.plugin2020;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -9,8 +9,8 @@ import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.plugin2019.util.Configuration;
-import sc.plugin2019.util.Constants;
+import sc.plugin2020.util.Configuration;
+import sc.plugin2020.util.Constants;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
 
@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sc.plugin2019.util.GameRuleLogic.isSwarmConnected;
+import static sc.plugin2020.util.GameRuleLogic.isSwarmConnected;
 
 /** Minimales Spiel als Basis für neue Plugins. Diese Klasse enthält die Spielelogik. */
 @XStreamAlias(value = "game")

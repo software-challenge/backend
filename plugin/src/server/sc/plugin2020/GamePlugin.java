@@ -1,9 +1,9 @@
-package sc.plugin2019;
+package sc.plugin2020;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
-import sc.plugin2019.util.Configuration;
+import sc.plugin2020.util.Configuration;
 import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;

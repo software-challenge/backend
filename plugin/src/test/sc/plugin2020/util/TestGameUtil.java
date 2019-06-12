@@ -1,8 +1,8 @@
-package sc.plugin2019.util;
+package sc.plugin2020.util;
 
 import org.junit.Assert;
-import sc.plugin2019.Board;
-import sc.plugin2019.FieldState;
+import sc.plugin2020.Board;
+import sc.plugin2020.FieldState;
 
 public class TestGameUtil {
 

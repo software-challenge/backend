@@ -1,4 +1,4 @@
-package sc.plugin2019;
+package sc.plugin2020;
 
 import sc.framework.plugins.Player;
 import sc.shared.GameResult;

@@ -1,4 +1,4 @@
-package sc.plugin2019;
+package sc.plugin2020;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +7,7 @@ import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
-import sc.plugin2019.util.Configuration;
+import sc.plugin2020.util.Configuration;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
@@ -115,7 +115,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
    */
   @Override
   public void onNewState(String roomId, Object state) {
-    sc.plugin2019.GameState gameState = (GameState) state;
+    sc.plugin2020.GameState gameState = (GameState) state;
     logger.debug("{} got new state {}", this, gameState);
 
     if (this.id != PlayerType.OBSERVER) {

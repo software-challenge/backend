@@ -1,4 +1,4 @@
-package sc.plugin2019.util;
+package sc.plugin2020.util;
 
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
