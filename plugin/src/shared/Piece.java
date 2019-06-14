@@ -1,19 +1,19 @@
 import sc.shared.PlayerColor;
 
 public class Piece {
-  PlayerColor owner;
-  PieceType type;
+  private PlayerColor owner;
+  private PieceType type;
 
-  Piece (PlayerColor owner, PieceType type){
+  public Piece (PlayerColor owner, PieceType type){
     this.owner = owner;
     this.type = type;
   }
 
-  PlayerColor getOwner (){
+  public PlayerColor getOwner (){
     return owner;
   }
 
-  PieceType getPieceType(){
+  public PieceType getPieceType(){
     return type;
   }
 }

@@ -153,8 +153,8 @@ public class GamePlayTest {
 
     assertTrue(isValidToMove(state, 0, 4, RIGHT, 2));
     assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 0, RIGHT, 2), "Field does not belong to the current player");
-    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 4, RIGHT, 3), "Move distance was incorrect");
-    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 4, LEFT, 2), "Move in that direction would not be on the board");
+    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 4, RIGHT, 3), "DrawMove distance was incorrect");
+    assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 4, LEFT, 2), "DrawMove in that direction would not be on the board");
     assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 1, RIGHT, 3), "Path to the new position is not clear");
     assertTrue(isValidToMove(state, 0, 2, RIGHT, 2));
     assertThrows(InvalidMoveException.class, () -> isValidToMove(state, 0, 3, RIGHT, 2), "Field is obstructed");

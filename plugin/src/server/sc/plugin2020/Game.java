@@ -58,7 +58,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       if(!(data instanceof Move))
         throw new InvalidMoveException(fromPlayer.getDisplayName() + " hat kein Zug-Objekt gesendet.");
       final Move move = (Move) data;
-      logger.debug("Performing Move");
+      logger.debug("Performing DrawMove");
       move.perform(this.gameState);
       next(this.gameState.getCurrentPlayer());
     } catch(InvalidMoveException e) {
@@ -261,7 +261,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     logger.info("Processing game information");
     if(gameInfo instanceof GameState) {
       this.gameState = (GameState) gameInfo;
-      // the currentPlayer has to be RED (else the Move request is send to the
+      // the currentPlayer has to be RED (else the DrawMove request is send to the
       // wrong player)
       // if it isn't red, the players have to be switched and red is made
       // currentPlayer

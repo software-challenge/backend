@@ -4,24 +4,24 @@ import sc.shared.PlayerColor;
 
 public class Field {
 
-  Stack<Piece> pieces = new Stack<Piece>();
-  boolean obstructed = false;
-  Coord position;
+  private Stack<Piece> pieces = new Stack<Piece>();
+  private boolean obstructed = false;
+  private Coord position;
 
-  Field(Coord position){
+  public Field(Coord position){
     this.position = position;
   }
 
-  Field(Coord position, boolean obstructed){
+  public Field(Coord position, boolean obstructed){
     this.position = position;
     this.obstructed = obstructed;
   }
 
-  Field(Coord position, Stack<Piece> pieces){
+  public Field(Coord position, Stack<Piece> pieces){
     this.pieces = pieces;
   }
 
-  FieldState getFieldState(){
+  public FieldState getFieldState(){
     if (obstructed)
       return FieldState.OBSTRUCTED;
 
@@ -34,15 +34,15 @@ public class Field {
     return FieldState.EMPTY;
   }
 
-  boolean isObstructed(){
+  public boolean isObstructed(){
     return obstructed;
   }
 
-  Stack<Piece> getPieces(){
+  public Stack<Piece> getPieces(){
     return(pieces);
   }
 
-  Coord getPosition(){
+  public Coord getPosition(){
     return position;
   }
 }
