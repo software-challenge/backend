@@ -1,4 +1,4 @@
 public enum MoveType {
   SETMOVE,
-  DRAWMOVE
+  DRAGMOVE
 }

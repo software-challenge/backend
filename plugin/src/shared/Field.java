@@ -19,6 +19,7 @@ public class Field {
 
   public Field(Coord position, Stack<Piece> pieces){
     this.pieces = pieces;
+    this.position = position;
   }
 
   public FieldState getFieldState(){

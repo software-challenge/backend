@@ -10,4 +10,11 @@ public class Coord {
     this.y = y;
     this.z = z;
   }
+
+  public Coord (int q, int r){
+    this.x = q;
+    this.y = r;
+    this.z = -q-r;
+  }
+
 }
