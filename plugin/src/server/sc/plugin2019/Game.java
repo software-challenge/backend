@@ -103,18 +103,13 @@ public class Game extends RoundBasedGameInstance<Player> {
     String reason = null;
     Player opponent = gameState.getOpponent(player);
     if(winCondition != null) {
-      reason = winCondition.toString(gameState.getPlayer(winCondition.getWinner()).getDisplayName());
+      PlayerColor winner = winCondition.getWinner();
+      reason = winner != null ? winCondition.toString(gameState.getPlayer(winner).getDisplayName()) : winCondition.toString();
       if(player.getColor().equals(winCondition.getWinner())) {
         matchPoints = Constants.WIN_SCORE;
       } else if(opponent.getColor().equals(winCondition.getWinner())) {
         matchPoints = Constants.LOSE_SCORE;
       } else {
-        // draw
-        matchPoints = Constants.DRAW_SCORE;
-      }
-    } else {
-      if(gameState.getTurn() == 2 * Constants.ROUND_LIMIT) {
-        reason = WinReason.ROUND_LIMIT.getMessage(null);
         matchPoints = Constants.DRAW_SCORE;
       }
     }
@@ -176,7 +171,7 @@ public class Game extends RoundBasedGameInstance<Player> {
           return new WinCondition(PlayerColor.BLUE, WinReason.SWARM_LARGER);
         } else {
           logger.info("Both Players have equal Points, no Winner");
-          return null;
+          return new WinCondition(null, WinReason.SWARM_EQUAL);
         }
       }
       return new WinCondition(PlayerColor.RED, WinReason.SWARM_CONNECTED);
@@ -197,7 +192,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       } else if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_SWARM_SIZE] < stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_SWARM_SIZE]) {
         winner = PlayerColor.BLUE;
       } else {
-        return null;
+        return new WinCondition(null, WinReason.ROUND_LIMIT);
       }
       return new WinCondition(winner, WinReason.ROUND_LIMIT);
     }

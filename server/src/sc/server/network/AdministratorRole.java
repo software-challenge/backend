@@ -14,9 +14,4 @@ public class AdministratorRole implements IClientRole {
     return this.client;
   }
 
-  /** Close the Administrator */
-  @Override
-  public void close() {
-  }
-
 }

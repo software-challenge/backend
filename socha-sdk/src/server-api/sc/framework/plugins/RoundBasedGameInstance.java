@@ -112,32 +112,46 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
   }
 
   /**
-   * On violation player is removed forcefully, if player has not violated, he has left by himself (i.e. Exception)
+   * Handle leave of a player.
    *
-   * @param player left player
+   * @param player the player that left.
+   *
+   * @see #onPlayerLeft(Player, ScoreCause)
    */
   public void onPlayerLeft(Player player) {
-    if (!player.getViolated()) {
-      player.setLeft(true);
-      onPlayerLeft(player, ScoreCause.LEFT);
-    } else {
-      onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
-    }
+    onPlayerLeft(player, null);
   }
 
-  /** Handle leave of player */
+  /**
+   * Handle leave of a player.
+   *
+   * @param player the player that left.
+   * @param cause  the cause for the leave. If none is provided, then it will either be {@link ScoreCause#RULE_VIOLATION}
+   *               or {@link ScoreCause#LEFT}, depending on whether the player has {@link Player#getViolated()}
+   */
   public void onPlayerLeft(Player player, ScoreCause cause) {
-    Map<Player, PlayerScore> res = generateScoreMap();
+    if(cause == ScoreCause.REGULAR)
+      return;
 
-    for (Entry<Player, PlayerScore> entry : res.entrySet()) {
-      PlayerScore score = entry.getValue();
+    if (cause == null) {
+      if (!player.getViolated()) {
+        player.setLeft(true);
+        cause = ScoreCause.LEFT;
+      } else {
+        cause = ScoreCause.RULE_VIOLATION;
+      }
+    }
 
+    Map<Player, PlayerScore> scores = generateScoreMap();
+
+    for (Entry<Player, PlayerScore> entry : scores.entrySet()) {
       if (entry.getKey() == player) {
+        PlayerScore score = entry.getValue();
         score.setCause(cause);
       }
     }
 
-    notifyOnGameOver(res);
+    notifyOnGameOver(scores);
   }
 
   protected final void next(P nextPlayer) {

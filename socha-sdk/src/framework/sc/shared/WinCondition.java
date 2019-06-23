@@ -27,11 +27,6 @@ public class WinCondition implements Cloneable {
     this.reason = reason;
   }
 
-  /**
-   * klont dieses Objekt
-   *
-   * @return ein neues Objekt mit gleichen Eigenschaften
-   */
   @Override
   public Object clone() {
     return new WinCondition(winner, reason);
@@ -55,7 +50,7 @@ public class WinCondition implements Cloneable {
 
   @Override
   public String toString() {
-    return getReason().getMessage(getWinner().getDisplayName());
+    return getReason().getMessage(getWinner() != null ? getWinner().getDisplayName() : null);
   }
 
 }
