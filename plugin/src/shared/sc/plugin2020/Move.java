@@ -1,3 +1,5 @@
+package sc.plugin2020;
+
 import sc.plugin2020.util.Coord;
 
 public class Move {

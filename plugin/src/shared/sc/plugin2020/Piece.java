@@ -1,3 +1,5 @@
+package sc.plugin2020;
+
 import sc.shared.PlayerColor;
 
 public class Piece {

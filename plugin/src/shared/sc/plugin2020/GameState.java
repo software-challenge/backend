@@ -1,3 +1,5 @@
+package sc.plugin2020;
+
 import java.util.LinkedList;
 import java.util.List;
 import sc.shared.PlayerColor;

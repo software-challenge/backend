@@ -1,3 +1,5 @@
+package sc.plugin2020;
+
 import java.util.Stack;
 import sc.plugin2020.util.Coord;
 import sc.shared.PlayerColor;
