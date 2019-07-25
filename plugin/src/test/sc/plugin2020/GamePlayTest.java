@@ -35,16 +35,15 @@ public class GamePlayTest {
   @Test
   public void onlyEndAfterRoundTest() throws InvalidMoveException {
     Board board = TestGameUtil.createCustomBoard("" +
-            "-BBBBBBBB-" +
-            "----B----R" +
-            "----BBB--R" +
-            "----B----R" +
-            "----BO---R" +
-            "----B--BRR" +
-            "----R-O--R" +
-            "------R--R" +
-            "---------R" +
-            "----------");
+                "----------" +
+               "------------" +
+              "--------------" +
+             "----------------" +
+            "------------------" +
+             "----------------" +
+              "--------------" +
+               "------------" +
+                "----------" );
     state.setBoard(board);
     {
       Move move = new Move(9, 3, UP_LEFT);

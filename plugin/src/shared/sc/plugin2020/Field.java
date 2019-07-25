@@ -41,6 +41,8 @@ public class Field {
     return obstructed;
   }
 
+  public void setObstructed(boolean o){ obstructed = o;}
+
   public Stack<Piece> getPieces(){
     return(pieces);
   }

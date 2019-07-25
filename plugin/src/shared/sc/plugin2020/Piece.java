@@ -11,7 +11,7 @@ public class Piece {
     this.type = type;
   }
 
-  public PlayerColor getOwner (){
+  public PlayerColor getOwner(){
     return owner;
   }
 

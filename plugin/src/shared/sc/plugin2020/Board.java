@@ -33,6 +33,7 @@ public class Board {
       for (int r = 0; r < Constants.BOARD_SIZE-1; r++){
         if (gameField[q][r] == null)
           gameField[q][r] = new Field(new Coord(q,r));
+          //Hier müssen irgendwie noch die Hindernisse eingebaut werden.
       }
     }
   }
