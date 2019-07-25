@@ -3,13 +3,14 @@ package sc.plugin2020;
 import java.util.ArrayList;
 import java.util.List;
 
+import sc.api.plugins.IGameState;
 import sc.plugin2020.util.Constants;
 import sc.shared.PlayerColor;
 import sc.framework.plugins.Player;
 
 import javax.swing.*;
 
-public class GameState {
+public class GameState implements IGameState {
   private Board gameBoard;
   private int turn;
   private ArrayList<Piece> undeployedRedPieces;
@@ -19,8 +20,8 @@ public class GameState {
   public GameState(){//Creates a completely new game(state)
     turn = 0;
     gameBoard = new Board();
-    undeployedBluePieces = parsePiecesString(Constants.Pieces, PlayerColor.BLUE);
-    undeployedRedPieces = parsePiecesString(Constants.Pieces, PlayerColor.RED);
+    undeployedBluePieces = parsePiecesString(Constants.PIECES, PlayerColor.BLUE);
+    undeployedRedPieces = parsePiecesString(Constants.PIECES, PlayerColor.RED);
   }
 
   public Player getCurrentPlayer(){
@@ -79,5 +80,18 @@ public class GameState {
       blue = player;
     else
       red = player;
+  }
+
+  public Player getPlayer(PlayerColor c){
+    return ((c == PlayerColor.BLUE) ? blue : red);
+  }
+
+  public Player getOpponent(Player p){
+    return ((p.equals(red)) ? red : blue);
+  }
+
+  @Override
+  public int getRound() {
+    return turn/2; //Ist das richtig?
   }
 }

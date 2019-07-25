@@ -1,8 +1,9 @@
 package sc.plugin2020;
 
+import sc.api.plugins.IMove;
 import sc.plugin2020.util.Coord;
 
-public class Move {
+public class Move implements IMove {
   private Coord start, destination;
   private Piece piece;
 

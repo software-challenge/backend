@@ -18,8 +18,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sc.plugin2020.util.GameRuleLogic.isSwarmConnected;
-
 /** Minimales Spiel als Basis für neue Plugins. Diese Klasse enthält die Spielelogik. */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
