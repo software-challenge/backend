@@ -1,11 +1,13 @@
 package sc.plugin2020;
 
+import sc.api.plugins.IBoard;
+import sc.api.plugins.IField;
 import sc.plugin2020.util.Constants;
 import sc.plugin2020.util.Coord;
 
 import java.util.LinkedList;
 
-public class Board {
+public class Board implements IBoard {
   private int shift = Constants.BOARD_SIZE-1/2;
   private Field[][] gameField = new Field[Constants.BOARD_SIZE-1][Constants.BOARD_SIZE-1];
 
@@ -45,5 +47,20 @@ public class Board {
     int q = pos.x + shift;
     int r = pos.z + shift;
     return gameField[q][r];
+  }
+
+  @Override
+  public Field getField(int x, int y) {
+    if (x > shift || x < -shift || y > shift || y < -shift)
+      throw new IndexOutOfBoundsException();
+
+    int q = x + shift;
+    int r = (-x)+(-y) + shift;
+    return gameField[q][r];
+  }
+
+  @Override
+  public Field getField(int x, int y, int z) {
+    return null;
   }
 }

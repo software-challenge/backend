@@ -3,14 +3,16 @@ package sc.plugin2020;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import sc.api.plugins.IGameState;
+import sc.api.plugins.TwoPlayerGameState;
 import sc.plugin2020.util.Constants;
 import sc.shared.PlayerColor;
 import sc.framework.plugins.Player;
 
 import javax.swing.*;
 
-public class GameState implements IGameState {
+public class GameState extends TwoPlayerGameState<Player, Move> implements Cloneable {
   private Board gameBoard;
   private int turn;
   private ArrayList<Piece> undeployedRedPieces;
@@ -24,13 +26,17 @@ public class GameState implements IGameState {
     undeployedRedPieces = parsePiecesString(Constants.PIECES, PlayerColor.RED);
   }
 
-  public Player getCurrentPlayer(){
-    return ((turn % 2 == 0) ? red : blue);
+  public void setBoard (Board b){
+    gameBoard = b;
   }
 
-  public Player getOtherPlayer(){
-    return ((turn % 2 == 0) ? blue : red);
-  }
+  //public Player getCurrentPlayer(){ // Ich verstehe die Syntax nicht HELP _________________________________
+  //  return ((turn % 2 == 0) ? red : blue);
+  //}
+
+  //public Player getOtherPlayer(){
+  //  return ((turn % 2 == 0) ? blue : red);
+  //}
 
   private ArrayList<Piece> parsePiecesString(String s, PlayerColor p){
     ArrayList<Piece> l = new ArrayList<Piece>();
@@ -82,16 +88,48 @@ public class GameState implements IGameState {
       red = player;
   }
 
-  public Player getPlayer(PlayerColor c){
-    return ((c == PlayerColor.BLUE) ? blue : red);
-  }
-
-  public Player getOpponent(Player p){
-    return ((p.equals(red)) ? red : blue);
-  }
-
   @Override
   public int getRound() {
     return turn/2; //Ist das richtig?
+  }
+
+  @NotNull
+  @Override
+  public Player getRed() {
+    return red;
+  }
+
+  @NotNull
+  @Override
+  public Player getBlue() {
+    return blue;
+  }
+
+  @Override
+  public int getPointsForPlayer(@NotNull PlayerColor playerColor) {
+    return turn;
+  }
+
+  public int[] getPlayerStats (Player p){
+    return getPlayerStats(p.getColor());
+  }
+
+  public int[] getPlayerStats (PlayerColor p){
+    int[] tmp = new int[1];
+    tmp[0] = turn;
+    return tmp;
+  }
+
+  public void setBlue(Player newBlue) {
+    blue = newBlue;
+  }
+
+  public void setRed(Player newRed) {
+    red = newRed;
+  }
+
+  public int[][] getGameStats(){
+    int[][] tmp = new int[1][1];
+    return tmp; // Nur reingeschrieben. Ich weiß nicht genau, wie es funktioniert. KOtlinsyntax
   }
 }

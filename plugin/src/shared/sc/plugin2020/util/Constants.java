@@ -7,6 +7,7 @@ public class Constants {
   public static final int LOSE_SCORE = 0;
   public static final int DRAW_SCORE = 1;
   public static final int WIN_SCORE = 2;
+  public static final int GAME_STATS_ROUNDS = 0;
 
   static public int BOARD_SIZE = 9;
   static public int FIELD_AMOUNT = 61; //TO DO: Calculate dynamically with BOARD_SIZE

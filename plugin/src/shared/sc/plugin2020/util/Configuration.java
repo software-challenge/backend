@@ -29,7 +29,7 @@ public class Configuration {
   public static List<Class<?>> getClassesToRegister() {
     return Arrays.asList(Game.class, Board.class,
             GameState.class, Move.class,
-            Direction.class, Field.class,//Was brauch ich hier?
+            Direction.class, Field.class,
             WelcomeMessage.class, Condition.class);
   }
 }

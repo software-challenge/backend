@@ -11,6 +11,7 @@ import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2020.util.Configuration;
 import sc.plugin2020.util.Constants;
+import sc.plugin2020.util.GameRuleLogic;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
 
@@ -57,7 +58,7 @@ public class Game extends RoundBasedGameInstance<Player> {
         throw new InvalidMoveException(fromPlayer.getDisplayName() + " hat kein Zug-Objekt gesendet.");
       final Move move = (Move) data;
       logger.debug("Performing DrawMove");
-      move.perform(this.gameState);
+      this.gameState = GameRuleLogic.performMove(this.gameState, move);
       next(this.gameState.getCurrentPlayer());
     } catch(InvalidMoveException e) {
       super.catchInvalidMove(e, fromPlayer);
@@ -141,7 +142,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     } else { // regular score or opponent violated
       cause = ScoreCause.REGULAR;
     }
-    return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_SWARM_SIZE]);
+    return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_ROUNDS]);
   }
 
   @Override
@@ -162,8 +163,8 @@ public class Game extends RoundBasedGameInstance<Player> {
       return null;
     }
 
-    boolean redConnected = isSwarmConnected(gameState.getBoard(), PlayerColor.RED);
-    boolean blueConnected = isSwarmConnected(gameState.getBoard(), PlayerColor.BLUE);
+    boolean redConnected = GameRuleLogic.isQueenBlocked(gameState.getBoard(), PlayerColor.RED);
+    boolean blueConnected = GameRuleLogic.isQueenBlocked(gameState.getBoard(), PlayerColor.BLUE);
     if(redConnected) {
       logger.info("Swarm is connected for red");
       if(blueConnected) {
@@ -190,9 +191,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     if(this.gameState.getTurn() == 2 * Constants.ROUND_LIMIT) {
       // round limit reached
       PlayerColor winner;
-      if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_SWARM_SIZE] > stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_SWARM_SIZE]) {
+      if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_ROUNDS] > stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {
         winner = PlayerColor.RED;
-      } else if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_SWARM_SIZE] < stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_SWARM_SIZE]) {
+      } else if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_ROUNDS] < stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {
         winner = PlayerColor.BLUE;
       } else {
         return null;

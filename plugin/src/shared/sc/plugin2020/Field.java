@@ -1,10 +1,12 @@
 package sc.plugin2020;
 
 import java.util.Stack;
+
+import sc.api.plugins.IField;
 import sc.plugin2020.util.Coord;
 import sc.shared.PlayerColor;
 
-public class Field {
+public class Field implements IField {
 
   private Stack<Piece> pieces = new Stack<Piece>();
   private boolean obstructed = false;
