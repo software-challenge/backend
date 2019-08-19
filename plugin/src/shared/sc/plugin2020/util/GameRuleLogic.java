@@ -1,10 +1,10 @@
 package sc.plugin2020.util;
 
-import sc.plugin2020.Board;
-import sc.plugin2020.Field;
-import sc.plugin2020.GameState;
-import sc.plugin2020.Move;
+import sc.plugin2020.*;
 import sc.shared.PlayerColor;
+
+import java.util.ArrayList;
+import java.util.Stack;
 
 public class GameRuleLogic {
 
@@ -20,11 +20,29 @@ public class GameRuleLogic {
     return ((gs.getTurn() % 2 == 0) ? PlayerColor.RED : PlayerColor.BLUE);
   }
 
-  public static GameState performMove(GameState gs, Move m){
-    return null;
+  public static void performMove(GameState gs, Move m){
+
   }
 
   public static boolean isQueenBlocked(Board b, PlayerColor pc){
     return false;
+  }
+
+  public static ArrayList<Coord> findPieces(Board b, PlayerColor pc, PieceType pt){
+    ArrayList<Coord> tmp = new ArrayList<>();
+    Field[][] gameField = b.getGameField();
+
+    for(int i = 0; i < gameField.length; i++) {
+      for(int j = 0; j < gameField[i].length; j++) {
+        Stack<Piece> s = gameField[i][j].getPieces();
+        for (int k = 0; k < s.size(); k++)
+        {
+          Piece p = s.get(k);
+          if (p.getOwner() == pc && p.getPieceType() == pt)
+            tmp.add(new Coord(i,j));
+        }
+      }
+    }
+    return tmp;
   }
 }

@@ -35,7 +35,7 @@ public class GamePlayTest {
   @Test
   public void onlyEndAfterRoundTest() throws InvalidMoveException {
     Board board = TestGameUtil.createCustomBoard("" +
-                "----------" +
+                "BB--------" +
                "------------" +
               "--------------" +
              "----------------" +
@@ -48,7 +48,7 @@ public class GamePlayTest {
     {
       //Move move = new Move();
       //GameRuleLogic.performMove(state, move);
-      assertEquals(null, game.checkWinCondition());
+      assertEquals(1, GameRuleLogic.findPieces(state.getBoard(), PlayerColor.BLUE, PieceType.BEETLE).size());
     }
   }
 }

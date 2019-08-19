@@ -11,6 +11,10 @@ public class Board implements IBoard {
   private int shift = Constants.BOARD_SIZE-1/2;
   private Field[][] gameField = new Field[Constants.BOARD_SIZE-1][Constants.BOARD_SIZE-1];
 
+  public Field[][] getGameField(){
+    return gameField;
+  }
+
   public Board(){
     fillBoard();
   }
