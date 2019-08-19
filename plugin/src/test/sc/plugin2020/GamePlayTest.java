@@ -5,6 +5,7 @@ import org.junit.Test;
 import sc.plugin2020.util.Constants;
 import sc.plugin2020.util.GameRuleLogic;
 import sc.plugin2020.util.TestGameUtil;
+import sc.plugin2020.util.Direction;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 import sc.shared.WinCondition;
@@ -14,10 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static sc.plugin2020.Direction.*;
 import static sc.plugin2020.FieldState.EMPTY;
 import static sc.plugin2020.FieldState.RED;
-import static sc.plugin2020.util.GameRuleLogic.*;
 import static sc.plugin2020.util.TestJUnitUtil.assertThrows;
 
 public class GamePlayTest {
