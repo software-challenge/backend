@@ -53,7 +53,6 @@ public class Board implements IBoard {
     return gameField[q][r];
   }
 
-  @Override
   public Field getField(int x, int y) {
     if (x > shift || x < -shift || y > shift || y < -shift)
       throw new IndexOutOfBoundsException();
