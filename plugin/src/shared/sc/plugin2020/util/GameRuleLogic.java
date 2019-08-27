@@ -64,7 +64,7 @@ public class GameRuleLogic {
           {
             Piece p = s.get(k);
             if (p.getOwner() == pc && p.getPieceType() == pt)
-              tmp.add(new CubeCoordinates(i,j));
+              tmp.add(new CubeCoordinates(gameField[i][j].getPosition()));
           }
         }
       }

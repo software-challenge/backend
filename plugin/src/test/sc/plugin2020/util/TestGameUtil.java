@@ -35,8 +35,9 @@ public class TestGameUtil {
   }
 
   public static Board createCustomBoard(String boardString) {//Hardcoded auf Feldgröße von 9
+    String boardStringWithoutWhitespace = boardString.replaceAll(" ", "");
     Assert.assertEquals("Length of boardString does not match size of the Board",
-            Constants.FIELD_AMOUNT*2, boardString.length());
+            Constants.FIELD_AMOUNT*2, boardStringWithoutWhitespace.length());
 
     int[][] fields = {              {0,4},{1,3},{2,2},{3,1},{4,0},
                                 {-1,4},{0,3},{1,2},{2,1},{3,0},{4,-1},
@@ -49,7 +50,7 @@ public class TestGameUtil {
                                     {-4,0},{-3,-1},{-2,-2},{-1,-3},{0,-4}
     };
     Board board = new Board();
-    char[] tmp = boardString.toCharArray();
+    char[] tmp = boardStringWithoutWhitespace.toCharArray();
 
     for(int i = 0; i < fields.length; i++) {
       board.getField(fields[i][0],fields[i][1]).getPieces().clear();
