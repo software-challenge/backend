@@ -7,6 +7,8 @@ import sc.plugin2020.Piece;
 import sc.plugin2020.PieceType;
 import sc.shared.PlayerColor;
 
+import java.security.InvalidParameterException;
+
 public class TestGameUtil {
 
   private static Piece parsePiece (PlayerColor pc, char c){
@@ -26,8 +28,10 @@ public class TestGameUtil {
 
       case 'A':
         return new Piece(pc, PieceType.ANT);
+      default:
+        throw new InvalidParameterException("Expected piecetype character to be one of Q,B,G,S or A, was: "+c);
+
     }
-    return null;
   }
 
   public static Board createCustomBoard(String boardString) {//Hardcoded auf Feldgröße von 9
@@ -49,18 +53,24 @@ public class TestGameUtil {
 
     for(int i = 0; i < fields.length; i++) {
       board.getField(fields[i][0],fields[i][1]).getPieces().clear();
-      switch (tmp[i*2-1])
+      switch (tmp[i*2])
       {
         case 'R':
-          board.getField(fields[i][0],fields[i][1]).getPieces().add(parsePiece(PlayerColor.RED, tmp[i*2]));
+          board.getField(fields[i][0],fields[i][1]).getPieces().add(parsePiece(PlayerColor.RED, tmp[i*2+1]));
           break;
 
         case 'B':
-          board.getField(fields[i][0],fields[i][1]).getPieces().add(parsePiece(PlayerColor.BLUE, tmp[i*2]));
+          board.getField(fields[i][0],fields[i][1]).getPieces().add(parsePiece(PlayerColor.BLUE, tmp[i*2+1]));
           break;
 
         case 'O':
           board.getField(fields[i][0],fields[i][1]).setObstructed(true);
+          break;
+        case '-':
+          // empty field
+          break;
+        default:
+          throw new InvalidParameterException("Expected first character to be either B (blue), R (red) or O (obstructed), was: "+tmp[i*2]);
       }
     }
     return board;

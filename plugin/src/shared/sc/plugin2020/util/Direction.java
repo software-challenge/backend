@@ -8,7 +8,7 @@ public enum Direction {
   DOWNRIGHT,
   DOWNLEFT;
 
-  public Coord shift(int d) { // d is the distance
+  public CubeCoordinates shift(int d) { // d is the distance
     int shiftX = 0;
     int shiftY = 0;
     int shiftZ = 0;
@@ -38,6 +38,6 @@ public enum Direction {
         shiftZ = 1*d;
         break;
     }
-    return new Coord(shiftX, shiftY, shiftZ);
+    return new CubeCoordinates(shiftX, shiftY, shiftZ);
   }
 }

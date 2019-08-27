@@ -3,25 +3,25 @@ package sc.plugin2020;
 import java.util.Stack;
 
 import sc.api.plugins.IField;
-import sc.plugin2020.util.Coord;
+import sc.plugin2020.util.CubeCoordinates;
 import sc.shared.PlayerColor;
 
 public class Field implements IField {
 
   private Stack<Piece> pieces = new Stack<Piece>();
   private boolean obstructed = false;
-  private Coord position;
+  private CubeCoordinates position;
 
-  public Field(Coord position){
+  public Field(CubeCoordinates position){
     this.position = position;
   }
 
-  public Field(Coord position, boolean obstructed){
+  public Field(CubeCoordinates position, boolean obstructed){
     this.position = position;
     this.obstructed = obstructed;
   }
 
-  public Field(Coord position, Stack<Piece> pieces){
+  public Field(CubeCoordinates position, Stack<Piece> pieces){
     this.pieces = pieces;
     this.position = position;
   }
@@ -49,7 +49,7 @@ public class Field implements IField {
     return(pieces);
   }
 
-  public Coord getPosition(){
+  public CubeCoordinates getPosition(){
     return position;
   }
 }

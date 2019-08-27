@@ -4,6 +4,7 @@ import sc.plugin2020.*;
 import sc.shared.PlayerColor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 public class GameRuleLogic {
@@ -12,7 +13,7 @@ public class GameRuleLogic {
     throw new IllegalStateException("Can't be instantiated.");
   }
 
-  public static ArrayList<Field> getNeighbours(Board b, Coord c){
+  public static ArrayList<Field> getNeighbours(Board b, CubeCoordinates c){
     ArrayList<Field> tmp = new ArrayList<>();
 
     for (Direction d : Direction.values()){
@@ -29,8 +30,8 @@ public class GameRuleLogic {
     return tmp;
   }
 
-  public static Field getNeighbourInDirection(Board b, Coord c, Direction d){
-    return b.getField(new Coord(c.x + d.shift(1).x,c.y + d.shift(1).y,c.z + d.shift(1).z));
+  public static Field getNeighbourInDirection(Board b, CubeCoordinates c, Direction d){
+    return b.getField(new CubeCoordinates(c.x + d.shift(1).x,c.y + d.shift(1).y,c.z + d.shift(1).z));
   }
 
   public static PlayerColor getCurrentPlayerColor(GameState gs){
@@ -42,32 +43,36 @@ public class GameRuleLogic {
   }
 
   public static boolean isQueenBlocked(Board b, PlayerColor pc){
-    ArrayList<Coord> l = findPiecesOfTypeAndPlayer(b, pc, PieceType.BEE);
-    
+    ArrayList<CubeCoordinates> l = findPiecesOfTypeAndPlayer(b, PieceType.BEE, pc);
+
     if (l.size() == 0)
       return false;
 
     ArrayList<Field> neighbours = getNeighbours(b, l.get(0));
-    //Hier weitermachen.
-
-    return false;
+    return neighbours.stream().allMatch((field) -> (field != null && (field.isObstructed() || !field.getPieces().empty())));
   }
 
-  public static ArrayList<Coord> findPiecesOfTypeAndPlayer(Board b, PlayerColor pc, PieceType pt){
-    ArrayList<Coord> tmp = new ArrayList<>();
+  public static ArrayList<CubeCoordinates> findPiecesOfTypeAndPlayer(Board b, PieceType pt, PlayerColor pc){
+    ArrayList<CubeCoordinates> tmp = new ArrayList<>();
     Field[][] gameField = b.getGameField();
 
     for(int i = 0; i < gameField.length; i++) {
       for(int j = 0; j < gameField[i].length; j++) {
-        Stack<Piece> s = gameField[i][j].getPieces();
-        for (int k = 0; k < s.size(); k++)
-        {
-          Piece p = s.get(k);
-          if (p.getOwner() == pc && p.getPieceType() == pt)
-            tmp.add(new Coord(i,j));
+        if (gameField[i][j] != null) {
+          Stack<Piece> s = gameField[i][j].getPieces();
+          for (int k = 0; k < s.size(); k++)
+          {
+            Piece p = s.get(k);
+            if (p.getOwner() == pc && p.getPieceType() == pt)
+              tmp.add(new CubeCoordinates(i,j));
+          }
         }
       }
     }
     return tmp;
+  }
+
+  public static ArrayList<Move> getPossibleMoves(GameState gs) {
+    return new ArrayList<>();
   }
 }

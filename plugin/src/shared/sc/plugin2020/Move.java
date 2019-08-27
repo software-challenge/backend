@@ -1,27 +1,27 @@
 package sc.plugin2020;
 
 import sc.api.plugins.IMove;
-import sc.plugin2020.util.Coord;
+import sc.plugin2020.util.CubeCoordinates;
 
 public class Move implements IMove {
-  private Coord start, destination;
+  private CubeCoordinates start, destination;
   private Piece piece;
 
-  public Move(Coord start, Coord destination){
+  public Move(CubeCoordinates start, CubeCoordinates destination){
     this.start = start;
     this.destination = destination;
   }
 
-  public Move(Piece piece, Coord destination){
+  public Move(Piece piece, CubeCoordinates destination){
     this.piece = piece;
     this.destination = destination;
   }
 
-  public Coord getStart(){
+  public CubeCoordinates getStart(){
     return start;
   }
 
-  public Coord getDestination(){
+  public CubeCoordinates getDestination(){
     return destination;
   }
 
