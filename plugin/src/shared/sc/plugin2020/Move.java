@@ -31,4 +31,12 @@ public class Move implements IMove {
     else
       return MoveType.SETMOVE;
   }
+
+  public boolean isSetMove() {
+    return this.getMoveType() == MoveType.SETMOVE;
+  }
+
+  public boolean isDragMove() {
+    return this.getMoveType() == MoveType.DRAGMOVE;
+  }
 }

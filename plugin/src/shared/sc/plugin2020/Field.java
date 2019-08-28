@@ -30,12 +30,14 @@ public class Field implements IField {
     if (obstructed)
       return FieldState.OBSTRUCTED;
 
-    if (pieces.peek().getOwner() == PlayerColor.RED)
-      return FieldState.RED;
+    if (!pieces.isEmpty()) {
 
-    if (pieces.peek().getOwner() == PlayerColor.BLUE)
-      return FieldState.BLUE;
+      if(pieces.peek().getOwner() == PlayerColor.RED)
+        return FieldState.RED;
 
+      if(pieces.peek().getOwner() == PlayerColor.BLUE)
+        return FieldState.BLUE;
+    }
     return FieldState.EMPTY;
   }
 

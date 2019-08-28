@@ -130,4 +130,72 @@ public class GamePlayTest {
       assertFalse(GameRuleLogic.isQueenBlocked(board, PlayerColor.RED));
     }
   }
+
+  @Test
+  public void findFieldsOwnedByPlayerTest() {
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   RG----------" +
+              "  --BQ----------" +
+              " BGBB------------" +
+              "----RQ------------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      assertEquals(3, GameRuleLogic.fieldsOwnedByPlayer(board, PlayerColor.BLUE).size());
+    }
+  }
+
+  @Test
+  public void setMoveTest() throws InvalidMoveException {
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " ----------------" +
+              "------------------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0,0));
+      assertTrue(GameRuleLogic.validateMove(state, move));
+    }
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " ----------------" +
+              "------------------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(8,0));
+      assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
+    }
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " --BG------------" +
+              "------------------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0,0));
+      assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
+    }
+    // TODO test and implement setting on board which already has pieces by current player
+  }
 }

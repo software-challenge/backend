@@ -132,4 +132,10 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
     int[][] tmp = new int[1][1];
     return tmp; // Nur reingeschrieben. Ich weiß nicht genau, wie es funktioniert. KOtlinsyntax
   }
+
+  @NotNull
+  @Override
+  public String toString() {
+    return String.format("GameState Zug %d", this.getTurn());
+  }
 }
