@@ -12,11 +12,11 @@ import sc.shared.ScoreFragment;
 /**
  * Abstrakte Beschreibung des Spiels Piranhas für die Software-Challenge 2019
  */
-@PluginDescriptor(name = "Piranhas", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
+@PluginDescriptor(name = "Hive", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin {
 
   public static final String PLUGIN_AUTHOR = "";
-  public static final String PLUGIN_UUID = "swc_2019_piranhas";
+  public static final String PLUGIN_UUID = "swc_2020_hive";
 
   public static final ScoreDefinition SCORE_DEFINITION;
 
