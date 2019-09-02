@@ -16,8 +16,7 @@ import javax.swing.*;
 
 @XStreamAlias(value = "state")
 public class GameState extends TwoPlayerGameState<Player, Move> implements Cloneable {
-  @XStreamAlias("board")
-  private Board gameBoard;
+  private Board board;
   @XStreamAsAttribute
   private int turn;
   private ArrayList<Piece> undeployedRedPieces;
@@ -26,13 +25,13 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
 
   public GameState(){//Creates a completely new game(state)
     turn = 0;
-    gameBoard = new Board();
+    board = new Board();
     undeployedBluePieces = parsePiecesString(Constants.PIECES, PlayerColor.BLUE);
     undeployedRedPieces = parsePiecesString(Constants.PIECES, PlayerColor.RED);
   }
 
   public void setBoard (Board b){
-    gameBoard = b;
+    board = b;
   }
 
   //public Player getCurrentPlayer(){ // Ich verstehe die Syntax nicht HELP _________________________________
@@ -83,7 +82,7 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
   }
 
   public Board getBoard(){
-    return gameBoard;
+    return board;
   }
 
   public void addPlayer(Player player){

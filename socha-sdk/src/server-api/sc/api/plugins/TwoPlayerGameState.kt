@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
 import sc.shared.PlayerColor
 
-@XStreamAlias(value = "state")
 abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
 
     abstract val red: P
