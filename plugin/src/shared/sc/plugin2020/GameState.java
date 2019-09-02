@@ -3,6 +3,8 @@ package sc.plugin2020;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.jetbrains.annotations.NotNull;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.TwoPlayerGameState;
@@ -12,8 +14,11 @@ import sc.framework.plugins.Player;
 
 import javax.swing.*;
 
+@XStreamAlias(value = "state")
 public class GameState extends TwoPlayerGameState<Player, Move> implements Cloneable {
+  @XStreamAlias("board")
   private Board gameBoard;
+  @XStreamAsAttribute
   private int turn;
   private ArrayList<Piece> undeployedRedPieces;
   private ArrayList<Piece> undeployedBluePieces;

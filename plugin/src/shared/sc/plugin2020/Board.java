@@ -1,13 +1,26 @@
 package sc.plugin2020;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import com.thoughtworks.xstream.converters.basic.NullConverter;
+import com.thoughtworks.xstream.converters.collections.ArrayConverter;
+import com.thoughtworks.xstream.converters.extended.ToStringConverter;
 import sc.api.plugins.IBoard;
 import sc.plugin2020.util.Constants;
 import sc.plugin2020.util.CubeCoordinates;
 
 import java.util.LinkedList;
 
+@XStreamAlias(value = "board")
 public class Board implements IBoard {
+  @XStreamOmitField
   private int shift = (Constants.BOARD_SIZE-1)/2;
+
+  // NOTE that this adds <null/> to the XML where fields of the array are null. This is required for proper deserialization, maybe we find a better way
+  @XStreamConverter(value = ArrayConverter.class, nulls = {ToStringConverter.class})
+  @XStreamImplicit(itemFieldName = "fields")
   private Field[][] gameField = new Field[Constants.BOARD_SIZE][Constants.BOARD_SIZE];
 
   public Field[][] getGameField(){

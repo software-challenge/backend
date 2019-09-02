@@ -1,7 +1,10 @@
 package sc.plugin2020;
 
+import com.thoughtworks.xstream.XStream;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import sc.plugin2020.util.Configuration;
 import sc.plugin2020.util.CubeCoordinates;
 import sc.plugin2020.util.GameRuleLogic;
 import sc.plugin2020.util.TestGameUtil;
@@ -197,5 +200,31 @@ public class GamePlayTest {
       assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
     }
     // TODO test and implement setting on board which already has pieces by current player
+
+  }
+
+  @Test
+  @Ignore
+  // use to see the generated XML
+  public void xmlTest() {
+    Board board = TestGameUtil.createCustomBoard("" +
+            "    ----------" +
+            "   ------------" +
+            "  --------------" +
+            " --BG------------" +
+            "------------------" +
+            " ----------------" +
+            "  --------------" +
+            "   ------------" +
+            "    ----------");
+    state.setBoard(board);
+    Piece[] pieces = new Piece[]{, };
+    board.getField(0,0).getPieces().add(new Piece(PlayerColor.RED, PieceType.ANT));
+    board.getField(0,0).getPieces().add(new Piece(PlayerColor.BLUE, PieceType.BEE));
+    assertEquals(PieceType.BEE, board.getField(0,0).getPieces().lastElement().getPieceType());
+    assertEquals(PieceType.BEE, board.getField(0,0).getPieces().peek().getPieceType());
+    XStream xstream = Configuration.getXStream();
+    String xml = xstream.toXML(state);
+    assertEquals("", xml);
   }
 }

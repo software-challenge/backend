@@ -1,7 +1,9 @@
 package sc.plugin2020.util;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.jetbrains.annotations.NotNull;
 
+@XStreamAlias(value = "position")
 public class CubeCoordinates implements Comparable {
   public final int x,y,z;
 
