@@ -125,6 +125,9 @@ public class GameRuleLogic {
   }
 
   public static ArrayList<Move> getPossibleMoves(GameState gs) {
-    return new ArrayList<>();
+    ArrayList<Move> setMoves = new ArrayList<>();
+    setMoves.add(new Move(new Piece(PlayerColor.RED, PieceType.BEETLE), new CubeCoordinates(0, 0, 0)));
+    // TODO
+    return setMoves;
   }
 }
