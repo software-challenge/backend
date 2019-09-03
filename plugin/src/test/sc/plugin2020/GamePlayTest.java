@@ -14,8 +14,6 @@ import sc.shared.PlayerColor;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 import static sc.plugin2020.util.TestJUnitUtil.assertThrows;
@@ -35,7 +33,7 @@ public class GamePlayTest {
   @Test
   public void boardCreationTest() {
     Board board = new Board();
-    assertNotNull(board.getField(0,0,0));
+    assertNotNull(board.getField(0, 0, 0));
   }
 
   @Test
@@ -50,7 +48,7 @@ public class GamePlayTest {
                     " ----------------" +
                     "  --------------" +
                     "   ------------" +
-                    "    ----------" )
+                    "    ----------")
     );
     assertThrows(InvalidParameterException.class, () ->
             TestGameUtil.createCustomBoard("" +
@@ -62,7 +60,7 @@ public class GamePlayTest {
                     " ----------------" +
                     "  --------------" +
                     "   ------------" +
-                    "    ----------" )
+                    "    ----------")
     );
   }
 
@@ -77,7 +75,7 @@ public class GamePlayTest {
             " ----------------" +
             "  --------------" +
             "   ------------" +
-            "    ----------" );
+            "    ----------");
     state.setBoard(board);
     {
       //Move move = new Move();
@@ -90,12 +88,12 @@ public class GamePlayTest {
   public void getNeighbourTest() {
     ArrayList<Field> n = GameRuleLogic.getNeighbours(new Board(), new CubeCoordinates(-2, 1));
     CubeCoordinates[] expected = {
-            new CubeCoordinates(-2,2),
-            new CubeCoordinates(-1,1),
-            new CubeCoordinates(-1,0),
-            new CubeCoordinates(-2,0),
-            new CubeCoordinates(-3,1),
-            new CubeCoordinates(-3,2)
+            new CubeCoordinates(-2, 2),
+            new CubeCoordinates(-1, 1),
+            new CubeCoordinates(-1, 0),
+            new CubeCoordinates(-2, 0),
+            new CubeCoordinates(-3, 1),
+            new CubeCoordinates(-3, 2)
     };
     assertArrayEquals(
             Arrays.stream(expected).sorted().toArray(),
@@ -165,7 +163,7 @@ public class GamePlayTest {
               "   ------------" +
               "    ----------");
       state.setBoard(board);
-      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0,0));
+      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0, 0));
       assertTrue(GameRuleLogic.validateMove(state, move));
     }
     {
@@ -180,7 +178,7 @@ public class GamePlayTest {
               "   ------------" +
               "    ----------");
       state.setBoard(board);
-      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(8,0));
+      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(8, 0));
       assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
     }
     {
@@ -195,10 +193,27 @@ public class GamePlayTest {
               "   ------------" +
               "    ----------");
       state.setBoard(board);
-      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0,0));
+      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0, 0));
       assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
     }
-    // TODO test and implement setting on board which already has pieces by current player
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " RGBG------------" +
+              "------------------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0, 0));
+      assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
+      Move move2 = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(-4, 4));
+      assertTrue(GameRuleLogic.validateMove(state, move2));
+    }
+    // TODO expand setting on board which already has pieces by current player
   }
 
   @Test
@@ -216,11 +231,11 @@ public class GamePlayTest {
             "   ------------" +
             "    ----------");
     state.setBoard(board);
-    Piece[] pieces = new Piece[]{, };
-    board.getField(0,0).getPieces().add(new Piece(PlayerColor.RED, PieceType.ANT));
-    board.getField(0,0).getPieces().add(new Piece(PlayerColor.BLUE, PieceType.BEE));
-    assertEquals(PieceType.BEE, board.getField(0,0).getPieces().lastElement().getPieceType());
-    assertEquals(PieceType.BEE, board.getField(0,0).getPieces().peek().getPieceType());
+    Piece[] pieces = new Piece[]{,};
+    board.getField(0, 0).getPieces().add(new Piece(PlayerColor.RED, PieceType.ANT));
+    board.getField(0, 0).getPieces().add(new Piece(PlayerColor.BLUE, PieceType.BEE));
+    assertEquals(PieceType.BEE, board.getField(0, 0).getPieces().lastElement().getPieceType());
+    assertEquals(PieceType.BEE, board.getField(0, 0).getPieces().peek().getPieceType());
     XStream xstream = Configuration.getXStream();
     String xml = xstream.toXML(state);
     assertEquals("<state startPlayerColor=\"RED\" currentPlayerColor=\"RED\" turn=\"0\">\n" +
@@ -372,148 +387,148 @@ public class GamePlayTest {
             "   ------------" +
             "    ----------");
     state.setBoard(board);
-    Piece[] pieces = new Piece[]{, };
-    board.getField(0,0).getPieces().add(new Piece(PlayerColor.RED, PieceType.ANT));
-    board.getField(0,0).getPieces().add(new Piece(PlayerColor.BLUE, PieceType.BEE));
-    assertEquals(PieceType.BEE, board.getField(0,0).getPieces().lastElement().getPieceType());
-    assertEquals(PieceType.BEE, board.getField(0,0).getPieces().peek().getPieceType());
+    Piece[] pieces = new Piece[]{,};
+    board.getField(0, 0).getPieces().add(new Piece(PlayerColor.RED, PieceType.ANT));
+    board.getField(0, 0).getPieces().add(new Piece(PlayerColor.BLUE, PieceType.BEE));
+    assertEquals(PieceType.BEE, board.getField(0, 0).getPieces().lastElement().getPieceType());
+    assertEquals(PieceType.BEE, board.getField(0, 0).getPieces().peek().getPieceType());
     XStream xstream = Configuration.getXStream();
     GameState xmlState = new GameState();
     GameState read = (GameState) xstream.fromXML(
-    "<state startPlayerColor=\"RED\" currentPlayerColor=\"RED\" turn=\"0\">\n" +
-            "  <board>\n" +
-            "    <fields>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <field obstructed=\"false\" x=\"-4\" y=\"0\" z=\"4\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-4\" y=\"1\" z=\"3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-4\" y=\"2\" z=\"2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-4\" y=\"3\" z=\"1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-4\" y=\"4\" z=\"0\"/>\n" +
-            "    </fields>\n" +
-            "    <fields>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <field obstructed=\"false\" x=\"-3\" y=\"-1\" z=\"4\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-3\" y=\"0\" z=\"3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-3\" y=\"1\" z=\"2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-3\" y=\"2\" z=\"1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-3\" y=\"3\" z=\"0\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-3\" y=\"4\" z=\"-1\"/>\n" +
-            "    </fields>\n" +
-            "    <fields>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <field obstructed=\"false\" x=\"-2\" y=\"-2\" z=\"4\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-2\" y=\"-1\" z=\"3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-2\" y=\"0\" z=\"2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-2\" y=\"1\" z=\"1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-2\" y=\"2\" z=\"0\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-2\" y=\"3\" z=\"-1\">\n" +
-            "        <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-            "      </field>\n" +
-            "      <field obstructed=\"false\" x=\"-2\" y=\"4\" z=\"-2\"/>\n" +
-            "    </fields>\n" +
-            "    <fields>\n" +
-            "      <null/>\n" +
-            "      <field obstructed=\"false\" x=\"-1\" y=\"-3\" z=\"4\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-1\" y=\"-2\" z=\"3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-1\" y=\"-1\" z=\"2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-1\" y=\"0\" z=\"1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-1\" y=\"1\" z=\"0\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-1\" y=\"2\" z=\"-1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-1\" y=\"3\" z=\"-2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"-1\" y=\"4\" z=\"-3\"/>\n" +
-            "    </fields>\n" +
-            "    <fields>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"-4\" z=\"4\"/>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"-3\" z=\"3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"-2\" z=\"2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"-1\" z=\"1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"0\" z=\"0\">\n" +
-            "        <piece owner=\"RED\" type=\"ANT\"/>\n" +
-            "        <piece owner=\"BLUE\" type=\"BEE\"/>\n" +
-            "      </field>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"1\" z=\"-1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"2\" z=\"-2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"3\" z=\"-3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"0\" y=\"4\" z=\"-4\"/>\n" +
-            "    </fields>\n" +
-            "    <fields>\n" +
-            "      <field obstructed=\"false\" x=\"1\" y=\"-4\" z=\"3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"1\" y=\"-3\" z=\"2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"1\" y=\"-2\" z=\"1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"1\" y=\"-1\" z=\"0\"/>\n" +
-            "      <field obstructed=\"false\" x=\"1\" y=\"0\" z=\"-1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"1\" y=\"1\" z=\"-2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"1\" y=\"2\" z=\"-3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"1\" y=\"3\" z=\"-4\"/>\n" +
-            "      <null/>\n" +
-            "    </fields>\n" +
-            "    <fields>\n" +
-            "      <field obstructed=\"false\" x=\"2\" y=\"-4\" z=\"2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"2\" y=\"-3\" z=\"1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"2\" y=\"-2\" z=\"0\"/>\n" +
-            "      <field obstructed=\"false\" x=\"2\" y=\"-1\" z=\"-1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"2\" y=\"0\" z=\"-2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"2\" y=\"1\" z=\"-3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"2\" y=\"2\" z=\"-4\"/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "    </fields>\n" +
-            "    <fields>\n" +
-            "      <field obstructed=\"false\" x=\"3\" y=\"-4\" z=\"1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"3\" y=\"-3\" z=\"0\"/>\n" +
-            "      <field obstructed=\"false\" x=\"3\" y=\"-2\" z=\"-1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"3\" y=\"-1\" z=\"-2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"3\" y=\"0\" z=\"-3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"3\" y=\"1\" z=\"-4\"/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "    </fields>\n" +
-            "    <fields>\n" +
-            "      <field obstructed=\"false\" x=\"4\" y=\"-4\" z=\"0\"/>\n" +
-            "      <field obstructed=\"false\" x=\"4\" y=\"-3\" z=\"-1\"/>\n" +
-            "      <field obstructed=\"false\" x=\"4\" y=\"-2\" z=\"-2\"/>\n" +
-            "      <field obstructed=\"false\" x=\"4\" y=\"-1\" z=\"-3\"/>\n" +
-            "      <field obstructed=\"false\" x=\"4\" y=\"0\" z=\"-4\"/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "      <null/>\n" +
-            "    </fields>\n" +
-            "  </board>\n" +
-            "  <undeployedRedPieces>\n" +
-            "    <piece owner=\"RED\" type=\"BEE\"/>\n" +
-            "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-            "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-            "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-            "    <piece owner=\"RED\" type=\"GRASSHOPPER\"/>\n" +
-            "    <piece owner=\"RED\" type=\"GRASSHOPPER\"/>\n" +
-            "    <piece owner=\"RED\" type=\"BEETLE\"/>\n" +
-            "    <piece owner=\"RED\" type=\"BEETLE\"/>\n" +
-            "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-            "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-            "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-            "  </undeployedRedPieces>\n" +
-            "  <undeployedBluePieces>\n" +
-            "    <piece owner=\"BLUE\" type=\"BEE\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"BEETLE\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"BEETLE\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-            "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-            "  </undeployedBluePieces>\n" +
-            "</state>", xmlState);
+            "<state startPlayerColor=\"RED\" currentPlayerColor=\"RED\" turn=\"0\">\n" +
+                    "  <board>\n" +
+                    "    <fields>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <field obstructed=\"false\" x=\"-4\" y=\"0\" z=\"4\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-4\" y=\"1\" z=\"3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-4\" y=\"2\" z=\"2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-4\" y=\"3\" z=\"1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-4\" y=\"4\" z=\"0\"/>\n" +
+                    "    </fields>\n" +
+                    "    <fields>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <field obstructed=\"false\" x=\"-3\" y=\"-1\" z=\"4\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-3\" y=\"0\" z=\"3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-3\" y=\"1\" z=\"2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-3\" y=\"2\" z=\"1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-3\" y=\"3\" z=\"0\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-3\" y=\"4\" z=\"-1\"/>\n" +
+                    "    </fields>\n" +
+                    "    <fields>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <field obstructed=\"false\" x=\"-2\" y=\"-2\" z=\"4\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-2\" y=\"-1\" z=\"3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-2\" y=\"0\" z=\"2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-2\" y=\"1\" z=\"1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-2\" y=\"2\" z=\"0\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-2\" y=\"3\" z=\"-1\">\n" +
+                    "        <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
+                    "      </field>\n" +
+                    "      <field obstructed=\"false\" x=\"-2\" y=\"4\" z=\"-2\"/>\n" +
+                    "    </fields>\n" +
+                    "    <fields>\n" +
+                    "      <null/>\n" +
+                    "      <field obstructed=\"false\" x=\"-1\" y=\"-3\" z=\"4\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-1\" y=\"-2\" z=\"3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-1\" y=\"-1\" z=\"2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-1\" y=\"0\" z=\"1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-1\" y=\"1\" z=\"0\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-1\" y=\"2\" z=\"-1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-1\" y=\"3\" z=\"-2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"-1\" y=\"4\" z=\"-3\"/>\n" +
+                    "    </fields>\n" +
+                    "    <fields>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"-4\" z=\"4\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"-3\" z=\"3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"-2\" z=\"2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"-1\" z=\"1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"0\" z=\"0\">\n" +
+                    "        <piece owner=\"RED\" type=\"ANT\"/>\n" +
+                    "        <piece owner=\"BLUE\" type=\"BEE\"/>\n" +
+                    "      </field>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"1\" z=\"-1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"2\" z=\"-2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"3\" z=\"-3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"0\" y=\"4\" z=\"-4\"/>\n" +
+                    "    </fields>\n" +
+                    "    <fields>\n" +
+                    "      <field obstructed=\"false\" x=\"1\" y=\"-4\" z=\"3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"1\" y=\"-3\" z=\"2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"1\" y=\"-2\" z=\"1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"1\" y=\"-1\" z=\"0\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"1\" y=\"0\" z=\"-1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"1\" y=\"1\" z=\"-2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"1\" y=\"2\" z=\"-3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"1\" y=\"3\" z=\"-4\"/>\n" +
+                    "      <null/>\n" +
+                    "    </fields>\n" +
+                    "    <fields>\n" +
+                    "      <field obstructed=\"false\" x=\"2\" y=\"-4\" z=\"2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"2\" y=\"-3\" z=\"1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"2\" y=\"-2\" z=\"0\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"2\" y=\"-1\" z=\"-1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"2\" y=\"0\" z=\"-2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"2\" y=\"1\" z=\"-3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"2\" y=\"2\" z=\"-4\"/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "    </fields>\n" +
+                    "    <fields>\n" +
+                    "      <field obstructed=\"false\" x=\"3\" y=\"-4\" z=\"1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"3\" y=\"-3\" z=\"0\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"3\" y=\"-2\" z=\"-1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"3\" y=\"-1\" z=\"-2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"3\" y=\"0\" z=\"-3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"3\" y=\"1\" z=\"-4\"/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "    </fields>\n" +
+                    "    <fields>\n" +
+                    "      <field obstructed=\"false\" x=\"4\" y=\"-4\" z=\"0\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"4\" y=\"-3\" z=\"-1\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"4\" y=\"-2\" z=\"-2\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"4\" y=\"-1\" z=\"-3\"/>\n" +
+                    "      <field obstructed=\"false\" x=\"4\" y=\"0\" z=\"-4\"/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "      <null/>\n" +
+                    "    </fields>\n" +
+                    "  </board>\n" +
+                    "  <undeployedRedPieces>\n" +
+                    "    <piece owner=\"RED\" type=\"BEE\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"GRASSHOPPER\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"GRASSHOPPER\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"BEETLE\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"BEETLE\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
+                    "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
+                    "  </undeployedRedPieces>\n" +
+                    "  <undeployedBluePieces>\n" +
+                    "    <piece owner=\"BLUE\" type=\"BEE\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"BEETLE\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"BEETLE\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
+                    "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
+                    "  </undeployedBluePieces>\n" +
+                    "</state>", xmlState);
     assertEquals(state, read);
   }
 }
