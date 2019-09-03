@@ -15,10 +15,10 @@ public class CubeCoordinates implements Comparable {
     this.z = z;
   }
 
-  public CubeCoordinates(int q, int r){
-    this.x = q;
-    this.y = r;
-    this.z = -q-r;
+  public CubeCoordinates(int x, int y){
+    this.x = x;
+    this.y = y;
+    this.z = -x-y;
   }
 
   public CubeCoordinates(CubeCoordinates position) {
