@@ -1,18 +1,15 @@
 package sc.plugin2020;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.jetbrains.annotations.NotNull;
-import sc.api.plugins.IGameState;
 import sc.api.plugins.TwoPlayerGameState;
+import sc.framework.plugins.Player;
 import sc.plugin2020.util.Constants;
 import sc.shared.PlayerColor;
-import sc.framework.plugins.Player;
 
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @XStreamAlias(value = "state")
 public class GameState extends TwoPlayerGameState<Player, Move> implements Cloneable {
@@ -23,14 +20,14 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
   private ArrayList<Piece> undeployedBluePieces;
   private Player red, blue;
 
-  public GameState(){//Creates a completely new game(state)
+  public GameState() {//Creates a completely new game(state)
     turn = 0;
     board = new Board();
     undeployedBluePieces = parsePiecesString(Constants.PIECES, PlayerColor.BLUE);
     undeployedRedPieces = parsePiecesString(Constants.PIECES, PlayerColor.RED);
   }
 
-  public void setBoard (Board b){
+  public void setBoard(Board b) {
     board = b;
   }
 
@@ -42,10 +39,10 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
   //  return ((turn % 2 == 0) ? blue : red);
   //}
 
-  private ArrayList<Piece> parsePiecesString(String s, PlayerColor p){
+  private ArrayList<Piece> parsePiecesString(String s, PlayerColor p) {
     ArrayList<Piece> l = new ArrayList<Piece>();
-    for (char c : s.toCharArray()){
-      switch (c) {
+    for(char c : s.toCharArray()) {
+      switch(c) {
         case 'Q':
           l.add(new Piece(p, PieceType.BEE));
           continue;
@@ -66,27 +63,27 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
     return l;
   }
 
-  public List<Piece> getUndeployedPieces(PlayerColor owner){
-    if (owner == PlayerColor.RED)
+  public List<Piece> getUndeployedPieces(PlayerColor owner) {
+    if(owner == PlayerColor.RED)
       return undeployedRedPieces;
     else
       return undeployedBluePieces;
   }
 
-  public int getTurn(){
+  public int getTurn() {
     return turn;
   }
 
-  public void setTurn(int turn){
+  public void setTurn(int turn) {
     this.turn = turn;
   }
 
-  public Board getBoard(){
+  public Board getBoard() {
     return board;
   }
 
-  public void addPlayer(Player player){
-    if (player.getColor() == PlayerColor.BLUE)
+  public void addPlayer(Player player) {
+    if(player.getColor() == PlayerColor.BLUE)
       blue = player;
     else
       red = player;
@@ -94,7 +91,7 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
 
   @Override
   public int getRound() {
-    return turn/2; //Ist das richtig?
+    return turn / 2; //Ist das richtig?
   }
 
   @NotNull
@@ -114,11 +111,11 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
     return turn;
   }
 
-  public int[] getPlayerStats (Player p){
+  public int[] getPlayerStats(Player p) {
     return getPlayerStats(p.getColor());
   }
 
-  public int[] getPlayerStats (PlayerColor p){
+  public int[] getPlayerStats(PlayerColor p) {
     int[] tmp = new int[1];
     tmp[0] = turn;
     return tmp;
@@ -132,7 +129,7 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
     red = newRed;
   }
 
-  public int[][] getGameStats(){
+  public int[][] getGameStats() {
     int[][] tmp = new int[1][1];
     return tmp; // Nur reingeschrieben. Ich weiß nicht genau, wie es funktioniert. KOtlinsyntax
   }

@@ -40,7 +40,6 @@ public class GamePlayTest {
 
   @Test
   public void invalidBoardStringTest() {
-
     assertThrows(InvalidParameterException.class, () ->
             TestGameUtil.createCustomBoard("" +
                     "    XY--------" +
@@ -200,7 +199,6 @@ public class GamePlayTest {
       assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
     }
     // TODO test and implement setting on board which already has pieces by current player
-
   }
 
   @Test
@@ -359,7 +357,6 @@ public class GamePlayTest {
             "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
             "  </undeployedBluePieces>\n" +
             "</state>", xml);
-
   }
 
   @Test
@@ -518,6 +515,5 @@ public class GamePlayTest {
             "  </undeployedBluePieces>\n" +
             "</state>", xmlState);
     assertEquals(state, read);
-
   }
 }
