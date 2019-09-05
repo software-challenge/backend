@@ -311,7 +311,7 @@ public class GamePlayTest {
               "   ------------" +
               "    ----------");
       state.setBoard(board);
-      Move move = new Move(new CubeCoordinates(0, 0) , new CubeCoordinates(0, 0));
+      Move move = new Move(new CubeCoordinates(0, 0) , new CubeCoordinates(1, -1));
       assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
     }
   }

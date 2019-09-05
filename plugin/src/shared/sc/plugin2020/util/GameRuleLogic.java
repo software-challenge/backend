@@ -127,12 +127,101 @@ public class GameRuleLogic {
         }
       }
     } else {
+      // TODO: Check if swarm will be disconnected
+
+      //If the queen is not placed, there should be no drag move
       if (GameRuleLogic.findPiecesOfTypeAndPlayer(gs.getBoard(), PieceType.BEE, gs.getCurrentPlayerColor()).size() != 1)
         throw new InvalidMoveException("The Queen is not placed. Until then drawmoves are not allowed");
+
+      if (!GameRuleLogic.isOnBoard(m.getDestination()) || !GameRuleLogic.isOnBoard(m.getStart()))
+        throw new InvalidMoveException("The Move is out of bounds. Watch out");
+
+      //Is a piece at the start position
+      if (gs.getBoard().getField(m.getStart()).getPieces().size() == 0)
+        throw new InvalidMoveException("There is no piece to move");
+
+      //Does the piece has the color of the current player
+      if (gs.getBoard().getField(m.getStart()).getPieces().peek().getOwner() != gs.getCurrentPlayerColor())
+        throw new InvalidMoveException("It is not this players move");
+
+      //No waiting moves allowed
       if (m.getStart().equals(m.getDestination()))
         throw new InvalidMoveException("The destination is the start. No waiting moves allowed.");
+
+      //Only beetles should climb on other pieces
+      if (isPosOnFieldOfColour(gs.getBoard(), gs.getCurrentPlayerColor().opponent(), m.getDestination()) || isPosOnFieldOfColour(gs.getBoard(), gs.getCurrentPlayerColor(), m.getDestination()))
+        if (gs.getBoard().getField(m.getStart()).getPieces().peek().getPieceType() != PieceType.BEETLE)
+          throw new InvalidMoveException("Only beetles are allowed to climb on other Pieces");
+
+      //The general checks are done. Now the piece specific ones
+      switch(gs.getBoard().getField(m.getStart()).getPieces().peek().getPieceType()) {
+        case ANT:
+          //HARD
+          break;
+        case BEE:
+          validateBeeMove(gs.getBoard(), m);
+          break;
+        case BEETLE:
+          break;
+        case GRASSHOPPER:
+          break;
+        case SPIDER:
+          break;
+      }
     }
     return true;
+  }
+
+  public static boolean validateAntMove(GameState gs, Move m) throws InvalidMoveException{
+    return false;
+  }
+  public static void validateBeeMove(Board b, Move m) throws InvalidMoveException{
+    if (!isPathToNextFieldClear(b, m.getStart(), m.getDestination()))
+      throw new InvalidMoveException("There is no path to your destination");
+  }
+  public static boolean validateBeetleMove(GameState gs, Move m) throws InvalidMoveException{
+    return false;
+  }
+  public static boolean validateGrasshopperMove(GameState gs, Move m) throws InvalidMoveException{
+    return false;
+  }
+  public static boolean validateSpiderMove(GameState gs, Move m) throws InvalidMoveException{
+    return false;
+  }
+
+  public static boolean isPathToNextFieldClear(Board b, CubeCoordinates coord1, CubeCoordinates coord2){
+    ArrayList<Field> path = sharedNeighboursOfTwoCoords(b, coord1, coord2);
+    for (Field i : path)
+      if (!i.isObstructed() && i.getPieces().size() == 0)
+        return true;
+
+    return false;
+  }
+
+  public static boolean twoFieldsOnOneStraight(CubeCoordinates coord1, CubeCoordinates coord2){
+    return coord1.x == coord2.x || coord1.y == coord2.y || coord1.z == coord2.z;
+  }
+
+  public static ArrayList<Field> sharedNeighboursOfTwoCoords(Board b, CubeCoordinates coord1, CubeCoordinates coord2){
+    ArrayList<Field> tmp = new ArrayList<>();
+
+    for ( Field i : getNeighbours(b, coord1)) {
+      for (Field j : getNeighbours(b, coord2)){
+        if (i.getPosition().equals(j.getPosition()))
+          tmp.add(j);
+      }
+    }
+    return tmp;
+  }
+
+  public static boolean isPosOnFieldOfColour(Board b, PlayerColor c, CubeCoordinates coord){
+    ArrayList<Field> playerFields = fieldsOwnedByPlayer(b, c);
+
+    for (Field i : playerFields)
+      if (i.getPosition().equals(coord))
+        return true;
+
+    return false;
   }
 
   public static boolean isPosNeighbourOfColour(Board b, PlayerColor c, CubeCoordinates coord){
