@@ -1,10 +1,15 @@
 package sc.plugin2020;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.api.plugins.IMove;
 import sc.plugin2020.util.CubeCoordinates;
 
+@XStreamAlias(value = "move")
 public class Move implements IMove {
+  @XStreamAsAttribute
   private CubeCoordinates start, destination;
+  @XStreamAsAttribute
   private Piece piece;
 
   public Move(CubeCoordinates start, CubeCoordinates destination){
@@ -43,21 +48,12 @@ public class Move implements IMove {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-
-    if (o == null || getClass() != o.getClass())
-      return false;
-
-    Move m = (Move) o;
-
-    if ((m.getMoveType() != this.getMoveType()) || (this.getDestination() == m.getDestination()))
-      return false;
-
-    if (this.getMoveType() == MoveType.SETMOVE)
-      return this.getPiece() == m.getPiece();
-    else
-      return this.getStart() == m.getStart();
+  public boolean equals(Object obj) {
+    Move to = (Move)obj;
+    if (this.isSetMove()) {
+      return (to.isSetMove() && this.destination.equals(to.destination) && this.piece.equals(to.piece));
+    } else {
+      return (to.isDragMove() && this.start.equals(to.start) && this.destination.equals(to.destination));
+    }
   }
 }

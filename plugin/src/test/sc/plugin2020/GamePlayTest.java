@@ -631,4 +631,38 @@ public class GamePlayTest {
                     "</state>", xmlState);
     assertEquals(state, read);
   }
+
+  @Test
+  public void moveToXmlTest() {
+    Move move = new Move(new Piece(PlayerColor.RED, PieceType.ANT), new CubeCoordinates(1,2,-3));
+    XStream xstream = Configuration.getXStream();
+    String xml = xstream.toXML(move);
+    String expect =
+            "<move>\n" +
+            "  <destination>\n" +
+            "    <x>1</x>\n" +
+            "    <y>2</y>\n" +
+            "    <z>-3</z>\n" +
+            "  </destination>\n" +
+            "  <piece owner=\"RED\" type=\"ANT\"/>\n" +
+            "</move>";
+    assertEquals(expect, xml);
+  }
+
+  @Test
+  public void xmlToMoveTest() {
+    XStream xstream = Configuration.getXStream();
+    String xml =
+            "<move>\n" +
+                    "  <destination>\n" +
+                    "    <x>1</x>\n" +
+                    "    <y>2</y>\n" +
+                    "    <z>-3</z>\n" +
+                    "  </destination>\n" +
+                    "  <piece owner=\"RED\" type=\"ANT\"/>\n" +
+                    "</move>";
+    Move xmlMove = (Move)xstream.fromXML(xml);
+    Move expect = new Move(new Piece(PlayerColor.RED, PieceType.ANT), new CubeCoordinates(1,2,-3));
+    assertEquals(expect, xmlMove);
+  }
 }
