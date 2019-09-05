@@ -31,7 +31,7 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
     board = b;
   }
 
-  //public Player getCurrentPlayer(){ // Ich verstehe die Syntax nicht HELP _________________________________
+  //public Player getCurrentPlayer(){ // Ich verstehe die Syntax nicht _________________________________
   //  return ((turn % 2 == 0) ? red : blue);
   //}
 
@@ -131,7 +131,7 @@ public class GameState extends TwoPlayerGameState<Player, Move> implements Clone
 
   public int[][] getGameStats() {
     int[][] tmp = new int[1][1];
-    return tmp; // Nur reingeschrieben. Ich weiß nicht genau, wie es funktioniert. KOtlinsyntax
+    return tmp; // TODO
   }
 
   @NotNull

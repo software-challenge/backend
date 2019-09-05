@@ -17,6 +17,8 @@ public class Move implements IMove {
     this.destination = destination;
   }
 
+  public Piece getPiece() { return piece; }
+
   public CubeCoordinates getStart(){
     return start;
   }
@@ -38,5 +40,24 @@ public class Move implements IMove {
 
   public boolean isDragMove() {
     return this.getMoveType() == MoveType.DRAGMOVE;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+
+    if (o == null || getClass() != o.getClass())
+      return false;
+
+    Move m = (Move) o;
+
+    if ((m.getMoveType() != this.getMoveType()) || (this.getDestination() == m.getDestination()))
+      return false;
+
+    if (this.getMoveType() == MoveType.SETMOVE)
+      return this.getPiece() == m.getPiece();
+    else
+      return this.getStart() == m.getStart();
   }
 }

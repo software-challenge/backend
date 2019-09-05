@@ -166,6 +166,10 @@ public class GamePlayTest {
       Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0, 0));
       assertTrue(GameRuleLogic.validateMove(state, move));
     }
+  }
+
+  @Test
+  public void setMoveTest1() throws InvalidMoveException {
     {
       Board board = TestGameUtil.createCustomBoard("" +
               "    ----------" +
@@ -181,6 +185,9 @@ public class GamePlayTest {
       Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(8, 0));
       assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
     }
+    }
+  @Test
+  public void setMoveTest2() throws InvalidMoveException {
     {
       Board board = TestGameUtil.createCustomBoard("" +
               "    ----------" +
@@ -196,6 +203,28 @@ public class GamePlayTest {
       Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(0, 0));
       assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
     }
+  }
+  @Test
+  public void setMoveTest3() throws InvalidMoveException {
+    {
+      state.getUndeployedPieces(PlayerColor.RED).clear();
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " RGBG------------" +
+              "------------------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(new Piece(PlayerColor.RED, PieceType.ANT), new CubeCoordinates(-4, 4));
+      assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
+    }
+  }
+  @Test
+  public void setMoveTest4() throws InvalidMoveException {
     {
       Board board = TestGameUtil.createCustomBoard("" +
               "    ----------" +
@@ -213,9 +242,79 @@ public class GamePlayTest {
       Move move2 = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(-4, 4));
       assertTrue(GameRuleLogic.validateMove(state, move2));
     }
-    // TODO expand setting on board which already has pieces by current player
   }
-
+  @Test
+  public void setMoveTest5() throws InvalidMoveException {
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " RGRGRG----------" +
+              "------------------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(state.getUndeployedPieces(PlayerColor.RED).get(0), new CubeCoordinates(-4, 4));
+      assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
+    }
+  }
+  @Test
+  public void drawMoveTest() throws InvalidMoveException {
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " ----------------" +
+              "------------------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(new CubeCoordinates(0, 0) , new CubeCoordinates(0, 0));
+      assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
+    }
+  }
+  @Test
+  public void drawMoveTest2() throws InvalidMoveException {
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " ----------------" +
+              "--------RQ--------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(new CubeCoordinates(0, 0) , new CubeCoordinates(0, 0));
+      assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
+    }
+  }
+  @Test
+  public void drawMoveTest3() throws InvalidMoveException {
+    {
+      Board board = TestGameUtil.createCustomBoard("" +
+              "    ----------" +
+              "   ------------" +
+              "  --------------" +
+              " ----------------" +
+              "--------RQBQ------" +
+              " ----------------" +
+              "  --------------" +
+              "   ------------" +
+              "    ----------");
+      state.setBoard(board);
+      Move move = new Move(new CubeCoordinates(0, 0) , new CubeCoordinates(0, 0));
+      assertThrows(InvalidMoveException.class, () -> GameRuleLogic.validateMove(state, move));
+    }
+  }
   @Test
   @Ignore
   // use to see the generated XML
@@ -375,6 +474,7 @@ public class GamePlayTest {
   }
 
   @Test
+  @Ignore
   public void fromXmlTest() {
     Board board = TestGameUtil.createCustomBoard("" +
             "    ----------" +

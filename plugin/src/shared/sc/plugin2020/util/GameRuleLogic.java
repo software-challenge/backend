@@ -5,11 +5,7 @@ import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Stack;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GameRuleLogic {
@@ -115,19 +111,51 @@ public class GameRuleLogic {
           }
         }
       } else {
-        // TODO player already has own pieces on board
-      }
+        if (GameRuleLogic.findPiecesOfTypeAndPlayer(gs.getBoard(), PieceType.BEE, gs.getCurrentPlayerColor()).size() != 1)
+          if (GameRuleLogic.fieldsOwnedByPlayer(gs.getBoard(), gs.getCurrentPlayerColor()).size() == 3)
+            throw new InvalidMoveException("The Bee must be placed at least as fourth piece");
 
+        if (!gs.getUndeployedPieces(gs.getCurrentPlayerColor()).contains(m.getPiece()))
+          throw new InvalidMoveException("Piece is not a undeployed piece of the current player");
+
+        if (isPosNeighbourOfColour(gs.getBoard(), gs.getCurrentPlayerColor(), m.getDestination())) {
+          if(isPosNeighbourOfColour(gs.getBoard(), gs.getCurrentPlayerColor().opponent(), m.getDestination())){
+            throw new InvalidMoveException("The destination of the move is too close to the pieces of the opponent");
+          }
+        }else{
+          throw new InvalidMoveException("The destination of the move is too far away from the own pieces");
+        }
+      }
     } else {
-      // TODO: dragmove
+      if (GameRuleLogic.findPiecesOfTypeAndPlayer(gs.getBoard(), PieceType.BEE, gs.getCurrentPlayerColor()).size() != 1)
+        throw new InvalidMoveException("The Queen is not placed. Until then drawmoves are not allowed");
+      if (m.getStart().equals(m.getDestination()))
+        throw new InvalidMoveException("The destination is the start. No waiting moves allowed.");
     }
     return true;
   }
 
+  public static boolean isPosNeighbourOfColour(Board b, PlayerColor c, CubeCoordinates coord){
+    ArrayList<Field> playerFields = fieldsOwnedByPlayer(b, c);
+
+    for (Field i : playerFields)
+      for(Field j : getNeighbours(b, i.getPosition()))
+        if(j.getPosition().equals(coord))
+          return true;
+
+    return false;
+  }
+
+  public static boolean boardIsEmpty(Board b){
+    return (fieldsOwnedByPlayer(b, PlayerColor.BLUE).isEmpty() && fieldsOwnedByPlayer(b, PlayerColor.RED).isEmpty());
+  }
   public static ArrayList<Move> getPossibleMoves(GameState gs) {
+
+    //Gather all setMoves
     ArrayList<Move> setMoves = new ArrayList<>();
-    setMoves.add(new Move(new Piece(PlayerColor.RED, PieceType.BEETLE), new CubeCoordinates(0, 0, 0)));
-    // TODO
+
+    //if(boardIsEmpty(gs.getBoard()))
+
     return setMoves;
   }
 }

@@ -24,4 +24,16 @@ public class Piece {
   public PieceType getPieceType(){
     return type;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if(this == o)
+      return true;
+
+    if(o == null || getClass() != o.getClass())
+      return false;
+
+    Piece p = (Piece) o;
+    return this.getOwner() == p.getOwner() && this.getPieceType() == p.getPieceType();
+  }
 }
