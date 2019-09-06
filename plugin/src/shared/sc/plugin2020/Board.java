@@ -66,4 +66,16 @@ public class Board implements IBoard {
   public Field getField(int cubeX, int cubeY, int cubeZ) {
     return this.getField(new CubeCoordinates(cubeX, cubeY));
   }
+
+  @Override
+  public String toString() {
+    String text = "Board\n";
+    for (int x = 0; x < Constants.BOARD_SIZE; x++) {
+      for (int y = 0; y < Constants.BOARD_SIZE; y++) {
+        text = text + this.gameField[x][y] == null ? "0" : "x";
+      }
+      text = text + "\n";
+    }
+    return text;
+  }
 }

@@ -57,7 +57,8 @@ public class Game extends RoundBasedGameInstance<Player> {
       if(!(data instanceof Move))
         throw new InvalidMoveException(fromPlayer.getDisplayName() + " hat kein Zug-Objekt gesendet.");
       final Move move = (Move) data;
-      logger.debug("Performing Move");
+      logger.debug("Performing Move "+move.toString());
+      logger.debug("Current Board: "+this.gameState.getBoard().toString());
       GameRuleLogic.performMove(this.gameState, move);
       next(this.gameState.getCurrentPlayer());
     } catch(InvalidMoveException e) {

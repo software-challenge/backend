@@ -7,7 +7,9 @@ import sc.plugin2020.util.CubeCoordinates;
 
 @XStreamAlias(value = "move")
 public class Move implements IMove {
+  @XStreamAsAttribute
   private CubeCoordinates start, destination;
+  @XStreamAsAttribute
   private Piece piece;
 
   public Move(CubeCoordinates start, CubeCoordinates destination){
@@ -52,6 +54,15 @@ public class Move implements IMove {
       return (to.isSetMove() && this.destination.equals(to.destination) && this.piece.equals(to.piece));
     } else {
       return (to.isDragMove() && this.start.equals(to.start) && this.destination.equals(to.destination));
+    }
+  }
+
+  @Override
+  public String toString() {
+    if (isSetMove()) {
+      return String.format("Set-move of %s %s to %s", this.piece.getOwner(), this.piece.getPieceType(), this.destination);
+    } else {
+      return String.format("Drag-move from %s to %s", this.start, this.destination);
     }
   }
 }
