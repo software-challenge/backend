@@ -671,4 +671,11 @@ public class GamePlayTest {
     Move expect = new Move(new Piece(PlayerColor.RED, PieceType.ANT), new CubeCoordinates(1,2,-3));
     assertEquals(expect, room.getData());
   }
+
+  @Test
+  public void performMoveTest() {
+    Move move = new Move(new Piece(PlayerColor.RED, PieceType.ANT), new CubeCoordinates(1,2,-3));
+    GameRuleLogic.performMove(state, move);
+    assertEquals(PieceType.ANT, state.getBoard().getField(1,2,-3).getPieces().lastElement().getPieceType());
+  }
 }
