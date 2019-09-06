@@ -40,7 +40,19 @@ public class GameRuleLogic {
   }
 
   public static void performMove(GameState gs, Move m){
-
+    // validate move TODO
+    // apply move
+    if (m.isSetMove()) {
+      gs.getUndeployedPieces(m.getPiece().getOwner()).remove(m.getPiece());
+      gs.getBoard().getField(m.getDestination()).getPieces().add(m.getPiece());
+    }
+    if (m.isDragMove()) {
+      Board board = gs.getBoard();
+      Piece pieceToMove = board.getField(m.getStart()).getPieces().pop();
+      board.getField(m.getDestination()).getPieces().push(pieceToMove);
+    }
+    // change active player
+    gs.setCurrentPlayerColor(gs.getOtherPlayerColor());
   }
 
   public static boolean isQueenBlocked(Board b, PlayerColor pc){
