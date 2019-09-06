@@ -8,6 +8,7 @@ import sc.plugin2020.util.Configuration;
 import sc.plugin2020.util.CubeCoordinates;
 import sc.plugin2020.util.GameRuleLogic;
 import sc.plugin2020.util.TestGameUtil;
+import sc.protocol.responses.RoomPacket;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
@@ -635,17 +636,20 @@ public class GamePlayTest {
   @Test
   public void moveToXmlTest() {
     Move move = new Move(new Piece(PlayerColor.RED, PieceType.ANT), new CubeCoordinates(1,2,-3));
+    String roomId = "42";
     XStream xstream = Configuration.getXStream();
-    String xml = xstream.toXML(move);
+    String xml = xstream.toXML(new RoomPacket(roomId, move));
     String expect =
-            "<move>\n" +
-            "  <destination>\n" +
-            "    <x>1</x>\n" +
-            "    <y>2</y>\n" +
-            "    <z>-3</z>\n" +
-            "  </destination>\n" +
-            "  <piece owner=\"RED\" type=\"ANT\"/>\n" +
-            "</move>";
+            "<room roomId=\""+roomId+"\">\n" +
+            "  <data class=\"move\">\n" +
+            "    <destination>\n" +
+            "      <x>1</x>\n" +
+            "      <y>2</y>\n" +
+            "      <z>-3</z>\n" +
+            "    </destination>\n" +
+            "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
+            "  </data>\n" +
+            "</room>";
     assertEquals(expect, xml);
   }
 
@@ -653,16 +657,18 @@ public class GamePlayTest {
   public void xmlToMoveTest() {
     XStream xstream = Configuration.getXStream();
     String xml =
-            "<move>\n" +
-                    "  <destination>\n" +
-                    "    <x>1</x>\n" +
-                    "    <y>2</y>\n" +
-                    "    <z>-3</z>\n" +
-                    "  </destination>\n" +
-                    "  <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                    "</move>";
-    Move xmlMove = (Move)xstream.fromXML(xml);
+            "<room roomId=\"42\">\n" +
+                    "  <data class=\"move\">\n" +
+                    "    <destination>\n" +
+                    "      <x>1</x>\n" +
+                    "      <y>2</y>\n" +
+                    "      <z>-3</z>\n" +
+                    "    </destination>\n" +
+                    "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
+                    "  </data>\n" +
+                    "</room>";
+    RoomPacket room = (RoomPacket)xstream.fromXML(xml);
     Move expect = new Move(new Piece(PlayerColor.RED, PieceType.ANT), new CubeCoordinates(1,2,-3));
-    assertEquals(expect, xmlMove);
+    assertEquals(expect, room.getData());
   }
 }
