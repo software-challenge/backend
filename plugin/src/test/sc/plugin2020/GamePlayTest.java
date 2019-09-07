@@ -673,6 +673,38 @@ public class GamePlayTest {
   }
 
   @Test
+  public void xmlToDragTest() {
+    XStream xstream = Configuration.getXStream();
+    String xml =
+            "<room roomId=\"42\">\n" +
+                    "  <data class=\"move\">\n" +
+                    "    <start>\n" +
+                    "      <x>0</x>\n" +
+                    "      <y>-1</y>\n" +
+                    "      <z>1</z>\n" +
+                    "    </start>\n" +
+                    "    <destination>\n" +
+                    "      <x>1</x>\n" +
+                    "      <y>2</y>\n" +
+                    "      <z>-3</z>\n" +
+                    "    </destination>\n" +
+                    "  </data>\n" +
+                    "</room>";
+    RoomPacket room = (RoomPacket)xstream.fromXML(xml);
+    Move expect = new Move(new CubeCoordinates(0, -1, 1), new CubeCoordinates(1,2,-3));
+    assertEquals(expect, room.getData());
+  }
+
+  @Test
+  public void xmlToSetMoveTest() {
+    XStream xstream = Configuration.getXStream();
+    String xml = "<room roomId=\"64a0482c-f368-4e33-9684-d5106228bb75\"><data class=\"move\"><piece owner=\"RED\" type=\"BEETLE\" /><destination><x>-2</x><y>0</y><z>2</z></destination></data></room>";
+    RoomPacket room = (RoomPacket)xstream.fromXML(xml);
+    Move expect = new Move(new Piece(PlayerColor.RED, PieceType.BEETLE), new CubeCoordinates(-2,0,2));
+    assertEquals(expect, room.getData());
+  }
+
+  @Test
   public void performMoveTest() {
     Move move = new Move(new Piece(PlayerColor.RED, PieceType.ANT), new CubeCoordinates(1,2,-3));
     GameRuleLogic.performMove(state, move);

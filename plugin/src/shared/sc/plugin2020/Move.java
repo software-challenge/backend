@@ -7,9 +7,7 @@ import sc.plugin2020.util.CubeCoordinates;
 
 @XStreamAlias(value = "move")
 public class Move implements IMove {
-  @XStreamAsAttribute
   private CubeCoordinates start, destination;
-  @XStreamAsAttribute
   private Piece piece;
 
   public Move(CubeCoordinates start, CubeCoordinates destination){
