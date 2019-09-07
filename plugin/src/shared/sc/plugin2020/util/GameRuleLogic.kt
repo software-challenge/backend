@@ -37,7 +37,7 @@ object GameRuleLogic {
 
     @JvmStatic
     fun performMove(gs: GameState, m: IMove) {
-        // validate move TODO
+        validateMove(gs, m)
         // apply move
         when(m) {
             is SetMove -> {
@@ -56,34 +56,10 @@ object GameRuleLogic {
 
     @JvmStatic
     fun isQueenBlocked(b: Board, pc: PlayerColor): Boolean {
-        val l = findPiecesOfTypeAndPlayer(b, PieceType.BEE, pc)
-
-        if(l.size == 0)
+        val l = b.filterFields { it.pieces.contains(Piece(pc, PieceType.BEE)) }
+        if(l.isEmpty())
             return false
-
-        val neighbours = getNeighbours(b, l[0])
-        return neighbours.stream().allMatch { field -> field != null && (field.isObstructed || !field.pieces.empty()) }
-    }
-
-    @JvmStatic
-    fun fieldsOwnedByPlayer(b: Board, color: PlayerColor): ArrayList<Field> =
-            b.gameField.flatMapTo(ArrayList()) {
-                it.filterNotNull().filter { field ->
-                    val s = field.pieces
-                    return@filter !s.empty() && s.peek().owner === color
-                }
-            }
-
-    @JvmStatic
-    fun findPiecesOfTypeAndPlayer(b: Board, pt: PieceType, pc: PlayerColor): ArrayList<CubeCoordinates> {
-        val tmp = ArrayList<CubeCoordinates>()
-
-        GameRuleLogic.fieldsOwnedByPlayer(b, pc).forEach { field ->
-            if(field.pieces.stream().anyMatch { (_, pieceType) -> pieceType === pt }) {
-                tmp.add(CubeCoordinates(field.position))
-            }
-        }
-        return tmp
+        return getNeighbours(b, l[0].coordinates).all { field -> field.isObstructed || !field.pieces.empty() }
     }
 
     @JvmStatic
@@ -97,11 +73,11 @@ object GameRuleLogic {
     fun validateMove(gs: GameState, m: IMove): Boolean {
         when(m) {
             is SetMove -> {
-                val ownedFields = GameRuleLogic.fieldsOwnedByPlayer(gs.board, gs.currentPlayerColor)
+                val ownedFields = gs.board.filterFields { it.owner == gs.currentPlayerColor }
                 if(ownedFields.isEmpty()) {
-                    val otherPlayerFields = GameRuleLogic.fieldsOwnedByPlayer(gs.board, gs.otherPlayerColor)
+                    val otherPlayerFields = gs.board.filterFields { it.owner == gs.otherPlayerColor }
                     if(otherPlayerFields.isEmpty()) {
-                        if(!GameRuleLogic.isOnBoard(m.destination)) {
+                        if(!isOnBoard(m.destination)) {
                             throw InvalidMoveException(
                                     String.format(
                                             "Piece has to be placed on board. Destination (%d,%d) is out of bounds.",
@@ -110,66 +86,49 @@ object GameRuleLogic {
                             )
                         }
                     } else {
-                        // NOTE that other player should have exactly one piece on the board here, so working with a list of fields is not really neccessary
-                        val emptyNeighbours = otherPlayerFields.stream().flatMap { field -> GameRuleLogic.getNeighbours(gs.board, field.position).stream().filter { neighbour -> neighbour.fieldState == FieldState.EMPTY } }
-                        if(emptyNeighbours.noneMatch { field -> field.position == m.destination }) {
+                        if(m.destination !in otherPlayerFields.flatMap { getNeighbours(gs.board, it.coordinates).filter { neighbour -> neighbour.isEmpty } }.map { it.coordinates })
                             throw InvalidMoveException("Piece has to be placed next to other players piece")
-                        }
                     }
                 } else {
-                    if(findPiecesOfTypeAndPlayer(gs.board, PieceType.BEE, gs.currentPlayerColor).size != 1)
-                        if(fieldsOwnedByPlayer(gs.board, gs.currentPlayerColor).size == 3)
-                            throw InvalidMoveException("The Bee must be placed at least as fourth piece")
+                    if(hasPlayerPlacedBee(gs) && gs.getDeployedPieces(gs.currentPlayerColor).size == 3)
+                        throw InvalidMoveException("The Bee must be placed at least as fourth piece")
 
                     if(!gs.getUndeployedPieces(gs.currentPlayerColor).contains(m.piece))
                         throw InvalidMoveException("Piece is not a undeployed piece of the current player")
 
-                    if(isPosNeighbourOfColor(gs.board, gs.currentPlayerColor, m.destination)) {
-                        if(isPosNeighbourOfColor(gs.board, gs.currentPlayerColor.opponent(), m.destination)) {
-                            throw InvalidMoveException("The destination of the move is too close to the pieces of the opponent")
-                        }
-                    } else {
-                        throw InvalidMoveException("The destination of the move is too far away from the own pieces")
-                    }
+                    if(!getNeighbours(gs.board, m.destination).any { it.owner == gs.currentPlayerColor })
+                        throw InvalidMoveException("A newly placed piece must touch an own piece")
                 }
             }
             is DragMove -> {
                 // TODO: Check if swarm will be disconnected
-                //If the queen is not placed, there should be no drag move
-                if(findPiecesOfTypeAndPlayer(gs.board, PieceType.BEE, gs.currentPlayerColor).size != 1)
-                    throw InvalidMoveException("The Queen is not placed. Until then drawmoves are not allowed")
+                if(!hasPlayerPlacedBee(gs))
+                    throw InvalidMoveException("You have to place the queen to be able to perform dragmoves")
 
                 if(!isOnBoard(m.destination) || !isOnBoard(m.start))
-                    throw InvalidMoveException("The IMove is out of bounds. Watch out")
+                    throw InvalidMoveException("The Move is out of bounds")
 
-                //Is a piece at the start position
                 if(gs.board.getField(m.start).pieces.size == 0)
                     throw InvalidMoveException("There is no piece to move")
 
-                //Does the piece has the color of the current player
-                if(gs.board.getField(m.start).pieces.peek().owner !== gs.currentPlayerColor)
-                    throw InvalidMoveException("It is not this players move")
+                val pieceToDrag = gs.board.getField(m.start).pieces.peek()
 
-                //No waiting moves allowed
-                if(m.start.equals(m.destination))
-                    throw InvalidMoveException("The destination is the start. No waiting moves allowed.")
+                if(pieceToDrag.owner !== gs.currentPlayerColor)
+                    throw InvalidMoveException("Trying to move piece of the other player")
 
-                //Only beetles should climb on other pieces
-                if(isPosOnFieldOfColor(gs.board, gs.currentPlayerColor.opponent(), m.destination) || isPosOnFieldOfColor(gs.board, gs.currentPlayerColor, m.destination))
-                    if(gs.board.getField(m.start).pieces.peek().type !== PieceType.BEETLE)
-                        throw InvalidMoveException("Only beetles are allowed to climb on other Pieces")
+                if(m.start == m.destination)
+                    throw InvalidMoveException("Destination and start are equal")
 
-                //The general checks are done. Now the piece specific ones
+                if(gs.board.getField(m.destination).pieces.isNotEmpty() && pieceToDrag.type !== PieceType.BEETLE)
+                    throw InvalidMoveException("Only beetles are allowed to climb on other Pieces")
+
                 when(gs.board.getField(m.start).pieces.peek().type) {
                     PieceType.ANT -> validateAntMove(gs.board, m)
                     PieceType.BEE -> validateBeeMove(gs.board, m)
-                    PieceType.BEETLE -> {
-                    }
-                    PieceType.GRASSHOPPER -> {
-                    }
-                    PieceType.SPIDER -> {
-                    }
-                }//HARD
+                    PieceType.BEETLE -> validateBeetleMove(gs.board, m)
+                    PieceType.GRASSHOPPER -> validateGrasshopperMove(gs.board, m)
+                    PieceType.SPIDER -> validateSpiderMove(gs.board, m)
+                }
             }
         }
         return true
@@ -218,44 +177,18 @@ object GameRuleLogic {
 
     @JvmStatic
     fun sharedNeighboursOfTwoCoords(b: Board, coord1: CubeCoordinates, coord2: CubeCoordinates): ArrayList<Field> {
-        val tmp = ArrayList<Field>()
-
-        for(i in getNeighbours(b, coord1)) {
-            for(j in getNeighbours(b, coord2)) {
-                if(i.position == j.position)
-                    tmp.add(j)
-            }
-        }
-        return tmp
+        val neighbours = getNeighbours(b, coord1)
+        neighbours.retainAll(getNeighbours(b, coord2))
+        return neighbours
     }
 
     @JvmStatic
-    fun isPosOnFieldOfColor(b: Board, c: PlayerColor, coord: CubeCoordinates): Boolean {
-        val playerFields = fieldsOwnedByPlayer(b, c)
-
-        for(i in playerFields)
-            if(i.position == coord)
-                return true
-
-        return false
-    }
+    fun hasPlayerPlacedBee(gs: GameState) =
+            gs.getDeployedPieces(gs.currentPlayerColor).any { it.type == PieceType.BEE }
 
     @JvmStatic
-    fun isPosNeighbourOfColor(b: Board, c: PlayerColor, coord: CubeCoordinates): Boolean {
-        val playerFields = fieldsOwnedByPlayer(b, c)
-
-        for(i in playerFields)
-            for(j in getNeighbours(b, i.position))
-                if(j.position == coord)
-                    return true
-
-        return false
-    }
-
-    @JvmStatic
-    fun boardIsEmpty(b: Board): Boolean {
-        return fieldsOwnedByPlayer(b, PlayerColor.BLUE).isEmpty() && fieldsOwnedByPlayer(b, PlayerColor.RED).isEmpty()
-    }
+    fun boardIsEmpty(b: Board): Boolean =
+            b.filterFields { it.pieces.isNotEmpty() }.isEmpty()
 
     @JvmStatic
     fun getPossibleMoves(gs: GameState): List<IMove> {

@@ -36,8 +36,17 @@ data class Field(
             return FieldState.EMPTY
         }
 
-    val position: CubeCoordinates
+    val isEmpty: Boolean
+        get() = pieces.isEmpty() && !isObstructed
+
+    val coordinates: CubeCoordinates
         get() = CubeCoordinates(this.x, this.y, this.z)
+
+    val owner: PlayerColor?
+        get() = if(pieces.isEmpty()) null else pieces.peek().owner
+
+    fun hasPiece(piece: PieceType) =
+            pieces.any { it.type == piece }
 
     constructor(position: CubeCoordinates) : this(position.x, position.y, position.z)
 

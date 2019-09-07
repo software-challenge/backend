@@ -31,10 +31,10 @@ class Board : IBoard {
         var x: Int
         var y: Int
         for(f in fields) {
-            if(f.position.x > shift || f.position.x < -shift || f.position.y > shift || f.position.y < -shift)
+            if(f.coordinates.x > shift || f.coordinates.x < -shift || f.coordinates.y > shift || f.coordinates.y < -shift)
                 throw IndexOutOfBoundsException()
-            x = f.position.x + shift
-            y = f.position.y + shift
+            x = f.coordinates.x + shift
+            y = f.coordinates.y + shift
             gameField[x][y] = f
         }
         fillBoard()
@@ -61,6 +61,11 @@ class Board : IBoard {
     override fun getField(cubeX: Int, cubeY: Int, cubeZ: Int): Field {
         return this.getField(CubeCoordinates(cubeX, cubeY))
     }
+
+    fun filterFields(predicate: (Field) -> Boolean): List<Field> =
+            gameField.flatMapTo(ArrayList()) {
+                it.filterNotNull().filter(predicate)
+            }
 
     override fun toString(): String {
         var text = "Board\n"

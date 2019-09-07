@@ -64,6 +64,7 @@ class GamePlayTest {
         }
     }
 
+    @Ignore
     @Test
     @Throws(InvalidMoveException::class)
     fun onlyEndAfterRoundTest() {
@@ -81,7 +82,6 @@ class GamePlayTest {
         run {
             //Move move = new Move();
             //GameRuleLogic.performMove(state, move);
-            assertEquals(1, GameRuleLogic.findPiecesOfTypeAndPlayer(state.board, PieceType.BEETLE, PlayerColor.RED).size.toLong())
         }
     }
 
@@ -91,7 +91,7 @@ class GamePlayTest {
         val expected = arrayOf(CubeCoordinates(-2, 2), CubeCoordinates(-1, 1), CubeCoordinates(-1, 0), CubeCoordinates(-2, 0), CubeCoordinates(-3, 1), CubeCoordinates(-3, 2))
         assertArrayEquals(
                 Arrays.stream(expected).sorted().toArray(),
-                n.stream().map { f: Field -> f.position }.sorted().toArray()
+                n.stream().map { f: Field -> f.coordinates }.sorted().toArray()
         )
     }
 
@@ -122,24 +122,6 @@ class GamePlayTest {
                     "   ------------" +
                     "    ----------")
             assertFalse(GameRuleLogic.isQueenBlocked(board, PlayerColor.RED))
-        }
-    }
-
-    @Test
-    fun findFieldsOwnedByPlayerTest() {
-        run {
-            val board = TestGameUtil.createCustomBoard("" +
-                    "    ----------" +
-                    "   RG----------" +
-                    "  --BQ----------" +
-                    " BGBB------------" +
-                    "----RQ------------" +
-                    " ----------------" +
-                    "  --------------" +
-                    "   ------------" +
-                    "    ----------")
-            state.board = board
-            assertEquals(3, GameRuleLogic.fieldsOwnedByPlayer(board, PlayerColor.BLUE).size.toLong())
         }
     }
 
@@ -248,26 +230,6 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
-    fun setMoveTest5() {
-        run {
-            val board = TestGameUtil.createCustomBoard("" +
-                    "    ----------" +
-                    "   ------------" +
-                    "  --------------" +
-                    " RGRGRG----------" +
-                    "------------------" +
-                    " ----------------" +
-                    "  --------------" +
-                    "   ------------" +
-                    "    ----------")
-            state.board = board
-            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 4))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
-        }
-    }
-
-    @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveTest() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
@@ -284,11 +246,6 @@ class GamePlayTest {
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
-    }
-
-    @Test
-    @Throws(InvalidMoveException::class)
-    fun dragMoveTest2() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -304,11 +261,6 @@ class GamePlayTest {
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
-    }
-
-    @Test
-    @Throws(InvalidMoveException::class)
-    fun dragMoveTest3() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -341,7 +293,6 @@ class GamePlayTest {
                 "   ------------" +
                 "    ----------")
         state.board = board
-        val pieces = arrayOf<Piece>()
         board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
         board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
         assertEquals(PieceType.BEE, board.getField(0, 0).pieces.lastElement().type)
@@ -498,7 +449,6 @@ class GamePlayTest {
                 "   ------------" +
                 "    ----------")
         state.board = board
-        val pieces = arrayOf<Piece>()
         board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
         board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
         assertEquals(PieceType.BEE, board.getField(0, 0).pieces.lastElement().type)
@@ -651,15 +601,15 @@ class GamePlayTest {
         val xml = xstream.toXML(RoomPacket(roomId, move))
         val expect =
                 "<room roomId=\"" + roomId + "\">\n" +
-                "  <data class=\"setmove\">\n" +
-                "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                "    <destination>\n" +
-                "      <x>1</x>\n" +
-                "      <y>2</y>\n" +
-                "      <z>-3</z>\n" +
-                "    </destination>\n" +
-                "  </data>\n" +
-                "</room>"
+                        "  <data class=\"setmove\">\n" +
+                        "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
+                        "    <destination>\n" +
+                        "      <x>1</x>\n" +
+                        "      <y>2</y>\n" +
+                        "      <z>-3</z>\n" +
+                        "    </destination>\n" +
+                        "  </data>\n" +
+                        "</room>"
         assertEquals(expect, xml)
     }
 
@@ -667,7 +617,7 @@ class GamePlayTest {
     fun xmlToDragMoveTest() {
         val xstream = Configuration.xStream
         val xml =
-         """<room roomId="42">
+                """<room roomId="42">
               <data class="dragmove">
                 <start>
                   <x>0</x>
@@ -691,11 +641,11 @@ class GamePlayTest {
         val xstream = Configuration.xStream
         val xml =
                 "<room roomId=\"64a0482c-f368-4e33-9684-d5106228bb75\">" +
-                "  <data class=\"setmove\">" +
-                "    <piece owner=\"RED\" type=\"BEETLE\" />" +
-                "    <destination><x>-2</x><y>0</y><z>2</z></destination>" +
-                "  </data>" +
-                "</room>"
+                        "  <data class=\"setmove\">" +
+                        "    <piece owner=\"RED\" type=\"BEETLE\" />" +
+                        "    <destination><x>-2</x><y>0</y><z>2</z></destination>" +
+                        "  </data>" +
+                        "</room>"
         val room = xstream.fromXML(xml) as RoomPacket
         val expect = SetMove(Piece(PlayerColor.RED, PieceType.BEETLE), CubeCoordinates(-2, 0, 2))
         assertEquals(expect, room.data)
