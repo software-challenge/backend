@@ -1,7 +1,6 @@
 package sc.plugin2020.util;
 
 import com.thoughtworks.xstream.XStream;
-import sc.framework.plugins.Player;
 import sc.plugin2020.*;
 import sc.protocol.LobbyProtocol;
 import sc.shared.WelcomeMessage;
@@ -28,7 +27,7 @@ public class Configuration {
 
   public static List<Class<?>> getClassesToRegister() {
     return Arrays.asList(Game.class, Board.class,
-            GameState.class, Move.class,
+            GameState.class, SetMove.class, DragMove.class,
             Direction.class, Field.class,
             WelcomeMessage.class, Condition.class);
   }
