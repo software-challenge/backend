@@ -7,7 +7,6 @@ import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.plugin2020.util.Constants
 import sc.shared.PlayerColor
-import java.util.*
 
 @XStreamAlias(value = "state")
 class GameState(
@@ -16,15 +15,15 @@ class GameState(
         override var board: Board = Board()) : TwoPlayerGameState<Player, IMove>(), Cloneable {
     @XStreamAsAttribute
     override var turn: Int = 0
-    private val undeployedRedPieces: ArrayList<Piece> = parsePiecesString(Constants.STARING_PIECES, PlayerColor.BLUE)
-    private val undeployedBluePieces: ArrayList<Piece> = parsePiecesString(Constants.STARING_PIECES, PlayerColor.BLUE)
+    private val undeployedRedPieces = parsePiecesString(Constants.STARING_PIECES, PlayerColor.RED)
+    private val undeployedBluePieces = parsePiecesString(Constants.STARING_PIECES, PlayerColor.BLUE)
+    private val allPieces = undeployedBluePieces + undeployedRedPieces
 
     override val round: Int
         get() = turn / 2
 
-    // TODO
     val gameStats: Array<IntArray>
-        get() = Array(1) { IntArray(1) }
+        get() = players.map { getPlayerStats(it) }.toTypedArray()
 
     private fun parsePiecesString(s: String, p: PlayerColor): ArrayList<Piece> {
         val l = ArrayList<Piece>()
@@ -40,18 +39,24 @@ class GameState(
         return l
     }
 
-    fun getUndeployedPieces(owner: PlayerColor): ArrayList<Piece> {
-        return if(owner === PlayerColor.RED)
-            undeployedRedPieces
-        else
-            undeployedBluePieces
+    fun getUndeployedPieces(owner: PlayerColor): MutableList<Piece> {
+        return when(owner) {
+            PlayerColor.RED -> undeployedRedPieces
+            PlayerColor.BLUE -> undeployedBluePieces
+        }
+    }
+
+    fun getDeployedPieces(owner: PlayerColor): List<Piece> {
+        val ownerPieces = allPieces.filterTo(ArrayList()) { it.owner == owner }
+        ownerPieces.removeAll(getUndeployedPieces(owner))
+        return ownerPieces
     }
 
     fun addPlayer(player: Player) {
-        if(player.color === PlayerColor.BLUE)
-            blue = player
-        else
-            red = player
+        when(player.color) {
+            PlayerColor.RED -> red = player
+            PlayerColor.BLUE -> blue = player
+        }
     }
 
     override fun getPointsForPlayer(playerColor: PlayerColor): Int {
@@ -71,4 +76,5 @@ class GameState(
     override fun toString(): String {
         return String.format("GameState Zug %d", this.turn)
     }
+
 }
