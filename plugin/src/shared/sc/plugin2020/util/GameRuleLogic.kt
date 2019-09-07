@@ -4,7 +4,6 @@ import sc.api.plugins.IMove
 import sc.plugin2020.*
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerColor
-import java.util.*
 
 object GameRuleLogic {
 
@@ -67,21 +66,13 @@ object GameRuleLogic {
     }
 
     @JvmStatic
-    fun fieldsOwnedByPlayer(b: Board, color: PlayerColor): ArrayList<Field> {
-        val fields = ArrayList<Field>()
-        val gameField = b.gameField
-        for(i in gameField.indices) {
-            for(j in gameField[i].indices) {
-                if(gameField[i][j] != null) {
-                    val s = gameField[i][j].pieces
-                    if(!s.empty() && s.peek().owner === color) {
-                        fields.add(gameField[i][j])
-                    }
+    fun fieldsOwnedByPlayer(b: Board, color: PlayerColor): ArrayList<Field> =
+            b.gameField.flatMapTo(ArrayList()) {
+                it.filterNotNull().filter { field ->
+                    val s = field.pieces
+                    return@filter !s.empty() && s.peek().owner === color
                 }
             }
-        }
-        return fields
-    }
 
     @JvmStatic
     fun findPiecesOfTypeAndPlayer(b: Board, pt: PieceType, pc: PlayerColor): ArrayList<CubeCoordinates> {

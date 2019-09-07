@@ -2,7 +2,6 @@ package sc.plugin2020.util;
 
 import org.junit.Assert;
 import sc.plugin2020.Board;
-import sc.plugin2020.FieldState;
 import sc.plugin2020.Piece;
 import sc.plugin2020.PieceType;
 import sc.shared.PlayerColor;
@@ -37,7 +36,7 @@ public class TestGameUtil {
   public static Board createCustomBoard(String boardString) {//Hardcoded auf Feldgröße von 9
     String boardStringWithoutWhitespace = boardString.replaceAll(" ", "");
     Assert.assertEquals("Length of boardString does not match size of the Board",
-            Constants.FIELD_AMOUNT*2, boardStringWithoutWhitespace.length());
+            Constants.FIELD_AMOUNT *2, boardStringWithoutWhitespace.length());
 
     int[][] fields = {              {0,4},{1,3},{2,2},{3,1},{4,0},
                                 {-1,4},{0,3},{1,2},{2,1},{3,0},{4,-1},

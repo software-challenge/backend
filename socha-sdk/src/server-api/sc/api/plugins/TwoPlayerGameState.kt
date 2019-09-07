@@ -47,7 +47,7 @@ abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
     val playerNames: Array<String>
         get() = arrayOf(red.displayName, blue.displayName)
 
-    /** letzter getaetigter Zug  */
+    /** Letzter getaetigter Zug. */
     var lastMove: M? = null
 
     fun getOpponent(player: P) =

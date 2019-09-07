@@ -76,7 +76,7 @@ class GamePlayTest {
                 "  --------------" +
                 "   ------------" +
                 "    ----------")
-        state.setBoard(board)
+        state.board = board
         run {
             //Move move = new Move();
             //GameRuleLogic.performMove(state, move);
@@ -137,7 +137,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             assertEquals(3, GameRuleLogic.fieldsOwnedByPlayer(board, PlayerColor.BLUE).size.toLong())
         }
     }
@@ -156,7 +156,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
             assertTrue(GameRuleLogic.validateMove(state, move))
         }
@@ -176,7 +176,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(8, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -196,7 +196,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -217,7 +217,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 4))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -237,7 +237,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
             val move2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 4))
@@ -259,7 +259,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 4))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -279,7 +279,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -299,7 +299,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -319,7 +319,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.setBoard(board)
+            state.board = board
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, -1))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -339,13 +339,13 @@ class GamePlayTest {
                 "  --------------" +
                 "   ------------" +
                 "    ----------")
-        state.setBoard(board)
+        state.board = board
         val pieces = arrayOf<Piece>()
         board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
         board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
         assertEquals(PieceType.BEE, board.getField(0, 0).pieces.lastElement().type)
         assertEquals(PieceType.BEE, board.getField(0, 0).pieces.peek().type)
-        val xstream = Configuration.getXStream()
+        val xstream = Configuration.xStream
         val xml = xstream.toXML(state)
         assertEquals("<state startPlayerColor=\"RED\" currentPlayerColor=\"RED\" turn=\"0\">\n" +
                 "  <board>\n" +
@@ -496,13 +496,13 @@ class GamePlayTest {
                 "  --------------" +
                 "   ------------" +
                 "    ----------")
-        state.setBoard(board)
+        state.board = board
         val pieces = arrayOf<Piece>()
         board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
         board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
         assertEquals(PieceType.BEE, board.getField(0, 0).pieces.lastElement().type)
         assertEquals(PieceType.BEE, board.getField(0, 0).pieces.peek().type)
-        val xstream = Configuration.getXStream()
+        val xstream = Configuration.xStream
         val xmlState = GameState()
         val read = xstream.fromXML(
                 "<state startPlayerColor=\"RED\" currentPlayerColor=\"RED\" turn=\"0\">\n" +
@@ -646,7 +646,7 @@ class GamePlayTest {
     fun moveToXmlTest() {
         val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))
         val roomId = "42"
-        val xstream = Configuration.getXStream()
+        val xstream = Configuration.xStream
         val xml = xstream.toXML(RoomPacket(roomId, move))
         val expect = "<room roomId=\"" + roomId + "\">\n" +
                 "  <data class=\"setmove\">\n" +
@@ -663,7 +663,7 @@ class GamePlayTest {
 
     @Test
     fun xmlToMoveTest() {
-        val xstream = Configuration.getXStream()
+        val xstream = Configuration.xStream
         val xml = "<room roomId=\"42\">\n" +
                 "  <data class=\"setmove\">\n" +
                 "    <destination>\n" +
