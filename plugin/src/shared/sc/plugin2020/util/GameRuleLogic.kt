@@ -52,6 +52,7 @@ object GameRuleLogic {
         }
         // change active player
         gs.currentPlayerColor = gs.otherPlayerColor
+        gs.turn++;
     }
 
     @JvmStatic
