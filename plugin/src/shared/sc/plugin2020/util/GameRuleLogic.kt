@@ -72,66 +72,73 @@ object GameRuleLogic {
     @JvmStatic
     fun validateMove(gs: GameState, m: IMove): Boolean {
         when(m) {
-            is SetMove -> {
-                val ownedFields = gs.board.filterFields { it.owner == gs.currentPlayerColor }
-                if(ownedFields.isEmpty()) {
-                    val otherPlayerFields = gs.board.filterFields { it.owner == gs.otherPlayerColor }
-                    if(otherPlayerFields.isEmpty()) {
-                        if(!isOnBoard(m.destination)) {
-                            throw InvalidMoveException(
-                                    String.format(
-                                            "Piece has to be placed on board. Destination (%d,%d) is out of bounds.",
-                                            m.destination.x, m.destination.y, m.destination.z
-                                    )
-                            )
-                        }
-                    } else {
-                        if(m.destination !in otherPlayerFields.flatMap { getNeighbours(gs.board, it.coordinates).filter { neighbour -> neighbour.isEmpty } }.map { it.coordinates })
-                            throw InvalidMoveException("Piece has to be placed next to other players piece")
-                    }
-                } else {
-                    if(hasPlayerPlacedBee(gs) && gs.getDeployedPieces(gs.currentPlayerColor).size == 3)
-                        throw InvalidMoveException("The Bee must be placed at least as fourth piece")
-
-                    if(!gs.getUndeployedPieces(gs.currentPlayerColor).contains(m.piece))
-                        throw InvalidMoveException("Piece is not a undeployed piece of the current player")
-
-                    if(!getNeighbours(gs.board, m.destination).any { it.owner == gs.currentPlayerColor })
-                        throw InvalidMoveException("A newly placed piece must touch an own piece")
-                }
-            }
-            is DragMove -> {
-                // TODO: Check if swarm will be disconnected
-                if(!hasPlayerPlacedBee(gs))
-                    throw InvalidMoveException("You have to place the queen to be able to perform dragmoves")
-
-                if(!isOnBoard(m.destination) || !isOnBoard(m.start))
-                    throw InvalidMoveException("The Move is out of bounds")
-
-                if(gs.board.getField(m.start).pieces.size == 0)
-                    throw InvalidMoveException("There is no piece to move")
-
-                val pieceToDrag = gs.board.getField(m.start).pieces.peek()
-
-                if(pieceToDrag.owner !== gs.currentPlayerColor)
-                    throw InvalidMoveException("Trying to move piece of the other player")
-
-                if(m.start == m.destination)
-                    throw InvalidMoveException("Destination and start are equal")
-
-                if(gs.board.getField(m.destination).pieces.isNotEmpty() && pieceToDrag.type !== PieceType.BEETLE)
-                    throw InvalidMoveException("Only beetles are allowed to climb on other Pieces")
-
-                when(gs.board.getField(m.start).pieces.peek().type) {
-                    PieceType.ANT -> validateAntMove(gs.board, m)
-                    PieceType.BEE -> validateBeeMove(gs.board, m)
-                    PieceType.BEETLE -> validateBeetleMove(gs.board, m)
-                    PieceType.GRASSHOPPER -> validateGrasshopperMove(gs.board, m)
-                    PieceType.SPIDER -> validateSpiderMove(gs.board, m)
-                }
-            }
+            is SetMove -> validateSetMove(gs, m)
+            is DragMove -> validateDragMove(gs, m)
         }
         return true
+    }
+
+    @Throws(InvalidMoveException::class)
+    @JvmStatic
+    fun validateSetMove(gs: GameState, m: SetMove): Boolean {
+        val ownedFields = gs.board.filterFields { it.owner == gs.currentPlayerColor }
+        if(ownedFields.isEmpty()) {
+            val otherPlayerFields = gs.board.filterFields { it.owner == gs.otherPlayerColor }
+            if(otherPlayerFields.isEmpty()) {
+                if(!isOnBoard(m.destination)) {
+                    throw InvalidMoveException(
+                            String.format(
+                                    "Piece has to be placed on board. Destination (%d,%d) is out of bounds.",
+                                    m.destination.x, m.destination.y, m.destination.z
+                            )
+                    )
+                }
+            } else {
+                if(m.destination !in otherPlayerFields.flatMap { getNeighbours(gs.board, it.coordinates).filter { neighbour -> neighbour.isEmpty } }.map { it.coordinates })
+                    throw InvalidMoveException("Piece has to be placed next to other players piece")
+            }
+        } else {
+            if(hasPlayerPlacedBee(gs) && gs.getDeployedPieces(gs.currentPlayerColor).size == 3)
+                throw InvalidMoveException("The Bee must be placed at least as fourth piece")
+
+            if(!gs.getUndeployedPieces(gs.currentPlayerColor).contains(m.piece))
+                throw InvalidMoveException("Piece is not a undeployed piece of the current player")
+
+            if(!getNeighbours(gs.board, m.destination).any { it.owner == gs.currentPlayerColor })
+                throw InvalidMoveException("A newly placed piece must touch an own piece")
+        }
+        return true
+    }
+
+    private fun validateDragMove(gs: GameState, m: DragMove) {
+        // TODO: Check if swarm will be disconnected
+        if(!hasPlayerPlacedBee(gs))
+            throw InvalidMoveException("You have to place the queen to be able to perform dragmoves")
+
+        if(!isOnBoard(m.destination) || !isOnBoard(m.start))
+            throw InvalidMoveException("The Move is out of bounds")
+
+        if(gs.board.getField(m.start).pieces.size == 0)
+            throw InvalidMoveException("There is no piece to move")
+
+        val pieceToDrag = gs.board.getField(m.start).pieces.peek()
+
+        if(pieceToDrag.owner !== gs.currentPlayerColor)
+            throw InvalidMoveException("Trying to move piece of the other player")
+
+        if(m.start == m.destination)
+            throw InvalidMoveException("Destination and start are equal")
+
+        if(gs.board.getField(m.destination).pieces.isNotEmpty() && pieceToDrag.type !== PieceType.BEETLE)
+            throw InvalidMoveException("Only beetles are allowed to climb on other Pieces")
+
+        when(pieceToDrag.type) {
+            PieceType.ANT -> validateAntMove(gs.board, m)
+            PieceType.BEE -> validateBeeMove(gs.board, m)
+            PieceType.BEETLE -> validateBeetleMove(gs.board, m)
+            PieceType.GRASSHOPPER -> validateGrasshopperMove(gs.board, m)
+            PieceType.SPIDER -> validateSpiderMove(gs.board, m)
+        }
     }
 
     @Throws(InvalidMoveException::class)
