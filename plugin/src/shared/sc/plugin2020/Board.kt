@@ -71,7 +71,7 @@ class Board : IBoard {
         var text = "Board\n"
         for(x in 0 until Constants.BOARD_SIZE) {
             for(y in 0 until Constants.BOARD_SIZE) {
-                text = if(text + this.gameField[x][y] == null) "0" else "x"
+                text = text + if(this.gameField[x][y] == null) "0" else "x"
             }
             text = text + "\n"
         }
