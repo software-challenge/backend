@@ -14,7 +14,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 @XStreamAlias(value = "board")
-class Board : IBoard {
+class Board: IBoard {
     @XStreamOmitField
     private val shift = (Constants.BOARD_SIZE - 1) / 2
 
@@ -60,8 +60,8 @@ class Board : IBoard {
         return this.getField(CubeCoordinates(cubeX, cubeY))
     }
 
-    override fun getField(cubeX: Int, cubeY: Int, cubeZ: Int): Field {
-        return this.getField(CubeCoordinates(cubeX, cubeY))
+    fun getField(cubeX: Int, cubeY: Int, cubeZ: Int): Field {
+        return this.getField(CubeCoordinates(cubeX, cubeY, cubeZ))
     }
 
     /**

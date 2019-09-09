@@ -20,7 +20,7 @@ data class Field(
         val pieces: Stack<Piece> = Stack(),
         @XStreamAsAttribute
         val isObstructed: Boolean = false
-) : CubeCoordinates(x, y, z), IField {
+): CubeCoordinates(x, y, z), IField {
 
     val fieldState: FieldState
         get() {
@@ -42,15 +42,15 @@ data class Field(
     val owner: PlayerColor?
         get() = if(pieces.isEmpty()) null else pieces.peek().owner
 
-    constructor(position: CubeCoordinates, obstructed: Boolean) : this(position.x, position.y, position.z, isObstructed = obstructed)
+    constructor(position: CubeCoordinates, obstructed: Boolean): this(position.x, position.y, position.z, isObstructed = obstructed)
 
-    constructor(position: CubeCoordinates, vararg pieces: Piece) : this(position.x, position.y, position.z, pieces.toCollection(Stack()))
+    constructor(position: CubeCoordinates, vararg pieces: Piece): this(position.x, position.y, position.z, pieces.toCollection(Stack()))
 
-    constructor (x: Int, y: Int, obstructed: Boolean) : this(x, y, isObstructed = obstructed)
+    constructor (x: Int, y: Int, obstructed: Boolean): this(x, y, isObstructed = obstructed)
 
-    constructor(x: Int, y: Int, vararg pieces: Piece) : this(x, y, pieces = pieces.toCollection(Stack()) as Stack<Piece>)
+    constructor(x: Int, y: Int, vararg pieces: Piece): this(x, y, pieces = pieces.toCollection(Stack()) as Stack<Piece>)
 
-    constructor(field: Field) : this(field.x, field.y, field.z, field.pieces.toCollection(Stack()), field.isObstructed)
+    constructor(field: Field): this(field.x, field.y, field.z, field.pieces.toCollection(Stack()), field.isObstructed)
 
     override fun equals(other: Any?): Boolean {
         if(this === other) return true

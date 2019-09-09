@@ -9,13 +9,13 @@ import kotlin.math.abs
 object GameRuleLogic {
 
     @JvmStatic
-    fun getNeighbours(b: Board, c: CubeCoordinates): ArrayList<Field> {
+    fun getNeighbours(board: Board, coords: CubeCoordinates): ArrayList<Field> {
         val tmp = ArrayList<Field>()
 
         for(d in Direction.values()) {
             val n: Field
             try {
-                n = getNeighbourInDirection(b, c, d)
+                n = getNeighbourInDirection(board, coords, d)
             } catch(ex: IndexOutOfBoundsException) {
                 continue
             }
@@ -27,55 +27,55 @@ object GameRuleLogic {
     }
 
     @JvmStatic
-    fun getNeighbourInDirection(b: Board, c: CubeCoordinates, d: Direction): Field {
-        return b.getField(CubeCoordinates(c.x + d.shift(1).x, c.y + d.shift(1).y, c.z + d.shift(1).z))
+    fun getNeighbourInDirection(board: Board, coords: CubeCoordinates, direction: Direction): Field {
+        return board.getField(CubeCoordinates(coords.x + direction.shift(1).x, coords.y + direction.shift(1).y, coords.z + direction.shift(1).z))
     }
 
     @JvmStatic
-    fun getCurrentPlayerColor(gs: GameState): PlayerColor {
-        return if(gs.turn % 2 == 0) PlayerColor.RED else PlayerColor.BLUE
+    fun getCurrentPlayerColor(gameState: GameState): PlayerColor {
+        return if(gameState.turn % 2 == 0) PlayerColor.RED else PlayerColor.BLUE
     }
 
     @JvmStatic
-    fun performMove(gs: GameState, m: IMove) {
-        validateMove(gs, m)
+    fun performMove(gameState: GameState, move: IMove) {
+        validateMove(gameState, move)
         // apply move
-        when(m) {
+        when(move) {
             is SetMove -> {
-                gs.getUndeployedPieces(m.piece.owner).remove(m.piece)
-                gs.board.getField(m.destination).pieces.add(m.piece)
+                gameState.getUndeployedPieces(move.piece.owner).remove(move.piece)
+                gameState.board.getField(move.destination).pieces.add(move.piece)
             }
             is DragMove -> {
-                val board = gs.board
-                val pieceToIMove = board.getField(m.start).pieces.pop()
-                board.getField(m.destination).pieces.push(pieceToIMove)
+                val board = gameState.board
+                val pieceToIMove = board.getField(move.start).pieces.pop()
+                board.getField(move.destination).pieces.push(pieceToIMove)
             }
         }
         // change active player
-        gs.currentPlayerColor = gs.otherPlayerColor
-        gs.turn++;
+        gameState.currentPlayerColor = gameState.otherPlayerColor
+        gameState.turn++
     }
 
     @JvmStatic
-    fun isQueenBlocked(b: Board, pc: PlayerColor): Boolean {
-        val l = b.fields.filter { it.pieces.contains(Piece(pc, PieceType.BEE)) }
+    fun isQueenBlocked(board: Board, color: PlayerColor): Boolean {
+        val l = board.fields.filter { it.pieces.contains(Piece(color, PieceType.BEE)) }
         if(l.isEmpty())
             return false
-        return getNeighbours(b, l[0].coordinates).all { field -> field.isObstructed || !field.pieces.empty() }
+        return getNeighbours(board, l[0].coordinates).all { field -> field.isObstructed || !field.pieces.empty() }
     }
 
     @JvmStatic
-    fun isOnBoard(c: CubeCoordinates): Boolean {
+    fun isOnBoard(coords: CubeCoordinates): Boolean {
         val shift = (Constants.BOARD_SIZE - 1) / 2
-        return -shift <= c.x && c.x <= shift && -shift <= c.y && c.y <= shift
+        return -shift <= coords.x && coords.x <= shift && -shift <= coords.y && coords.y <= shift
     }
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateMove(gs: GameState, m: IMove): Boolean {
-        when(m) {
-            is SetMove -> validateSetMove(gs, m)
-            is DragMove -> validateDragMove(gs, m)
+    fun validateMove(gameState: GameState, move: IMove): Boolean {
+        when(move) {
+            is SetMove -> validateSetMove(gameState, move)
+            is DragMove -> validateDragMove(gameState, move)
         }
         return true
     }
@@ -151,13 +151,13 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateAntMove(board: Board, m: DragMove): Boolean {
-        val visitedFields: MutableList<CubeCoordinates> = arrayListOf(m.start)
+    fun validateAntMove(board: Board, move: DragMove): Boolean {
+        val visitedFields: MutableList<CubeCoordinates> = arrayListOf(move.start)
         var index = 0
         do {
             val currentField = visitedFields[index]
             val newFields = getAccessibleNeighbours(board, currentField).filterNot { it in visitedFields }
-            if(m.destination in newFields)
+            if(move.destination in newFields)
                 return true
             visitedFields.addAll(newFields)
         } while(++index < visitedFields.size)
@@ -184,33 +184,31 @@ object GameRuleLogic {
     @JvmStatic
     fun getAccessibleNeighbours(board: Board, start: CubeCoordinates) =
             getNeighbours(board, start).filter { neighbour ->
-                neighbour.owner == null && sharedNeighboursOfTwoCoords(board, start, neighbour.coordinates).let { shared ->
-                    shared.size == 2 && shared.any { it.isEmpty } && shared.any { it.owner != null }
-                }
+                neighbour.owner == null && getCanMoveBetween(board, start, neighbour)
             }
 
     @JvmStatic
-    fun getFieldsNextToSwarm(b: Board, exclude: CubeCoordinates): Collection<Field> =
-            b.fields.filter { it.pieces.isNotEmpty() && it.coordinates != exclude }.flatMapTo(HashSet()) { getNeighbours(b, it.coordinates) }
+    fun getFieldsNextToSwarm(board: Board, exclude: CubeCoordinates): Collection<Field> =
+            board.fields.filter { it.pieces.isNotEmpty() && it.coordinates != exclude }.flatMapTo(HashSet()) { getNeighbours(board, it.coordinates) }
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateBeeMove(b: Board, m: DragMove) {
-        validateDestinationNextToStart(m)
-        if(!isPathToNextFieldClear(b, m.start, m.destination))
+    fun validateBeeMove(board: Board, move: DragMove) {
+        validateDestinationNextToStart(move)
+        if(!getCanMoveBetween(board, move.start, move.destination))
             throw InvalidMoveException("There is no path to your destination")
     }
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateBeetleMove(b: Board, m: DragMove) {
-        validateDestinationNextToStart(m)
+    fun validateBeetleMove(board: Board, move: DragMove) {
+        validateDestinationNextToStart(move)
     }
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateDestinationNextToStart(m: DragMove) {
-        if(!this.isNeighbour(m.start, m.destination))
+    fun validateDestinationNextToStart(move: DragMove) {
+        if(!this.isNeighbour(move.start, move.destination))
             throw InvalidMoveException("Destination field is not next to start field")
     }
 
@@ -223,14 +221,14 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateGrasshopperMove(b: Board, m: DragMove) {
-        if(!twoFieldsOnOneStraight(m.start, m.destination)) {
+    fun validateGrasshopperMove(board: Board, move: DragMove) {
+        if(!twoFieldsOnOneStraight(move.start, move.destination)) {
             throw InvalidMoveException("Grasshopper can only move straight lines")
         }
-        if(isNeighbour(m.start, m.destination)) {
+        if(isNeighbour(move.start, move.destination)) {
             throw InvalidMoveException("Grasshopper has to jump over at least one piece")
         }
-        if(getLineBetweenCoords(b, m.start, m.destination).any { it.isEmpty }) {
+        if(getLineBetweenCoords(board, move.start, move.destination).any { it.isEmpty }) {
             throw InvalidMoveException("Grasshopper can only jump over occupied fields, not empty ones")
         }
     }
@@ -258,39 +256,41 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateSpiderMove(b: Board, m: DragMove) {
+    fun validateSpiderMove(board: Board, move: DragMove) {
     }
 
     @JvmStatic
-    fun isPathToNextFieldClear(b: Board, coord1: CubeCoordinates, coord2: CubeCoordinates): Boolean =
-            sharedNeighboursOfTwoCoords(b, coord1, coord2).any { it.isEmpty }
+    fun getCanMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
+            sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
+                shared.size == 2 && shared.any { it.isEmpty } && shared.any { it.owner != null }
+            }
 
     @JvmStatic
-    fun twoFieldsOnOneStraight(coord1: CubeCoordinates, coord2: CubeCoordinates): Boolean {
-        return coord1.x == coord2.x || coord1.y == coord2.y || coord1.z == coord2.z
+    fun twoFieldsOnOneStraight(coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean {
+        return coords1.x == coords2.x || coords1.y == coords2.y || coords1.z == coords2.z
     }
 
     @JvmStatic
-    fun sharedNeighboursOfTwoCoords(b: Board, coord1: CubeCoordinates, coord2: CubeCoordinates): ArrayList<Field> {
-        val neighbours = getNeighbours(b, coord1)
-        neighbours.retainAll(getNeighbours(b, coord2))
+    fun sharedNeighboursOfTwoCoords(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): ArrayList<Field> {
+        val neighbours = getNeighbours(board, coords1)
+        neighbours.retainAll(getNeighbours(board, coords2))
         return neighbours
     }
 
     @JvmStatic
-    fun hasPlayerPlacedBee(gs: GameState) =
-            gs.getDeployedPieces(gs.currentPlayerColor).any { it.type == PieceType.BEE }
+    fun hasPlayerPlacedBee(gameState: GameState) =
+            gameState.getDeployedPieces(gameState.currentPlayerColor).any { it.type == PieceType.BEE }
 
     @JvmStatic
-    fun boardIsEmpty(b: Board): Boolean =
-            b.fields.none { it.pieces.isNotEmpty() }
+    fun boardIsEmpty(board: Board): Boolean =
+            board.fields.none { it.pieces.isNotEmpty() }
 
     @JvmStatic
-    fun getPossibleMoves(gs: GameState): List<IMove> {
+    fun getPossibleMoves(gameState: GameState): List<IMove> {
 
         //Gather all setMoves
 
-        //if(boardIsEmpty(gs.board))
+        //if(boardIsEmpty(gameState.board))
 
         return listOf()
     }

@@ -12,7 +12,9 @@ import sc.shared.PlayerColor
 class GameState(
         override var red: Player = Player(PlayerColor.RED),
         override var blue: Player = Player(PlayerColor.BLUE),
-        override var board: Board = Board()) : TwoPlayerGameState<Player, IMove>(), Cloneable {
+        override var board: Board = Board()
+): TwoPlayerGameState<Player, IMove>(), Cloneable {
+
     @XStreamAsAttribute
     override var turn: Int = 0
     private val undeployedRedPieces = parsePiecesString(Constants.STARING_PIECES, PlayerColor.RED)

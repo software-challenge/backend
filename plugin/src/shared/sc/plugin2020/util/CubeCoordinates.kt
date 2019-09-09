@@ -4,9 +4,9 @@ open class CubeCoordinates(
         open val x: Int,
         open val y: Int,
         open val z: Int = -x - y
-) : Comparable<CubeCoordinates> {
+): Comparable<CubeCoordinates> {
 
-    constructor(position: CubeCoordinates) : this(position.x, position.y, position.z)
+    constructor(position: CubeCoordinates): this(position.x, position.y, position.z)
 
     init {
         @Suppress("LeakingThis")
