@@ -8,34 +8,38 @@ enum class Direction {
     DOWNRIGHT,
     DOWNLEFT;
 
-    fun shift(d: Int): CubeCoordinates { // d is the distance
+    fun shift(distance: Int): CubeCoordinates {
+        return this.shift(CubeCoordinates(0, 0, 0), distance)
+    }
+
+    fun shift(start: CubeCoordinates, distance: Int = 1): CubeCoordinates {
         var shiftX = 0
         var shiftY = 0
         var shiftZ = 0
         when(this) {
             RIGHT -> {
-                shiftX = 1 * d
-                shiftY = -1 * d
+                shiftX = start.x + distance
+                shiftY = start.y - distance
             }
             LEFT -> {
-                shiftX = -1 * d
-                shiftY = 1 * d
+                shiftX = start.x - distance
+                shiftY = start.y + distance
             }
             UPRIGHT -> {
-                shiftX = 1 * d
-                shiftZ = -1 * d
+                shiftX = start.x + distance
+                shiftZ = start.z - distance
             }
             UPLEFT -> {
-                shiftY = 1 * d
-                shiftZ = -1 * d
+                shiftY = start.y + distance
+                shiftZ = start.z - distance
             }
             DOWNRIGHT -> {
-                shiftY = -1 * d
-                shiftZ = 1 * d
+                shiftY = start.y - distance
+                shiftZ = start.z + distance
             }
             DOWNLEFT -> {
-                shiftX = -1 * d
-                shiftZ = 1 * d
+                shiftX = start.x - distance
+                shiftZ = start.z + distance
             }
         }
         return CubeCoordinates(shiftX, shiftY, shiftZ)

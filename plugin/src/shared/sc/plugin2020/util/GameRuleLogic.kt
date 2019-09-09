@@ -157,6 +157,18 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeetleMove(b: Board, m: DragMove) {
+        if (!this.isNeighbour(m.start, m.destination))
+            throw InvalidMoveException("Destination field is not next to start field")
+        if (!this.isPathToNextFieldClear(b, m.start, m.destination)) {
+            throw InvalidMoveException("Destination field is not reachable because of blocked neighbours")
+        }
+    }
+
+    @JvmStatic
+    fun isNeighbour(start: CubeCoordinates, destination: CubeCoordinates): Boolean {
+        return Direction.values().map {
+            it.shift(start)
+        }.contains(destination)
     }
 
     @Throws(InvalidMoveException::class)

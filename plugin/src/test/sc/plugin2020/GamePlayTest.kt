@@ -318,6 +318,44 @@ class GamePlayTest {
     }
 
     @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveBeetleTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ----------------" +
+                    "--------RBBG------" +
+                    " --------RQ------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(2, -1))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+        }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveBlockedBeetleTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ------BA--------" +
+                    "--------RBBG------" +
+                    " --------RQ------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+        }
+    }
+
+    @Test
     @Ignore
     // use to see the generated XML
     fun gamestateToXmlTest() {
