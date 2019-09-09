@@ -127,7 +127,7 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
-    fun setMoveTest() {
+    fun setMoveOnEmptyBoardTest() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -147,7 +147,7 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
-    fun setMoveTest1() {
+    fun setMoveOutsideOfBoard() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -167,7 +167,7 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
-    fun setMoveTest2() {
+    fun validSetMoveTest() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -187,9 +187,8 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
-    fun setMoveTest3() {
+    fun setMoveOfUnavailablePieceTest() {
         run {
-            state.getUndeployedPieces(PlayerColor.RED).clear()
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
                     "   ------------" +
@@ -201,6 +200,7 @@ class GamePlayTest {
                     "   ------------" +
                     "    ----------")
             state.board = board
+            state.getUndeployedPieces(PlayerColor.RED).clear()
             val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 4))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -208,7 +208,7 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
-    fun setMoveTest4() {
+    fun setMoveConnectionToSwarmTest() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -230,7 +230,7 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
-    fun dragMoveTest() {
+    fun dragMoveNonexistentPieceTest() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -246,6 +246,11 @@ class GamePlayTest {
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveOfSolePieceOnBoardTest() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -261,6 +266,11 @@ class GamePlayTest {
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveOntoOtherPieceTest() {
         run {
             val board = TestGameUtil.createCustomBoard("" +
                     "    ----------" +
@@ -278,10 +288,11 @@ class GamePlayTest {
         }
     }
 
+
     @Test
     @Ignore
     // use to see the generated XML
-    fun toXmlTest() {
+    fun gamestateToXmlTest() {
         val board = TestGameUtil.createCustomBoard("" +
                 "    ----------" +
                 "   ------------" +
@@ -437,7 +448,7 @@ class GamePlayTest {
 
     @Test
     @Ignore
-    fun fromXmlTest() {
+    fun gamestateFromXmlTest() {
         val board = TestGameUtil.createCustomBoard("" +
                 "    ----------" +
                 "   ------------" +
