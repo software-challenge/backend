@@ -145,7 +145,77 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateAntMove(b: Board, m: DragMove) {
+    fun validateAntMove(board: Board, m: DragMove) {
+        val swarm = getFieldsNextToSwarm(board, m.start)
+        val visitedFields: MutableCollection<Field> = arrayListOf(board.getField(m.start))
+        val touchedFields: MutableCollection<Field> = this.getNeighbours(board, m.start).filter{ neighbour: Field ->
+              swarm.any {
+                  neighbour.coordinates == it.coordinates
+              }
+        }.toMutableList()
+w       var currentField: CubeCoordinates = m.start
+
+        // darf sich die Ameise überhaupt weg bewegen?
+        if (touchedFields.any{
+                    !isSwarmConnected(board, currentField, it.coordinates) ||
+                    !isPathToNextFieldClear(board, currentField, it.coordinates)}) {
+            throw InvalidMoveException("Path is blocked")
+        }
+
+        // es ist fields.length <= swarm, da from manuell hinzugefügt wurde (+1)
+        while (visitedFields.size + touchedFields.size <= swarm.size && touchedFields.isNotEmpty() && currentField != m.destination && !touchedFields.any{ it.coordinates == m.destination }) {
+            for (f in this.getNeighbours(board, currentField).filter{ swarm.any{ s -> it.coordinates == s.coordinates } }) {
+                if (!visitedFields.any{ f.coordinates == it.coordinates } &&
+                        !touchedFields.any{ f.coordinates == it.coordinates }) {
+                    touchedFields.add(f)
+                }
+            }
+
+            // TODO do in one operation (pop)
+            val newField = touchedFields.first()
+            touchedFields.remove(newField)
+
+            visitedFields.add(newField)
+            currentField = newField.coordinates
+        }
+
+        if (currentField != m.destination && !touchedFields.any{it.coordinates == m.destination}) {
+            throw InvalidMoveException("Ant move is not valid")
+        }
+    }
+
+    @JvmStatic
+    fun isSwarmConnected(board: Board, currentField: CubeCoordinates, coordinates: CubeCoordinates): Boolean {
+        let connected = this.getNeighbours(board, to).filter(e => e.stack.length > 0 && !e.coordinates.equal(from))
+        let currentField: Field = null
+        let visitedFields = [board.getField(from), board.getField(to)]
+        let totalPieces = board.countPieces()
+
+        while (connected.length > 0 && connected.reduce((prev, e) => prev + e.stack.length, 0) + visitedFields.reduce((prev, e) => prev + e.stack.length, 0) < totalPieces) {
+            currentField = connected.pop()
+            visitedFields.push(currentField)
+
+            for (let f of this.getNeighbours(board, currentField.coordinates).filter(e => e.stack.length > 0 && !e.coordinates.equal(from))) {
+            // no duplicated fields please
+            if (!visitedFields.some(e => e.coordinates.equal(f.coordinates)) && !connected.some(e => e.coordinates.equal(f.coordinates))) {
+            connected.push(f)
+        }
+        }
+        }
+
+        return connected.reduce((prev, e) => prev + e.stack.length, 0) + visitedFields.reduce((prev, e) => prev + e.stack.length, 0) == totalPieces
+
+    }
+
+    @JvmStatic
+    fun getFieldsNextToSwarm(board: Board, start: CubeCoordinates): List<Field> {
+        let tiles: Field[] = []
+
+        this.getFieldsWithPiece(board).filter(e => except == null || !except.equal(e.coordinates)).forEach(field => {
+            tiles = tiles.concat(this.getNeighbours(board, field.coordinates).filter(e => e.stack.length == 0 && !e.obstructed && (except == null || !except.equal(e.coordinates)) && !tiles.some(f => e.coordinates.equal(f.coordinates))))
+        })
+
+        return tiles
     }
 
     @Throws(InvalidMoveException::class)
