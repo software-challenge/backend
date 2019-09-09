@@ -72,7 +72,7 @@ class Board : IBoard {
      * Only for tests!
      * use inversion of GameState.allPieces
      */
-    internal fun getPieces(): List<Piece> {
+    fun getPieces(): List<Piece> {
         val pieces = mutableListOf<Piece>()
         for(x in -shift..shift) {
             for(y in max(-shift, -x - shift)..min(shift, -x + shift)) {
@@ -88,7 +88,7 @@ class Board : IBoard {
      * Only for tests!
      * Use inversion of GameState.undeployed{Red,Blue}Pieces
      */
-    internal fun getPiecesFor(color: PlayerColor): List<Piece> {
+    fun getPiecesFor(color: PlayerColor): List<Piece> {
         return this.getPieces().filter { it.owner == color }
     }
 
