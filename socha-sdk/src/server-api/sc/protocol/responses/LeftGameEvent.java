@@ -20,4 +20,10 @@ public class LeftGameEvent implements ProtocolMessage{
     return this.roomId;
   }
 
+  @Override
+  public String toString() {
+    return "LeftGameEvent{" +
+            "roomId='" + roomId + '\'' +
+            '}';
+  }
 }

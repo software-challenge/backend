@@ -14,5 +14,11 @@ public class CancelRequest implements ILobbyRequest {
   public CancelRequest(String roomId) {
     this.roomId = roomId;
   }
-  
+
+  @Override
+  public String toString() {
+    return "CancelRequest{" +
+            "roomId='" + roomId + '\'' +
+            '}';
+  }
 }
