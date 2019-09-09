@@ -82,9 +82,7 @@ public class TestGameUtil {
   public static void updateUndeployedPiecesFromBoard(GameState gs) {
     for(PlayerColor color: PlayerColor.values()) {
       List<Piece> deployed = gs.getBoard().getPiecesFor(color);
-      List<Piece> newUndeployed = gs.getUndeployedPieces(color);
-      newUndeployed.removeIf(p -> deployed.contains(p));
-      gs.setUndeployedPieces(color, newUndeployed);
+      gs.getUndeployedPieces(color).removeIf(p -> deployed.contains(p));
     }
   }
 
