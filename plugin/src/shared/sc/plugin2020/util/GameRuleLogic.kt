@@ -150,9 +150,7 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeeMove(b: Board, m: DragMove) {
-        // NOTE that this is also used to validate a beetle move
-        if (!this.isNeighbour(m.start, m.destination))
-            throw InvalidMoveException("Destination field is not next to start field")
+        validateDestinationNextToStart(b, m)
         if(!isPathToNextFieldClear(b, m.start, m.destination))
             throw InvalidMoveException("There is no path to your destination")
     }
@@ -160,8 +158,14 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeetleMove(b: Board, m: DragMove) {
-        // beetle moves like the bee
-        validateBeeMove(b, m)
+        validateDestinationNextToStart(b, m)
+    }
+
+    @Throws(InvalidMoveException::class)
+    @JvmStatic
+    fun validateDestinationNextToStart(b: Board, m: DragMove) {
+        if(!this.isNeighbour(m.start, m.destination))
+            throw InvalidMoveException("Destination field is not next to start field")
     }
 
     @JvmStatic
