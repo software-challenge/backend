@@ -51,7 +51,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     this.gameType = GamePlugin.PLUGIN_UUID;
     try {
       this.client = new LobbyClient(Configuration.getXStream(), Configuration.getClassesToRegister(), host, port);
-    } catch (ConnectException e) {
+    } catch(ConnectException e) {
       logger.error("Could not connect to Server: " + e.getMessage());
       System.exit(1);
     }
@@ -86,9 +86,9 @@ public abstract class AbstractClient implements ILobbyClientListener {
    */
   @Override
   public void onRoomMessage(String roomId, Object data) {
-    if (data instanceof MoveRequest) {
+    if(data instanceof MoveRequest) {
       this.handler.onRequestAction();
-    } else if (data instanceof WelcomeMessage) {
+    } else if(data instanceof WelcomeMessage) {
       this.color = ((WelcomeMessage) data).getPlayerColor();
     }
     this.roomId = roomId;
@@ -119,10 +119,10 @@ public abstract class AbstractClient implements ILobbyClientListener {
     sc.plugin2020.GameState gameState = (GameState) state;
     logger.debug("{} got new state {}", this, gameState);
 
-    if (this.id != PlayerType.OBSERVER) {
+    if(this.id != PlayerType.OBSERVER) {
       this.handler.onUpdate(gameState);
 
-      if (gameState.getCurrentPlayer().getColor() == this.color) {
+      if(gameState.getCurrentPlayer().getColor() == this.color) {
         // active player is own
         this.handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
       } else {
@@ -161,7 +161,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   @Override
   public void onGameOver(String roomId, GameResult data) {
     logger.debug("{} onGameOver got game result {}", this, data);
-    if (this.handler != null) {
+    if(this.handler != null) {
       this.handler.gameEnded(data, this.color, this.error);
     }
   }

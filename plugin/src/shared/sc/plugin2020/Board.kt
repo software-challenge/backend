@@ -10,12 +10,11 @@ import sc.api.plugins.IBoard
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.CubeCoordinates
 import sc.shared.PlayerColor
-import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
 @XStreamAlias(value = "board")
-class Board : IBoard {
+class Board: IBoard {
     @XStreamOmitField
     private val shift = (Constants.BOARD_SIZE - 1) / 2
 
@@ -23,12 +22,14 @@ class Board : IBoard {
     @XStreamConverter(value = ArrayConverter::class, nulls = [ToStringConverter::class])
     @XStreamImplicit(itemFieldName = "fields")
     val gameField = Array<Array<Field?>>(Constants.BOARD_SIZE) { arrayOfNulls(Constants.BOARD_SIZE) }
+    val fields: Collection<Field>
+        get() = gameField.flatMap { it.filterNotNull() }
 
     constructor() {
         fillBoard()
     }
 
-    constructor(fields: LinkedList<Field>) {
+    constructor(fields: Collection<Field>) {
         var x: Int
         var y: Int
         for(f in fields) {
@@ -52,21 +53,16 @@ class Board : IBoard {
     }
 
     fun getField(pos: CubeCoordinates): Field {
-        return gameField[pos.x + shift][pos.y + shift]!!
+        return gameField[pos.x + shift][pos.y + shift] ?: throw IndexOutOfBoundsException()
     }
 
     override fun getField(cubeX: Int, cubeY: Int): Field {
         return this.getField(CubeCoordinates(cubeX, cubeY))
     }
 
-    override fun getField(cubeX: Int, cubeY: Int, cubeZ: Int): Field {
-        return this.getField(CubeCoordinates(cubeX, cubeY))
+    fun getField(cubeX: Int, cubeY: Int, cubeZ: Int): Field {
+        return this.getField(CubeCoordinates(cubeX, cubeY, cubeZ))
     }
-
-    fun filterFields(predicate: (Field) -> Boolean): List<Field> =
-            gameField.flatMapTo(ArrayList()) {
-                it.filterNotNull().filter(predicate)
-            }
 
     /**
      * Only for tests!
@@ -77,7 +73,7 @@ class Board : IBoard {
         for(x in -shift..shift) {
             for(y in max(-shift, -x - shift)..min(shift, -x + shift)) {
                 val field = gameField[x + shift][y + shift]
-                if (field != null)
+                if(field != null)
                     pieces.addAll(field.pieces)
             }
         }
