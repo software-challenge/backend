@@ -376,6 +376,39 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
+    fun dragMoveBlockedBeetleTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ------BA--------" +
+                    "--------RBBG------" +
+                    " --------RQ------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ----BGBA--------" +
+                    "------RBRBBG------" +
+                    " ------RARQ------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
+            assertTrue(GameRuleLogic.validateMove(state, move))
+        }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
     fun dragMoveGrasshopperValidTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
