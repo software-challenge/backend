@@ -58,7 +58,7 @@ object GameRuleLogic {
 
     @JvmStatic
     fun isQueenBlocked(b: Board, pc: PlayerColor): Boolean {
-        val l = b.filterFields { it.pieces.contains(Piece(pc, PieceType.BEE)) }
+        val l = b.fields.filter { it.pieces.contains(Piece(pc, PieceType.BEE)) }
         if(l.isEmpty())
             return false
         return getNeighbours(b, l[0].coordinates).all { field -> field.isObstructed || !field.pieces.empty() }
@@ -82,141 +82,116 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateSetMove(gs: GameState, m: SetMove): Boolean {
-        val ownedFields = gs.board.filterFields { it.owner == gs.currentPlayerColor }
+    fun validateSetMove(gameState: GameState, move: SetMove): Boolean {
+        val ownedFields = gameState.board.fields.filter { it.owner == gameState.currentPlayerColor }
         if(ownedFields.isEmpty()) {
-            val otherPlayerFields = gs.board.filterFields { it.owner == gs.otherPlayerColor }
+            val otherPlayerFields = gameState.board.fields.filter { it.owner == gameState.otherPlayerColor }
             if(otherPlayerFields.isEmpty()) {
-                if(!isOnBoard(m.destination)) {
+                if(!isOnBoard(move.destination)) {
                     throw InvalidMoveException(
                             String.format(
                                     "Piece has to be placed on board. Destination (%d,%d) is out of bounds.",
-                                    m.destination.x, m.destination.y, m.destination.z
+                                    move.destination.x, move.destination.y, move.destination.z
                             )
                     )
                 }
             } else {
-                if(m.destination !in otherPlayerFields.flatMap { getNeighbours(gs.board, it.coordinates).filter { neighbour -> neighbour.isEmpty } }.map { it.coordinates })
+                if(move.destination !in otherPlayerFields.flatMap { getNeighbours(gameState.board, it.coordinates).filter { neighbour -> neighbour.isEmpty } }.map { it.coordinates })
                     throw InvalidMoveException("Piece has to be placed next to other players piece")
             }
         } else {
-            if(hasPlayerPlacedBee(gs) && gs.getDeployedPieces(gs.currentPlayerColor).size == 3)
+            if(hasPlayerPlacedBee(gameState) && gameState.getDeployedPieces(gameState.currentPlayerColor).size == 3)
                 throw InvalidMoveException("The Bee must be placed at least as fourth piece")
 
-            if(!gs.getUndeployedPieces(gs.currentPlayerColor).contains(m.piece))
+            if(!gameState.getUndeployedPieces(gameState.currentPlayerColor).contains(move.piece))
                 throw InvalidMoveException("Piece is not a undeployed piece of the current player")
 
-            if(!getNeighbours(gs.board, m.destination).any { it.owner == gs.currentPlayerColor })
+            if(!getNeighbours(gameState.board, move.destination).any { it.owner == gameState.currentPlayerColor })
                 throw InvalidMoveException("A newly placed piece must touch an own piece")
         }
         return true
     }
 
-    private fun validateDragMove(gs: GameState, m: DragMove) {
-        // TODO: Check if swarm will be disconnected
-        if(!hasPlayerPlacedBee(gs))
+    @Throws(InvalidMoveException::class)
+    @JvmStatic
+    fun validateDragMove(gameState: GameState, move: DragMove) {
+        if(!hasPlayerPlacedBee(gameState))
             throw InvalidMoveException("You have to place the queen to be able to perform dragmoves")
 
-        if(!isOnBoard(m.destination) || !isOnBoard(m.start))
+        if(!isOnBoard(move.destination) || !isOnBoard(move.start))
             throw InvalidMoveException("The Move is out of bounds")
 
-        if(gs.board.getField(m.start).pieces.size == 0)
+        if(gameState.board.getField(move.start).pieces.size == 0)
             throw InvalidMoveException("There is no piece to move")
 
-        val pieceToDrag = gs.board.getField(m.start).pieces.peek()
+        val pieceToDrag = gameState.board.getField(move.start).pieces.peek()
 
-        if(pieceToDrag.owner !== gs.currentPlayerColor)
+        if(pieceToDrag.owner !== gameState.currentPlayerColor)
             throw InvalidMoveException("Trying to move piece of the other player")
 
-        if(m.start == m.destination)
+        if(move.start == move.destination)
             throw InvalidMoveException("Destination and start are equal")
 
-        if(gs.board.getField(m.destination).pieces.isNotEmpty() && pieceToDrag.type !== PieceType.BEETLE)
+        if(gameState.board.getField(move.destination).pieces.isNotEmpty() && pieceToDrag.type !== PieceType.BEETLE)
             throw InvalidMoveException("Only beetles are allowed to climb on other Pieces")
 
+        if(!isSwarmConnected(Board(gameState.board.fields.map {
+                    if(it == move.start) Field(it).apply { pieces.pop() } else it
+                })))
+            throw InvalidMoveException("Removing piece would disconnect swarm")
+
         when(pieceToDrag.type) {
-            PieceType.ANT -> validateAntMove(gs.board, m)
-            PieceType.BEE -> validateBeeMove(gs.board, m)
-            PieceType.BEETLE -> validateBeetleMove(gs.board, m)
-            PieceType.GRASSHOPPER -> validateGrasshopperMove(gs.board, m)
-            PieceType.SPIDER -> validateSpiderMove(gs.board, m)
+            PieceType.ANT -> validateAntMove(gameState.board, move)
+            PieceType.BEE -> validateBeeMove(gameState.board, move)
+            PieceType.BEETLE -> validateBeetleMove(gameState.board, move)
+            PieceType.GRASSHOPPER -> validateGrasshopperMove(gameState.board, move)
+            PieceType.SPIDER -> validateSpiderMove(gameState.board, move)
         }
     }
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateAntMove(board: Board, m: DragMove) {
-        val swarm = getFieldsNextToSwarm(board, m.start)
-        val visitedFields: MutableCollection<Field> = arrayListOf(board.getField(m.start))
-        val touchedFields: MutableCollection<Field> = this.getNeighbours(board, m.start).filter{ neighbour: Field ->
-              swarm.any {
-                  neighbour.coordinates == it.coordinates
-              }
-        }.toMutableList()
-w       var currentField: CubeCoordinates = m.start
+    fun validateAntMove(board: Board, m: DragMove): Boolean {
+        val visitedFields: MutableList<CubeCoordinates> = arrayListOf(m.start)
+        var index = 0
+        do {
+            val currentField = visitedFields[index]
+            val newFields = getAccessibleNeighbours(board, currentField).filterNot { it in visitedFields }
+            if(m.destination in newFields)
+                return true
+            visitedFields.addAll(newFields)
+        } while(++index < visitedFields.size)
+        throw InvalidMoveException("No path found for Ant move")
+    }
 
-        // darf sich die Ameise überhaupt weg bewegen?
-        if (touchedFields.any{
-                    !isSwarmConnected(board, currentField, it.coordinates) ||
-                    !isPathToNextFieldClear(board, currentField, it.coordinates)}) {
-            throw InvalidMoveException("Path is blocked")
-        }
+    @JvmStatic
+    fun isSwarmConnected(board: Board): Boolean {
+        val visitedFields = arrayListOf(board.fields.firstOrNull { it.pieces.isNotEmpty() } ?: return true)
+        val totalPieces = board.getPieces().size
+        var index = 0
+        do {
+            val currentField = visitedFields[index]
+            val occupiedNeighbours = getNeighbours(board, currentField.coordinates)
+                    .filterTo(ArrayList()) { it.pieces.isNotEmpty() }
+            occupiedNeighbours.removeAll(visitedFields)
+            visitedFields.addAll(occupiedNeighbours)
+            if(visitedFields.sumBy { it.pieces.size } == totalPieces)
+                return true
+        } while(++index < visitedFields.size)
+        return false
+    }
 
-        // es ist fields.length <= swarm, da from manuell hinzugefügt wurde (+1)
-        while (visitedFields.size + touchedFields.size <= swarm.size && touchedFields.isNotEmpty() && currentField != m.destination && !touchedFields.any{ it.coordinates == m.destination }) {
-            for (f in this.getNeighbours(board, currentField).filter{ swarm.any{ s -> it.coordinates == s.coordinates } }) {
-                if (!visitedFields.any{ f.coordinates == it.coordinates } &&
-                        !touchedFields.any{ f.coordinates == it.coordinates }) {
-                    touchedFields.add(f)
+    @JvmStatic
+    fun getAccessibleNeighbours(board: Board, start: CubeCoordinates) =
+            getNeighbours(board, start).filter { neighbour ->
+                neighbour.owner == null && sharedNeighboursOfTwoCoords(board, start, neighbour.coordinates).let { shared ->
+                    shared.size == 2 && shared.any { it.isEmpty } && shared.any { it.owner != null }
                 }
             }
 
-            // TODO do in one operation (pop)
-            val newField = touchedFields.first()
-            touchedFields.remove(newField)
-
-            visitedFields.add(newField)
-            currentField = newField.coordinates
-        }
-
-        if (currentField != m.destination && !touchedFields.any{it.coordinates == m.destination}) {
-            throw InvalidMoveException("Ant move is not valid")
-        }
-    }
-
     @JvmStatic
-    fun isSwarmConnected(board: Board, currentField: CubeCoordinates, coordinates: CubeCoordinates): Boolean {
-        let connected = this.getNeighbours(board, to).filter(e => e.stack.length > 0 && !e.coordinates.equal(from))
-        let currentField: Field = null
-        let visitedFields = [board.getField(from), board.getField(to)]
-        let totalPieces = board.countPieces()
-
-        while (connected.length > 0 && connected.reduce((prev, e) => prev + e.stack.length, 0) + visitedFields.reduce((prev, e) => prev + e.stack.length, 0) < totalPieces) {
-            currentField = connected.pop()
-            visitedFields.push(currentField)
-
-            for (let f of this.getNeighbours(board, currentField.coordinates).filter(e => e.stack.length > 0 && !e.coordinates.equal(from))) {
-            // no duplicated fields please
-            if (!visitedFields.some(e => e.coordinates.equal(f.coordinates)) && !connected.some(e => e.coordinates.equal(f.coordinates))) {
-            connected.push(f)
-        }
-        }
-        }
-
-        return connected.reduce((prev, e) => prev + e.stack.length, 0) + visitedFields.reduce((prev, e) => prev + e.stack.length, 0) == totalPieces
-
-    }
-
-    @JvmStatic
-    fun getFieldsNextToSwarm(board: Board, start: CubeCoordinates): List<Field> {
-        let tiles: Field[] = []
-
-        this.getFieldsWithPiece(board).filter(e => except == null || !except.equal(e.coordinates)).forEach(field => {
-            tiles = tiles.concat(this.getNeighbours(board, field.coordinates).filter(e => e.stack.length == 0 && !e.obstructed && (except == null || !except.equal(e.coordinates)) && !tiles.some(f => e.coordinates.equal(f.coordinates))))
-        })
-
-        return tiles
-    }
+    fun getFieldsNextToSwarm(b: Board, exclude: CubeCoordinates): Collection<Field> =
+            b.fields.filter { it.pieces.isNotEmpty() && it.coordinates != exclude }.flatMapTo(HashSet()) { getNeighbours(b, it.coordinates) }
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
@@ -308,7 +283,7 @@ w       var currentField: CubeCoordinates = m.start
 
     @JvmStatic
     fun boardIsEmpty(b: Board): Boolean =
-            b.filterFields { it.pieces.isNotEmpty() }.isEmpty()
+            b.fields.none { it.pieces.isNotEmpty() }
 
     @JvmStatic
     fun getPossibleMoves(gs: GameState): List<IMove> {

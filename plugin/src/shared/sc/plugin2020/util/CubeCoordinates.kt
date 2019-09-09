@@ -1,20 +1,27 @@
 package sc.plugin2020.util
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
-
-@XStreamAlias(value = "position")
-data class CubeCoordinates(val x: Int,
-                           val y: Int,
-                           val z: Int = -x-y) : Comparable<CubeCoordinates> {
-
-    init {
-        require(x + y + z == 0) { "Constraint: (x + y + z == 0) not granted for ${this}!" }
-    }
+open class CubeCoordinates(
+        open val x: Int,
+        open val y: Int,
+        open val z: Int = -x - y
+) : Comparable<CubeCoordinates> {
 
     constructor(position: CubeCoordinates) : this(position.x, position.y, position.z)
 
-    override fun toString(): String {
-        return String.format("(%d,%d,%d)", this.x, this.y, this.z)
+    init {
+        @Suppress("LeakingThis")
+        require(x + y + z == 0) { "Constraint: (x + y + z == 0) not granted for ${this}!" }
+    }
+
+    override fun toString(): String = String.format("(%d,%d,%d)", x, y, z)
+
+    override fun equals(other: Any?): Boolean = other is CubeCoordinates && x == other.x && y == other.y && z == other.z
+
+    override fun hashCode(): Int {
+        var result = x
+        result = 31 * result + y
+        result = 31 * result + z
+        return result
     }
 
     override operator fun compareTo(other: CubeCoordinates): Int {
@@ -26,8 +33,5 @@ data class CubeCoordinates(val x: Int,
         return if(this.z < other.z) -1 else 0
     }
 
-    override fun equals(other: Any?): Boolean {
-        val to = other as CubeCoordinates?
-        return this.x == to!!.x && this.y == to.y && this.z == to.z
-    }
 }
+

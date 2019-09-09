@@ -8,32 +8,29 @@ import sc.plugin2020.util.CubeCoordinates
 import sc.shared.PlayerColor
 import java.util.*
 
-// NOTE that we use primitives instead of CubeCoordinates to let XStream serialize coordinates as attributes of field tag
 @XStreamAlias("field")
 data class Field(
         @XStreamAsAttribute
-        private val x: Int = 0,
+        override val x: Int = 0,
         @XStreamAsAttribute
-        private val y: Int = 0,
+        override val y: Int = 0,
         @XStreamAsAttribute
-        private val z: Int = 0,
+        override val z: Int = -x - y,
         @XStreamImplicit
         val pieces: Stack<Piece> = Stack(),
         @XStreamAsAttribute
-        var isObstructed: Boolean = false
-) : IField {
+        val isObstructed: Boolean = false
+) : CubeCoordinates(x, y, z), IField {
 
     val fieldState: FieldState
         get() {
             if(isObstructed)
                 return FieldState.OBSTRUCTED
-            if(!pieces.isEmpty()) {
-                when(pieces.peek().owner) {
-                    PlayerColor.RED -> FieldState.RED
-                    PlayerColor.BLUE -> FieldState.BLUE
-                }
+            return when(owner) {
+                PlayerColor.RED -> FieldState.RED
+                PlayerColor.BLUE -> FieldState.BLUE
+                null -> FieldState.EMPTY
             }
-            return FieldState.EMPTY
         }
 
     val isEmpty: Boolean
@@ -45,13 +42,39 @@ data class Field(
     val owner: PlayerColor?
         get() = if(pieces.isEmpty()) null else pieces.peek().owner
 
-    fun hasPiece(piece: PieceType) =
-            pieces.any { it.type == piece }
+    constructor(position: CubeCoordinates, obstructed: Boolean) : this(position.x, position.y, position.z, isObstructed = obstructed)
 
-    constructor(position: CubeCoordinates) : this(position.x, position.y, position.z)
+    constructor(position: CubeCoordinates, vararg pieces: Piece) : this(position.x, position.y, position.z, pieces.toCollection(Stack()))
 
-    constructor(position: CubeCoordinates, obstructed: Boolean) : this(position.x, position.y, position.z, Stack(), obstructed)
+    constructor (x: Int, y: Int, obstructed: Boolean) : this(x, y, isObstructed = obstructed)
 
-    constructor(position: CubeCoordinates, pieces: Stack<Piece>) : this(position.x, position.y, position.z, pieces)
+    constructor(x: Int, y: Int, vararg pieces: Piece) : this(x, y, pieces = pieces.toCollection(Stack()) as Stack<Piece>)
+
+    constructor(field: Field) : this(field.x, field.y, field.z, field.pieces.toCollection(Stack()), field.isObstructed)
+
+    override fun equals(other: Any?): Boolean {
+        if(this === other) return true
+        if(javaClass != other?.javaClass)
+            return if(other is CubeCoordinates) super.equals(other) else false
+
+        other as Field
+
+        if(x != other.x) return false
+        if(y != other.y) return false
+        if(z != other.z) return false
+        if(pieces != other.pieces) return false
+        if(isObstructed != other.isObstructed) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = x
+        result = 31 * result + y
+        result = 31 * result + z
+        result = 31 * result + pieces.hashCode()
+        result = 31 * result + isObstructed.hashCode()
+        return result
+    }
 
 }
