@@ -27,4 +27,12 @@ public class ProtocolErrorMessage implements ProtocolMessage {
     return this.message;
   }
 
+  @Override
+  public String toString() {
+    return "ProtocolErrorMessage{" +
+            "originalRequest=" + originalRequest +
+            ", message='" + message + '\'' +
+            '}';
+  }
+
 }
