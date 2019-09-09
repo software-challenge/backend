@@ -13,9 +13,9 @@ enum class Direction {
     }
 
     fun shift(start: CubeCoordinates, distance: Int = 1): CubeCoordinates {
-        var shiftX = 0
-        var shiftY = 0
-        var shiftZ = 0
+        var shiftX = start.x
+        var shiftY = start.y
+        var shiftZ = start.z
         when(this) {
             RIGHT -> {
                 shiftX = start.x + distance

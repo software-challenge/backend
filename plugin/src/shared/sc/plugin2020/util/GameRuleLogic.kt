@@ -150,6 +150,9 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeeMove(b: Board, m: DragMove) {
+        // NOTE that this is also used to validate a beetle move
+        if (!this.isNeighbour(m.start, m.destination))
+            throw InvalidMoveException("Destination field is not next to start field")
         if(!isPathToNextFieldClear(b, m.start, m.destination))
             throw InvalidMoveException("There is no path to your destination")
     }
@@ -157,11 +160,8 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeetleMove(b: Board, m: DragMove) {
-        if (!this.isNeighbour(m.start, m.destination))
-            throw InvalidMoveException("Destination field is not next to start field")
-        if (!this.isPathToNextFieldClear(b, m.start, m.destination)) {
-            throw InvalidMoveException("Destination field is not reachable because of blocked neighbours")
-        }
+        // beetle moves like the bee
+        validateBeeMove(b, m)
     }
 
     @JvmStatic
@@ -185,7 +185,7 @@ object GameRuleLogic {
     fun isPathToNextFieldClear(b: Board, coord1: CubeCoordinates, coord2: CubeCoordinates): Boolean {
         val path = sharedNeighboursOfTwoCoords(b, coord1, coord2)
         for(i in path)
-            if(!i.isObstructed && i.pieces.size == 0)
+            if(i.isEmpty)
                 return true
         return false
     }

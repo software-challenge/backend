@@ -319,7 +319,45 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
-    fun dragMoveBeetleTest() {
+    fun dragMoveBeeValidTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ----------------" +
+                    "--------RBBG------" +
+                    " --------RQ------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(0, -1), CubeCoordinates(1, -2))
+            assertTrue(GameRuleLogic.validateMove(state, move))
+        }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveBeeTooFarTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ----------------" +
+                    "--------RBBG------" +
+                    " --------RQ------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(0, -1), CubeCoordinates(2, -2))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+        }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveBeetleTooFarTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +

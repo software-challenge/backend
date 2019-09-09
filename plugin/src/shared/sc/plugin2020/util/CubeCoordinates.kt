@@ -8,7 +8,7 @@ data class CubeCoordinates(val x: Int,
                            val z: Int = -x-y) : Comparable<CubeCoordinates> {
 
     init {
-        require(x + y + z == 0) { "Constraint: (x + y + z == 0) not granted!" }
+        require(x + y + z == 0) { "Constraint: (x + y + z == 0) not granted for ${this}!" }
     }
 
     constructor(position: CubeCoordinates) : this(position.x, position.y, position.z)
