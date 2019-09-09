@@ -174,6 +174,39 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateGrasshopperMove(b: Board, m: DragMove) {
+        if (!twoFieldsOnOneStraight(m.start, m.destination)) {
+            throw InvalidMoveException("Grasshopper can only move straight lines")
+        }
+        if (isNeighbour(m.start, m.destination)) {
+            throw InvalidMoveException("Grasshopper has to jump over at least one piece")
+        }
+        if (getLineBetweenCoords(b, m.start, m.destination).any { it.isEmpty }) {
+            throw InvalidMoveException("Grasshopper can only jump over occupied fields, not empty ones")
+        }
+    }
+
+    @Throws(IndexOutOfBoundsException::class)
+    @JvmStatic
+    fun getLineBetweenCoords(board: Board, start: CubeCoordinates, destination: CubeCoordinates): List<Field> {
+        if (!twoFieldsOnOneStraight(start, destination)) {
+            throw IndexOutOfBoundsException("destination is not in line with start")
+        }
+
+        // get diff between 2 coords
+        val d_x = start.x - destination.x
+        val d_y = start.y - destination.y
+        val d_z = start.z - destination.z
+        val d = if (d_x == 0) Math.abs(d_y) else Math.abs(d_x)
+        val tmp = mutableListOf<CubeCoordinates>()
+
+        for (i in 1..(d-1)) {
+            tmp.add(CubeCoordinates(
+                    destination.x + i * if (d_x > 0) 1 else if (d_x < 0) -1 else 0,
+                    destination.y + i * if (d_y > 0) 1 else if (d_y < 0) -1 else 0,
+                    destination.z + i * if (d_z > 0) 1 else if (d_z < 0) -1 else 0
+            ))
+        }
+        return tmp.map { board.getField(it) }
     }
 
     @Throws(InvalidMoveException::class)
