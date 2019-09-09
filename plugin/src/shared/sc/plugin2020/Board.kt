@@ -9,6 +9,7 @@ import com.thoughtworks.xstream.converters.extended.ToStringConverter
 import sc.api.plugins.IBoard
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.CubeCoordinates
+import sc.shared.PlayerColor
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -66,6 +67,22 @@ class Board : IBoard {
             gameField.flatMapTo(ArrayList()) {
                 it.filterNotNull().filter(predicate)
             }
+
+    fun getPieces(): List<Piece> {
+        val pieces = mutableListOf<Piece>()
+        for(x in -shift..shift) {
+            for(y in max(-shift, -x - shift)..min(shift, -x + shift)) {
+                val field = gameField[x + shift][y + shift]
+                if (field != null)
+                    pieces.addAll(field.pieces)
+            }
+        }
+        return pieces
+    }
+
+    fun getPiecesFor(color: PlayerColor): List<Piece> {
+        return this.getPieces().filter { it.owner == color }
+    }
 
     override fun toString(): String {
         var text = "Board\n"

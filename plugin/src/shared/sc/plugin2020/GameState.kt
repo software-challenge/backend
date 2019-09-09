@@ -77,4 +77,13 @@ class GameState(
         return String.format("GameState Zug %d", this.turn)
     }
 
+    /**
+     * For internal use only!
+     */
+    fun setUndeployedPieces(color: PlayerColor, pieces: List<Piece>) {
+        val undeployedPieces = this.getUndeployedPieces(color)
+        undeployedPieces.clear()
+        undeployedPieces.addAll(pieces)
+    }
+
 }
