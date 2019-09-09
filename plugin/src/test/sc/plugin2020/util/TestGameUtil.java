@@ -2,11 +2,14 @@ package sc.plugin2020.util;
 
 import org.junit.Assert;
 import sc.plugin2020.Board;
+import sc.plugin2020.GameState;
 import sc.plugin2020.Piece;
 import sc.plugin2020.PieceType;
 import sc.shared.PlayerColor;
 
 import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.List;
 
 public class TestGameUtil {
 
@@ -75,5 +78,19 @@ public class TestGameUtil {
     }
     return board;
   }
+
+  public static void updateUndeployedPiecesFromBoard(GameState gs) {
+    for(PlayerColor color: PlayerColor.values()) {
+      List<Piece> p = gs.getDeployedPieces(color);
+      gs.getUndeployedPieces(color).removeAll(p);
+    }
+  }
+
+  public static void updateGamestateWithBoard(GameState gs, String customBoard) {
+    Board board = TestGameUtil.createCustomBoard(customBoard);
+    gs.setBoard(board);
+    TestGameUtil.updateUndeployedPiecesFromBoard(gs);
+  }
+
 }
 

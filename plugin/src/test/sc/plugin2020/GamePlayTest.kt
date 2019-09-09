@@ -38,7 +38,7 @@ class GamePlayTest {
     fun invalidBoardStringTest() {
         assertThrows(InvalidParameterException::class.java
         ) {
-            TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    XY--------" +
                     "   ------------" +
                     "  --------------" +
@@ -51,7 +51,7 @@ class GamePlayTest {
         }
         assertThrows(InvalidParameterException::class.java
         ) {
-            TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    BY--------" +
                     "   ------------" +
                     "  --------------" +
@@ -68,7 +68,7 @@ class GamePlayTest {
     @Test
     @Throws(InvalidMoveException::class)
     fun onlyEndAfterRoundTest() {
-        val board = TestGameUtil.createCustomBoard("" +
+        TestGameUtil.updateGamestateWithBoard(state, "" +
                 "    RB--------" +
                 "   ------------" +
                 "  --------------" +
@@ -78,7 +78,6 @@ class GamePlayTest {
                 "  --------------" +
                 "   ------------" +
                 "    ----------")
-        state.board = board
         run {
             //Move move = new Move();
             //GameRuleLogic.performMove(state, move);
@@ -98,7 +97,7 @@ class GamePlayTest {
     @Test
     fun gameEndTest() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -108,10 +107,10 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            assertTrue(GameRuleLogic.isQueenBlocked(board, PlayerColor.RED))
+            assertTrue(GameRuleLogic.isQueenBlocked(state.board, PlayerColor.RED))
         }
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -121,7 +120,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            assertFalse(GameRuleLogic.isQueenBlocked(board, PlayerColor.RED))
+            assertFalse(GameRuleLogic.isQueenBlocked(state.board, PlayerColor.RED))
         }
     }
 
@@ -129,7 +128,7 @@ class GamePlayTest {
     @Throws(InvalidMoveException::class)
     fun setMoveOnEmptyBoardTest() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -139,7 +138,6 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
             assertTrue(GameRuleLogic.validateMove(state, move))
         }
@@ -149,7 +147,7 @@ class GamePlayTest {
     @Throws(InvalidMoveException::class)
     fun setMoveOutsideOfBoard() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -159,7 +157,6 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(8, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -169,7 +166,7 @@ class GamePlayTest {
     @Throws(InvalidMoveException::class)
     fun validSetMoveTest() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -179,7 +176,6 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -189,7 +185,7 @@ class GamePlayTest {
     @Throws(InvalidMoveException::class)
     fun setMoveOfUnavailablePieceTest() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -199,7 +195,6 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.board = board
             state.getUndeployedPieces(PlayerColor.RED).clear()
             val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 4))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
@@ -210,7 +205,7 @@ class GamePlayTest {
     @Throws(InvalidMoveException::class)
     fun setMoveConnectionToSwarmTest() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -220,7 +215,6 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.board = board
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
             val move2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 4))
@@ -232,7 +226,7 @@ class GamePlayTest {
     @Throws(InvalidMoveException::class)
     fun dragMoveNonexistentPieceTest() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -242,7 +236,6 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.board = board
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -252,7 +245,7 @@ class GamePlayTest {
     @Throws(InvalidMoveException::class)
     fun dragMoveOfSolePieceOnBoardTest() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -262,7 +255,6 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.board = board
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
@@ -272,7 +264,7 @@ class GamePlayTest {
     @Throws(InvalidMoveException::class)
     fun dragMoveOntoOtherPieceTest() {
         run {
-            val board = TestGameUtil.createCustomBoard("" +
+            TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
                     "   ------------" +
                     "  --------------" +
@@ -282,18 +274,54 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            state.board = board
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, -1))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
 
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveBeforeQueenTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ----------------" +
+                    "--------RBBG------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+        }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveAfterQueenTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ----------------" +
+                    "--------RBBG------" +
+                    " --------RQ------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
+            assertTrue(GameRuleLogic.validateMove(state, move))
+        }
+    }
 
     @Test
     @Ignore
     // use to see the generated XML
     fun gamestateToXmlTest() {
-        val board = TestGameUtil.createCustomBoard("" +
+        TestGameUtil.updateGamestateWithBoard(state, "" +
                 "    ----------" +
                 "   ------------" +
                 "  --------------" +
@@ -303,11 +331,11 @@ class GamePlayTest {
                 "  --------------" +
                 "   ------------" +
                 "    ----------")
-        state.board = board
-        board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
-        board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
-        assertEquals(PieceType.BEE, board.getField(0, 0).pieces.lastElement().type)
-        assertEquals(PieceType.BEE, board.getField(0, 0).pieces.peek().type)
+        state.board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
+        state.board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
+        TestGameUtil.updateUndeployedPiecesFromBoard(state)
+        assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
+        assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
         val xstream = Configuration.xStream
         val xml = xstream.toXML(state)
         assertEquals("<state startPlayerColor=\"RED\" currentPlayerColor=\"RED\" turn=\"0\">\n" +
@@ -449,7 +477,7 @@ class GamePlayTest {
     @Test
     @Ignore
     fun gamestateFromXmlTest() {
-        val board = TestGameUtil.createCustomBoard("" +
+        TestGameUtil.updateGamestateWithBoard(state, "" +
                 "    ----------" +
                 "   ------------" +
                 "  --------------" +
@@ -459,11 +487,11 @@ class GamePlayTest {
                 "  --------------" +
                 "   ------------" +
                 "    ----------")
-        state.board = board
-        board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
-        board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
-        assertEquals(PieceType.BEE, board.getField(0, 0).pieces.lastElement().type)
-        assertEquals(PieceType.BEE, board.getField(0, 0).pieces.peek().type)
+        state.board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
+        state.board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
+        TestGameUtil.updateUndeployedPiecesFromBoard(state);
+        assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
+        assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
         val xstream = Configuration.xStream
         val xmlState = GameState()
         val read = xstream.fromXML(
