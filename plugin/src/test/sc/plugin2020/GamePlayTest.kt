@@ -475,6 +475,24 @@ class GamePlayTest {
 
     @Test
     @Throws(InvalidMoveException::class)
+    fun dragMoveBeetleOverTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------RB----" +
+                    " ------RABB--RB--" +
+                    "------BQRBRGBB----" +
+                    " --------RQ------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(3, -2), CubeCoordinates(3, -1))
+            assertThrows(InvalidMoveException::class.java){ GameRuleLogic.validateMove(state, move)}
+        }
+    }
+    @Test
+    @Throws(InvalidMoveException::class)
     fun dragMoveAntDisconnectFromSwarmTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
