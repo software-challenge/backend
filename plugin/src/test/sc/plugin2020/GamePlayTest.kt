@@ -604,20 +604,48 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            val validOne = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1))
-            assertTrue(GameRuleLogic.validateMove(state, validOne))
-            val validTwo = DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0))
-            assertTrue(GameRuleLogic.validateMove(state, validTwo))
-            val validThree = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-2, 1))
-            assertTrue(GameRuleLogic.validateMove(state, validThree))
-            val invalidOne = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalidOne) }
-            val invalidTwo = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalidTwo) }
-            val invalidThree = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalidThree) }
-            val invalidFour = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalidFour) }
+            val valid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1))
+            assertTrue(GameRuleLogic.validateMove(state, valid1))
+            val valid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-2, 1))
+            assertTrue(GameRuleLogic.validateMove(state, valid2))
+            val invalid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
+            val invalid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
+            val invalid3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid3) }
+            val invalid4 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 2))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid4) }
+            val invalid5 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid5)
+            val invalid6 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid6) }}
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  ----BB--BB----" +
+                    " ----RBRS--BS----" +
+                    "------RBRQBQ------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+           val valid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1))
+            assertTrue(GameRuleLogic.validateMove(state, valid1))
+            val valid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0))
+            assertTrue(GameRuleLogic.validateMove(state, valid2))
+            val valid3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 2))
+            assertTrue(GameRuleLogic.validateMove(state, valid3))
+            val valid4 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 3))
+            assertTrue(GameRuleLogic.validateMove(state, valid4))
+            val invalid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
+            val invalid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2)
+            val invalid3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid3) }}
         }
     }
 

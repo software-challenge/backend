@@ -4,6 +4,8 @@ import sc.api.plugins.IMove
 import sc.plugin2020.*
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerColor
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 object GameRuleLogic {
@@ -135,17 +137,18 @@ object GameRuleLogic {
         if(gameState.board.getField(move.destination).pieces.isNotEmpty() && pieceToDrag.type !== PieceType.BEETLE)
             throw InvalidMoveException("Only beetles are allowed to climb on other Pieces")
 
-        if(!isSwarmConnected(Board(gameState.board.fields.map {
-                    if(it == move.start) Field(it).apply { pieces.pop() } else it
-                })))
+        val boardWithoutPiece = Board(gameState.board.fields.map {
+            if(it == move.start) Field(it).apply { pieces.pop() } else it
+        })
+        if(!isSwarmConnected(boardWithoutPiece))
             throw InvalidMoveException("Moving piece would disconnect swarm")
 
         when(pieceToDrag.type) {
-            PieceType.ANT -> validateAntMove(gameState.board, move)
-            PieceType.BEE -> validateBeeMove(gameState.board, move)
-            PieceType.BEETLE -> validateBeetleMove(gameState.board, move)
-            PieceType.GRASSHOPPER -> validateGrasshopperMove(gameState.board, move)
-            PieceType.SPIDER -> validateSpiderMove(gameState.board, move)
+            PieceType.ANT -> validateAntMove(boardWithoutPiece, move)
+            PieceType.BEE -> validateBeeMove(boardWithoutPiece, move)
+            PieceType.BEETLE -> validateBeetleMove(boardWithoutPiece, move)
+            PieceType.GRASSHOPPER -> validateGrasshopperMove(boardWithoutPiece, move)
+            PieceType.SPIDER -> validateSpiderMove(boardWithoutPiece, move)
         }
     }
 
@@ -217,8 +220,18 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateSpiderMove(board: Board, move: DragMove) {
-
+    fun validateSpiderMove(board: Board, move: DragMove): Boolean {
+        val paths: Deque<Array<CubeCoordinates>> = ArrayDeque()
+        paths.add(arrayOf(move.start))
+        do {
+            val currentPath = paths.removeFirst()
+            val newFields = getAccessibleNeighbours(board, currentPath.last()).filterNot { it in currentPath }
+            if(currentPath.size < 3)
+                paths.addAll(newFields.map { currentPath + it })
+            else if(move.destination in newFields)
+                return true
+        } while(paths.isNotEmpty())
+        throw InvalidMoveException("No path found for Spider move")
     }
 
     @Throws(IndexOutOfBoundsException::class)
@@ -262,6 +275,7 @@ object GameRuleLogic {
             it.shift(start)
         }.contains(destination)
     }
+
     @JvmStatic
     fun twoFieldsOnOneStraight(coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean {
         return coords1.x == coords2.x || coords1.y == coords2.y || coords1.z == coords2.z
