@@ -99,6 +99,7 @@ tasks {
     }
 
     val testGame by creating {
+        enabled = false
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {
             testLogDir.mkdirs()
