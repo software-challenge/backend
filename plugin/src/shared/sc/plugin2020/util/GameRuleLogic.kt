@@ -202,6 +202,8 @@ object GameRuleLogic {
     @JvmStatic
     fun validateBeetleMove(board: Board, move: DragMove) {
         validateDestinationNextToStart(move)
+        if(sharedNeighboursOfTwoCoords(board, move.start, move.destination).none { it.pieces.isNotEmpty() })
+            throw InvalidMoveException("Beetle has to move along swarm")
     }
 
     @Throws(InvalidMoveException::class)
