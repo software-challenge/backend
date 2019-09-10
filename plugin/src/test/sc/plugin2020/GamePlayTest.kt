@@ -35,6 +35,12 @@ class GamePlayTest {
     }
 
     @Test
+    fun obstructedCreationTest() {
+        val board = Board()
+        assertEquals(3, board.fields.filter { it.isObstructed }.size)
+    }
+
+    @Test
     fun invalidBoardStringTest() {
         assertThrows(InvalidParameterException::class.java) {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -519,9 +525,10 @@ class GamePlayTest {
                     "   ------------" +
                     "    ----------")
             val move = DragMove(CubeCoordinates(3, -2), CubeCoordinates(3, -1))
-            assertThrows(InvalidMoveException::class.java){ GameRuleLogic.validateMove(state, move)}
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
+
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveAntDisconnectFromSwarmTest() {
