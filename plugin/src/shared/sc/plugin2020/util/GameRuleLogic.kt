@@ -196,10 +196,6 @@ object GameRuleLogic {
                 neighbour.owner == null && getCanMoveBetween(board, start, neighbour)
             }
 
-    @JvmStatic
-    fun getFieldsNextToSwarm(board: Board, exclude: CubeCoordinates): Collection<Field> =
-            board.fields.filter { it.pieces.isNotEmpty() && it.coordinates != exclude }.flatMapTo(HashSet()) { getNeighbours(board, it.coordinates) }
-
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeeMove(board: Board, move: DragMove) {
@@ -216,20 +212,6 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateDestinationNextToStart(move: DragMove) {
-        if(!this.isNeighbour(move.start, move.destination))
-            throw InvalidMoveException("Destination field is not next to start field")
-    }
-
-    @JvmStatic
-    fun isNeighbour(start: CubeCoordinates, destination: CubeCoordinates): Boolean {
-        return Direction.values().map {
-            it.shift(start)
-        }.contains(destination)
-    }
-
-    @Throws(InvalidMoveException::class)
-    @JvmStatic
     fun validateGrasshopperMove(board: Board, move: DragMove) {
         if(!twoFieldsOnOneStraight(move.start, move.destination)) {
             throw InvalidMoveException("Grasshopper can only move straight lines")
@@ -240,6 +222,12 @@ object GameRuleLogic {
         if(getLineBetweenCoords(board, move.start, move.destination).any { it.isEmpty }) {
             throw InvalidMoveException("Grasshopper can only jump over occupied fields, not empty ones")
         }
+    }
+
+    @Throws(InvalidMoveException::class)
+    @JvmStatic
+    fun validateSpiderMove(board: Board, move: DragMove) {
+
     }
 
     @Throws(IndexOutOfBoundsException::class)
@@ -263,17 +251,26 @@ object GameRuleLogic {
         }
     }
 
-    @Throws(InvalidMoveException::class)
-    @JvmStatic
-    fun validateSpiderMove(board: Board, move: DragMove) {
-    }
-
     @JvmStatic
     fun getCanMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
             sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
                 shared.size == 1 || shared.any { it.isEmpty }
             }
 
+
+    @Throws(InvalidMoveException::class)
+    @JvmStatic
+    fun validateDestinationNextToStart(move: DragMove) {
+        if(!this.isNeighbour(move.start, move.destination))
+            throw InvalidMoveException("Destination field is not next to start field")
+    }
+
+    @JvmStatic
+    fun isNeighbour(start: CubeCoordinates, destination: CubeCoordinates): Boolean {
+        return Direction.values().map {
+            it.shift(start)
+        }.contains(destination)
+    }
     @JvmStatic
     fun twoFieldsOnOneStraight(coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean {
         return coords1.x == coords2.x || coords1.y == coords2.y || coords1.z == coords2.z
