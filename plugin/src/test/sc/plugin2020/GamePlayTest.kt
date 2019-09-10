@@ -492,6 +492,26 @@ class GamePlayTest {
     }
 
     @Test
+    fun dragMoveAntAroundObstacleTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "    ----------" +
+                "   ------------" +
+                "  --------------" +
+                " --------OO------" +
+                "------RQRA--------" +
+                " ------OO--------" +
+                "  --------------" +
+                "   ------------" +
+                "    ----------")
+        val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 1))
+        assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+        val move2 = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
+        assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move2) }
+        val move3 = DragMove(CubeCoordinates(0, 0), CubeCoordinates(-1, 0))
+        assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move3) }
+    }
+
+    @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveAntIntoBlockedTest() {
         run {
