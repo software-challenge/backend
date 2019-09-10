@@ -111,7 +111,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            assertTrue(GameRuleLogic.isQueenBlocked(state.board, PlayerColor.RED))
+            assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
         }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -124,7 +124,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            assertFalse(GameRuleLogic.isQueenBlocked(state.board, PlayerColor.RED))
+            assertFalse(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
         }
     }
 
@@ -246,6 +246,28 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
             val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-1, 2))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
+        }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun setMoveQueenTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " RGRGRG----------" +
+                    "------------------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            state.turn = 6
+            val setAnt = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 4))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, setAnt) }
+            val setBee = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-4, 4))
+            assertTrue(GameRuleLogic.validateMove(state, setBee))
         }
     }
 

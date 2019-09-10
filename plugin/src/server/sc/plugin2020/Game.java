@@ -165,8 +165,8 @@ public class Game extends RoundBasedGameInstance<Player> {
       return null;
     }
 
-    boolean redConnected = GameRuleLogic.isQueenBlocked(gameState.getBoard(), PlayerColor.RED);
-    boolean blueConnected = GameRuleLogic.isQueenBlocked(gameState.getBoard(), PlayerColor.BLUE);
+    boolean redConnected = GameRuleLogic.isBeeBlocked(gameState.getBoard(), PlayerColor.RED);
+    boolean blueConnected = GameRuleLogic.isBeeBlocked(gameState.getBoard(), PlayerColor.BLUE);
     if(redConnected) {
       logger.info("Swarm is connected for red");
       if(blueConnected) {

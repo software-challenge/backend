@@ -59,7 +59,7 @@ object GameRuleLogic {
     }
     
     @JvmStatic
-    fun isQueenBlocked(board: Board, color: PlayerColor): Boolean {
+    fun isBeeBlocked(board: Board, color: PlayerColor): Boolean {
         val l = board.fields.filter { it.pieces.contains(Piece(color, PieceType.BEE)) }
         if(l.isEmpty())
             return false
@@ -98,8 +98,8 @@ object GameRuleLogic {
                     throw InvalidMoveException("Piece has to be placed next to other players piece")
             }
         } else {
-            if(!hasPlayerPlacedBee(gameState) && gameState.getDeployedPieces(gameState.currentPlayerColor).size == 3)
-                throw InvalidMoveException("The Bee must be placed at least as fourth piece")
+            if(gameState.round == 3 && !hasPlayerPlacedBee(gameState) && move.piece.type != PieceType.BEE)
+                throw InvalidMoveException("The Bee must be placed in fourth round latest")
             
             if(!gameState.getUndeployedPieces(gameState.currentPlayerColor).contains(move.piece))
                 throw InvalidMoveException("Piece is not a undeployed piece of the current player")
@@ -114,7 +114,7 @@ object GameRuleLogic {
     @JvmStatic
     fun validateDragMove(gameState: GameState, move: DragMove) {
         if(!hasPlayerPlacedBee(gameState))
-            throw InvalidMoveException("You have to place the queen to be able to perform dragmoves")
+            throw InvalidMoveException("You have to place the Bee to be able to perform dragmoves")
         
         if(!isOnBoard(move.destination) || !isOnBoard(move.start))
             throw InvalidMoveException("The Move is out of bounds")
