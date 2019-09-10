@@ -219,10 +219,33 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
-            val move2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 4))
-            assertTrue(GameRuleLogic.validateMove(state, move2))
+            val invalid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1)
+            val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 0))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }}
+            val valid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 4))
+            assertTrue(GameRuleLogic.validateMove(state, valid1))
+        }
+    }
+
+    @Test
+    @Throws(InvalidMoveException::class)
+    fun setMoveBlockedFieldTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " RGBGOO----------" +
+                    "------------------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val invalid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 4))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
+            val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-1, 2))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
         }
     }
 
