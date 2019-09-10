@@ -10,8 +10,10 @@ import sc.api.plugins.IBoard
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.CubeCoordinates
 import sc.shared.PlayerColor
+import java.util.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
 
 @XStreamAlias(value = "board")
 class Board: IBoard {
@@ -27,6 +29,7 @@ class Board: IBoard {
 
     constructor() {
         fillBoard()
+        generateObstructed()
     }
 
     constructor(fields: Collection<Field>) {
@@ -49,6 +52,19 @@ class Board: IBoard {
                     gameField[x + shift][y + shift] = Field(CubeCoordinates(x, y))
                 }
             }
+        }
+    }
+
+    private fun generateObstructed() {
+        val all = this.fields.toMutableList()
+        val toBeObstructed = mutableListOf<Field>()
+        for(i in 1..3) {
+            val index = Random.nextInt(all.size)
+            toBeObstructed.add(all[index])
+            all.removeAt(index)
+        }
+        toBeObstructed.forEach {
+            this.gameField[it.x + shift][it.y + shift] = Field(it.x, it.y, it.z, Stack(), true)
         }
     }
 
