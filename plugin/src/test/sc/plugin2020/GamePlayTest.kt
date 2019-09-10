@@ -580,6 +580,25 @@ class GamePlayTest {
     }
 
     @Test
+    @Throws(InvalidMoveException::class)
+    fun dragMoveEdgeTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --RBRGBGBB----" +
+                    " RQBGBSRS--BS----" +
+                    "--RS--RBRABQ------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val move = DragMove(CubeCoordinates(-3, 4), CubeCoordinates(-2, 4))
+            assertTrue(GameRuleLogic.validateMove(state, move))
+        }
+    }
+
+    @Test
     @Ignore
     // use to see the generated XML
     fun gamestateToXmlTest() {

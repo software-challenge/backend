@@ -140,6 +140,15 @@ object GameRuleLogic {
                 })))
             throw InvalidMoveException("Removing piece would disconnect swarm")
 
+        if(!isSwarmConnected(Board(gameState.board.fields.map {
+                    when(it) {
+                        move.start -> Field(it).apply { pieces.pop() }
+                        move.destination -> Field(it).apply { pieces.push(gameState.board.getField(move.start).pieces.peek()) }
+                        else -> it
+                    }
+                })))
+            throw InvalidMoveException("Moving piece to destination would disconnect swarm")
+
         when(pieceToDrag.type) {
             PieceType.ANT -> validateAntMove(gameState.board, move)
             PieceType.BEE -> validateBeeMove(gameState.board, move)
@@ -262,7 +271,7 @@ object GameRuleLogic {
     @JvmStatic
     fun getCanMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
             sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
-                shared.size == 2 && shared.any { it.isEmpty } && shared.any { it.owner != null }
+                shared.size == 1 || shared.any { it.isEmpty }
             }
 
     @JvmStatic
