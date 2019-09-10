@@ -138,16 +138,7 @@ object GameRuleLogic {
         if(!isSwarmConnected(Board(gameState.board.fields.map {
                     if(it == move.start) Field(it).apply { pieces.pop() } else it
                 })))
-            throw InvalidMoveException("Removing piece would disconnect swarm")
-
-        if(!isSwarmConnected(Board(gameState.board.fields.map {
-                    when(it) {
-                        move.start -> Field(it).apply { pieces.pop() }
-                        move.destination -> Field(it).apply { pieces.push(gameState.board.getField(move.start).pieces.peek()) }
-                        else -> it
-                    }
-                })))
-            throw InvalidMoveException("Moving piece to destination would disconnect swarm")
+            throw InvalidMoveException("Moving piece would disconnect swarm")
 
         when(pieceToDrag.type) {
             PieceType.ANT -> validateAntMove(gameState.board, move)
@@ -193,14 +184,14 @@ object GameRuleLogic {
     @JvmStatic
     fun getAccessibleNeighbours(board: Board, start: CubeCoordinates) =
             getNeighbours(board, start).filter { neighbour ->
-                neighbour.owner == null && getCanMoveBetween(board, start, neighbour)
+                neighbour.isEmpty && canMoveBetween(board, start, neighbour)
             }
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeeMove(board: Board, move: DragMove) {
         validateDestinationNextToStart(move)
-        if(!getCanMoveBetween(board, move.start, move.destination))
+        if(!canMoveBetween(board, move.start, move.destination))
             throw InvalidMoveException("There is no path to your destination")
     }
 
@@ -252,9 +243,9 @@ object GameRuleLogic {
     }
 
     @JvmStatic
-    fun getCanMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
+    fun canMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
             sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
-                shared.size == 1 || shared.any { it.isEmpty }
+                (shared.size == 1 || shared.any { it.isEmpty }) && shared.any { it.pieces.isNotEmpty() }
             }
 
 
