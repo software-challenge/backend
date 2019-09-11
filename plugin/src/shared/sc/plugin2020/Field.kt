@@ -9,13 +9,10 @@ import sc.shared.PlayerColor
 import java.util.*
 
 @XStreamAlias("field")
-data class Field(
-        @XStreamAsAttribute
-        override val x: Int = 0,
-        @XStreamAsAttribute
-        override val y: Int = 0,
-        @XStreamAsAttribute
-        override val z: Int = -x - y,
+class Field(
+        x: Int = 0,
+        y: Int = 0,
+        z: Int = -x - y,
         @XStreamImplicit
         val pieces: Stack<Piece> = Stack(),
         @XStreamAsAttribute

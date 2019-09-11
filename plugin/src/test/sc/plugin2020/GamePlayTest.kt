@@ -4,10 +4,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
-import sc.plugin2020.util.Configuration
-import sc.plugin2020.util.CubeCoordinates
-import sc.plugin2020.util.GameRuleLogic
-import sc.plugin2020.util.TestGameUtil
+import sc.plugin2020.util.*
 import sc.plugin2020.util.TestJUnitUtil.assertThrows
 import sc.protocol.responses.RoomPacket
 import sc.shared.InvalidMoveException
@@ -17,29 +14,29 @@ import java.util.*
 
 
 class GamePlayTest {
-
+    
     private lateinit var game: Game
     private lateinit var state: GameState
-
+    
     @Before
     fun beforeEveryTest() {
         game = Game()
         state = game.gameState
         state.currentPlayerColor = PlayerColor.RED
     }
-
+    
     @Test
     fun boardCreationTest() {
         val board = Board()
         assertNotNull(board.getField(0, 0, 0))
     }
-
+    
     @Test
     fun obstructedCreationTest() {
         val board = Board()
         assertEquals(3, board.fields.filter { it.isObstructed }.size)
     }
-
+    
     @Test
     fun invalidBoardStringTest() {
         assertThrows(InvalidParameterException::class.java) {
@@ -67,7 +64,7 @@ class GamePlayTest {
                     "    ----------")
         }
     }
-
+    
     @Ignore
     @Test
     @Throws(InvalidMoveException::class)
@@ -87,7 +84,7 @@ class GamePlayTest {
             //GameRuleLogic.performMove(state, move);
         }
     }
-
+    
     @Test
     fun getNeighbourTest() {
         val n = GameRuleLogic.getNeighbours(Board(), CubeCoordinates(-2, 1))
@@ -97,7 +94,7 @@ class GamePlayTest {
                 n.stream().map { f: Field -> f.coordinates }.sorted().toArray()
         )
     }
-
+    
     @Test
     fun gameEndTest() {
         run {
@@ -127,7 +124,7 @@ class GamePlayTest {
             assertFalse(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun setMoveOnEmptyBoardTest() {
@@ -146,7 +143,7 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, move))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun setMoveOutsideOfBoard() {
@@ -165,7 +162,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun validSetMoveTest() {
@@ -184,7 +181,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun setMoveOfUnavailablePieceTest() {
@@ -204,7 +201,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun setMoveConnectionToSwarmTest() {
@@ -220,14 +217,16 @@ class GamePlayTest {
                     "   ------------" +
                     "    ----------")
             val invalid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1)
-            val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }}
+            assertThrows(InvalidMoveException::class.java) {
+                GameRuleLogic.validateMove(state, invalid1)
+                val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 0))
+                assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
+            }
             val valid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 4))
             assertTrue(GameRuleLogic.validateMove(state, valid1))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun setMoveBlockedFieldTest() {
@@ -248,7 +247,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun setMoveQueenTest() {
@@ -270,7 +269,7 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, setBee))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveNonexistentPieceTest() {
@@ -289,7 +288,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveOfSolePieceOnBoardTest() {
@@ -308,7 +307,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveOntoOtherPieceTest() {
@@ -327,7 +326,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveBeforeQueenTest() {
@@ -346,7 +345,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveAfterQueenTest() {
@@ -365,7 +364,7 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, move))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveBeeValidTest() {
@@ -384,7 +383,7 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, move))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveBeeTooFarTest() {
@@ -403,7 +402,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveBeetleTooFarTest() {
@@ -422,7 +421,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveBlockedBeetleTest() {
@@ -455,7 +454,7 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, move))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveGrasshopperValidTest() {
@@ -476,7 +475,7 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, move2))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveGrasshopperOverEmptyFieldTest() {
@@ -495,7 +494,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveGrasshopperToNeighbourTest() {
@@ -514,7 +513,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveAntValidTest() {
@@ -535,7 +534,7 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, move2))
         }
     }
-
+    
     @Test
     fun dragMoveAntAroundObstacleTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -555,7 +554,7 @@ class GamePlayTest {
         val move3 = DragMove(CubeCoordinates(0, 0), CubeCoordinates(-1, 0))
         assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move3) }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveAntIntoBlockedTest() {
@@ -574,7 +573,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveAntAroundBorderTest() {
@@ -597,7 +596,7 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, move3))
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveAntDisconnectFromSwarmTest() {
@@ -616,6 +615,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveBeetleOverTest() {
@@ -634,7 +634,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveSpiderTest() {
@@ -662,9 +662,11 @@ class GamePlayTest {
             val invalid4 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 2))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid4) }
             val invalid5 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid5)
-            val invalid6 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid6) }}
+            assertThrows(InvalidMoveException::class.java) {
+                GameRuleLogic.validateMove(state, invalid5)
+                val invalid6 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 0))
+                assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid6) }
+            }
         }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -677,7 +679,7 @@ class GamePlayTest {
                     "  --------------" +
                     "   ------------" +
                     "    ----------")
-           val valid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1))
+            val valid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1))
             assertTrue(GameRuleLogic.validateMove(state, valid1))
             val valid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0))
             assertTrue(GameRuleLogic.validateMove(state, valid2))
@@ -688,12 +690,14 @@ class GamePlayTest {
             val invalid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
             val invalid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2)
-            val invalid3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid3) }}
+            assertThrows(InvalidMoveException::class.java) {
+                GameRuleLogic.validateMove(state, invalid2)
+                val invalid3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
+                assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid3) }
+            }
         }
     }
-
+    
     @Test
     @Throws(InvalidMoveException::class)
     fun dragMoveEdgeTest() {
@@ -712,10 +716,8 @@ class GamePlayTest {
             assertTrue(GameRuleLogic.validateMove(state, move))
         }
     }
-
+    
     @Test
-    @Ignore
-    // use to see the generated XML
     fun gamestateToXmlTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
                 "    ----------" +
@@ -729,330 +731,171 @@ class GamePlayTest {
                 "    ----------")
         state.board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
         state.board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
-        TestGameUtil.updateUndeployedPiecesFromBoard(state)
+        TestGameUtil.updateUndeployedPiecesFromBoard(state, true)
+        assertEquals(listOf(Piece(PlayerColor.RED, PieceType.ANT)), state.getDeployedPieces(PlayerColor.RED))
+        assertEquals(listOf(Piece(PlayerColor.BLUE, PieceType.BEE), Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER)), state.getDeployedPieces(PlayerColor.BLUE))
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
         val xstream = Configuration.xStream
-        val xml = xstream.toXML(state)
-        assertEquals("<state startPlayerColor=\"RED\" currentPlayerColor=\"RED\" turn=\"0\">\n" +
-                "  <board>\n" +
-                "    <fields>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <field obstructed=\"false\" x=\"-4\" y=\"0\" z=\"4\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-4\" y=\"1\" z=\"3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-4\" y=\"2\" z=\"2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-4\" y=\"3\" z=\"1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-4\" y=\"4\" z=\"0\"/>\n" +
-                "    </fields>\n" +
-                "    <fields>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <field obstructed=\"false\" x=\"-3\" y=\"-1\" z=\"4\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-3\" y=\"0\" z=\"3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-3\" y=\"1\" z=\"2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-3\" y=\"2\" z=\"1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-3\" y=\"3\" z=\"0\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-3\" y=\"4\" z=\"-1\"/>\n" +
-                "    </fields>\n" +
-                "    <fields>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <field obstructed=\"false\" x=\"-2\" y=\"-2\" z=\"4\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-2\" y=\"-1\" z=\"3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-2\" y=\"0\" z=\"2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-2\" y=\"1\" z=\"1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-2\" y=\"2\" z=\"0\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-2\" y=\"3\" z=\"-1\">\n" +
-                "        <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-                "      </field>\n" +
-                "      <field obstructed=\"false\" x=\"-2\" y=\"4\" z=\"-2\"/>\n" +
-                "    </fields>\n" +
-                "    <fields>\n" +
-                "      <null/>\n" +
-                "      <field obstructed=\"false\" x=\"-1\" y=\"-3\" z=\"4\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-1\" y=\"-2\" z=\"3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-1\" y=\"-1\" z=\"2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-1\" y=\"0\" z=\"1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-1\" y=\"1\" z=\"0\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-1\" y=\"2\" z=\"-1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-1\" y=\"3\" z=\"-2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"-1\" y=\"4\" z=\"-3\"/>\n" +
-                "    </fields>\n" +
-                "    <fields>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"-4\" z=\"4\"/>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"-3\" z=\"3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"-2\" z=\"2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"-1\" z=\"1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"0\" z=\"0\">\n" +
-                "        <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                "        <piece owner=\"BLUE\" type=\"BEE\"/>\n" +
-                "      </field>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"1\" z=\"-1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"2\" z=\"-2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"3\" z=\"-3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"0\" y=\"4\" z=\"-4\"/>\n" +
-                "    </fields>\n" +
-                "    <fields>\n" +
-                "      <field obstructed=\"false\" x=\"1\" y=\"-4\" z=\"3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"1\" y=\"-3\" z=\"2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"1\" y=\"-2\" z=\"1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"1\" y=\"-1\" z=\"0\"/>\n" +
-                "      <field obstructed=\"false\" x=\"1\" y=\"0\" z=\"-1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"1\" y=\"1\" z=\"-2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"1\" y=\"2\" z=\"-3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"1\" y=\"3\" z=\"-4\"/>\n" +
-                "      <null/>\n" +
-                "    </fields>\n" +
-                "    <fields>\n" +
-                "      <field obstructed=\"false\" x=\"2\" y=\"-4\" z=\"2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"2\" y=\"-3\" z=\"1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"2\" y=\"-2\" z=\"0\"/>\n" +
-                "      <field obstructed=\"false\" x=\"2\" y=\"-1\" z=\"-1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"2\" y=\"0\" z=\"-2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"2\" y=\"1\" z=\"-3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"2\" y=\"2\" z=\"-4\"/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "    </fields>\n" +
-                "    <fields>\n" +
-                "      <field obstructed=\"false\" x=\"3\" y=\"-4\" z=\"1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"3\" y=\"-3\" z=\"0\"/>\n" +
-                "      <field obstructed=\"false\" x=\"3\" y=\"-2\" z=\"-1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"3\" y=\"-1\" z=\"-2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"3\" y=\"0\" z=\"-3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"3\" y=\"1\" z=\"-4\"/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "    </fields>\n" +
-                "    <fields>\n" +
-                "      <field obstructed=\"false\" x=\"4\" y=\"-4\" z=\"0\"/>\n" +
-                "      <field obstructed=\"false\" x=\"4\" y=\"-3\" z=\"-1\"/>\n" +
-                "      <field obstructed=\"false\" x=\"4\" y=\"-2\" z=\"-2\"/>\n" +
-                "      <field obstructed=\"false\" x=\"4\" y=\"-1\" z=\"-3\"/>\n" +
-                "      <field obstructed=\"false\" x=\"4\" y=\"0\" z=\"-4\"/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "      <null/>\n" +
-                "    </fields>\n" +
-                "  </board>\n" +
-                "  <undeployedRedPieces>\n" +
-                "    <piece owner=\"RED\" type=\"BEE\"/>\n" +
-                "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-                "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-                "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-                "    <piece owner=\"RED\" type=\"GRASSHOPPER\"/>\n" +
-                "    <piece owner=\"RED\" type=\"GRASSHOPPER\"/>\n" +
-                "    <piece owner=\"RED\" type=\"BEETLE\"/>\n" +
-                "    <piece owner=\"RED\" type=\"BEETLE\"/>\n" +
-                "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                "  </undeployedRedPieces>\n" +
-                "  <undeployedBluePieces>\n" +
-                "    <piece owner=\"BLUE\" type=\"BEE\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"BEETLE\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"BEETLE\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-                "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-                "  </undeployedBluePieces>\n" +
-                "</state>", xml)
+        val xml = """
+            |<state startPlayerColor="RED" currentPlayerColor="RED" turn="0">
+            |  <red displayName="" color="RED"/>
+            |  <blue displayName="" color="BLUE"/>
+            |  <board>
+            |    <fields>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |      <field x="-4" y="0" z="4" isObstructed="false"/>
+            |      <field x="-4" y="1" z="3" isObstructed="false"/>
+            |      <field x="-4" y="2" z="2" isObstructed="false"/>
+            |      <field x="-4" y="3" z="1" isObstructed="false"/>
+            |      <field x="-4" y="4" z="0" isObstructed="false"/>
+            |    </fields>
+            |    <fields>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |      <field x="-3" y="-1" z="4" isObstructed="false"/>
+            |      <field x="-3" y="0" z="3" isObstructed="false"/>
+            |      <field x="-3" y="1" z="2" isObstructed="false"/>
+            |      <field x="-3" y="2" z="1" isObstructed="false"/>
+            |      <field x="-3" y="3" z="0" isObstructed="false"/>
+            |      <field x="-3" y="4" z="-1" isObstructed="false"/>
+            |    </fields>
+            |    <fields>
+            |      <null/>
+            |      <null/>
+            |      <field x="-2" y="-2" z="4" isObstructed="false"/>
+            |      <field x="-2" y="-1" z="3" isObstructed="false"/>
+            |      <field x="-2" y="0" z="2" isObstructed="false"/>
+            |      <field x="-2" y="1" z="1" isObstructed="false"/>
+            |      <field x="-2" y="2" z="0" isObstructed="false"/>
+            |      <field x="-2" y="3" z="-1" isObstructed="false">
+            |        <piece owner="BLUE" type="GRASSHOPPER"/>
+            |      </field>
+            |      <field x="-2" y="4" z="-2" isObstructed="false"/>
+            |    </fields>
+            |    <fields>
+            |      <null/>
+            |      <field x="-1" y="-3" z="4" isObstructed="false"/>
+            |      <field x="-1" y="-2" z="3" isObstructed="false"/>
+            |      <field x="-1" y="-1" z="2" isObstructed="false"/>
+            |      <field x="-1" y="0" z="1" isObstructed="false"/>
+            |      <field x="-1" y="1" z="0" isObstructed="false"/>
+            |      <field x="-1" y="2" z="-1" isObstructed="false"/>
+            |      <field x="-1" y="3" z="-2" isObstructed="false"/>
+            |      <field x="-1" y="4" z="-3" isObstructed="false"/>
+            |    </fields>
+            |    <fields>
+            |      <field x="0" y="-4" z="4" isObstructed="false"/>
+            |      <field x="0" y="-3" z="3" isObstructed="false"/>
+            |      <field x="0" y="-2" z="2" isObstructed="false"/>
+            |      <field x="0" y="-1" z="1" isObstructed="false"/>
+            |      <field x="0" y="0" z="0" isObstructed="false">
+            |        <piece owner="RED" type="ANT"/>
+            |        <piece owner="BLUE" type="BEE"/>
+            |      </field>
+            |      <field x="0" y="1" z="-1" isObstructed="false"/>
+            |      <field x="0" y="2" z="-2" isObstructed="false"/>
+            |      <field x="0" y="3" z="-3" isObstructed="false"/>
+            |      <field x="0" y="4" z="-4" isObstructed="false"/>
+            |    </fields>
+            |    <fields>
+            |      <field x="1" y="-4" z="3" isObstructed="false"/>
+            |      <field x="1" y="-3" z="2" isObstructed="false"/>
+            |      <field x="1" y="-2" z="1" isObstructed="false"/>
+            |      <field x="1" y="-1" z="0" isObstructed="false"/>
+            |      <field x="1" y="0" z="-1" isObstructed="false"/>
+            |      <field x="1" y="1" z="-2" isObstructed="false"/>
+            |      <field x="1" y="2" z="-3" isObstructed="false"/>
+            |      <field x="1" y="3" z="-4" isObstructed="false"/>
+            |      <null/>
+            |    </fields>
+            |    <fields>
+            |      <field x="2" y="-4" z="2" isObstructed="false"/>
+            |      <field x="2" y="-3" z="1" isObstructed="false"/>
+            |      <field x="2" y="-2" z="0" isObstructed="false"/>
+            |      <field x="2" y="-1" z="-1" isObstructed="false"/>
+            |      <field x="2" y="0" z="-2" isObstructed="false"/>
+            |      <field x="2" y="1" z="-3" isObstructed="false"/>
+            |      <field x="2" y="2" z="-4" isObstructed="false"/>
+            |      <null/>
+            |      <null/>
+            |    </fields>
+            |    <fields>
+            |      <field x="3" y="-4" z="1" isObstructed="false"/>
+            |      <field x="3" y="-3" z="0" isObstructed="false"/>
+            |      <field x="3" y="-2" z="-1" isObstructed="false"/>
+            |      <field x="3" y="-1" z="-2" isObstructed="false"/>
+            |      <field x="3" y="0" z="-3" isObstructed="false"/>
+            |      <field x="3" y="1" z="-4" isObstructed="false"/>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |    </fields>
+            |    <fields>
+            |      <field x="4" y="-4" z="0" isObstructed="false"/>
+            |      <field x="4" y="-3" z="-1" isObstructed="false"/>
+            |      <field x="4" y="-2" z="-2" isObstructed="false"/>
+            |      <field x="4" y="-1" z="-3" isObstructed="false"/>
+            |      <field x="4" y="0" z="-4" isObstructed="false"/>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |    </fields>
+            |  </board>
+            |  <undeployedRedPieces>
+            |    <piece owner="RED" type="BEE"/>
+            |    <piece owner="RED" type="SPIDER"/>
+            |    <piece owner="RED" type="SPIDER"/>
+            |    <piece owner="RED" type="SPIDER"/>
+            |    <piece owner="RED" type="GRASSHOPPER"/>
+            |    <piece owner="RED" type="GRASSHOPPER"/>
+            |    <piece owner="RED" type="BEETLE"/>
+            |    <piece owner="RED" type="BEETLE"/>
+            |    <piece owner="RED" type="ANT"/>
+            |    <piece owner="RED" type="ANT"/>
+            |  </undeployedRedPieces>
+            |  <undeployedBluePieces>
+            |    <piece owner="BLUE" type="SPIDER"/>
+            |    <piece owner="BLUE" type="SPIDER"/>
+            |    <piece owner="BLUE" type="SPIDER"/>
+            |    <piece owner="BLUE" type="BEETLE"/>
+            |    <piece owner="BLUE" type="BEETLE"/>
+            |    <piece owner="BLUE" type="ANT"/>
+            |    <piece owner="BLUE" type="ANT"/>
+            |    <piece owner="BLUE" type="ANT"/>
+            |    <piece owner="BLUE" type="GRASSHOPPER"/>
+            |  </undeployedBluePieces>
+            |</state>""".trimMargin()
+        assertEquals(xml, xstream.toXML(state))
+        assertEquals(state, xstream.fromXML(xml))
     }
-
-    @Test
-    @Ignore
-    fun gamestateFromXmlTest() {
-        TestGameUtil.updateGamestateWithBoard(state, "" +
-                "    ----------" +
-                "   ------------" +
-                "  --------------" +
-                " --BG------------" +
-                "------------------" +
-                " ----------------" +
-                "  --------------" +
-                "   ------------" +
-                "    ----------")
-        state.board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
-        state.board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
-        TestGameUtil.updateUndeployedPiecesFromBoard(state);
-        assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
-        assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
-        val xstream = Configuration.xStream
-        val xmlState = GameState()
-        val read = xstream.fromXML(
-                "<state startPlayerColor=\"RED\" currentPlayerColor=\"RED\" turn=\"0\">\n" +
-                        "  <board>\n" +
-                        "    <fields>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <field obstructed=\"false\" x=\"-4\" y=\"0\" z=\"4\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-4\" y=\"1\" z=\"3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-4\" y=\"2\" z=\"2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-4\" y=\"3\" z=\"1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-4\" y=\"4\" z=\"0\"/>\n" +
-                        "    </fields>\n" +
-                        "    <fields>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <field obstructed=\"false\" x=\"-3\" y=\"-1\" z=\"4\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-3\" y=\"0\" z=\"3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-3\" y=\"1\" z=\"2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-3\" y=\"2\" z=\"1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-3\" y=\"3\" z=\"0\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-3\" y=\"4\" z=\"-1\"/>\n" +
-                        "    </fields>\n" +
-                        "    <fields>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <field obstructed=\"false\" x=\"-2\" y=\"-2\" z=\"4\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-2\" y=\"-1\" z=\"3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-2\" y=\"0\" z=\"2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-2\" y=\"1\" z=\"1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-2\" y=\"2\" z=\"0\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-2\" y=\"3\" z=\"-1\">\n" +
-                        "        <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-                        "      </field>\n" +
-                        "      <field obstructed=\"false\" x=\"-2\" y=\"4\" z=\"-2\"/>\n" +
-                        "    </fields>\n" +
-                        "    <fields>\n" +
-                        "      <null/>\n" +
-                        "      <field obstructed=\"false\" x=\"-1\" y=\"-3\" z=\"4\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-1\" y=\"-2\" z=\"3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-1\" y=\"-1\" z=\"2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-1\" y=\"0\" z=\"1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-1\" y=\"1\" z=\"0\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-1\" y=\"2\" z=\"-1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-1\" y=\"3\" z=\"-2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"-1\" y=\"4\" z=\"-3\"/>\n" +
-                        "    </fields>\n" +
-                        "    <fields>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"-4\" z=\"4\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"-3\" z=\"3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"-2\" z=\"2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"-1\" z=\"1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"0\" z=\"0\">\n" +
-                        "        <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                        "        <piece owner=\"BLUE\" type=\"BEE\"/>\n" +
-                        "      </field>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"1\" z=\"-1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"2\" z=\"-2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"3\" z=\"-3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"0\" y=\"4\" z=\"-4\"/>\n" +
-                        "    </fields>\n" +
-                        "    <fields>\n" +
-                        "      <field obstructed=\"false\" x=\"1\" y=\"-4\" z=\"3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"1\" y=\"-3\" z=\"2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"1\" y=\"-2\" z=\"1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"1\" y=\"-1\" z=\"0\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"1\" y=\"0\" z=\"-1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"1\" y=\"1\" z=\"-2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"1\" y=\"2\" z=\"-3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"1\" y=\"3\" z=\"-4\"/>\n" +
-                        "      <null/>\n" +
-                        "    </fields>\n" +
-                        "    <fields>\n" +
-                        "      <field obstructed=\"false\" x=\"2\" y=\"-4\" z=\"2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"2\" y=\"-3\" z=\"1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"2\" y=\"-2\" z=\"0\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"2\" y=\"-1\" z=\"-1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"2\" y=\"0\" z=\"-2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"2\" y=\"1\" z=\"-3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"2\" y=\"2\" z=\"-4\"/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "    </fields>\n" +
-                        "    <fields>\n" +
-                        "      <field obstructed=\"false\" x=\"3\" y=\"-4\" z=\"1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"3\" y=\"-3\" z=\"0\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"3\" y=\"-2\" z=\"-1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"3\" y=\"-1\" z=\"-2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"3\" y=\"0\" z=\"-3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"3\" y=\"1\" z=\"-4\"/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "    </fields>\n" +
-                        "    <fields>\n" +
-                        "      <field obstructed=\"false\" x=\"4\" y=\"-4\" z=\"0\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"4\" y=\"-3\" z=\"-1\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"4\" y=\"-2\" z=\"-2\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"4\" y=\"-1\" z=\"-3\"/>\n" +
-                        "      <field obstructed=\"false\" x=\"4\" y=\"0\" z=\"-4\"/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "      <null/>\n" +
-                        "    </fields>\n" +
-                        "  </board>\n" +
-                        "  <undeployedRedPieces>\n" +
-                        "    <piece owner=\"RED\" type=\"BEE\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"SPIDER\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"GRASSHOPPER\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"GRASSHOPPER\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"BEETLE\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"BEETLE\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                        "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                        "  </undeployedRedPieces>\n" +
-                        "  <undeployedBluePieces>\n" +
-                        "    <piece owner=\"BLUE\" type=\"BEE\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"SPIDER\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"GRASSHOPPER\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"BEETLE\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"BEETLE\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-                        "    <piece owner=\"BLUE\" type=\"ANT\"/>\n" +
-                        "  </undeployedBluePieces>\n" +
-                        "</state>", xmlState) as GameState
-        assertEquals(state, read)
-    }
-
+    
     @Test
     fun moveToXmlTest() {
         val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))
         val roomId = "42"
         val xstream = Configuration.xStream
         val xml = xstream.toXML(RoomPacket(roomId, move))
-        val expect =
-                "<room roomId=\"" + roomId + "\">\n" +
-                        "  <data class=\"setmove\">\n" +
-                        "    <piece owner=\"RED\" type=\"ANT\"/>\n" +
-                        "    <destination>\n" +
-                        "      <x>1</x>\n" +
-                        "      <y>2</y>\n" +
-                        "      <z>-3</z>\n" +
-                        "    </destination>\n" +
-                        "  </data>\n" +
-                        "</room>"
+        val expect = """
+            |<room roomId="$roomId">
+            |  <data class="setmove">
+            |    <piece owner="RED" type="ANT"/>
+            |    <destination x="1" y="2" z="-3"/>
+            |  </data>
+            |</room>""".trimMargin()
         assertEquals(expect, xml)
     }
-
+    
     @Test
     fun xmlToDragMoveTest() {
         val xstream = Configuration.xStream
-        val xml =
-                """<room roomId="42">
+        val xml = """
+            <room roomId="42">
               <data class="dragmove">
                 <start>
                   <x>0</x>
@@ -1070,22 +913,22 @@ class GamePlayTest {
         val expect = DragMove(CubeCoordinates(0, -1, 1), CubeCoordinates(1, 2, -3))
         assertEquals(expect, room.data)
     }
-
+    
     @Test
     fun xmlToSetMoveTest() {
         val xstream = Configuration.xStream
-        val xml =
-                "<room roomId=\"64a0482c-f368-4e33-9684-d5106228bb75\">" +
-                        "  <data class=\"setmove\">" +
-                        "    <piece owner=\"RED\" type=\"BEETLE\" />" +
-                        "    <destination><x>-2</x><y>0</y><z>2</z></destination>" +
-                        "  </data>" +
-                        "</room>"
-        val room = xstream.fromXML(xml) as RoomPacket
+        val xml = """
+            <room roomId="64a0482c-f368-4e33-9684-d5106228bb75">
+              <data class="setmove">
+                <piece owner="RED" type="BEETLE" />
+                <destination x="-2" y="0" z="2"/>
+              </data>
+            </room>"""
+        val packet = xstream.fromXML(xml) as RoomPacket
         val expect = SetMove(Piece(PlayerColor.RED, PieceType.BEETLE), CubeCoordinates(-2, 0, 2))
-        assertEquals(expect, room.data)
+        assertEquals(expect, packet.data)
     }
-
+    
     @Test
     fun performMoveTest() {
         val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))

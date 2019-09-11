@@ -39,10 +39,14 @@ object TestGameUtil {
         return Board(boardFields)
     }
 
-    fun updateUndeployedPiecesFromBoard(gs: GameState) {
-        for(color in PlayerColor.values()) {
-            val deployed = gs.board.getPiecesFor(color)
-            gs.getUndeployedPieces(color).removeIf { p -> deployed.contains(p) }
+    fun updateUndeployedPiecesFromBoard(gs: GameState, reset: Boolean = false) {
+        if(reset) {
+            PlayerColor.values().forEach {
+                gs.getUndeployedPieces(it).addAll(gs.getDeployedPieces(it))
+            }
+        }
+        gs.board.getPieces().forEach {
+            gs.getUndeployedPieces(it.owner).remove(it)
         }
     }
 

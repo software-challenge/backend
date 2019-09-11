@@ -1,8 +1,13 @@
 package sc.plugin2020.util
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+
 open class CubeCoordinates(
+        @XStreamAsAttribute
         open val x: Int,
+        @XStreamAsAttribute
         open val y: Int,
+        @XStreamAsAttribute
         open val z: Int = -x - y
 ): Comparable<CubeCoordinates> {
 
