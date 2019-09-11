@@ -10,7 +10,9 @@ object Constants {
     const val GAME_STATS_ROUNDS = 0
 
     const val BOARD_SIZE = 9
-    const val FIELD_AMOUNT = 61 //TODO: Calculate dynamically with BOARD_SIZE
+    val FIELD_AMOUNT = fieldAmount((BOARD_SIZE + 1) / 2)
+    fun fieldAmount(radius: Int): Int =
+            if(radius==1) 1 else (radius-1) * 6 + fieldAmount(radius-1)
     /** A String representing the amount and type of starting pieces per player. */
     const val STARING_PIECES = "QSSSGGBBAAA"
 }
