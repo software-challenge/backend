@@ -4,7 +4,10 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
-import sc.plugin2020.util.*
+import sc.plugin2020.util.Configuration
+import sc.plugin2020.util.CubeCoordinates
+import sc.plugin2020.util.GameRuleLogic
+import sc.plugin2020.util.TestGameUtil
 import sc.plugin2020.util.TestJUnitUtil.assertThrows
 import sc.protocol.responses.RoomPacket
 import sc.shared.InvalidMoveException
@@ -29,6 +32,7 @@ class GamePlayTest {
     fun boardCreationTest() {
         val board = Board()
         assertNotNull(board.getField(0, 0, 0))
+        assertEquals(board, board.clone())
     }
     
     @Test
@@ -63,6 +67,21 @@ class GamePlayTest {
                     "   ------------" +
                     "    ----------")
         }
+    }
+    
+    @Test
+    fun boardCloneTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  ----BBOOBB----" +
+                    " ----RBRS--BS----" +
+                    "------RBRQBQ------" +
+                    " ----------RG----" +
+                    "  --OO----------" +
+                    "   ------------" +
+                    "    ----------")
+        assertEquals(state.board, state.board.clone())
     }
     
     @Ignore

@@ -3,115 +3,119 @@ package sc.plugin2020
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamConverter
 import com.thoughtworks.xstream.annotations.XStreamImplicit
-import com.thoughtworks.xstream.annotations.XStreamOmitField
 import com.thoughtworks.xstream.converters.collections.ArrayConverter
 import com.thoughtworks.xstream.converters.extended.ToStringConverter
 import sc.api.plugins.IBoard
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.CubeCoordinates
-import sc.shared.PlayerColor
 import java.util.*
+import kotlin.collections.HashSet
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.random.Random
 
 @XStreamAlias(value = "board")
-class Board: IBoard {
-    @XStreamOmitField
-    private val shift = (Constants.BOARD_SIZE - 1) / 2
-
-    // NOTE that this adds <null/> to the XML where fields of the array are null. This is required for proper deserialization, maybe we find a better way
-    @XStreamConverter(value = ArrayConverter::class, nulls = [ToStringConverter::class])
-    @XStreamImplicit(itemFieldName = "fields")
-    val gameField = Array<Array<Field?>>(Constants.BOARD_SIZE) { arrayOfNulls(Constants.BOARD_SIZE) }
-    val fields: Collection<Field>
+data class Board(
+        @XStreamConverter(value = ArrayConverter::class, nulls = [ToStringConverter::class])
+        @XStreamImplicit(itemFieldName = "fields")
+        val gameField: Array<Array<Field?>>
+): IBoard {
+    
+    val fields: List<Field>
         get() = gameField.flatMap { it.filterNotNull() }
-
-    constructor() {
-        fillBoard()
+    
+    constructor(): this(fillGameField()) {
         generateObstructed()
     }
-
-    constructor(fields: Collection<Field>) {
-        var x: Int
-        var y: Int
-        for(f in fields) {
-            if(f.coordinates.x > shift || f.coordinates.x < -shift || f.coordinates.y > shift || f.coordinates.y < -shift)
-                throw IndexOutOfBoundsException()
-            x = f.coordinates.x + shift
-            y = f.coordinates.y + shift
-            gameField[x][y] = f
-        }
-        fillBoard()
-    }
-
-    private fun fillBoard() {
-        for(x in -shift..shift) {
-            for(y in max(-shift, -x - shift)..min(shift, -x + shift)) {
-                if(gameField[x + shift][y + shift] == null) {
-                    gameField[x + shift][y + shift] = Field(CubeCoordinates(x, y))
-                }
-            }
-        }
-    }
-
+    
+    constructor(fields: Collection<Field>): this(gameFieldFromFields(fields))
+    
+    public override fun clone() = Board(fields)
+    
     private fun generateObstructed() {
-        val all = this.fields.toMutableList()
-        val toBeObstructed = mutableListOf<Field>()
-        for(i in 1..3) {
-            val index = Random.nextInt(all.size)
-            toBeObstructed.add(all[index])
-            all.removeAt(index)
-        }
+        val all = this.fields
+        val toBeObstructed = HashSet<Field>()
+        while(toBeObstructed.size < 3)
+            toBeObstructed.add(all.random())
         toBeObstructed.forEach {
-            this.gameField[it.x + shift][it.y + shift] = Field(it.x, it.y, it.z, Stack(), true)
+            this.gameField[it.x + SHIFT][it.y + SHIFT] = Field(it.x, it.y, it.z, Stack(), true)
         }
     }
-
-    fun getField(pos: CubeCoordinates): Field {
-        return gameField[pos.x + shift][pos.y + shift] ?: throw IndexOutOfBoundsException()
-    }
-
-    override fun getField(cubeX: Int, cubeY: Int): Field {
-        return this.getField(CubeCoordinates(cubeX, cubeY))
-    }
-
-    fun getField(cubeX: Int, cubeY: Int, cubeZ: Int): Field {
-        return this.getField(CubeCoordinates(cubeX, cubeY, cubeZ))
-    }
-
-    /**
-     * Only for tests!
-     * use inversion of GameState.allPieces
-     */
+    
+    fun getField(pos: CubeCoordinates): Field =
+            gameField[pos.x + SHIFT][pos.y + SHIFT] ?: throw IndexOutOfBoundsException("No field at $pos")
+    
+    override fun getField(cubeX: Int, cubeY: Int): Field =
+            this.getField(CubeCoordinates(cubeX, cubeY))
+    
+    fun getField(cubeX: Int, cubeY: Int, cubeZ: Int): Field =
+            this.getField(CubeCoordinates(cubeX, cubeY, cubeZ))
+    
+    /** @return all Pieces on the Board. Prefer [GameState.getDeployedPieces] if possible for better performance. */
     fun getPieces(): List<Piece> {
         val pieces = mutableListOf<Piece>()
-        for(x in -shift..shift) {
-            for(y in max(-shift, -x - shift)..min(shift, -x + shift)) {
-                val field = gameField[x + shift][y + shift]
+        for(x in -SHIFT..SHIFT) {
+            for(y in max(-SHIFT, -x - SHIFT)..min(SHIFT, -x + SHIFT)) {
+                val field = gameField[x + SHIFT][y + SHIFT]
                 if(field != null)
                     pieces.addAll(field.pieces)
             }
         }
         return pieces
     }
-
-    /**
-     * Only for tests!
-     * Use inversion of GameState.undeployed{Red,Blue}Pieces
-     */
-    fun getPiecesFor(color: PlayerColor): List<Piece> {
-        return this.getPieces().filter { it.owner == color }
-    }
-
+    
     override fun toString(): String {
         var text = "Board\n"
         for(x in 0 until Constants.BOARD_SIZE) {
             for(y in 0 until Constants.BOARD_SIZE) {
-                text = text + if(this.gameField[x][y] == null) "0" else "x"
+                text += if(this.gameField[x][y] == null) "0" else "x"
             }
-            text = text + "\n"
+            text += "\n"
         }
         return text
+    }
+    
+    override fun equals(other: Any?): Boolean {
+        if(this === other) return true
+        if(javaClass != other?.javaClass) return false
+        
+        other as Board
+        
+        if(!gameField.contentDeepEquals(other.gameField)) return false
+        
+        return true
+    }
+    
+    override fun hashCode(): Int =
+            gameField.contentDeepHashCode()
+    
+    companion object {
+        private const val SHIFT = (Constants.BOARD_SIZE - 1) / 2
+        
+        private fun emptyGameField() = Array(Constants.BOARD_SIZE) { arrayOfNulls<Field>(Constants.BOARD_SIZE) }
+        
+        private fun fillGameField(gameField: Array<Array<Field?>> = emptyGameField()): Array<Array<Field?>> {
+            for(x in -SHIFT..SHIFT) {
+                for(y in max(-SHIFT, -x - SHIFT)..min(SHIFT, -x + SHIFT)) {
+                    if(gameField[x + SHIFT][y + SHIFT] == null) {
+                        gameField[x + SHIFT][y + SHIFT] = Field(CubeCoordinates(x, y))
+                    }
+                }
+            }
+            return gameField
+        }
+        
+        private fun gameFieldFromFields(fields: Collection<Field>): Array<Array<Field?>> {
+            val gameField = emptyGameField()
+            var x: Int
+            var y: Int
+            for(f in fields) {
+                if(f.coordinates.x > SHIFT || f.coordinates.x < -SHIFT || f.coordinates.y > SHIFT || f.coordinates.y < -SHIFT)
+                    throw IndexOutOfBoundsException()
+                x = f.coordinates.x + SHIFT
+                y = f.coordinates.y + SHIFT
+                gameField[x][y] = f
+            }
+            return gameField
+        }
     }
 }

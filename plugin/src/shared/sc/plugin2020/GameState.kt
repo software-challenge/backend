@@ -60,7 +60,7 @@ data class GameState(
         return tmp
     }
     
-    override fun toString(): String = String.format("GameState Zug %d", this.turn)
+    override fun toString(): String = "GameState Zug $turn"
     
     companion object {
         private fun parsePiecesString(s: String, p: PlayerColor): ArrayList<Piece> {
