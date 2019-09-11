@@ -86,7 +86,6 @@ class GamePlayTest {
     
     @Ignore
     @Test
-    @Throws(InvalidMoveException::class)
     fun onlyEndAfterRoundTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
                 "    RB--------" +
@@ -145,7 +144,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun setMoveOnEmptyBoardTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -164,7 +162,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun setMoveOutsideOfBoard() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -183,7 +180,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun validSetMoveTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -202,7 +198,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun setMoveOfUnavailablePieceTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -222,7 +217,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun setMoveConnectionToSwarmTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -247,7 +241,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun setMoveBlockedFieldTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -268,7 +261,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun setMoveQueenTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -290,7 +282,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveNonexistentPieceTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -309,7 +300,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveOfSolePieceOnBoardTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -328,7 +318,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveOntoOtherPieceTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -347,7 +336,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveBeforeQueenTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -366,7 +354,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveAfterQueenTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -385,7 +372,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveBeeValidTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -404,7 +390,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveBeeTooFarTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -423,7 +408,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveBeetleTooFarTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -442,7 +426,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveBlockedBeetleTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -476,7 +459,6 @@ class GamePlayTest {
     
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveBeetleNoJumpTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -495,7 +477,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveGrasshopperValidTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -516,7 +497,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveGrasshopperOverEmptyFieldTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -535,7 +515,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveGrasshopperToNeighbourTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -554,7 +533,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveAntValidTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -595,7 +573,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveAntIntoBlockedTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -614,7 +591,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveAntAroundBorderTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -637,7 +613,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveAntDisconnectFromSwarmTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -656,7 +631,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveSpiderTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -719,7 +693,6 @@ class GamePlayTest {
     }
     
     @Test
-    @Throws(InvalidMoveException::class)
     fun dragMoveEdgeTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
