@@ -17,8 +17,8 @@ class GameState(
 
     @XStreamAsAttribute
     override var turn: Int = 0
-    private val undeployedRedPieces = parsePiecesString(Constants.STARING_PIECES, PlayerColor.RED)
-    private val undeployedBluePieces = parsePiecesString(Constants.STARING_PIECES, PlayerColor.BLUE)
+    private val undeployedRedPieces = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.RED)
+    private val undeployedBluePieces = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE)
     private val allPieces = undeployedBluePieces + undeployedRedPieces
 
     override val round: Int

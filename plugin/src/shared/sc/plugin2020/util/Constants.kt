@@ -14,5 +14,5 @@ object Constants {
     fun fieldAmount(radius: Int): Int =
             if(radius==1) 1 else (radius-1) * 6 + fieldAmount(radius-1)
     /** A String representing the amount and type of starting pieces per player. */
-    const val STARING_PIECES = "QSSSGGBBAAA"
+    const val STARTING_PIECES = "QSSSGGBBAAA"
 }
