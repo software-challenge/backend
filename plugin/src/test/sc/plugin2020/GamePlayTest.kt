@@ -261,7 +261,7 @@ class GamePlayTest {
     }
     
     @Test
-    fun setMoveQueenTest() {
+    fun setMoveForceBeeTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
@@ -336,7 +336,7 @@ class GamePlayTest {
     }
     
     @Test
-    fun dragMoveBeforeQueenTest() {
+    fun dragMoveBeeRequiredTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
@@ -351,10 +351,6 @@ class GamePlayTest {
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
-    }
-    
-    @Test
-    fun dragMoveAfterQueenTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
