@@ -426,7 +426,7 @@ class GamePlayTest {
     }
     
     @Test
-    fun dragMoveBlockedBeetleTest() {
+    fun dragMoveBeetleDisconnectTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "    ----------" +
@@ -474,6 +474,22 @@ class GamePlayTest {
             val move = DragMove(CubeCoordinates(3, -2), CubeCoordinates(3, -1))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
         }
+    }
+    
+    @Test
+    fun dragMoveBeetleClimbTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "    ----------" +
+                "   ------------" +
+                "  --------------" +
+                " --------RQ------" +
+                "--------RB--------" +
+                " ----------------" +
+                "  --------------" +
+                "   ------------" +
+                "    ----------")
+        val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
+        assertTrue(GameRuleLogic.validateMove(state, move))
     }
     
     @Test
