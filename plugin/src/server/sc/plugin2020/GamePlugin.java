@@ -10,7 +10,7 @@ import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 
 /**
- * Abstrakte Beschreibung des Spiels Piranhas für die Software-Challenge 2019
+ * Abstrakte Beschreibung des Spiels Hive für die Software-Challenge 2020
  */
 @PluginDescriptor(name = "Hive", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin {
@@ -25,7 +25,7 @@ public class GamePlugin implements IGamePlugin {
     SCORE_DEFINITION.add("Gewinner");
     // NOTE: Always write the XML representation of unicode characters, not the character directly, as it confuses the
     // parsers which consume the server messages!
-    SCORE_DEFINITION.add(new ScoreFragment("\u2205 Schwarm", ScoreAggregation.AVERAGE));
+    SCORE_DEFINITION.add(new ScoreFragment("\u2205 freie Felder", ScoreAggregation.AVERAGE));
   }
 
   @Override

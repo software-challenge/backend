@@ -20,7 +20,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Minimales Spiel als Basis für neue Plugins. Diese Klasse enthält die Spielelogik. */
+/** Minimales Spiel als Basis für neue Plugins. */
 @XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
   private static final Logger logger = LoggerFactory.getLogger(Game.class);
@@ -165,30 +165,30 @@ public class Game extends RoundBasedGameInstance<Player> {
       return null;
     }
 
-    boolean redConnected = GameRuleLogic.isBeeBlocked(gameState.getBoard(), PlayerColor.RED);
-    boolean blueConnected = GameRuleLogic.isBeeBlocked(gameState.getBoard(), PlayerColor.BLUE);
-    if(redConnected) {
-      logger.info("Swarm is connected for red");
-      if(blueConnected) {
-        logger.info("Swarm is connected for blue");
+    boolean redBeeBlocked = GameRuleLogic.isBeeBlocked(gameState.getBoard(), PlayerColor.RED);
+    boolean blueBeeBlocked = GameRuleLogic.isBeeBlocked(gameState.getBoard(), PlayerColor.BLUE);
+    if(redBeeBlocked) {
+      logger.info("Red bee is blocked");
+      if(blueBeeBlocked) {
+        logger.info("Blue bee is also blocked");
         if(gameState.getPointsForPlayer(PlayerColor.RED) > gameState.getPointsForPlayer(PlayerColor.BLUE)) {
-          return new WinCondition(PlayerColor.RED, WinReason.SWARM_LARGER);
+          return new WinCondition(PlayerColor.RED, WinReason.BEE_FREE_FIELDS);
         } else if(gameState.getPointsForPlayer(PlayerColor.RED) < gameState.getPointsForPlayer(PlayerColor.BLUE)) {
-          return new WinCondition(PlayerColor.BLUE, WinReason.SWARM_LARGER);
+          return new WinCondition(PlayerColor.BLUE, WinReason.BEE_FREE_FIELDS);
         } else {
           logger.info("Both Players have equal Points, no Winner");
           return null;
         }
       }
-      return new WinCondition(PlayerColor.RED, WinReason.SWARM_CONNECTED);
+      return new WinCondition(PlayerColor.BLUE, WinReason.BEE_SURROUNDED);
     } else {
-      logger.debug("Swarm is not connected for red");
-      if(blueConnected) {
-        logger.info("Swarm is connected for blue");
-        return new WinCondition(PlayerColor.BLUE, WinReason.SWARM_CONNECTED);
+      logger.debug("Red bee is not surrounded");
+      if(blueBeeBlocked) {
+        logger.info("Blue bee is surrounded");
+        return new WinCondition(PlayerColor.RED, WinReason.BEE_SURROUNDED);
       }
     }
-    logger.debug("Swarm is not connected for blue");
+    logger.debug("Blue bee is not surrounded");
 
     if(this.gameState.getTurn() == 2 * Constants.ROUND_LIMIT) {
       // round limit reached

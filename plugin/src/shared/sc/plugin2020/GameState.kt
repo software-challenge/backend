@@ -7,6 +7,7 @@ import sc.api.plugins.IMove
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.plugin2020.util.Constants
+import sc.plugin2020.util.GameRuleLogic
 import sc.shared.PlayerColor
 
 @XStreamAlias(value = "state")
@@ -47,18 +48,15 @@ data class GameState(
     }
     
     override fun getPointsForPlayer(playerColor: PlayerColor): Int {
-        return turn
+        return GameRuleLogic.freeBeeNeighbours(this.board, playerColor)
     }
     
     fun getPlayerStats(p: Player): IntArray {
         return getPlayerStats(p.color)
     }
     
-    fun getPlayerStats(p: PlayerColor): IntArray {
-        val tmp = IntArray(1)
-        tmp[0] = turn
-        return tmp
-    }
+    fun getPlayerStats(playerColor: PlayerColor): IntArray =
+            intArrayOf(this.getPointsForPlayer(playerColor))
     
     override fun toString(): String = "GameState Zug $turn"
     

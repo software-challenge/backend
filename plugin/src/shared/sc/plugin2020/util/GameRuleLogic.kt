@@ -66,6 +66,14 @@ object GameRuleLogic {
         return getNeighbours(board, l[0].coordinates).all { field -> field.isObstructed || !field.pieces.empty() }
     }
     
+    fun freeBeeNeighbours(board: Board, color: PlayerColor): Int {
+        // free fields are fields which have no piece on them, are not obstructed and are inside the board
+        val l = board.fields.filter { it.pieces.contains(Piece(color, PieceType.BEE)) }
+        if(l.isEmpty())
+            return 0
+        return getNeighbours(board, l[0].coordinates).filter { field -> !field.isObstructed && field.pieces.empty() }.size
+    }
+    
     @JvmStatic
     fun isOnBoard(coords: CubeCoordinates): Boolean {
         val shift = (Constants.BOARD_SIZE - 1) / 2
