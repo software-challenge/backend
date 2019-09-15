@@ -111,9 +111,13 @@ object GameRuleLogic {
             
             if(!gameState.getUndeployedPieces(gameState.currentPlayerColor).contains(move.piece))
                 throw InvalidMoveException("Piece is not a undeployed piece of the current player")
-            
-            if(!getNeighbours(gameState.board, move.destination).any { it.owner == gameState.currentPlayerColor })
+    
+            val destinationNeighbours = getNeighbours(gameState.board, move.destination)
+            if(!destinationNeighbours.any { it.owner == gameState.currentPlayerColor })
                 throw InvalidMoveException("A newly placed piece must touch an own piece")
+    
+            if(destinationNeighbours.any { it.owner == gameState.otherPlayerColor })
+                throw InvalidMoveException("A newly placed is not allowed to touch an opponent's piece")
         }
         return true
     }
