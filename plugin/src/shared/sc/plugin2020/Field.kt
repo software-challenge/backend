@@ -32,6 +32,9 @@ class Field(
 
     val isEmpty: Boolean
         get() = pieces.isEmpty() && !isObstructed
+    
+    val hasOwner: Boolean
+        get() = !pieces.isEmpty() && !isObstructed
 
     val coordinates: CubeCoordinates
         get() = CubeCoordinates(this.x, this.y, this.z)

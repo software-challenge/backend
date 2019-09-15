@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.converters.extended.ToStringConverter
 import sc.api.plugins.IBoard
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.CubeCoordinates
+import sc.shared.PlayerColor
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.math.max
@@ -87,6 +88,8 @@ data class Board(
     
     override fun hashCode(): Int =
             gameField.contentDeepHashCode()
+    
+    fun getFieldsOwnedBy(owner: PlayerColor): List<Field> = fields.filter { it.owner == owner }
     
     companion object {
         private const val SHIFT = (Constants.BOARD_SIZE - 1) / 2

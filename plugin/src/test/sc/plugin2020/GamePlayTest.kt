@@ -4,10 +4,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
-import sc.plugin2020.util.Configuration
-import sc.plugin2020.util.CubeCoordinates
-import sc.plugin2020.util.GameRuleLogic
-import sc.plugin2020.util.TestGameUtil
+import sc.plugin2020.util.*
 import sc.plugin2020.util.TestJUnitUtil.assertThrows
 import sc.protocol.responses.RoomPacket
 import sc.shared.InvalidMoveException
@@ -257,6 +254,24 @@ class GamePlayTest {
             }
             val valid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 4))
             assertTrue(GameRuleLogic.validateMove(state, valid1))
+        }
+    }
+    
+    @Test
+    fun setMoveNextToOpponentTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " RGBG------------" +
+                    "------------------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            val invalid = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-2, 4))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid) }
         }
     }
     
@@ -957,5 +972,92 @@ class GamePlayTest {
         val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))
         GameRuleLogic.performMove(state, move)
         assertEquals(PieceType.ANT, state.board.getField(1, 2, -3).pieces.lastElement().type)
+    }
+    
+    @Test
+    fun possibleMoveTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --RBRGBGBB----" +
+                    " RQBGBSRS--BS----" +
+                    "--RS--RBRABQ------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            assertFalse(GameRuleLogic.getPossibleMoves(state).isEmpty())
+        }
+    }
+    
+    @Test
+    fun possibleSetMoveDestinationsTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --RBRGBGBB----" +
+                    " RQBGBSRS--BS----" +
+                    "--RS--RBRABQ------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            assertEquals(7, GameRuleLogic.getPossibleSetMoveDestinations(state.board, state.currentPlayerColor).size)
+        }
+    }
+    
+    @Test
+    fun possibleSetMoveDestinationsSecondTurnTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ----------------" +
+                    "--------RBOO------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            state.currentPlayerColor = PlayerColor.BLUE
+            state.turn = 1
+            assertEquals(PieceType.values().size * 5, GameRuleLogic.getPossibleSetMoves(state).size)
+        }
+    }
+    
+    @Test
+    fun possibleSetMoveDestinationsFirstTurnTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ----------------" +
+                    "----------OO------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            assertEquals(PieceType.values().size * (Constants.FIELD_AMOUNT - 1), GameRuleLogic.getPossibleSetMoves(state).size)
+        }
+    }
+    
+    @Test
+    fun possibleDragMovesTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "    ----------" +
+                    "   ------------" +
+                    "  --------------" +
+                    " ------BB--------" +
+                    "--------RQOO------" +
+                    " ----------------" +
+                    "  --------------" +
+                    "   ------------" +
+                    "    ----------")
+            assertEquals(1, GameRuleLogic.getPossibleDragMoves(state).size)
+        }
     }
 }
