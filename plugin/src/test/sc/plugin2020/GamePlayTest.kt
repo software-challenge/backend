@@ -969,6 +969,16 @@ class GamePlayTest {
     
     @Test
     fun performMoveTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "    ----------" +
+                "   ------------" +
+                "  --------------" +
+                " ----------------" +
+                "------------------" +
+                " ----------------" +
+                "  --------------" +
+                "   ------------" +
+                "    ----------")
         val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))
         GameRuleLogic.performMove(state, move)
         assertEquals(PieceType.ANT, state.board.getField(1, 2, -3).pieces.lastElement().type)
