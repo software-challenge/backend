@@ -4,8 +4,8 @@ import java.io.InputStream
 plugins {
     maven
     `java-library`
-    kotlin("jvm") version "1.3.21"
-    id("com.github.ben-manes.versions") version "0.21.0"
+    kotlin("jvm") version "1.3.50"
+    id("com.github.ben-manes.versions") version "0.24.0"
     id("org.jetbrains.dokka") version "0.9.17"
 }
 
@@ -99,6 +99,7 @@ tasks {
     }
 
     val testGame by creating {
+        enabled = false
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {
             testLogDir.mkdirs()
@@ -146,6 +147,7 @@ tasks {
     }
 
     val testTestClient by creating {
+        enabled = false
         dependsOn(clearTestLogs, ":server:deploy")
         val testClientGames = 3
         doLast {

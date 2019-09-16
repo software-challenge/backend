@@ -106,7 +106,7 @@ public abstract class XStreamClient {
           ProtocolMessage response = (ProtocolMessage) object;
 
           logger.debug("Client " + this + ": Received " + response + " via " + networkInterface);
-          logger.trace("Dumping {}:\n{}", response, xStream.toXML(response));
+          logger.debug("Dumping {}:\n{}", response, xStream.toXML(response));
 
           if (response instanceof CloseConnection) {
             handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);

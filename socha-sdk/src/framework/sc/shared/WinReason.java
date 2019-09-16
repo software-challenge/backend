@@ -1,10 +1,9 @@
 package sc.shared;
 
 public enum WinReason {
-  SWARM_EQUAL("Beide Spieler haben einen Schwarm gleicher Größe gebildet."),
-  SWARM_CONNECTED("%s hat seinen Schwarm vereint."),
-  SWARM_LARGER("Beide Spieler haben ihren Schwarm vereint.\nDer Schwarm von %s ist größer."),
-  ROUND_LIMIT("Das Rundenlimit wurde erreicht.");
+  BEE_SURROUNDED("Das Spiel ist beendet.\n%s hat die gegnerische Biene umzingelt."),
+  BEE_FREE_FIELDS("Das Spiel ist beendet.\n%s hat mehr freie Felder um seine Biene."),
+  ROUND_LIMIT("Das Rundenlimit wurde erreicht.\n%s hat mehr freie Felder um seine Biene.");
 
   private final String message;
 
