@@ -68,7 +68,16 @@ data class Board(
         var text = "Board\n"
         for(x in 0 until Constants.BOARD_SIZE) {
             for(y in 0 until Constants.BOARD_SIZE) {
-                text += if(this.gameField[x][y] == null) "0" else "x"
+                val field = this.gameField[x][y]
+                if(field == null) {
+                    text += "00"
+                } else {
+                    if(field.hasOwner) {
+                        text += (field.owner.toString().get(0) + "T")
+                    } else {
+                        text += "[]"
+                    }
+                }
             }
             text += "\n"
         }

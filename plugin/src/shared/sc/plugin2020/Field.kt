@@ -13,8 +13,10 @@ class Field(
         x: Int = 0,
         y: Int = 0,
         z: Int = -x - y,
+        // NOTE that an empty collection in XML gets deserialized to null, not to an empty collection!
+        // see http://x-stream.github.io/faq.html#Serialization_implicit_null
         @XStreamImplicit
-        val pieces: Stack<Piece> = Stack(),
+        var pieces: Stack<Piece> = Stack(),
         @XStreamAsAttribute
         val isObstructed: Boolean = false
 ): CubeCoordinates(x, y, z), IField {
@@ -31,16 +33,24 @@ class Field(
         }
 
     val isEmpty: Boolean
-        get() = pieces.isEmpty() && !isObstructed
+        get() = safePieces.isEmpty() && !isObstructed
     
     val hasOwner: Boolean
-        get() = !pieces.isEmpty() && !isObstructed
+        get() = !safePieces.isEmpty() && !isObstructed
 
     val coordinates: CubeCoordinates
         get() = CubeCoordinates(this.x, this.y, this.z)
 
     val owner: PlayerColor?
-        get() = if(pieces.isEmpty()) null else pieces.peek().owner
+        get() = if(safePieces.isEmpty()) null else safePieces.peek().owner
+    
+    val safePieces: Stack<Piece>
+        get() {
+            if(pieces == null) {
+                pieces = Stack()
+            }
+            return pieces
+        }
 
     constructor(position: CubeCoordinates, obstructed: Boolean): this(position.x, position.y, position.z, isObstructed = obstructed)
 
@@ -51,7 +61,7 @@ class Field(
     constructor(x: Int, y: Int, vararg pieces: Piece): this(x, y, pieces = pieces.toCollection(Stack()) as Stack<Piece>)
 
     constructor(field: Field): this(field.x, field.y, field.z, field.pieces.toCollection(Stack()), field.isObstructed)
-
+    
     override fun equals(other: Any?): Boolean {
         if(this === other) return true
         if(javaClass != other?.javaClass)
@@ -62,7 +72,7 @@ class Field(
         if(x != other.x) return false
         if(y != other.y) return false
         if(z != other.z) return false
-        if(pieces != other.pieces) return false
+        if(safePieces != other.safePieces) return false
         if(isObstructed != other.isObstructed) return false
 
         return true
@@ -72,7 +82,7 @@ class Field(
         var result = x
         result = 31 * result + y
         result = 31 * result + z
-        result = 31 * result + pieces.hashCode()
+        result = 31 * result + safePieces.hashCode()
         result = 31 * result + isObstructed.hashCode()
         return result
     }

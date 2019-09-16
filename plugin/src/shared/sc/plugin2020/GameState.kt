@@ -2,7 +2,6 @@ package sc.plugin2020
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.IMove
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
@@ -21,8 +20,8 @@ data class GameState(
         private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE)
 ): TwoPlayerGameState<Player, IMove>(), Cloneable {
     
-    @XStreamOmitField
-    private val allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
+    private val allPieces: Collection<Piece>
+        get() = undeployedBluePieces + undeployedRedPieces + board.getPieces()
     
     val gameStats: Array<IntArray>
         get() = players.map { getPlayerStats(it) }.toTypedArray()
@@ -61,7 +60,7 @@ data class GameState(
     override fun toString(): String = "GameState Zug $turn"
     
     companion object {
-        private fun parsePiecesString(s: String, p: PlayerColor): ArrayList<Piece> {
+        public fun parsePiecesString(s: String, p: PlayerColor): ArrayList<Piece> {
             val l = ArrayList<Piece>()
             for(c in s.toCharArray()) {
                 when(c) {

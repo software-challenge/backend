@@ -42,7 +42,8 @@ object TestGameUtil {
     fun updateUndeployedPiecesFromBoard(gs: GameState, reset: Boolean = false) {
         if(reset) {
             PlayerColor.values().forEach {
-                gs.getUndeployedPieces(it).addAll(gs.getDeployedPieces(it))
+                gs.getUndeployedPieces(it).clear()
+                gs.getUndeployedPieces(it).addAll(GameState.parsePiecesString(Constants.STARTING_PIECES, it))
             }
         }
         gs.board.getPieces().forEach {

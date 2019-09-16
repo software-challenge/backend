@@ -754,7 +754,6 @@ class GamePlayTest {
     }
 
     @Test
-    @Ignore
     // ignored because deep equals for gamestate is not implemented completely yet (I think)
     fun gamestateToXmlTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -771,7 +770,7 @@ class GamePlayTest {
         state.board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
         TestGameUtil.updateUndeployedPiecesFromBoard(state, true)
         assertEquals(listOf(Piece(PlayerColor.RED, PieceType.ANT)), state.getDeployedPieces(PlayerColor.RED))
-        assertEquals(listOf(Piece(PlayerColor.BLUE, PieceType.BEE), Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER)), state.getDeployedPieces(PlayerColor.BLUE))
+        assertEquals(listOf(Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER), Piece(PlayerColor.BLUE, PieceType.BEE)), state.getDeployedPieces(PlayerColor.BLUE))
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
         val xstream = Configuration.xStream
@@ -901,16 +900,19 @@ class GamePlayTest {
             |    <piece owner="BLUE" type="SPIDER"/>
             |    <piece owner="BLUE" type="SPIDER"/>
             |    <piece owner="BLUE" type="SPIDER"/>
-            |    <piece owner="BLUE" type="BEETLE"/>
-            |    <piece owner="BLUE" type="BEETLE"/>
-            |    <piece owner="BLUE" type="ANT"/>
-            |    <piece owner="BLUE" type="ANT"/>
-            |    <piece owner="BLUE" type="ANT"/>
             |    <piece owner="BLUE" type="GRASSHOPPER"/>
+            |    <piece owner="BLUE" type="BEETLE"/>
+            |    <piece owner="BLUE" type="BEETLE"/>
+            |    <piece owner="BLUE" type="ANT"/>
+            |    <piece owner="BLUE" type="ANT"/>
+            |    <piece owner="BLUE" type="ANT"/>
             |  </undeployedBluePieces>
             |</state>""".trimMargin()
         assertEquals(xml, xstream.toXML(state))
-        assertEquals(state, xstream.fromXML(xml))
+        val fromXml = xstream.fromXML(xml) as GameState
+        assertEquals(state.board, fromXml.board)
+        assertEquals(state.getUndeployedPieces(PlayerColor.RED), fromXml.getUndeployedPieces(PlayerColor.RED))
+        assertEquals(state.getUndeployedPieces(PlayerColor.BLUE), fromXml.getUndeployedPieces(PlayerColor.BLUE))
     }
     
     @Test
