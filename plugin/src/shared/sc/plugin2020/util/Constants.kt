@@ -9,7 +9,7 @@ object Constants {
     const val WIN_SCORE = 2
     const val GAME_STATS_ROUNDS = 0
     
-    const val BOARD_SIZE = 9
+    const val BOARD_SIZE = 11
     val FIELD_AMOUNT = fieldAmount((BOARD_SIZE + 1) / 2)
     fun fieldAmount(radius: Int): Int =
             if(radius==1) 1 else (radius-1) * 6 + fieldAmount(radius-1)
