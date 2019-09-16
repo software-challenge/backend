@@ -172,7 +172,7 @@ public class Game extends RoundBasedGameInstance<Player> {
           return new WinCondition(PlayerColor.BLUE, WinReason.BEE_FREE_FIELDS);
         } else {
           logger.info("Both Players have equal Points, no Winner");
-          return new WinCondition(null, WinReason.SWARM_EQUAL);
+          return new WinCondition(null, WinReason.BEE_FREE_FIELDS_EQUAL);
         }
       }
       return new WinCondition(PlayerColor.BLUE, WinReason.BEE_SURROUNDED);
