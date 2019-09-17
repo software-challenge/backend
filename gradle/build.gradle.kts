@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.InputStream
 
 plugins {
