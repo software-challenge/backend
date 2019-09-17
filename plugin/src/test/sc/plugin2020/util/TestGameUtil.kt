@@ -18,13 +18,16 @@ object TestGameUtil {
             else -> throw InvalidParameterException("Expected piecetype character to be one of Q,B,G,S or A, was: $c")
         }
     }
-
-    fun createCustomBoard(boardString: String): Board {//Hardcoded auf Feldgröße von 9
+    
+    fun createCustomBoard(boardString: String): Board {
         val boardStringWithoutWhitespace = boardString.replace(" ".toRegex(), "")
         Assert.assertEquals("Length of boardString does not match size of the Board",
                 (Constants.FIELD_AMOUNT * 2).toLong(), boardStringWithoutWhitespace.length.toLong())
-
-        val fields = arrayOf(intArrayOf(0, 4), intArrayOf(1, 3), intArrayOf(2, 2), intArrayOf(3, 1), intArrayOf(4, 0), intArrayOf(-1, 4), intArrayOf(0, 3), intArrayOf(1, 2), intArrayOf(2, 1), intArrayOf(3, 0), intArrayOf(4, -1), intArrayOf(-2, 4), intArrayOf(-1, 3), intArrayOf(0, 2), intArrayOf(1, 1), intArrayOf(2, 0), intArrayOf(3, -1), intArrayOf(4, -2), intArrayOf(-3, 4), intArrayOf(-2, 3), intArrayOf(-1, 2), intArrayOf(0, 1), intArrayOf(1, 0), intArrayOf(2, -1), intArrayOf(3, -2), intArrayOf(4, -3), intArrayOf(-4, 4), intArrayOf(-3, 3), intArrayOf(-2, 2), intArrayOf(-1, 1), intArrayOf(0, 0), intArrayOf(1, -1), intArrayOf(2, -2), intArrayOf(3, -3), intArrayOf(4, -4), intArrayOf(-4, 3), intArrayOf(-3, 2), intArrayOf(-2, 1), intArrayOf(-1, 0), intArrayOf(0, -1), intArrayOf(1, -2), intArrayOf(2, -3), intArrayOf(3, -4), intArrayOf(-4, 2), intArrayOf(-3, 1), intArrayOf(-2, 0), intArrayOf(-1, -1), intArrayOf(0, -2), intArrayOf(1, -3), intArrayOf(2, -4), intArrayOf(-4, 1), intArrayOf(-3, 0), intArrayOf(-2, -1), intArrayOf(-1, -2), intArrayOf(0, -3), intArrayOf(1, -4), intArrayOf(-4, 0), intArrayOf(-3, -1), intArrayOf(-2, -2), intArrayOf(-1, -3), intArrayOf(0, -4))
+        
+        val fields = Board()
+                .fields
+                .sortedWith(Comparator.comparing(Field::z).then(Comparator.comparing(Field::x)))
+                .map { intArrayOf(it.x, it.y) }
         val fieldDescriptors = boardStringWithoutWhitespace.toCharArray()
         val boardFields = ArrayList<Field>()
         for(i in fields.indices) {

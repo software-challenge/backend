@@ -1,4 +1,3 @@
-import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.InputStream
 
 plugins {
@@ -197,6 +196,10 @@ tasks {
 // == Cross-project configuration ==
 
 allprojects {
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    
     repositories {
         jcenter()
         maven("http://dist.wso2.org/maven2")
