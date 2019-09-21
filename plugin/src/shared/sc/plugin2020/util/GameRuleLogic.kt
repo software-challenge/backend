@@ -167,7 +167,7 @@ object GameRuleLogic {
         var index = 0
         do {
             val currentField = visitedFields[index]
-            val newFields = getAccessibleNeighbours(board, currentField).filterNot { it in visitedFields }
+            val newFields = getAccessibleNeighboursExcept(board, currentField, move.start).filterNot { it in visitedFields }
             if (move.destination in newFields)
                 return true
             visitedFields.addAll(newFields)
@@ -196,6 +196,12 @@ object GameRuleLogic {
     fun getAccessibleNeighbours(board: Board, start: CubeCoordinates) =
             getNeighbours(board, start).filter { neighbour ->
                 neighbour.isEmpty && canMoveBetween(board, start, neighbour)
+            }
+
+    @JvmStatic
+    fun getAccessibleNeighboursExcept(board: Board, start: CubeCoordinates, except: CubeCoordinates) =
+            getNeighbours(board, start).filter { neighbour ->
+                neighbour.isEmpty && canMoveBetweenExcept(board, start, neighbour, except)
             }
 
     @Throws(InvalidMoveException::class)
@@ -231,16 +237,26 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateSpiderMove(board: Board, move: DragMove): Boolean {
+        /*
+        // Ich lass das mal noch hier, da dass der evtl. performantere Ansatz ist
         val paths: Deque<Array<CubeCoordinates>> = ArrayDeque()
         paths.add(arrayOf(move.start))
         do {
             val currentPath = paths.removeFirst()
-            val newFields = getAccessibleNeighbours(board, currentPath.last()).filterNot { it in currentPath }
+            val newFields = getAccessibleNeighboursExcept(board, currentPath.last(), move.start).filterNot { it in currentPath }
             if (currentPath.size < 3)
                 paths.addAll(newFields.map { currentPath + it })
             else if (move.destination in newFields)
                 return true
         } while (paths.isNotEmpty())
+         */
+        val found = getAccessibleNeighbours(board, move.start).any { depth1 ->
+            getAccessibleNeighboursExcept(board, depth1, move.start).any { depth2 ->
+                getAccessibleNeighboursExcept(board, depth2, move.start).filterNot { it.coordinates ==  depth1}.any { move.destination == it }
+            }
+        }
+        if (found)
+            return true
         throw InvalidMoveException("No path found for Spider move")
     }
 
@@ -266,10 +282,18 @@ object GameRuleLogic {
     }
 
     @JvmStatic
-    fun canMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
-            sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
-                (shared.size == 1 || shared.any { it.isEmpty }) && shared.any { it.pieces.isNotEmpty() }
-            }
+    fun canMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean {
+        return sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
+            (shared.size == 1 || shared.any { it.isEmpty && !it.isObstructed }) && shared.any { it.pieces.isNotEmpty() }
+        }
+    }
+
+    @JvmStatic
+    fun canMoveBetweenExcept(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates, except: CubeCoordinates): Boolean {
+        return sharedNeighboursOfTwoCoords(board, coords1, coords2).filterNot { it.pieces.size == 1 && except == it.coordinates }.let { shared ->
+            (shared.size == 1 || shared.any { it.isEmpty && !it.isObstructed }) && shared.any { it.pieces.isNotEmpty() }
+        }
+    }
 
 
     @Throws(InvalidMoveException::class)
