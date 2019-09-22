@@ -201,7 +201,7 @@ object GameRuleLogic {
     @JvmStatic
     fun getAccessibleNeighboursExcept(board: Board, start: CubeCoordinates, except: CubeCoordinates) =
             getNeighbours(board, start).filter { neighbour ->
-                neighbour.isEmpty && canMoveBetweenExcept(board, start, neighbour, except)
+                neighbour.isEmpty && canMoveBetweenExcept(board, start, neighbour, except) && neighbour.coordinates != except
             }
 
     @Throws(InvalidMoveException::class)
@@ -252,7 +252,7 @@ object GameRuleLogic {
          */
         val found = getAccessibleNeighbours(board, move.start).any { depth1 ->
             getAccessibleNeighboursExcept(board, depth1, move.start).any { depth2 ->
-                getAccessibleNeighboursExcept(board, depth2, move.start).filterNot { it.coordinates ==  depth1}.any { move.destination == it }
+                getAccessibleNeighboursExcept(board, depth2, move.start).filterNot { it.coordinates == depth1 }.any { move.destination == it }
             }
         }
         if (found)
