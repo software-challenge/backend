@@ -749,16 +749,15 @@ class GamePlayTest {
     }
     
     @Test
-    @Ignore
     fun dragMoveSpiderTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
                     "    --------------" +
-                    "   --------BB------" +
-                    "  ------RS--BS------" +
-                    " ------RBRQBQ--------" +
-                    "----------------------" +
+                    "   ----------------" +
+                    "  ----------BB------" +
+                    " --------RS--BS------" +
+                    "--------RBRQBQ--------" +
                     " --------------------" +
                     "  ------------------" +
                     "   ----------------" +
@@ -785,10 +784,10 @@ class GamePlayTest {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
                     "    --------------" +
-                    "   ----BB--BB------" +
-                    "  ----RBRS--BS------" +
-                    " ------RBRQBQ--------" +
-                    "----------------------" +
+                    "   ----------------" +
+                    "  ------BB--BB------" +
+                    " ------RBRS--BS------" +
+                    "--------RBRQBQ--------" +
                     " --------------------" +
                     "  ------------------" +
                     "   ----------------" +
@@ -812,28 +811,26 @@ class GamePlayTest {
     }
     
     @Test
-    @Ignore
     fun dragMoveEdgeTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
                     "    --------------" +
-                    "   --RBRGBGBB------" +
-                    "  RQBGBSRS--BS------" +
-                    " --RS--RBRABQ--------" +
-                    "----------------------" +
+                    "   ----------------" +
+                    "  --RBRGBGBB--------" +
+                    " RQBGBSRS--BS--------" +
+                    "--RS--RBRABQ----------" +
                     " --------------------" +
                     "  ------------------" +
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = DragMove(CubeCoordinates(-3, 4), CubeCoordinates(-2, 4))
+            val move = DragMove(CubeCoordinates(-4, 5), CubeCoordinates(-3, 5))
             assertTrue(GameRuleLogic.validateMove(state, move))
         }
     }
 
     @Test
-    @Ignore
     fun gamestateToXmlTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
                 "     ------------" +
@@ -865,38 +862,58 @@ class GamePlayTest {
             |      <null/>
             |      <null/>
             |      <null/>
-            |      <field x="-4" y="0" z="4" isObstructed="false"/>
-            |      <field x="-4" y="1" z="3" isObstructed="false"/>
-            |      <field x="-4" y="2" z="2" isObstructed="false"/>
-            |      <field x="-4" y="3" z="1" isObstructed="false"/>
-            |      <field x="-4" y="4" z="0" isObstructed="false"/>
+            |      <null/>
+            |      <field x="-5" y="0" z="5" isObstructed="false"/>
+            |      <field x="-5" y="1" z="4" isObstructed="false"/>
+            |      <field x="-5" y="2" z="3" isObstructed="false"/>
+            |      <field x="-5" y="3" z="2" isObstructed="false"/>
+            |      <field x="-5" y="4" z="1" isObstructed="false"/>
+            |      <field x="-5" y="5" z="0" isObstructed="false"/>
             |    </fields>
             |    <fields>
             |      <null/>
             |      <null/>
             |      <null/>
+            |      <null/>
+            |      <field x="-4" y="-1" z="5" isObstructed="false"/>
+            |      <field x="-4" y="0" z="4" isObstructed="false"/>
+            |      <field x="-4" y="1" z="3" isObstructed="false"/>
+            |      <field x="-4" y="2" z="2" isObstructed="false"/>
+            |      <field x="-4" y="3" z="1" isObstructed="false"/>
+            |      <field x="-4" y="4" z="0" isObstructed="false"/>
+            |      <field x="-4" y="5" z="-1" isObstructed="false"/>
+            |    </fields>
+            |    <fields>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |      <field x="-3" y="-2" z="5" isObstructed="false"/>
             |      <field x="-3" y="-1" z="4" isObstructed="false"/>
             |      <field x="-3" y="0" z="3" isObstructed="false"/>
             |      <field x="-3" y="1" z="2" isObstructed="false"/>
             |      <field x="-3" y="2" z="1" isObstructed="false"/>
             |      <field x="-3" y="3" z="0" isObstructed="false"/>
             |      <field x="-3" y="4" z="-1" isObstructed="false"/>
+            |      <field x="-3" y="5" z="-2" isObstructed="false"/>
             |    </fields>
             |    <fields>
             |      <null/>
             |      <null/>
+            |      <field x="-2" y="-3" z="5" isObstructed="false"/>
             |      <field x="-2" y="-2" z="4" isObstructed="false"/>
             |      <field x="-2" y="-1" z="3" isObstructed="false"/>
             |      <field x="-2" y="0" z="2" isObstructed="false"/>
             |      <field x="-2" y="1" z="1" isObstructed="false"/>
             |      <field x="-2" y="2" z="0" isObstructed="false"/>
-            |      <field x="-2" y="3" z="-1" isObstructed="false">
+            |      <field x="-2" y="3" z="-1" isObstructed="false"/>
+            |      <field x="-2" y="4" z="-2" isObstructed="false">
             |        <piece owner="BLUE" type="GRASSHOPPER"/>
             |      </field>
-            |      <field x="-2" y="4" z="-2" isObstructed="false"/>
+            |      <field x="-2" y="5" z="-3" isObstructed="false"/>
             |    </fields>
             |    <fields>
             |      <null/>
+            |      <field x="-1" y="-4" z="5" isObstructed="false"/>
             |      <field x="-1" y="-3" z="4" isObstructed="false"/>
             |      <field x="-1" y="-2" z="3" isObstructed="false"/>
             |      <field x="-1" y="-1" z="2" isObstructed="false"/>
@@ -905,8 +922,10 @@ class GamePlayTest {
             |      <field x="-1" y="2" z="-1" isObstructed="false"/>
             |      <field x="-1" y="3" z="-2" isObstructed="false"/>
             |      <field x="-1" y="4" z="-3" isObstructed="false"/>
+            |      <field x="-1" y="5" z="-4" isObstructed="false"/>
             |    </fields>
             |    <fields>
+            |      <field x="0" y="-5" z="5" isObstructed="false"/>
             |      <field x="0" y="-4" z="4" isObstructed="false"/>
             |      <field x="0" y="-3" z="3" isObstructed="false"/>
             |      <field x="0" y="-2" z="2" isObstructed="false"/>
@@ -919,8 +938,10 @@ class GamePlayTest {
             |      <field x="0" y="2" z="-2" isObstructed="false"/>
             |      <field x="0" y="3" z="-3" isObstructed="false"/>
             |      <field x="0" y="4" z="-4" isObstructed="false"/>
+            |      <field x="0" y="5" z="-5" isObstructed="false"/>
             |    </fields>
             |    <fields>
+            |      <field x="1" y="-5" z="4" isObstructed="false"/>
             |      <field x="1" y="-4" z="3" isObstructed="false"/>
             |      <field x="1" y="-3" z="2" isObstructed="false"/>
             |      <field x="1" y="-2" z="1" isObstructed="false"/>
@@ -929,9 +950,11 @@ class GamePlayTest {
             |      <field x="1" y="1" z="-2" isObstructed="false"/>
             |      <field x="1" y="2" z="-3" isObstructed="false"/>
             |      <field x="1" y="3" z="-4" isObstructed="false"/>
+            |      <field x="1" y="4" z="-5" isObstructed="false"/>
             |      <null/>
             |    </fields>
             |    <fields>
+            |      <field x="2" y="-5" z="3" isObstructed="false"/>
             |      <field x="2" y="-4" z="2" isObstructed="false"/>
             |      <field x="2" y="-3" z="1" isObstructed="false"/>
             |      <field x="2" y="-2" z="0" isObstructed="false"/>
@@ -939,26 +962,44 @@ class GamePlayTest {
             |      <field x="2" y="0" z="-2" isObstructed="false"/>
             |      <field x="2" y="1" z="-3" isObstructed="false"/>
             |      <field x="2" y="2" z="-4" isObstructed="false"/>
+            |      <field x="2" y="3" z="-5" isObstructed="false"/>
             |      <null/>
             |      <null/>
             |    </fields>
             |    <fields>
+            |      <field x="3" y="-5" z="2" isObstructed="false"/>
             |      <field x="3" y="-4" z="1" isObstructed="false"/>
             |      <field x="3" y="-3" z="0" isObstructed="false"/>
             |      <field x="3" y="-2" z="-1" isObstructed="false"/>
             |      <field x="3" y="-1" z="-2" isObstructed="false"/>
             |      <field x="3" y="0" z="-3" isObstructed="false"/>
             |      <field x="3" y="1" z="-4" isObstructed="false"/>
+            |      <field x="3" y="2" z="-5" isObstructed="false"/>
             |      <null/>
             |      <null/>
             |      <null/>
             |    </fields>
             |    <fields>
+            |      <field x="4" y="-5" z="1" isObstructed="false"/>
             |      <field x="4" y="-4" z="0" isObstructed="false"/>
             |      <field x="4" y="-3" z="-1" isObstructed="false"/>
             |      <field x="4" y="-2" z="-2" isObstructed="false"/>
             |      <field x="4" y="-1" z="-3" isObstructed="false"/>
             |      <field x="4" y="0" z="-4" isObstructed="false"/>
+            |      <field x="4" y="1" z="-5" isObstructed="false"/>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |      <null/>
+            |    </fields>
+            |    <fields>
+            |      <field x="5" y="-5" z="0" isObstructed="false"/>
+            |      <field x="5" y="-4" z="-1" isObstructed="false"/>
+            |      <field x="5" y="-3" z="-2" isObstructed="false"/>
+            |      <field x="5" y="-2" z="-3" isObstructed="false"/>
+            |      <field x="5" y="-1" z="-4" isObstructed="false"/>
+            |      <field x="5" y="0" z="-5" isObstructed="false"/>
+            |      <null/>
             |      <null/>
             |      <null/>
             |      <null/>
