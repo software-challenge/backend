@@ -1094,6 +1094,19 @@ class GamePlayTest {
     }
     
     @Test
+    fun xmlToMissMoveTest() {
+        val xstream = Configuration.xStream
+        val xml = """
+            <room roomId="64a0482c-f368-4e33-9684-d5106228bb75">
+              <data class="missmove">
+              </data>
+            </room>"""
+        val packet = xstream.fromXML(xml) as RoomPacket
+        val expect = MissMove()
+        assertEquals(expect, packet.data)
+    }
+    
+    @Test
     fun performMoveTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
                 "     ------------" +
