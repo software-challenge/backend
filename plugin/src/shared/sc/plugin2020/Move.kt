@@ -13,3 +13,8 @@ data class SetMove(val piece: Piece, val destination: CubeCoordinates): IMove {
 data class DragMove(val start: CubeCoordinates, val destination: CubeCoordinates): IMove {
     override fun toString() = String.format("Drag from %s to %s", this.start, this.destination)
 }
+
+@XStreamAlias(value = "missmove")
+data class MissMove(val type: String = "miss"): IMove {
+    override fun toString() = "Miss move"
+}

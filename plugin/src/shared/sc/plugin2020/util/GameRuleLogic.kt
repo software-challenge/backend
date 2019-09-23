@@ -4,8 +4,6 @@ import sc.api.plugins.IMove
 import sc.plugin2020.*
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerColor
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 object GameRuleLogic {
@@ -86,10 +84,19 @@ object GameRuleLogic {
         when (move) {
             is SetMove -> validateSetMove(gameState, move)
             is DragMove -> validateDragMove(gameState, move)
+            is MissMove -> validateMissMove(gameState)
         }
         return true
     }
-
+    
+    private fun validateMissMove(gameState: GameState): Boolean {
+        if(this.getPossibleMoves(gameState).isNotEmpty())
+            throw InvalidMoveException("Missing a turn is only allowed when no other moves can be made.")
+        if(gameState.round == 3 && !hasPlayerPlacedBee(gameState))
+            throw InvalidMoveException("The bee must be placed in fourth round latest")
+        return true
+    }
+    
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove): Boolean {
@@ -107,7 +114,7 @@ object GameRuleLogic {
             }
         } else {
             if (gameState.round == 3 && !hasPlayerPlacedBee(gameState) && move.piece.type != PieceType.BEE)
-                throw InvalidMoveException("The Bee must be placed in fourth round latest")
+                throw InvalidMoveException("The bee must be placed in fourth round latest")
 
             if (!gameState.getUndeployedPieces(gameState.currentPlayerColor).contains(move.piece))
                 throw InvalidMoveException("Piece is not a undeployed piece of the current player")

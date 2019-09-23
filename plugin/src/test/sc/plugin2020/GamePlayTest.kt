@@ -342,6 +342,8 @@ class GamePlayTest {
             state.turn = 6
             val setAnt = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 5))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, setAnt) }
+            val miss = MissMove()
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, miss) }
             val setBee = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-4, 5))
             assertTrue(GameRuleLogic.validateMove(state, setBee))
         }
@@ -1204,6 +1206,42 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             assertEquals(1, GameRuleLogic.getPossibleDragMoves(state).size)
+        }
+    }
+    
+    @Test
+    fun missMoveTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  RGBG--------------" +
+                    " --------------------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val invalid = MissMove()
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid) }
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     RA----------" +
+                    "    --BG----------" +
+                    "   ----------------" +
+                    "  ------------------" +
+                    " --------------------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val valid = MissMove()
+            assertTrue(GameRuleLogic.validateMove(state, valid))
         }
     }
 }
