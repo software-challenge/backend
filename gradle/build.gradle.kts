@@ -10,10 +10,11 @@ plugins {
     id("org.jetbrains.dokka") version "0.9.17"
 }
 
-val year: String by project
-val gameName: String by project
-val game by extra { "${gameName}_$year" }
-version = year.substring(2) + "." + property("socha.version")
+val gameName = property("socha.gameName") as String
+val versions = arrayOf("year", "mimor", "patch").map { property("socha.version.$it").toString().toInt() }
+val versionObject = KotlinVersion(versions[0], versions[1], versions[2])
+version = versions.joinToString { it.toString().padStart(2, '0') }
+val game by extra { "${gameName}_${versionObject.major}" }
 println("Current version: $version Game: $game")
 
 val deployDir by extra { buildDir.resolve("deploy") }
@@ -32,7 +33,7 @@ tasks {
         dependsOn(":server:run")
         group = mainGroup
     }
-
+    
     val doc by creating(DokkaTask::class) {
         val includedProjects = arrayOf("sdk", "plugin")
         mustRunAfter(includedProjects.map { "$it:classes" })
@@ -46,24 +47,36 @@ tasks {
             classpath = files(sourceSets.map { it.runtimeClasspath }.flatMap { it.files }.filter { it.exists() })
         }
     }
-
+    
     val deploy by creating {
         dependsOn(doc)
         dependOnSubprojects()
         group = mainGroup
-        description = "Zips everything up for release into ./build/deploy"
+        description = "Zips everything up for release into build/deploy/"
     }
-
+    
     val release by creating {
         dependsOn(deploy)
         group = mainGroup
         description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
         doLast {
-            val v = project.properties["v"]?.toString()?.takeIf { it.count { char -> char == '.' } == 1 }
-                    ?: throw InvalidUserDataException("Die Flag -Pv=\"Version\" wird im Format X.X benötigt")
+            when {
+                project.hasProperty("manual") -> {}
+                project.hasProperty("patch") -> {
+                
+                }
+                project.hasProperty("minor") -> {
+        
+                }
+            }
+            val v = project.properties["patch"]?.toString()
+                    ?: throw InvalidUserDataException("Gib entweder -Ppatch oder -Pminor an, um die Versionsnummer automatisch zu inkrementieren, oder ändere sie selbst in gradle.properties und gib dann -Pmanual an")
+            val propsFile = file("gradle.properties")
+            propsFile.useLines {
+                it
+            }.forEach { propsFile.bufferedWriter().appendln(it) }
             val desc = project.properties["desc"]?.toString()
-                    ?: throw InvalidUserDataException("Die Flag -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
-            val version = "${year.substring(2)}.$v"
+                    ?: throw InvalidUserDataException("Das Argument -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
             println("Version: $version")
             println("Beschreibung: $desc")
             file("gradle.properties").writeText(file("gradle.properties").readText()
@@ -93,15 +106,15 @@ tasks {
             ===================================================""".trimIndent())
         }
     }
-
+    
     val maxGameLength = 150L
-
+    
     val clearTestLogs by creating(Delete::class) {
         delete(testLogDir)
     }
-
+    
     val testGame by creating {
-        enabled = false
+        enabled = versionObject.minor > 0
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {
             testLogDir.mkdirs()
@@ -147,9 +160,9 @@ tasks {
             println("Successfully played a game using the deployed server & client!")
         }
     }
-
+    
     val testTestClient by creating {
-        enabled = false
+        enabled = versionObject.minor > 0
         dependsOn(clearTestLogs, ":server:deploy")
         val testClientGames = 3
         doFirst {
@@ -157,7 +170,7 @@ tasks {
             val unzipped = testLogDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
             Runtime.getRuntime().exec("unzip software-challenge-server.zip -d $unzipped", null, deployDir).waitFor()
-
+            
             println("Testing TestClient...")
             val testClient = ProcessBuilder(
                     project("test-client").tasks.getByName<ScriptsTask>("createScripts").content.split(" ") +
@@ -175,12 +188,12 @@ tasks {
             }
         }
     }
-
+    
     val integrationTest by creating {
         dependsOn(testGame, testTestClient)
         group = mainGroup
     }
-
+    
     clean {
         dependOnSubprojects()
         group = mainGroup
@@ -255,13 +268,13 @@ allprojects {
 
 project("sdk") {
     sourceSets.main.get().java.srcDirs("src/framework", "src/server-api")
-
+    
     dependencies {
         api(kotlin("stdlib"))
         api("com.thoughtworks.xstream", "xstream", "1.4.11.1")
         api("jargs", "jargs", "1.0")
         api("ch.qos.logback", "logback-classic", "1.2.3")
-
+        
         implementation("org.hamcrest", "hamcrest-core", "2.1")
         implementation("net.sf.kxml", "kxml2", "2.3.0")
         implementation("xmlpull", "xmlpull", "1.1.3.1")
@@ -273,14 +286,14 @@ project("plugin") {
         main.get().java.srcDirs("src/client", "src/server", "src/shared")
         test.get().java.srcDir("src/test")
     }
-
+    
     dependencies {
         api(project(":sdk"))
-
+        
         testImplementation("junit", "junit", "4.12")
         testImplementation("io.kotlintest", "kotlintest-runner-junit5", "3.3.2")
     }
-
+    
     tasks.jar.get().archiveBaseName.set(game)
 }
 
