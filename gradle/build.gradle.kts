@@ -69,7 +69,7 @@ tasks {
             file("gradle.properties").writeText(file("gradle.properties").readText()
                     .replace(Regex("socha.version.*"), "socha.version = $v"))
             exec { commandLine("git", "add", "gradle.properties") }
-            exec { commandLine("git", "commit", "-m", version) }
+            exec { commandLine("git", "commit", "-m", version, "--no-verify") }
             exec { commandLine("git", "tag", version, "-m", desc) }
             exec { commandLine("git", "push", "--follow-tags") }
             println("""
