@@ -277,6 +277,7 @@ project("plugin") {
         api(project(":sdk"))
 
         testImplementation("junit", "junit", "4.12")
+        testImplementation("io.kotlintest", "kotlintest-runner-junit5", "3.3.2")
     }
 
     tasks.jar.get().archiveBaseName.set(game)
