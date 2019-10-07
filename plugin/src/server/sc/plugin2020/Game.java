@@ -8,6 +8,7 @@ import sc.api.plugins.IGameState;
 import sc.api.plugins.IMove;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
+import sc.framework.plugins.NamedPlayer;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2020.util.Configuration;
@@ -75,7 +76,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     if(PlayerColor.RED == playerColor && this.gameState.getPlayer(PlayerColor.RED) != null) {
       player = this.gameState.getPlayer(PlayerColor.RED);
     } else if(PlayerColor.BLUE == playerColor && this.gameState.getPlayer(PlayerColor.BLUE) != null) {
-      player = this.gameState.getPlayer(PlayerColor.BLUE);
+      player = this.players.getPlayer(PlayerColor.BLUE);
     } else {
       player = new Player(playerColor);
     }
@@ -98,11 +99,11 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public PlayerScore getScoreFor(Player player) {
     logger.debug("get score for player {} (violated: {})", player.getColor(), player.hasViolated());
-    int[] stats = this.gameState.getPlayerStats(player);
+    int[] stats = this.gameState.getPlayerStats(player.getColor());
     int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
     String reason = null;
-    Player opponent = gameState.getOpponent(player);
+    NamedPlayer opponent = gameState.getOpponent(player);
     if(winCondition != null) {
       PlayerColor winner = winCondition.getWinner();
       reason = winner != null ? winCondition.toString(gameState.getPlayer(winner).getDisplayName()) : winCondition.toString();
@@ -263,8 +264,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       // currentPlayer
       if(this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
         this.gameState.setCurrentPlayerColor(PlayerColor.RED);
-        Player newRed = this.gameState.getPlayer(PlayerColor.BLUE).clone();
-        newRed.setColor(PlayerColor.RED);
+        Player newRed = this.gameState.getPlayer(PlayerColor.BLUE).copy();
         Player newBlue = this.gameState.getPlayer(PlayerColor.RED).clone();
         newBlue.setColor(PlayerColor.BLUE);
         this.gameState.setRed(newRed);
@@ -302,7 +302,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   /** Liste der Spieler. Reihenfolge: RED, BLUE */
   @Override
   public List<Player> getPlayers() {
-    return gameState.getPlayers();
+    return players;
   }
 
   /** Liste der playerScores für jeden Spieler. Reihenfolge: RED, BLUE */

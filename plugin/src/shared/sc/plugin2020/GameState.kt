@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.IMove
 import sc.api.plugins.TwoPlayerGameState
+import sc.framework.plugins.NamedPlayer
 import sc.framework.plugins.Player
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.GameRuleLogic
@@ -11,14 +12,12 @@ import sc.shared.PlayerColor
 
 @XStreamAlias(value = "state")
 data class GameState(
-        override var red: Player = Player(PlayerColor.RED),
-        override var blue: Player = Player(PlayerColor.BLUE),
         override var board: Board = Board(),
         @XStreamAsAttribute
         override var turn: Int = 0,
         private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.RED),
         private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE)
-): TwoPlayerGameState<Player, IMove>(), Cloneable {
+): TwoPlayerGameState<NamedPlayer, IMove>(), Cloneable {
     
     private val allPieces: Collection<Piece>
         get() = undeployedBluePieces + undeployedRedPieces + board.getPieces()
@@ -39,7 +38,7 @@ data class GameState(
         return ownerPieces
     }
     
-    fun addPlayer(player: Player) {
+    fun addPlayer(player: NamedPlayer) {
         when(player.color) {
             PlayerColor.RED -> red = player
             PlayerColor.BLUE -> blue = player
@@ -48,10 +47,6 @@ data class GameState(
     
     override fun getPointsForPlayer(playerColor: PlayerColor): Int {
         return GameRuleLogic.freeBeeNeighbours(this.board, playerColor)
-    }
-    
-    fun getPlayerStats(p: Player): IntArray {
-        return getPlayerStats(p.color)
     }
     
     fun getPlayerStats(playerColor: PlayerColor): IntArray =
