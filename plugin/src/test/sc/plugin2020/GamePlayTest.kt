@@ -856,8 +856,8 @@ class GamePlayTest {
         val xstream = Configuration.xStream
         val xml = """
             |<state startPlayerColor="RED" currentPlayerColor="RED" turn="0">
-            |  <red displayName="" color="RED"/>
-            |  <blue displayName="" color="BLUE"/>
+            |  <red color="RED" displayName=""/>
+            |  <blue color="BLUE" displayName=""/>
             |  <board>
             |    <fields>
             |      <null/>
