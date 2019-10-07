@@ -5,6 +5,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import sc.plugin2020.util.*
+import sc.plugin2020.util.TestJUnitUtil.assertContentEquals
 import sc.plugin2020.util.TestJUnitUtil.assertThrows
 import sc.protocol.responses.RoomPacket
 import sc.shared.InvalidMoveException
@@ -849,15 +850,16 @@ class GamePlayTest {
         state.board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
         state.board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
         TestGameUtil.updateUndeployedPiecesFromBoard(state, true)
-        assertEquals(listOf(Piece(PlayerColor.RED, PieceType.ANT)), state.getDeployedPieces(PlayerColor.RED))
-        assertEquals(listOf(Piece(PlayerColor.BLUE, PieceType.BEE), Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER)), state.getDeployedPieces(PlayerColor.BLUE))
+        assertContentEquals(listOf(Piece(PlayerColor.RED, PieceType.ANT)), state.getDeployedPieces(PlayerColor.RED))
+        assertContentEquals(listOf(Piece(PlayerColor.BLUE, PieceType.BEE), Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER)), state.getDeployedPieces(PlayerColor.BLUE))
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
+        state.blue.displayName = "aBluePlayer"
         val xstream = Configuration.xStream
         val xml = """
             |<state startPlayerColor="RED" currentPlayerColor="RED" turn="0">
             |  <red color="RED" displayName=""/>
-            |  <blue color="BLUE" displayName=""/>
+            |  <blue color="BLUE" displayName="aBluePlayer"/>
             |  <board>
             |    <fields>
             |      <null/>
@@ -1034,9 +1036,9 @@ class GamePlayTest {
             |</state>""".trimMargin()
         assertEquals(xml, xstream.toXML(state))
         val fromXml = xstream.fromXML(xml) as GameState
-        assertEquals(state.board, fromXml.board)
-        assertEquals(state.getUndeployedPieces(PlayerColor.RED), fromXml.getUndeployedPieces(PlayerColor.RED))
-        assertEquals(state.getUndeployedPieces(PlayerColor.BLUE), fromXml.getUndeployedPieces(PlayerColor.BLUE))
+        assertEquals(state, fromXml)
+        assertContentEquals(state.getDeployedPieces(PlayerColor.RED), fromXml.getDeployedPieces(PlayerColor.RED))
+        assertContentEquals(state.getDeployedPieces(PlayerColor.BLUE), fromXml.getDeployedPieces(PlayerColor.BLUE))
     }
     
     @Test
