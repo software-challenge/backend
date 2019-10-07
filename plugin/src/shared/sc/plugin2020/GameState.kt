@@ -11,7 +11,7 @@ import sc.plugin2020.util.GameRuleLogic
 import sc.shared.PlayerColor
 
 @XStreamAlias(value = "state")
-data class GameState(
+data class GameState @JvmOverloads constructor(
         override var red: Player = Player(PlayerColor.RED),
         override var blue: Player = Player(PlayerColor.BLUE),
         override var board: Board = Board(),
@@ -22,10 +22,15 @@ data class GameState(
 ): TwoPlayerGameState<Player, IMove>(), Cloneable {
     
     @XStreamOmitField
-    private val allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
+    private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
     
     val gameStats: Array<IntArray>
-        get() = players.map { getPlayerStats(it) }.toTypedArray()
+        get() = PlayerColor.values().map { getPlayerStats(it) }.toTypedArray()
+    
+    fun readResolve(): GameState {
+        allPieces = undeployedBluePieces + undeployedRedPieces + board.getPieces()
+        return this
+    }
     
     fun getUndeployedPieces(owner: PlayerColor): MutableList<Piece> {
         return when(owner) {
