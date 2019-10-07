@@ -850,7 +850,7 @@ class GamePlayTest {
         state.board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
         TestGameUtil.updateUndeployedPiecesFromBoard(state, true)
         assertEquals(listOf(Piece(PlayerColor.RED, PieceType.ANT)), state.getDeployedPieces(PlayerColor.RED))
-        assertEquals(listOf(Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER), Piece(PlayerColor.BLUE, PieceType.BEE)), state.getDeployedPieces(PlayerColor.BLUE))
+        assertEquals(listOf(Piece(PlayerColor.BLUE, PieceType.BEE), Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER)), state.getDeployedPieces(PlayerColor.BLUE))
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
         val xstream = Configuration.xStream
