@@ -29,8 +29,12 @@ data class Board(
     }
     
     constructor(fields: Collection<Field>): this(gameFieldFromFields(fields))
-    
-    public override fun clone() = Board(fields)
+   
+    /** Copy constructor to create a new deeply copied state from the given [board]. */
+    constructor(board: Board): this(board.fields)
+   
+    /** Creates a deep copy of this [Board]. */
+    public override fun clone() = Board(this)
     
     private fun generateObstructed() {
         val all = this.fields
@@ -87,12 +91,7 @@ data class Board(
     override fun equals(other: Any?): Boolean {
         if(this === other) return true
         if(javaClass != other?.javaClass) return false
-        
-        other as Board
-        
-        if(!gameField.contentDeepEquals(other.gameField)) return false
-        
-        return true
+        return gameField.contentDeepEquals((other as Board).gameField)
     }
     
     override fun hashCode(): Int =

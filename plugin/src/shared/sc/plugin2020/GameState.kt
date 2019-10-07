@@ -19,7 +19,7 @@ data class GameState @JvmOverloads constructor(
         override var turn: Int = 0,
         private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.RED),
         private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE)
-): TwoPlayerGameState<Player, IMove>(), Cloneable {
+): TwoPlayerGameState<Player, IMove>() {
     
     @XStreamOmitField
     private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
@@ -32,6 +32,12 @@ data class GameState @JvmOverloads constructor(
         return this
     }
     
+    /** Copy constructor to create a new deeply copied state from the given [state]. */
+    constructor(state: GameState): this(state.red.clone(), state.blue.clone(), state.board.clone(), state.turn, ArrayList(state.undeployedRedPieces), ArrayList(state.undeployedBluePieces))
+    
+    /** Creates a deep copy of this [GameState]. */
+    public override fun clone() = GameState(this)
+    
     fun getUndeployedPieces(owner: PlayerColor): MutableList<Piece> {
         return when(owner) {
             PlayerColor.RED -> undeployedRedPieces
@@ -40,9 +46,9 @@ data class GameState @JvmOverloads constructor(
     }
     
     fun getDeployedPieces(owner: PlayerColor): List<Piece> {
-        val ownerPieces = allPieces.filterTo(ArrayList()) { it.owner == owner }
-        getUndeployedPieces(owner).forEach { ownerPieces.remove(it) }
-        return ownerPieces
+        val ownedPieces = allPieces.filterTo(ArrayList()) { it.owner == owner }
+        getUndeployedPieces(owner).forEach { ownedPieces.remove(it) }
+        return ownedPieces
     }
     
     fun addPlayer(player: Player) {
