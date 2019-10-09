@@ -61,6 +61,8 @@ class Field(
     
     constructor(field: Field): this(field.x, field.y, field.z, field.pieces.toCollection(Stack()), field.isObstructed)
     
+    public override fun clone() = Field(this)
+    
     override fun equals(other: Any?): Boolean {
         if(this === other) return true
         if(javaClass != other?.javaClass)

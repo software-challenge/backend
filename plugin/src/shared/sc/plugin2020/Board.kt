@@ -124,7 +124,7 @@ data class Board(
                     throw IndexOutOfBoundsException()
                 x = f.coordinates.x + SHIFT
                 y = f.coordinates.y + SHIFT
-                gameField[x][y] = f
+                gameField[x][y] = f.clone()
             }
             return gameField
         }
