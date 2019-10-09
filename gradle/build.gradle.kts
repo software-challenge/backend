@@ -75,20 +75,21 @@ tasks {
             println("""
             ===================================================
             Fertig! Jetzt noch folgende Schritte ausfuehren:
-             - ein Release für die GUI erstellen
-             - auf der Website (http://www.software-challenge.de/wp-admin) unter Medien die Dateien ersetzen
-             - unter Seiten die Downloadseite aktualisieren (neue Version in Versionshistorie eintragen)
+            
+            1. Ein Release für die GUI erstellen
 
-            Dann auf der Wettkampfseite (http://contest.software-challenge.de) was unter Aktuelles schreiben:
+            2. Auf der Wettkampfseite (http://contest.software-challenge.de) was unter Aktuelles schreiben:
 
             Eine neue Version der Software ist verfügbar: $desc
             Dafür gibt es einen neuen Server und Simpleclient im [Download-Bereich der Website][1].
 
             [1]: http://www.software-challenge.de/downloads/
 
-            Dann noch etwas im Discord-Server in #news schreiben:
+            3. Etwas im Discord-Server in #news schreiben:
             Good news @everyone! Neue Version der Software: http://www.software-challenge.de/downloads/
             Highlights: $desc
+            
+            Siehe auch https://www.notion.so/softwarechallenge/Creating-a-Release-1732217fb0234469b3d5653436f357db
             ===================================================""".trimIndent())
         }
     }
