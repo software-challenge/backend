@@ -8,6 +8,7 @@ val year: String by project
 val gameName: String by project
 val deployDir: File by project
 val testLogDir: File by project
+val version = rootProject.version.toString()
 
 sourceSets.main {
     java.srcDir("src")
@@ -35,7 +36,7 @@ tasks {
         with(copySpec {
             from("buildscripts")
             filter {
-                it.replace("VERSION", rootProject.version.toString()).replace("GAME", game).replace("YEAR", year)
+                it.replace("VERSION", version).replace("GAME", game).replace("YEAR", year)
             }
         }, copySpec {
             from(rootDir.resolve("gradlew"), rootDir.resolve("gradlew.bat"))

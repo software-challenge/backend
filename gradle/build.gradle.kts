@@ -10,11 +10,12 @@ plugins {
     id("org.jetbrains.dokka") version "0.9.17"
 }
 
-val gameName = property("socha.gameName") as String
-val versions = arrayOf("year", "mimor", "patch").map { property("socha.version.$it").toString().toInt() }
+val gameName by extra { property("socha.gameName") as String }
+val versions = arrayOf("year", "minor", "patch").map { property("socha.version.$it").toString().toInt() }
 val versionObject = KotlinVersion(versions[0], versions[1], versions[2])
-version = versions.joinToString { it.toString().padStart(2, '0') }
-val game by extra { "${gameName}_${versionObject.major}" }
+version = versions.joinToString(".") { it.toString().padStart(2, '0') }
+val year by extra { "20${versionObject.major}" }
+val game by extra { "${gameName}_$year" }
 println("Current version: $version Game: $game")
 
 val deployDir by extra { buildDir.resolve("deploy") }
@@ -97,7 +98,6 @@ tasks {
     }
     
     val testGame by creating {
-        enabled = versionObject.minor > 0
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {
             testLogDir.mkdirs()
@@ -145,7 +145,6 @@ tasks {
     }
     
     val testTestClient by creating {
-        enabled = versionObject.minor > 0
         dependsOn(clearTestLogs, ":server:deploy")
         val testClientGames = 3
         doFirst {
@@ -173,7 +172,9 @@ tasks {
     }
     
     val integrationTest by creating {
-        dependsOn(testGame, testTestClient)
+        enabled = versionObject.minor > 0
+        if(enabled)
+            dependsOn(testGame, testTestClient)
         group = mainGroup
     }
     
