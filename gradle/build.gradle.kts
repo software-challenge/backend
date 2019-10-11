@@ -61,32 +61,37 @@ tasks {
         group = mainGroup
         description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
         doLast {
+            fun edit(original: String, version: String, new: Int) =
+                    if(original.startsWith("socha.version.$version"))
+                        "socha.version.$version=${new.toString().padStart(2, '0')}"
+                    else original
+            
+            var newVersion = version
             val filter: (String) -> String = when {
                 project.hasProperty("manual") -> ({ it })
                 project.hasProperty("minor") -> ({
-                    if(it.startsWith("socha.version.minor"))
-                        "socha.version.minor=${versionObject.minor.toString().padStart(2, '0')}"
-                    else it
+                    newVersion = "${versionObject.major}.${versionObject.minor + 1}.0"
+                    edit(edit(it, "minor", versionObject.minor + 1), "patch", 0)
                 })
                 project.hasProperty("patch") -> ({
-                    if(it.startsWith("socha.version.patch"))
-                        "socha.version.patch=${versionObject.patch.toString().padStart(2, '0')}"
-                    else it
+                    newVersion = "${versionObject.major}.${versionObject.minor}.${versionObject.patch + 1}"
+                    edit(it, "patch", versionObject.patch + 1)
                 })
                 else -> throw InvalidUserDataException("Gib entweder -Ppatch oder -Pminor an, um die Versionsnummer automatisch zu inkrementieren, oder ändere sie selbst in gradle.properties und gib dann -Pmanual an!")
             }
-            val propsFile = file("gradle.properties")
-            propsFile.readLines().forEach {
-                propsFile.bufferedWriter().appendln(filter(it))
-            }
-            
             val desc = project.properties["desc"]?.toString()
                     ?: throw InvalidUserDataException("Das Argument -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
-            println("Version: $version")
+    
+            val propsFile = file("gradle.properties")
+            propsFile.writeText(
+                    propsFile.readLines().joinToString("\n") { filter(it) }
+            )
+            
+            println("Version: $newVersion")
             println("Beschreibung: $desc")
             exec { commandLine("git", "add", "gradle.properties") }
-            exec { commandLine("git", "commit", "-m", version, "--no-verify") }
-            exec { commandLine("git", "tag", version, "-m", desc) }
+            exec { commandLine("git", "commit", "-m", newVersion, "--no-verify") }
+            exec { commandLine("git", "tag", newVersion, "-m", desc) }
             exec { commandLine("git", "push", "--follow-tags") }
         }
     }

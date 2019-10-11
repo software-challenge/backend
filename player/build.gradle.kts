@@ -90,7 +90,7 @@ tasks {
                 into(execDir)
             }
             val command = arrayListOf("./gradlew", "shadowJar", "--quiet")
-            if(System.getenv("CI") != "true")
+            if(System.getenv("CI") == "true")
                 command.add("--offline")
             testLogDir.mkdirs()
             val process = ProcessBuilder(command).directory(execDir)
