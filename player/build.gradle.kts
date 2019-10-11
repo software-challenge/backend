@@ -77,10 +77,10 @@ tasks {
         args = System.getProperty("args", "").split(" ")
     }
 
-    val playerTest by creating(Test::class) {
+    val playerTest by creating {
         dependsOn(prepareZip)
         val execDir = File(System.getProperty("java.io.tmpdir")).resolve("socha-player")
-        doLast {
+        doFirst {
             execDir.deleteRecursively()
             execDir.mkdirs()
 
@@ -91,8 +91,11 @@ tasks {
             val command = arrayListOf("./gradlew", "shadowJar", "--quiet")
             if(System.getenv("CI") != "true")
                 command.add("--offline")
+            testLogDir.mkdirs()
             val process = ProcessBuilder(command).directory(execDir)
-                    .redirectOutput(testLogDir.resolve("player-shadowJar-build.log")).start()
+                    .redirectOutput(testLogDir.resolve("player-shadowJar-build.log"))
+                    .redirectError(testLogDir.resolve("player-shadowJar-err.log"))
+                    .start()
             val timeout = 5L
             if(process.waitFor(timeout, TimeUnit.MINUTES)) {
                 val result = process.exitValue()

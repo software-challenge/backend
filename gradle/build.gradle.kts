@@ -152,7 +152,7 @@ tasks {
         enabled = false
         dependsOn(clearTestLogs, ":server:deploy")
         val testClientGames = 3
-        doLast {
+        doFirst {
             testLogDir.mkdirs()
             val unzipped = testLogDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
