@@ -60,50 +60,33 @@ tasks {
         group = mainGroup
         description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
         doLast {
-            when {
-                project.hasProperty("manual") -> {}
-                project.hasProperty("patch") -> {
-                
-                }
-                project.hasProperty("minor") -> {
-        
-                }
+            val filter: (String) -> String = when {
+                project.hasProperty("manual") -> ({ it })
+                project.hasProperty("minor") -> ({
+                    if(it.startsWith("socha.version.minor"))
+                        "socha.version.minor=${versionObject.minor.toString().padStart(2, '0')}"
+                    else it
+                })
+                project.hasProperty("patch") -> ({
+                    if(it.startsWith("socha.version.patch"))
+                        "socha.version.patch=${versionObject.patch.toString().padStart(2, '0')}"
+                    else it
+                })
+                else -> throw InvalidUserDataException("Gib entweder -Ppatch oder -Pminor an, um die Versionsnummer automatisch zu inkrementieren, oder ändere sie selbst in gradle.properties und gib dann -Pmanual an!")
             }
-            val v = project.properties["patch"]?.toString()
-                    ?: throw InvalidUserDataException("Gib entweder -Ppatch oder -Pminor an, um die Versionsnummer automatisch zu inkrementieren, oder ändere sie selbst in gradle.properties und gib dann -Pmanual an")
             val propsFile = file("gradle.properties")
-            propsFile.useLines {
-                it
-            }.forEach { propsFile.bufferedWriter().appendln(it) }
+            propsFile.readLines().forEach {
+                propsFile.bufferedWriter().appendln(filter(it))
+            }
+            
             val desc = project.properties["desc"]?.toString()
                     ?: throw InvalidUserDataException("Das Argument -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
             println("Version: $version")
             println("Beschreibung: $desc")
-            file("gradle.properties").writeText(file("gradle.properties").readText()
-                    .replace(Regex("socha.version.*"), "socha.version = $v"))
             exec { commandLine("git", "add", "gradle.properties") }
             exec { commandLine("git", "commit", "-m", version, "--no-verify") }
             exec { commandLine("git", "tag", version, "-m", desc) }
             exec { commandLine("git", "push", "--follow-tags") }
-            println("""
-            ===================================================
-            Fertig! Jetzt noch folgende Schritte ausfuehren:
-            
-            1. Ein Release für die GUI erstellen
-
-            2. Auf der Wettkampfseite (http://contest.software-challenge.de) was unter Aktuelles schreiben:
-
-            Eine neue Version der Software ist verfügbar: $desc
-            Dafür gibt es einen neuen Server und Simpleclient im [Download-Bereich der Website][1].
-
-            [1]: http://www.software-challenge.de/downloads/
-
-            3. Etwas im Discord-Server in #news schreiben:
-            Good news @everyone! Neue Version der Software: http://www.software-challenge.de/downloads/
-            Highlights: $desc
-            
-            Siehe auch https://www.notion.so/softwarechallenge/Creating-a-Release-1732217fb0234469b3d5653436f357db
-            ===================================================""".trimIndent())
         }
     }
     
