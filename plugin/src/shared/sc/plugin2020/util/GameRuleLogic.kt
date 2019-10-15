@@ -51,8 +51,6 @@ object GameRuleLogic {
                 board.getField(move.destination).pieces.push(pieceToIMove)
             }
         }
-        // change active player
-        gameState.currentPlayerColor = gameState.otherPlayerColor
         gameState.turn++
     }
 

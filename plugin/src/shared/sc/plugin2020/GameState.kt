@@ -24,6 +24,9 @@ data class GameState @JvmOverloads constructor(
     @XStreamOmitField
     private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
     
+    override val currentPlayerColor: PlayerColor
+        get() = if(turn.rem(2) == 0) startPlayerColor else startPlayerColor.opponent()
+    
     val gameStats: Array<IntArray>
         get() = PlayerColor.values().map { getPlayerStats(it) }.toTypedArray()
     
