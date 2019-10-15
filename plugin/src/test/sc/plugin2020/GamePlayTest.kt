@@ -23,7 +23,6 @@ class GamePlayTest {
     fun beforeEveryTest() {
         game = Game()
         state = game.gameState
-        state.currentPlayerColor = PlayerColor.RED
     }
     
     @Test
@@ -125,7 +124,7 @@ class GamePlayTest {
                 "    --------------" +
                 "     ------------")
         run {
-            state.currentPlayerColor = PlayerColor.BLUE
+            state.turn = 1
             val move = DragMove(CubeCoordinates(-1, 3), CubeCoordinates(0, 3))
             GameRuleLogic.performMove(state, move)
             assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
@@ -1180,7 +1179,6 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            state.currentPlayerColor = PlayerColor.BLUE
             state.turn = 1
             assertEquals(PieceType.values().size * 5, GameRuleLogic.getPossibleSetMoves(state).size)
         }

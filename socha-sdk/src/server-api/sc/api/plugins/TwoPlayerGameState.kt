@@ -56,6 +56,11 @@ abstract class TwoPlayerGameState<P : Player, M : IMove>(
                 PlayerColor.RED -> red
                 PlayerColor.BLUE -> blue
             }
+    
+    /** Calculates the color of the current player from the [turn] and the [startPlayerColor].
+     * Based on the assumption that the current player switches every turn. */
+    protected fun currentPlayerFromTurn() =
+            if(turn.rem(2) == 0) startPlayerColor else startPlayerColor.opponent()
 
     /** Gibt die angezeigte Punktzahl des Spielers zurueck. */
     abstract fun getPointsForPlayer(playerColor: PlayerColor): Int

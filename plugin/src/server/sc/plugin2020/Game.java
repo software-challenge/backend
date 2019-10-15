@@ -247,29 +247,14 @@ public class Game extends RoundBasedGameInstance<Player> {
     if(gameInfo != null) {
       loadGameInfo(gameInfo);
     }
-    // delete copied
     tmp_replay.delete();
   }
 
-  // XXX test this
   @Override
   public void loadGameInfo(Object gameInfo) {
     logger.info("Processing game information");
     if(gameInfo instanceof GameState) {
       this.gameState = (GameState) gameInfo;
-      // the currentPlayer has to be RED (else the DrawMove request is send to the
-      // wrong player)
-      // if it isn't red, the players have to be switched and red is made
-      // currentPlayer
-      if(this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
-        this.gameState.setCurrentPlayerColor(PlayerColor.RED);
-        Player newRed = this.gameState.getPlayer(PlayerColor.BLUE).clone();
-        newRed.setColor(PlayerColor.RED);
-        Player newBlue = this.gameState.getPlayer(PlayerColor.RED).clone();
-        newBlue.setColor(PlayerColor.BLUE);
-        this.gameState.setRed(newRed);
-        this.gameState.setBlue(newBlue);
-      }
     }
   }
 
