@@ -2,7 +2,6 @@ package sc.plugin2020;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.api.plugins.IMove;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
@@ -99,7 +98,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
    *
    * @param move the move you want to do
    */
-  public void sendMove(IMove move) {
+  public void sendMove(Move move) {
     this.client.sendMessageToRoom(this.roomId, move);
   }
 

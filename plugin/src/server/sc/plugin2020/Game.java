@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.api.plugins.IMove;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.Player;
@@ -55,9 +54,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     // NOTE: Checking if right player sent move was already done by onAction(Player, ProtocolMove)}.
     // There is no need to do it here again.
     try {
-      if(!(data instanceof IMove))
+      if(!(data instanceof Move))
         throw new InvalidMoveException(fromPlayer.getDisplayName() + " hat kein Zug-Objekt gesendet.");
-      final IMove move = (IMove) data;
+      final Move move = (Move) data;
       logger.debug("Performing Move " + move.toString());
       logger.debug("Current Board: " + this.gameState.getBoard().toString());
       GameRuleLogic.performMove(this.gameState, move);

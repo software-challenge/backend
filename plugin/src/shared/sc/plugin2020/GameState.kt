@@ -3,7 +3,6 @@ package sc.plugin2020
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
-import sc.api.plugins.IMove
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.plugin2020.util.Constants
@@ -18,7 +17,7 @@ class GameState @JvmOverloads constructor(
         turn: Int = 0,
         private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.RED),
         private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE)
-): TwoPlayerGameState<Player, IMove>() {
+): TwoPlayerGameState<Player, Move>() {
     
     @XStreamOmitField
     private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()

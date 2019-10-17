@@ -342,8 +342,8 @@ class GamePlayTest {
             state.turn = 6
             val setAnt = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 5))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, setAnt) }
-            val miss = MissMove()
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, miss) }
+            val skip = SkipMove
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, skip) }
             val setBee = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-4, 5))
             assertTrue(GameRuleLogic.validateMove(state, setBee))
         }
@@ -1099,11 +1099,11 @@ class GamePlayTest {
         val xstream = Configuration.xStream
         val xml = """
             <room roomId="64a0482c-f368-4e33-9684-d5106228bb75">
-              <data class="missmove">
+              <data class="skipmove">
               </data>
             </room>"""
         val packet = xstream.fromXML(xml) as RoomPacket
-        val expect = MissMove()
+        val expect = SkipMove
         assertEquals(expect, packet.data)
     }
     
@@ -1237,7 +1237,7 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val invalid = MissMove()
+            val invalid = SkipMove
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid) }
         }
         run {
@@ -1253,7 +1253,7 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val valid = MissMove()
+            val valid = SkipMove
             assertTrue(GameRuleLogic.validateMove(state, valid))
         }
     }

@@ -2,11 +2,11 @@ package sc.player2020.logic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.api.plugins.IMove;
 import sc.framework.plugins.Player;
 import sc.player2020.Starter;
 import sc.plugin2020.GameState;
 import sc.plugin2020.IGameHandler;
+import sc.plugin2020.Move;
 import sc.plugin2020.util.GameRuleLogic;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
@@ -49,7 +49,7 @@ public class Logic implements IGameHandler {
   public void onRequestAction() {
     long startTime = System.currentTimeMillis();
     log.info("Es wurde ein Zug angefordert.");
-    List<IMove> possibleMoves = GameRuleLogic.getPossibleMoves(gameState);
+    List<Move> possibleMoves = GameRuleLogic.getPossibleMoves(gameState);
     sendAction(possibleMoves.get((int) (Math.random() * possibleMoves.size())));
   }
 
@@ -76,7 +76,7 @@ public class Logic implements IGameHandler {
    * {@inheritDoc}
    */
   @Override
-  public void sendAction(IMove move) {
+  public void sendAction(Move move) {
     client.sendMove(move);
   }
 

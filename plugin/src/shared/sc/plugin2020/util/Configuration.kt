@@ -14,7 +14,7 @@ object Configuration {
     @JvmStatic
     val classesToRegister: List<Class<*>>
         get() = listOf(Game::class.java, Board::class.java,
-                GameState::class.java, SetMove::class.java, DragMove::class.java, MissMove::class.java,
+                GameState::class.java, SetMove::class.java, DragMove::class.java, SkipMove::class.java,
                 Direction::class.java, Field::class.java,
                 WelcomeMessage::class.java, Condition::class.java)
 
