@@ -1,6 +1,7 @@
 package sc.server.gaming;
 
 import sc.framework.plugins.Player;
+import sc.networking.clients.XStreamClient;
 import sc.server.network.IClient;
 import sc.shared.SlotDescriptor;
 
@@ -103,8 +104,8 @@ public class PlayerSlot {
     return this.role.getClient();
   }
 
-  public void close() {
-    this.getRoom().removePlayer(this.getRole().getPlayer());
+  public void close(XStreamClient.DisconnectCause cause) {
+    this.getRoom().removePlayer(this.getRole().getPlayer(), cause);
   }
 
 }

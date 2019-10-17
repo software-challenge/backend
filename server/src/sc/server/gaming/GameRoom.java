@@ -15,6 +15,7 @@ import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
+import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.*;
 import sc.server.Configuration;
 import sc.server.network.Client;
@@ -712,9 +713,9 @@ public class GameRoom implements IGameListener {
    *
    * @param player to be removed
    */
-  public void removePlayer(Player player) {
+  public void removePlayer(Player player, XStreamClient.DisconnectCause cause) {
     logger.info("Removing {} from {}", player, this);
-    this.game.onPlayerLeft(player);
+    this.game.onPlayerLeft(player, cause == XStreamClient.DisconnectCause.DISCONNECTED ? ScoreCause.REGULAR : null);
   }
 
   /**

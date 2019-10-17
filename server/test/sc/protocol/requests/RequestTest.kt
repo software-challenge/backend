@@ -318,7 +318,7 @@ class RequestTest : RealServerTest() {
         Assert.assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isNotEmpty() }, 1000))
 
         player1.send(CancelRequest(listener.roomid))
-        Assert.assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isEmpty() }, 1000))
+        Assert.assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isEmpty() }, 3000))
         Assert.assertEquals(0, lobby.gameManager.games.size.toLong())
     }
 
@@ -359,8 +359,6 @@ class RequestTest : RealServerTest() {
         TestHelper.waitMillis(2000)
         room = gameMgr.games.iterator().next()
         Assert.assertFalse(room.slots[0].role.player.isCanTimeout)
-
-
     }
 
     @Test

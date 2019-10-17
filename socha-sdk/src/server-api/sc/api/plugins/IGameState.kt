@@ -25,7 +25,7 @@ import sc.protocol.responses.ProtocolMessage
  *
  * @author Niklas, Sören, Janek
  */
-interface IGameState : ProtocolMessage {
+interface IGameState : ProtocolMessage, Cloneable {
     /** Aktuelle Zugzahl  */
     val turn: Int
 

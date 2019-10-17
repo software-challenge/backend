@@ -1,13 +1,12 @@
-import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.InputStream
-import java.util.concurrent.TimeUnit
 
 plugins {
     maven
     `java-library`
-    kotlin("jvm") version "1.3.11"
-    id("com.github.ben-manes.versions") version "0.20.0"
+    kotlin("jvm") version "1.3.50"
+    id("com.github.ben-manes.versions") version "0.24.0"
     id("org.jetbrains.dokka") version "0.9.17"
 }
 
@@ -18,7 +17,8 @@ version = year.substring(2) + "." + property("socha.version")
 println("Current version: $version Game: $game")
 
 val deployDir by extra { buildDir.resolve("deploy") }
-val deployedClient: String by extra { deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath }
+val deployedPlayer: String by extra { deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath }
+val testLogDir by extra { buildDir.resolve("tests") }
 
 subprojects {
     apply(plugin = "java-library")
@@ -28,14 +28,16 @@ subprojects {
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 val mainGroup = "_main"
 tasks {
-    create("startServer") {
+    val startServer by creating {
         dependsOn(":server:run")
         group = mainGroup
     }
 
     val doc by creating(DokkaTask::class) {
+        val includedProjects = arrayOf("sdk", "plugin")
+        mustRunAfter(includedProjects.map { "$it:classes" })
         moduleName = "Software-Challenge API $version"
-        val sourceSets = arrayOf("sdk", "plugin").map { project(it).sourceSets.main.get() }
+        val sourceSets = includedProjects.map { project(it).sourceSets.main.get() }
         sourceDirs = files(sourceSets.map { it.java.sourceDirectories })
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
@@ -49,10 +51,10 @@ tasks {
         dependsOn(doc)
         dependOnSubprojects()
         group = mainGroup
-        description = "Zips everything up for release into build/deploy"
+        description = "Zips everything up for release into ./build/deploy"
     }
 
-    create("release") {
+    val release by creating {
         dependsOn(deploy)
         group = mainGroup
         description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
@@ -67,58 +69,60 @@ tasks {
             file("gradle.properties").writeText(file("gradle.properties").readText()
                     .replace(Regex("socha.version.*"), "socha.version = $v"))
             exec { commandLine("git", "add", "gradle.properties") }
-            exec { commandLine("git", "commit", "-m", version) }
+            exec { commandLine("git", "commit", "-m", version, "--no-verify") }
             exec { commandLine("git", "tag", version, "-m", desc) }
             exec { commandLine("git", "push", "--follow-tags") }
             println("""
             ===================================================
             Fertig! Jetzt noch folgende Schritte ausfuehren:
-             - einen Release für die GUI erstellen
-             - auf der Website (http://www.software-challenge.de/wp-admin) unter Medien die Dateien ersetzen
-             - unter Seiten die Downloadseite aktualisieren (neue Version in Versionshistorie eintragen)
+            
+            1. Ein Release für die GUI erstellen
 
-            Dann auf der Wettkampfseite (http://contest.software-challenge.de) was unter Aktuelles schreiben:
+            2. Auf der Wettkampfseite (http://contest.software-challenge.de) was unter Aktuelles schreiben:
 
             Eine neue Version der Software ist verfügbar: $desc
             Dafür gibt es einen neuen Server und Simpleclient im [Download-Bereich der Website][1].
 
             [1]: http://www.software-challenge.de/downloads/
 
-            Dann noch etwas im Discord-Server in #news schreiben:
+            3. Etwas im Discord-Server in #news schreiben:
             Good news @everyone! Neue Version der Software: http://www.software-challenge.de/downloads/
             Highlights: $desc
+            
+            Siehe auch https://www.notion.so/softwarechallenge/Creating-a-Release-1732217fb0234469b3d5653436f357db
             ===================================================""".trimIndent())
         }
     }
 
-    val testDeployed by creating {
-        dependsOn(deploy)
-        group = mainGroup
-        val testDir = buildDir.resolve("tests")
-        doLast {
-            val gameWaitSeconds = 150L
-            val testClientGames = 3
+    val maxGameLength = 150L
 
-            testDir.deleteRecursively()
-            testDir.mkdirs()
+    val clearTestLogs by creating(Delete::class) {
+        delete(testLogDir)
+    }
+
+    val testGame by creating {
+        enabled = false
+        dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
+        doFirst {
+            testLogDir.mkdirs()
             val server = ProcessBuilder("java", "-Dlogback.configurationFile=logback.xml", "-jar",
                     project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath)
-                    .redirectOutput(testDir.resolve("server.log")).redirectError(testDir.resolve("server-err.log"))
+                    .redirectOutput(testLogDir.resolve("server.log")).redirectError(testLogDir.resolve("server-err.log"))
                     .directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(1000)
             val startClient: (Int) -> Process = {
-                ProcessBuilder("java", "-jar", deployedClient)
-                        .redirectOutput(testDir.resolve("client$it.log")).redirectError(testDir.resolve("client$it-err.log")).start()
+                ProcessBuilder("java", "-jar", deployedPlayer)
+                        .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
             startClient(2)
             val thread = Thread {
                 try {
-                    Thread.sleep(gameWaitSeconds * 1000)
+                    Thread.sleep(maxGameLength * 1000)
                 } catch(e: InterruptedException) {
                     return@Thread
                 }
-                println("testDeployed has been running for over $gameWaitSeconds seconds - killing server!")
+                println("$this has been running for over $maxGameLength seconds - killing server!")
                 server.destroyForcibly()
             }.apply {
                 isDaemon = true
@@ -131,37 +135,50 @@ tasks {
                         if(!server.isAlive)
                             throw Exception("Server terminated unexpectedly!")
                         Thread.sleep(200)
-                    } while(!testDir.resolve("client$i.log").readText().contains("Received game result", true))
+                    } while(!testLogDir.resolve("client$i.log").readText().contains("Received game result", true))
                 }
             } catch(t: Throwable) {
-                println("Error in testDeployed - check the logs in $testDir")
+                println("Error in $this - check the logs in $testLogDir")
                 throw t
             } finally {
                 server.destroy()
             }
             thread.interrupt()
             println("Successfully played a game using the deployed server & client!")
+        }
+    }
 
-            val unzipped = deployDir.resolve("software-challenge-server")
+    val testTestClient by creating {
+        enabled = false
+        dependsOn(clearTestLogs, ":server:deploy")
+        val testClientGames = 3
+        doFirst {
+            testLogDir.mkdirs()
+            val unzipped = testLogDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
             Runtime.getRuntime().exec("unzip software-challenge-server.zip -d $unzipped", null, deployDir).waitFor()
 
             println("Testing TestClient...")
             val testClient = ProcessBuilder(
-                    project("test-client").tasks.getByName("createScripts", ScriptsTask::class).content.split(" ") +
+                    project("test-client").tasks.getByName<ScriptsTask>("createScripts").content.split(" ") +
                             listOf("--start-server", "--tests", "$testClientGames"))
-                    .redirectOutput(testDir.resolve("test-client.log")).redirectError(testDir.resolve("test-client-err.log"))
+                    .redirectOutput(testLogDir.resolve("test-client.log")).redirectError(testLogDir.resolve("test-client-err.log"))
                     .directory(unzipped).start()
-            if(testClient.waitFor(gameWaitSeconds * testClientGames, TimeUnit.SECONDS)) {
+            if(testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
                 if(value == 0)
                     println("TestClient successfully tested!")
                 else
                     throw Exception("TestClient exited with exit code $value!")
             } else {
-                throw Exception("TestClient exceeded timeout of ${gameWaitSeconds * testClientGames} seconds!")
+                throw Exception("TestClient exceeded timeout of ${maxGameLength * testClientGames} seconds!")
             }
         }
+    }
+
+    val integrationTest by creating {
+        dependsOn(testGame, testTestClient)
+        group = mainGroup
     }
 
     clean {
@@ -170,18 +187,22 @@ tasks {
     }
     test {
         dependOnSubprojects()
-        dependsOn(testDeployed)
+        dependsOn(integrationTest)
         group = mainGroup
     }
     build {
         group = mainGroup
     }
-    replace("run").dependsOn(testDeployed)
+    replace("run").dependsOn(integrationTest)
 }
 
 // == Cross-project configuration ==
 
 allprojects {
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    
     repositories {
         jcenter()
         maven("http://dist.wso2.org/maven2")
@@ -257,6 +278,7 @@ project("plugin") {
         api(project(":sdk"))
 
         testImplementation("junit", "junit", "4.12")
+        testImplementation("io.kotlintest", "kotlintest-runner-junit5", "3.3.2")
     }
 
     tasks.jar.get().archiveBaseName.set(game)
