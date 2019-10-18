@@ -17,7 +17,7 @@ class GameState @JvmOverloads constructor(
         turn: Int = 0,
         private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.RED),
         private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE)
-): TwoPlayerGameState<Player, Move>() {
+): TwoPlayerGameState<Player>() {
     
     @XStreamOmitField
     private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
@@ -29,9 +29,11 @@ class GameState @JvmOverloads constructor(
     @XStreamAsAttribute
     override var turn = turn
         set(value) {
-            currentPlayerColor = currentPlayerFromTurn()
             field = value
+            currentPlayerColor = currentPlayerFromTurn()
         }
+    
+    override var lastMove: Move? = null
     
     val gameStats: Array<IntArray>
         get() = PlayerColor.values().map { getPlayerStats(it) }.toTypedArray()

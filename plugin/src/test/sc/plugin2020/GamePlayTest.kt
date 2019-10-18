@@ -854,9 +854,16 @@ class GamePlayTest {
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
         state.blue.displayName = "aBluePlayer"
+        state.turn = 3
+        assertEquals(PlayerColor.BLUE, state.currentPlayerColor)
+        state.lastMove = SetMove(Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER), CubeCoordinates(-2, 4))
         val xstream = Configuration.xStream
         val xml = """
-            |<state startPlayerColor="RED" currentPlayerColor="RED" turn="0">
+            |<state startPlayerColor="RED" currentPlayerColor="BLUE" turn="3">
+            |  <lastMove class="setmove">
+            |    <piece owner="BLUE" type="GRASSHOPPER"/>
+            |    <destination x="-2" y="4" z="-2"/>
+            |  </lastMove>
             |  <red color="RED" displayName=""/>
             |  <blue color="BLUE" displayName="aBluePlayer"/>
             |  <board>

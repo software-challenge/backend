@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
 import sc.shared.PlayerColor
 
-abstract class TwoPlayerGameState<P : Player, M : IMove>(
+abstract class TwoPlayerGameState<P : Player>(
         /** Farbe des Startspielers. */
         @XStreamAsAttribute val startPlayerColor: PlayerColor = PlayerColor.RED
 ) : IGameState {
@@ -46,7 +46,7 @@ abstract class TwoPlayerGameState<P : Player, M : IMove>(
         get() = arrayOf(red.displayName, blue.displayName)
 
     /** Letzter getaetigter Zug. */
-    var lastMove: M? = null
+    abstract val lastMove: IMove?
 
     fun getOpponent(player: P) =
             getPlayer(player.color.opponent())

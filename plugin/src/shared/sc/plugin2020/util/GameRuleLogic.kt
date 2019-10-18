@@ -51,6 +51,7 @@ object GameRuleLogic {
             }
         }
         gameState.turn++
+        gameState.lastMove = move
     }
 
     @JvmStatic
