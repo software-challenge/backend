@@ -1095,7 +1095,7 @@ class GamePlayTest {
     }
     
     @Test
-    fun xmlToMissMoveTest() {
+    fun xmlToSkipMoveTest() {
         val xstream = Configuration.xStream
         val xml = """
             <room roomId="64a0482c-f368-4e33-9684-d5106228bb75">

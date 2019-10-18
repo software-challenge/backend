@@ -81,14 +81,14 @@ object GameRuleLogic {
         when (move) {
             is SetMove -> validateSetMove(gameState, move)
             is DragMove -> validateDragMove(gameState, move)
-            is SkipMove -> validateMissMove(gameState)
+            is SkipMove -> validateSkipMove(gameState)
         }
         return true
     }
     
-    private fun validateMissMove(gameState: GameState): Boolean {
+    private fun validateSkipMove(gameState: GameState): Boolean {
         if(this.getPossibleMoves(gameState).isNotEmpty())
-            throw InvalidMoveException("Missing a turn is only allowed when no other moves can be made.")
+            throw InvalidMoveException("Skipping a turn is only allowed when no other moves can be made.")
         if(gameState.round == 3 && !hasPlayerPlacedBee(gameState))
             throw InvalidMoveException("The bee must be placed in fourth round latest")
         return true
