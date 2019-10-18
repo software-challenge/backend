@@ -25,11 +25,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This class is used to handle all communication with a server. It is used in a
- * client (e.g. the java simple client). It is also used to represent
- * observer-threads started by the server which connect to the server. The
- * server always has a Client object for every
- * LobbyClient representing the client on the server-side.
+ * This class is used to handle all communication with a server.
+ *
+ * - It is used in a client (e.g. the java simple client).
+ * - It is also used to represent observer-threads started by the server which connect to the server.
+ *
+ * The server always has a Client object for every LobbyClient representing the client on the server-side.
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private static final Logger logger = LoggerFactory.getLogger(LobbyClient.class);
@@ -71,7 +72,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   @Override
   protected final void onObject(ProtocolMessage o) {
     if (o == null) {
-      logger.warn("Received null object.");
+      logger.warn("Received null message.");
       return;
     }
 
@@ -111,7 +112,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       onError(response.getMessage(), response);
     } else if (o instanceof ObservationProtocolMessage) {
       String roomId = ((ObservationProtocolMessage) o).getRoomId();
-
       onGameObserved(roomId);
     } else if (o instanceof TestModeMessage) { // for handling testing
       boolean testMode = (((TestModeMessage) o).testMode);
@@ -281,7 +281,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
                                           Class<? extends ProtocolMessage> response) throws InterruptedException {
     final RequestResult requestResult = new RequestResult();
     final Object beacon = new Object();
-    synchronized (beacon) {
+    synchronized(beacon) {
       IRequestResult blockingHandler = new IRequestResult() {
 
         @Override
@@ -297,7 +297,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
         }
 
         private void notifySemaphore() {
-          synchronized (beacon) {
+          synchronized(beacon) {
             beacon.notify();
           }
         }
@@ -318,12 +318,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   public IControllableGame observeAndControl(PrepareGameProtocolMessage handle) {
-    IControllableGame result = new ControllingClient(this,
-            handle.getRoomId());
+    String roomId = handle.getRoomId();
+    IControllableGame result = new ControllingClient(this, roomId);
     start();
-    logger.debug("sending observation request with handle.roomId {}",
-            handle.getRoomId());
-    send(new ObservationRequest(handle.getRoomId()));
+    logger.debug("Sending observation request for roomId: {}", roomId);
+    send(new ObservationRequest(roomId));
     result.pause();
     return result;
   }
