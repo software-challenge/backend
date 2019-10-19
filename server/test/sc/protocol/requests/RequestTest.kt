@@ -1,7 +1,7 @@
 package sc.protocol.requests
 
 import com.thoughtworks.xstream.XStream
-import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import sc.framework.plugins.RoundBasedGameInstance
@@ -39,7 +39,7 @@ class RequestTest : RealServerTest() {
             TestHelper.waitMillis(200)
             player3 = connectClient("localhost", serverPort)
             TestHelper.waitMillis(200)
-        } catch (e: Exception) {
+        } catch(e: Exception) {
             // happens if port is already in use
             e.printStackTrace()
         }
@@ -50,7 +50,7 @@ class RequestTest : RealServerTest() {
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
 
         TestHelper.assertEqualsWithTimeout(1, { lobby.gameManager.games.size })
-        Assert.assertEquals(1, lobby.gameManager.games.iterator().next().clients.size.toLong())
+        assertEquals(1, lobby.gameManager.games.iterator().next().clients.size.toLong())
     }
 
     @Test
@@ -58,15 +58,15 @@ class RequestTest : RealServerTest() {
         player1.authenticate(PASSWORD)
         TestHelper.waitMillis(200)
         val clients = lobby.clientManager.clients
-        Assert.assertTrue(clients[0].isAdministrator)
-        Assert.assertEquals(3, lobby.clientManager.clients.size.toLong())
+        assertTrue(clients[0].isAdministrator)
+        assertEquals(3, lobby.clientManager.clients.size.toLong())
 
         player2.authenticate("PASSWORD_FAIL_TEST")
         TestHelper.waitMillis(200)
 
         //Player2 got kicked
-        Assert.assertEquals(2, lobby.clientManager.clients.size.toLong())
-        Assert.assertFalse(clients[1].isAdministrator)
+        assertEquals(2, lobby.clientManager.clients.size.toLong())
+        assertFalse(clients[1].isAdministrator)
     }
 
     @Test
@@ -77,11 +77,11 @@ class RequestTest : RealServerTest() {
         player1.addListener(listener)
 
         TestHelper.waitMillis(200)
-        Assert.assertNotNull(listener.response)
+        assertNotNull(listener.response)
 
-        Assert.assertEquals(1, lobby.gameManager.games.size.toLong())
-        Assert.assertEquals(0, lobby.gameManager.games.iterator().next().clients.size.toLong())
-        Assert.assertTrue(lobby.gameManager.games.iterator().next().isPauseRequested)
+        assertEquals(1, lobby.gameManager.games.size.toLong())
+        assertEquals(0, lobby.gameManager.games.iterator().next().clients.size.toLong())
+        assertTrue(lobby.gameManager.games.iterator().next().isPauseRequested)
 
     }
 
@@ -98,8 +98,8 @@ class RequestTest : RealServerTest() {
                 "  <slot displayName=\"Häschenschule\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +
                 "  <slot displayName=\"Testhase\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +
                 "</prepare>")
-        Assert.assertEquals(PrepareGameRequest::class.java, request.javaClass)
-        Assert.assertEquals("Häschenschule", (request as PrepareGameRequest).slotDescriptors[0].displayName)
+        assertEquals(PrepareGameRequest::class.java, request.javaClass)
+        assertEquals("Häschenschule", (request as PrepareGameRequest).slotDescriptors[0].displayName)
     }
 
     @Test
@@ -115,15 +115,15 @@ class RequestTest : RealServerTest() {
         val reservation = response.reservations[0]
         player1.joinPreparedGame(reservation)
         TestHelper.waitMillis(200)
-        Assert.assertEquals(1, lobby.gameManager.games.iterator().next().clients.size.toLong())
+        assertEquals(1, lobby.gameManager.games.iterator().next().clients.size.toLong())
 
         player2.joinPreparedGame(response.reservations[1])
         TestHelper.waitMillis(200)
-        Assert.assertEquals(2, lobby.gameManager.games.iterator().next().clients.size.toLong())
+        assertEquals(2, lobby.gameManager.games.iterator().next().clients.size.toLong())
 
         player3.joinPreparedGame(response.reservations[1])
         TestHelper.waitMillis(200)
-        Assert.assertEquals(2, lobby.clientManager.clients.size.toLong())
+        assertEquals(2, lobby.clientManager.clients.size.toLong())
     }
 
     @Test
@@ -142,12 +142,12 @@ class RequestTest : RealServerTest() {
 
         val roles = lobby.clientManager.clients[2].roles.iterator()
         var hasRole = false
-        while (roles.hasNext()) {
-            if (roles.next() is ObserverRole) {
+        while(roles.hasNext()) {
+            if(roles.next() is ObserverRole) {
                 hasRole = true
             }
         }
-        Assert.assertTrue(hasRole)
+        assertTrue(hasRole)
     }
 
     @Test
@@ -184,25 +184,25 @@ class RequestTest : RealServerTest() {
         // Wait for the server to register that
         TestHelper.waitUntilTrue({ room.isPauseRequested }, 2000)
 
-        Assert.assertTrue(room.isPauseRequested)
+        assertTrue(room.isPauseRequested)
         val pr1 = room.slots[0].role
         val pr2 = room.slots[1].role
-        Assert.assertTrue(pr1.player.isShouldBePaused)
-        Assert.assertTrue(pr2.player.isShouldBePaused)
+        assertTrue(pr1.player.isShouldBePaused)
+        assertTrue(pr2.player.isShouldBePaused)
 
 
         // Wait for it to register
         // no state will be send if game is paused TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000);
         listener.newStateReceived = false
 
-        Assert.assertTrue(TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000))
+        assertTrue(TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000))
         p1Listener.playerEventReceived = false
-        Assert.assertEquals(p1Listener.requests.size.toLong(), 1)
-        Assert.assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
+        assertEquals(p1Listener.requests.size.toLong(), 1)
+        assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
 
         player1.sendMessageToRoom(room.id, TestMove(1))
         TestHelper.waitMillis(100)
-        Assert.assertEquals(room.status, GameRoom.GameStatus.OVER)
+        assertEquals(room.status, GameRoom.GameStatus.OVER)
     }
 
     @Test
@@ -241,18 +241,18 @@ class RequestTest : RealServerTest() {
 
         val pr1 = room.slots[0].role
         val pr2 = room.slots[1].role
-        Assert.assertTrue(pr1.player.isShouldBePaused)
-        Assert.assertTrue(pr2.player.isShouldBePaused)
+        assertTrue(pr1.player.isShouldBePaused)
+        assertTrue(pr2.player.isShouldBePaused)
 
 
         // Wait for it to register
         // no state will be send if game is paused TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000);
         listener.newStateReceived = false
 
-        Assert.assertTrue(TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000))
+        assertTrue(TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000))
         p1Listener.playerEventReceived = false
-        Assert.assertEquals(p1Listener.requests.size.toLong(), 1)
-        Assert.assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
+        assertEquals(p1Listener.requests.size.toLong(), 1)
+        assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
 
         // enabling this should result in a GameLogicException
         // player1.sendMessageToRoom(room.getId(), new TestMove(1));
@@ -292,17 +292,17 @@ class RequestTest : RealServerTest() {
         TestHelper.waitMillis(500)
 
         // There should not come another request
-        Assert.assertTrue(p1Listener.playerEventReceived)
-        Assert.assertNotEquals(p2Listener.requests[p2Listener.requests.size - 1].javaClass, TestTurnRequest::class.java)
+        assertTrue(p1Listener.playerEventReceived)
+        assertNotEquals(p2Listener.requests[p2Listener.requests.size - 1].javaClass, TestTurnRequest::class.java)
 
         // Should not result in a new game state
-        Assert.assertFalse(listener.newStateReceived)
+        assertFalse(listener.newStateReceived)
         p1Listener.playerEventReceived = false
         p2Listener.playerEventReceived = false
         listener.newStateReceived = false
 
         // Game should be deleted, because player3 send invalid move
-        Assert.assertEquals(0L, lobby.gameManager.games.size.toLong())
+        assertEquals(0L, lobby.gameManager.games.size.toLong())
 
     }
 
@@ -315,11 +315,11 @@ class RequestTest : RealServerTest() {
         player1.addListener(listener)
 
         // Wait for messages to get to server
-        Assert.assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isNotEmpty() }, 1000))
+        assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isNotEmpty() }, 1000))
 
-        player1.send(CancelRequest(listener.roomid))
-        Assert.assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isEmpty() }, 3000))
-        Assert.assertEquals(0, lobby.gameManager.games.size.toLong())
+        player1.send(CancelRequest(listener.roomId))
+        assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isEmpty() }, 3000))
+        assertEquals(0, lobby.gameManager.games.size.toLong())
     }
 
     @Test
@@ -353,12 +353,12 @@ class RequestTest : RealServerTest() {
 
         TestHelper.waitUntilEqual(1, { lobby.gameManager.games.size }, 2000)
         var room = gameMgr.games.iterator().next()
-        Assert.assertTrue(room.slots[0].role.player.isCanTimeout)
+        assertTrue(room.slots[0].role.player.isCanTimeout)
         val req = ControlTimeoutRequest(room.id, false, 0)
         player1.send(req)
         TestHelper.waitMillis(2000)
         room = gameMgr.games.iterator().next()
-        Assert.assertFalse(room.slots[0].role.player.isCanTimeout)
+        assertFalse(room.slots[0].role.player.isCanTimeout)
     }
 
     @Test
@@ -381,11 +381,11 @@ class RequestTest : RealServerTest() {
         splayer2.addPlayerListener(p2Listener)
         splayer2.displayName = "player2..."
 
-        Assert.assertFalse(room.isPauseRequested)
+        assertFalse(room.isPauseRequested)
         TestHelper.waitUntilEqual(2, { p1Listener.requests.size }, 2000)
-        Assert.assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
+        assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
         TestHelper.waitMillis(500)
-        Assert.assertEquals(p1Listener.requests[1].javaClass, TestTurnRequest::class.java)
+        assertEquals(p1Listener.requests[1].javaClass, TestTurnRequest::class.java)
         listener.newStateReceived = false
 
         player1.send(PauseGameRequest(room.id, true))
@@ -394,7 +394,7 @@ class RequestTest : RealServerTest() {
         player1.sendMessageToRoom(room.id, TestMove(42))
         TestHelper.waitMillis(1000)
         // assert that (if the game is paused) no new gameState is send to the observers after a pending Request was received
-        Assert.assertFalse(listener.newStateReceived)
+        assertFalse(listener.newStateReceived)
 
 
         p1Listener.playerEventReceived = false
@@ -404,8 +404,8 @@ class RequestTest : RealServerTest() {
 
 
         TestHelper.waitMillis(500)
-        Assert.assertTrue(p2Listener.playerEventReceived)
-        Assert.assertEquals(p2Listener.requests[p2Listener.requests.size - 1].javaClass,
+        assertTrue(p2Listener.playerEventReceived)
+        assertEquals(p2Listener.requests[p2Listener.requests.size - 1].javaClass,
                 TestTurnRequest::class.java)
     }
 
