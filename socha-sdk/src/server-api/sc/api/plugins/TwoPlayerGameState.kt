@@ -6,7 +6,10 @@ import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
 import sc.shared.PlayerColor
 
-abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
+abstract class TwoPlayerGameState<P : Player>(
+        /** Farbe des Startspielers. */
+        @XStreamAsAttribute val startPlayerColor: PlayerColor = PlayerColor.RED
+) : IGameState {
 
     abstract val red: P
     abstract val blue: P
@@ -14,14 +17,9 @@ abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
 
     @XStreamOmitField
     private val logger = LoggerFactory.getLogger(TwoPlayerGameState::class.java)
-
-    /** Farbe des Startspielers  */
-    @XStreamAsAttribute
-    open var startPlayerColor: PlayerColor = PlayerColor.RED
-
-    /** Farbe des Spielers, der aktuell am Zug ist */
-    @XStreamAsAttribute
-    open var currentPlayerColor: PlayerColor = PlayerColor.RED
+    
+    /** Farbe des Spielers, der aktuell am Zug ist. */
+    abstract val currentPlayerColor: PlayerColor
 
     /** Liste der Spieler. Reihenfolge: RED, BLUE */
     val players: List<P>
@@ -48,7 +46,7 @@ abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
         get() = arrayOf(red.displayName, blue.displayName)
 
     /** Letzter getaetigter Zug. */
-    var lastMove: M? = null
+    abstract val lastMove: IMove?
 
     fun getOpponent(player: P) =
             getPlayer(player.color.opponent())
@@ -58,6 +56,11 @@ abstract class TwoPlayerGameState<P : Player, M : IMove> : IGameState {
                 PlayerColor.RED -> red
                 PlayerColor.BLUE -> blue
             }
+    
+    /** Calculates the color of the current player from the [turn] and the [startPlayerColor].
+     * Based on the assumption that the current player switches every turn. */
+    protected fun currentPlayerFromTurn() =
+            if(turn.rem(2) == 0) startPlayerColor else startPlayerColor.opponent()
 
     /** Gibt die angezeigte Punktzahl des Spielers zurueck. */
     abstract fun getPointsForPlayer(playerColor: PlayerColor): Int

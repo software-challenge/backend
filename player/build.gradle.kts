@@ -27,9 +27,9 @@ tasks {
     shadowJar {
         archiveFileName.set("defaultplayer.jar")
     }
-
+    
     replace("jar").dependsOn(shadowJar.get())
-
+    
     val prepareZip by creating(Copy::class) {
         dependsOn(":sdk:doc", ":plugin:doc")
         into(buildDir.resolve("zip"))
@@ -57,9 +57,9 @@ tasks {
             from(project(":sdk").buildDir.resolve("doc"))
             into("doc/sdk")
         })
-
+        
     }
-
+    
     val deploy by creating(Zip::class) {
         dependsOn(shadowJar.get(), prepareZip)
         destinationDirectory.set(deployDir)
@@ -73,25 +73,23 @@ tasks {
             }
         }
     }
-
+    
     run.configure {
         args = System.getProperty("args", "").split(" ")
     }
-
+    
     val playerTest by creating {
         dependsOn(prepareZip)
         val execDir = File(System.getProperty("java.io.tmpdir")).resolve("socha-player")
         doFirst {
             execDir.deleteRecursively()
             execDir.mkdirs()
-
+            
             copy {
                 from(prepareZip.destinationDir)
                 into(execDir)
             }
-            val command = arrayListOf("./gradlew", "shadowJar", "--quiet")
-            if(System.getenv("CI") == "true")
-                command.add("--offline")
+            val command = arrayListOf("./gradlew", "shadowJar", "--quiet", "--offline")
             testLogDir.mkdirs()
             val process = ProcessBuilder(command).directory(execDir)
                     .redirectOutput(testLogDir.resolve("player-shadowJar-build.log"))
@@ -108,9 +106,9 @@ tasks {
             println("Successfully generated client jar from shipped source")
         }
     }
-
+    
     test {
         dependsOn(playerTest)
     }
-
+    
 }

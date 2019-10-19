@@ -1,6 +1,5 @@
 package sc.plugin2020.util
 
-import sc.api.plugins.IMove
 import sc.plugin2020.*
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerColor
@@ -37,7 +36,7 @@ object GameRuleLogic {
     }
 
     @JvmStatic
-    fun performMove(gameState: GameState, move: IMove) {
+    fun performMove(gameState: GameState, move: Move) {
         validateMove(gameState, move)
         // apply move
         when (move) {
@@ -47,13 +46,12 @@ object GameRuleLogic {
             }
             is DragMove -> {
                 val board = gameState.board
-                val pieceToIMove = board.getField(move.start).pieces.pop()
-                board.getField(move.destination).pieces.push(pieceToIMove)
+                val pieceToMove = board.getField(move.start).pieces.pop()
+                board.getField(move.destination).pieces.push(pieceToMove)
             }
         }
-        // change active player
-        gameState.currentPlayerColor = gameState.otherPlayerColor
         gameState.turn++
+        gameState.lastMove = move
     }
 
     @JvmStatic
@@ -80,18 +78,18 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateMove(gameState: GameState, move: IMove): Boolean {
+    fun validateMove(gameState: GameState, move: Move): Boolean {
         when (move) {
             is SetMove -> validateSetMove(gameState, move)
             is DragMove -> validateDragMove(gameState, move)
-            is MissMove -> validateMissMove(gameState)
+            is SkipMove -> validateSkipMove(gameState)
         }
         return true
     }
     
-    private fun validateMissMove(gameState: GameState): Boolean {
+    private fun validateSkipMove(gameState: GameState): Boolean {
         if(this.getPossibleMoves(gameState).isNotEmpty())
-            throw InvalidMoveException("Missing a turn is only allowed when no other moves can be made.")
+            throw InvalidMoveException("Skipping a turn is only allowed when no other moves can be made.")
         if(gameState.round == 3 && !hasPlayerPlacedBee(gameState))
             throw InvalidMoveException("The bee must be placed in fourth round latest")
         return true
@@ -338,11 +336,11 @@ object GameRuleLogic {
             board.fields.none { it.pieces.isNotEmpty() }
 
     @JvmStatic
-    fun getPossibleMoves(gameState: GameState): List<IMove> =
+    fun getPossibleMoves(gameState: GameState): List<Move> =
             this.getPossibleSetMoves(gameState) + this.getPossibleDragMoves(gameState)
 
     @JvmStatic
-    fun getPossibleDragMoves(gameState: GameState): List<IMove> =
+    fun getPossibleDragMoves(gameState: GameState): List<Move> =
             gameState.board.getFieldsOwnedBy(gameState.currentPlayerColor).flatMap { startField ->
                 val edgeTargets: Set<CubeCoordinates> = this.getEmptyFieldsConnectedToSwarm(gameState.board)
                 val additionalTargets: Set<CubeCoordinates> = if (startField.pieces.lastElement().type == PieceType.BEETLE) {
@@ -374,7 +372,7 @@ object GameRuleLogic {
                     .toSet()
                     .filter { this.getNeighbours(board, it).all { it.owner != owner.opponent() } }
 
-    fun getPossibleSetMoves(gameState: GameState): List<IMove> {
+    fun getPossibleSetMoves(gameState: GameState): List<Move> {
         val undeployed = gameState.getUndeployedPieces(gameState.currentPlayerColor)
         val setDestinations = if (undeployed.size == Constants.STARTING_PIECES.length) {
             // current player has not placed any pieces yet (first or second turn)

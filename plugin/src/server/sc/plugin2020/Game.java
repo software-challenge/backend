@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.api.plugins.IMove;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.Player;
@@ -55,9 +54,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     // NOTE: Checking if right player sent move was already done by onAction(Player, ProtocolMove)}.
     // There is no need to do it here again.
     try {
-      if(!(data instanceof IMove))
+      if(!(data instanceof Move))
         throw new InvalidMoveException(fromPlayer.getDisplayName() + " hat kein Zug-Objekt gesendet.");
-      final IMove move = (IMove) data;
+      final Move move = (Move) data;
       logger.debug("Performing Move " + move.toString());
       logger.debug("Current Board: " + this.gameState.getBoard().toString());
       GameRuleLogic.performMove(this.gameState, move);
@@ -247,29 +246,14 @@ public class Game extends RoundBasedGameInstance<Player> {
     if(gameInfo != null) {
       loadGameInfo(gameInfo);
     }
-    // delete copied
     tmp_replay.delete();
   }
 
-  // XXX test this
   @Override
   public void loadGameInfo(Object gameInfo) {
     logger.info("Processing game information");
     if(gameInfo instanceof GameState) {
       this.gameState = (GameState) gameInfo;
-      // the currentPlayer has to be RED (else the DrawMove request is send to the
-      // wrong player)
-      // if it isn't red, the players have to be switched and red is made
-      // currentPlayer
-      if(this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
-        this.gameState.setCurrentPlayerColor(PlayerColor.RED);
-        Player newRed = this.gameState.getPlayer(PlayerColor.BLUE).clone();
-        newRed.setColor(PlayerColor.RED);
-        Player newBlue = this.gameState.getPlayer(PlayerColor.RED).clone();
-        newBlue.setColor(PlayerColor.BLUE);
-        this.gameState.setRed(newRed);
-        this.gameState.setBlue(newBlue);
-      }
     }
   }
 

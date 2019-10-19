@@ -23,7 +23,6 @@ class GamePlayTest {
     fun beforeEveryTest() {
         game = Game()
         state = game.gameState
-        state.currentPlayerColor = PlayerColor.RED
     }
     
     @Test
@@ -125,7 +124,7 @@ class GamePlayTest {
                 "    --------------" +
                 "     ------------")
         run {
-            state.currentPlayerColor = PlayerColor.BLUE
+            state.turn = 1
             val move = DragMove(CubeCoordinates(-1, 3), CubeCoordinates(0, 3))
             GameRuleLogic.performMove(state, move)
             assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
@@ -343,8 +342,8 @@ class GamePlayTest {
             state.turn = 6
             val setAnt = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 5))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, setAnt) }
-            val miss = MissMove()
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, miss) }
+            val skip = SkipMove
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, skip) }
             val setBee = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-4, 5))
             assertTrue(GameRuleLogic.validateMove(state, setBee))
         }
@@ -855,9 +854,16 @@ class GamePlayTest {
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
         assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
         state.blue.displayName = "aBluePlayer"
+        state.turn = 3
+        assertEquals(PlayerColor.BLUE, state.currentPlayerColor)
+        state.lastMove = SetMove(Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER), CubeCoordinates(-2, 4))
         val xstream = Configuration.xStream
         val xml = """
-            |<state startPlayerColor="RED" currentPlayerColor="RED" turn="0">
+            |<state startPlayerColor="RED" currentPlayerColor="BLUE" turn="3">
+            |  <lastMove class="setmove">
+            |    <piece owner="BLUE" type="GRASSHOPPER"/>
+            |    <destination x="-2" y="4" z="-2"/>
+            |  </lastMove>
             |  <red color="RED" displayName=""/>
             |  <blue color="BLUE" displayName="aBluePlayer"/>
             |  <board>
@@ -1096,15 +1102,15 @@ class GamePlayTest {
     }
     
     @Test
-    fun xmlToMissMoveTest() {
+    fun xmlToSkipMoveTest() {
         val xstream = Configuration.xStream
         val xml = """
             <room roomId="64a0482c-f368-4e33-9684-d5106228bb75">
-              <data class="missmove">
+              <data class="skipmove">
               </data>
             </room>"""
         val packet = xstream.fromXML(xml) as RoomPacket
-        val expect = MissMove()
+        val expect = SkipMove
         assertEquals(expect, packet.data)
     }
     
@@ -1180,7 +1186,6 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            state.currentPlayerColor = PlayerColor.BLUE
             state.turn = 1
             assertEquals(PieceType.values().size * 5, GameRuleLogic.getPossibleSetMoves(state).size)
         }
@@ -1239,7 +1244,7 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val invalid = MissMove()
+            val invalid = SkipMove
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid) }
         }
         run {
@@ -1255,7 +1260,7 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val valid = MissMove()
+            val valid = SkipMove
             assertTrue(GameRuleLogic.validateMove(state, valid))
         }
     }

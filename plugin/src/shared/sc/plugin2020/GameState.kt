@@ -3,7 +3,6 @@ package sc.plugin2020
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
-import sc.api.plugins.IMove
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.plugin2020.util.Constants
@@ -11,18 +10,30 @@ import sc.plugin2020.util.GameRuleLogic
 import sc.shared.PlayerColor
 
 @XStreamAlias(value = "state")
-data class GameState @JvmOverloads constructor(
+class GameState @JvmOverloads constructor(
         override var red: Player = Player(PlayerColor.RED),
         override var blue: Player = Player(PlayerColor.BLUE),
         override var board: Board = Board(),
-        @XStreamAsAttribute
-        override var turn: Int = 0,
+        turn: Int = 0,
         private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.RED),
         private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE)
-): TwoPlayerGameState<Player, IMove>() {
+): TwoPlayerGameState<Player>() {
     
     @XStreamOmitField
     private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
+    
+    @XStreamAsAttribute
+    override var currentPlayerColor: PlayerColor = currentPlayerFromTurn()
+        private set
+    
+    @XStreamAsAttribute
+    override var turn = turn
+        set(value) {
+            field = value
+            currentPlayerColor = currentPlayerFromTurn()
+        }
+    
+    override var lastMove: Move? = null
     
     val gameStats: Array<IntArray>
         get() = PlayerColor.values().map { getPlayerStats(it) }.toTypedArray()
@@ -71,8 +82,34 @@ data class GameState @JvmOverloads constructor(
     
     override fun toString(): String = "GameState Zug $turn"
     
+    override fun equals(other: Any?): Boolean {
+        if(this === other) return true
+        if(other !is GameState) return false
+        
+        if(red != other.red) return false
+        if(blue != other.blue) return false
+        if(board != other.board) return false
+        if(undeployedRedPieces != other.undeployedRedPieces) return false
+        if(undeployedBluePieces != other.undeployedBluePieces) return false
+        if(allPieces.size != other.allPieces.size || !allPieces.containsAll(other.allPieces)) return false
+        if(turn != other.turn) return false
+        
+        return true
+    }
+    
+    override fun hashCode(): Int {
+        var result = red.hashCode()
+        result = 31 * result + blue.hashCode()
+        result = 31 * result + board.hashCode()
+        result = 31 * result + undeployedRedPieces.hashCode()
+        result = 31 * result + undeployedBluePieces.hashCode()
+        result = 31 * result + allPieces.hashCode()
+        result = 31 * result + turn
+        return result
+    }
+    
     companion object {
-        public fun parsePiecesString(s: String, p: PlayerColor): ArrayList<Piece> {
+        fun parsePiecesString(s: String, p: PlayerColor): ArrayList<Piece> {
             val l = ArrayList<Piece>()
             for(c in s.toCharArray()) {
                 when(c) {
