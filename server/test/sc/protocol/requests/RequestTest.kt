@@ -308,18 +308,20 @@ class RequestTest : RealServerTest() {
 
     @Test
     fun cancelRequest() {
-        player1.authenticate(PASSWORD)
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         val listener = TestLobbyClientListener()
         player1.addListener(listener)
 
-        // Wait for messages to get to server
+        player1.authenticate(PASSWORD)
+        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+
+        // Wait for server to go
         assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isNotEmpty() }, 1000))
+        assertTrue(TestHelper.waitUntilTrue({ listener.roomId != null }, 2000))
 
         player1.send(CancelRequest(listener.roomId))
-        assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isEmpty() }, 3000))
-        assertEquals(0, lobby.gameManager.games.size.toLong())
+        assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isEmpty() }, 10000))
+        assertEquals(0, lobby.gameManager.games.size)
     }
 
     @Test
