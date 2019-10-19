@@ -103,9 +103,12 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       this.rooms.add(roomId);
       onGameJoined(roomId);
     } else if (o instanceof LeftGameEvent) {
+      logger.info("Received LeftGameEvent");
       String roomId = ((LeftGameEvent) o).getRoomId();
       this.rooms.remove(roomId);
       onGameLeft(roomId);
+      logger.info(listeners.toString());
+      logger.info("Left {}", roomId);
     } else if (o instanceof ProtocolErrorMessage) {
       ProtocolErrorMessage response = (ProtocolErrorMessage) o;
 
