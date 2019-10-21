@@ -181,7 +181,7 @@ public class TestClient extends XStreamClient {
 
     logger.trace("Received {}", message);
     if (message instanceof TestModeMessage) {
-      boolean testMode = (((TestModeMessage) message).testMode);
+      boolean testMode = (((TestModeMessage) message).getTestMode());
       logger.debug("TestMode was set to {} - starting clients", testMode);
       prepareNewClients();
     } else if (message instanceof RoomPacket) {
