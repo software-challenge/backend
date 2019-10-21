@@ -11,7 +11,7 @@ import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
 import sc.plugin2020.util.Constants;
-import sc.protocol.LobbyProtocol;
+import sc.protocol.helpers.LobbyProtocol;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;

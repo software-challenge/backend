@@ -8,7 +8,7 @@ import sc.api.plugins.host.IRequestResult;
 import sc.framework.plugins.Player;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
-import sc.protocol.LobbyProtocol;
+import sc.protocol.helpers.LobbyProtocol;
 import sc.protocol.helpers.AsyncResultManager;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.requests.*;

@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.io.xml.KXml2Driver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.helpers.RuntimeJarLoader;
-import sc.protocol.LobbyProtocol;
+import sc.protocol.helpers.LobbyProtocol;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;
