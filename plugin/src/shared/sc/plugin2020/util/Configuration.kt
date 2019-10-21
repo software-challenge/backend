@@ -2,7 +2,7 @@ package sc.plugin2020.util
 
 import com.thoughtworks.xstream.XStream
 import sc.plugin2020.*
-import sc.protocol.LobbyProtocol
+import sc.protocol.helpers.LobbyProtocol
 import sc.shared.WelcomeMessage
 import java.util.concurrent.locks.Condition
 

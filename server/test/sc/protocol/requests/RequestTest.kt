@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import sc.framework.plugins.RoundBasedGameInstance
 import sc.networking.clients.LobbyClient
-import sc.protocol.LobbyProtocol
+import sc.protocol.helpers.LobbyProtocol
 import sc.protocol.responses.ProtocolMessage
 import sc.server.Configuration
 import sc.server.client.PlayerListener
