@@ -51,13 +51,15 @@ public class ScoreFragment {
   public boolean equals(Object o) {
     if (o instanceof ScoreFragment) {
       ScoreFragment fragment = (ScoreFragment) o;
-      if (this.getName().equals(fragment.getName()) &&
+      return this.getName().equals(fragment.getName()) &&
               this.getAggregation().equals(fragment.getAggregation()) &&
-              this.isRelevantForRanking() == fragment.isRelevantForRanking()) {
-        return true;
-      }
+              this.isRelevantForRanking() == fragment.isRelevantForRanking();
     }
     return false;
   }
 
+  @Override
+  public String toString() {
+    return String.format("ScoreFragment{name='%s', aggregation=%s, relevantForRanking=%s}", name, aggregation, relevantForRanking);
+  }
 }
