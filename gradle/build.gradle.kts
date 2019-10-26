@@ -79,8 +79,8 @@ tasks {
                 })
                 else -> throw InvalidUserDataException("Gib entweder -Ppatch oder -Pminor an, um die Versionsnummer automatisch zu inkrementieren, oder ändere sie selbst in gradle.properties und gib dann -Pmanual an!")
             }
-            val desc = project.properties["desc"]?.toString()
-                    ?: throw InvalidUserDataException("Das Argument -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
+            val desc = project.properties["m"]?.toString()
+                    ?: throw InvalidUserDataException("Das Argument -Pm=\"Beschreibung dieser Version\" wird benötigt")
     
             val propsFile = file("gradle.properties")
             propsFile.writeText(
