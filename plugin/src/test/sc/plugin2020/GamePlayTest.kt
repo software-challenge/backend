@@ -109,8 +109,7 @@ class GamePlayTest {
     }
     
     @Test
-    @Ignore
-    fun redBeeSourroundedTest() {
+    fun redBeeSurroundedTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
                 "     RQBQ--------" +
                 "    BB------------" +
@@ -125,7 +124,7 @@ class GamePlayTest {
                 "     ------------")
         run {
             state.turn = 1
-            val move = DragMove(CubeCoordinates(-1, 3), CubeCoordinates(0, 3))
+            val move = DragMove(CubeCoordinates(-1, 4), CubeCoordinates(0, 4))
             GameRuleLogic.performMove(state, move)
             assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
         }
