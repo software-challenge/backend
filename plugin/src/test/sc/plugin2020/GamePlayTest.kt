@@ -859,10 +859,6 @@ class GamePlayTest {
         val xstream = Configuration.xStream
         val xml = """
             |<state startPlayerColor="RED" currentPlayerColor="BLUE" turn="3">
-            |  <lastMove class="setmove">
-            |    <piece owner="BLUE" type="GRASSHOPPER"/>
-            |    <destination x="-2" y="4" z="-2"/>
-            |  </lastMove>
             |  <red color="RED" displayName=""/>
             |  <blue color="BLUE" displayName="aBluePlayer"/>
             |  <board>
@@ -1038,6 +1034,10 @@ class GamePlayTest {
             |    <piece owner="BLUE" type="ANT"/>
             |    <piece owner="BLUE" type="ANT"/>
             |  </undeployedBluePieces>
+            |  <lastMove class="setmove">
+            |    <piece owner="BLUE" type="GRASSHOPPER"/>
+            |    <destination x="-2" y="4" z="-2"/>
+            |  </lastMove>
             |</state>""".trimMargin()
         assertEquals(xml, xstream.toXML(state))
         val fromXml = xstream.fromXML(xml) as GameState

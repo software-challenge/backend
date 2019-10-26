@@ -29,5 +29,9 @@ class CloneTest: StringSpec({
         clone shouldBe state
         clone shouldNotBeSameInstanceAs state
         clone.getDeployedPieces(PlayerColor.RED) shouldBe state.getDeployedPieces(PlayerColor.RED)
+        clone.currentPlayerColor shouldBe state.currentPlayerColor
+        clone.currentPlayer shouldNotBeSameInstanceAs state.currentPlayer
+        clone.lastMove shouldBe state.lastMove
+        clone.board shouldBe state.board
     }
 })

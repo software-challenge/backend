@@ -16,7 +16,8 @@ class GameState @JvmOverloads constructor(
         override var board: Board = Board(),
         turn: Int = 0,
         private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.RED),
-        private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE)
+        private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE),
+        override var lastMove: Move? = null
 ): TwoPlayerGameState<Player>() {
     
     @XStreamOmitField
@@ -33,8 +34,6 @@ class GameState @JvmOverloads constructor(
             currentPlayerColor = currentPlayerFromTurn()
         }
     
-    override var lastMove: Move? = null
-    
     val gameStats: Array<IntArray>
         get() = PlayerColor.values().map { getPlayerStats(it) }.toTypedArray()
     
@@ -44,7 +43,7 @@ class GameState @JvmOverloads constructor(
     }
     
     /** Copy constructor to create a new deeply copied state from the given [state]. */
-    constructor(state: GameState): this(state.red.clone(), state.blue.clone(), state.board.clone(), state.turn, ArrayList(state.undeployedRedPieces), ArrayList(state.undeployedBluePieces))
+    constructor(state: GameState): this(state.red.clone(), state.blue.clone(), state.board.clone(), state.turn, ArrayList(state.undeployedRedPieces), ArrayList(state.undeployedBluePieces), state.lastMove)
     
     /** Creates a deep copy of this [GameState]. */
     public override fun clone() = GameState(this)
