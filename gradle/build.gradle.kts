@@ -153,8 +153,10 @@ tasks {
         dependsOn(clearTestLogs, ":server:deploy")
         val testClientGames = 3
         doFirst {
+            val tmpDir = buildDir.resolve("tmp")
+            tmpDir.mkdirs()
             testLogDir.mkdirs()
-            val unzipped = testLogDir.resolve("software-challenge-server")
+            val unzipped = tmpDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
             Runtime.getRuntime().exec("unzip software-challenge-server.zip -d $unzipped", null, deployDir).waitFor()
             

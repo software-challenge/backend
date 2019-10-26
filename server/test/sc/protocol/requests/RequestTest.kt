@@ -3,6 +3,7 @@ package sc.protocol.requests
 import com.thoughtworks.xstream.XStream
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import sc.framework.plugins.RoundBasedGameInstance
 import sc.networking.clients.LobbyClient
@@ -307,6 +308,7 @@ class RequestTest : RealServerTest() {
     }
 
     @Test
+    @Ignore
     fun cancelRequest() {
         player1.authenticate(PASSWORD)
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
