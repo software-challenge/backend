@@ -1229,7 +1229,7 @@ class GamePlayTest {
     }
     
     @Test
-    fun missMoveTest() {
+    fun skipMoveTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
@@ -1262,5 +1262,24 @@ class GamePlayTest {
             val valid = SkipMove
             assertTrue(GameRuleLogic.validateMove(state, valid))
         }
+    }
+    
+    @Test
+    fun undeployedPiecesCloneTest() {
+        run {
+            val redMove = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-5, 0, 5))
+            GameRuleLogic.performMove(state, redMove);
+            val clone = GameState(state)
+            val blueMove = SetMove(Piece(PlayerColor.BLUE, PieceType.BEE), CubeCoordinates(-4, -1, 5))
+            assertTrue(GameRuleLogic.validateMove(clone, blueMove))
+        }
+    }
+    
+    @Test
+    fun currentPlayerCloneTest() {
+        state.turn++
+        val clone = GameState(state)
+        assertEquals(state.turn, clone.turn)
+        assertEquals(PlayerColor.BLUE, clone.currentPlayerColor)
     }
 }
