@@ -90,8 +90,8 @@ tasks {
             println("Version: $newVersion")
             println("Beschreibung: $desc")
             exec { commandLine("git", "add", "gradle.properties") }
-            exec { commandLine("git", "commit", "-m", newVersion, "--no-verify") }
-            exec { commandLine("git", "tag", newVersion, "-m", "release: $desc") }
+            exec { commandLine("git", "commit", "-m", "release: $newVersion", "--no-verify") }
+            exec { commandLine("git", "tag", newVersion, "-m", "$desc") }
             exec { commandLine("git", "push", "--follow-tags") }
         }
     }
