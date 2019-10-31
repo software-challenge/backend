@@ -24,15 +24,15 @@ class GameState @JvmOverloads constructor(
     private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
     
     @XStreamAsAttribute
-    override var currentPlayerColor: PlayerColor = currentPlayerFromTurn()
-        private set
-    
-    @XStreamAsAttribute
     override var turn = turn
         set(value) {
             field = value
             currentPlayerColor = currentPlayerFromTurn()
         }
+    
+    @XStreamAsAttribute
+    override var currentPlayerColor: PlayerColor = currentPlayerFromTurn()
+        private set
     
     val gameStats: Array<IntArray>
         get() = PlayerColor.values().map { getPlayerStats(it) }.toTypedArray()
@@ -92,6 +92,7 @@ class GameState @JvmOverloads constructor(
         if(undeployedBluePieces != other.undeployedBluePieces) return false
         if(allPieces.size != other.allPieces.size || !allPieces.containsAll(other.allPieces)) return false
         if(turn != other.turn) return false
+        if(currentPlayerColor != other.currentPlayerColor) return false
         
         return true
     }

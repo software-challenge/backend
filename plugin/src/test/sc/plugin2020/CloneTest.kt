@@ -34,4 +34,13 @@ class CloneTest: StringSpec({
         clone.lastMove shouldBe state.lastMove
         clone.board shouldBe state.board
     }
+    "clone another Game state" {
+        val state = Game().gameState
+        state.turn++
+        state.currentPlayerColor shouldBe PlayerColor.BLUE
+        val clone = GameState(state)
+        clone shouldBe state
+        clone.turn shouldBe 1
+        clone.currentPlayerColor shouldBe state.currentPlayerColor
+    }
 })

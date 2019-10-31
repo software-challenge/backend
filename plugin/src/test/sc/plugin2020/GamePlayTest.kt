@@ -1275,11 +1275,4 @@ class GamePlayTest {
         }
     }
     
-    @Test
-    fun currentPlayerCloneTest() {
-        state.turn++
-        val clone = GameState(state)
-        assertEquals(state.turn, clone.turn)
-        assertEquals(PlayerColor.BLUE, clone.currentPlayerColor)
-    }
 }
