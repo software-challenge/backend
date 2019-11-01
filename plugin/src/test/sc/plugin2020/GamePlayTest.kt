@@ -858,7 +858,7 @@ class GamePlayTest {
         state.lastMove = SetMove(Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER), CubeCoordinates(-2, 4))
         val xstream = Configuration.xStream
         val xml = """
-            |<state startPlayerColor="RED" currentPlayerColor="BLUE" turn="3">
+            |<state startPlayerColor="RED" turn="3" currentPlayerColor="BLUE">
             |  <red color="RED" displayName=""/>
             |  <blue color="BLUE" displayName="aBluePlayer"/>
             |  <board>
