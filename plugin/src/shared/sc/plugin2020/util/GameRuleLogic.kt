@@ -88,7 +88,7 @@ object GameRuleLogic {
     }
     
     private fun validateSkipMove(gameState: GameState): Boolean {
-        if(this.getPossibleMoves(gameState).isNotEmpty())
+        if(this.getPossibleMoves(gameState).any { it !is SkipMove })
             throw InvalidMoveException("Skipping a turn is only allowed when no other moves can be made.")
         if(gameState.round == 3 && !hasPlayerPlacedBee(gameState))
             throw InvalidMoveException("The bee must be placed in fourth round latest")
@@ -337,7 +337,9 @@ object GameRuleLogic {
 
     @JvmStatic
     fun getPossibleMoves(gameState: GameState): List<Move> =
-            this.getPossibleSetMoves(gameState) + this.getPossibleDragMoves(gameState)
+            (this.getPossibleSetMoves(gameState) + this.getPossibleDragMoves(gameState)).ifEmpty {
+                listOf(SkipMove)
+            }
 
     @JvmStatic
     fun getPossibleDragMoves(gameState: GameState): List<Move> =

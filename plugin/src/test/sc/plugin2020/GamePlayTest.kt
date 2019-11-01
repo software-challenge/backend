@@ -1261,6 +1261,7 @@ class GamePlayTest {
                     "     ------------")
             val valid = SkipMove
             assertTrue(GameRuleLogic.validateMove(state, valid))
+            assertEquals(GameRuleLogic.getPossibleMoves(state), listOf(SkipMove))
         }
     }
     
