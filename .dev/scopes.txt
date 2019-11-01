@@ -1,0 +1,10 @@
+readme
+git
+gradle
+travis
+player
+plugin
+server
+sdk
+framework
+protocol

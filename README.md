@@ -3,6 +3,7 @@
 Das offizielle Repository der [Software-Challenge](https://www.software-challenge.de/), welches aus Server, Client und Spiel-Plugins besteht.
 
 ## Struktur
+
 | Ordner | Beschreibung |
 | ------ | ------------ |
 | helpers | Zusätzliche Tools (z.B. der TestClient) |
@@ -10,6 +11,15 @@ Das offizielle Repository der [Software-Challenge](https://www.software-challeng
 | plugin | Plugin dieses Jahres |
 | server | Spielserver |
 | socha-sdk | Projektübergreifend verwendete Klassen |
+
+## Collaboration
+
+Wir nutzen den type-scope commit message Syntax nach [Karma Runner](http://karma-runner.github.io/4.0/dev/git-commit-msg.html), wobei die verfügbaren scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden.  
+Bitte führe nach dem klonen des repositories einmal folgendes im Terminal aus, damit die entsprechenden git hooks aktiv werden:  
+ `git config core.hooksPath .dev/githooks`
+
+Um bei den Branches die Übersicht zu behalten ist es hilfreich, diese ebenfalls ähnlich dieser Konvention zu benennen, also könnte ein Branch mit einem Release-fix für gradle `fix/gradle-release` heißen und ein Branch, der ein neues login-feature zum server hinzufügt, `feat/server-login`.  
+Branches werden normalerweise beim mergen gesquashed, außer die einzelnen commits des branches haben jeweils eine alleinstehende Aussagekraft.
 
 ## Build
 
