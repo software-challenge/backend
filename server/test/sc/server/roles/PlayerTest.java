@@ -27,7 +27,7 @@ public class PlayerTest extends AbstractRoleTest {
     Client client = connectClient();
 
     this.lobby.onRequest(client, new PacketCallback(new JoinRoomRequest(
-            TestPlugin.TEST_PLUGIN_UUID)));
+            TestPlugin.TEST_PLUGIN_UUID)), System.nanoTime() / 1000000);
 
     Assert.assertEquals(1, this.gameMgr.getGames().size());
     Assert.assertEquals(1, client.getRoles().size());
@@ -39,9 +39,9 @@ public class PlayerTest extends AbstractRoleTest {
     MockClient player2 = connectClient();
 
     this.lobby.onRequest(player1, new PacketCallback(new JoinRoomRequest(
-            TestPlugin.TEST_PLUGIN_UUID)));
+            TestPlugin.TEST_PLUGIN_UUID)), System.nanoTime() / 1000000);
     this.lobby.onRequest(player2, new PacketCallback(new JoinRoomRequest(
-            TestPlugin.TEST_PLUGIN_UUID)));
+            TestPlugin.TEST_PLUGIN_UUID)), System.nanoTime() / 1000000);
 
     Assert.assertEquals(1, this.gameMgr.getGames().size());
 
@@ -69,15 +69,16 @@ public class PlayerTest extends AbstractRoleTest {
     SlotDescriptor slot1 = new SlotDescriptor("player1", true, false);
     SlotDescriptor slot2 = new SlotDescriptor("player2", true, false);
 
-    this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, slot1, slot2)));
+    this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, slot1, slot2)),
+            System.nanoTime() / 1000000);
     PrepareGameProtocolMessage prepared = admin.seekMessage(PrepareGameProtocolMessage.class);
 
     this.lobby.onRequest(observer, new PacketCallback(
-            new ObservationRequest(prepared.getRoomId())));
+            new ObservationRequest(prepared.getRoomId())), System.nanoTime() / 1000000);
     this.lobby.onRequest(player1, new PacketCallback(
-            new JoinPreparedRoomRequest(prepared.getReservations().get(0))));
+            new JoinPreparedRoomRequest(prepared.getReservations().get(0))), System.nanoTime() / 1000000);
     this.lobby.onRequest(player2, new PacketCallback(
-            new JoinPreparedRoomRequest(prepared.getReservations().get(1))));
+            new JoinPreparedRoomRequest(prepared.getReservations().get(1))), System.nanoTime() / 1000000);
 
     String roomId = player1.seekMessage(JoinGameProtocolMessage.class).getRoomId();
     String roomId2 = player2.seekMessage(JoinGameProtocolMessage.class)
@@ -112,7 +113,7 @@ public class PlayerTest extends AbstractRoleTest {
     // Do the move
     player1.seekRoomMessage(roomId, TestTurnRequest.class);
     this.lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
-            new TestMove(this.firstState))));
+            new TestMove(this.firstState))), System.nanoTime() / 1000000);
 
     // Check Player 1
     MementoPacket memento1 = player1.seekRoomMessage(roomId,
@@ -134,7 +135,7 @@ public class PlayerTest extends AbstractRoleTest {
           throws RescuableClientException, InvalidGameStateException {
     player.seekRoomMessage(roomId, TestTurnRequest.class);
     this.lobby.onRequest(player, new PacketCallback(new RoomPacket(roomId,
-            new TestMove(123456))));
+            new TestMove(123456))), System.nanoTime() / 1000000);
   }
 
   private void shouldPropagateSecondPlayersMove(String roomId,
@@ -143,7 +144,7 @@ public class PlayerTest extends AbstractRoleTest {
     // Do the move
     player2.seekRoomMessage(roomId, TestTurnRequest.class);
     this.lobby.onRequest(player2, new PacketCallback(new RoomPacket(roomId,
-            new TestMove(this.secondState))));
+            new TestMove(this.secondState))), System.nanoTime() / 1000000);
 
     // Player 1
     MementoPacket memento1 = player1.seekRoomMessage(roomId,

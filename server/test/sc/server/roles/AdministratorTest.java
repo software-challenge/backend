@@ -38,7 +38,7 @@ public class AdministratorTest extends AbstractRoleTest
 		try
 		{
 			this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
-					WRONG_PASSWORD)));
+					WRONG_PASSWORD)), System.nanoTime() / 1000000);
 			Assert.fail("No exception was thrown");
 		}
 		catch (RescuableClientException e)
@@ -59,7 +59,7 @@ public class AdministratorTest extends AbstractRoleTest
 		try
 		{
 			this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
-					CORRECT_PASSWORD)));
+					CORRECT_PASSWORD)), System.nanoTime() / 1000000);
 		}
 		catch (RescuableClientException e)
 		{
@@ -74,7 +74,7 @@ public class AdministratorTest extends AbstractRoleTest
 		Client client = connectAsAdmin();
 
 		this.lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID)));
+				TestPlugin.TEST_PLUGIN_UUID)), System.nanoTime() / 1000000);
 
 		Assert.assertEquals(1, this.gameMgr.getGames().size());
 	}
