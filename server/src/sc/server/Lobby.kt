@@ -56,7 +56,7 @@ class Lobby : IClientListener {
 
     /** handle requests or moves of clients  */
     @Throws(RescuableClientException::class, InvalidGameStateException::class)
-    override fun onRequest(source: Client, callback: PacketCallback) {
+    override fun onRequest(source: Client, callback: PacketCallback, time: Long) {
         val packet = callback.packet
         if (packet is ILobbyRequest) {
             when (packet) {
@@ -82,7 +82,7 @@ class Lobby : IClientListener {
                 is RoomPacket -> {
                     // i.e. new move
                     val room = this.gameManager.findRoom(packet.roomId)
-                    room.onEvent(source, packet.data)
+                    room.onEvent(source, packet.data, time)
                 }
                 is ObservationRequest -> if (source.isAdministrator) {
                     val room = this.gameManager.findRoom(packet.roomId)

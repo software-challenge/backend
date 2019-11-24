@@ -84,13 +84,15 @@ public class Client extends XStreamClient implements IClient {
      * in the receiver thread.
      */
 
+    long time = System.nanoTime() / 1000000;
+
     Collection<RescuableClientException> errors = new ArrayList<>();
 
     PacketCallback callback = new PacketCallback(packet);
 
     for (IClientListener listener : this.clientListeners) {
       try {
-        listener.onRequest(this, callback);
+        listener.onRequest(this, callback, time);
       } catch (RescuableClientException e) {
         errors.add(e);
       }

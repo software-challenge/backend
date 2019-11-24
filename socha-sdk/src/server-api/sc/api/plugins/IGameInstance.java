@@ -34,7 +34,7 @@ public interface IGameInstance {
    * @throws GameLogicException   if any invalid action is done
    * @throws InvalidMoveException if the received move violates the rules
    */
-  void onAction(Player fromPlayer, ProtocolMessage data)
+  void onAction(Player fromPlayer, ProtocolMessage data, long time)
           throws GameLogicException, InvalidGameStateException, InvalidMoveException;
 
   /**

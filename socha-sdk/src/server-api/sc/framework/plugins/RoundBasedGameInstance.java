@@ -49,12 +49,12 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
    *
    * @throws GameLogicException if any invalid action is done, i.e. game rule violation
    */
-  public final void onAction(Player fromPlayer, ProtocolMessage data)
+  public final void onAction(Player fromPlayer, ProtocolMessage data, long time)
           throws GameLogicException, InvalidGameStateException, InvalidMoveException {
     Optional<String> errorMsg = Optional.empty();
     if (fromPlayer.equals(this.activePlayer)) {
       if (wasMoveRequested()) {
-        this.requestTimeout.stop();
+        this.requestTimeout.stop(time);
 
         if (this.requestTimeout.didTimeout()) {
           logger.warn("Client hit soft-timeout.");
@@ -101,7 +101,7 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
     logger.info("Destroying Game");
 
     if (this.requestTimeout != null) {
-      this.requestTimeout.stop();
+      this.requestTimeout.stop(System.nanoTime() / 1000000);
       this.requestTimeout = null;
     }
   }

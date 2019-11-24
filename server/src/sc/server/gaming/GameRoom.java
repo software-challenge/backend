@@ -485,12 +485,12 @@ public class GameRoom implements IGameListener {
    *
    * @throws RescuableClientException
    */
-  public synchronized void onEvent(Client source, ProtocolMessage data) throws RescuableClientException, InvalidGameStateException {
+  public synchronized void onEvent(Client source, ProtocolMessage data, long time) throws RescuableClientException, InvalidGameStateException {
     if (isOver())
       throw new RescuableClientException("Game is already over, but got data: " + data.getClass());
 
     try {
-      this.game.onAction(resolvePlayer(source), data);
+      this.game.onAction(resolvePlayer(source), data, time);
     } catch (InvalidMoveException e) {
       this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.move, e.getMessage())));
       throw new GameLogicException(e.toString());

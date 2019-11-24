@@ -74,7 +74,7 @@ public class ActionTimeout {
     return false;
   }
 
-  public synchronized void stop() {
+  public synchronized void stop(long time) {
     if (this.status == Status.NEW) {
       throw new IllegalStateException("Timeout was never started.");
     }
@@ -84,7 +84,7 @@ public class ActionTimeout {
       return;
     }
 
-    this.stopTimestamp = System.nanoTime() / 1000000; // in milliseconds
+    this.stopTimestamp = time; // in milliseconds
     this.status = Status.STOPPED;
 
     if (this.timeoutThread != null) {
@@ -103,7 +103,7 @@ public class ActionTimeout {
         public void run() {
           try {
             Thread.sleep(getHardTimeout());
-            stop();
+            stop(System.nanoTime() / 1000000);
             onTimeout.run();
           } catch (InterruptedException e) {
             logger.info("HardTimout wasn't reached.");

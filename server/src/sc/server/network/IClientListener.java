@@ -14,7 +14,7 @@ public interface IClientListener {
   void onClientDisconnected(Client source);
 
   /** Invoked when new data is received and ready to be processed. */
-  void onRequest(Client source, PacketCallback packet)
+  void onRequest(Client source, PacketCallback packet, long time)
           throws RescuableClientException, InvalidGameStateException;
 
   /**
