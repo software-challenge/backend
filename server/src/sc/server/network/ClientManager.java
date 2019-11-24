@@ -151,7 +151,7 @@ public class ClientManager implements Runnable, IClientListener {
    * @throws RescuableClientException never
    */
   @Override
-  public void onRequest(Client source, PacketCallback packet)
+  public void onRequest(Client source, PacketCallback packet, long time)
       throws RescuableClientException {
     // XXX Handle Request?
     
