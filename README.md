@@ -76,12 +76,12 @@ Nun können Gradle tasks auch direkt in IDEA vom Gradle Tool Window
 
 Ein Release kann durch dieses Command initiiert werden:
 
-`./gradlew release -Ppatch -Pdesc="Versionsbeschreibung"`
+`./gradlew release -Ppatch -Pm="Versionsbeschreibung"`
 oder
-`./gradlew release -Pminor -Pdesc="Versionsbeschreibung"`
+`./gradlew release -Pminor -Pm="Versionsbeschreibung"`
 
 - `-Pminor` oder `-Ppatch` gibt an, welcher Teil der Version inkrementiert werden soll.
-- `-Pdesc` ist eine kurze Beschreibung der Version. Sie wird als Nachricht des Tags verwendet
+- `-Pm` ist eine kurze Beschreibung der Version. Sie wird als Nachricht des Tags verwendet
   und im vorgeschlagenen Text für Ankündigungen auf verschiedenen Platformen eingefügt.
 
 Dann wird die Version (in `gradle.properties`) automatisch angepasst, ein
