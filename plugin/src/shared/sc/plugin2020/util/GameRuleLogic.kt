@@ -79,6 +79,12 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateMove(gameState: GameState, move: Move): Boolean {
+        move.destination?.let { destination ->
+            if (!isOnBoard(destination))
+                throw InvalidMoveException("Destination $destination is out of bounds")
+            if(gameState.board.getField(destination).isObstructed)
+                throw InvalidMoveException("The target field is obstructed")
+        }
         when (move) {
             is SetMove -> validateSetMove(gameState, move)
             is DragMove -> validateDragMove(gameState, move)
@@ -89,7 +95,7 @@ object GameRuleLogic {
     
     private fun validateSkipMove(gameState: GameState): Boolean {
         if(this.getPossibleMoves(gameState).any { it !is SkipMove })
-            throw InvalidMoveException("Skipping a turn is only allowed when no other moves can be made.")
+            throw InvalidMoveException("Skipping a turn is only allowed when no other moves can be made")
         if(gameState.round == 3 && !hasPlayerPlacedBee(gameState))
             throw InvalidMoveException("The bee must be placed in fourth round latest")
         return true
@@ -98,31 +104,32 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove): Boolean {
-        if (!isOnBoard(move.destination))
-            throw InvalidMoveException("Piece has to be placed on board. Destination ${move.destination} is out of bounds.")
         if (!gameState.board.getField(move.destination).isEmpty)
-            throw InvalidMoveException("Set destination is not empty!")
+            throw InvalidMoveException("Set destination is not empty")
+        
+        if(gameState.currentPlayerColor != move.piece.owner)
+            throw InvalidMoveException("The piece ${move.piece} does not belong to the current Player(${gameState.currentPlayerColor})")
 
         val ownedFields = gameState.board.fields.filter { it.owner == gameState.currentPlayerColor }
         if (ownedFields.isEmpty()) {
             val otherPlayerFields = gameState.board.fields.filter { it.owner == gameState.otherPlayerColor }
             if (otherPlayerFields.isNotEmpty()) {
                 if (move.destination !in otherPlayerFields.flatMap { getNeighbours(gameState.board, it.coordinates) })
-                    throw InvalidMoveException("Piece has to be placed next to other players piece")
+                    throw InvalidMoveException("Your first piece has to touch the piece of the other player")
             }
         } else {
-            if (gameState.round == 3 && !hasPlayerPlacedBee(gameState) && move.piece.type != PieceType.BEE)
-                throw InvalidMoveException("The bee must be placed in fourth round latest")
-
             if (!gameState.getUndeployedPieces(gameState.currentPlayerColor).contains(move.piece))
-                throw InvalidMoveException("Piece is not a undeployed piece of the current player")
+                throw InvalidMoveException("Piece ${move.piece} is not an undeployed piece of the current player")
+            
+            if (gameState.round >= 3 && !hasPlayerPlacedBee(gameState) && move.piece.type != PieceType.BEE)
+                throw InvalidMoveException("The bee must be placed in fourth round latest")
 
             val destinationNeighbours = getNeighbours(gameState.board, move.destination)
             if (!destinationNeighbours.any { it.owner == gameState.currentPlayerColor })
                 throw InvalidMoveException("A newly placed piece must touch an own piece")
 
             if (destinationNeighbours.any { it.owner == gameState.otherPlayerColor })
-                throw InvalidMoveException("A newly placed is not allowed to touch an opponent's piece")
+                throw InvalidMoveException("A newly placed piece must not touch a piece of the other player")
         }
         return true
     }
@@ -133,13 +140,12 @@ object GameRuleLogic {
         if (!hasPlayerPlacedBee(gameState))
             throw InvalidMoveException("You have to place the Bee to be able to perform dragmoves")
 
-        if (!isOnBoard(move.destination) || !isOnBoard(move.start))
-            throw InvalidMoveException("The Move is out of bounds")
-
-        if (gameState.board.getField(move.start).pieces.size == 0)
+        val availablePieces = gameState.board.getField(move.start).pieces
+        
+        if (availablePieces.size == 0)
             throw InvalidMoveException("There is no piece to move")
 
-        val pieceToDrag = gameState.board.getField(move.start).pieces.peek()
+        val pieceToDrag = availablePieces.peek()
 
         if (pieceToDrag.owner !== gameState.currentPlayerColor)
             throw InvalidMoveException("Trying to move piece of the other player")
@@ -168,7 +174,7 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateAntMove(board: Board, move: DragMove): Boolean {
-        val visitedFields: MutableList<CubeCoordinates> = arrayListOf(move.start)
+        val visitedFields = mutableListOf(move.start)
         var index = 0
         do {
             val currentField = visitedFields[index]
