@@ -985,12 +985,30 @@ class GamePlayTest {
     
     @Test
     fun undeployedPiecesCloneTest() {
-        run {
-            val redMove = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-5, 0, 5))
-            GameRuleLogic.performMove(state, redMove);
-            val clone = GameState(state)
-            val blueMove = SetMove(Piece(PlayerColor.BLUE, PieceType.BEE), CubeCoordinates(-4, -1, 5))
-            assertTrue(GameRuleLogic.validateMove(clone, blueMove))
+        val redMove = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-5, 0, 5))
+        GameRuleLogic.performMove(state, redMove);
+        val clone = GameState(state)
+        val blueMove = SetMove(Piece(PlayerColor.BLUE, PieceType.BEE), CubeCoordinates(-4, -1, 5))
+        assertTrue(GameRuleLogic.validateMove(clone, blueMove))
+    }
+    
+    @Test
+    fun beetleToObstructedTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     RBOO--------" +
+                "    --BGRQ--------" +
+                "   ----------------" +
+                "  ------------------" +
+                " --------------------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        val moveBeetle = DragMove(CubeCoordinates(0, 5), CubeCoordinates(1, 4))
+        assertThrows(InvalidMoveException::class.java) {
+            GameRuleLogic.performMove(state, moveBeetle)
         }
     }
     
