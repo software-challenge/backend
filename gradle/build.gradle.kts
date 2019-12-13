@@ -8,7 +8,7 @@ plugins {
     maven
     `java-library`
     kotlin("jvm") version "1.4.10"
-    id("org.jetbrains.dokka") version "0.9.17"
+    id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
     id("com.github.ben-manes.versions") version "0.33.0"
@@ -52,17 +52,13 @@ tasks {
     }
     
     val doc by creating(DokkaTask::class) {
-        val includedProjects = documentedProjects
-        mustRunAfter(includedProjects.map { "$it:classes" })
-        moduleName = "Software-Challenge API $version"
-        val sourceSets = includedProjects.map { project(it).sourceSets.main.get() }
-        sourceDirs = files(sourceSets.map { it.java.sourceDirectories })
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
-        jdkVersion = 8
-        reportUndocumented = false
-        doFirst {
-            classpath = files(sourceSets.map { it.runtimeClasspath }.flatMap { it.files }.filter { it.exists() })
+        subProjects = listOf("sdk", "plugin")
+        configuration {
+            reportUndocumented = false
+            moduleName = "Software-Challenge API $version"
+            jdkVersion = 8
         }
     }
     
@@ -247,17 +243,11 @@ allprojects {
     
     if (this.name in documentedProjects) {
         apply(plugin = "maven")
+        apply(plugin = "org.jetbrains.dokka")
         tasks {
             val doc by creating(DokkaTask::class) {
-                moduleName = "Software-Challenge API $version"
-                classpath = sourceSets.main.get().runtimeClasspath
                 outputDirectory = buildDir.resolve("doc").toString()
                 outputFormat = "javadoc"
-                jdkVersion = 8
-                reportUndocumented = false
-                doFirst {
-                    classpath = files(sourceSets.main.get().runtimeClasspath.files.filter { it.exists() })
-                }
             }
             val docJar by creating(Jar::class) {
                 dependsOn(doc)
