@@ -75,10 +75,12 @@ object GameRuleLogic {
         val shift = (Constants.BOARD_SIZE - 1) / 2
         return -shift <= coords.x && coords.x <= shift && -shift <= coords.y && coords.y <= shift
     }
-
+    
+    /** Checks if the given [move] is able to be performed on the given [gameState].
+     * @throws InvalidMoveException if [move] is not possible */
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateMove(gameState: GameState, move: Move): Boolean {
+    fun validateMove(gameState: GameState, move: Move) {
         move.destination?.let { destination ->
             if (!isOnBoard(destination))
                 throw InvalidMoveException("Destination $destination is out of bounds")
@@ -90,15 +92,13 @@ object GameRuleLogic {
             is DragMove -> validateDragMove(gameState, move)
             is SkipMove -> validateSkipMove(gameState)
         }
-        return true
     }
     
-    private fun validateSkipMove(gameState: GameState): Boolean {
+    @Throws(InvalidMoveException::class)
+    @JvmStatic
+    private fun validateSkipMove(gameState: GameState) {
         if(this.getPossibleMoves(gameState).any { it !is SkipMove })
             throw InvalidMoveException("Skipping a turn is only allowed when no other moves can be made")
-        if(gameState.round == 3 && !hasPlayerPlacedBee(gameState))
-            throw InvalidMoveException("The bee must be placed in fourth round latest")
-        return true
     }
     
     @Throws(InvalidMoveException::class)
@@ -179,8 +179,8 @@ object GameRuleLogic {
         do {
             val currentField = visitedFields[index]
             val newFields = getAccessibleNeighboursExcept(board, currentField, move.start).filterNot { it in visitedFields }
-            if (move.destination in newFields)
-                return true
+            if(move.destination in newFields)
+                return
             visitedFields.addAll(newFields)
         } while (++index < visitedFields.size)
         throw InvalidMoveException("No path found for Ant move")
@@ -247,7 +247,7 @@ object GameRuleLogic {
 
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateSpiderMove(board: Board, move: DragMove): Boolean {
+    fun validateSpiderMove(board: Board, move: DragMove) {
         /*
         // Ich lass das mal noch hier, da dass der evtl. performantere Ansatz ist
         val paths: Deque<Array<CubeCoordinates>> = ArrayDeque()
@@ -266,9 +266,8 @@ object GameRuleLogic {
                 getAccessibleNeighboursExcept(board, depth2, move.start).filterNot { it.coordinates == depth1 }.any { move.destination == it }
             }
         }
-        if (found)
-            return true
-        throw InvalidMoveException("No path found for Spider move")
+        if(!found)
+            throw InvalidMoveException("No path found for Spider move")
     }
 
     @Throws(IndexOutOfBoundsException::class)

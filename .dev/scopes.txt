@@ -4,6 +4,7 @@ gradle
 travis
 player
 plugin
+gamerules
 server
 sdk
 framework
