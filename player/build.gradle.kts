@@ -1,6 +1,6 @@
 plugins {
     application
-    id("com.github.johnrengelman.shadow") version "5.1.0"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 val game: String by project
@@ -27,8 +27,6 @@ tasks {
     shadowJar {
         archiveFileName.set("defaultplayer.jar")
     }
-    
-    replace("jar").dependsOn(shadowJar.get())
     
     val prepareZip by creating(Copy::class) {
         dependsOn(":sdk:doc", ":plugin:doc")

@@ -35,10 +35,11 @@ Die wichtigsten Tasks:
 | `build` | baut alles, deployt und testet
 | `test` | führt tests aus
 | `deploy` | erstellt hochladbare ZIP-Pakete
-| `run` oder `testDeployed` | startet den server und 2 simpleclients und überpüft, ob das Spiel normal endet
+| `integrationTest` | testet ein komplettes Spiel sowie den TestClient
 | `startServer` oder `:server:run` | führt den Server direkt vom Quellcode aus
 | `:server:startProduction` | startet den gepackten Server
 | `:player:run` | startet den SimpleClient direkt vom Sourcecode
+| `:player:shadowJar` | baut eine jar des SimpleClient
 | `:test-client:run` | startet den Testclient
 
 Tasks der Subprojekte können in zwei Wegen aufgerufen werden:
