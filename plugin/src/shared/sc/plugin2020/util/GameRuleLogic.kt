@@ -343,25 +343,28 @@ object GameRuleLogic {
             }
     
     @JvmStatic
-    fun getPossibleDragMoves(gameState: GameState): List<DragMove> =
-            gameState.board.getFieldsOwnedBy(gameState.currentPlayerColor).flatMap { startField ->
-                val edgeTargets: Set<CubeCoordinates> = this.getEmptyFieldsConnectedToSwarm(gameState.board)
-                val additionalTargets: Set<CubeCoordinates> =
-                        if (startField.topPiece?.type == PieceType.BEETLE) {
-                            this.getNeighbours(gameState.board, startField).toSet()
-                        } else {
-                            emptySet()
-                        }
-                (edgeTargets + additionalTargets).mapNotNull { destination: CubeCoordinates ->
-                    val move = DragMove(startField, destination)
-                    try {
-                        this.validateMove(gameState, move)
-                        move
-                    } catch (e: InvalidMoveException) {
-                        null
+    fun getPossibleDragMoves(gameState: GameState): List<DragMove> {
+        if(gameState.mustPlayerPlaceBee())
+            return emptyList()
+        return gameState.board.getFieldsOwnedBy(gameState.currentPlayerColor).flatMap { startField ->
+            val edgeTargets: Set<CubeCoordinates> = this.getEmptyFieldsConnectedToSwarm(gameState.board)
+            val additionalTargets: Set<CubeCoordinates> =
+                    if (startField.topPiece?.type == PieceType.BEETLE) {
+                        this.getNeighbours(gameState.board, startField).toSet()
+                    } else {
+                        emptySet()
                     }
+            (edgeTargets + additionalTargets).mapNotNull { destination: CubeCoordinates ->
+                val move = DragMove(startField, destination)
+                try {
+                    this.validateMove(gameState, move)
+                    move
+                } catch (e: InvalidMoveException) {
+                    null
                 }
             }
+        }
+    }
     
     @JvmStatic
     fun getEmptyFieldsConnectedToSwarm(board: Board): Set<CubeCoordinates> =
@@ -378,24 +381,23 @@ object GameRuleLogic {
                     .filter { this.getNeighbours(board, it).all { it.owner != owner.opponent() } }
                     .toSet()
     
+    @JvmStatic
     fun getPossibleSetMoves(gameState: GameState): List<SetMove> {
         val undeployed = gameState.getUndeployedPieces(gameState.currentPlayerColor)
-        val setDestinations = if (undeployed.size == Constants.STARTING_PIECES.length) {
-            // current player has not placed any pieces yet (first or second turn)
-            if (gameState.getUndeployedPieces(gameState.otherPlayerColor).size == Constants.STARTING_PIECES.length) {
-                // other player also has not placed any pieces yet (first turn, all destinations allowed (except obstructed)
-                gameState.board.fields.filter { it.isEmpty }
-                
-            } else {
-                // other player placed a piece already
-                gameState.board.getFieldsOwnedBy(gameState.otherPlayerColor)
-                        .flatMap { GameRuleLogic.getNeighbours(gameState.board, it).filter { it.isEmpty } }
-            }
-        } else {
-            this.getPossibleSetMoveDestinations(gameState.board, gameState.currentPlayerColor)
-        }
+        val setDestinations =
+                if (undeployed.size == Constants.STARTING_PIECES.length) {
+                    // current player has not placed any pieces yet (first or second turn)
+                    if (gameState.getUndeployedPieces(gameState.otherPlayerColor).size == Constants.STARTING_PIECES.length) {
+                        gameState.board.fields.filter { it.isEmpty }
+                    } else {
+                        gameState.board.getFieldsOwnedBy(gameState.otherPlayerColor)
+                                .flatMap { getNeighbours(gameState.board, it).filter { it.isEmpty } }
+                    }
+                } else {
+                    this.getPossibleSetMoveDestinations(gameState.board, gameState.currentPlayerColor)
+                }
         
-        val possiblePieceTypes = if (!gameState.hasPlayerPlacedBee() && gameState.turn > 5) listOf(PieceType.BEE) else undeployed.map { it.type }.toSet()
+        val possiblePieceTypes = if (gameState.mustPlayerPlaceBee()) listOf(PieceType.BEE) else undeployed.map { it.type }.toSet()
         return setDestinations
                 .flatMap {
                     possiblePieceTypes.map { u ->
