@@ -49,6 +49,8 @@ wechselt und dort `./gradlew run` ausführt.
 Wenn notwendig, können bei der Ausführung eines Subprojektes via `run`
 per `-Dargs="Argument1 Argument2"`Argumente mitgegeben werden.
 
+Der TestClient kann z.B. mit dem Befehl `./gradlew :test-client:run -Dargs="--player1 ../../player/build/libs/defaultplayer.jar --player2 ../../player/build/libs/defaultplayer.jar --tests 3"`
+
 ### Arbeiten mit Intellij IDEA
 
 Zuerst sollte sichergestellt werden, dass die neuste Version von

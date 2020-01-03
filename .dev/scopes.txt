@@ -9,3 +9,4 @@ server
 sdk
 framework
 protocol
+testclient

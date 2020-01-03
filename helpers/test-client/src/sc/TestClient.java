@@ -110,7 +110,7 @@ public class TestClient extends XStreamClient {
     for (int i = 0; i < 2; i++) {
       players[i].canTimeout = !(noTimeout || (boolean) parser.getOptionValue(noTimeoutOptions[i], false));
       players[i].name = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
-      players[i].executable = (String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar");
+      players[i].executable = new File((String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar"));
       players[i].isJar = Util.isJar(players[i].executable);
     }
     if (players[0].name.equals(players[1].name)) {
@@ -296,10 +296,10 @@ public class TestClient extends XStreamClient {
     ProcessBuilder builder;
     if (player.isJar) {
       logger.debug("Invoking client {} with Java", player.name);
-      builder = new ProcessBuilder("java", "-jar", "-mx1500m", player.executable, "-r", reservation, "-h", host, "-p", Integer.toString(port));
+      builder = new ProcessBuilder("java", "-jar", "-mx1500m", player.executable.getAbsolutePath(), "-r", reservation, "-h", host, "-p", Integer.toString(port));
     } else {
       logger.debug("Invoking client {}", player.name);
-      builder = new ProcessBuilder(player.executable, "--reservation", reservation, "--host", host, "--port", Integer.toString(port));
+      builder = new ProcessBuilder(player.executable.getAbsolutePath(), "--reservation", reservation, "--host", host, "--port", Integer.toString(port));
     }
 
     logDir.mkdirs();
@@ -389,7 +389,7 @@ class ClientPlayer {
   String name;
   boolean canTimeout;
 
-  String executable;
+  File executable;
   boolean isJar;
 
   @Override
@@ -403,8 +403,8 @@ class ClientPlayer {
 
 class Util {
 
-  static boolean isJar(String f) {
-    return f.endsWith("jar") && new File(f).exists();
+  static boolean isJar(File f) {
+    return f.getName().endsWith("jar") && f.exists();
   }
 
   static double factorial(int n) {
