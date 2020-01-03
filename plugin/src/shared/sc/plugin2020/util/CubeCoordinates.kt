@@ -17,7 +17,7 @@ open class CubeCoordinates
     constructor(position: CubeCoordinates): this(position.x, position.y, position.z)
     
     init {
-        require(x + y + z == 0) { "Constraint: (x + y + z == 0) not granted for ${this}!" }
+        require(x + y + z == 0) { "Constraint: (x + y + z == 0) not fulfilled for ${this}!" }
     }
     
     override fun toString(): String = String.format("(%d,%d,%d)", x, y, z)

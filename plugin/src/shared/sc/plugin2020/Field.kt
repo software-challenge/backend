@@ -22,6 +22,7 @@ class Field(
     // See http://x-stream.github.io/faq.html#Serialization_implicit_null
     @XStreamImplicit
     var pieces = pieces
+        internal set
         get() {
             @Suppress("SENSELESS_COMPARISON")
             if(field == null) field = Stack()
@@ -39,17 +40,25 @@ class Field(
             }
         }
     
+    /** @return true iff this [Field] has no pieces and is not obstructed. */
     val isEmpty: Boolean
         get() = pieces.isEmpty() && !isObstructed
     
+    /** @return true iff this [Field] has pieces on it */
     val hasOwner: Boolean
-        get() = !pieces.isEmpty() && !isObstructed
+        get() = pieces.isNotEmpty()
     
+    /** Since [Field] is now a subclass of [CubeCoordinates], this returns itself. */
     val coordinates: CubeCoordinates
-        get() = CubeCoordinates(x, y, z)
+        get() = this
     
+    /** @return owner of the uppermost piece on this field, or null if it is empty. */
     val owner: PlayerColor?
-        get() = if(pieces.isEmpty()) null else pieces.peek().owner
+        get() = topPiece?.owner
+    
+    /** @return the uppermost piece on the field, or null is it is empty. */
+    val topPiece: Piece?
+        get() = if(pieces.isEmpty()) null else pieces.peek()
     
     constructor(position: CubeCoordinates, obstructed: Boolean): this(position.x, position.y, position.z, isObstructed = obstructed)
     
