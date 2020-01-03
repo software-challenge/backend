@@ -151,6 +151,7 @@ tasks {
     
     val testTestClient by creating {
         dependsOn(clearTestLogs, ":server:deploy")
+        mustRunAfter(testGame)
         val testClientGames = 3
         doFirst {
             val tmpDir = buildDir.resolve("tmp")
