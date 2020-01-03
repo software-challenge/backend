@@ -128,16 +128,6 @@ class GamePlayTest {
     }
     
     @Test
-    fun getNeighbourTest() {
-        val n = GameRuleLogic.getNeighbours(Board(), CubeCoordinates(-2, 1))
-        val expected = arrayOf(CubeCoordinates(-2, 2), CubeCoordinates(-1, 1), CubeCoordinates(-1, 0), CubeCoordinates(-2, 0), CubeCoordinates(-3, 1), CubeCoordinates(-3, 2))
-        assertArrayEquals(
-                Arrays.stream(expected).sorted().toArray(),
-                n.stream().map { f: Field -> f.coordinates }.sorted().toArray()
-        )
-    }
-    
-    @Test
     fun gameEndTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +

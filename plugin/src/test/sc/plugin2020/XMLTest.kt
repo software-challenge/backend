@@ -31,8 +31,7 @@ class XMLTest {
         TestGameUtil.updateUndeployedPiecesFromBoard(state, true)
         TestJUnitUtil.assertContentEquals(listOf(Piece(PlayerColor.RED, PieceType.ANT)), state.getDeployedPieces(PlayerColor.RED))
         TestJUnitUtil.assertContentEquals(listOf(Piece(PlayerColor.BLUE, PieceType.BEE), Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER)), state.getDeployedPieces(PlayerColor.BLUE))
-        Assert.assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
-        Assert.assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
+        Assert.assertEquals(PieceType.BEE, state.board.getField(0, 0).topPiece?.type)
         state.blue.displayName = "aBluePlayer"
         state.turn = 3
         Assert.assertEquals(PlayerColor.BLUE, state.currentPlayerColor)
