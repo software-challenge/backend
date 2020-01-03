@@ -6,35 +6,30 @@ import sc.shared.PlayerColor
 import kotlin.math.abs
 
 object GameRuleLogic {
-
+    
+    /** @return all (up to 6) neighbouring fields of [coords]. */
     @JvmStatic
-    fun getNeighbours(board: Board, coords: CubeCoordinates): ArrayList<Field> {
-        val tmp = ArrayList<Field>()
-
-        for (d in Direction.values()) {
-            val n: Field
-            try {
-                n = getNeighbourInDirection(board, coords, d)
-            } catch (ex: IndexOutOfBoundsException) {
-                continue
+    fun getNeighbours(board: Board, coords: CubeCoordinates): List<Field> =
+            Direction.values().mapNotNull {
+                try {
+                    getNeighbourInDirection(board, coords, it)
+                } catch (ex: IndexOutOfBoundsException) {
+                    null
+                }
             }
-
-            tmp.add(n)
-        }
-
-        return tmp
-    }
-
+    
+    /** Gets the [Field] adjacent to [coords] in [direction].
+     * @throws IndexOutOfBoundsException if there is no field in that direction. */
     @JvmStatic
     fun getNeighbourInDirection(board: Board, coords: CubeCoordinates, direction: Direction): Field {
         return board.getField(CubeCoordinates(coords.x + direction.shift(1).x, coords.y + direction.shift(1).y, coords.z + direction.shift(1).z))
     }
-
+    
+    /** @return the [PlayerColor] that has to make the next Move. */
     @JvmStatic
-    fun getCurrentPlayerColor(gameState: GameState): PlayerColor {
-        return if (gameState.turn % 2 == 0) PlayerColor.RED else PlayerColor.BLUE
-    }
-
+    fun getCurrentPlayerColor(gameState: GameState): PlayerColor = gameState.currentPlayerColor
+    
+    /** Validates & executes the [move] on the [gameState]. */
     @JvmStatic
     fun performMove(gameState: GameState, move: Move) {
         validateMove(gameState, move)
@@ -53,23 +48,21 @@ object GameRuleLogic {
         gameState.turn++
         gameState.lastMove = move
     }
-
+    
+    /** Whether the Bee is completely blocked.
+     * @return true iff [freeBeeNeighbours] returns 0 */
     @JvmStatic
-    fun isBeeBlocked(board: Board, color: PlayerColor): Boolean {
-        val l = board.fields.filter { it.pieces.contains(Piece(color, PieceType.BEE)) }
-        if (l.isEmpty())
-            return false
-        return getNeighbours(board, l[0].coordinates).all { field -> field.isObstructed || !field.pieces.empty() }
-    }
-
-    fun freeBeeNeighbours(board: Board, color: PlayerColor): Int {
-        // free fields are fields which have no piece on them, are not obstructed and are inside the board
-        val l = board.fields.filter { it.pieces.contains(Piece(color, PieceType.BEE)) }
-        if (l.isEmpty())
-            return 0
-        return getNeighbours(board, l[0].coordinates).filter { field -> !field.isObstructed && field.pieces.empty() }.size
-    }
-
+    fun isBeeBlocked(board: Board, color: PlayerColor): Boolean =
+            freeBeeNeighbours(board, color) == 0
+    
+    /** @return number of free (empty & not obstructed) fields around the Bee - -1 if no Bee has been placed. */
+    @JvmStatic
+    fun freeBeeNeighbours(board: Board, color: PlayerColor): Int =
+            board.fields.find { it.pieces.contains(Piece(color, PieceType.BEE)) }
+                    ?.let { getNeighbours(board, it) }?.count { field -> field.isEmpty }
+                    ?: -1
+    
+    /** @return true iff the given [coords] are within the Board size. */
     @JvmStatic
     fun isOnBoard(coords: CubeCoordinates): Boolean {
         val shift = (Constants.BOARD_SIZE - 1) / 2
@@ -84,7 +77,7 @@ object GameRuleLogic {
         move.destination?.let { destination ->
             if (!isOnBoard(destination))
                 throw InvalidMoveException("Destination $destination is out of bounds")
-            if(gameState.board.getField(destination).isObstructed)
+            if (gameState.board.getField(destination).isObstructed)
                 throw InvalidMoveException("The target field is obstructed")
         }
         when (move) {
@@ -97,19 +90,19 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     private fun validateSkipMove(gameState: GameState) {
-        if(this.getPossibleMoves(gameState).any { it !is SkipMove })
+        if (this.getPossibleMoves(gameState).any { it !is SkipMove })
             throw InvalidMoveException("Skipping a turn is only allowed when no other moves can be made")
     }
     
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateSetMove(gameState: GameState, move: SetMove): Boolean {
+    fun validateSetMove(gameState: GameState, move: SetMove) {
         if (!gameState.board.getField(move.destination).isEmpty)
             throw InvalidMoveException("Set destination is not empty")
         
-        if(gameState.currentPlayerColor != move.piece.owner)
+        if (gameState.currentPlayerColor != move.piece.owner)
             throw InvalidMoveException("The piece ${move.piece} does not belong to the current Player(${gameState.currentPlayerColor})")
-
+        
         val ownedFields = gameState.board.fields.filter { it.owner == gameState.currentPlayerColor }
         if (ownedFields.isEmpty()) {
             val otherPlayerFields = gameState.board.fields.filter { it.owner == gameState.otherPlayerColor }
@@ -121,47 +114,46 @@ object GameRuleLogic {
             if (!gameState.getUndeployedPieces(gameState.currentPlayerColor).contains(move.piece))
                 throw InvalidMoveException("Piece ${move.piece} is not an undeployed piece of the current player")
             
-            if (gameState.round >= 3 && !hasPlayerPlacedBee(gameState) && move.piece.type != PieceType.BEE)
+            if (gameState.round >= 3 && !gameState.hasPlayerPlacedBee() && move.piece.type != PieceType.BEE)
                 throw InvalidMoveException("The bee must be placed in fourth round latest")
-
+            
             val destinationNeighbours = getNeighbours(gameState.board, move.destination)
             if (!destinationNeighbours.any { it.owner == gameState.currentPlayerColor })
                 throw InvalidMoveException("A newly placed piece must touch an own piece")
-
+            
             if (destinationNeighbours.any { it.owner == gameState.otherPlayerColor })
                 throw InvalidMoveException("A newly placed piece must not touch a piece of the other player")
         }
-        return true
     }
-
+    
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateDragMove(gameState: GameState, move: DragMove) {
-        if (!hasPlayerPlacedBee(gameState))
+        if (!gameState.hasPlayerPlacedBee())
             throw InvalidMoveException("You have to place the Bee to be able to perform dragmoves")
-
+        
         val availablePieces = gameState.board.getField(move.start).pieces
         
         if (availablePieces.size == 0)
             throw InvalidMoveException("There is no piece to move")
-
+        
         val pieceToDrag = availablePieces.peek()
-
+        
         if (pieceToDrag.owner !== gameState.currentPlayerColor)
             throw InvalidMoveException("Trying to move piece of the other player")
-
+        
         if (move.start == move.destination)
             throw InvalidMoveException("Destination and start are equal")
-
+        
         if (gameState.board.getField(move.destination).pieces.isNotEmpty() && pieceToDrag.type !== PieceType.BEETLE)
             throw InvalidMoveException("Only beetles are allowed to climb on other Pieces")
-
+        
         val boardWithoutPiece = Board(gameState.board.fields.map {
             if (it == move.start) Field(it).apply { pieces.pop() } else it
         })
         if (!isSwarmConnected(boardWithoutPiece))
             throw InvalidMoveException("Moving piece would disconnect swarm")
-
+        
         when (pieceToDrag.type) {
             PieceType.ANT -> validateAntMove(boardWithoutPiece, move)
             PieceType.BEE -> validateBeeMove(boardWithoutPiece, move)
@@ -170,22 +162,22 @@ object GameRuleLogic {
             PieceType.SPIDER -> validateSpiderMove(boardWithoutPiece, move)
         }
     }
-
+    
     @Throws(InvalidMoveException::class)
     @JvmStatic
-    fun validateAntMove(board: Board, move: DragMove): Boolean {
+    fun validateAntMove(board: Board, move: DragMove) {
         val visitedFields = mutableListOf(move.start)
         var index = 0
         do {
             val currentField = visitedFields[index]
             val newFields = getAccessibleNeighboursExcept(board, currentField, move.start).filterNot { it in visitedFields }
-            if(move.destination in newFields)
+            if (move.destination in newFields)
                 return
             visitedFields.addAll(newFields)
         } while (++index < visitedFields.size)
         throw InvalidMoveException("No path found for Ant move")
     }
-
+    
     @JvmStatic
     fun isSwarmConnected(board: Board): Boolean {
         val visitedFields = arrayListOf(board.fields.firstOrNull { it.pieces.isNotEmpty() } ?: return true)
@@ -202,19 +194,19 @@ object GameRuleLogic {
         } while (++index < visitedFields.size)
         return false
     }
-
+    
     @JvmStatic
     fun getAccessibleNeighbours(board: Board, start: CubeCoordinates) =
             getNeighbours(board, start).filter { neighbour ->
                 neighbour.isEmpty && canMoveBetween(board, start, neighbour)
             }
-
+    
     @JvmStatic
     fun getAccessibleNeighboursExcept(board: Board, start: CubeCoordinates, except: CubeCoordinates) =
             getNeighbours(board, start).filter { neighbour ->
                 neighbour.isEmpty && canMoveBetweenExcept(board, start, neighbour, except) && neighbour.coordinates != except
             }
-
+    
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeeMove(board: Board, move: DragMove) {
@@ -222,7 +214,7 @@ object GameRuleLogic {
         if (!canMoveBetween(board, move.start, move.destination))
             throw InvalidMoveException("There is no path to your destination")
     }
-
+    
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateBeetleMove(board: Board, move: DragMove) {
@@ -230,7 +222,7 @@ object GameRuleLogic {
         if ((sharedNeighboursOfTwoCoords(board, move.start, move.destination) + board.getField(move.destination) + board.getField(move.start)).all { it.pieces.isEmpty() })
             throw InvalidMoveException("Beetle has to move along swarm")
     }
-
+    
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateGrasshopperMove(board: Board, move: DragMove) {
@@ -244,7 +236,7 @@ object GameRuleLogic {
             throw InvalidMoveException("Grasshopper can only jump over occupied fields, not empty ones")
         }
     }
-
+    
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateSpiderMove(board: Board, move: DragMove) {
@@ -266,22 +258,22 @@ object GameRuleLogic {
                 getAccessibleNeighboursExcept(board, depth2, move.start).filterNot { it.coordinates == depth1 }.any { move.destination == it }
             }
         }
-        if(!found)
+        if (!found)
             throw InvalidMoveException("No path found for Spider move")
     }
-
+    
     @Throws(IndexOutOfBoundsException::class)
     @JvmStatic
     fun getLineBetweenCoords(board: Board, start: CubeCoordinates, destination: CubeCoordinates): List<Field> {
         if (!twoFieldsOnOneStraight(start, destination)) {
             throw IndexOutOfBoundsException("destination is not in line with start")
         }
-
+        
         val dX = start.x - destination.x
         val dY = start.y - destination.y
         val dZ = start.z - destination.z
         val d = if (dX == 0) abs(dY) else abs(dX)
-
+        
         return (1 until d).map { i ->
             board.getField(CubeCoordinates(
                     destination.x + i * if (dX > 0) 1 else if (dX < 0) -1 else 0,
@@ -290,71 +282,76 @@ object GameRuleLogic {
             ))
         }
     }
-
+    
     @JvmStatic
-    fun canMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean {
-        return sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
-            (shared.size == 1 || shared.any { it.isEmpty && !it.isObstructed }) && shared.any { it.pieces.isNotEmpty() }
-        }
-    }
-
+    fun canMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
+            sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
+                (shared.size == 1 || shared.any { it.isEmpty && !it.isObstructed }) && shared.any { it.pieces.isNotEmpty() }
+            }
+    
     @JvmStatic
-    fun canMoveBetweenExcept(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates, except: CubeCoordinates): Boolean {
-        return sharedNeighboursOfTwoCoords(board, coords1, coords2).filterNot { it.pieces.size == 1 && except == it.coordinates }.let { shared ->
-            (shared.size == 1 || shared.any { it.isEmpty && !it.isObstructed }) && shared.any { it.pieces.isNotEmpty() }
-        }
-    }
-
-
+    fun canMoveBetweenExcept(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates, except: CubeCoordinates): Boolean =
+            sharedNeighboursOfTwoCoords(board, coords1, coords2).filterNot { it.pieces.size == 1 && except == it.coordinates }.let { shared ->
+                (shared.size == 1 || shared.any { it.isEmpty && !it.isObstructed }) && shared.any { it.pieces.isNotEmpty() }
+            }
+    
+    /** Checks that start and destination of this [DragMove] are neighbours.
+     * @throws InvalidMoveException if start and destination are not neighbours */
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateDestinationNextToStart(move: DragMove) {
         if (!this.isNeighbour(move.start, move.destination))
             throw InvalidMoveException("Destination field is not next to start field")
     }
-
+    
     @JvmStatic
-    fun isNeighbour(start: CubeCoordinates, destination: CubeCoordinates): Boolean {
-        return Direction.values().map {
-            it.shift(start)
-        }.contains(destination)
-    }
-
+    fun isNeighbour(start: CubeCoordinates, destination: CubeCoordinates): Boolean =
+            start.distanceTo(destination) == 1
+    
+    /** @return true iff the two fields have an axis in common. */
     @JvmStatic
-    fun twoFieldsOnOneStraight(coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean {
-        return coords1.x == coords2.x || coords1.y == coords2.y || coords1.z == coords2.z
-    }
-
+    fun twoFieldsOnOneStraight(coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
+            coords1.x == coords2.x || coords1.y == coords2.y || coords1.z == coords2.z
+    
+    /** @return the Fields (up to 2) that are neighbours of both fields. */
     @JvmStatic
-    fun sharedNeighboursOfTwoCoords(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): ArrayList<Field> {
-        val neighbours = getNeighbours(board, coords1)
-        neighbours.retainAll(getNeighbours(board, coords2))
-        return neighbours
-    }
-
+    fun sharedNeighboursOfTwoCoords(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Collection<Field> =
+            getNeighbours(board, coords1).intersect(getNeighbours(board, coords2))
+    
+    /** @return true iff the current Player has to place the Bee in this round. */
     @JvmStatic
-    fun hasPlayerPlacedBee(gameState: GameState) =
-            gameState.getDeployedPieces(gameState.currentPlayerColor).any { it.type == PieceType.BEE }
-
+    fun GameState.mustPlayerPlaceBee() =
+            round >= 3 && !hasPlayerPlacedBee()
+    
+    /** @return true iff the current Player has his Bee deployed. */
+    @JvmStatic
+    fun GameState.hasPlayerPlacedBee() =
+            getDeployedPieces(currentPlayerColor).any { it.type == PieceType.BEE }
+    
+    /** @return true iff there are no pieces on the Board. */
     @JvmStatic
     fun boardIsEmpty(board: Board): Boolean =
-            board.fields.none { it.pieces.isNotEmpty() }
-
+            board.getPieces().isEmpty()
+    
     @JvmStatic
     fun getPossibleMoves(gameState: GameState): List<Move> =
             (this.getPossibleSetMoves(gameState) + this.getPossibleDragMoves(gameState)).ifEmpty {
-                listOf(SkipMove)
+                if (gameState.mustPlayerPlaceBee())
+                    emptyList()
+                else
+                    listOf(SkipMove)
             }
-
+    
     @JvmStatic
-    fun getPossibleDragMoves(gameState: GameState): List<Move> =
+    fun getPossibleDragMoves(gameState: GameState): List<DragMove> =
             gameState.board.getFieldsOwnedBy(gameState.currentPlayerColor).flatMap { startField ->
                 val edgeTargets: Set<CubeCoordinates> = this.getEmptyFieldsConnectedToSwarm(gameState.board)
-                val additionalTargets: Set<CubeCoordinates> = if (startField.pieces.lastElement().type == PieceType.BEETLE) {
-                    this.getNeighbours(gameState.board, startField).toSet()
-                } else {
-                    emptySet<CubeCoordinates>()
-                }
+                val additionalTargets: Set<CubeCoordinates> =
+                        if (startField.topPiece?.type == PieceType.BEETLE) {
+                            this.getNeighbours(gameState.board, startField).toSet()
+                        } else {
+                            emptySet()
+                        }
                 (edgeTargets + additionalTargets).mapNotNull { destination: CubeCoordinates ->
                     val move = DragMove(startField, destination)
                     try {
@@ -365,28 +362,30 @@ object GameRuleLogic {
                     }
                 }
             }
-
+    
     @JvmStatic
     fun getEmptyFieldsConnectedToSwarm(board: Board): Set<CubeCoordinates> =
             board.fields.filter { it.hasOwner }
                     .flatMap { this.getNeighbours(board, it).filter { it.isEmpty } }
                     .toSet()
-
+    
     @JvmStatic
-    fun getPossibleSetMoveDestinations(board: Board, owner: PlayerColor): List<CubeCoordinates> =
+    fun getPossibleSetMoveDestinations(board: Board, owner: PlayerColor): Collection<CubeCoordinates> =
             board.getFieldsOwnedBy(owner)
-                    .flatMap { this.getNeighbours(board, it).filter { it.isEmpty } }
-                    .toSet()
+                    .asSequence()
+                    .flatMap { this.getNeighbours(board, it).asSequence() }
+                    .filter { it.isEmpty }
                     .filter { this.getNeighbours(board, it).all { it.owner != owner.opponent() } }
-
-    fun getPossibleSetMoves(gameState: GameState): List<Move> {
+                    .toSet()
+    
+    fun getPossibleSetMoves(gameState: GameState): List<SetMove> {
         val undeployed = gameState.getUndeployedPieces(gameState.currentPlayerColor)
         val setDestinations = if (undeployed.size == Constants.STARTING_PIECES.length) {
             // current player has not placed any pieces yet (first or second turn)
             if (gameState.getUndeployedPieces(gameState.otherPlayerColor).size == Constants.STARTING_PIECES.length) {
                 // other player also has not placed any pieces yet (first turn, all destinations allowed (except obstructed)
                 gameState.board.fields.filter { it.isEmpty }
-
+                
             } else {
                 // other player placed a piece already
                 gameState.board.getFieldsOwnedBy(gameState.otherPlayerColor)
@@ -395,8 +394,8 @@ object GameRuleLogic {
         } else {
             this.getPossibleSetMoveDestinations(gameState.board, gameState.currentPlayerColor)
         }
-
-        val possiblePieceTypes = if (!this.hasPlayerPlacedBee(gameState) && gameState.turn > 5) listOf(PieceType.BEE) else undeployed.map { it.type }.toSet()
+        
+        val possiblePieceTypes = if (!gameState.hasPlayerPlacedBee() && gameState.turn > 5) listOf(PieceType.BEE) else undeployed.map { it.type }.toSet()
         return setDestinations
                 .flatMap {
                     possiblePieceTypes.map { u ->
