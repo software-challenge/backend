@@ -7,6 +7,7 @@ import sc.plugin2020.util.CubeCoordinates
 /* NOTE: Remember to add all these classes to classesToRegister in sc/plugin2020/util/Configuration.kt */
 sealed class Move: IMove {
     abstract val destination: CubeCoordinates?
+    var hint: String? = null
 }
 
 @XStreamAlias(value = "setmove")
