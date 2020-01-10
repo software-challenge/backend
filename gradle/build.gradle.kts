@@ -258,7 +258,10 @@ allprojects {
 }
 
 project("sdk") {
-    sourceSets.main.get().java.srcDirs("src/framework", "src/server-api")
+    sourceSets {
+        main.get().java.srcDirs("src/framework", "src/server-api")
+        test.get().java.srcDir("src/test")
+    }
     
     dependencies {
         api(kotlin("stdlib"))
@@ -269,6 +272,9 @@ project("sdk") {
         implementation("org.hamcrest", "hamcrest-core", "2.2")
         implementation("net.sf.kxml", "kxml2", "2.3.0")
         implementation("xmlpull", "xmlpull", "1.1.3.1")
+        
+        testImplementation("junit", "junit", "4.13")
+        testImplementation("io.kotlintest", "kotlintest-runner-junit5", "3.4.2")
     }
 }
 

@@ -1,4 +1,4 @@
-package sc.server.helpers;
+package sc.helpers;
 
 import org.junit.Assert;
 import org.junit.Test;
