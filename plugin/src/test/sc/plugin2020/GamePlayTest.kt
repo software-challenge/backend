@@ -2,7 +2,6 @@ package sc.plugin2020
 
 import org.junit.Assert.*
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import sc.plugin2020.util.*
 import sc.plugin2020.util.TestJUnitUtil.assertThrows
@@ -26,7 +25,7 @@ class GamePlayTest {
     fun invalidBoardStringTest() {
         assertThrows(InvalidParameterException::class.java) {
             TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     XY----------" +
+                    "     XB----------" +
                     "    --------------" +
                     "   ----------------" +
                     "  ------------------" +
@@ -71,27 +70,6 @@ class GamePlayTest {
         assertEquals(state.board, state.board.clone())
     }
     
-    @Ignore
-    @Test
-    fun onlyEndAfterRoundTest() {
-        TestGameUtil.updateGamestateWithBoard(state, "" +
-                "     RB----------" +
-                "    --------------" +
-                "   ----------------" +
-                "  ------------------" +
-                " --------------------" +
-                "----------------------" +
-                " --------------------" +
-                "  ------------------" +
-                "   ----------------" +
-                "    --------------" +
-                "     ------------")
-        run {
-            //Move move = new Move();
-            //GameRuleLogic.performMove(state, move);
-        }
-    }
-    
     @Test
     fun redBeeSurroundedTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -116,21 +94,6 @@ class GamePlayTest {
     
     @Test
     fun gameEndTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   ----------------" +
-                    "  ----BBBB----------" +
-                    " ----BBRQBB----------" +
-                    "------BBBB------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
-        }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
@@ -245,11 +208,9 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val invalid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
-            assertThrows(InvalidMoveException::class.java) {
-                GameRuleLogic.validateMove(state, invalid1)
-                val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 4))
-                assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
-            }
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
+            val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 4))
+            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
             val valid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 5))
             GameRuleLogic.validateMove(state, valid1)
         }
@@ -698,7 +659,7 @@ class GamePlayTest {
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
             val move2 = DragMove(CubeCoordinates(-2, 5), CubeCoordinates(0, 5))
             assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move2) }
-            val move3 = DragMove(CubeCoordinates(-2, 5), CubeCoordinates(-2,3))
+            val move3 = DragMove(CubeCoordinates(-2, 5), CubeCoordinates(-2, 3))
             GameRuleLogic.validateMove(state, move3)
         }
     }
@@ -804,7 +765,7 @@ class GamePlayTest {
             GameRuleLogic.validateMove(state, move)
         }
     }
-
+    
     @Test
     fun performMoveTest() {
         TestGameUtil.updateGamestateWithBoard(state, "" +
