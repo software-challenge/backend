@@ -429,6 +429,26 @@ class GamePlayTest: AnnotationSpec() {
     }
     
     @Test
+    fun dragMoveBeetleJumpTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  ------BA----------" +
+                    " ------RARBBA--------" +
+                    "--------BQRQ----------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
+            GameRuleLogic.validateMove(state, move)
+        }
+    }
+    
+    @Test
     fun dragMoveBeetleDisconnectTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -450,27 +470,6 @@ class GamePlayTest: AnnotationSpec() {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
                     "    --------------" +
-                    "   ----------------" +
-                    "  ------BA----------" +
-                    " ------RARBBA--------" +
-                    "--------BQRQ----------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
-            GameRuleLogic.validateMove(state, move)
-        }
-    }
-    
-    
-    @Test
-    fun dragMoveBeetleNoJumpTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
                     "   --------RG------" +
                     "  --------BG--RB----" +
                     " ----------RQBQ------" +
@@ -480,8 +479,14 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = DragMove(CubeCoordinates(3, -1), CubeCoordinates(3, 0))
-            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+            val possibleMoves = GameRuleLogic.getPossibleDragMoves(state)
+            arrayOf(
+                    DragMove(CubeCoordinates(3, -1), CubeCoordinates(3, 0)),
+                    DragMove(CubeCoordinates(3, -1), CubeCoordinates(4, 0))
+            ).forEach { move ->
+                shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+                possibleMoves shouldNotContain move
+            }
         }
     }
     
@@ -501,6 +506,24 @@ class GamePlayTest: AnnotationSpec() {
                 "     ------------")
         val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
         GameRuleLogic.validateMove(state, move)
+    }
+    
+    @Test
+    fun dragMoveBeetleObstructedTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     RBOO--------" +
+                "    --BGRQ--------" +
+                "   ----------------" +
+                "  ------------------" +
+                " --------------------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        val moveBeetle = DragMove(CubeCoordinates(0, 5), CubeCoordinates(1, 4))
+        shouldThrow<InvalidMoveException> { GameRuleLogic.performMove(state, moveBeetle) }
     }
     
     @Test
@@ -938,26 +961,6 @@ class GamePlayTest: AnnotationSpec() {
         val clone = GameState(state)
         val blueMove = SetMove(Piece(PlayerColor.BLUE, PieceType.BEE), CubeCoordinates(-4, -1, 5))
         GameRuleLogic.validateMove(clone, blueMove)
-    }
-    
-    @Test
-    fun beetleToObstructedTest() {
-        TestGameUtil.updateGamestateWithBoard(state, "" +
-                "     RBOO--------" +
-                "    --BGRQ--------" +
-                "   ----------------" +
-                "  ------------------" +
-                " --------------------" +
-                "----------------------" +
-                " --------------------" +
-                "  ------------------" +
-                "   ----------------" +
-                "    --------------" +
-                "     ------------")
-        val moveBeetle = DragMove(CubeCoordinates(0, 5), CubeCoordinates(1, 4))
-        shouldThrow<InvalidMoveException> {
-            GameRuleLogic.performMove(state, moveBeetle)
-        }
     }
     
 }
