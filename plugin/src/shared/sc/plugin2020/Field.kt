@@ -48,9 +48,9 @@ class Field(
     val hasOwner: Boolean
         get() = pieces.isNotEmpty()
     
-    /** Since [Field] is now a subclass of [CubeCoordinates], this returns itself. */
+    /** Returns the pure [CubeCoordinates] of this Field. */
     val coordinates: CubeCoordinates
-        get() = this
+        get() = CubeCoordinates(x, y, z)
     
     /** @return owner of the uppermost piece on this field, or null if it is empty. */
     val owner: PlayerColor?

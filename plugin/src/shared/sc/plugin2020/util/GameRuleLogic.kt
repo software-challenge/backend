@@ -3,6 +3,7 @@ package sc.plugin2020.util
 import sc.plugin2020.*
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerColor
+import java.util.*
 import kotlin.math.abs
 
 object GameRuleLogic {
@@ -240,8 +241,6 @@ object GameRuleLogic {
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateSpiderMove(board: Board, move: DragMove) {
-        /*
-        // Ich lass das mal noch hier, da dass der evtl. performantere Ansatz ist
         val paths: Deque<Array<CubeCoordinates>> = ArrayDeque()
         paths.add(arrayOf(move.start))
         do {
@@ -250,16 +249,9 @@ object GameRuleLogic {
             if (currentPath.size < 3)
                 paths.addAll(newFields.map { currentPath + it })
             else if (move.destination in newFields)
-                return true
+                return
         } while (paths.isNotEmpty())
-         */
-        val found = getAccessibleNeighbours(board, move.start).any { depth1 ->
-            getAccessibleNeighboursExcept(board, depth1, move.start).any { depth2 ->
-                getAccessibleNeighboursExcept(board, depth2, move.start).filterNot { it.coordinates == depth1 }.any { move.destination == it }
-            }
-        }
-        if (!found)
-            throw InvalidMoveException("No path found for Spider move")
+        throw InvalidMoveException("No path found for Spider move")
     }
     
     @Throws(IndexOutOfBoundsException::class)
