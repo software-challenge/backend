@@ -258,7 +258,7 @@ object GameRuleLogic {
     @JvmStatic
     fun getLineBetweenCoords(board: Board, start: CubeCoordinates, destination: CubeCoordinates): List<Field> {
         if (!twoFieldsOnOneStraight(start, destination)) {
-            throw IndexOutOfBoundsException("destination is not in line with start")
+            throw IndexOutOfBoundsException("Not in a line: $start and $destination")
         }
         
         val dX = start.x - destination.x
@@ -336,17 +336,14 @@ object GameRuleLogic {
     
     @JvmStatic
     fun getPossibleDragMoves(gameState: GameState): List<DragMove> {
-        if(gameState.mustPlayerPlaceBee())
+        if (gameState.mustPlayerPlaceBee())
             return emptyList()
         return gameState.board.getFieldsOwnedBy(gameState.currentPlayerColor).flatMap { startField ->
-            val edgeTargets: Set<CubeCoordinates> = this.getEmptyFieldsConnectedToSwarm(gameState.board)
-            val additionalTargets: Set<CubeCoordinates> =
-                    if (startField.topPiece?.type == PieceType.BEETLE) {
-                        this.getNeighbours(gameState.board, startField).toSet()
-                    } else {
-                        emptySet()
-                    }
-            (edgeTargets + additionalTargets).mapNotNull { destination: CubeCoordinates ->
+            when (startField.topPiece?.type) {
+                PieceType.BEE -> return@flatMap this.getAccessibleNeighbours(gameState.board, startField).map { DragMove(startField, it) }
+                PieceType.BEETLE -> this.getNeighbours(gameState.board, startField)
+                else -> this.getEmptyFieldsConnectedToSwarm(gameState.board)
+            }.mapNotNull { destination: CubeCoordinates ->
                 val move = DragMove(startField, destination)
                 try {
                     this.validateMove(gameState, move)
