@@ -1,5 +1,7 @@
 package sc.plugin2020
 
+import io.kotlintest.matchers.collections.shouldContain
+import io.kotlintest.matchers.collections.shouldNotContain
 import io.kotlintest.shouldThrow
 import io.kotlintest.specs.AnnotationSpec
 import org.junit.Assert.*
@@ -14,13 +16,11 @@ import java.security.InvalidParameterException
 
 class GamePlayTest: AnnotationSpec() {
     
-    private lateinit var game: Game
     private lateinit var state: GameState
     
     @BeforeEach
     fun beforeEveryTest() {
-        game = Game()
-        state = game.gameState
+        state = GameState()
     }
     
     @Test
@@ -707,7 +707,7 @@ class GamePlayTest: AnnotationSpec() {
                     DragMove(CubeCoordinates(0, 1), CubeCoordinates(-2, 1))
             ).forEach {
                 GameRuleLogic.validateMove(state, it)
-                assertTrue(possibleMoves.contains(it))
+                possibleMoves shouldContain it
             }
             arrayOf(
                     DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0)),
@@ -718,7 +718,7 @@ class GamePlayTest: AnnotationSpec() {
                     DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 0))
             ).forEach {
                 shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, it) }
-                assertFalse(possibleMoves.contains(it))
+                possibleMoves shouldNotContain it
             }
         }
         run {
@@ -742,7 +742,7 @@ class GamePlayTest: AnnotationSpec() {
                     DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 3))
             ).forEach {
                 GameRuleLogic.validateMove(state, it)
-                assertTrue(possibleMoves.contains(it))
+                possibleMoves shouldContain it
             }
             arrayOf(
                     DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0)),
@@ -750,7 +750,7 @@ class GamePlayTest: AnnotationSpec() {
                     DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
             ).forEach {
                 shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, it) }
-                assertFalse(possibleMoves.contains(it))
+                possibleMoves shouldNotContain it
             }
         }
         run {
@@ -768,7 +768,7 @@ class GamePlayTest: AnnotationSpec() {
                     "     ------------")
             val move = DragMove(CubeCoordinates(5, -1, -4), CubeCoordinates(5, -2, -3))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
-            assertFalse(GameRuleLogic.getPossibleDragMoves(state).contains(move))
+            GameRuleLogic.getPossibleDragMoves(state) shouldNotContain move
         }
     }
     
@@ -889,7 +889,7 @@ class GamePlayTest: AnnotationSpec() {
     }
     
     @Test
-    fun possibleDragMovesTest() {
+    fun possibleDragMoveObstructedTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
