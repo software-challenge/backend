@@ -73,29 +73,40 @@ class GamePlayTest: AnnotationSpec() {
     }
     
     @Test
-    fun redBeeSurroundedTest() {
-        TestGameUtil.updateGamestateWithBoard(state, "" +
-                "     RQBQ--------" +
-                "    BB------------" +
-                "   --BB------------" +
-                "  ------------------" +
-                " --------------------" +
-                "----------------------" +
-                " --------------------" +
-                "  ------------------" +
-                "   ----------------" +
-                "    --------------" +
-                "     ------------")
+    fun redBeeBlockedTest() {
         run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     RQBQ--------" +
+                    "    BB------------" +
+                    "   --BB------------" +
+                    "  ------------------" +
+                    " --------------------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
             state.turn = 1
             val move = DragMove(CubeCoordinates(-1, 4), CubeCoordinates(0, 4))
             GameRuleLogic.performMove(state, move)
             assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
         }
-    }
-    
-    @Test
-    fun gameEndTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  ----BBBB----------" +
+                    " ----BBRQBB----------" +
+                    "------BBBB------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
+        }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
@@ -154,26 +165,6 @@ class GamePlayTest: AnnotationSpec() {
     }
     
     @Test
-    fun validSetMoveTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   ----------------" +
-                    "  --BG--------------" +
-                    " --------------------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
-            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
-        }
-    }
-    
-    @Test
     fun setMoveOfUnavailablePieceTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -215,6 +206,22 @@ class GamePlayTest: AnnotationSpec() {
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid2) }
             val valid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 5))
             GameRuleLogic.validateMove(state, valid1)
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  --BG--------------" +
+                    " --------------------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -301,26 +308,6 @@ class GamePlayTest: AnnotationSpec() {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
-            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
-        }
-    }
-    
-    @Test
-    fun dragMoveOfSolePieceOnBoardTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state,
-                    "     ------------" +
-                            "    --------------" +
-                            "   ----------------" +
-                            "  ------------------" +
-                            " --------------------" +
-                            "----------RQ----------" +
-                            " --------------------" +
-                            "  ------------------" +
-                            "   ----------------" +
-                            "    --------------" +
-                            "     ------------")
-            val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, -1))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
