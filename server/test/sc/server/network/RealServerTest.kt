@@ -19,16 +19,16 @@ abstract class RealServerTest {
     protected lateinit var clientMgr: ClientManager
     protected lateinit var gameMgr: GameRoomManager
     protected lateinit var pluginMgr: GamePluginManager
-
+    
     protected val serverPort: Int
         get() = NewClientListener.lastUsedPort
-
+    
     fun connectClient(host: String, port: Int): LobbyClient {
         val client = LobbyClient(Configuration.getXStream(), null, host, port)
         client.start()
         return client
     }
-
+    
     @Before
     fun setup() {
         // Random PortAllocation
@@ -38,29 +38,29 @@ abstract class RealServerTest {
         this.clientMgr = this.lobby.clientManager
         this.gameMgr = this.lobby.gameManager
         this.pluginMgr = this.gameMgr.pluginManager
-
+        
         this.pluginMgr.loadPlugin(TestPlugin::class.java, this.gameMgr.pluginApi)
         Assert.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID))
-
+        
         NewClientListener.lastUsedPort = 0
         this.lobby.start()
         waitForServer()
     }
-
+    
     @After
     fun tearDown() {
         this.lobby.close()
     }
-
+    
     private fun waitForServer() {
         while (NewClientListener.lastUsedPort == 0) {
             Thread.yield()
         }
     }
-
+    
     protected fun waitForConnect(count: Int) =
             TestHelper.assertEqualsWithTimeout(count, { this@RealServerTest.lobby.clientManager.clients.size }, 1, TimeUnit.SECONDS)
-
+    
     protected fun connectClient(): TestTcpClient {
         try {
             if (serverPort == 0)
@@ -76,7 +76,7 @@ abstract class RealServerTest {
             Assert.fail("Could not connect to server.")
             throw Throwable("Unreachable")
         }
-
+        
     }
-
+    
 }

@@ -26,7 +26,7 @@ public class TestPreparedGameResponseListener implements ILobbyClientListener {
   @Override
   public void onRoomMessage(String roomId, Object data) {
   }
-  
+
   @Override
   public void onGameLeft(String roomId) {
   }

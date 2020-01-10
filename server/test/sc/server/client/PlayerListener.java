@@ -8,13 +8,13 @@ import java.util.List;
 
 public class PlayerListener implements IPlayerListener {
   public boolean playerEventReceived;
-  
+
   public List<ProtocolMessage> requests = new ArrayList<>();
-  
+
   @Override
   public void onPlayerEvent(ProtocolMessage request) {
     playerEventReceived = true;
     requests.add(request);
   }
-  
+
 }
