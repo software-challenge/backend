@@ -23,19 +23,6 @@ class GamePlayTest {
     }
     
     @Test
-    fun boardCreationTest() {
-        val board = Board()
-        assertNotNull(board.getField(0, 0, 0))
-        assertEquals(board, board.clone())
-    }
-    
-    @Test
-    fun obstructedCreationTest() {
-        val board = Board()
-        assertEquals(3, board.fields.filter { it.isObstructed }.size)
-    }
-    
-    @Test
     fun invalidBoardStringTest() {
         assertThrows(InvalidParameterException::class.java) {
             TestGameUtil.updateGamestateWithBoard(state, "" +

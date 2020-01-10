@@ -1,11 +1,19 @@
 package sc.plugin2020
 
+import io.kotlintest.matchers.collections.shouldHaveSize
 import io.kotlintest.shouldBe
+import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
 import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.GameRuleLogic
 
 class GameRuleTest: StringSpec({
+    "board creation" {
+        val board = Board()
+        board.getField(0, 0, 0) shouldNotBe null
+        board shouldBe board.clone()
+        board.fields.filter { it.isObstructed } shouldHaveSize 3
+    }
     "neighbours & distances" {
         val field1 = CubeCoordinates(0, 0, 0)
         val field2 = CubeCoordinates(1, -1, 0)
