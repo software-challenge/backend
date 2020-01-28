@@ -11,10 +11,10 @@ data class Piece(
         @field: XStreamAsAttribute
         val type: PieceType)
 
-enum class PieceType {
-    ANT,
-    BEE,
-    BEETLE,
-    GRASSHOPPER,
-    SPIDER
+enum class PieceType(val letter: Char) {
+    ANT('A'),
+    BEE('Q'),
+    BEETLE('B'),
+    GRASSHOPPER('G'),
+    SPIDER('S')
 }

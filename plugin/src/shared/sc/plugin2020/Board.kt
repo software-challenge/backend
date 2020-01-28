@@ -69,23 +69,20 @@ data class Board(
     }
     
     override fun toString(): String {
-        var text = "Board\n"
-        for(x in 0 until Constants.BOARD_SIZE) {
-            for(y in 0 until Constants.BOARD_SIZE) {
+        val text = StringBuilder("Board")
+        for (x in 0 until Constants.BOARD_SIZE) {
+            val line = StringBuilder()
+            for (y in 0 until Constants.BOARD_SIZE) {
                 val field = this.gameField[x][y]
-                if(field == null) {
-                    text += "00"
-                } else {
-                    if(field.hasOwner) {
-                        text += (field.owner.toString().get(0) + "T")
-                    } else {
-                        text += "[]"
-                    }
+                when {
+                    field == null -> line.insert(0, ' ')
+                    !field.hasOwner -> line.append("[]")
+                    else -> line.append(field.owner!!.letter).append(field.topPiece!!.type.letter)
                 }
             }
-            text += "\n"
+            text.append('\n').append(line)
         }
-        return text
+        return text.toString()
     }
     
     override fun equals(other: Any?): Boolean {
