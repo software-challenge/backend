@@ -2,6 +2,7 @@ package sc.plugin2020
 
 import io.kotlintest.matchers.collections.shouldContain
 import io.kotlintest.matchers.collections.shouldNotContain
+import io.kotlintest.shouldBe
 import io.kotlintest.shouldThrow
 import io.kotlintest.specs.AnnotationSpec
 import org.junit.Assert.*
@@ -12,7 +13,6 @@ import sc.plugin2020.util.TestGameUtil
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerColor
 import java.security.InvalidParameterException
-
 
 class GamePlayTest: AnnotationSpec() {
     
@@ -823,97 +823,127 @@ class GamePlayTest: AnnotationSpec() {
     
     @Test
     fun possibleMoveTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   --RBRGBGBB------" +
-                    "  RQBGBSRS--BS------" +
-                    " --RS--RBRABQ--------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            assertFalse(GameRuleLogic.getPossibleMoves(state).isEmpty())
-        }
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   --RBRGBGBB------" +
+                "  RQBGBSRS--BS------" +
+                " --RS--RBRABQ--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        assertFalse(GameRuleLogic.getPossibleMoves(state).isEmpty())
     }
     
     @Test
     fun possibleSetMoveDestinationsTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   --RBRGBGBB------" +
-                    "  RQBGBSRS--BS------" +
-                    " --RS--RBRABQ--------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            assertEquals(7, GameRuleLogic.getPossibleSetMoveDestinations(state.board, state.currentPlayerColor).size)
-        }
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   --RBRGBGBB------" +
+                "  RQBGBSRS--BS------" +
+                " --RS--RBRABQ--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        assertEquals(7, GameRuleLogic.getPossibleSetMoveDestinations(state.board, state.currentPlayerColor).size)
     }
     
     @Test
     fun possibleSetMoveDestinationsSecondTurnTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   ----------------" +
-                    "  ------------------" +
-                    " --------RBOO--------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            state.turn = 1
-            assertEquals(PieceType.values().size * 5, GameRuleLogic.getPossibleSetMoves(state).size)
-        }
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   ----------------" +
+                "  ------------------" +
+                " --------RBOO--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        state.turn = 1
+        assertEquals(PieceType.values().size * 5, GameRuleLogic.getPossibleSetMoves(state).size)
     }
     
     @Test
     fun possibleSetMoveDestinationsFirstTurnTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   ----------------" +
-                    "  ------------------" +
-                    " ----------OO--------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            assertEquals(PieceType.values().size * (Constants.FIELD_AMOUNT - 1), GameRuleLogic.getPossibleSetMoves(state).size)
-        }
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   ----------------" +
+                "  ------------------" +
+                " ----------OO--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        assertEquals(PieceType.values().size * (Constants.FIELD_AMOUNT - 1), GameRuleLogic.getPossibleSetMoves(state).size)
     }
     
     @Test
     fun possibleDragMoveObstructedTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   ----------------" +
+                "  ------BB----------" +
+                " --------RQOO--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        assertEquals(1, GameRuleLogic.getPossibleDragMoves(state).size)
+    }
+    
+    @Test
+    fun possibleMoveSeparateTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
                     "    --------------" +
                     "   ----------------" +
-                    "  ------BB----------" +
-                    " --------RQOO--------" +
-                    "----------------------" +
+                    "  ----------------RQ" +
+                    " ------------------BQ" +
+                    "--------------------RA" +
                     " --------------------" +
                     "  ------------------" +
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            assertEquals(1, GameRuleLogic.getPossibleDragMoves(state).size)
+            state.turn = 3
+            GameRuleLogic.getPossibleMoves(state).forEach {
+                GameRuleLogic.validateMove(state, it)
+            }
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    ------------BA" +
+                    "   --------------BB" +
+                    "  ----------RGRQBSBB" +
+                    " ------------RB----BQ" +
+                    "--------------RS----BA" +
+                    " ------------RG------" +
+                    "  ------------RA----" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            state.turn = 9
+            GameRuleLogic.getPossibleMoves(state).forEach {
+                GameRuleLogic.validateMove(state, it)
+            }
         }
     }
     
@@ -952,15 +982,6 @@ class GamePlayTest: AnnotationSpec() {
             GameRuleLogic.validateMove(state, valid)
             assertEquals(GameRuleLogic.getPossibleMoves(state), listOf(SkipMove))
         }
-    }
-    
-    @Test
-    fun undeployedPiecesCloneTest() {
-        val redMove = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-5, 0, 5))
-        GameRuleLogic.performMove(state, redMove);
-        val clone = GameState(state)
-        val blueMove = SetMove(Piece(PlayerColor.BLUE, PieceType.BEE), CubeCoordinates(-4, -1, 5))
-        GameRuleLogic.validateMove(clone, blueMove)
     }
     
 }

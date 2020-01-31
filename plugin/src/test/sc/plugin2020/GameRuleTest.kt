@@ -6,6 +6,7 @@ import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
 import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.GameRuleLogic
+import sc.shared.PlayerColor
 
 class GameRuleTest: StringSpec({
     "board creation" {
@@ -29,5 +30,13 @@ class GameRuleTest: StringSpec({
         val result = GameRuleLogic.getNeighbours(Board(), CubeCoordinates(-2, 1)).toTypedArray()
         val expected = arrayOf(CubeCoordinates(-2, 2), CubeCoordinates(-1, 1), CubeCoordinates(-1, 0), CubeCoordinates(-2, 0), CubeCoordinates(-3, 1), CubeCoordinates(-3, 2))
         result contentEquals expected
+    }
+    "clone undeployed Pieces" {
+        val state = GameState()
+        val redMove = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-5, 0, 5))
+        GameRuleLogic.performMove(state, redMove)
+        val clone = GameState(state)
+        val blueMove = SetMove(Piece(PlayerColor.BLUE, PieceType.BEE), CubeCoordinates(-4, -1, 5))
+        GameRuleLogic.validateMove(clone, blueMove)
     }
 })
