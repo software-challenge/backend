@@ -149,9 +149,7 @@ object GameRuleLogic {
         if (gameState.board.getField(move.destination).pieces.isNotEmpty() && pieceToDrag.type !== PieceType.BEETLE)
             throw InvalidMoveException("Only beetles are allowed to climb on other Pieces")
         
-        val boardWithoutPiece = Board(gameState.board.fields.map {
-            if (it == move.start) Field(it).apply { pieces.pop() } else it
-        })
+        val boardWithoutPiece = gameState.board.withoutPiece(move.start)
         if (!isSwarmConnected(boardWithoutPiece))
             throw InvalidMoveException("Moving piece would disconnect swarm")
         
@@ -164,6 +162,11 @@ object GameRuleLogic {
         }
     }
     
+    fun Board.withoutPiece(position: CubeCoordinates): Board =
+            Board(fields.map {
+                if (it == position) it.clone().apply { pieces.pop() } else it
+            })
+    
     @Throws(InvalidMoveException::class)
     @JvmStatic
     fun validateAntMove(board: Board, move: DragMove) {
@@ -171,7 +174,7 @@ object GameRuleLogic {
         var index = 0
         do {
             val currentField = visitedFields[index]
-            val newFields = getAccessibleNeighboursExcept(board, currentField, move.start).filterNot { it in visitedFields }
+            val newFields = getAccessibleNeighbours(board, currentField).filterNot { it in visitedFields }
             if (move.destination in newFields)
                 return
             visitedFields.addAll(newFields)
@@ -198,12 +201,10 @@ object GameRuleLogic {
     
     @JvmStatic
     fun getAccessibleNeighbours(board: Board, start: CubeCoordinates) =
-            getNeighbours(board, start).filter { neighbour ->
-                neighbour.isEmpty && canMoveBetween(board, start, neighbour)
-            }
+            getAccessibleNeighboursExcept(board, start, null)
     
     @JvmStatic
-    fun getAccessibleNeighboursExcept(board: Board, start: CubeCoordinates, except: CubeCoordinates) =
+    fun getAccessibleNeighboursExcept(board: Board, start: CubeCoordinates, except: CubeCoordinates?) =
             getNeighbours(board, start).filter { neighbour ->
                 neighbour.isEmpty && canMoveBetweenExcept(board, start, neighbour, except) && neighbour.coordinates != except
             }
@@ -245,7 +246,7 @@ object GameRuleLogic {
         paths.add(arrayOf(move.start))
         do {
             val currentPath = paths.removeFirst()
-            val newFields = getAccessibleNeighboursExcept(board, currentPath.last(), move.start).filterNot { it in currentPath }
+            val newFields = getAccessibleNeighbours(board, currentPath.last()).filterNot { it in currentPath }
             if (currentPath.size < 3)
                 paths.addAll(newFields.map { currentPath + it })
             else if (move.destination in newFields)
@@ -277,12 +278,10 @@ object GameRuleLogic {
     
     @JvmStatic
     fun canMoveBetween(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates): Boolean =
-            sharedNeighboursOfTwoCoords(board, coords1, coords2).let { shared ->
-                (shared.size == 1 || shared.any { it.isEmpty && !it.isObstructed }) && shared.any { it.pieces.isNotEmpty() }
-            }
+            canMoveBetweenExcept(board, coords1, coords2, null)
     
     @JvmStatic
-    fun canMoveBetweenExcept(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates, except: CubeCoordinates): Boolean =
+    fun canMoveBetweenExcept(board: Board, coords1: CubeCoordinates, coords2: CubeCoordinates, except: CubeCoordinates?): Boolean =
             sharedNeighboursOfTwoCoords(board, coords1, coords2).filterNot { it.pieces.size == 1 && except == it.coordinates }.let { shared ->
                 (shared.size == 1 || shared.any { it.isEmpty && !it.isObstructed }) && shared.any { it.pieces.isNotEmpty() }
             }
