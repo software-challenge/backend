@@ -48,9 +48,9 @@ class Field(
     val hasOwner: Boolean
         get() = pieces.isNotEmpty()
     
-    /** Returns the pure [CubeCoordinates] of this Field. */
+    /** Since [Field] is a subclass of [CubeCoordinates], this returns itself. */
     val coordinates: CubeCoordinates
-        get() = CubeCoordinates(x, y, z)
+        get() = this
     
     /** @return owner of the uppermost piece on this field, or null if it is empty. */
     val owner: PlayerColor?
@@ -71,30 +71,5 @@ class Field(
     constructor(field: Field): this(field.x, field.y, field.z, field.pieces.toCollection(Stack()), field.isObstructed)
     
     public override fun clone() = Field(this)
-    
-    override fun equals(other: Any?): Boolean {
-        if(this === other) return true
-        if(javaClass != other?.javaClass)
-            return if(other is CubeCoordinates) super.equals(other) else false
-        
-        other as Field
-        
-        if(x != other.x) return false
-        if(y != other.y) return false
-        if(z != other.z) return false
-        if(pieces != other.pieces) return false
-        if(isObstructed != other.isObstructed) return false
-        
-        return true
-    }
-    
-    override fun hashCode(): Int {
-        var result = x
-        result = 31 * result + y
-        result = 31 * result + z
-        result = 31 * result + pieces.hashCode()
-        result = 31 * result + isObstructed.hashCode()
-        return result
-    }
     
 }
