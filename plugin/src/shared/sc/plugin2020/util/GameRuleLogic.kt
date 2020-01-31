@@ -338,9 +338,10 @@ object GameRuleLogic {
     fun getPossibleDragMoves(gameState: GameState): List<DragMove> {
         if (gameState.mustPlayerPlaceBee())
             return emptyList()
+        
         return gameState.board.getFieldsOwnedBy(gameState.currentPlayerColor).flatMap { startField ->
             when (startField.topPiece?.type) {
-                PieceType.BEE -> return@flatMap this.getAccessibleNeighbours(gameState.board, startField).map { DragMove(startField, it) }
+                PieceType.BEE -> this.getAccessibleNeighbours(gameState.board, startField)
                 PieceType.BEETLE -> this.getNeighbours(gameState.board, startField)
                 else -> this.getEmptyFieldsConnectedToSwarm(gameState.board)
             }.mapNotNull { destination: CubeCoordinates ->
