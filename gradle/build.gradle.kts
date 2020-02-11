@@ -19,7 +19,7 @@ val game by extra { "${gameName}_$year" }
 println("Current version: $version Game: $game")
 
 val deployDir by extra { buildDir.resolve("deploy") }
-val deployedPlayer: String by extra { deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath }
+val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
 val testLogDir by extra { buildDir.resolve("tests") }
 
 subprojects {
@@ -111,7 +111,7 @@ tasks {
                     .directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(1000)
             val startClient: (Int) -> Process = {
-                ProcessBuilder("java", "-jar", deployedPlayer)
+                ProcessBuilder("java", "-jar", deployDir.resolve(deployedPlayer).absolutePath)
                         .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
