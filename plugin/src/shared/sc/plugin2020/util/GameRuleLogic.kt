@@ -229,13 +229,13 @@ object GameRuleLogic {
     @JvmStatic
     fun validateGrasshopperMove(board: Board, move: DragMove) {
         if (!twoFieldsOnOneStraight(move.start, move.destination)) {
-            throw InvalidMoveException("Grasshopper can only move straight lines")
+            throw InvalidMoveException("Grasshopper can only move in straight lines")
         }
         if (isNeighbour(move.start, move.destination)) {
             throw InvalidMoveException("Grasshopper has to jump over at least one piece")
         }
-        if (getLineBetweenCoords(board, move.start, move.destination).any { it.isEmpty }) {
-            throw InvalidMoveException("Grasshopper can only jump over occupied fields, not empty ones")
+        if (getLineBetweenCoords(board, move.start, move.destination).any { !it.hasOwner }) {
+            throw InvalidMoveException("Grasshopper can only jump over occupied fields")
         }
     }
     

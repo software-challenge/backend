@@ -549,6 +549,42 @@ class GamePlayTest: AnnotationSpec() {
     }
     
     @Test
+    fun dragMoveGrasshopperOverBlockedFieldTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  ------RQBB--------" +
+                    " --------OORG--------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = DragMove(CubeCoordinates(1, 0), CubeCoordinates(-1, 2))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  --RBRQBABB--------" +
+                    " ----OOBQRBRG--------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = DragMove(CubeCoordinates(1, 0), CubeCoordinates(-3, 4))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+        }
+    }
+    
+    @Test
     fun dragMoveGrasshopperOverEmptyFieldTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
