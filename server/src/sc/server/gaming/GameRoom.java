@@ -493,6 +493,7 @@ public class GameRoom implements IGameListener {
       this.game.onAction(resolvePlayer(source), data);
     } catch (InvalidMoveException e) {
       this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.move, e.getMessage())));
+      this.game.onPlayerLeft(resolvePlayer(source), ScoreCause.RULE_VIOLATION);
       throw new GameLogicException(e.toString());
     }
   }
