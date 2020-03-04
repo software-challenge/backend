@@ -11,7 +11,9 @@ public class InvalidMoveException extends Exception {
   }
 
   public InvalidMoveException(String reason, IMove move) {
-    super(reason);
+    /* NOTE: It is important to have information about the move in the reason
+     * because that is the only place where the invalid move is logged */
+    super(reason + (move == null ? "" : "; move was " + move.toString()));
     this.move = move;
   }
 

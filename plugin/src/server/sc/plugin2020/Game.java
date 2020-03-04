@@ -62,7 +62,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       GameRuleLogic.performMove(this.gameState, move);
       next(this.gameState.getCurrentPlayer());
     } catch(InvalidMoveException e) {
-      super.catchInvalidMove(e, fromPlayer);
+      super.catchInvalidMove(e, fromPlayer, move);
     }
   }
 
