@@ -6,7 +6,7 @@ Das offizielle Repository der [Software-Challenge](https://www.software-challeng
 
 | Ordner | Beschreibung |
 | ------ | ------------ |
-| helpers | Zusätzliche Tools (z.B. der TestClient) |
+| helpers | Zusätzliche Tools (aktuell nur der TestClient) |
 | player | Simpleclient dieses Jahres |
 | plugin | Plugin dieses Jahres |
 | server | Spielserver |
@@ -20,6 +20,8 @@ Bitte führe nach dem klonen des repositories einmal folgendes im Terminal aus, 
 
 Um bei den Branches die Übersicht zu behalten ist es hilfreich, diese ebenfalls ähnlich dieser Konvention zu benennen, also könnte ein Branch mit einem Release-fix für gradle `fix/gradle-release` heißen und ein Branch, der ein neues login-feature zum server hinzufügt, `feat/server-login`.  
 Branches werden normalerweise beim mergen gesquashed, außer die einzelnen commits des branches haben jeweils eine alleinstehende Aussagekraft.
+
+Detaillierte Informationen zu unserem Kollaborations-stil findet ihr in der [Kull Convention](xerus2000.github.io/kull).
 
 ## Build
 
@@ -74,24 +76,3 @@ Dazu sind folgende Schritte notwendig:
 
 Nun können Gradle tasks auch direkt in IDEA vom Gradle Tool Window
 (befindet sich normalerweise in der rechten Andockleiste) ausgeführt werden.
-
-## Release
-
-Ein Release kann durch dieses Command initiiert werden:
-
-`./gradlew release -Ppatch -Pm="Versionsbeschreibung"`
-oder
-`./gradlew release -Pminor -Pm="Versionsbeschreibung"`
-
-- `-Pminor` oder `-Ppatch` gibt an, welcher Teil der Version inkrementiert werden soll.
-- `-Pm` ist eine kurze Beschreibung der Version. Sie wird als Nachricht des Tags verwendet
-  und im vorgeschlagenen Text für Ankündigungen auf verschiedenen Platformen eingefügt.
-
-Dann wird die Version (in `gradle.properties`) automatisch angepasst, ein
-commit gemacht, git tag gesetzt und gepusht. Muss man die Major-Version
-anpassen, so geht dies nur über direktes Editieren der `gradle.properties`.  Im
-Anschluss gibt das Skript Hinweise, wie weiter zu verfahren ist.
-
-## Deploy im Wettkampfsystem
-
-siehe https://github.com/CAU-Kiel-Tech-Inf/socha-sysops/wiki/General-infrastructure#game-server
