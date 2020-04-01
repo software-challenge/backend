@@ -1,6 +1,8 @@
 # Software-Challenge [![Build Status](https://travis-ci.com/CAU-Kiel-Tech-Inf/socha.svg?branch=master)](https://travis-ci.com/CAU-Kiel-Tech-Inf/socha)
 
-Das offizielle Repository der [Software-Challenge](https://www.software-challenge.de/), welches aus Server, Client und Spiel-Plugins besteht.
+Dies ist das offizielle Repository der [Software-Challenge](https://www.software-challenge.de/), ein jährlicher Programmierwettbewerb für Schüler.
+Ziel hierbei ist, für ein jährlich wechselndes Spiel eine künstliche Intelligenz zu entwickeln, die den Gegenspieler besiegt.
+Das Repository besteht aus Server, Client und Spiel-Plugins.
 
 ## Struktur
 
@@ -67,4 +69,4 @@ In Intellij kann man das Projekt bequem von Gradle importieren, wodurch alle Mod
 - Warten, bis der Gradle build fertig ist
 - Einmal im Terminal `git checkout .idea` ausführen, um sich die codeStyles zurückzuholen
 
-Nun können Gradle tasks auch direkt in IDEA vom Gradle Tool Window ausgeführt werden; dieses befindet sich normalerweise in der rechten Andockleiste.
+Nun können Gradle tasks auch direkt in IDEA vom Gradle Tool Window ausgeführt werden; dieses befindet sich normalerweise in der rechten Andockleistefix.
