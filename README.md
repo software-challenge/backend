@@ -46,7 +46,7 @@ Die wichtigsten Tasks:
 ### Unterprojekte
 
 Tasks in Unterprojekten können über zwei Wege aufgerufen werden:  
-`./gradlew :server:run` führt die Task "run" des Unterprojektes "server" aus.
+`./gradlew :server:run` führt den Task "run" des Unterprojektes "server" aus.
 Alternativ kann man in das Server-Verzeichnis wechseln und dort `./gradlew run` ausführen.
 
 Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1 Argument2"` zusätzlich Argumente mitgegeben werden. Zum Beispiel kann der TestClient mit folgendem Befehl direkt aus dem Sourcecode getestet werden:
@@ -69,4 +69,4 @@ In Intellij kann man das Projekt bequem von Gradle importieren, wodurch alle Mod
 - Warten, bis der Gradle build fertig ist
 - Einmal im Terminal `git checkout .idea` ausführen, um sich die codeStyles zurückzuholen
 
-Nun können Gradle tasks auch direkt in IDEA vom Gradle Tool Window ausgeführt werden; dieses befindet sich normalerweise in der rechten Andockleistefix.
+Nun können Gradle Tasks auch direkt in IDEA vom Gradle Tool Window ausgeführt werden; dieses befindet sich normalerweise in der rechten Andockleistefix.
