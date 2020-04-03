@@ -1,6 +1,6 @@
 # Software-Challenge [![Build Status](https://travis-ci.com/CAU-Kiel-Tech-Inf/socha.svg?branch=master)](https://travis-ci.com/CAU-Kiel-Tech-Inf/socha)
 
-Dies ist das offizielle Repository der [Software-Challenge](https://www.software-challenge.de/), ein jährlicher Programmierwettbewerb für Schüler.
+Dies ist das offizielle Repository der [Software-Challenge](https://www.software-challenge.de/), ein Programmierwettbewerb für Schüler.
 Ziel hierbei ist, für ein jährlich wechselndes Spiel eine künstliche Intelligenz zu entwickeln, die den Gegenspieler besiegt.
 Das Repository besteht aus Server, Client und Spiel-Plugins.
 
