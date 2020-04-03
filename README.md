@@ -16,7 +16,7 @@ Das Repository besteht aus Server, Client und Spiel-Plugins.
 
 ## Collaboration
 
-Unsere Commit-Messages folgen dem Muster `type(scope): summary` (siehe [Karma Runner Konvention](http://karma-runner.github.io/latest/dev/git-commit-msg.html)), wobei die verfügbaren Scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden. Bitte führe nach dem Klonen des Repositories einmal Folgendes im Terminal aus, damit die entsprechenden Git Hooks aktiv werden:  
+Unsere Commit-Messages folgen dem Muster `type(scope): summary` (siehe [Karma Runner Konvention](http://karma-runner.github.io/latest/dev/git-commit-msg.html)), wobei die verfügbaren Scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden. Bitte führe nach dem Klonen des Repositories einmal Folgendes im Terminal aus, damit die entsprechenden Git-Hooks aktiv werden:  
 
     git config core.hooksPath .dev/githooks
 
@@ -53,11 +53,11 @@ Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1
 
     ./gradlew :test-client:run -Dargs="--player1 ../../player/build/libs/defaultplayer.jar --player2 ../../player/build/libs/defaultplayer.jar --tests 3"
 
-### Arbeiten mit Intellij IDEA
+### Arbeiten mit IntelliJ IDEA
 
-Zuerst sollte sichergestellt werden, dass die neuste Version von Intellij IDEA verwendet wird, da es ansonsten Probleme mit Kotlin geben kann.
+Zuerst sollte sichergestellt werden, dass die neuste Version von IntelliJ IDEA verwendet wird, da es ansonsten Probleme mit Kotlin geben kann.
 
-In Intellij kann man das Projekt bequem von Gradle importieren, wodurch alle Module und Bibliotheken automatisch geladen werden. Dazu sind folgende Schritte notwendig:
+In IntelliJ kann man das Projekt bequem von Gradle importieren, wodurch alle Module und Bibliotheken automatisch geladen werden. Dazu sind folgende Schritte notwendig:
 
 - Projekt klonen: `git clone git@github.com:CAU-Kiel-Tech-Inf/socha.git`
 - In IntelliJ auf "File" > "New" > "Project from existing sources" > socha Verzeichnis auswählen
