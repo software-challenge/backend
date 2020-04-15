@@ -12,7 +12,7 @@ class PrepareGameRequest(
         val gameType: String,
         @XStreamImplicit(itemFieldName = "slot")
         val slotDescriptors: Array<SlotDescriptor>
-): ILobbyRequest {
+): AdminLobbyRequest {
     
     /**
      * Create a prepared game with descriptors for each player.
