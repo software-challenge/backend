@@ -12,8 +12,8 @@ application {
 }
 
 dependencies {
-    compile(project(":plugin"))
-    compile(project(":server"))
+    implementation(project(":plugin"))
+    implementation(project(":server"))
 }
 
 tasks {
