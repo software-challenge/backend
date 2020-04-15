@@ -72,60 +72,61 @@ class Lobby: IClientListener {
                         }
                     }
                 }
-                is AuthenticateRequest -> source.authenticate(packet.password)
-                is PrepareGameRequest -> if (source.isAdministrator) {
-                    source.send(this.gameManager.prepareGame(packet))
-                }
-                is FreeReservationRequest -> if (source.isAdministrator) {
-                    ReservationManager.freeReservation(packet.reservation)
-                }
                 is RoomPacket -> {
                     // i.e. new move
                     val room = this.gameManager.findRoom(packet.roomId)
                     room.onEvent(source, packet.data)
                 }
-                is ObservationRequest -> if (source.isAdministrator) {
-                    val room = this.gameManager.findRoom(packet.roomId)
-                    room.addObserver(source)
-                }
-                is PauseGameRequest -> if (source.isAdministrator) {
-                    try {
-                        val room = this.gameManager.findRoom(packet.roomId)
-                        room.pause(packet.pause)
-                    } catch (e: RescuableClientException) {
-                        this.logger.error("Got exception on pause: {}", e)
+                is AuthenticateRequest -> source.authenticate(packet.password)
+                
+                is AdminLobbyRequest -> if (source.isAdministrator) when (packet) {
+                    is PrepareGameRequest -> {
+                        source.send(this.gameManager.prepareGame(packet))
                     }
-
-                }
-                is ControlTimeoutRequest -> if (source.isAdministrator) {
-                    val room = this.gameManager.findRoom(packet.roomId)
-                    val slot = room.slots[packet.slot]
-                    slot.role.player.isCanTimeout = packet.activate
-
-                }
-                is StepRequest -> // It is not checked whether there is a prior pending StepRequest
-                    if (source.isAdministrator) {
+                    is FreeReservationRequest -> {
+                        ReservationManager.freeReservation(packet.reservation)
+                    }
+                    is ControlTimeoutRequest -> {
+                        val room = this.gameManager.findRoom(packet.roomId)
+                        val slot = room.slots[packet.slot]
+                        slot.role.player.isCanTimeout = packet.activate
+                    }
+                    is ObservationRequest -> {
+                        val room = this.gameManager.findRoom(packet.roomId)
+                        room.addObserver(source)
+                    }
+                    is PauseGameRequest -> {
+                        try {
+                            val room = this.gameManager.findRoom(packet.roomId)
+                            room.pause(packet.pause)
+                        } catch (e: RescuableClientException) {
+                            this.logger.error("Got exception on pause: {}", e)
+                        }
+                    }
+                    is StepRequest -> {
+                        // TODO check for a prior pending StepRequest
                         val room = this.gameManager.findRoom(packet.roomId)
                         room.step(packet.forced)
                     }
-                is CancelRequest -> if (source.isAdministrator) {
-                    val room = this.gameManager.findRoom(packet.roomId)
-                    room.cancel()
-                    // TODO check whether all clients receive game over message
-                    this.gameManager.games.remove(room)
-                }
-                is TestModeRequest -> if (source.isAdministrator) {
-                    val testMode = packet.testMode
-                    logger.info("Test mode is set to {}", testMode)
-                    Configuration.set(Configuration.TEST_MODE, java.lang.Boolean.toString(testMode))
-                    source.send(TestModeMessage(testMode))
-                }
-                is GetScoreForPlayerRequest -> if (source.isAdministrator) {
-                    val displayName = packet.displayName
-                    val score = getScoreOfPlayer(displayName)
-                            ?: throw IllegalArgumentException("Score for \"$displayName\" could not be found!")
-                    logger.debug("Sending score of player \"{}\"", displayName)
-                    source.send(PlayerScorePacket(score))
+                    is CancelRequest -> {
+                        val room = this.gameManager.findRoom(packet.roomId)
+                        room.cancel()
+                        // TODO check whether all clients receive game over message
+                        this.gameManager.games.remove(room)
+                    }
+                    is GetScoreForPlayerRequest -> {
+                        val displayName = packet.displayName
+                        val score = getScoreOfPlayer(displayName)
+                                ?: throw IllegalArgumentException("Score for \"$displayName\" could not be found!")
+                        logger.debug("Sending score of player \"{}\"", displayName)
+                        source.send(PlayerScorePacket(score))
+                    }
+                    is TestModeRequest -> {
+                        val testMode = packet.testMode
+                        logger.info("Setting Test mode to {}", testMode)
+                        Configuration.set(Configuration.TEST_MODE, java.lang.Boolean.toString(testMode))
+                        source.send(TestModeMessage(testMode))
+                    }
                 }
                 else -> throw RescuableClientException("Unhandled Packet of type: " + packet.javaClass)
             }
