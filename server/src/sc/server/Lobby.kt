@@ -101,7 +101,6 @@ class Lobby : IClientListener {
                     val room = this.gameManager.findRoom(packet.roomId)
                     val slot = room.slots[packet.slot]
                     slot.role.player.isCanTimeout = packet.activate
-
                 }
                 is StepRequest -> // It is not checked whether there is a prior pending StepRequest
                     if (source.isAdministrator) {
@@ -109,8 +108,7 @@ class Lobby : IClientListener {
                         room.step(packet.forced)
                     }
                 is CancelRequest -> if (source.isAdministrator) {
-                    if(packet.roomId == null)
-                        throw IllegalArgumentException("Can't cancel a game with roomId null!")
+                    requireNotNull(packet.roomId) { "Can't cancel a game with roomId null!" }
                     val room = this.gameManager.findRoom(packet.roomId)
                     room.cancel()
                 }
