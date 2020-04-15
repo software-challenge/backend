@@ -86,8 +86,9 @@ public class ClientManager implements Runnable, IClientListener {
   }
 
   /**
-   * Starts the ClientManager in it's own daemon thread. This method should be used only once.
-   * clientListener starts SocketListener on defined port to watch for new connecting clients
+   * Starts the ClientManager and ClientListener in it's own daemon thread. This method should be used only once.
+   *
+   * @see NewClientListener#start()
    */
   public void start() throws IOException {
     this.clientListener.start();

@@ -28,11 +28,7 @@ class Lobby: IClientListener {
     val gameManager: GameRoomManager = GameRoomManager()
     val clientManager: ClientManager = ClientManager(this)
     
-    /**
-     * Starts the ClientManager in it's own daemon thread. This method should be used only once.
-     * ClientManager starts clientListener.
-     * clientListener starts SocketListener on defined port to watch for new connecting clients.
-     */
+    /** @see ClientManager.start */
     @Throws(IOException::class)
     fun start() {
         this.clientManager.start()
