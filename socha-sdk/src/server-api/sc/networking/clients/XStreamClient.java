@@ -50,7 +50,7 @@ public abstract class XStreamClient {
     return ready;
   }
 
-  /** Signals that client can receive and send */
+  /** Signals that client can receive and send. */
   public void start() {
     synchronized(readyLock) {
       if (!ready) {

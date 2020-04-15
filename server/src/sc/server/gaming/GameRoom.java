@@ -163,7 +163,7 @@ public class GameRoom implements IGameListener {
    *
    * @param results map of Player and PlayerScore
    *
-   * @return GameResult, containing all PlayerScores and
+   * @return GameResult containing all PlayerScores in order and winners
    */
   private GameResult generateGameResult(Map<Player, PlayerScore> results) {
     ScoreDefinition definition = getProvider().getPlugin().getScoreDefinition();
