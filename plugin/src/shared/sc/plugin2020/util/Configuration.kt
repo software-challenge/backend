@@ -2,7 +2,7 @@ package sc.plugin2020.util
 
 import com.thoughtworks.xstream.XStream
 import sc.plugin2020.*
-import sc.protocol.LobbyProtocol
+import sc.protocol.helpers.LobbyProtocol
 import sc.shared.WelcomeMessage
 import java.util.concurrent.locks.Condition
 
@@ -14,7 +14,7 @@ object Configuration {
     @JvmStatic
     val classesToRegister: List<Class<*>>
         get() = listOf(Game::class.java, Board::class.java,
-                GameState::class.java, SetMove::class.java, DragMove::class.java, MissMove::class.java,
+                GameState::class.java, SetMove::class.java, DragMove::class.java, SkipMove::class.java,
                 Direction::class.java, Field::class.java,
                 WelcomeMessage::class.java, Condition::class.java)
 

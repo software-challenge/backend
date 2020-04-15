@@ -5,6 +5,7 @@ doc/
 log/
 out/
 .gradle/
+.kotlintest/
 
 # Copied files
 /server/configuration/server.properties

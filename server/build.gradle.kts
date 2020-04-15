@@ -54,7 +54,7 @@ tasks {
     }
 
     val deploy by creating(Zip::class) {
-        dependsOn(":test-client:jar", ":player:jar", "makeRunnable")
+        dependsOn(":test-client:jar", ":player:shadowJar", "makeRunnable")
         destinationDirectory.set(deployDir)
         archiveBaseName.set("software-challenge-server")
         from(project(":test-client").buildDir.resolve("libs"), project(":player").buildDir.resolve("libs"), runnableDir)

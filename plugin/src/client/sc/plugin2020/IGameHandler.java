@@ -1,6 +1,5 @@
 package sc.plugin2020;
 
-import sc.api.plugins.IMove;
 import sc.framework.plugins.Player;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
@@ -31,7 +30,7 @@ public interface IGameHandler {
    *
    * @param move zu taetigender Zug
    */
-  void sendAction(IMove move);
+  void sendAction(Move move);
 
   /**
    * aufgerufen, wenn das Spiel beendet ist.

@@ -1,5 +1,8 @@
 package sc.helpers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,114 +12,111 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public final class ManifestHelper {
-	private static final Logger logger = LoggerFactory.getLogger(ManifestHelper.class);
+  private static final Logger logger = LoggerFactory.getLogger(ManifestHelper.class);
 
-	public static final String MODULE_VERSION_ATTRIBUTE_KEY = "SC-Module-Version";
+  public static final String MODULE_VERSION_ATTRIBUTE_KEY = "SC-Module-Version";
 
-	public static final String MANIFEST_LOCATION = "META-INF/MANIFEST.MF";
-	
-	public static final String MODIFIED_IDENTIFIER = "M";
-	
-	public static final String MODFIED_READABLE_IDENTIFIER = " (modified)";
+  public static final String MANIFEST_LOCATION = "META-INF/MANIFEST.MF";
 
-	private ManifestHelper() {
-		// hide constructor
-	}
+  public static final String MODIFIED_IDENTIFIER = "M";
 
-	private static String cleanModuleVersion(String rawModuleVersion) {
-		if (rawModuleVersion == null) {
-			return null;
-		}
+  public static final String MODFIED_READABLE_IDENTIFIER = " (modified)";
 
-		String cleanModuleVersion = rawModuleVersion;
+  private ManifestHelper() {
+    // hide constructor
+  }
 
-		if (rawModuleVersion.endsWith(MODIFIED_IDENTIFIER)) {
-			cleanModuleVersion = rawModuleVersion.substring(0, rawModuleVersion
-					.length() - MODIFIED_IDENTIFIER.length());
-			cleanModuleVersion += MODFIED_READABLE_IDENTIFIER;
-		}
+  private static String cleanModuleVersion(String rawModuleVersion) {
+    if (rawModuleVersion == null) {
+      return null;
+    }
 
-		return cleanModuleVersion;
-	}
+    String cleanModuleVersion = rawModuleVersion;
 
-	public static String getModuleVersion(Class<?> clazz) {
-		Attributes attrs = getAttributes(clazz);
-		return cleanModuleVersion(attrs.getValue(MODULE_VERSION_ATTRIBUTE_KEY));
-	}
+    if (rawModuleVersion.endsWith(MODIFIED_IDENTIFIER)) {
+      cleanModuleVersion = rawModuleVersion.substring(0, rawModuleVersion
+              .length() - MODIFIED_IDENTIFIER.length());
+      cleanModuleVersion += MODFIED_READABLE_IDENTIFIER;
+    }
 
-	public static String getModuleVersion(JarFile jar) {
-		String moduleVersion = null;
+    return cleanModuleVersion;
+  }
 
-		try {
-			Attributes attrs = getAttributesFromManifest(jar.getManifest());
-			moduleVersion = attrs.getValue(MODULE_VERSION_ATTRIBUTE_KEY);
-		} catch (IOException e) {
-			logger.warn("Couldn't load Attributes from Manifest.");
-		}
+  public static String getModuleVersion(Class<?> clazz) {
+    Attributes attrs = getAttributes(clazz);
+    return cleanModuleVersion(attrs.getValue(MODULE_VERSION_ATTRIBUTE_KEY));
+  }
 
-		return cleanModuleVersion(moduleVersion);
-	}
+  public static String getModuleVersion(JarFile jar) {
+    String moduleVersion = null;
 
-	public static Attributes getAttributes(Class<?> clazz) {
-		URL url = clazz.getClassLoader().getResource(MANIFEST_LOCATION);
-		logger.info("Loading Manifest-Attributes from {}", url);
+    try {
+      Attributes attrs = getAttributesFromManifest(jar.getManifest());
+      moduleVersion = attrs.getValue(MODULE_VERSION_ATTRIBUTE_KEY);
+    } catch (IOException e) {
+      logger.warn("Couldn't load Attributes from Manifest.");
+    }
 
-		InputStream stream = clazz.getClassLoader().getResourceAsStream(
-				MANIFEST_LOCATION);
-		if (stream != null) {
-			try {
-				final Manifest manifest = new Manifest(stream);
-				stream.close();
-				Attributes attrs = getAttributesFromManifest(manifest, clazz);
-				logger.info("Read {} attributes from Manifest.", attrs.size());
+    return cleanModuleVersion(moduleVersion);
+  }
 
-				return attrs;
-			} catch (IOException e) {
-				logger.warn("Failed to read Manifest", e);
-			}
-		} else {
-			logger.warn("Couldn't load Manifest. Not a JAR?");
-		}
+  public static Attributes getAttributes(Class<?> clazz) {
+    URL url = clazz.getClassLoader().getResource(MANIFEST_LOCATION);
+    logger.info("Loading Manifest-Attributes from {}", url);
 
-		// Use empty manifest attributes.
-		return new Attributes();
-	}
+    InputStream stream = clazz.getClassLoader().getResourceAsStream(
+            MANIFEST_LOCATION);
+    if (stream != null) {
+      try {
+        final Manifest manifest = new Manifest(stream);
+        stream.close();
+        Attributes attrs = getAttributesFromManifest(manifest, clazz);
+        logger.info("Read {} attributes from Manifest.", attrs.size());
 
-	public static Attributes getAttributesFromManifest(final Manifest manifest) {
-		return manifest.getMainAttributes();
-	}
+        return attrs;
+      } catch (IOException e) {
+        logger.warn("Failed to read Manifest", e);
+      }
+    } else {
+      logger.warn("Couldn't load Manifest. Not a JAR?");
+    }
 
-	public static Attributes getAttributesFromManifest(final Manifest manifest,
-			Class<?> clazz) {
+    // Use empty manifest attributes.
+    return new Attributes();
+  }
 
-		String name = clazz.getName().replace('.', '/');
-		int index;
-		while ((index = name.lastIndexOf('/')) >= 0) {
-			final Attributes attributes = manifest.getAttributes(name
-					.substring(0, index + 1));
-			if (attributes != null)
-				return attributes;
-			name = name.substring(0, index);
-		}
+  public static Attributes getAttributesFromManifest(final Manifest manifest) {
+    return manifest.getMainAttributes();
+  }
 
-		return getAttributesFromManifest(manifest);
-	}
+  public static Attributes getAttributesFromManifest(final Manifest manifest,
+                                                     Class<?> clazz) {
 
-	public static String getModuleVersion(URI jarUri) {
-		logger.info("Loading Manifest-Attributes from {}", jarUri);
+    String name = clazz.getName().replace('.', '/');
+    int index;
+    while ((index = name.lastIndexOf('/')) >= 0) {
+      final Attributes attributes = manifest.getAttributes(name
+              .substring(0, index + 1));
+      if (attributes != null)
+        return attributes;
+      name = name.substring(0, index);
+    }
 
-		try {
-			JarFile jar = new JarFile(new File(jarUri));
-			return getModuleVersion(jar);
-		} catch (IOException e) {
-			logger.warn("Couldn't open JAR to determine MANIFEST content.", e);
-		}
+    return getAttributesFromManifest(manifest);
+  }
 
-		return null;
-	}
+  public static String getModuleVersion(URI jarUri) {
+    logger.info("Loading Manifest-Attributes from {}", jarUri);
+
+    try {
+      JarFile jar = new JarFile(new File(jarUri));
+      return getModuleVersion(jar);
+    } catch (IOException e) {
+      logger.warn("Couldn't open JAR to determine MANIFEST content.", e);
+    }
+
+    return null;
+  }
 
 }

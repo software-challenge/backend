@@ -2,7 +2,6 @@ package sc.shared;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @XStreamAlias(value = "slotDescriptor")
 public class SlotDescriptor {
@@ -55,5 +54,5 @@ public class SlotDescriptor {
   public String toString() {
     return String.format("SlotDescriptor{displayName=%s, canTimeout=%s, shouldBePaused=%s}", displayName, canTimeout, shouldBePaused);
   }
-  
+
 }

@@ -1,48 +1,33 @@
 package sc.plugin2020
 
+import io.kotlintest.matchers.collections.shouldContain
+import io.kotlintest.matchers.collections.shouldNotContain
+import io.kotlintest.shouldBe
+import io.kotlintest.shouldThrow
+import io.kotlintest.specs.AnnotationSpec
 import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
-import sc.plugin2020.util.*
-import sc.plugin2020.util.TestJUnitUtil.assertThrows
-import sc.protocol.responses.RoomPacket
+import sc.plugin2020.util.Constants
+import sc.plugin2020.util.CubeCoordinates
+import sc.plugin2020.util.GameRuleLogic
+import sc.plugin2020.util.TestGameUtil
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerColor
 import java.security.InvalidParameterException
-import java.util.*
 
-
-class GamePlayTest {
+class GamePlayTest: AnnotationSpec() {
     
-    private lateinit var game: Game
     private lateinit var state: GameState
     
-    @Before
+    @BeforeEach
     fun beforeEveryTest() {
-        game = Game()
-        state = game.gameState
-        state.currentPlayerColor = PlayerColor.RED
-    }
-    
-    @Test
-    fun boardCreationTest() {
-        val board = Board()
-        assertNotNull(board.getField(0, 0, 0))
-        assertEquals(board, board.clone())
-    }
-    
-    @Test
-    fun obstructedCreationTest() {
-        val board = Board()
-        assertEquals(3, board.fields.filter { it.isObstructed }.size)
+        state = GameState()
     }
     
     @Test
     fun invalidBoardStringTest() {
-        assertThrows(InvalidParameterException::class.java) {
+        shouldThrow<InvalidParameterException> {
             TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     XY----------" +
+                    "     XB----------" +
                     "    --------------" +
                     "   ----------------" +
                     "  ------------------" +
@@ -54,7 +39,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
         }
-        assertThrows(InvalidParameterException::class.java) {
+        shouldThrow<InvalidParameterException> {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     BY----------" +
                     "    --------------" +
@@ -87,62 +72,26 @@ class GamePlayTest {
         assertEquals(state.board, state.board.clone())
     }
     
-    @Ignore
     @Test
-    fun onlyEndAfterRoundTest() {
-        TestGameUtil.updateGamestateWithBoard(state, "" +
-                "     RB----------" +
-                "    --------------" +
-                "   ----------------" +
-                "  ------------------" +
-                " --------------------" +
-                "----------------------" +
-                " --------------------" +
-                "  ------------------" +
-                "   ----------------" +
-                "    --------------" +
-                "     ------------")
+    fun redBeeBlockedTest() {
         run {
-            //Move move = new Move();
-            //GameRuleLogic.performMove(state, move);
-        }
-    }
-    
-    @Test
-    @Ignore
-    fun redBeeSourroundedTest() {
-        TestGameUtil.updateGamestateWithBoard(state, "" +
-                "     RQBQ--------" +
-                "    BB------------" +
-                "   --BB------------" +
-                "  ------------------" +
-                " --------------------" +
-                "----------------------" +
-                " --------------------" +
-                "  ------------------" +
-                "   ----------------" +
-                "    --------------" +
-                "     ------------")
-        run {
-            state.currentPlayerColor = PlayerColor.BLUE
-            val move = DragMove(CubeCoordinates(-1, 3), CubeCoordinates(0, 3))
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     RQBQ--------" +
+                    "    BB------------" +
+                    "   --BB------------" +
+                    "  ------------------" +
+                    " --------------------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            state.turn = 1
+            val move = DragMove(CubeCoordinates(-1, 4), CubeCoordinates(0, 4))
             GameRuleLogic.performMove(state, move)
             assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
         }
-    }
-    
-    @Test
-    fun getNeighbourTest() {
-        val n = GameRuleLogic.getNeighbours(Board(), CubeCoordinates(-2, 1))
-        val expected = arrayOf(CubeCoordinates(-2, 2), CubeCoordinates(-1, 1), CubeCoordinates(-1, 0), CubeCoordinates(-2, 0), CubeCoordinates(-3, 1), CubeCoordinates(-3, 2))
-        assertArrayEquals(
-                Arrays.stream(expected).sorted().toArray(),
-                n.stream().map { f: Field -> f.coordinates }.sorted().toArray()
-        )
-    }
-    
-    @Test
-    fun gameEndTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
@@ -191,7 +140,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
-            assertTrue(GameRuleLogic.validateMove(state, move))
+            GameRuleLogic.validateMove(state, move)
         }
     }
     
@@ -211,27 +160,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(8, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
-        }
-    }
-    
-    @Test
-    fun validSetMoveTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   ----------------" +
-                    "  --BG--------------" +
-                    " --------------------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -252,7 +181,7 @@ class GamePlayTest {
                     "     ------------")
             state.getUndeployedPieces(PlayerColor.RED).clear()
             val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 4))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -272,13 +201,27 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val invalid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
-            assertThrows(InvalidMoveException::class.java) {
-                GameRuleLogic.validateMove(state, invalid1)
-                val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 0))
-                assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
-            }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid1) }
+            val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 4))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid2) }
             val valid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 5))
-            assertTrue(GameRuleLogic.validateMove(state, valid1))
+            GameRuleLogic.validateMove(state, valid1)
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  --BG--------------" +
+                    " --------------------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -298,7 +241,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val invalid = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-2, 4))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid) }
         }
     }
     
@@ -318,9 +261,9 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val invalid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 4))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid1) }
             val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-1, 2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid2) }
         }
     }
     
@@ -341,11 +284,11 @@ class GamePlayTest {
                     "     ------------")
             state.turn = 6
             val setAnt = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 5))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, setAnt) }
-            val miss = MissMove()
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, miss) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, setAnt) }
+            val skip = SkipMove
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, skip) }
             val setBee = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-4, 5))
-            assertTrue(GameRuleLogic.validateMove(state, setBee))
+            GameRuleLogic.validateMove(state, setBee)
         }
     }
     
@@ -365,27 +308,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
-        }
-    }
-    
-    @Test
-    fun dragMoveOfSolePieceOnBoardTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state,
-                    "     ------------" +
-                            "    --------------" +
-                            "   ----------------" +
-                            "  ------------------" +
-                            " --------RQ----------" +
-                            "----------------------" +
-                            " --------------------" +
-                            "  ------------------" +
-                            "   ----------------" +
-                            "    --------------" +
-                            "     ------------")
-            val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -397,15 +320,15 @@ class GamePlayTest {
                     "    --------------" +
                     "   ----------------" +
                     "  ------------------" +
-                    " --------RQBQ--------" +
-                    "----------------------" +
+                    " --------------------" +
+                    "----------RQBQ--------" +
                     " --------------------" +
                     "  ------------------" +
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, -1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -425,7 +348,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -441,7 +364,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
-            assertTrue(GameRuleLogic.validateMove(state, move))
+            GameRuleLogic.validateMove(state, move)
         }
     }
     
@@ -461,7 +384,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 1))
-            assertTrue(GameRuleLogic.validateMove(state, move))
+            GameRuleLogic.validateMove(state, move)
         }
     }
     
@@ -481,7 +404,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, -1), CubeCoordinates(2, -2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -501,7 +424,27 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(2, -1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+        }
+    }
+    
+    @Test
+    fun dragMoveBeetleJumpTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  ------BA----------" +
+                    " ------RARBBA--------" +
+                    "--------BQRQ----------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
+            GameRuleLogic.validateMove(state, move)
         }
     }
     
@@ -521,29 +464,8 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   ----------------" +
-                    "  ------BA----------" +
-                    " ------RARBBA--------" +
-                    "--------BQRQ----------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
-            assertTrue(GameRuleLogic.validateMove(state, move))
-        }
-    }
-    
-    
-    @Test
-    fun dragMoveBeetleNoJumpTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
@@ -557,8 +479,14 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = DragMove(CubeCoordinates(3, -2), CubeCoordinates(3, -1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            val possibleMoves = GameRuleLogic.getPossibleDragMoves(state)
+            arrayOf(
+                    DragMove(CubeCoordinates(3, -1), CubeCoordinates(3, 0)),
+                    DragMove(CubeCoordinates(3, -1), CubeCoordinates(4, 0))
+            ).forEach { move ->
+                shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+                possibleMoves shouldNotContain move
+            }
         }
     }
     
@@ -577,7 +505,25 @@ class GamePlayTest {
                 "    --------------" +
                 "     ------------")
         val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
-        assertTrue(GameRuleLogic.validateMove(state, move))
+        GameRuleLogic.validateMove(state, move)
+    }
+    
+    @Test
+    fun dragMoveBeetleObstructedTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     RBOO--------" +
+                "    --BGRQ--------" +
+                "   ----------------" +
+                "  ------------------" +
+                " --------------------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        val moveBeetle = DragMove(CubeCoordinates(0, 5), CubeCoordinates(1, 4))
+        shouldThrow<InvalidMoveException> { GameRuleLogic.performMove(state, moveBeetle) }
     }
     
     @Test
@@ -596,9 +542,45 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(1, 0), CubeCoordinates(-2, 3))
-            assertTrue(GameRuleLogic.validateMove(state, move))
+            GameRuleLogic.validateMove(state, move)
             val move2 = DragMove(CubeCoordinates(1, 0), CubeCoordinates(1, 2))
-            assertTrue(GameRuleLogic.validateMove(state, move2))
+            GameRuleLogic.validateMove(state, move2)
+        }
+    }
+    
+    @Test
+    fun dragMoveGrasshopperOverBlockedFieldTest() {
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  ------RQBB--------" +
+                    " --------OORG--------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = DragMove(CubeCoordinates(1, 0), CubeCoordinates(-1, 2))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    --------------" +
+                    "   ----------------" +
+                    "  --RBRQBABB--------" +
+                    " ----OOBQRBRG--------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = DragMove(CubeCoordinates(1, 0), CubeCoordinates(-3, 4))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -617,8 +599,8 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = DragMove(CubeCoordinates(1, -1), CubeCoordinates(-3, 3))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            val move = DragMove(CubeCoordinates(1, 0), CubeCoordinates(-3, 4))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -637,8 +619,8 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = DragMove(CubeCoordinates(1, -1), CubeCoordinates(1, -2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            val move = DragMove(CubeCoordinates(1, 0), CubeCoordinates(1, -1))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -658,9 +640,9 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 2), CubeCoordinates(1, 2))
-            assertTrue(GameRuleLogic.validateMove(state, move))
+            GameRuleLogic.validateMove(state, move)
             val move2 = DragMove(CubeCoordinates(0, 2), CubeCoordinates(0, -1))
-            assertTrue(GameRuleLogic.validateMove(state, move2))
+            GameRuleLogic.validateMove(state, move2)
         }
     }
     
@@ -678,12 +660,12 @@ class GamePlayTest {
                 "   ----------------" +
                 "    --------------" +
                 "     ------------")
-        val move = DragMove(CubeCoordinates(0, 0), CubeCoordinates(0, 1))
-        assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
-        val move2 = DragMove(CubeCoordinates(0, 0), CubeCoordinates(1, 0))
-        assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move2) }
-        val move3 = DragMove(CubeCoordinates(0, 0), CubeCoordinates(-1, 0))
-        assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move3) }
+        val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 2))
+        shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+        val move2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
+        shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move2) }
+        val move3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 0))
+        shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move3) }
     }
     
     @Test
@@ -702,7 +684,7 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, -1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -722,11 +704,11 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(-2, 5), CubeCoordinates(-4, 5))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
             val move2 = DragMove(CubeCoordinates(-2, 5), CubeCoordinates(0, 5))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move2) }
-            val move3 = DragMove(CubeCoordinates(-2, 5), CubeCoordinates(-2,3))
-            assertTrue(GameRuleLogic.validateMove(state, move3))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move2) }
+            val move3 = DragMove(CubeCoordinates(-2, 5), CubeCoordinates(-2, 3))
+            GameRuleLogic.validateMove(state, move3)
         }
     }
     
@@ -738,15 +720,15 @@ class GamePlayTest {
                     "    --------------" +
                     "   ----------------" +
                     "  ------RABB--------" +
-                    " ------BQRBRG--------" +
+                    " ------BQ--RG--------" +
                     "----------RQ----------" +
                     " --------------------" +
                     "  ------------------" +
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, move) }
+            val move = DragMove(CubeCoordinates(0, 2), CubeCoordinates(-1, 1))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
     
@@ -765,22 +747,25 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val valid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1))
-            assertTrue(GameRuleLogic.validateMove(state, valid1))
-            val valid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-2, 1))
-            assertTrue(GameRuleLogic.validateMove(state, valid2))
-            val invalid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
-            val invalid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
-            val invalid3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid3) }
-            val invalid4 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid4) }
-            val invalid5 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid5) }
-            val invalid6 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid6) }
+            val possibleMoves = GameRuleLogic.getPossibleDragMoves(state)
+            arrayOf(
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(-2, 1))
+            ).forEach {
+                GameRuleLogic.validateMove(state, it)
+                possibleMoves shouldContain it
+            }
+            arrayOf(
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 2)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 0))
+            ).forEach {
+                shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, it) }
+                possibleMoves shouldNotContain it
+            }
         }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -795,20 +780,41 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val valid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1))
-            assertTrue(GameRuleLogic.validateMove(state, valid1))
-            val valid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0))
-            assertTrue(GameRuleLogic.validateMove(state, valid2))
-            val valid3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 2))
-            assertTrue(GameRuleLogic.validateMove(state, valid3))
-            val valid4 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 3))
-            assertTrue(GameRuleLogic.validateMove(state, valid4))
-            val invalid1 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid1) }
-            val invalid2 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid2) }
-            val invalid3 = DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid3) }
+            val possibleMoves = GameRuleLogic.getPossibleDragMoves(state)
+            arrayOf(
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(2, 1)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(3, 0)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 2)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(0, 3))
+            ).forEach {
+                GameRuleLogic.validateMove(state, it)
+                possibleMoves shouldContain it
+            }
+            arrayOf(
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 0)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(1, 1)),
+                    DragMove(CubeCoordinates(0, 1), CubeCoordinates(-1, 2))
+            ).forEach {
+                shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, it) }
+                possibleMoves shouldNotContain it
+            }
+        }
+        run {
+            TestGameUtil.updateGamestateWithBoard(state, "" +
+                    "     ------------" +
+                    "    ----------RQRS" +
+                    "   ------------RB--" +
+                    "  ------------------" +
+                    " --------------------" +
+                    "----------------------" +
+                    " --------------------" +
+                    "  ------------------" +
+                    "   ----------------" +
+                    "    --------------" +
+                    "     ------------")
+            val move = DragMove(CubeCoordinates(5, -1, -4), CubeCoordinates(5, -2, -3))
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
+            GameRuleLogic.getPossibleDragMoves(state) shouldNotContain move
         }
     }
     
@@ -828,282 +834,8 @@ class GamePlayTest {
                     "    --------------" +
                     "     ------------")
             val move = DragMove(CubeCoordinates(-4, 5), CubeCoordinates(-3, 5))
-            assertTrue(GameRuleLogic.validateMove(state, move))
+            GameRuleLogic.validateMove(state, move)
         }
-    }
-
-    @Test
-    fun gamestateToXmlTest() {
-        TestGameUtil.updateGamestateWithBoard(state, "" +
-                "     ------------" +
-                "    --------------" +
-                "   ----------------" +
-                "  --BG--------------" +
-                " --------------------" +
-                "----------------------" +
-                " --------------------" +
-                "  ------------------" +
-                "   ----------------" +
-                "    --------------" +
-                "     ------------")
-        state.board.getField(0, 0).pieces.add(Piece(PlayerColor.RED, PieceType.ANT))
-        state.board.getField(0, 0).pieces.add(Piece(PlayerColor.BLUE, PieceType.BEE))
-        TestGameUtil.updateUndeployedPiecesFromBoard(state, true)
-        assertEquals(listOf(Piece(PlayerColor.RED, PieceType.ANT)), state.getDeployedPieces(PlayerColor.RED))
-        assertEquals(listOf(Piece(PlayerColor.BLUE, PieceType.GRASSHOPPER), Piece(PlayerColor.BLUE, PieceType.BEE)), state.getDeployedPieces(PlayerColor.BLUE))
-        assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.lastElement().type)
-        assertEquals(PieceType.BEE, state.board.getField(0, 0).pieces.peek().type)
-        val xstream = Configuration.xStream
-        val xml = """
-            |<state startPlayerColor="RED" currentPlayerColor="RED" turn="0">
-            |  <red displayName="" color="RED"/>
-            |  <blue displayName="" color="BLUE"/>
-            |  <board>
-            |    <fields>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <field x="-5" y="0" z="5" isObstructed="false"/>
-            |      <field x="-5" y="1" z="4" isObstructed="false"/>
-            |      <field x="-5" y="2" z="3" isObstructed="false"/>
-            |      <field x="-5" y="3" z="2" isObstructed="false"/>
-            |      <field x="-5" y="4" z="1" isObstructed="false"/>
-            |      <field x="-5" y="5" z="0" isObstructed="false"/>
-            |    </fields>
-            |    <fields>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <field x="-4" y="-1" z="5" isObstructed="false"/>
-            |      <field x="-4" y="0" z="4" isObstructed="false"/>
-            |      <field x="-4" y="1" z="3" isObstructed="false"/>
-            |      <field x="-4" y="2" z="2" isObstructed="false"/>
-            |      <field x="-4" y="3" z="1" isObstructed="false"/>
-            |      <field x="-4" y="4" z="0" isObstructed="false"/>
-            |      <field x="-4" y="5" z="-1" isObstructed="false"/>
-            |    </fields>
-            |    <fields>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <field x="-3" y="-2" z="5" isObstructed="false"/>
-            |      <field x="-3" y="-1" z="4" isObstructed="false"/>
-            |      <field x="-3" y="0" z="3" isObstructed="false"/>
-            |      <field x="-3" y="1" z="2" isObstructed="false"/>
-            |      <field x="-3" y="2" z="1" isObstructed="false"/>
-            |      <field x="-3" y="3" z="0" isObstructed="false"/>
-            |      <field x="-3" y="4" z="-1" isObstructed="false"/>
-            |      <field x="-3" y="5" z="-2" isObstructed="false"/>
-            |    </fields>
-            |    <fields>
-            |      <null/>
-            |      <null/>
-            |      <field x="-2" y="-3" z="5" isObstructed="false"/>
-            |      <field x="-2" y="-2" z="4" isObstructed="false"/>
-            |      <field x="-2" y="-1" z="3" isObstructed="false"/>
-            |      <field x="-2" y="0" z="2" isObstructed="false"/>
-            |      <field x="-2" y="1" z="1" isObstructed="false"/>
-            |      <field x="-2" y="2" z="0" isObstructed="false"/>
-            |      <field x="-2" y="3" z="-1" isObstructed="false"/>
-            |      <field x="-2" y="4" z="-2" isObstructed="false">
-            |        <piece owner="BLUE" type="GRASSHOPPER"/>
-            |      </field>
-            |      <field x="-2" y="5" z="-3" isObstructed="false"/>
-            |    </fields>
-            |    <fields>
-            |      <null/>
-            |      <field x="-1" y="-4" z="5" isObstructed="false"/>
-            |      <field x="-1" y="-3" z="4" isObstructed="false"/>
-            |      <field x="-1" y="-2" z="3" isObstructed="false"/>
-            |      <field x="-1" y="-1" z="2" isObstructed="false"/>
-            |      <field x="-1" y="0" z="1" isObstructed="false"/>
-            |      <field x="-1" y="1" z="0" isObstructed="false"/>
-            |      <field x="-1" y="2" z="-1" isObstructed="false"/>
-            |      <field x="-1" y="3" z="-2" isObstructed="false"/>
-            |      <field x="-1" y="4" z="-3" isObstructed="false"/>
-            |      <field x="-1" y="5" z="-4" isObstructed="false"/>
-            |    </fields>
-            |    <fields>
-            |      <field x="0" y="-5" z="5" isObstructed="false"/>
-            |      <field x="0" y="-4" z="4" isObstructed="false"/>
-            |      <field x="0" y="-3" z="3" isObstructed="false"/>
-            |      <field x="0" y="-2" z="2" isObstructed="false"/>
-            |      <field x="0" y="-1" z="1" isObstructed="false"/>
-            |      <field x="0" y="0" z="0" isObstructed="false">
-            |        <piece owner="RED" type="ANT"/>
-            |        <piece owner="BLUE" type="BEE"/>
-            |      </field>
-            |      <field x="0" y="1" z="-1" isObstructed="false"/>
-            |      <field x="0" y="2" z="-2" isObstructed="false"/>
-            |      <field x="0" y="3" z="-3" isObstructed="false"/>
-            |      <field x="0" y="4" z="-4" isObstructed="false"/>
-            |      <field x="0" y="5" z="-5" isObstructed="false"/>
-            |    </fields>
-            |    <fields>
-            |      <field x="1" y="-5" z="4" isObstructed="false"/>
-            |      <field x="1" y="-4" z="3" isObstructed="false"/>
-            |      <field x="1" y="-3" z="2" isObstructed="false"/>
-            |      <field x="1" y="-2" z="1" isObstructed="false"/>
-            |      <field x="1" y="-1" z="0" isObstructed="false"/>
-            |      <field x="1" y="0" z="-1" isObstructed="false"/>
-            |      <field x="1" y="1" z="-2" isObstructed="false"/>
-            |      <field x="1" y="2" z="-3" isObstructed="false"/>
-            |      <field x="1" y="3" z="-4" isObstructed="false"/>
-            |      <field x="1" y="4" z="-5" isObstructed="false"/>
-            |      <null/>
-            |    </fields>
-            |    <fields>
-            |      <field x="2" y="-5" z="3" isObstructed="false"/>
-            |      <field x="2" y="-4" z="2" isObstructed="false"/>
-            |      <field x="2" y="-3" z="1" isObstructed="false"/>
-            |      <field x="2" y="-2" z="0" isObstructed="false"/>
-            |      <field x="2" y="-1" z="-1" isObstructed="false"/>
-            |      <field x="2" y="0" z="-2" isObstructed="false"/>
-            |      <field x="2" y="1" z="-3" isObstructed="false"/>
-            |      <field x="2" y="2" z="-4" isObstructed="false"/>
-            |      <field x="2" y="3" z="-5" isObstructed="false"/>
-            |      <null/>
-            |      <null/>
-            |    </fields>
-            |    <fields>
-            |      <field x="3" y="-5" z="2" isObstructed="false"/>
-            |      <field x="3" y="-4" z="1" isObstructed="false"/>
-            |      <field x="3" y="-3" z="0" isObstructed="false"/>
-            |      <field x="3" y="-2" z="-1" isObstructed="false"/>
-            |      <field x="3" y="-1" z="-2" isObstructed="false"/>
-            |      <field x="3" y="0" z="-3" isObstructed="false"/>
-            |      <field x="3" y="1" z="-4" isObstructed="false"/>
-            |      <field x="3" y="2" z="-5" isObstructed="false"/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |    </fields>
-            |    <fields>
-            |      <field x="4" y="-5" z="1" isObstructed="false"/>
-            |      <field x="4" y="-4" z="0" isObstructed="false"/>
-            |      <field x="4" y="-3" z="-1" isObstructed="false"/>
-            |      <field x="4" y="-2" z="-2" isObstructed="false"/>
-            |      <field x="4" y="-1" z="-3" isObstructed="false"/>
-            |      <field x="4" y="0" z="-4" isObstructed="false"/>
-            |      <field x="4" y="1" z="-5" isObstructed="false"/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |    </fields>
-            |    <fields>
-            |      <field x="5" y="-5" z="0" isObstructed="false"/>
-            |      <field x="5" y="-4" z="-1" isObstructed="false"/>
-            |      <field x="5" y="-3" z="-2" isObstructed="false"/>
-            |      <field x="5" y="-2" z="-3" isObstructed="false"/>
-            |      <field x="5" y="-1" z="-4" isObstructed="false"/>
-            |      <field x="5" y="0" z="-5" isObstructed="false"/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |      <null/>
-            |    </fields>
-            |  </board>
-            |  <undeployedRedPieces>
-            |    <piece owner="RED" type="BEE"/>
-            |    <piece owner="RED" type="SPIDER"/>
-            |    <piece owner="RED" type="SPIDER"/>
-            |    <piece owner="RED" type="SPIDER"/>
-            |    <piece owner="RED" type="GRASSHOPPER"/>
-            |    <piece owner="RED" type="GRASSHOPPER"/>
-            |    <piece owner="RED" type="BEETLE"/>
-            |    <piece owner="RED" type="BEETLE"/>
-            |    <piece owner="RED" type="ANT"/>
-            |    <piece owner="RED" type="ANT"/>
-            |  </undeployedRedPieces>
-            |  <undeployedBluePieces>
-            |    <piece owner="BLUE" type="SPIDER"/>
-            |    <piece owner="BLUE" type="SPIDER"/>
-            |    <piece owner="BLUE" type="SPIDER"/>
-            |    <piece owner="BLUE" type="GRASSHOPPER"/>
-            |    <piece owner="BLUE" type="BEETLE"/>
-            |    <piece owner="BLUE" type="BEETLE"/>
-            |    <piece owner="BLUE" type="ANT"/>
-            |    <piece owner="BLUE" type="ANT"/>
-            |    <piece owner="BLUE" type="ANT"/>
-            |  </undeployedBluePieces>
-            |</state>""".trimMargin()
-        assertEquals(xml, xstream.toXML(state))
-        val fromXml = xstream.fromXML(xml) as GameState
-        assertEquals(state.board, fromXml.board)
-        assertEquals(state.getUndeployedPieces(PlayerColor.RED), fromXml.getUndeployedPieces(PlayerColor.RED))
-        assertEquals(state.getUndeployedPieces(PlayerColor.BLUE), fromXml.getUndeployedPieces(PlayerColor.BLUE))
-    }
-    
-    @Test
-    fun moveToXmlTest() {
-        val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))
-        val roomId = "42"
-        val xstream = Configuration.xStream
-        val xml = xstream.toXML(RoomPacket(roomId, move))
-        val expect = """
-            |<room roomId="$roomId">
-            |  <data class="setmove">
-            |    <piece owner="RED" type="ANT"/>
-            |    <destination x="1" y="2" z="-3"/>
-            |  </data>
-            |</room>""".trimMargin()
-        assertEquals(expect, xml)
-    }
-    
-    @Test
-    fun xmlToDragMoveTest() {
-        val xstream = Configuration.xStream
-        val xml = """
-            <room roomId="42">
-              <data class="dragmove">
-                <start>
-                  <x>0</x>
-                  <y>-1</y>
-                  <z>1</z>
-                </start>
-                <destination>
-                  <x>1</x>
-                  <y>2</y>
-                  <z>-3</z>
-                </destination>
-              </data>
-            </room>"""
-        val room = xstream.fromXML(xml) as RoomPacket
-        val expect = DragMove(CubeCoordinates(0, -1, 1), CubeCoordinates(1, 2, -3))
-        assertEquals(expect, room.data)
-    }
-    
-    @Test
-    fun xmlToSetMoveTest() {
-        val xstream = Configuration.xStream
-        val xml = """
-            <room roomId="64a0482c-f368-4e33-9684-d5106228bb75">
-              <data class="setmove">
-                <piece owner="RED" type="BEETLE" />
-                <destination x="-2" y="0" z="2"/>
-              </data>
-            </room>"""
-        val packet = xstream.fromXML(xml) as RoomPacket
-        val expect = SetMove(Piece(PlayerColor.RED, PieceType.BEETLE), CubeCoordinates(-2, 0, 2))
-        assertEquals(expect, packet.data)
-    }
-    
-    @Test
-    fun xmlToMissMoveTest() {
-        val xstream = Configuration.xStream
-        val xml = """
-            <room roomId="64a0482c-f368-4e33-9684-d5106228bb75">
-              <data class="missmove">
-              </data>
-            </room>"""
-        val packet = xstream.fromXML(xml) as RoomPacket
-        val expect = MissMove()
-        assertEquals(expect, packet.data)
     }
     
     @Test
@@ -1122,108 +854,137 @@ class GamePlayTest {
                 "     ------------")
         val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))
         GameRuleLogic.performMove(state, move)
-        assertEquals(PieceType.ANT, state.board.getField(1, 2, -3).pieces.lastElement().type)
+        assertEquals(PieceType.ANT, state.board.getField(1, 2, -3).topPiece?.type)
     }
     
     @Test
     fun possibleMoveTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   --RBRGBGBB------" +
-                    "  RQBGBSRS--BS------" +
-                    " --RS--RBRABQ--------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            assertFalse(GameRuleLogic.getPossibleMoves(state).isEmpty())
-        }
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   --RBRGBGBB------" +
+                "  RQBGBSRS--BS------" +
+                " --RS--RBRABQ--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        assertFalse(GameRuleLogic.getPossibleMoves(state).isEmpty())
     }
     
     @Test
     fun possibleSetMoveDestinationsTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   --RBRGBGBB------" +
-                    "  RQBGBSRS--BS------" +
-                    " --RS--RBRABQ--------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            assertEquals(7, GameRuleLogic.getPossibleSetMoveDestinations(state.board, state.currentPlayerColor).size)
-        }
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   --RBRGBGBB------" +
+                "  RQBGBSRS--BS------" +
+                " --RS--RBRABQ--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        assertEquals(7, GameRuleLogic.getPossibleSetMoveDestinations(state.board, state.currentPlayerColor).size)
     }
     
     @Test
     fun possibleSetMoveDestinationsSecondTurnTest() {
-        run {
-            TestGameUtil.updateGamestateWithBoard(state, "" +
-                    "     ------------" +
-                    "    --------------" +
-                    "   ----------------" +
-                    "  ------------------" +
-                    " --------RBOO--------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
-                    "   ----------------" +
-                    "    --------------" +
-                    "     ------------")
-            state.currentPlayerColor = PlayerColor.BLUE
-            state.turn = 1
-            assertEquals(PieceType.values().size * 5, GameRuleLogic.getPossibleSetMoves(state).size)
-        }
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   ----------------" +
+                "  ------------------" +
+                " --------RBOO--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        state.turn = 1
+        assertEquals(PieceType.values().size * 5, GameRuleLogic.getPossibleSetMoves(state).size)
     }
     
     @Test
     fun possibleSetMoveDestinationsFirstTurnTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   ----------------" +
+                "  ------------------" +
+                " ----------OO--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        assertEquals(PieceType.values().size * (Constants.FIELD_AMOUNT - 1), GameRuleLogic.getPossibleSetMoves(state).size)
+    }
+    
+    @Test
+    fun possibleDragMoveObstructedTest() {
+        TestGameUtil.updateGamestateWithBoard(state, "" +
+                "     ------------" +
+                "    --------------" +
+                "   ----------------" +
+                "  ------BB----------" +
+                " --------RQOO--------" +
+                "----------------------" +
+                " --------------------" +
+                "  ------------------" +
+                "   ----------------" +
+                "    --------------" +
+                "     ------------")
+        assertEquals(1, GameRuleLogic.getPossibleDragMoves(state).size)
+    }
+    
+    @Test
+    fun possibleMoveSeparateTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
                     "    --------------" +
                     "   ----------------" +
-                    "  ------------------" +
-                    " ----------OO--------" +
-                    "----------------------" +
+                    "  ----------------RQ" +
+                    " ------------------BQ" +
+                    "--------------------RA" +
                     " --------------------" +
                     "  ------------------" +
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            assertEquals(PieceType.values().size * (Constants.FIELD_AMOUNT - 1), GameRuleLogic.getPossibleSetMoves(state).size)
+            state.turn = 3
+            GameRuleLogic.getPossibleMoves(state).forEach {
+                GameRuleLogic.validateMove(state, it)
+            }
         }
-    }
-    
-    @Test
-    fun possibleDragMovesTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
-                    "    --------------" +
-                    "   ----------------" +
-                    "  ------BB----------" +
-                    " --------RQOO--------" +
-                    "----------------------" +
-                    " --------------------" +
-                    "  ------------------" +
+                    "    ------------BA" +
+                    "   --------------BB" +
+                    "  ----------RGRQBSBB" +
+                    " ------------RB----BQ" +
+                    "--------------RS----BA" +
+                    " ------------RG------" +
+                    "  ------------RA----" +
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            assertEquals(1, GameRuleLogic.getPossibleDragMoves(state).size)
+            state.turn = 9
+            GameRuleLogic.getPossibleMoves(state).forEach {
+                GameRuleLogic.validateMove(state, it)
+            }
         }
     }
     
     @Test
-    fun missMoveTest() {
+    fun skipMoveTest() {
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
                     "     ------------" +
@@ -1237,8 +998,8 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val invalid = MissMove()
-            assertThrows(InvalidMoveException::class.java) { GameRuleLogic.validateMove(state, invalid) }
+            val invalid = SkipMove
+            shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid) }
         }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -1253,8 +1014,10 @@ class GamePlayTest {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val valid = MissMove()
-            assertTrue(GameRuleLogic.validateMove(state, valid))
+            val valid = SkipMove
+            GameRuleLogic.validateMove(state, valid)
+            assertEquals(GameRuleLogic.getPossibleMoves(state), listOf(SkipMove))
         }
     }
+    
 }

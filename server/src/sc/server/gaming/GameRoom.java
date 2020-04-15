@@ -493,6 +493,7 @@ public class GameRoom implements IGameListener {
       this.game.onAction(resolvePlayer(source), data);
     } catch (InvalidMoveException e) {
       this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.move, e.getMessage())));
+      this.game.onPlayerLeft(resolvePlayer(source), ScoreCause.RULE_VIOLATION);
       throw new GameLogicException(e.toString());
     }
   }
@@ -640,22 +641,18 @@ public class GameRoom implements IGameListener {
 
   /**
    * Set descriptors of PlayerSlots
-   *
-   * @param descriptors to be set
-   *
-   * @throws TooManyPlayersException
    */
-  public void openSlots(List<SlotDescriptor> descriptors)
+  public void openSlots(SlotDescriptor[] descriptors)
           throws TooManyPlayersException {
-    if (descriptors.size() > 2) {
+    if (descriptors.length > 2) {
       throw new TooManyPlayersException();
     }
     this.playerSlots.add(new PlayerSlot(this));
     this.playerSlots.add(new PlayerSlot(this));
 
-    for (int i = 0; i < descriptors.size(); i++) {
-      this.playerSlots.get(i).setDescriptor(descriptors.get(i));
-      if (descriptors.get(i).isShouldBePaused()) {
+    for (int i = 0; i < descriptors.length; i++) {
+      this.playerSlots.get(i).setDescriptor(descriptors[i]);
+      if (descriptors[i].isShouldBePaused()) {
         pause(true);
       }
     }

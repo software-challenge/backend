@@ -22,6 +22,7 @@ class Field(
     // See http://x-stream.github.io/faq.html#Serialization_implicit_null
     @XStreamImplicit
     var pieces = pieces
+        internal set
         get() {
             @Suppress("SENSELESS_COMPARISON")
             if(field == null) field = Stack()
@@ -39,17 +40,25 @@ class Field(
             }
         }
     
+    /** @return true iff this [Field] has no pieces and is not obstructed. */
     val isEmpty: Boolean
         get() = pieces.isEmpty() && !isObstructed
     
+    /** @return true iff this [Field] has pieces on it */
     val hasOwner: Boolean
-        get() = !pieces.isEmpty() && !isObstructed
+        get() = pieces.isNotEmpty()
     
+    /** Since [Field] is a subclass of [CubeCoordinates], this returns itself. */
     val coordinates: CubeCoordinates
-        get() = CubeCoordinates(x, y, z)
+        get() = this
     
+    /** @return owner of the uppermost piece on this field, or null if it is empty. */
     val owner: PlayerColor?
-        get() = if(pieces.isEmpty()) null else pieces.peek().owner
+        get() = topPiece?.owner
+    
+    /** @return the uppermost piece on the field, or null is it is empty. */
+    val topPiece: Piece?
+        get() = if(pieces.isEmpty()) null else pieces.peek()
     
     constructor(position: CubeCoordinates, obstructed: Boolean): this(position.x, position.y, position.z, isObstructed = obstructed)
     
@@ -61,29 +70,6 @@ class Field(
     
     constructor(field: Field): this(field.x, field.y, field.z, field.pieces.toCollection(Stack()), field.isObstructed)
     
-    override fun equals(other: Any?): Boolean {
-        if(this === other) return true
-        if(javaClass != other?.javaClass)
-            return if(other is CubeCoordinates) super.equals(other) else false
-        
-        other as Field
-        
-        if(x != other.x) return false
-        if(y != other.y) return false
-        if(z != other.z) return false
-        if(pieces != other.pieces) return false
-        if(isObstructed != other.isObstructed) return false
-        
-        return true
-    }
-    
-    override fun hashCode(): Int {
-        var result = x
-        result = 31 * result + y
-        result = 31 * result + z
-        result = 31 * result + pieces.hashCode()
-        result = 31 * result + isObstructed.hashCode()
-        return result
-    }
+    public override fun clone() = Field(this)
     
 }

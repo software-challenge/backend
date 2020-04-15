@@ -1,10 +1,7 @@
 package sc.server.roles;
 
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.PrepareGameRequest;
@@ -15,68 +12,63 @@ import sc.server.network.PacketCallback;
 import sc.server.plugins.TestPlugin;
 import sc.shared.InvalidGameStateException;
 
-public class AdministratorTest extends AbstractRoleTest
-{
-	private static final String	CORRECT_PASSWORD = "this-is-a-secret";
-	private static final String	WRONG_PASSWORD = "i-am-a-hacker";
+import java.io.IOException;
 
-	@Test
-	public void shouldBecomeAdminWithCorrectPassword() throws IOException,
-					RescuableClientException, InvalidGameStateException {
-		Client client = connectAsAdmin();
+public class AdministratorTest extends AbstractRoleTest {
+  private static final String CORRECT_PASSWORD = "this-is-a-secret";
+  private static final String WRONG_PASSWORD = "i-am-a-hacker";
 
-		Assert.assertEquals(1, client.getRoles().size());
-		Assert.assertEquals(true, client.isAdministrator());
-	}
+  @Test
+  public void shouldBecomeAdminWithCorrectPassword() throws IOException,
+          RescuableClientException, InvalidGameStateException {
+    Client client = connectAsAdmin();
 
-	@Test
-	public void shouldNotBecomeAdminWithWrongPassword() throws IOException, InvalidGameStateException {
-		Client client = connectClient();
+    Assert.assertEquals(1, client.getRoles().size());
+    Assert.assertEquals(true, client.isAdministrator());
+  }
 
-		Configuration.set(Configuration.PASSWORD_KEY, CORRECT_PASSWORD);
+  @Test
+  public void shouldNotBecomeAdminWithWrongPassword() throws IOException, InvalidGameStateException {
+    Client client = connectClient();
 
-		try
-		{
-			this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
-					WRONG_PASSWORD)));
-			Assert.fail("No exception was thrown");
-		}
-		catch (RescuableClientException e)
-		{
-			// expected
-		}
+    Configuration.set(Configuration.PASSWORD_KEY, CORRECT_PASSWORD);
 
-		Assert.assertEquals(0, client.getRoles().size());
-		Assert.assertEquals(false, client.isAdministrator());
-	}
+    try {
+      this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
+              WRONG_PASSWORD)));
+      Assert.fail("No exception was thrown");
+    } catch (RescuableClientException e) {
+      // expected
+    }
 
-	protected MockClient connectAsAdmin() throws InvalidGameStateException {
-		MockClient client = null;
-		client = connectClient();
+    Assert.assertEquals(0, client.getRoles().size());
+    Assert.assertEquals(false, client.isAdministrator());
+  }
 
-		Configuration.set(Configuration.PASSWORD_KEY, CORRECT_PASSWORD);
+  protected MockClient connectAsAdmin() throws InvalidGameStateException {
+    MockClient client = null;
+    client = connectClient();
 
-		try
-		{
-			this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
-					CORRECT_PASSWORD)));
-		}
-		catch (RescuableClientException e)
-		{
-			Assert.fail("Could not authenticate as admin.");
-		}
+    Configuration.set(Configuration.PASSWORD_KEY, CORRECT_PASSWORD);
 
-		return client;
-	}
+    try {
+      this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
+              CORRECT_PASSWORD)));
+    } catch (RescuableClientException e) {
+      Assert.fail("Could not authenticate as admin.");
+    }
 
-	@Test
-	public void shouldBeAbleToPrepareGame() throws RescuableClientException, InvalidGameStateException {
-		Client client = connectAsAdmin();
+    return client;
+  }
 
-		this.lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID)));
+  @Test
+  public void shouldBeAbleToPrepareGame() throws RescuableClientException, InvalidGameStateException {
+    Client client = connectAsAdmin();
 
-		Assert.assertEquals(1, this.gameMgr.getGames().size());
-	}
+    this.lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(
+            TestPlugin.TEST_PLUGIN_UUID)));
+
+    Assert.assertEquals(1, this.gameMgr.getGames().size());
+  }
 
 }

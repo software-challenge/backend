@@ -1,10 +1,11 @@
 plugins {
     java
     application
-    id("com.github.johnrengelman.shadow") version "4.0.2"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 sourceSets.main.get().java.srcDir("src")
+sourceSets.main.get().resources.srcDir("src")
 
 application {
     mainClassName = "sc.playerYEAR.Starter"

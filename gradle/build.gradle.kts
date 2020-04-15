@@ -5,19 +5,22 @@ import java.io.InputStream
 plugins {
     maven
     `java-library`
-    kotlin("jvm") version "1.3.50"
-    id("com.github.ben-manes.versions") version "0.24.0"
+    kotlin("jvm") version "1.3.71"
+    id("com.github.ben-manes.versions") version "0.28.0"
+    id("se.patrikerdes.use-latest-versions") version "0.2.13"
     id("org.jetbrains.dokka") version "0.9.17"
 }
 
-val year: String by project
-val gameName: String by project
+val gameName by extra { property("socha.gameName") as String }
+val versions = arrayOf("year", "minor", "patch").map { property("socha.version.$it").toString().toInt() }
+val versionObject = KotlinVersion(versions[0], versions[1], versions[2])
+version = versions.joinToString(".") { it.toString() }
+val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
-version = year.substring(2) + "." + property("socha.version")
 println("Current version: $version Game: $game")
 
 val deployDir by extra { buildDir.resolve("deploy") }
-val deployedPlayer: String by extra { deployDir.resolve("simpleclient-$gameName-$version.jar").absolutePath }
+val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
 val testLogDir by extra { buildDir.resolve("tests") }
 
 subprojects {
@@ -32,7 +35,7 @@ tasks {
         dependsOn(":server:run")
         group = mainGroup
     }
-
+    
     val doc by creating(DokkaTask::class) {
         val includedProjects = arrayOf("sdk", "plugin")
         mustRunAfter(includedProjects.map { "$it:classes" })
@@ -42,65 +45,64 @@ tasks {
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
         jdkVersion = 8
+        reportUndocumented = false
         doFirst {
             classpath = files(sourceSets.map { it.runtimeClasspath }.flatMap { it.files }.filter { it.exists() })
         }
     }
-
+    
     val deploy by creating {
         dependsOn(doc)
         dependOnSubprojects()
         group = mainGroup
-        description = "Zips everything up for release into ./build/deploy"
+        description = "Zips everything up for release into build/deploy/"
     }
-
+    
     val release by creating {
         dependsOn(deploy)
         group = mainGroup
         description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
         doLast {
-            val v = project.properties["v"]?.toString()?.takeIf { it.count { char -> char == '.' } == 1 }
-                    ?: throw InvalidUserDataException("Die Flag -Pv=\"Version\" wird im Format X.X benötigt")
-            val desc = project.properties["desc"]?.toString()
-                    ?: throw InvalidUserDataException("Die Flag -Pdesc=\"Beschreibung dieser Version\" wird benötigt")
-            val version = "${year.substring(2)}.$v"
-            println("Version: $version")
+            fun edit(original: String, version: String, new: Int) =
+                    if (original.startsWith("socha.version.$version"))
+                        "socha.version.$version=${new.toString().padStart(2, '0')}"
+                    else original
+            
+            var newVersion = version
+            val filter: (String) -> String = when {
+                project.hasProperty("manual") -> ({ it })
+                project.hasProperty("minor") -> ({
+                    newVersion = "${versionObject.major}.${versionObject.minor + 1}.0"
+                    edit(edit(it, "minor", versionObject.minor + 1), "patch", 0)
+                })
+                project.hasProperty("patch") -> ({
+                    newVersion = "${versionObject.major}.${versionObject.minor}.${versionObject.patch + 1}"
+                    edit(it, "patch", versionObject.patch + 1)
+                })
+                else -> throw InvalidUserDataException("Gib entweder -Ppatch oder -Pminor an, um die Versionsnummer automatisch zu inkrementieren, oder ändere sie selbst in gradle.properties und gib dann -Pmanual an!")
+            }
+            val desc = project.properties["m"]?.toString()
+                    ?: throw InvalidUserDataException("Das Argument -Pm=\"Beschreibung dieser Version\" wird benötigt")
+            
+            val propsFile = file("gradle.properties")
+            propsFile.writeText(propsFile.readLines().joinToString("\n") { filter(it) })
+            
+            println("Version: $newVersion")
             println("Beschreibung: $desc")
-            file("gradle.properties").writeText(file("gradle.properties").readText()
-                    .replace(Regex("socha.version.*"), "socha.version = $v"))
             exec { commandLine("git", "add", "gradle.properties") }
-            exec { commandLine("git", "commit", "-m", version) }
-            exec { commandLine("git", "tag", version, "-m", desc) }
+            exec { commandLine("git", "commit", "-m", "release: $newVersion", "--no-verify") }
+            exec { commandLine("git", "tag", newVersion, "-m", desc) }
             exec { commandLine("git", "push", "--follow-tags") }
-            println("""
-            ===================================================
-            Fertig! Jetzt noch folgende Schritte ausfuehren:
-             - ein Release für die GUI erstellen
-             - auf der Website (http://www.software-challenge.de/wp-admin) unter Medien die Dateien ersetzen
-             - unter Seiten die Downloadseite aktualisieren (neue Version in Versionshistorie eintragen)
-
-            Dann auf der Wettkampfseite (http://contest.software-challenge.de) was unter Aktuelles schreiben:
-
-            Eine neue Version der Software ist verfügbar: $desc
-            Dafür gibt es einen neuen Server und Simpleclient im [Download-Bereich der Website][1].
-
-            [1]: http://www.software-challenge.de/downloads/
-
-            Dann noch etwas im Discord-Server in #news schreiben:
-            Good news @everyone! Neue Version der Software: http://www.software-challenge.de/downloads/
-            Highlights: $desc
-            ===================================================""".trimIndent())
         }
     }
-
+    
     val maxGameLength = 150L
-
+    
     val clearTestLogs by creating(Delete::class) {
         delete(testLogDir)
     }
-
+    
     val testGame by creating {
-        enabled = false
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {
             testLogDir.mkdirs()
@@ -110,7 +112,7 @@ tasks {
                     .directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(1000)
             val startClient: (Int) -> Process = {
-                ProcessBuilder("java", "-jar", deployedPlayer)
+                ProcessBuilder("java", "-jar", deployDir.resolve(deployedPlayer).absolutePath)
                         .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
@@ -118,7 +120,7 @@ tasks {
             val thread = Thread {
                 try {
                     Thread.sleep(maxGameLength * 1000)
-                } catch(e: InterruptedException) {
+                } catch (e: InterruptedException) {
                     return@Thread
                 }
                 println("$this has been running for over $maxGameLength seconds - killing server!")
@@ -128,15 +130,15 @@ tasks {
                 start()
             }
             try {
-                for(i in 1..2) {
+                for (i in 1..2) {
                     println("Waiting for client $i to receive game result")
                     do {
-                        if(!server.isAlive)
+                        if (!server.isAlive)
                             throw Exception("Server terminated unexpectedly!")
                         Thread.sleep(200)
-                    } while(!testLogDir.resolve("client$i.log").readText().contains("Received game result", true))
+                    } while (!testLogDir.resolve("client$i.log").readText().contains("Received game result", true))
                 }
-            } catch(t: Throwable) {
+            } catch (t: Throwable) {
                 println("Error in $this - check the logs in $testLogDir")
                 throw t
             } finally {
@@ -146,26 +148,28 @@ tasks {
             println("Successfully played a game using the deployed server & client!")
         }
     }
-
+    
     val testTestClient by creating {
-        enabled = false
         dependsOn(clearTestLogs, ":server:deploy")
+        mustRunAfter(testGame)
         val testClientGames = 3
-        doLast {
+        doFirst {
+            val tmpDir = buildDir.resolve("tmp")
+            tmpDir.mkdirs()
             testLogDir.mkdirs()
-            val unzipped = testLogDir.resolve("software-challenge-server")
+            val unzipped = tmpDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
             Runtime.getRuntime().exec("unzip software-challenge-server.zip -d $unzipped", null, deployDir).waitFor()
-
+            
             println("Testing TestClient...")
             val testClient = ProcessBuilder(
                     project("test-client").tasks.getByName<ScriptsTask>("createScripts").content.split(" ") +
                             listOf("--start-server", "--tests", "$testClientGames"))
                     .redirectOutput(testLogDir.resolve("test-client.log")).redirectError(testLogDir.resolve("test-client-err.log"))
                     .directory(unzipped).start()
-            if(testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
+            if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
-                if(value == 0)
+                if (value == 0)
                     println("TestClient successfully tested!")
                 else
                     throw Exception("TestClient exited with exit code $value!")
@@ -174,12 +178,14 @@ tasks {
             }
         }
     }
-
+    
     val integrationTest by creating {
-        dependsOn(testGame, testTestClient)
+        enabled = versionObject.minor > 0
+        if (enabled)
+            dependsOn(testGame, testTestClient)
         group = mainGroup
     }
-
+    
     clean {
         dependOnSubprojects()
         group = mainGroup
@@ -192,7 +198,6 @@ tasks {
     build {
         group = mainGroup
     }
-    replace("run").dependsOn(integrationTest)
 }
 
 // == Cross-project configuration ==
@@ -206,7 +211,7 @@ allprojects {
         jcenter()
         maven("http://dist.wso2.org/maven2")
     }
-    if(this.name in arrayOf("sdk", "plugin")) {
+    if (this.name in arrayOf("sdk", "plugin")) {
         apply(plugin = "maven")
         tasks {
             val doc by creating(DokkaTask::class) {
@@ -215,6 +220,7 @@ allprojects {
                 outputDirectory = buildDir.resolve("doc").toString()
                 outputFormat = "javadoc"
                 jdkVersion = 8
+                reportUndocumented = false
                 doFirst {
                     classpath = files(sourceSets.main.get().runtimeClasspath.files.filter { it.exists() })
                 }
@@ -240,12 +246,12 @@ allprojects {
     afterEvaluate {
         doAfterEvaluate.forEach { it(this) }
         tasks {
-            forEach { if(it.name != clean.name) it.mustRunAfter(clean.get()) }
+            forEach { if (it.name != clean.name) it.mustRunAfter(clean.get()) }
             test {
                 testLogging { showStandardStreams = project.properties["verbose"] != null }
             }
             withType<Jar> {
-                if(plugins.hasPlugin(ApplicationPlugin::class))
+                if (plugins.hasPlugin(ApplicationPlugin::class))
                     manifest.attributes["Main-Class"] = project.extensions.getByType<JavaApplication>().mainClassName
             }
         }
@@ -253,17 +259,23 @@ allprojects {
 }
 
 project("sdk") {
-    sourceSets.main.get().java.srcDirs("src/framework", "src/server-api")
-
+    sourceSets {
+        main.get().java.srcDirs("src/framework", "src/server-api")
+        test.get().java.srcDir("src/test")
+    }
+    
     dependencies {
         api(kotlin("stdlib"))
         api("com.thoughtworks.xstream", "xstream", "1.4.11.1")
         api("jargs", "jargs", "1.0")
         api("ch.qos.logback", "logback-classic", "1.2.3")
-
-        implementation("org.hamcrest", "hamcrest-core", "2.1")
+        
+        implementation("org.hamcrest", "hamcrest-core", "2.2")
         implementation("net.sf.kxml", "kxml2", "2.3.0")
         implementation("xmlpull", "xmlpull", "1.1.3.1")
+        
+        testImplementation("junit", "junit", "4.13")
+        testImplementation("io.kotlintest", "kotlintest-runner-junit5", "3.4.2")
     }
 }
 
@@ -272,30 +284,31 @@ project("plugin") {
         main.get().java.srcDirs("src/client", "src/server", "src/shared")
         test.get().java.srcDir("src/test")
     }
-
+    
     dependencies {
         api(project(":sdk"))
-
-        testImplementation("junit", "junit", "4.12")
+        
+        testImplementation("junit", "junit", "4.13")
+        testImplementation("io.kotlintest", "kotlintest-runner-junit5", "3.4.2")
     }
-
+    
     tasks.jar.get().archiveBaseName.set(game)
 }
 
 // == Utilities ==
 
 fun InputStream.dump(name: String? = null) {
-    if(name != null)
+    if (name != null)
         println("\n$name:")
-    while(available() > 0)
+    while (available() > 0)
         print(read().toChar())
     close()
 }
 
 fun Task.dependOnSubprojects() {
-    if(this.project == rootProject)
+    if (this.project == rootProject)
         doAfterEvaluate.add {
-            if(it != rootProject)
+            if (it != rootProject)
                 dependsOn(it.tasks.findByName(name) ?: return@add)
         }
 }
@@ -303,7 +316,7 @@ fun Task.dependOnSubprojects() {
 // "run" task won't work when recursive, see https://stackoverflow.com/q/51903863/6723250
 gradle.taskGraph.whenReady {
     val hasRootRunTask = hasTask(":run")
-    if(hasRootRunTask) {
+    if (hasRootRunTask) {
         allTasks.forEach { task ->
             task.enabled = task.name != "run"
         }

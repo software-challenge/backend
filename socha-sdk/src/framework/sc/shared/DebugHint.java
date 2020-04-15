@@ -13,65 +13,62 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class DebugHint implements Cloneable {
 
-	@XStreamAsAttribute
-	public final String content;
+  @XStreamAsAttribute
+  public final String content;
 
-	/**
-	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
-	 * Deserialisierung von Objekten aus XML-Nachrichten.
-	 */
-	public DebugHint() {
-		content = null;
-	}
+  /**
+   * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
+   * Deserialisierung von Objekten aus XML-Nachrichten.
+   */
+  public DebugHint() {
+    content = null;
+  }
 
-	/**
-	 * einen neuen Hinweis der form key = value erstellen
-	 *
-	 * @param key
-	 *            string vor dem Gleichheitszeichen
-	 * @param value
-	 *            string nach dem Gleichheitszeichen
-	 */
-	public DebugHint(String key, String value) {
+  /**
+   * einen neuen Hinweis der form key = value erstellen
+   *
+   * @param key   string vor dem Gleichheitszeichen
+   * @param value string nach dem Gleichheitszeichen
+   */
+  public DebugHint(String key, String value) {
 
-		key = key == null ? "" : key;
-		value = value == null ? "" : value;
+    key = key == null ? "" : key;
+    value = value == null ? "" : value;
 
-		if (!(key.equals("") && value.equals(""))) {
-			content = key + " = " + value;
-		} else {
-			content = key + value;
-		}
+    if (!(key.equals("") && value.equals(""))) {
+      content = key + " = " + value;
+    } else {
+      content = key + value;
+    }
 
-	}
+  }
 
-	/**
-	 * Gibt den Inhalt des Debughints zurück.
-	 *
-	 * @return den Inhalt
-	 */
-	public String getContent() {
-		return this.content;
-	}
+  /**
+   * Gibt den Inhalt des Debughints zurück.
+   *
+   * @return den Inhalt
+   */
+  public String getContent() {
+    return this.content;
+  }
 
-	/**
-	 * ein neuen Hinweis mit beliebigem Inhalt erstellen
-	 *
-	 * @param content
-	 *            der Inhalt, der angezeigt werden soll
-	 */
-	public DebugHint(final String content) {
-		this.content = content == null ? "" : content;
-	}
+  /**
+   * ein neuen Hinweis mit beliebigem Inhalt erstellen
+   *
+   * @param content der Inhalt, der angezeigt werden soll
+   */
+  public DebugHint(final String content) {
+    this.content = content == null ? "" : content;
+  }
 
-	/**
-	 * klont dieses Objekt
-	 *
-	 * @return ein neues Objekt mit gleichen Eigenschaften
-	 */
-	@Override
-	protected Object clone() {
-		return new DebugHint(content);
-	}
+  /**
+   * klont dieses Objekt
+   *
+   * @return ein neues Objekt mit gleichen Eigenschaften
+   */
+  @Override
+  protected Object clone() {
+    return new DebugHint(content);
+  }
 
 }

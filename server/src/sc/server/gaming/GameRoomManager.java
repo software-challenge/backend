@@ -187,7 +187,7 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized PrepareGameProtocolMessage prepareGame(String gameType, List<SlotDescriptor> descriptors, Object loadGameInfo)
+  public synchronized PrepareGameProtocolMessage prepareGame(String gameType, SlotDescriptor[] descriptors, Object loadGameInfo)
           throws RescuableClientException {
     GameRoom room = createGame(gameType, true);
     room.openSlots(descriptors);
@@ -200,18 +200,20 @@ public class GameRoomManager {
   }
 
   /**
-   * Calls {@link #prepareGame(String, List, Object) prepareGame}
+   * Calls {@link #prepareGame}
    *
    * @param prepared PrepareGameRequest with gameType and slotsDescriptors
    *
-   * @return ProtocolMessage from server
+   * @return new PrepareGameProtocolMessage with roomId and slots
    *
-   * @throws RescuableClientException if room could not be created
+   * @throws RescuableClientException if game could not be created
    */
   public synchronized PrepareGameProtocolMessage prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
     return prepareGame(
             prepared.getGameType(),
-            prepared.getSlotDescriptors(), prepared.getLoadGameInfo());
+            prepared.getSlotDescriptors(),
+            null
+    );
   }
 
   /**

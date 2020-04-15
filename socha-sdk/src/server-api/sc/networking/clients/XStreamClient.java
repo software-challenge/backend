@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 
 public abstract class XStreamClient {
   private static Logger logger = LoggerFactory.getLogger(XStreamClient.class);
@@ -51,7 +52,7 @@ public abstract class XStreamClient {
 
   /** Signals that client can receive and send */
   public void start() {
-    synchronized (readyLock) {
+    synchronized(readyLock) {
       if (!ready) {
         ready = true;
         readyLock.notifyAll();
@@ -81,20 +82,18 @@ public abstract class XStreamClient {
         logger.debug("Terminated thread with id {} and name {}", thread.getId(), thread.getName());
       }
     });
-    this.thread.setName("XStreamClient Receive Thread " + thread.getId() + " " + getClass().getSimpleName());
+    this.thread.setName(String.format("XStreamClient Receive Thread %d %s", thread.getId(), getClass().getSimpleName()));
     this.thread.start();
   }
 
   protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException;
 
-  /**
-   * used by the receiving thread. All exceptions should be handled.
-   */
+  /** Used by the receiving thread. All exceptions should be handled. */
   public void receiveThread() {
     try {
       in = xStream.createObjectInputStream(networkInterface.getInputStream());
 
-      synchronized (readyLock) {
+      synchronized(readyLock) {
         while (!isReady()) {
           readyLock.wait();
         }
@@ -152,8 +151,8 @@ public abstract class XStreamClient {
   }
 
   public void sendCustomData(String data) throws IOException {
-    logger.info(data);
-    sendCustomData(data.getBytes("utf-8"));
+    logger.info("Sending Custom data: {}", data);
+    sendCustomData(data.getBytes(StandardCharsets.UTF_8));
   }
 
   public void sendCustomData(byte[] data) throws IOException {
@@ -169,8 +168,9 @@ public abstract class XStreamClient {
     if (isClosed())
       throw new IllegalStateException("Writing on a closed xStream!");
 
-    logger.debug("Client " + this + ": Sending " + packet + " via " + networkInterface);
-    logger.trace("Dumping {}:\n{}", packet, this.xStream.toXML(packet));
+    logger.debug("Client {}: Sending {} via {}", this, packet, networkInterface);
+    if (logger.isTraceEnabled())
+      logger.trace("Dumping {}:\n{}", packet, this.xStream.toXML(packet));
 
     try {
       this.out.writeObject(packet);
@@ -188,7 +188,7 @@ public abstract class XStreamClient {
 
   protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
     if (exception != null) {
-      logger.warn("Client " + this + " disconnected (Cause: " + cause + ", Exception: " + exception + ")");
+      logger.warn("Client {} disconnected (Cause: {}, Exception: {})", this, cause, exception);
       if (logger.isDebugEnabled())
         exception.printStackTrace();
     } else {
@@ -233,7 +233,7 @@ public abstract class XStreamClient {
       logger.warn("Receiver thread is stopping itself");
     }
     // unlock waiting threads
-    synchronized (this.readyLock) {
+    synchronized(this.readyLock) {
       this.readyLock.notifyAll();
     }
     this.thread.interrupt();

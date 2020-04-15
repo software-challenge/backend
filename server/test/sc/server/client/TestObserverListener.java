@@ -2,8 +2,8 @@ package sc.server.client;
 
 import sc.framework.plugins.Player;
 import sc.networking.clients.ILobbyClientListener;
-import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 
 public class TestObserverListener implements ILobbyClientListener {
