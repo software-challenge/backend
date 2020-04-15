@@ -22,12 +22,12 @@ import java.io.IOException
  * The lobby will help clients find an open game or create new games to play with
  * another client.
  */
-class Lobby : IClientListener {
+class Lobby: IClientListener {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
-
+    
     val gameManager: GameRoomManager = GameRoomManager()
     val clientManager: ClientManager = ClientManager(this)
-
+    
     /**
      * Starts the ClientManager in it's own daemon thread. This method should be used only once.
      * ClientManager starts clientListener.
@@ -37,7 +37,7 @@ class Lobby : IClientListener {
     fun start() {
         this.clientManager.start()
     }
-
+    
     /**
      * Add lobby as listener to client.
      * Prepare client for send and receive.
@@ -48,13 +48,13 @@ class Lobby : IClientListener {
         client.addClientListener(this)
         client.start()
     }
-
+    
     override fun onClientDisconnected(source: Client) {
         logger.info("{} disconnected.", source)
         source.removeClientListener(this)
     }
-
-    /** handle requests or moves of clients  */
+    
+    /** Handle requests or moves of clients. */
     @Throws(RescuableClientException::class, InvalidGameStateException::class)
     override fun onRequest(source: Client, callback: PacketCallback) {
         val packet = callback.packet
@@ -132,7 +132,7 @@ class Lobby : IClientListener {
             callback.setProcessed()
         }
     }
-
+    
     private fun getScoreOfPlayer(displayName: String): Score? {
         for (score in this.gameManager.scores) {
             if (score.displayName == displayName) {
@@ -141,11 +141,11 @@ class Lobby : IClientListener {
         }
         return null
     }
-
+    
     fun close() {
         this.clientManager.close()
     }
-
+    
     override fun onError(source: Client, errorPacket: ProtocolErrorMessage) {
         for (role in source.roles) {
             if (role.javaClass == PlayerRole::class.java) {
