@@ -221,7 +221,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       FileWriter fileWriter = new FileWriter(tmp_replay);
       BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
       String line;
-      bufferedWriter.write("<protocol>"); // XXX since hui18 replays start with protocol instead of object-stream
+      bufferedWriter.write("<protocol><room><data>"); // XXX since hui18 replays start with protocol instead of object-stream, and this is really brittle. Parse it properly!
       bufferedWriter.newLine();
       while((line = bufferedReader.readLine()) != null) {
         if(line.contains("turn=\"" + turn + "\"")) {
@@ -229,7 +229,7 @@ public class Game extends RoundBasedGameInstance<Player> {
           bufferedWriter.newLine();
           // case a gameState with specified turn was found
           while((line = bufferedReader.readLine()) != null
-                  && !line.contains("turn=\"" + (turn + 1) + "\"")) {
+                  && !line.contains("<room ")) {
             bufferedWriter.write(line);
             bufferedWriter.newLine();
           }
