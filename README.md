@@ -9,18 +9,18 @@ Das Repository besteht aus Server, Client und Spiel-Plugins.
 | Ordner | Beschreibung |
 | ------ | ------------ |
 | helpers | Zusätzliche Tools (aktuell nur der TestClient) |
-| player | Simpleclient dieses Jahres |
+| player | SimpleClient dieses Jahres |
 | plugin | Plugin dieses Jahres |
 | server | Spielserver |
 | socha-sdk | Projektübergreifend verwendete Klassen |
 
 ## Collaboration
 
-Unsere Commit-Messages folgen dem Muster `type(scope): summary` (siehe [Karma Runner Konvention](http://karma-runner.github.io/latest/dev/git-commit-msg.html)), wobei die verfügbaren Scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden. Bitte führe nach dem Klonen des Repositories einmal Folgendes im Terminal aus, damit die entsprechenden Git-Hooks aktiv werden:  
+Unsere Commit-Messages folgen dem Muster `type(scope): summary` (siehe [Karma Runner Konvention](http://karma-runner.github.io/latest/dev/git-commit-msg.html)), wobei die verfügbaren Scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden. Bitte führe nach dem Klonen des Repository's einmal Folgendes im Terminal aus, damit die entsprechenden Git-Hooks aktiv werden:  
 
     git config core.hooksPath .dev/githooks
 
-Um bei den Branches die Übersicht zu behalten, sollten diese ebenfalls nach der Konvention benannt werden - z.B. könnte ein Branch mit einem Release-Fix für Gradle `fix/gradle-release` heißen und ein Branch, das ein neues Login-Feature zum Server hinzufügt, `feat/server-login`.  
+Um bei den Branches die Übersicht zu behalten, sollten diese ebenfalls nach der Konvention benannt werden - z.B. könnte ein Branch mit einem Release-Fix für Gradle `fix/gradle-release` heißen und ein Branch, der ein neues Login-Feature zum Server hinzufügt, `feat/server-login`.  
 Branches werden normalerweise beim Mergen zu einem einzelnen Commit zusammengefügt (Squash-Merge), es sei denn, die einzelnen Commits des Branches haben jeweils eine alleinstehende Aussagekraft.
 
 Detaillierte Informationen zu unserem Kollaborations-Stil findet ihr in der [Kull Konvention](https://xerus2000.github.io/kull).
@@ -41,15 +41,15 @@ Die wichtigsten Tasks:
 | `:server:startProduction` | Startet den gepackten Server
 | `:player:run` | Startet den SimpleClient direkt vom Sourcecode
 | `:player:shadowJar` | Baut eine jar des SimpleClient
-| `:test-client:run` | Startet den Testclient
+| `:test-client:run` | Startet den TestClient
 
 ### Unterprojekte
 
 Tasks in Unterprojekten können über zwei Wege aufgerufen werden:  
-`./gradlew :server:run` führt das Task "run" des Unterprojektes "server" aus.
+`./gradlew :server:run` führt den Task "run" des Unterprojektes "server" aus.
 Alternativ kann man in das Server-Verzeichnis wechseln und dort `./gradlew run` ausführen.
 
-Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1 Argument2"` zusätzlich Argumente mitgegeben werden. Zum Beispiel kann das TestClient mit folgendem Befehl direkt aus dem Sourcecode getestet werden:
+Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1 Argument2"` zusätzlich Argumente mitgegeben werden. Zum Beispiel kann der TestClient mit folgendem Befehl direkt aus dem Sourcecode getestet werden:
 
     ./gradlew :test-client:run -Dargs="--player1 ../../player/build/libs/defaultplayer.jar --player2 ../../player/build/libs/defaultplayer.jar --tests 3"
 
