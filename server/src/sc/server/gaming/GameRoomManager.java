@@ -292,27 +292,22 @@ public class GameRoomManager {
         logger.error("Could not add current game result to score. Score definition of player and result do not match.");
         throw new InvalidScoreDefinitionException("ScoreDefinition of player does not match expected score definition");
       }
-      // average = oldaverage * ((#tests - 1)/ #tests) + newValue / #tests
       if (fragment.getAggregation().equals(ScoreAggregation.AVERAGE)) {
-        firstValue.setValue((firstValue.getValue().
-                multiply(
-                        (new BigDecimal(firstScore.getNumberOfTests() - 1)
-                                .divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
-                )).add(
-                playerScores.get(0).getValues().get(i).divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
-        secondValue.setValue((secondValue.getValue().
-                multiply(
-                        (new BigDecimal(secondScore.getNumberOfTests() - 1)
-                                .divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
-                )).add(
-                playerScores.get(1).getValues().get(i).divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
-        firstValue.setValue(firstValue.getValue().round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2)));
-        secondValue.setValue(secondValue.getValue().round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2)));
+        firstValue.setValue(updateAverage(firstValue.getValue(), firstScore.getNumberOfTests(), playerScores.get(0).getValues().get(i)));
+        secondValue.setValue(updateAverage(secondValue.getValue(), secondScore.getNumberOfTests(), playerScores.get(1).getValues().get(i)));
       } else if (fragment.getAggregation().equals(ScoreAggregation.SUM)) {
         firstValue.setValue(firstValue.getValue().add(playerScores.get(0).getValues().get(i)));
         secondValue.setValue(secondValue.getValue().add(playerScores.get(1).getValues().get(i)));
       }
     }
+  }
+
+  /** Calculates a new average value: average = oldAverage * ((#amount - 1)/ #amount) + newValue / #amount */
+  private BigDecimal updateAverage(BigDecimal oldAverage, int amount, BigDecimal newValue) {
+    BigDecimal decAmount = new BigDecimal(amount);
+    return oldAverage.multiply(decAmount.subtract(BigDecimal.ONE).divide(decAmount, Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+            .add(newValue.divide(decAmount, Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+            .round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2));
   }
 
 }
