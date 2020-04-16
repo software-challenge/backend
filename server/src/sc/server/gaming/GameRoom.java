@@ -21,7 +21,6 @@ import sc.server.Configuration;
 import sc.server.network.Client;
 import sc.server.network.DummyClient;
 import sc.server.network.IClient;
-import sc.server.plugins.GamePluginInstance;
 import sc.shared.*;
 
 import java.io.BufferedWriter;
@@ -128,7 +127,7 @@ public class GameRoom implements IGameListener {
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         writer.write("<protocol>\n");
         for (ProtocolMessage element : replayHistory) {
-          if(!(element instanceof IGameState))
+          if (!(element instanceof IGameState))
             continue;
           IGameState state = (IGameState) element;
           MementoPacket data = new MementoPacket(state, null);
@@ -195,22 +194,22 @@ public class GameRoom implements IGameListener {
   }
 
   /**
-   * Send ProtocolMessage o to all Players or all Players in this room
+   * Send ProtocolMessage to all Players or all Players in this room.
    *
-   * @param o            a ProtocolMessage
+   * @param message      a ProtocolMessage
    * @param roomSpecific only send this room
    */
-  private void broadcast(ProtocolMessage o, boolean roomSpecific) {
-    ProtocolMessage toSend = o;
+  private void broadcast(ProtocolMessage message, boolean roomSpecific) {
+    ProtocolMessage toSend = message;
 
     // If message is specific to room, wrap the message in a RoomPacket
     if (roomSpecific) {
-      toSend = new RoomPacket(getId(), o);
+      toSend = createRoomPacket(toSend);
     }
 
     // Send to all Players
     for (PlayerRole player : getPlayers()) {
-      logger.debug("Sending {} to {}", o, player);
+      logger.debug("Sending {} to {}", message, player);
       player.getClient().send(toSend);
     }
 
@@ -218,11 +217,7 @@ public class GameRoom implements IGameListener {
     observerBroadcast(toSend);
   }
 
-  /**
-   * Send Message to all registered Observers
-   *
-   * @param toSend Message to send
-   */
+  /** Send Message to all registered Observers. */
   private void observerBroadcast(ProtocolMessage toSend) {
     for (ObserverRole observer : Collections.unmodifiableCollection(this.observers)) {
       logger.debug("Sending {} to observer {}", toSend, observer.getClient().getClass().getSimpleName());
@@ -232,15 +227,11 @@ public class GameRoom implements IGameListener {
 
   /** Send {@link GameRoom#broadcast(ProtocolMessage, boolean) broadcast} message with {@link LeftGameEvent LeftGameEvent} */
   private void kickAllClients() {
-    logger.debug("Kicking clients (and observer)");
+    logger.debug("Kicking clients and observers");
     broadcast(new LeftGameEvent(getId()), false);
   }
 
-  /**
-   * send StateObject to all players and observers
-   *
-   * @param data State Object that derives Object
-   */
+  /** Send updated GameState to all players and observers. */
   @Override
   public void onStateChanged(IGameState data) {
     sendStateToObservers(data);
@@ -254,7 +245,6 @@ public class GameRoom implements IGameListener {
    * @param errorPacket ProtocolErrorMessage
    */
   public void onClientError(ProtocolErrorMessage errorPacket) {
-    // packet = createRoomPacket(errorPacket);
     broadcast(errorPacket, true);
   }
 

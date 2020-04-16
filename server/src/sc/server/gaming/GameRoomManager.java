@@ -24,7 +24,6 @@ import java.util.*;
  * which seem to be dead-locked or have caused a timeout.
  */
 public class GameRoomManager {
-  /* Private fields  */
   private Map<String, GameRoom> rooms;
   private GamePluginApi pluginApi;
 
