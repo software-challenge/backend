@@ -25,7 +25,9 @@ import java.io.IOException
 class Lobby: GameRoomManager(), IClientListener {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
     
-    val clientManager: ClientManager = ClientManager(this)
+    val clientManager = ClientManager().also {
+        it.setOnClientConnected(this::onClientConnected)
+    }
     
     /** @see ClientManager.start */
     @Throws(IOException::class)
