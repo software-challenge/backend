@@ -24,7 +24,7 @@ public abstract class AbstractRoleTest {
 
     this.lobby = new Lobby();
     this.clientMgr = this.lobby.getClientManager();
-    this.gameMgr = this.lobby.getGameManager();
+    this.gameMgr = this.lobby;
     this.pluginMgr = this.gameMgr.getPluginManager();
 
     this.pluginMgr.loadPlugin(TestPlugin.class, this.gameMgr.getPluginApi());

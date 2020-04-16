@@ -36,7 +36,7 @@ abstract class RealServerTest {
         Configuration.set(Configuration.PASSWORD_KEY, "TEST_PASSWORD")
         this.lobby = Lobby()
         this.clientMgr = this.lobby.clientManager
-        this.gameMgr = this.lobby.gameManager
+        this.gameMgr = this.lobby
         this.pluginMgr = this.gameMgr.pluginManager
         
         this.pluginMgr.loadPlugin(TestPlugin::class.java, this.gameMgr.pluginApi)

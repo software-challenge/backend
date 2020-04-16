@@ -22,10 +22,9 @@ import java.io.IOException
  * The lobby will help clients find an open game or create new games to play with
  * another client.
  */
-class Lobby: IClientListener {
+class Lobby: GameRoomManager(), IClientListener {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
     
-    val gameManager: GameRoomManager = GameRoomManager()
     val clientManager: ClientManager = ClientManager(this)
     
     /** @see ClientManager.start */
@@ -58,42 +57,40 @@ class Lobby: IClientListener {
             when (packet) {
                 is JoinPreparedRoomRequest -> ReservationManager.redeemReservationCode(source, packet.reservationCode)
                 is JoinRoomRequest -> {
-                    val gameRoomMessage = this.gameManager.joinOrCreateGame(source, packet.gameType)
+                    val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
                     // null is returned if join was unsuccessful
-                    if (gameRoomMessage != null) {
-                        for (admin in clientManager.clients) {
-                            if (admin.isAdministrator) {
-                                admin.send(gameRoomMessage)
-                            }
-                        }
+                    if(gameRoomMessage != null) {
+                        clientManager.clients
+                                .filter { it.isAdministrator }
+                                .forEach { it.send(gameRoomMessage) }
                     }
                 }
                 is RoomPacket -> {
                     // i.e. new move
-                    val room = this.gameManager.findRoom(packet.roomId)
+                    val room = this.findRoom(packet.roomId)
                     room.onEvent(source, packet.data)
                 }
                 is AuthenticateRequest -> source.authenticate(packet.password)
                 
                 is AdminLobbyRequest -> if (source.isAdministrator) when (packet) {
                     is PrepareGameRequest -> {
-                        source.send(this.gameManager.prepareGame(packet))
+                        source.send(this.prepareGame(packet))
                     }
                     is FreeReservationRequest -> {
                         ReservationManager.freeReservation(packet.reservation)
                     }
                     is ControlTimeoutRequest -> {
-                        val room = this.gameManager.findRoom(packet.roomId)
+                        val room = this.findRoom(packet.roomId)
                         val slot = room.slots[packet.slot]
                         slot.role.player.isCanTimeout = packet.activate
                     }
                     is ObservationRequest -> {
-                        val room = this.gameManager.findRoom(packet.roomId)
+                        val room = this.findRoom(packet.roomId)
                         room.addObserver(source)
                     }
                     is PauseGameRequest -> {
                         try {
-                            val room = this.gameManager.findRoom(packet.roomId)
+                            val room = this.findRoom(packet.roomId)
                             room.pause(packet.pause)
                         } catch (e: RescuableClientException) {
                             this.logger.error("Got exception on pause: {}", e)
@@ -101,14 +98,14 @@ class Lobby: IClientListener {
                     }
                     is StepRequest -> {
                         // TODO check for a prior pending StepRequest
-                        val room = this.gameManager.findRoom(packet.roomId)
+                        val room = this.findRoom(packet.roomId)
                         room.step(packet.forced)
                     }
                     is CancelRequest -> {
-                        val room = this.gameManager.findRoom(packet.roomId)
+                        val room = this.findRoom(packet.roomId)
                         room.cancel()
                         // TODO check whether all clients receive game over message
-                        this.gameManager.games.remove(room)
+                        this.games.remove(room)
                     }
                     is GetScoreForPlayerRequest -> {
                         val displayName = packet.displayName
@@ -120,7 +117,7 @@ class Lobby: IClientListener {
                     is TestModeRequest -> {
                         val testMode = packet.testMode
                         logger.info("Setting Test mode to {}", testMode)
-                        Configuration.set(Configuration.TEST_MODE, java.lang.Boolean.toString(testMode))
+                        Configuration.set(Configuration.TEST_MODE, testMode.toString())
                         source.send(TestModeMessage(testMode))
                     }
                 }
@@ -131,7 +128,7 @@ class Lobby: IClientListener {
     }
     
     private fun getScoreOfPlayer(displayName: String): Score? {
-        for (score in this.gameManager.scores) {
+        for (score in this.scores) {
             if (score.displayName == displayName) {
                 return score
             }
