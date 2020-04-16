@@ -85,7 +85,7 @@ public class GameRoomManager {
     logger.info("Created new game of type " + gameType);
 
     String roomId = generateRoomId();
-    GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(), prepared);
+    GameRoom room = new GameRoom(roomId, this, plugin.getPlugin().getScoreDefinition(), plugin.createGame(), prepared);
     // pause room if specified in server.properties on joinRoomRequest
     if (!prepared) {
       boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
@@ -252,13 +252,12 @@ public class GameRoomManager {
    * Called by gameRoom after game ended and test mode enabled to save results in playerScores
    *
    * @param result       GameResult
-   * @param playerScores List of playerScores
    * @param name1        displayName of player1
    * @param name2        displayName of player2
    *
    * @throws InvalidScoreDefinitionException if scoreDefinitions do not match
    */
-  public void addResultToScore(GameResult result, List<PlayerScore> playerScores, String name1, String name2) throws InvalidScoreDefinitionException {
+  public void addResultToScore(GameResult result, String name1, String name2) throws InvalidScoreDefinitionException {
     if (name1.equals(name2)) {
       logger.warn("Both player playerScores have the same displayName. Won't save test relevant data");
       return;
@@ -282,6 +281,7 @@ public class GameRoomManager {
       this.scores.add(secondScore);
     }
 
+    final List<PlayerScore> playerScores = result.getScores();
     firstScore.setNumberOfTests(firstScore.getNumberOfTests() + 1);
     secondScore.setNumberOfTests(secondScore.getNumberOfTests() + 1);
     for (int i = 0; i < scoreDefinition.size(); i++) {

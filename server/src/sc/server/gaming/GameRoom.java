@@ -38,10 +38,10 @@ public class GameRoom implements IGameListener {
 
   private final String id;
   private final GameRoomManager gameRoomManager;
-  private final GamePluginInstance provider;
+  private final ScoreDefinition scoreDefinition;
   private final IGameInstance game;
-  private List<ObserverRole> observers = new ArrayList<>();
-  private List<PlayerSlot> playerSlots = new ArrayList<>(2);
+  private final List<ObserverRole> observers = new ArrayList<>();
+  private final List<PlayerSlot> playerSlots = new ArrayList<>(2);
   private final boolean prepared;
   private GameStatus status = GameStatus.CREATED;
   private GameResult result = null;
@@ -59,17 +59,13 @@ public class GameRoom implements IGameListener {
     CREATED, ACTIVE, OVER
   }
 
-  public GameRoom(String id, GameRoomManager gameRoomManager,
-                  GamePluginInstance provider, IGameInstance game, boolean prepared) {
-
-    if (provider == null)
-      throw new IllegalArgumentException("Provider must not be null");
-
+  public GameRoom(String id, GameRoomManager gameRoomManager, ScoreDefinition scoreDefinition, IGameInstance game, boolean prepared) {
     this.id = id;
-    this.provider = provider;
+    // TODO the gameroom shouldn't need to know its manager
+    this.gameRoomManager = gameRoomManager;
+    this.scoreDefinition = scoreDefinition;
     this.game = game;
     this.prepared = prepared;
-    this.gameRoomManager = gameRoomManager;
     game.addGameListener(this);
     // if option is set, add observer to save replay
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
@@ -85,10 +81,6 @@ public class GameRoom implements IGameListener {
         e.printStackTrace();
       }
     }
-  }
-
-  public GamePluginInstance getProvider() {
-    return this.provider;
   }
 
   public IGameInstance getGame() {
@@ -149,11 +141,10 @@ public class GameRoom implements IGameListener {
     // save playerScore if test mode enabled
     if (Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE))) {
       List<Player> players = game.getPlayers();
-      gameRoomManager.addResultToScore(this.getResult(), game.getPlayerScores(), players.get(0).getDisplayName(), players.get(1).getDisplayName());
+      gameRoomManager.addResultToScore(this.getResult(), players.get(0).getDisplayName(), players.get(1).getDisplayName());
     }
     kickAllClients();
-    this.game.destroy();
-    this.gameRoomManager.remove(this);
+    cancel();
   }
 
 
@@ -165,7 +156,6 @@ public class GameRoom implements IGameListener {
    * @return GameResult containing all PlayerScores in order and winners
    */
   private GameResult generateGameResult(Map<Player, PlayerScore> results) {
-    ScoreDefinition definition = getProvider().getPlugin().getScoreDefinition();
     List<PlayerScore> scores = new ArrayList<>();
 
     // restore order
@@ -176,12 +166,12 @@ public class GameRoom implements IGameListener {
         throw new RuntimeException("GameScore was not complete!");
 
       // FIXME: remove cause != unknown
-      if (score.getCause() != ScoreCause.UNKNOWN && !score.matches(definition))
-        throw new RuntimeException(String.format("Score %1s did not match Definition %2s", score, definition));
+      if (score.getCause() != ScoreCause.UNKNOWN && !score.matches(scoreDefinition))
+        throw new RuntimeException(String.format("Score %1s did not match Definition %2s", score, scoreDefinition));
 
       scores.add(score);
     }
-    return new GameResult(definition, scores, this.game.getWinners());
+    return new GameResult(scoreDefinition, scores, this.game.getWinners());
   }
 
   /**
@@ -611,12 +601,14 @@ public class GameRoom implements IGameListener {
     }
   }
 
-  /** Kick all Player and destroy game afterwards */
+  /** Kick all players, destroy the game and remove it from the manager */
   public void cancel() {
     if (!isOver()) {
       kickAllClients();
-      this.game.destroy();
+      setStatus(GameStatus.OVER);
     }
+    this.game.destroy();
+    this.gameRoomManager.remove(this);
   }
 
   /**
