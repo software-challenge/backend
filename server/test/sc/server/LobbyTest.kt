@@ -18,14 +18,14 @@ class LobbyTest: RealServerTest() {
             player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
             
             // Was game created?
-            TestHelper.assertEqualsWithTimeout(1, { lobby.gameManager.games.size }, 2000)
-            Assert.assertNotNull(lobby.gameManager.games)
-            Assert.assertNotEquals(0, lobby.gameManager.games.size.toLong())
+            TestHelper.assertEqualsWithTimeout(1, { lobby.games.size }, 2000)
+            Assert.assertNotNull(lobby.games)
+            Assert.assertNotEquals(0, lobby.games.size.toLong())
             Assert.assertNotNull(lobby.clientManager)
             
             player1.stop()
             // FIXME sometimes fails - see Issue #124
-            // TestHelper.assertEqualsWithTimeout(0, { lobby.gameManager.games.size }, 5000)
+            // TestHelper.assertEqualsWithTimeout(0, { lobby.games.size }, 5000)
         } catch (e: Exception) {
             e.printStackTrace()
             Assert.fail()
