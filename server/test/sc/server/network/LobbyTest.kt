@@ -35,8 +35,6 @@ class LobbyTest: RealServerTest() {
         player1.sendCustomData("<yarr>")
         
         TestHelper.assertEqualsWithTimeout(true, { theRoom.isOver })
-        TestHelper.assertEqualsWithTimeout(true, { theRoom.result.scores != null })
-        
         TestHelper.assertEqualsWithTimeout(ScoreCause.LEFT, { theRoom.result.scores[0].cause }, 2, TimeUnit.SECONDS)
         
         // should cleanup gamelist
