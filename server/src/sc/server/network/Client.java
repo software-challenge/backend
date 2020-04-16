@@ -67,8 +67,8 @@ public class Client extends XStreamClient implements IClient {
       super.send(packet);
     } else {
       logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {}) Thread: {}",
-          packet.getClass().getSimpleName(),
-          Thread.currentThread().getName());
+              packet.getClass().getSimpleName(),
+              Thread.currentThread().getName());
     }
   }
 
@@ -110,13 +110,13 @@ public class Client extends XStreamClient implements IClient {
     }
     if (!errors.isEmpty()) {
       logger.debug("Stopping client because of error. Thread: {}",
-          Thread.currentThread().getName());
+              Thread.currentThread().getName());
       stop();
     }
 
     if (packet instanceof LeftGameEvent) {
       logger.debug("Stopping client because of LeftGameEvent received. Thread: {}",
-          Thread.currentThread().getName());
+              Thread.currentThread().getName());
       stop();
     }
   }
@@ -177,6 +177,7 @@ public class Client extends XStreamClient implements IClient {
 
   /**
    * Authenticates a Client as Administrator
+   *
    * @param password The secret that is required to gain administrative rights.
    */
   public void authenticate(String password) throws AuthenticationFailedException {

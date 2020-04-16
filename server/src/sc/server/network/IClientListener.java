@@ -20,8 +20,8 @@ public interface IClientListener {
   /**
    * Invoked when a client encountered a problem.
    *
-   * @param source  client
-   * @param packet  which rose the problem
+   * @param source client
+   * @param packet which caused the problem
    */
   void onError(Client source, ProtocolErrorMessage packet);
 }

@@ -2,18 +2,11 @@ package sc.server.network;
 
 import sc.protocol.responses.ProtocolMessage;
 
-/** Client interface, which is used to send packages to the server */
-public interface IClient
-{
-  /**
-   * Add role to the client.
-   * @param role to be added
-   */
+/** Client interface to send packages to the server. */
+public interface IClient {
+  /** Add role to the client. */
   void addRole(IClientRole role);
 
-  /**
-   * Send a package.
-   * @param packet to be send
-   */
+  /** Send a package. */
   void send(ProtocolMessage packet);
 }

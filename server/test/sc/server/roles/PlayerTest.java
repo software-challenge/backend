@@ -54,11 +54,7 @@ public class PlayerTest extends AbstractRoleTest {
     Assert.assertNotNull(msg.getRoomId());
   }
 
-  /**
-   * Checks basic sending of Moves and end of game
-   *
-   * @throws RescuableClientException
-   */
+  /** Checks basic sending of Moves and end of game. */
   @Test
   public void shouldBeAbleToPlayTheGame() throws RescuableClientException, InvalidGameStateException {
     MockClient admin = connectClient(true);
