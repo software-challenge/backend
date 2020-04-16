@@ -147,7 +147,7 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
     for (Entry<Player, PlayerScore> entry : scores.entrySet()) {
       if (entry.getKey() == player) {
         PlayerScore score = entry.getValue();
-        score.setCause(cause);
+        entry.setValue(new PlayerScore(cause, score.getReason(), score.getParts()));
       }
     }
 

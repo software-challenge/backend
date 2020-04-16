@@ -196,8 +196,9 @@ public class TestClient extends XStreamClient {
           irregularGames++;
         StringBuilder log = new StringBuilder("Game {} ended " +
                 (result.isRegular() ? "regularly -" : "abnormally!") + " Winner: ");
-        for (Player winner : result.getWinners())
-          log.append(winner.getDisplayName()).append(", ");
+        if (result.getWinners() != null)
+          for (Player winner : result.getWinners())
+            log.append(winner.getDisplayName()).append(", ");
         logger.warn(log.substring(0, log.length() - 2), finishedTests);
 
         finishedTests++;

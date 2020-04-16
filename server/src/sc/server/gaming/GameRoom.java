@@ -178,7 +178,7 @@ public class GameRoom implements IGameListener {
 
       // FIXME: remove cause != unknown
       if (score.getCause() != ScoreCause.UNKNOWN && !score.matches(definition))
-        throw new RuntimeException("ScoreSize did not match Definition");
+        throw new RuntimeException(String.format("Score %1s did not match Definition %2s", score, definition));
 
       scores.add(score);
     }
