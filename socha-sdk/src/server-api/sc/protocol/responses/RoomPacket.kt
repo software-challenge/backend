@@ -10,5 +10,5 @@ import sc.protocol.requests.ILobbyRequest
 data class RoomPacket(
         @XStreamAsAttribute
         val roomId: String,
-        val data: ProtocolMessage
+        val data: ProtocolMessage?
 ): ILobbyRequest
