@@ -1,6 +1,7 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.InputStream
+import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     maven
@@ -110,19 +111,22 @@ tasks {
                     project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath)
                     .redirectOutput(testLogDir.resolve("server.log")).redirectError(testLogDir.resolve("server-err.log"))
                     .directory(project("server").buildDir.resolve("runnable")).start()
-            Thread.sleep(1000)
+            Thread.sleep(400)
             val startClient: (Int) -> Process = {
+                Thread.sleep(100)
                 ProcessBuilder("java", "-jar", deployDir.resolve(deployedPlayer).absolutePath)
                         .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
             startClient(2)
+            val timeout = AtomicBoolean(false)
             val thread = Thread {
                 try {
                     Thread.sleep(maxGameLength * 1000)
                 } catch (e: InterruptedException) {
                     return@Thread
                 }
+                timeout.set(true)
                 println("$this has been running for over $maxGameLength seconds - killing server!")
                 server.destroyForcibly()
             }.apply {
@@ -131,12 +135,21 @@ tasks {
             }
             try {
                 for (i in 1..2) {
+                    val logFile = testLogDir.resolve("client$i.log")
+                    var log: String
                     println("Waiting for client $i to receive game result")
                     do {
-                        if (!server.isAlive)
-                            throw Exception("Server terminated unexpectedly!")
-                        Thread.sleep(200)
-                    } while (!testLogDir.resolve("client$i.log").readText().contains("Received game result", true))
+                        if (!server.isAlive) {
+                            if(!timeout.get())
+                                throw Exception("Server terminated unexpectedly!")
+                            return@doFirst
+                        }
+                        Thread.yield()
+                        Thread.sleep(100)
+                        log = logFile.readText()
+                    } while (!log.contains("stop", true))
+                    if(!log.contains("Received game result"))
+                        throw Exception("Client $i did not receive the game result - check $logFile")
                 }
             } catch (t: Throwable) {
                 println("Error in $this - check the logs in $testLogDir")
