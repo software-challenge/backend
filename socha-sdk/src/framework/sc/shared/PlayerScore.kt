@@ -23,6 +23,8 @@ data class PlayerScore(
     fun toStrings(): Array<String> =
             parts.map { it.toString() }.toTypedArray()
     
+    
+    
     val values: List<BigDecimal>
         get() = parts.asList()
     
@@ -31,9 +33,9 @@ data class PlayerScore(
     
     override fun equals(other: Any?): Boolean =
             other is PlayerScore &&
-                    cause == other.cause &&
-                    reason == other.reason &&
-                    parts.contentEquals(other.parts)
+            cause == other.cause &&
+            reason == other.reason &&
+            parts.contentEquals(other.parts)
     
     override fun hashCode(): Int {
         var result = parts.contentHashCode()
