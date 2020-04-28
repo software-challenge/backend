@@ -2,11 +2,7 @@ package sc.shared
 
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
-import io.kotlintest.shouldThrow
 import io.kotlintest.specs.StringSpec
-import sc.shared.PlayerScore
-
-import java.math.BigDecimal
 
 class PlayerScoreTest: StringSpec({
     "check equality" {
