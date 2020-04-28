@@ -140,7 +140,7 @@ tasks {
                     println("Waiting for client $i to receive game result")
                     do {
                         if (!server.isAlive) {
-                            if(!timeout.get())
+                            if (!timeout.get())
                                 throw Exception("Server terminated unexpectedly!")
                             return@doFirst
                         }
@@ -148,7 +148,7 @@ tasks {
                         Thread.sleep(100)
                         log = logFile.readText()
                     } while (!log.contains("stop", true))
-                    if(!log.contains("Received game result"))
+                    if (!log.contains("Received game result"))
                         throw Exception("Client $i did not receive the game result - check $logFile")
                 }
             } catch (t: Throwable) {
@@ -193,9 +193,6 @@ tasks {
     }
     
     val integrationTest by creating {
-        enabled = versionObject.minor > 0
-        if (enabled)
-            dependsOn(testGame, testTestClient)
         group = mainGroup
     }
     
@@ -205,7 +202,8 @@ tasks {
     }
     test {
         dependOnSubprojects()
-        dependsOn(integrationTest)
+        if (!hasProperty("nointegration") && versionObject.minor > 0)
+            dependsOn(integrationTest)
         group = mainGroup
     }
     build {
