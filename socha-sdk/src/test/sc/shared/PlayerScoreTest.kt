@@ -31,16 +31,16 @@ class PlayerScoreTest: StringSpec({
         xstream.setMode(XStream.NO_REFERENCES)
         xstream.classLoader = PlayerScore::class.java.classLoader
         val ISplayerScoreXML = xstream.toXML(playerScore)
-        val SHOULDplayerScoreXML = ""                           +
-            "<sc.shared.PlayerScore>\n"                         +
-            "  <cause>REGULAR</cause>\n"                        +
-            "  <reason>Reason</reason>\n"                       +
-            "  <parts>\n"                                       +
-            "    <big-decimal>0</big-decimal>\n"                +
-            "    <big-decimal>1</big-decimal>\n"                +
-            "    <big-decimal>2</big-decimal>\n"                +
-            "  </parts>\n"                                      +
-            "</sc.shared.PlayerScore>"
+        val SHOULDplayerScoreXML = """
+            <sc.shared.PlayerScore>
+              <cause>REGULAR</cause>
+              <reason>Reason</reason>
+              <parts>
+                <big-decimal>0</big-decimal>
+                <big-decimal>1</big-decimal>
+                <big-decimal>2</big-decimal>
+              </parts>
+            </sc.shared.PlayerScore>""".trimIndent()
         playerScore shouldBe xstream.fromXML(SHOULDplayerScoreXML)
         playerScore shouldBe xstream.fromXML(ISplayerScoreXML)
         ISplayerScoreXML shouldBe SHOULDplayerScoreXML
