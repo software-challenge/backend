@@ -81,8 +81,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
     // this.players.remove(player);
     logger.debug("Player left {}", player);
     Map<Player, PlayerScore> result = generateScoreMap();
-    result.put(player, new PlayerScore(false, "Spieler hat das Spiel verlassen."));
-    result.get(player).setCause(cause);
+    result.put(player, new PlayerScore(cause, "Spieler hat das Spiel verlassen.", 0));
     notifyOnGameOver(result);
   }
 
