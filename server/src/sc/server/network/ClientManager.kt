@@ -76,25 +76,16 @@ class ClientManager : Runnable, IClientListener {
     @Throws(IOException::class)
     fun start() {
         this.clientListener.start()
-        if(this.thread == null) {
-            this.thread = ServiceManager.createService(this.javaClass.simpleName, this)
-            this.thread!!.start()
-        }
+        if(this.thread == null)
+            this.thread = ServiceManager.createService(this.javaClass.simpleName, this).apply { start() }
     }
 
     fun close() {
         this.running = false
-
-        if(this.thread != null) {
-            this.thread!!.interrupt()
-        }
-
+        this.thread?.interrupt()
         this.clientListener.close()
-
-        for(i in this.clients.indices) {
-            val client = this.clients[i]
-            client.stop()
-        }
+        // Stop clients in reverse order to ensure all clients are stopped since they might be removed by onClientDisconnected
+        this.clients.indices.reversed().forEach { clients[it].stop() }
     }
 
     /**
