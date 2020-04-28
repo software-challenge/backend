@@ -1,5 +1,7 @@
 package sc.shared
 
+
+import com.thoughtworks.xstream.XStream
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
@@ -22,5 +24,25 @@ class PlayerScoreTest: StringSpec({
         
         val noPlayerScore: Any? = null
         noPlayerScore shouldNotBe playerScoreUnknown1
+    }
+    "convert XML" {
+        val playerScore = PlayerScore(ScoreCause.REGULAR, "Reason", 0, 1, 2)
+        var xstream = XStream()
+        xstream.setMode(XStream.NO_REFERENCES)
+        xstream.classLoader = PlayerScore::class.java.classLoader
+        val ISplayerScoreXML = xstream.toXML(playerScore)
+        val SHOULDplayerScoreXML = ""                           +
+            "<sc.shared.PlayerScore>\n"                         +
+            "  <cause>REGULAR</cause>\n"                        +
+            "  <reason>Reason</reason>\n"                       +
+            "  <parts>\n"                                       +
+            "    <big-decimal>0</big-decimal>\n"                +
+            "    <big-decimal>1</big-decimal>\n"                +
+            "    <big-decimal>2</big-decimal>\n"                +
+            "  </parts>\n"                                      +
+            "</sc.shared.PlayerScore>"
+        playerScore shouldBe xstream.fromXML(SHOULDplayerScoreXML)
+        playerScore shouldBe xstream.fromXML(ISplayerScoreXML)
+        ISplayerScoreXML shouldBe SHOULDplayerScoreXML
     }
 })
