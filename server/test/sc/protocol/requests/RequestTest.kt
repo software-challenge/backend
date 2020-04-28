@@ -88,12 +88,7 @@ class RequestTest: RealServerTest() {
     
     @Test
     fun prepareXmlTest() {
-        val xStream = XStream()
-        xStream.setMode(XStream.NO_REFERENCES)
-        xStream.classLoader = Configuration::class.java.classLoader
-        LobbyProtocol.registerMessages(xStream)
-        LobbyProtocol.registerAdditionalMessages(xStream,
-                Arrays.asList(*arrayOf<Class<*>>(ProtocolMessage::class.java)))
+        val xStream = Configuration.getXStream()
         val request = xStream.fromXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<prepare gameType=\"swc_2018_hase_und_igel\">\n" +
                 "  <slot displayName=\"Häschenschule\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +
