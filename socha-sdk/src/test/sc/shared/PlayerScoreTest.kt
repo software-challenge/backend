@@ -1,6 +1,5 @@
 package sc.shared
 
-
 import com.thoughtworks.xstream.XStream
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
