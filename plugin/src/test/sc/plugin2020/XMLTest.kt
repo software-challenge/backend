@@ -233,12 +233,12 @@ class XMLTest {
         val xstream = Configuration.xStream
         val xml = xstream.toXML(RoomPacket(roomId, move))
         val expect = """
-            |<room roomId="$roomId">
-            |  <data class="setmove">
-            |    <piece owner="RED" type="ANT"/>
-            |    <destination x="1" y="2" z="-3"/>
-            |  </data>
-            |</room>""".trimMargin()
+            <room roomId="$roomId">
+              <data class="setmove">
+                <piece owner="RED" type="ANT"/>
+                <destination x="1" y="2" z="-3"/>
+              </data>
+            </room>""".trimIndent()
         Assert.assertEquals(expect, xml)
     }
     

@@ -16,15 +16,12 @@ class GameResult(
     
     override fun toString(): String {
         val builder = StringBuilder("Winner: ").append(winners)
-        for ((playerIndex, score) in scores.withIndex()) {
-            builder.append("\n").append("Player ").append(playerIndex).append(": ")
+        scores.forEachIndexed { playerIndex, score ->
+            builder.appendln().append("Player ").append(playerIndex).append(": ")
             val scoreParts = score.toStrings()
-            for (i in scoreParts.indices) {
-                builder.append(definition[i].name).append("=").append(scoreParts[i])
-                builder.append("; ")
-            }
+            builder.append(scoreParts.indices.joinToString("; ") { i -> "${definition[i].name}=${scoreParts[i]}" })
         }
-        return builder.substring(0, builder.length - 1)
+        return builder.toString()
     }
     
     val isRegular: Boolean by lazy {
