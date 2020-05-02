@@ -171,7 +171,7 @@ public class Game extends RoundBasedGameInstance<Player> {
           return new WinCondition(PlayerColor.BLUE, WinReason.BEE_FREE_FIELDS);
         } else {
           logger.info("Both Players have equal Points, no Winner");
-          return new WinCondition(null, WinReason.BEE_FREE_FIELDS_EQUAL);
+          return new WinCondition(null, WinReason.ROUND_LIMIT_EQUAL);
         }
       }
       return new WinCondition(PlayerColor.BLUE, WinReason.BEE_SURROUNDED);
@@ -192,9 +192,9 @@ public class Game extends RoundBasedGameInstance<Player> {
       } else if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_ROUNDS] < stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {
         winner = PlayerColor.BLUE;
       } else {
-        return new WinCondition(null, WinReason.ROUND_LIMIT);
+        return new WinCondition(null, WinReason.ROUND_LIMIT_EQUAL);
       }
-      return new WinCondition(winner, WinReason.ROUND_LIMIT);
+      return new WinCondition(winner, WinReason.ROUND_LIMIT_FREE_FIELDS);
     }
 
     return null;
