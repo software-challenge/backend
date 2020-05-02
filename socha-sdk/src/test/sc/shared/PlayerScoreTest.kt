@@ -19,9 +19,10 @@ class PlayerScoreTest: StringSpec({
     }
     "convert XML" {
         val playerScore = PlayerScore(ScoreCause.REGULAR, "Reason", 0, 1, 2)
-        var xstream = XStream()
-        xstream.setMode(XStream.NO_REFERENCES)
-        xstream.classLoader = PlayerScore::class.java.classLoader
+        val xstream = XStream().apply {
+            setMode(XStream.NO_REFERENCES)
+            classLoader = PlayerScore::class.java.classLoader
+        }
         val ISplayerScoreXML = xstream.toXML(playerScore)
         val SHOULDplayerScoreXML = """
             <sc.shared.PlayerScore>
