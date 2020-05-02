@@ -6,13 +6,16 @@ import sc.framework.plugins.Player
 import sc.protocol.responses.ProtocolMessage
 
 @XStreamAlias(value = "result")
-class GameResult(
+data class GameResult(
         val definition: ScoreDefinition,
         @XStreamImplicit(itemFieldName = "score")
         val scores: List<PlayerScore>,
         @XStreamImplicit(itemFieldName = "winner")
         val winners: List<Player>?
 ): ProtocolMessage {
+    
+    val isRegular: Boolean
+        get() = scores.all { it.cause == ScoreCause.REGULAR }
     
     override fun toString(): String {
         val builder = StringBuilder("Winner: ").append(winners)
