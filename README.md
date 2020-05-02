@@ -34,7 +34,8 @@ Die wichtigsten Tasks:
 | Task | Beschreibung
 | ------ | ------------
 | `build` | Baut alles, deployt und testet
-| `test` | Führt Tests aus
+| `test` | Führt Unittests aus
+| `check` | Führt alle Tests aus
 | `deploy` | Erstellt hochladbare ZIP-Pakete
 | `integrationTest` | Testet ein komplettes Spiel sowie den TestClient
 | `startServer` oder `:server:run` | Führt den Server direkt vom Quellcode aus

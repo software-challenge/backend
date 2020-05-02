@@ -194,20 +194,26 @@ tasks {
     
     val integrationTest by creating {
         group = mainGroup
+        dependsOn(testGame, testTestClient)
+        shouldRunAfter(test)
     }
     
     clean {
-        dependOnSubprojects()
         group = mainGroup
+        dependOnSubprojects()
     }
     test {
+        group = mainGroup
         dependOnSubprojects()
+    }
+    check {
+        group = mainGroup
         if (!hasProperty("nointegration") && versionObject.minor > 0)
             dependsOn(integrationTest)
-        group = mainGroup
     }
     build {
         group = mainGroup
+        dependsOn(deploy)
     }
 }
 
