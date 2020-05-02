@@ -21,10 +21,8 @@ class PlayerScoreTest: StringSpec({
         val playerScore = PlayerScore(ScoreCause.REGULAR, "Reason", 0, 1, 2)
         val xstream = XStream().apply {
             setMode(XStream.NO_REFERENCES)
-            classLoader = PlayerScore::class.java.classLoader
         }
-        val ISplayerScoreXML = xstream.toXML(playerScore)
-        val SHOULDplayerScoreXML = """
+        val playerScoreXML = """
             <sc.shared.PlayerScore>
               <cause>REGULAR</cause>
               <reason>Reason</reason>
@@ -34,8 +32,7 @@ class PlayerScoreTest: StringSpec({
                 <big-decimal>2</big-decimal>
               </parts>
             </sc.shared.PlayerScore>""".trimIndent()
-        playerScore shouldBe xstream.fromXML(SHOULDplayerScoreXML)
-        playerScore shouldBe xstream.fromXML(ISplayerScoreXML)
-        ISplayerScoreXML shouldBe SHOULDplayerScoreXML
+        xstream.fromXML(playerScoreXML) shouldBe playerScore
+        xstream.toXML(playerScore) shouldBe playerScoreXML
     }
 })
