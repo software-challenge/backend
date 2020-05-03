@@ -109,8 +109,9 @@ tasks {
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {
             testLogDir.mkdirs()
-            val server = ProcessBuilder("java", "-Dlogback.configurationFile=logback.xml", "-jar",
-                    project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath)
+            val server = ProcessBuilder("java",
+                    "-Dlogback.configurationFile=${project("server").projectDir.resolve("configuration/logback-trace.xml")}",
+                    "-jar", project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath)
                     .redirectOutput(testLogDir.resolve("server.log")).redirectError(testLogDir.resolve("server-err.log"))
                     .directory(project("server").buildDir.resolve("runnable")).start()
             Thread.sleep(400)
