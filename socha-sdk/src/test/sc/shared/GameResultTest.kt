@@ -95,8 +95,6 @@ class GameResultTest: StringSpec({
                  <winners class="kotlin.collections.EmptyList"/>
                </sc.shared.GameResult>""".trimIndent()
         )
-//        print(xstream.toXML(gameResultWithWinner.first))
-//        print(xstream.toXML(gameResultWithoutWinner.first))
         
         val gameResults = listOf(gameResultWithWinner, gameResultWithoutWinner)
         gameResults.forEach {
