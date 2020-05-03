@@ -117,6 +117,10 @@ public abstract class XStreamClient {
         }
       }
     } catch (IOException e) {
+      if(e.getCause() instanceof InterruptedException) {
+        // readObject method was interrupted
+        return;
+      }
       // The other side closed the connection. It is better when the other
       // side sends a CloseConnection message before, giving this side the
       // chance to close the connection regularly.
