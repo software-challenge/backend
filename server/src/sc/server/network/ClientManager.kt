@@ -17,13 +17,13 @@ class ClientManager : Runnable, IClientListener {
     private val clientListener = NewClientListener()
 
     private var running: Boolean = false
-    private var thread: Thread? = null
+    private var serviceThread: Thread? = null
 
     private var onClientConnected: ((Client) -> Unit)? = null
 
     init {
-        this.running = false
-        this.thread = null
+        running = false
+        serviceThread = null
     }
 
     /**
@@ -32,7 +32,7 @@ class ClientManager : Runnable, IClientListener {
      * *(only used by tests and addAll())*
      */
     fun add(newClient: Client) {
-        this.clients.add(newClient)
+        clients.add(newClient)
         newClient.addClientListener(this)
         onClientConnected?.invoke(newClient)
     }
@@ -43,28 +43,25 @@ class ClientManager : Runnable, IClientListener {
 
     /** Fetch new clients  */
     override fun run() {
-        this.running = true
+        running = true
 
         logger.info("ClientManager running")
 
-        while(this.running && !Thread.interrupted()) {
+        while(running && !Thread.interrupted()) {
             try {
                 // Waits blocking for new Client
-                val client = this.clientListener.fetchNewSingleClient()
+                val client = clientListener.fetchNewSingleClient()
 
                 logger.info("Delegating new client to ClientManager...")
-                this.add(client)
+                add(client)
                 logger.info("Delegation done")
             } catch(e: InterruptedException) {
-                if(this.running) {
+                if(running)
                     logger.warn("Interrupted while waiting for a new client", e)
-                } else {
-                    logger.warn("Client manager is shutting down")
-                }
             }
         }
 
-        this.running = false
+        running = false
         logger.info("ClientManager closed")
     }
     
@@ -75,17 +72,22 @@ class ClientManager : Runnable, IClientListener {
      */
     @Throws(IOException::class)
     fun start() {
-        this.clientListener.start()
-        if(this.thread == null)
-            this.thread = ServiceManager.createService(this.javaClass.simpleName, this).apply { start() }
+        clientListener.start()
+        if(serviceThread == null)
+            serviceThread = ServiceManager.createService(javaClass.simpleName, this).apply { start() }
     }
 
     fun close() {
-        this.running = false
-        this.thread?.interrupt()
-        this.clientListener.close()
-        // Stop clients in reverse order to ensure all clients are stopped since they might be removed by onClientDisconnected
-        this.clients.indices.reversed().forEach { clients[it].stop() }
+        running = false
+        serviceThread?.interrupt()
+        clientListener.close()
+        while (clients.size > 0) {
+            try {
+                clients.removeAt(clients.lastIndex).stop()
+            } catch (ignored: ArrayIndexOutOfBoundsException) {
+                // Client was removed concurrently
+            }
+        }
     }
 
     /**
