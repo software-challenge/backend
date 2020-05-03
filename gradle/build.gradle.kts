@@ -23,6 +23,7 @@ println("Current version: $version Game: $game")
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
 val testLogDir by extra { buildDir.resolve("tests") }
+val documentedProjects = arrayOf("sdk", "plugin")
 
 subprojects {
     apply(plugin = "java-library")
@@ -30,15 +31,14 @@ subprojects {
 }
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
-val mainGroup = "_main"
 tasks {
     val startServer by creating {
         dependsOn(":server:run")
-        group = mainGroup
+        group = "application"
     }
     
     val doc by creating(DokkaTask::class) {
-        val includedProjects = arrayOf("sdk", "plugin")
+        val includedProjects = documentedProjects
         mustRunAfter(includedProjects.map { "$it:classes" })
         moduleName = "Software-Challenge API $version"
         val sourceSets = includedProjects.map { project(it).sourceSets.main.get() }
@@ -55,14 +55,15 @@ tasks {
     val deploy by creating {
         dependsOn(doc)
         dependOnSubprojects()
-        group = mainGroup
+        group = "distribution"
         description = "Zips everything up for release into build/deploy/"
+        outputs.dir(deployDir)
     }
     
     val release by creating {
         dependsOn(deploy)
-        group = mainGroup
-        description = "Prepares a new Release by bumping the version and creating a commit and a git tag"
+        group = "distribution"
+        description = "Prepares a new Release by bumping the version and creating a commit with a git tag of the new version"
         doLast {
             fun edit(original: String, version: String, new: Int) =
                     if (original.startsWith("socha.version.$version"))
@@ -104,6 +105,7 @@ tasks {
     }
     
     val testGame by creating {
+        group = "verification"
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {
             testLogDir.mkdirs()
@@ -163,8 +165,9 @@ tasks {
     }
     
     val testTestClient by creating {
+        group = "verification"
         dependsOn(clearTestLogs, ":server:deploy")
-        mustRunAfter(testGame)
+        shouldRunAfter(testGame)
         val testClientGames = 3
         doFirst {
             val tmpDir = buildDir.resolve("tmp")
@@ -177,7 +180,7 @@ tasks {
             println("Testing TestClient...")
             val testClient = ProcessBuilder(
                     project("test-client").tasks.getByName<ScriptsTask>("createScripts").content.split(" ") +
-                            listOf("--start-server", "--tests", "$testClientGames"))
+                            listOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055"))
                     .redirectOutput(testLogDir.resolve("test-client.log")).redirectError(testLogDir.resolve("test-client-err.log"))
                     .directory(unzipped).start()
             if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
@@ -193,26 +196,22 @@ tasks {
     }
     
     val integrationTest by creating {
-        group = mainGroup
+        group = "verification"
         dependsOn(testGame, testTestClient)
         shouldRunAfter(test)
     }
     
     clean {
-        group = mainGroup
         dependOnSubprojects()
     }
     test {
-        group = mainGroup
         dependOnSubprojects()
     }
     check {
-        group = mainGroup
-        if (!hasProperty("nointegration") && versionObject.minor > 0)
+        if (!project.hasProperty("nointegration") && versionObject.minor > 0)
             dependsOn(integrationTest)
     }
     build {
-        group = mainGroup
         dependsOn(deploy)
     }
 }
@@ -228,7 +227,7 @@ allprojects {
         jcenter()
         maven("http://dist.wso2.org/maven2")
     }
-    if (this.name in arrayOf("sdk", "plugin")) {
+    if (this.name in documentedProjects) {
         apply(plugin = "maven")
         tasks {
             val doc by creating(DokkaTask::class) {
