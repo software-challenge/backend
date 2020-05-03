@@ -29,7 +29,6 @@ tasks {
     }
     
     val prepareZip by creating(Copy::class) {
-        dependsOn(":sdk:doc", ":plugin:doc")
         into(buildDir.resolve("zip"))
         with(copySpec {
             from("buildscripts")
@@ -48,14 +47,17 @@ tasks {
         }, copySpec {
             from(configurations.default, arrayOf("sdk", "plugin").map { project(":$it").tasks.getByName("sourcesJar").outputs.files })
             into("lib")
-        }, copySpec {
-            from(project(":plugin").buildDir.resolve("doc"))
-            into("doc/plugin-$gameName")
-        }, copySpec {
-            from(project(":sdk").buildDir.resolve("doc"))
-            into("doc/sdk")
         })
-        
+        if(!project.hasProperty("nodoc")) {
+            dependsOn(":sdk:doc", ":plugin:doc")
+            with(copySpec {
+                from(project(":plugin").buildDir.resolve("doc"))
+                into("doc/plugin-$gameName")
+            }, copySpec {
+                from(project(":sdk").buildDir.resolve("doc"))
+                into("doc/sdk")
+            })
+        }
     }
     
     val deploy by creating(Zip::class) {
