@@ -27,8 +27,4 @@ data class GameResult(
         return builder.toString()
     }
     
-    val isRegular: Boolean by lazy {
-        scores.all { it.cause == ScoreCause.REGULAR }
-    }
-    
 }
