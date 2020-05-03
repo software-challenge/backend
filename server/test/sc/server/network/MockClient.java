@@ -29,8 +29,7 @@ public class MockClient extends Client {
   }
 
   public MockClient() throws IOException {
-    this(new StringNetworkInterface("<protocol>"), Configuration
-            .getXStream());
+    this(new StringNetworkInterface("<protocol>"), Configuration.getXStream());
   }
 
   @Override

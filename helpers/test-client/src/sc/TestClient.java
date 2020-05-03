@@ -267,7 +267,7 @@ public class TestClient extends XStreamClient {
                 logger.error("{} crashed, look into {}", player.name, logDir);
                 exit(2);
               }
-            // Max game length: Roundlimit * 2 * 2 seconds, one second buffer per round
+            // Max game length: turns(Roundlimit * 2) * turnlength(2 seconds), one second buffer per round
             if (slept > Constants.ROUND_LIMIT * 5) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
