@@ -25,7 +25,7 @@ data class PlayerScore(
         get() = parts.asList()
     
     fun matches(definition: ScoreDefinition): Boolean =
-            size() == definition.size()
+            size() == definition.size
     
     override fun equals(other: Any?): Boolean =
             other is PlayerScore &&
