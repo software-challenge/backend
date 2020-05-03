@@ -23,7 +23,7 @@ public abstract class XStreamClient {
   private final INetworkInterface networkInterface;
   private final ObjectOutputStream out;
   private ObjectInputStream in;
-  private final Thread thread;
+  private final Thread receiveThread;
   private DisconnectCause disconnectCause = DisconnectCause.NOT_DISCONNECTED;
   protected final XStream xStream;
   private boolean closed = false;
@@ -60,8 +60,7 @@ public abstract class XStreamClient {
     }
   }
 
-  public XStreamClient(final XStream xstream,
-                       final INetworkInterface networkInterface) throws IOException {
+  public XStreamClient(final XStream xstream, final INetworkInterface networkInterface) throws IOException {
     if (networkInterface == null)
       throw new IllegalArgumentException("networkInterface must not be null.");
 
@@ -71,7 +70,7 @@ public abstract class XStreamClient {
     this.xStream = xstream;
     this.networkInterface = networkInterface;
     this.out = xstream.createObjectOutputStream(networkInterface.getOutputStream(), "protocol");
-    this.thread = new Thread(new Runnable() {
+    this.receiveThread = new Thread(new Runnable() {
       @Override
       public void run() {
         try {
@@ -79,11 +78,11 @@ public abstract class XStreamClient {
         } catch (Exception e) {
           logger.error("ReceiveThread caused an exception.", e);
         }
-        logger.debug("Terminated thread with id {} and name {}", thread.getId(), thread.getName());
+        logger.debug("Terminated {}", receiveThread.getName());
       }
     });
-    this.thread.setName(String.format("XStreamClient Receive Thread %d %s", thread.getId(), getClass().getSimpleName()));
-    this.thread.start();
+    this.receiveThread.setName(String.format("XStreamClient ReceiveThread id:%d client:%s", receiveThread.getId(), getClass().getSimpleName()));
+    this.receiveThread.start();
   }
 
   protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException;
@@ -228,15 +227,15 @@ public abstract class XStreamClient {
   }
 
   protected synchronized void stopReceiver() {
-    logger.info("Stopping receiver thread {}", Thread.currentThread().getName());
-    if (this.thread.getId() == Thread.currentThread().getId()) {
-      logger.warn("Receiver thread is stopping itself");
+    logger.info("Stopping {}", receiveThread.getName());
+    if (this.receiveThread.getId() == Thread.currentThread().getId()) {
+      logger.warn("ReceiveThread is stopping itself");
     }
     // unlock waiting threads
     synchronized(this.readyLock) {
       this.readyLock.notifyAll();
     }
-    this.thread.interrupt();
+    this.receiveThread.interrupt();
   }
 
   protected synchronized void close() {
