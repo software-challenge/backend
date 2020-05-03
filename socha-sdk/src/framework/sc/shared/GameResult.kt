@@ -18,13 +18,7 @@ data class GameResult(
         get() = scores.all { it.cause == ScoreCause.REGULAR }
     
     override fun toString(): String {
-        val builder = StringBuilder("Winner: ").append(winners)
-        scores.forEachIndexed { playerIndex, score ->
-            builder.appendln().append("Player ").append(playerIndex).append(": ")
-            val scoreParts = score.toStrings()
-            builder.append(scoreParts.indices.joinToString("; ") { i -> "${definition[i].name}=${scoreParts[i]}" })
-        }
-        return builder.toString()
+        return "GameResult(winner=$winners, scores=[${(0..scores.lastIndex).joinToString { i -> "Player${i+1}${scores[i].toString(definition).removePrefix("PlayerScore")}" }}])"
     }
     
 }

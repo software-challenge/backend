@@ -38,6 +38,11 @@ public class ScoreDefinition implements Iterable<ScoreFragment> {
   }
 
   @Override
+  public String toString() {
+    return "ScoreDefinition(fragments=" + fragments + ')';
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (o instanceof ScoreDefinition) {
       int i = 0;

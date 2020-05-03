@@ -3,6 +3,7 @@ package sc.shared
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
+import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 
 @XStreamAlias(value = "score")
@@ -19,9 +20,6 @@ data class PlayerScore(
     constructor(cause: ScoreCause?, reason: String, vararg scores: Int): this(cause, reason, scores.map { BigDecimal(it) }.toTypedArray())
     
     fun size(): Int = parts.size
-    
-    fun toStrings(): Array<String> =
-            parts.map { it.toString() }.toTypedArray()
     
     val values: List<BigDecimal>
         get() = parts.asList()
@@ -40,6 +38,12 @@ data class PlayerScore(
         result = 31 * result + cause.hashCode()
         result = 31 * result + reason.hashCode()
         return result
+    }
+    
+    fun toString(definition: ScoreDefinition): String {
+        if(!matches(definition))
+            throw IllegalArgumentException("$definition does not match $this")
+        return "PlayerScore(cause=$cause, reason='$reason', parts=[${(0..parts.lastIndex).joinToString { i -> "${definition.get(i).name}=${parts[i]}" }}])"
     }
     
     override fun toString(): String {
