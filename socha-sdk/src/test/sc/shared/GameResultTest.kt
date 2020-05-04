@@ -10,7 +10,7 @@ class GameResultTest: StringSpec({
         val xstream = XStream().apply {
             setMode(XStream.NO_REFERENCES)
         }
-        val definition = ScoreDefinition().apply { add("winner") }
+        val definition = ScoreDefinition("winner")
         val scores: List<PlayerScore> = listOf(
                 PlayerScore(ScoreCause.REGULAR, "test", 1),
                 PlayerScore(ScoreCause.LEFT, "second test", 0)

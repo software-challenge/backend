@@ -284,7 +284,7 @@ public class GameRoomManager {
     final List<PlayerScore> playerScores = result.getScores();
     firstScore.setNumberOfTests(firstScore.getNumberOfTests() + 1);
     secondScore.setNumberOfTests(secondScore.getNumberOfTests() + 1);
-    for (int i = 0; i < scoreDefinition.size(); i++) {
+    for (int i = 0; i < scoreDefinition.getSize(); i++) {
       ScoreFragment fragment = scoreDefinition.get(i);
       ScoreValue firstValue = firstScore.getScoreValues().get(i);
       ScoreValue secondValue = secondScore.getScoreValues().get(i);

@@ -18,15 +18,11 @@ public class GamePlugin implements IGamePlugin {
   public static final String PLUGIN_AUTHOR = "";
   public static final String PLUGIN_UUID = "swc_2020_hive";
 
-  public static final ScoreDefinition SCORE_DEFINITION;
-
-  static {
-    SCORE_DEFINITION = new ScoreDefinition();
-    SCORE_DEFINITION.add("Gewinner");
-    // NOTE: Always write the XML representation of unicode characters, not the character directly, as it confuses the
-    // parsers which consume the server messages!
-    SCORE_DEFINITION.add(new ScoreFragment("\u2205 freie Felder", ScoreAggregation.AVERAGE));
-  }
+  // NOTE: Always write the XML representation of unicode characters, not the character directly, as it confuses the
+  // parsers which consume the server messages!
+  public static final ScoreDefinition SCORE_DEFINITION = new ScoreDefinition(new ScoreFragment[]{
+          new ScoreFragment("Gewinner"),
+          new ScoreFragment("\u2205 freie Felder", ScoreAggregation.AVERAGE)});
 
   @Override
   public IGameInstance createGame() {
