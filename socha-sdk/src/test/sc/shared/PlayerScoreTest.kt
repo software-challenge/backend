@@ -18,21 +18,20 @@ class PlayerScoreTest: StringSpec({
         playerScoreScores shouldBe playerScoreScores
     }
     "convert XML" {
-        val playerScore = PlayerScore(ScoreCause.REGULAR, "Reason", 0, 1, 2)
+        val playerScore = PlayerScore(ScoreCause.REGULAR, "Game ended regularly", 0, 1, 2)
         val xstream = XStream().apply {
             setMode(XStream.NO_REFERENCES)
+            autodetectAnnotations(true)
         }
         val playerScoreXML = """
-            <sc.shared.PlayerScore>
-              <cause>REGULAR</cause>
-              <reason>Reason</reason>
-              <parts>
-                <big-decimal>0</big-decimal>
-                <big-decimal>1</big-decimal>
-                <big-decimal>2</big-decimal>
-              </parts>
-            </sc.shared.PlayerScore>""".trimIndent()
+            <score cause="REGULAR" reason="Game ended regularly">
+              <part>0</part>
+              <part>1</part>
+              <part>2</part>
+            </score>""".trimIndent()
+        val playerScoreToXML = xstream.toXML(playerScore)
+        playerScoreToXML shouldBe playerScoreXML
         xstream.fromXML(playerScoreXML) shouldBe playerScore
-        xstream.toXML(playerScore) shouldBe playerScoreXML
+        xstream.fromXML(playerScoreToXML) shouldBe playerScore
     }
 })
