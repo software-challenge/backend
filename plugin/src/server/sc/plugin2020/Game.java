@@ -100,7 +100,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     int[] stats = this.gameState.getPlayerStats(player);
     int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
-    String reason = null;
+    String reason = "";
     Player opponent = gameState.getOpponent(player);
     if(winCondition != null) {
       PlayerColor winner = winCondition.getWinner();
