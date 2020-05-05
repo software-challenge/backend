@@ -17,8 +17,21 @@ data class GameResult(
     val isRegular: Boolean
         get() = scores.all { it.cause == ScoreCause.REGULAR }
     
-    override fun toString(): String {
-        return "GameResult(winner=$winners, scores=[${(0..scores.lastIndex).joinToString { i -> "Player${i+1}${scores[i].toString(definition).removePrefix("PlayerScore")}" }}])"
+    override fun toString() =
+            "GameResult(winner=$winners, scores=[${(0..scores.lastIndex).joinToString { i -> "Player${i + 1}${scores[i].toString(definition).removePrefix("PlayerScore")}" }}])"
+    
+    override fun equals(other: Any?) =
+            other is GameResult &&
+                    definition == other.definition &&
+                    scores == other.scores &&
+                    (winners == other.winners ||
+                            (winners.isNullOrEmpty() && other.winners.isNullOrEmpty()))
+    
+    override fun hashCode(): Int {
+        var result = definition.hashCode()
+        result = 31 * result + scores.hashCode()
+        result = 31 * result + (winners ?: emptyList()).hashCode()
+        return result
     }
     
 }
