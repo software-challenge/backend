@@ -1,21 +1,26 @@
 package sc.shared
 
 import com.thoughtworks.xstream.XStream
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import sc.framework.plugins.Player
 
 class GameResultTest: StringSpec({
-    "convert XML" {
+    val definition = ScoreDefinition("winner")
+    val scoreRegular = PlayerScore(ScoreCause.REGULAR, "", 1)
+    val scores = listOf(scoreRegular, PlayerScore(ScoreCause.LEFT, "Player left", 0))
+    val winners = listOf(Player(PlayerColor.BLUE, "bluez"))
+    "PlayerScore toString with ScoreDefinition" {
+        scoreRegular.toString(definition) shouldContain "winner=1"
+        val definition2 = ScoreDefinition("winner", "test")
+        shouldThrow<IllegalArgumentException> { scoreRegular.toString(definition2) }
+    }
+    "GameResult XML" {
         val xstream = XStream().apply {
             setMode(XStream.NO_REFERENCES)
         }
-        val definition = ScoreDefinition("winner")
-        val scores: List<PlayerScore> = listOf(
-                PlayerScore(ScoreCause.REGULAR, "test", 1),
-                PlayerScore(ScoreCause.LEFT, "second test", 0)
-        )
-        val winners: List<Player>? = listOf(Player(PlayerColor.BLUE, "bluez"))
         
         val gameResultWithWinner = Pair(
                 GameResult(definition, scores, winners), """
@@ -33,14 +38,14 @@ class GameResultTest: StringSpec({
                    <a class="sc.shared.PlayerScore-array">
                      <sc.shared.PlayerScore>
                        <cause>REGULAR</cause>
-                       <reason>test</reason>
+                       <reason></reason>
                        <parts>
                          <big-decimal>1</big-decimal>
                        </parts>
                      </sc.shared.PlayerScore>
                      <sc.shared.PlayerScore>
                        <cause>LEFT</cause>
-                       <reason>second test</reason>
+                       <reason>Player left</reason>
                        <parts>
                          <big-decimal>0</big-decimal>
                        </parts>
@@ -78,14 +83,14 @@ class GameResultTest: StringSpec({
                    <a class="sc.shared.PlayerScore-array">
                      <sc.shared.PlayerScore>
                        <cause>REGULAR</cause>
-                       <reason>test</reason>
+                       <reason></reason>
                        <parts>
                          <big-decimal>1</big-decimal>
                        </parts>
                      </sc.shared.PlayerScore>
                      <sc.shared.PlayerScore>
                        <cause>LEFT</cause>
-                       <reason>second test</reason>
+                       <reason>Player left</reason>
                        <parts>
                          <big-decimal>0</big-decimal>
                        </parts>
@@ -95,11 +100,12 @@ class GameResultTest: StringSpec({
                  <winners class="kotlin.collections.EmptyList"/>
                </sc.shared.GameResult>""".trimIndent()
         )
-        
         val gameResults = listOf(gameResultWithWinner, gameResultWithoutWinner)
         gameResults.forEach {
-            xstream.toXML(it.first) shouldBe it.second
+            val toXML = xstream.toXML(it.first)
+            toXML shouldBe it.second
             xstream.fromXML(it.second) shouldBe it.first
+            xstream.fromXML(toXML) shouldBe it.first
         }
     }
 })
