@@ -18,7 +18,7 @@ application {
 dependencies {
     implementation(project(":sdk"))
 
-    testImplementation("junit", "junit", "4.12")
+    testImplementation("junit", "junit", "4.13")
 }
 
 val deployDir: File by project

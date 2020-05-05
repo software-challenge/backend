@@ -1,8 +1,8 @@
 package sc.plugin2020
 
-import io.kotlintest.matchers.types.shouldNotBeSameInstanceAs
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
+import io.kotest.core.spec.style.StringSpec
 import sc.framework.plugins.Player
 import sc.shared.PlayerColor
 

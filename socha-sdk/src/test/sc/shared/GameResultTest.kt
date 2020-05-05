@@ -1,8 +1,8 @@
 package sc.shared
 
 import com.thoughtworks.xstream.XStream
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import sc.framework.plugins.Player
 
 class GameResultTest: StringSpec({

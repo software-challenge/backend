@@ -1,10 +1,10 @@
 package sc.plugin2020
 
-import io.kotlintest.matchers.collections.shouldContain
-import io.kotlintest.matchers.collections.shouldNotContain
-import io.kotlintest.shouldBe
-import io.kotlintest.shouldThrow
-import io.kotlintest.specs.AnnotationSpec
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldNotContain
+import io.kotest.matchers.shouldBe
+import io.kotest.core.spec.style.AnnotationSpec
 import org.junit.Assert.*
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.CubeCoordinates
