@@ -347,8 +347,10 @@ public class GameRoom implements IGameListener {
    * @throws RescuableClientException
    */
   private void syncSlot(PlayerSlot slot) throws RescuableClientException {
-    Player player = getGame().onPlayerJoined(); // make new player in gameState of game
-    // set attributes for player XXX check whether this is needed for prepared games
+    // create new player in gameState of game
+    Player player = getGame().onPlayerJoined();
+    // set attributes for player
+    // TODO check whether this is needed for prepared games
     player.setDisplayName(slot.getDescriptor().getDisplayName());
     player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
     player.setCanTimeout(slot.getDescriptor().isCanTimeout());

@@ -12,28 +12,30 @@ import java.util.*
 
 private val logger = LoggerFactory.getLogger(Player::class.java)
 
+/**
+ * Keeps information about a player:
+ * - basic info: name and color
+ * - state info: if they can time out, whether their game is paused
+ * - game result info: left & timeouts, to determine the winner and potential violation information
+ * - listeners: subscribers that get notified about new messages concerning this player, notably Welcome and Errors
+ *
+ * Note: the toString/equals/hashCode/clone methods only take [color] and [displayName] into account!
+ */
+// TODO split this beast up!
 @XStreamAlias(value = "player")
 open class Player @JvmOverloads constructor(
         @XStreamAsAttribute var color: PlayerColor,
-        @XStreamAsAttribute var displayName: String = "") : Cloneable {
+        @XStreamAsAttribute var displayName: String = ""
+): Cloneable {
     
-    public override fun clone() = Player(color, displayName)
-    
-    override fun equals(other: Any?) = other is Player && other.color == color && other.displayName == displayName
-
     @XStreamOmitField
     protected var listeners: MutableList<IPlayerListener> = ArrayList()
 
     @XStreamOmitField
-    var isCanTimeout: Boolean = false
+    var canTimeout: Boolean = false
 
     @XStreamOmitField
-    var isShouldBePaused: Boolean = false
-
-    @XStreamOmitField
-    var violated = false
-
-    fun hasViolated() = violated
+    var shouldBePaused: Boolean = false
 
     @XStreamOmitField
     var left = false
@@ -49,9 +51,9 @@ open class Player @JvmOverloads constructor(
     var hardTimeout = false
 
     fun hasHardTimeout() = hardTimeout
-
-    /** @return Reason for violation
-     */
+    
+    fun hasViolated() = violationReason != null
+    
     @XStreamOmitField
     var violationReason: String? = null
 
@@ -76,5 +78,15 @@ open class Player @JvmOverloads constructor(
     }
 
     override fun toString(): String = "Player %s(%s)".format(color, displayName)
-
+    
+    public override fun clone() = Player(color, displayName)
+    
+    override fun equals(other: Any?) = other is Player && other.color == color && other.displayName == displayName
+    
+    override fun hashCode(): Int {
+        var result = color.hashCode()
+        result = 31 * result + displayName.hashCode()
+        return result
+    }
+    
 }

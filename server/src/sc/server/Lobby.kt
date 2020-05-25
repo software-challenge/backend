@@ -84,7 +84,7 @@ class Lobby: GameRoomManager(), IClientListener {
                     is ControlTimeoutRequest -> {
                         val room = this.findRoom(packet.roomId)
                         val slot = room.slots[packet.slot]
-                        slot.role.player.isCanTimeout = packet.activate
+                        slot.role.player.canTimeout = packet.activate
                     }
                     is ObservationRequest -> {
                         val room = this.findRoom(packet.roomId)

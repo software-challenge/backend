@@ -1,14 +1,11 @@
 package sc.protocol.requests
 
-import com.thoughtworks.xstream.XStream
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import sc.framework.plugins.RoundBasedGameInstance
 import sc.networking.clients.LobbyClient
-import sc.protocol.helpers.LobbyProtocol
-import sc.protocol.responses.ProtocolMessage
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
@@ -22,7 +19,6 @@ import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.server.plugins.TestTurnRequest
 import sc.shared.WelcomeMessage
-import java.util.*
 
 private const val PASSWORD = "TEST_PASSWORD"
 
@@ -183,8 +179,8 @@ class RequestTest: RealServerTest() {
         assertTrue(room.isPauseRequested)
         val pr1 = room.slots[0].role
         val pr2 = room.slots[1].role
-        assertTrue(pr1.player.isShouldBePaused)
-        assertTrue(pr2.player.isShouldBePaused)
+        assertTrue(pr1.player.shouldBePaused)
+        assertTrue(pr2.player.shouldBePaused)
         
         
         // Wait for it to register
@@ -237,8 +233,8 @@ class RequestTest: RealServerTest() {
         
         val pr1 = room.slots[0].role
         val pr2 = room.slots[1].role
-        assertTrue(pr1.player.isShouldBePaused)
-        assertTrue(pr2.player.isShouldBePaused)
+        assertTrue(pr1.player.shouldBePaused)
+        assertTrue(pr2.player.shouldBePaused)
         
         
         // Wait for it to register
@@ -350,12 +346,12 @@ class RequestTest: RealServerTest() {
         
         TestHelper.waitUntilEqual(1, { lobby.games.size }, 2000)
         var room = gameMgr.games.iterator().next()
-        assertTrue(room.slots[0].role.player.isCanTimeout)
+        assertTrue(room.slots[0].role.player.canTimeout)
         val req = ControlTimeoutRequest(room.id, false, 0)
         player1.send(req)
         TestHelper.waitMillis(2000)
         room = gameMgr.games.iterator().next()
-        assertFalse(room.slots[0].role.player.isCanTimeout)
+        assertFalse(room.slots[0].role.player.canTimeout)
     }
     
     @Test
