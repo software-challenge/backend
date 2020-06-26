@@ -18,7 +18,7 @@ class SlotDescriptorTest : StringSpec({
                 SlotDescriptor("another name", true, false)
         )
         val XMLs = listOf(
-                """<slotDescriptor canTimeout="false" shouldBePaused="false"/>""",
+                """<slotDescriptor displayName="Unknown" canTimeout="true" shouldBePaused="true"/>""",
                 """<slotDescriptor displayName="Display Name" canTimeout="true" shouldBePaused="true"/>""",
                 """<slotDescriptor displayName="name" canTimeout="false" shouldBePaused="true"/>""",
                 """<slotDescriptor displayName="another name" canTimeout="true" shouldBePaused="false"/>"""
