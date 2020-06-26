@@ -652,6 +652,7 @@ public class GameRoom implements IGameListener {
 
     for (int i = 0; i < descriptors.length; i++) {
       this.playerSlots.get(i).setDescriptor(descriptors[i]);
+      // isShouldBePaused should work. If not, change to getShouldBePaused. Calling Kt from Jv may cause issues here
       if (descriptors[i].isShouldBePaused()) {
         pause(true);
       }
