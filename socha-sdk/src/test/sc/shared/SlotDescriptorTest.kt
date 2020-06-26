@@ -26,6 +26,7 @@ class SlotDescriptorTest : StringSpec({
         
         (descriptors zip XMLs).forAll {
             xstream.toXML(it.first) shouldBe it.second
+            xstream.fromXML(it.second).toString() shouldBe it.first.toString()
         }
     }
 })
