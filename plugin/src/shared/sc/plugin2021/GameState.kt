@@ -5,8 +5,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.IMove
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
-import sc.plugin2020.Board
-import sc.plugin2020.util.GameRuleLogic
+import sc.plugin2021.Board
+import sc.plugin2021.util.GameRuleLogic
 import sc.shared.PlayerColor
 
 @XStreamAlias(value = "state")

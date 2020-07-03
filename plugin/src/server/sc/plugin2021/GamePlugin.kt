@@ -7,7 +7,7 @@ import sc.plugin2020.GamePlugin
 import sc.plugins.PluginDescriptor
 import sc.shared.ScoreDefinition
 
-@PluginDescriptor(name = "Hive", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
+@PluginDescriptor(name = "Blokus", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 class GamePlugin: IGamePlugin {
     
     companion object {
