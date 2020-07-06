@@ -7,7 +7,17 @@ enum class FieldContent(val letter: Char) {
     RED('R'),
     GREEN('G'),
     BLUE('B'),
-    YELLOW('Y')
+    YELLOW('Y');
+    
+    override fun toString(): String = letter.toString()
 }
 
-class Field(val coordinates: Coordinates, val content: FieldContent): IField
+class Field(val coordinates: Coordinates, val content: FieldContent): IField {
+    override fun toString(): String = "'$content $coordinates'"
+    
+    override fun equals(other: Any?): Boolean {
+        return other is Field &&
+                other.coordinates == coordinates &&
+                other.content == content
+    }
+}
