@@ -11,7 +11,9 @@ object Configuration {
 
     @JvmStatic
     val classesToRegister: List<Class<*>>
-        get() = listOf()
+        get() = listOf(Board::class.java, Coordinates::class.java,
+                Field::class.java, GameState::class.java,
+                Move::class.java, Piece::class.java)
 
     init {
         xStream = XStream()
