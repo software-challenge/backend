@@ -59,7 +59,7 @@ data class Board(
     fun getField(pos: CubeCoordinates): Field =
             gameField[pos.x + SHIFT][pos.y + SHIFT] ?: throw IndexOutOfBoundsException("No field at $pos")
     
-    fun getField(cubeX: Int, cubeY: Int): Field =
+    override fun getField(cubeX: Int, cubeY: Int): Field =
             this.getField(CubeCoordinates(cubeX, cubeY))
     
     fun getField(cubeX: Int, cubeY: Int, cubeZ: Int): Field =

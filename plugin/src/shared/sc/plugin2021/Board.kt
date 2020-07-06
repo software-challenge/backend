@@ -10,6 +10,9 @@ class Board(
                 Array(Constants.BOARD_SIZE) { Array(Constants.BOARD_SIZE) { FieldContent.EMPTY }}
 ): IBoard {
     
+    override fun getField(x: Int, y: Int): Field =
+            get(x, y)
+    
     operator fun get(x: Int, y: Int) =
             Field(Coordinates(x, y), gameField[y][x])
     operator fun get(position: Coordinates) =
