@@ -17,9 +17,6 @@ class Board(
     operator fun set(x: Int, y: Int, content: FieldContent) {
         gameField[y][x] = content
     }
-    fun set(field: Field) {
-        gameField[field.coordinates.x][field.coordinates.y] = field.content
-    }
     
     override fun hashCode(): Int =
             gameField.contentDeepHashCode()
