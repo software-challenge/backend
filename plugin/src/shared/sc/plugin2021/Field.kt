@@ -20,4 +20,10 @@ class Field(val coordinates: Coordinates, val content: FieldContent): IField {
                 other.coordinates == coordinates &&
                 other.content == content
     }
+    
+    override fun hashCode(): Int {
+        var result = coordinates.hashCode()
+        result = 31 * result + content.hashCode()
+        return result
+    }
 }

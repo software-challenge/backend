@@ -12,12 +12,26 @@ class Board(
     
     override fun getField(x: Int, y: Int) = this[x, y]
     operator fun get(x: Int, y: Int) =
-            Field(Coordinates(x, y), gameField[x][y])
+            Field(Coordinates(x, y), gameField[y][x])
     
-    fun set(x: Int, y: Int, content: FieldContent) {
-        gameField[x][y] = content
+    operator fun set(x: Int, y: Int, content: FieldContent) {
+        gameField[y][x] = content
+    }
+    fun set(field: Field) {
+        gameField[field.coordinates.x][field.coordinates.y] = field.content
     }
     
     override fun hashCode(): Int =
             gameField.contentDeepHashCode()
+    
+    override fun equals(other: Any?): Boolean {
+        return other is Board &&
+                other.gameField.contentDeepEquals(gameField)
+    }
+    
+    override fun toString(): String {
+        return gameField.joinToString(separator = "") {
+            "${it.joinToString(separator = "") { it.letter.toString() }}\n"
+        }
+    }
 }
