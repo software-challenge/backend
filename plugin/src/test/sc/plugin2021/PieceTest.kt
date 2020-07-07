@@ -1,5 +1,6 @@
 package sc.plugin2021
 
+import arrow.core.Right
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -18,8 +19,12 @@ class PieceTest: StringSpec({
                 setOf(Coordinates(0, 0), Coordinates(2, 0))
         )
         
-        for (pieceShape in pieceShapes) {
-            pieceShape.second.rotate(Rotation.MIRROR).rotate(Rotation.MIRROR) shouldBe pieceShape.second
+        for (pair in pieceShapes) {
+            val pieceShape = pair.second
+            pieceShape.rotate(Rotation.NONE) shouldBe pieceShape
+            pieceShape.rotate(Rotation.RIGHT).rotate(Rotation.RIGHT) shouldBe pieceShape.rotate(Rotation.MIRROR)
+            pieceShape.rotate(Rotation.MIRROR).rotate(Rotation.MIRROR) shouldBe pieceShape
+            pieceShape.rotate(Rotation.LEFT) shouldBe pieceShape.rotate(Rotation.MIRROR).rotate(Rotation.RIGHT)
         }
     }
 })

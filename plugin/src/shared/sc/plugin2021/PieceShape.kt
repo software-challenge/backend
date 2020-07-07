@@ -24,10 +24,16 @@ class PieceShape(coordinates: Set<Coordinates>) {
     }
     
     private fun turnRight(): PieceShape {
-        return this
+        return PieceShape(coordinates.map{
+            Coordinates(it.y, -it.x)
+        }.toSet())
     }
     
-    private fun turnLeft(): PieceShape = turnRight().mirror()
+    private fun turnLeft(): PieceShape {
+        return PieceShape(coordinates.map{
+            Coordinates(-it.y, it.x)
+        }.toSet())
+    }
     
     companion object {
         fun align(coordinates: Set<Coordinates>): Set<Coordinates> {
