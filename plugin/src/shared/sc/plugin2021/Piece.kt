@@ -5,7 +5,7 @@ enum class PlayerColor {
 }
 
 class Piece(val kind: Int, val rotation: Rotation, val color: PlayerColor) {
-    val shape: PieceShape = pieceShapes[kind].second.rotate(rotation)
+    val shape: PieceShape = PieceShape.shapes[kind].second.rotate(rotation)
     
     override fun toString(): String {
         return "$color Piece $kind:${rotation.value}"

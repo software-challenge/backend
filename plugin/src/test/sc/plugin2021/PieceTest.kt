@@ -7,7 +7,7 @@ import io.kotlintest.specs.StringSpec
 
 class PieceTest: StringSpec({
     "Test Piece initialisation" {
-        for (pieceShape in pieceShapes) {
+        for (pieceShape in PieceShape.shapes) {
             Piece(pieceShape.first, Rotation.NONE, PlayerColor.GREEN).shape shouldBe pieceShape.second
         }
         
@@ -19,7 +19,7 @@ class PieceTest: StringSpec({
                 setOf(Coordinates(0, 0), Coordinates(2, 0))
         )
         
-        for (pair in pieceShapes) {
+        for (pair in PieceShape.shapes) {
             val pieceShape = pair.second
             pieceShape.rotate(Rotation.NONE) shouldBe pieceShape
             pieceShape.rotate(Rotation.RIGHT).rotate(Rotation.RIGHT) shouldBe pieceShape.rotate(Rotation.MIRROR)
