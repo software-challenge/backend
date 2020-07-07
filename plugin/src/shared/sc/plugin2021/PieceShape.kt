@@ -1,32 +1,43 @@
 package sc.plugin2021
 
+import sc.plugin2020.Piece
+import sc.plugin2020.util.Constants
 import kotlin.math.max
+import kotlin.math.min
 
 // data structure to represent one shape of piece of Blokus. There are 21 different kinds, see https://en.wikipedia.org/wiki/Blokus
 // The shapes are represented as coordinate list of occupied fields, where the left upper corner of a shape is the origin (0,0), x-axis going to the right and y-axis going down
-data class PieceShape(val coordinates: Set<Coordinates>) {
+class PieceShape(coordinates: Set<Coordinates>) {
+    val coordinates: Set<Coordinates> = align(coordinates)
+    
     fun rotate(rotation: Rotation): PieceShape = when(rotation) {
         Rotation.NONE -> this
         Rotation.RIGHT -> this
-        Rotation.MIRROR -> mirror(getCenter())
+        Rotation.MIRROR -> align(mirror())
         Rotation.LEFT -> this
     }
     
-    private fun getCenter(): Pair<Double, Double> {
-        var maxX = 0
-        var maxY = 0
-        coordinates.forEach{
-            maxX = max(it.x, maxX)
-            maxY = max(it.y, maxY)
-        }
-        return Pair(0.5 * maxX, 0.5 * maxY)
-    }
-    
-    private fun mirror(center: Pair<Double, Double>): PieceShape {
+    private fun mirror(center: Pair<Double, Double> = Pair(0.0, 0.0)): PieceShape {
         return PieceShape(coordinates.map{
             Coordinates((it.x + 2 * (center.first - it.x.toDouble())).toInt(),
                     (it.y + 2 * (center.second - it.y.toDouble())).toInt())
         }.toSet())
+    }
+    
+    companion object {
+        fun align(coordinates: Set<Coordinates>, upper_left: Coordinates = Coordinates(0, 0)): Set<Coordinates> {
+            var minX = Constants.BOARD_SIZE
+            var minY = Constants.BOARD_SIZE
+            coordinates.forEach {
+                minX = min(it.x, minX)
+                minY = min(it.y, minY)
+            }
+            return coordinates.map {
+                Coordinates(it.x - (minX - upper_left.x), it.y - (minY - upper_left.y))
+            }.toSet()
+        }
+        fun align(shape: PieceShape, upper_left: Coordinates = Coordinates(0, 0)): PieceShape =
+                PieceShape(align(shape.coordinates))
     }
     
     override fun equals(other: Any?): Boolean {

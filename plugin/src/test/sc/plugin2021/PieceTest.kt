@@ -13,7 +13,11 @@ class PieceTest: StringSpec({
         Piece(4, Rotation.RIGHT, PlayerColor.YELLOW).toString() shouldBe "YELLOW Piece 4:1"
         Piece(20, Rotation.LEFT, PlayerColor.RED).toString() shouldBe "RED Piece 20:3"
     }
-    "Test PieceShape arithmetic (rotations)" {
+    "Test PieceShape arithmetic" {
+        PieceShape(setOf(Coordinates(1, 2), Coordinates(3, 2))).coordinates.shouldBe(
+                setOf(Coordinates(0, 0), Coordinates(2, 0))
+        )
+        
         for (pieceShape in pieceShapes) {
             pieceShape.second.rotate(Rotation.MIRROR).rotate(Rotation.MIRROR) shouldBe pieceShape.second
         }
