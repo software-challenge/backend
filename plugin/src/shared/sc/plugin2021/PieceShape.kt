@@ -11,21 +11,26 @@ class PieceShape(coordinates: Set<Coordinates>) {
     val coordinates: Set<Coordinates> = align(coordinates)
     
     fun rotate(rotation: Rotation): PieceShape = when(rotation) {
-        Rotation.NONE -> this
-        Rotation.RIGHT -> this
+        Rotation.NONE   -> this
+        Rotation.RIGHT  -> align(turnRight())
         Rotation.MIRROR -> align(mirror())
-        Rotation.LEFT -> this
+        Rotation.LEFT   -> align(turnLeft())
     }
     
-    private fun mirror(center: Pair<Double, Double> = Pair(0.0, 0.0)): PieceShape {
+    private fun mirror(): PieceShape {
         return PieceShape(coordinates.map{
-            Coordinates((it.x + 2 * (center.first - it.x.toDouble())).toInt(),
-                    (it.y + 2 * (center.second - it.y.toDouble())).toInt())
+            Coordinates(-it.x, -it.y)
         }.toSet())
     }
     
+    private fun turnRight(): PieceShape {
+        return this
+    }
+    
+    private fun turnLeft(): PieceShape = turnRight().mirror()
+    
     companion object {
-        fun align(coordinates: Set<Coordinates>, upper_left: Coordinates = Coordinates(0, 0)): Set<Coordinates> {
+        fun align(coordinates: Set<Coordinates>): Set<Coordinates> {
             var minX = Constants.BOARD_SIZE
             var minY = Constants.BOARD_SIZE
             coordinates.forEach {
@@ -33,10 +38,10 @@ class PieceShape(coordinates: Set<Coordinates>) {
                 minY = min(it.y, minY)
             }
             return coordinates.map {
-                Coordinates(it.x - (minX - upper_left.x), it.y - (minY - upper_left.y))
+                Coordinates(it.x - minX, it.y - minY)
             }.toSet()
         }
-        fun align(shape: PieceShape, upper_left: Coordinates = Coordinates(0, 0)): PieceShape =
+        fun align(shape: PieceShape): PieceShape =
                 PieceShape(align(shape.coordinates))
     }
     
