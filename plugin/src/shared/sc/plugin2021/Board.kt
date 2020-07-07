@@ -1,7 +1,6 @@
 package sc.plugin2021
 
 import sc.api.plugins.IBoard
-import sc.api.plugins.IField
 import sc.plugin2021.util.Constants
 import sc.plugin2021.Field
 

@@ -1,11 +1,8 @@
 package sc.plugin2021
 
 import io.kotlintest.matchers.types.shouldNotBeSameInstanceAs
-import sc.plugin2021.util.Configuration
-import sc.plugin2021.Board
 
 import io.kotlintest.shouldBe
-import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
 import sc.plugin2021.util.Constants
 
