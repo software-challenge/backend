@@ -48,6 +48,21 @@ class BoardTest : StringSpec({
             --------------------
             
         """.trimIndent()
+    }
+    "Check Board comparison" {
+        val oldBoard = Board()
+        val newBoard = Board()
+        
+        val changingFields = listOf(
+                Field(Coordinates(2, 3), FieldContent.YELLOW),
+                Field(Coordinates(19, 2), FieldContent.YELLOW),
+                Field(Coordinates(8, 3), FieldContent.YELLOW),
+                Field(Coordinates(4, 9), FieldContent.YELLOW)
+        )
+        changingFields.forEach{
+            newBoard[it.coordinates] = it.content
+        }
+        val changedFields = oldBoard.compare(newBoard)
         
     }
 })
