@@ -4,6 +4,7 @@ import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.host.IGamePluginHost
 import sc.plugin2020.GamePlugin
+import sc.plugin2020.util.Configuration.classesToRegister
 import sc.plugins.PluginDescriptor
 import sc.shared.ScoreDefinition
 
@@ -19,8 +20,8 @@ class GamePlugin: IGamePlugin {
         return Game(PLUGIN_UUID)
     }
     
-    override fun initialize(host: IGamePluginHost?) {
-        TODO("Not yet implemented")
+    override fun initialize(host: IGamePluginHost) {
+        host.registerProtocolClasses(classesToRegister)
     }
     
     override fun unload() {
