@@ -1,6 +1,5 @@
 package sc.plugin2021
 
-import arrow.core.Right
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 

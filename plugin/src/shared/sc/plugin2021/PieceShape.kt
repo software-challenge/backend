@@ -1,7 +1,6 @@
 package sc.plugin2021
 
-import sc.plugin2020.Piece
-import sc.plugin2020.util.Constants
+import sc.plugin2021.util.Constants
 import kotlin.math.max
 import kotlin.math.min
 
