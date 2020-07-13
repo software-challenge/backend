@@ -7,7 +7,6 @@ enum class Team(val index: Int, val displayName: String) {
     
     val letter = name.first()
     
-    /** Die Spielerfarbe des Gegners dieses Spielers */
     fun opponent(): Team =
             when (this) {
                 ONE -> TWO
