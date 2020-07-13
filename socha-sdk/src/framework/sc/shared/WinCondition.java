@@ -1,5 +1,7 @@
 package sc.shared;
 
+import sc.api.plugins.ITeam;
+
 public class WinCondition implements Cloneable {
 
   /** Farbe des Gewinners */

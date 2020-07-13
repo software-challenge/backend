@@ -2,7 +2,7 @@ package sc.plugin2021
 
 import sc.framework.plugins.Player
 import sc.shared.GameResult
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 
 interface IGameHandler {
     

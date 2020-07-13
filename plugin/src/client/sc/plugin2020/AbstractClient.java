@@ -11,7 +11,7 @@ import sc.plugin2020.util.Configuration;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
-import sc.shared.ITeam;
+import sc.api.plugins.ITeam;
 import sc.shared.WelcomeMessage;
 
 import java.io.IOException;

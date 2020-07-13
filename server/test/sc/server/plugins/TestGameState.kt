@@ -1,7 +1,7 @@
 package sc.server.plugins
 
 import sc.api.plugins.IGameState
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 import sc.server.helpers.TestTeam
 
 class TestGameState: IGameState {

@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory
 import sc.api.plugins.host.IPlayerListener
 import sc.framework.plugins.protocol.MoveRequest
 import sc.protocol.responses.ProtocolMessage
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 import java.util.*
 
 private val logger = LoggerFactory.getLogger(Player::class.java)
 
 @XStreamAlias(value = "player")
-open class Player<T : ITeam> @JvmOverloads constructor(
+open class Player<T : ITeam<T>> @JvmOverloads constructor(
         @XStreamAsAttribute var color: T,
         @XStreamAsAttribute var displayName: String = "") : Cloneable {
     

@@ -6,7 +6,7 @@ import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
 import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.GameRuleLogic
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 
 class GameRuleTest: StringSpec({
     "board creation" {

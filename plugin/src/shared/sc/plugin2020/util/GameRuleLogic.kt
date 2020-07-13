@@ -2,7 +2,7 @@ package sc.plugin2020.util
 
 import sc.plugin2020.*
 import sc.shared.InvalidMoveException
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 import java.util.*
 import kotlin.math.abs
 

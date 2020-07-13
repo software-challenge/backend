@@ -2,7 +2,7 @@ package sc.plugin2020;
 
 import sc.framework.plugins.Player;
 import sc.shared.GameResult;
-import sc.shared.ITeam;
+import sc.api.plugins.ITeam;
 
 /**
  * Ein allgemeines Interface für spielfähige Klassen.

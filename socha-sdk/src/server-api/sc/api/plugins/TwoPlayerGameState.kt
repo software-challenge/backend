@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
-import sc.shared.ITeam
 
 abstract class TwoPlayerGameState<P : Player<T>, T : ITeam<T>>(
         /** Farbe des Startspielers. */

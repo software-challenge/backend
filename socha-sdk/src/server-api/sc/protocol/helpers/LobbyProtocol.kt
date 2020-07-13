@@ -1,6 +1,7 @@
 package sc.protocol.helpers
 
 import com.thoughtworks.xstream.XStream
+import sc.api.plugins.ITeam
 import sc.protocol.requests.*
 import sc.protocol.responses.*
 import sc.shared.*

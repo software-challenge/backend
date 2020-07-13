@@ -2,7 +2,7 @@ package sc.plugin2020.util
 
 import org.junit.Assert
 import sc.plugin2020.*
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 import java.security.InvalidParameterException
 import java.util.*
 

@@ -7,7 +7,6 @@ import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.GameRuleLogic
-import sc.shared.ITeam
 
 @XStreamAlias(value = "state")
 class GameState @JvmOverloads constructor(

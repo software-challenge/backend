@@ -1,4 +1,4 @@
-package sc.shared
+package sc.api.plugins
 
 /** This represents the team a player is in / is playing for.
  *  Concrete implementations belong into the corresponding plugin. */

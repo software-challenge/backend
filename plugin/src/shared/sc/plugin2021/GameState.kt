@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 
 @XStreamAlias(value = "state")
 class GameState @JvmOverloads constructor(

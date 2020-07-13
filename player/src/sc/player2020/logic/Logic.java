@@ -9,7 +9,7 @@ import sc.plugin2020.IGameHandler;
 import sc.plugin2020.Move;
 import sc.plugin2020.util.GameRuleLogic;
 import sc.shared.GameResult;
-import sc.shared.ITeam;
+import sc.api.plugins.ITeam;
 
 import java.util.List;
 

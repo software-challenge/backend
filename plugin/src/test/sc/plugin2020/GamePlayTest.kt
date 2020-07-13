@@ -10,7 +10,7 @@ import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.GameRuleLogic
 import sc.plugin2020.util.TestGameUtil
 import sc.shared.InvalidMoveException
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 import java.security.InvalidParameterException
 
 class GamePlayTest: AnnotationSpec() {

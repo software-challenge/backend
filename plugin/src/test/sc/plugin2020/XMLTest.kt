@@ -7,7 +7,7 @@ import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.TestGameUtil
 import sc.plugin2020.util.TestJUnitUtil
 import sc.protocol.responses.RoomPacket
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 
 class XMLTest {
     

@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.converters.extended.ToStringConverter
 import sc.api.plugins.IBoard
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.CubeCoordinates
-import sc.shared.ITeam
+import sc.api.plugins.ITeam
 import kotlin.collections.HashSet
 import kotlin.math.max
 import kotlin.math.min
