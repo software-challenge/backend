@@ -8,16 +8,16 @@ import sc.api.plugins.ITeam
 
 @XStreamAlias(value = "state")
 class GameState @JvmOverloads constructor(
-        override var red: Player = Player(ITeam.ONE),
-        override var blue: Player = Player(ITeam.TWO),
+        override var red: Player = Player(Team.ONE),
+        override var blue: Player = Player(Team.TWO),
         override var board: Board = Board(),
         override val turn: Int = 0,
         override var lastMove: Move? = null
-): TwoPlayerGameState<Player>() {
+): TwoPlayerGameState<Player>(Team.ONE) {
     
     @XStreamAsAttribute
-    override var currentPlayerColor = ITeam.ONE
+    override var currentPlayerColor = Team.ONE
     
-    override fun getPointsForPlayer(playerColor: ITeam): Int = 0
+    override fun getPointsForPlayer(playerColor: ITeam<*>): Int = 0
     
 }

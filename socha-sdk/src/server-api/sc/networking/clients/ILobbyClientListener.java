@@ -22,7 +22,7 @@ public interface ILobbyClientListener {
 
   void onGameOver(String roomId, GameResult data);
 
-  void onGamePaused(String roomId, Player<? extends ITeam> nextPlayer);
+  void onGamePaused(String roomId, Player nextPlayer);
 
   void onGameObserved(String roomId);
 

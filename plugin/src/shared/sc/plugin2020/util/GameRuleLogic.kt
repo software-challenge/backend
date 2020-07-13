@@ -26,7 +26,7 @@ object GameRuleLogic {
         return board.getField(CubeCoordinates(coords.x + direction.shift(1).x, coords.y + direction.shift(1).y, coords.z + direction.shift(1).z))
     }
 
-    /** @return the [ITeam] that has to make the next Move. */
+    /** @return the [Team] that has to make the next Move. */
     @JvmStatic
     fun getCurrentPlayerColor(gameState: GameState): ITeam<*> = gameState.currentPlayerColor
 

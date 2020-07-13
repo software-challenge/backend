@@ -34,6 +34,6 @@ interface IGameHandler {
      * @param color        Playercolor
      * @param errorMessage Fehlernachricht
      */
-    fun gameEnded(data: GameResult, color: ITeam, errorMessage: String)
+    fun gameEnded(data: GameResult, color: ITeam<*>, errorMessage: String)
     
 }

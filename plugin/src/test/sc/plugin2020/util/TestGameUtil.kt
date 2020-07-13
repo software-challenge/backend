@@ -8,7 +8,7 @@ import java.util.*
 
 object TestGameUtil {
 
-    private fun parsePiece(pc: ITeam, c: Char): Piece {
+    private fun parsePiece(pc: ITeam<*>, c: Char): Piece {
         return when(c) {
             'Q' -> Piece(pc, PieceType.BEE)
             'B' -> Piece(pc, PieceType.BEETLE)
@@ -32,8 +32,8 @@ object TestGameUtil {
         val boardFields = ArrayList<Field>()
         for(i in fields.indices) {
             when(fieldDescriptors[i * 2]) {
-                'R' -> Field(fields[i][0], fields[i][1], parsePiece(ITeam.ONE, fieldDescriptors[i * 2 + 1]))
-                'B' -> Field(fields[i][0], fields[i][1], parsePiece(ITeam.TWO, fieldDescriptors[i * 2 + 1]))
+                'R' -> Field(fields[i][0], fields[i][1], parsePiece(Team.RED, fieldDescriptors[i * 2 + 1]))
+                'B' -> Field(fields[i][0], fields[i][1], parsePiece(Team.BLUE, fieldDescriptors[i * 2 + 1]))
                 'O' -> Field(fields[i][0], fields[i][1], true)
                 '-' -> Field(fields[i][0], fields[i][1])
                 else -> throw InvalidParameterException("Expected first character to be either B (blue), R (red) or O (obstructed), was: " + fieldDescriptors[i * 2])
@@ -44,7 +44,7 @@ object TestGameUtil {
 
     fun updateUndeployedPiecesFromBoard(gs: GameState, reset: Boolean = false) {
         if(reset) {
-            ITeam.values().forEach {
+            Team.values().forEach {
                 gs.getUndeployedPieces(it).clear()
                 gs.getUndeployedPieces(it).addAll(GameState.parsePiecesString(Constants.STARTING_PIECES, it))
             }

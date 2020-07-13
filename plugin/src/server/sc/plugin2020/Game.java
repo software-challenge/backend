@@ -187,7 +187,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
     if(this.gameState.getTurn() == 2 * Constants.ROUND_LIMIT) {
       // round limit reached
-      ITeam winner;
+      Team winner;
       if(stats[Team.RED.getIndex()][Constants.GAME_STATS_ROUNDS] > stats[Team.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {
         winner = Team.RED;
       } else if(stats[Team.RED.getIndex()][Constants.GAME_STATS_ROUNDS] < stats[Team.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {

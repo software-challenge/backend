@@ -87,7 +87,7 @@ data class Board(
                 when {
                     field == null -> line.insert(0, ' ')
                     !field.hasOwner -> line.append("[]")
-                    else -> line.append(field.owner!!.letter).append(field.topPiece!!.type.letter)
+                    else -> line.append(field.owner!!.toString()[0]).append(field.topPiece!!.type.letter)
                 }
             }
             text.append('\n').append(line)
@@ -104,7 +104,7 @@ data class Board(
     override fun hashCode(): Int =
             gameField.contentDeepHashCode()
     
-    fun getFieldsOwnedBy(owner: ITeam): List<Field> = fields.filter { it.owner == owner }
+    fun getFieldsOwnedBy(owner: ITeam<*>): List<Field> = fields.filter { it.owner == owner }
     
     companion object {
         private const val SHIFT = (Constants.BOARD_SIZE - 1) / 2

@@ -144,7 +144,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePaused(String roomId, Player<? extends ITeam> nextPlayer) {
+  public void onGamePaused(String roomId, Player nextPlayer) {
   }
 
   @Override
