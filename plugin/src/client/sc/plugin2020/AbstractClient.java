@@ -11,7 +11,7 @@ import sc.plugin2020.util.Configuration;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
-import sc.shared.PlayerColor;
+import sc.shared.Team;
 import sc.shared.WelcomeMessage;
 
 import java.io.IOException;
@@ -44,7 +44,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   /** the current port */
   private int port;
   /** current figurecolor to identify which client belongs to which player */
-  private PlayerColor color;
+  private Team color;
 
   public AbstractClient(String host, int port, PlayerType id) throws IOException {
     this.gameType = GamePlugin.PLUGIN_UUID;
@@ -181,7 +181,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     return this.error;
   }
 
-  public PlayerColor getColor() {
+  public Team getColor() {
     return this.color;
   }
 

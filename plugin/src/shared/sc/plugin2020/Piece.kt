@@ -2,12 +2,12 @@ package sc.plugin2020
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.shared.PlayerColor
+import sc.shared.Team
 
 @XStreamAlias(value = "piece")
 data class Piece(
         @field:XStreamAsAttribute
-        val owner: PlayerColor,
+        val owner: Team,
         @field: XStreamAsAttribute
         val type: PieceType)
 

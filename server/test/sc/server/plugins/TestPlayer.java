@@ -3,12 +3,12 @@ package sc.server.plugins;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.framework.plugins.Player;
-import sc.shared.PlayerColor;
+import sc.shared.Team;
 
 public class TestPlayer extends Player {
   private static Logger logger = LoggerFactory.getLogger(TestPlayer.class);
 
-  public TestPlayer(PlayerColor pc) {
+  public TestPlayer(Team pc) {
     super(pc);
   }
 

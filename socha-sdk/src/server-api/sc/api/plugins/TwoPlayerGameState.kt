@@ -4,11 +4,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
-import sc.shared.PlayerColor
+import sc.shared.Team
 
 abstract class TwoPlayerGameState<P : Player>(
         /** Farbe des Startspielers. */
-        @XStreamAsAttribute val startPlayerColor: PlayerColor = PlayerColor.RED
+        @XStreamAsAttribute val startPlayerColor: Team = Team.ONE
 ) : IGameState {
 
     abstract val red: P
@@ -19,7 +19,7 @@ abstract class TwoPlayerGameState<P : Player>(
     private val logger = LoggerFactory.getLogger(TwoPlayerGameState::class.java)
     
     /** Farbe des Spielers, der aktuell am Zug ist. */
-    abstract val currentPlayerColor: PlayerColor
+    abstract val currentPlayerColor: Team
 
     /** Liste der Spieler. Reihenfolge: RED, BLUE */
     val players: List<P>
@@ -34,7 +34,7 @@ abstract class TwoPlayerGameState<P : Player>(
         get() = getPlayer(otherPlayerColor)
 
     /** Farbe des Spielers, der momentan nicht am Zug ist. */
-    val otherPlayerColor: PlayerColor
+    val otherPlayerColor: Team
         get() = currentPlayerColor.opponent()
 
     /** Der Spieler, der das Spiel begonnen hat. */
@@ -51,10 +51,10 @@ abstract class TwoPlayerGameState<P : Player>(
     fun getOpponent(player: P) =
             getPlayer(player.color.opponent())
 
-    fun getPlayer(color: PlayerColor): P =
+    fun getPlayer(color: Team): P =
             when(color) {
-                PlayerColor.RED -> red
-                PlayerColor.BLUE -> blue
+                Team.ONE -> red
+                Team.TWO -> blue
             }
     
     /** Calculates the color of the current player from the [turn] and the [startPlayerColor].
@@ -63,7 +63,7 @@ abstract class TwoPlayerGameState<P : Player>(
             if(turn.rem(2) == 0) startPlayerColor else startPlayerColor.opponent()
 
     /** Gibt die angezeigte Punktzahl des Spielers zurueck. */
-    abstract fun getPointsForPlayer(playerColor: PlayerColor): Int
+    abstract fun getPointsForPlayer(playerColor: Team): Int
 
     override fun toString() =
             "GameState(turn=$turn,currentPlayer=${currentPlayer.color})"

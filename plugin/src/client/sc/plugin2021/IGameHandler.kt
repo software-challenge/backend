@@ -2,7 +2,7 @@ package sc.plugin2021
 
 import sc.framework.plugins.Player
 import sc.shared.GameResult
-import sc.shared.PlayerColor
+import sc.shared.Team
 
 interface IGameHandler {
     
@@ -34,6 +34,6 @@ interface IGameHandler {
      * @param color        Playercolor
      * @param errorMessage Fehlernachricht
      */
-    fun gameEnded(data: GameResult, color: PlayerColor, errorMessage: String)
+    fun gameEnded(data: GameResult, color: Team, errorMessage: String)
     
 }

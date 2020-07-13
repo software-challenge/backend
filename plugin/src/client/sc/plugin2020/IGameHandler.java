@@ -2,7 +2,7 @@ package sc.plugin2020;
 
 import sc.framework.plugins.Player;
 import sc.shared.GameResult;
-import sc.shared.PlayerColor;
+import sc.shared.Team;
 
 /**
  * Ein allgemeines Interface für spielfähige Klassen.
@@ -39,5 +39,5 @@ public interface IGameHandler {
    * @param color        Playercolor
    * @param errorMessage Fehlernachricht
    */
-  void gameEnded(GameResult data, PlayerColor color, String errorMessage);
+  void gameEnded(GameResult data, Team color, String errorMessage);
 }

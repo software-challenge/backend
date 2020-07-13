@@ -12,9 +12,9 @@ private constructor(
         @XStreamAsAttribute private val color: String
 ): ProtocolMessage {
     
-    constructor(color: PlayerColor): this(color.toString().toLowerCase())
+    constructor(color: Team): this(color.toString().toLowerCase())
     
-    val playerColor: PlayerColor
-        get() = PlayerColor.valueOf(color.toUpperCase())
+    val playerColor: Team
+        get() = Team.valueOf(color.toUpperCase())
     
 }

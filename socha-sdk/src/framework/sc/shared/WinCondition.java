@@ -3,12 +3,12 @@ package sc.shared;
 public class WinCondition implements Cloneable {
 
   /** Farbe des Gewinners */
-  private final PlayerColor winner;
+  private final Team winner;
 
   /** Sieggrund */
   private final WinReason reason;
 
-  public PlayerColor getWinner() {
+  public Team getWinner() {
     return winner;
   }
 
@@ -22,7 +22,7 @@ public class WinCondition implements Cloneable {
    * @param winner Farbe des Siegers
    * @param reason Text, der Sieg beschreibt
    */
-  public WinCondition(PlayerColor winner, WinReason reason) {
+  public WinCondition(Team winner, WinReason reason) {
     this.winner = winner;
     this.reason = reason;
   }

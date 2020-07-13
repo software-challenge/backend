@@ -7,16 +7,16 @@ import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.GameRuleLogic
-import sc.shared.PlayerColor
+import sc.shared.Team
 
 @XStreamAlias(value = "state")
 class GameState @JvmOverloads constructor(
-        override var red: Player = Player(PlayerColor.RED),
-        override var blue: Player = Player(PlayerColor.BLUE),
+        override var red: Player = Player(Team.ONE),
+        override var blue: Player = Player(Team.TWO),
         override var board: Board = Board(),
         turn: Int = 0,
-        private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.RED),
-        private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, PlayerColor.BLUE),
+        private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.ONE),
+        private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.TWO),
         override var lastMove: Move? = null
 ): TwoPlayerGameState<Player>() {
     
@@ -31,11 +31,11 @@ class GameState @JvmOverloads constructor(
         }
     
     @XStreamAsAttribute
-    override var currentPlayerColor: PlayerColor = currentPlayerFromTurn()
+    override var currentPlayerColor: Team = currentPlayerFromTurn()
         private set
     
     val gameStats: Array<IntArray>
-        get() = PlayerColor.values().map { getPlayerStats(it) }.toTypedArray()
+        get() = Team.values().map { getPlayerStats(it) }.toTypedArray()
     
     fun readResolve(): GameState {
         allPieces = undeployedBluePieces + undeployedRedPieces + board.getPieces()
@@ -48,14 +48,14 @@ class GameState @JvmOverloads constructor(
     /** Creates a deep copy of this [GameState]. */
     public override fun clone() = GameState(this)
     
-    fun getUndeployedPieces(owner: PlayerColor): MutableList<Piece> {
+    fun getUndeployedPieces(owner: Team): MutableList<Piece> {
         return when(owner) {
-            PlayerColor.RED -> undeployedRedPieces
-            PlayerColor.BLUE -> undeployedBluePieces
+            Team.ONE -> undeployedRedPieces
+            Team.TWO -> undeployedBluePieces
         }
     }
     
-    fun getDeployedPieces(owner: PlayerColor): List<Piece> {
+    fun getDeployedPieces(owner: Team): List<Piece> {
         val ownedPieces = allPieces.filterTo(ArrayList()) { it.owner == owner }
         getUndeployedPieces(owner).forEach { ownedPieces.remove(it) }
         return ownedPieces
@@ -63,12 +63,12 @@ class GameState @JvmOverloads constructor(
     
     fun addPlayer(player: Player) {
         when(player.color) {
-            PlayerColor.RED -> red = player
-            PlayerColor.BLUE -> blue = player
+            Team.ONE -> red = player
+            Team.TWO -> blue = player
         }
     }
     
-    override fun getPointsForPlayer(playerColor: PlayerColor): Int {
+    override fun getPointsForPlayer(playerColor: Team): Int {
         return GameRuleLogic.freeBeeNeighbours(this.board, playerColor)
     }
     
@@ -76,7 +76,7 @@ class GameState @JvmOverloads constructor(
         return getPlayerStats(p.color)
     }
     
-    fun getPlayerStats(playerColor: PlayerColor): IntArray =
+    fun getPlayerStats(playerColor: Team): IntArray =
             intArrayOf(this.getPointsForPlayer(playerColor))
     
     override fun toString(): String = "GameState Zug $turn"
@@ -109,7 +109,7 @@ class GameState @JvmOverloads constructor(
     }
     
     companion object {
-        fun parsePiecesString(s: String, p: PlayerColor): ArrayList<Piece> {
+        fun parsePiecesString(s: String, p: Team): ArrayList<Piece> {
             val l = ArrayList<Piece>()
             for(c in s.toCharArray()) {
                 when(c) {
