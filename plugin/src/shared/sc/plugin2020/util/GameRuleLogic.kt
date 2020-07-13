@@ -28,7 +28,7 @@ object GameRuleLogic {
 
     /** @return the [ITeam] that has to make the next Move. */
     @JvmStatic
-    fun getCurrentPlayerColor(gameState: GameState): ITeam = gameState.currentPlayerColor
+    fun getCurrentPlayerColor(gameState: GameState): ITeam<*> = gameState.currentPlayerColor
 
     /** Validates & executes the [move] on the [gameState]. */
     @JvmStatic
@@ -53,12 +53,12 @@ object GameRuleLogic {
     /** Whether the Bee is completely blocked.
      * @return true iff [freeBeeNeighbours] returns 0 */
     @JvmStatic
-    fun isBeeBlocked(board: Board, color: ITeam): Boolean =
+    fun isBeeBlocked(board: Board, color: Team): Boolean =
             freeBeeNeighbours(board, color) == 0
 
     /** @return number of free (empty & not obstructed) fields around the Bee - -1 if no Bee has been placed. */
     @JvmStatic
-    fun freeBeeNeighbours(board: Board, color: ITeam): Int =
+    fun freeBeeNeighbours(board: Board, color: ITeam<*>): Int =
             board.fields.find { it.pieces.contains(Piece(color, PieceType.BEE)) }
                     ?.let { getNeighbours(board, it) }?.count { field -> field.isEmpty }
                     ?: -1
@@ -362,7 +362,7 @@ object GameRuleLogic {
                     .toSet()
 
     @JvmStatic
-    fun getPossibleSetMoveDestinations(board: Board, owner: ITeam): Collection<CubeCoordinates> =
+    fun getPossibleSetMoveDestinations(board: Board, owner: ITeam<*>): Collection<CubeCoordinates> =
             board.getFieldsOwnedBy(owner)
                     .asSequence()
                     .flatMap { this.getNeighbours(board, it).asSequence() }

@@ -5,7 +5,7 @@ import sc.api.plugins.ITeam;
 public class WinCondition implements Cloneable {
 
   /** Farbe des Gewinners */
-  private final ITeam winner;
+  private final ITeam<? extends ITeam> winner;
 
   /** Sieggrund */
   private final WinReason reason;
@@ -24,7 +24,7 @@ public class WinCondition implements Cloneable {
    * @param winner Farbe des Siegers
    * @param reason Text, der Sieg beschreibt
    */
-  public WinCondition(ITeam winner, WinReason reason) {
+  public WinCondition(ITeam <? extends ITeam> winner, WinReason reason) {
     this.winner = winner;
     this.reason = reason;
   }
@@ -47,12 +47,12 @@ public class WinCondition implements Cloneable {
   }
 
   public String toString(String playerName) {
-    return getReason().getMessage(String.format("%s (%s)", playerName, getWinner().getDisplayName()));
+    return getReason().getMessage(String.format("%s (%s)", playerName, getWinner().toString()));
   }
 
   @Override
   public String toString() {
-    return getReason().getMessage(getWinner() != null ? getWinner().getDisplayName() : null);
+    return getReason().getMessage(getWinner() != null ? getWinner().toString() : null);
   }
 
 }

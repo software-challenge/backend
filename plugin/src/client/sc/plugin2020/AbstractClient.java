@@ -44,7 +44,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   /** the current port */
   private int port;
   /** current figurecolor to identify which client belongs to which player */
-  private ITeam color;
+  private Team color;
 
   public AbstractClient(String host, int port, PlayerType id) throws IOException {
     this.gameType = GamePlugin.PLUGIN_UUID;
@@ -88,7 +88,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     if(data instanceof MoveRequest) {
       this.handler.onRequestAction();
     } else if(data instanceof WelcomeMessage) {
-      this.color = ((WelcomeMessage) data).getPlayerColor();
+      this.color = (Team) ((WelcomeMessage) data).getPlayerColor();
     }
     this.roomId = roomId;
   }
@@ -144,7 +144,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePaused(String roomId, Player nextPlayer) {
+  public void onGamePaused(String roomId, Player<? extends ITeam> nextPlayer) {
   }
 
   @Override
@@ -181,7 +181,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     return this.error;
   }
 
-  public ITeam getColor() {
+  public Team getColor() {
     return this.color;
   }
 

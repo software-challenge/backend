@@ -26,7 +26,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
   @XStreamOmitField
-  private List<ITeam> availableColors = new ArrayList<>();
+  private List<Team> availableColors = new ArrayList<>();
 
   private GameState gameState = new GameState();
 
@@ -71,7 +71,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   public Player onPlayerJoined() {
     final Player player;
     // When starting a game from a imported state the players should not be overwritten
-    ITeam team = this.availableColors.remove(0);
+    Team team = this.availableColors.remove(0);
     if(Team.RED == team && this.gameState.getPlayer(Team.RED) != null) {
       player = this.gameState.getPlayer(Team.RED);
     } else if(Team.BLUE == team && this.gameState.getPlayer(Team.BLUE) != null) {

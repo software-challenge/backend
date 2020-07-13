@@ -5,6 +5,6 @@ package sc.api.plugins
 interface ITeam<out T> {
     val index: Int
     
-    fun opponent(): T
+    fun opponent(): ITeam<*>
     override fun toString(): String
 }

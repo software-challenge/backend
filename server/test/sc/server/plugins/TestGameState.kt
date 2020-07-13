@@ -8,8 +8,8 @@ class TestGameState: IGameState {
     override var turn = 0
     var state = 0
     var lastPlayerIndex = 0
-    var currentPlayer: ITeam
-    var startPlayer: ITeam
+    var currentPlayer: TestTeam
+    var startPlayer: TestTeam
     
     var red: TestPlayer
     var blue: TestPlayer

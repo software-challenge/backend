@@ -39,5 +39,5 @@ public interface IGameHandler {
    * @param color        Playercolor
    * @param errorMessage Fehlernachricht
    */
-  void gameEnded(GameResult data, ITeam color, String errorMessage);
+  void gameEnded(GameResult data, Team color, String errorMessage);
 }

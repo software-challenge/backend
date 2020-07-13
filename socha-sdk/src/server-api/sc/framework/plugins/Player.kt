@@ -13,13 +13,13 @@ import java.util.*
 private val logger = LoggerFactory.getLogger(Player::class.java)
 
 @XStreamAlias(value = "player")
-open class Player<T : ITeam<T>> @JvmOverloads constructor(
-        @XStreamAsAttribute var color: T,
+open class Player @JvmOverloads constructor(
+        @XStreamAsAttribute var color: ITeam<*>,
         @XStreamAsAttribute var displayName: String = "") : Cloneable {
     
     public override fun clone() = Player(color, displayName)
     
-    override fun equals(other: Any?) = other is Player<*> && other.color == color && other.displayName == displayName
+    override fun equals(other: Any?) = other is Player && other.color == color && other.displayName == displayName
 
     @XStreamOmitField
     protected var listeners: MutableList<IPlayerListener> = ArrayList()

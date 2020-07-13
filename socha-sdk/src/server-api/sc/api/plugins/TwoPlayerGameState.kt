@@ -5,9 +5,9 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
 
-abstract class TwoPlayerGameState<P : Player<T>, T : ITeam<T>>(
+abstract class TwoPlayerGameState<P : Player>(
         /** Farbe des Startspielers. */
-        @XStreamAsAttribute val startPlayerColor: T
+        @XStreamAsAttribute val startPlayerColor: ITeam<*>
 ) : IGameState {
 
     abstract val red: P
@@ -18,7 +18,7 @@ abstract class TwoPlayerGameState<P : Player<T>, T : ITeam<T>>(
     private val logger = LoggerFactory.getLogger(TwoPlayerGameState::class.java)
     
     /** Farbe des Spielers, der aktuell am Zug ist. */
-    abstract val currentPlayerColor: T
+    abstract val currentPlayerColor: ITeam<*>
 
     /** Liste der Spieler. Reihenfolge: RED, BLUE */
     val players: List<P>
@@ -33,8 +33,8 @@ abstract class TwoPlayerGameState<P : Player<T>, T : ITeam<T>>(
         get() = getPlayer(otherPlayerColor)
 
     /** Farbe des Spielers, der momentan nicht am Zug ist. */
-    val otherPlayerColor: T
-        get() = currentPlayerColor.opponent() as T
+    val otherPlayerColor: ITeam<*>
+        get() = currentPlayerColor.opponent()
 
     /** Der Spieler, der das Spiel begonnen hat. */
     val startPlayer: P
@@ -48,20 +48,20 @@ abstract class TwoPlayerGameState<P : Player<T>, T : ITeam<T>>(
     abstract val lastMove: IMove?
 
     fun getOpponent(player: P) =
-            getPlayer(player.color.opponent() as T)
+            getPlayer(player.color.opponent())
 
-    fun getPlayer(color: T): P {
+    fun getPlayer(color: ITeam<*>): P {
         if (color.index == 0) return red
         return blue
     }
     
     /** Calculates the color of the current player from the [turn] and the [startPlayerColor].
      * Based on the assumption that the current player switches every turn. */
-    protected fun currentPlayerFromTurn(): T =
-            if(turn.rem(2) == 0) startPlayerColor else startPlayerColor.opponent() as T
+    protected fun currentPlayerFromTurn(): ITeam<*> =
+            if(turn.rem(2) == 0) startPlayerColor else startPlayerColor.opponent()
 
     /** Gibt die angezeigte Punktzahl des Spielers zurueck. */
-    abstract fun getPointsForPlayer(playerColor: T): Int
+    abstract fun getPointsForPlayer(playerColor: ITeam<*>): Int
 
     override fun toString() =
             "GameState(turn=$turn,currentPlayer=${currentPlayer.color})"
