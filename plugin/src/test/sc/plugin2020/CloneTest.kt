@@ -8,14 +8,14 @@ import sc.api.plugins.ITeam
 
 class CloneTest: StringSpec({
     "clone Player" {
-        val player = Player(ITeam.ONE, "aPlayer")
+        val player = Player(Team.RED, "aPlayer")
         val clone = player.clone()
         clone shouldBe player
         clone shouldNotBeSameInstanceAs player
     }
     "clone Board" {
         val board = Board()
-        board.getField(0, 0, 0).pieces.add(Piece(ITeam.ONE, PieceType.BEETLE))
+        board.getField(0, 0, 0).pieces.add(Piece(Team.RED, PieceType.BEETLE))
         val clone = board.clone()
         clone shouldBe board
         clone shouldNotBeSameInstanceAs board
@@ -24,11 +24,11 @@ class CloneTest: StringSpec({
         clone.getField(0, 0, 0).pieces shouldNotBeSameInstanceAs board.getField(0, 0, 0).pieces
     }
     "clone GameState" {
-        val state = GameState(blue = Player(ITeam.TWO, "aBluePlayer"), turn = 5)
+        val state = GameState(blue = Player(Team.BLUE, "aBluePlayer"), turn = 5)
         val clone = state.clone()
         clone shouldBe state
         clone shouldNotBeSameInstanceAs state
-        clone.getDeployedPieces(ITeam.ONE) shouldBe state.getDeployedPieces(ITeam.ONE)
+        clone.getDeployedPieces(Team.RED) shouldBe state.getDeployedPieces(Team.RED)
         clone.currentPlayerColor shouldBe state.currentPlayerColor
         clone.currentPlayer shouldNotBeSameInstanceAs state.currentPlayer
         clone.lastMove shouldBe state.lastMove
@@ -37,7 +37,7 @@ class CloneTest: StringSpec({
     "clone another Game state" {
         val state = Game().gameState
         state.turn++
-        state.currentPlayerColor shouldBe ITeam.TWO
+        state.currentPlayerColor shouldBe Team.BLUE
         val clone = GameState(state)
         clone shouldBe state
         clone.turn shouldBe 1

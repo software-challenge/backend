@@ -33,10 +33,10 @@ class GameRuleTest: StringSpec({
     }
     "clone undeployed Pieces" {
         val state = GameState()
-        val redMove = SetMove(Piece(ITeam.ONE, PieceType.BEE), CubeCoordinates(-5, 0, 5))
+        val redMove = SetMove(Piece(Team.RED, PieceType.BEE), CubeCoordinates(-5, 0, 5))
         GameRuleLogic.performMove(state, redMove)
         val clone = GameState(state)
-        val blueMove = SetMove(Piece(ITeam.TWO, PieceType.BEE), CubeCoordinates(-4, -1, 5))
+        val blueMove = SetMove(Piece(Team.BLUE, PieceType.BEE), CubeCoordinates(-4, -1, 5))
         GameRuleLogic.validateMove(clone, blueMove)
     }
 })
