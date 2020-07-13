@@ -7,7 +7,7 @@ import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.TestGameUtil
 import sc.plugin2020.util.TestJUnitUtil
 import sc.protocol.responses.RoomPacket
-import sc.shared.Team
+import sc.shared.ITeam
 
 class XMLTest {
     
@@ -26,16 +26,16 @@ class XMLTest {
                 "   ----------------" +
                 "    --------------" +
                 "     ------------")
-        state.board.getField(0, 0).pieces.add(Piece(Team.ONE, PieceType.ANT))
-        state.board.getField(0, 0).pieces.add(Piece(Team.TWO, PieceType.BEE))
+        state.board.getField(0, 0).pieces.add(Piece(ITeam.ONE, PieceType.ANT))
+        state.board.getField(0, 0).pieces.add(Piece(ITeam.TWO, PieceType.BEE))
         TestGameUtil.updateUndeployedPiecesFromBoard(state, true)
-        TestJUnitUtil.assertContentEquals(listOf(Piece(Team.ONE, PieceType.ANT)), state.getDeployedPieces(Team.ONE))
-        TestJUnitUtil.assertContentEquals(listOf(Piece(Team.TWO, PieceType.BEE), Piece(Team.TWO, PieceType.GRASSHOPPER)), state.getDeployedPieces(Team.TWO))
+        TestJUnitUtil.assertContentEquals(listOf(Piece(ITeam.ONE, PieceType.ANT)), state.getDeployedPieces(ITeam.ONE))
+        TestJUnitUtil.assertContentEquals(listOf(Piece(ITeam.TWO, PieceType.BEE), Piece(ITeam.TWO, PieceType.GRASSHOPPER)), state.getDeployedPieces(ITeam.TWO))
         Assert.assertEquals(PieceType.BEE, state.board.getField(0, 0).topPiece?.type)
         state.blue.displayName = "aBluePlayer"
         state.turn = 3
-        Assert.assertEquals(Team.TWO, state.currentPlayerColor)
-        state.lastMove = SetMove(Piece(Team.TWO, PieceType.GRASSHOPPER), CubeCoordinates(-2, 4))
+        Assert.assertEquals(ITeam.TWO, state.currentPlayerColor)
+        state.lastMove = SetMove(Piece(ITeam.TWO, PieceType.GRASSHOPPER), CubeCoordinates(-2, 4))
         val xstream = Configuration.xStream
         val xml = """
             |<state startPlayerColor="RED" turn="3" currentPlayerColor="BLUE">
@@ -222,13 +222,13 @@ class XMLTest {
         Assert.assertEquals(xml, xstream.toXML(state))
         val fromXml = xstream.fromXML(xml) as GameState
         Assert.assertEquals(state, fromXml)
-        TestJUnitUtil.assertContentEquals(state.getDeployedPieces(Team.ONE), fromXml.getDeployedPieces(Team.ONE))
-        TestJUnitUtil.assertContentEquals(state.getDeployedPieces(Team.TWO), fromXml.getDeployedPieces(Team.TWO))
+        TestJUnitUtil.assertContentEquals(state.getDeployedPieces(ITeam.ONE), fromXml.getDeployedPieces(ITeam.ONE))
+        TestJUnitUtil.assertContentEquals(state.getDeployedPieces(ITeam.TWO), fromXml.getDeployedPieces(ITeam.TWO))
     }
     
     @Test
     fun moveToXmlTest() {
-        val move = SetMove(Piece(Team.ONE, PieceType.ANT), CubeCoordinates(1, 2, -3))
+        val move = SetMove(Piece(ITeam.ONE, PieceType.ANT), CubeCoordinates(1, 2, -3))
         val roomId = "42"
         val xstream = Configuration.xStream
         val xml = xstream.toXML(RoomPacket(roomId, move))
@@ -276,7 +276,7 @@ class XMLTest {
               </data>
             </room>"""
         val packet = xstream.fromXML(xml) as RoomPacket
-        val expect = SetMove(Piece(Team.ONE, PieceType.BEETLE), CubeCoordinates(-2, 0, 2))
+        val expect = SetMove(Piece(ITeam.ONE, PieceType.BEETLE), CubeCoordinates(-2, 0, 2))
         Assert.assertEquals(expect, packet.data)
     }
     

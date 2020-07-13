@@ -2,7 +2,7 @@ package sc.plugin2020.util
 
 import sc.plugin2020.*
 import sc.shared.InvalidMoveException
-import sc.shared.Team
+import sc.shared.ITeam
 import java.util.*
 import kotlin.math.abs
 
@@ -26,9 +26,9 @@ object GameRuleLogic {
         return board.getField(CubeCoordinates(coords.x + direction.shift(1).x, coords.y + direction.shift(1).y, coords.z + direction.shift(1).z))
     }
 
-    /** @return the [Team] that has to make the next Move. */
+    /** @return the [ITeam] that has to make the next Move. */
     @JvmStatic
-    fun getCurrentPlayerColor(gameState: GameState): Team = gameState.currentPlayerColor
+    fun getCurrentPlayerColor(gameState: GameState): ITeam = gameState.currentPlayerColor
 
     /** Validates & executes the [move] on the [gameState]. */
     @JvmStatic
@@ -53,12 +53,12 @@ object GameRuleLogic {
     /** Whether the Bee is completely blocked.
      * @return true iff [freeBeeNeighbours] returns 0 */
     @JvmStatic
-    fun isBeeBlocked(board: Board, color: Team): Boolean =
+    fun isBeeBlocked(board: Board, color: ITeam): Boolean =
             freeBeeNeighbours(board, color) == 0
 
     /** @return number of free (empty & not obstructed) fields around the Bee - -1 if no Bee has been placed. */
     @JvmStatic
-    fun freeBeeNeighbours(board: Board, color: Team): Int =
+    fun freeBeeNeighbours(board: Board, color: ITeam): Int =
             board.fields.find { it.pieces.contains(Piece(color, PieceType.BEE)) }
                     ?.let { getNeighbours(board, it) }?.count { field -> field.isEmpty }
                     ?: -1
@@ -362,7 +362,7 @@ object GameRuleLogic {
                     .toSet()
 
     @JvmStatic
-    fun getPossibleSetMoveDestinations(board: Board, owner: Team): Collection<CubeCoordinates> =
+    fun getPossibleSetMoveDestinations(board: Board, owner: ITeam): Collection<CubeCoordinates> =
             board.getFieldsOwnedBy(owner)
                     .asSequence()
                     .flatMap { this.getNeighbours(board, it).asSequence() }

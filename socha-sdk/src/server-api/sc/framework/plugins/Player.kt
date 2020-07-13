@@ -7,19 +7,19 @@ import org.slf4j.LoggerFactory
 import sc.api.plugins.host.IPlayerListener
 import sc.framework.plugins.protocol.MoveRequest
 import sc.protocol.responses.ProtocolMessage
-import sc.shared.Team
+import sc.shared.ITeam
 import java.util.*
 
 private val logger = LoggerFactory.getLogger(Player::class.java)
 
 @XStreamAlias(value = "player")
-open class Player @JvmOverloads constructor(
-        @XStreamAsAttribute var color: Team,
+open class Player<T : ITeam> @JvmOverloads constructor(
+        @XStreamAsAttribute var color: T,
         @XStreamAsAttribute var displayName: String = "") : Cloneable {
     
     public override fun clone() = Player(color, displayName)
     
-    override fun equals(other: Any?) = other is Player && other.color == color && other.displayName == displayName
+    override fun equals(other: Any?) = other is Player<*> && other.color == color && other.displayName == displayName
 
     @XStreamOmitField
     protected var listeners: MutableList<IPlayerListener> = ArrayList()

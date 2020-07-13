@@ -8,6 +8,7 @@ import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.protocol.responses.ProtocolMessage;
+import sc.server.helpers.TestTeam;
 import sc.shared.*;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
 
       final TestMove move = (TestMove) data;
       move.perform(this.state);
-      next(this.state.getCurrentPlayer() == Team.ONE ? state.getRed() : state.getBlue());
+      next(this.state.getCurrentPlayer() == TestTeam.RED ? state.getRed() : state.getBlue());
     }
   }
 
@@ -38,7 +39,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   protected WinCondition checkWinCondition() {
     if (this.getRound() > 1) {
       logger.info("Someone won");
-      return new WinCondition(((TestGameState) this.getCurrentState()).getState() % 2 == 0 ? Team.ONE : Team.TWO, WinReason.ROUND_LIMIT_FREE_FIELDS);
+      return new WinCondition(((TestGameState) this.getCurrentState()).getState() % 2 == 0 ? TestTeam.RED : TestTeam.BLUE, WinReason.ROUND_LIMIT_FREE_FIELDS);
     }
     return null;
   }
@@ -47,11 +48,11 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   public Player onPlayerJoined() throws TooManyPlayersException {
     if (this.players.size() < 2) {
       if (players.size() == 0) {
-        state.setRed(new TestPlayer(Team.ONE));
+        state.setRed(new TestPlayer(TestTeam.RED));
         players.add(state.getRed());
         return state.getRed();
       } else {
-        state.setBlue(new TestPlayer(Team.TWO));
+        state.setBlue(new TestPlayer(TestTeam.BLUE));
         players.add(state.getBlue());
         return state.getBlue();
       }

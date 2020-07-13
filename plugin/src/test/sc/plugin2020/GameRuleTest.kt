@@ -6,7 +6,7 @@ import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
 import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.GameRuleLogic
-import sc.shared.Team
+import sc.shared.ITeam
 
 class GameRuleTest: StringSpec({
     "board creation" {
@@ -33,10 +33,10 @@ class GameRuleTest: StringSpec({
     }
     "clone undeployed Pieces" {
         val state = GameState()
-        val redMove = SetMove(Piece(Team.ONE, PieceType.BEE), CubeCoordinates(-5, 0, 5))
+        val redMove = SetMove(Piece(ITeam.ONE, PieceType.BEE), CubeCoordinates(-5, 0, 5))
         GameRuleLogic.performMove(state, redMove)
         val clone = GameState(state)
-        val blueMove = SetMove(Piece(Team.TWO, PieceType.BEE), CubeCoordinates(-4, -1, 5))
+        val blueMove = SetMove(Piece(ITeam.TWO, PieceType.BEE), CubeCoordinates(-4, -1, 5))
         GameRuleLogic.validateMove(clone, blueMove)
     }
 })

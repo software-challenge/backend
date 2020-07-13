@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.converters.extended.ToStringConverter
 import sc.api.plugins.IBoard
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.CubeCoordinates
-import sc.shared.Team
+import sc.shared.ITeam
 import kotlin.collections.HashSet
 import kotlin.math.max
 import kotlin.math.min
@@ -104,7 +104,7 @@ data class Board(
     override fun hashCode(): Int =
             gameField.contentDeepHashCode()
     
-    fun getFieldsOwnedBy(owner: Team): List<Field> = fields.filter { it.owner == owner }
+    fun getFieldsOwnedBy(owner: ITeam): List<Field> = fields.filter { it.owner == owner }
     
     companion object {
         private const val SHIFT = (Constants.BOARD_SIZE - 1) / 2

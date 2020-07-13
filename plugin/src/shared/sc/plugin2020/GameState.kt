@@ -7,18 +7,18 @@ import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.plugin2020.util.Constants
 import sc.plugin2020.util.GameRuleLogic
-import sc.shared.Team
+import sc.shared.ITeam
 
 @XStreamAlias(value = "state")
 class GameState @JvmOverloads constructor(
-        override var red: Player = Player(Team.ONE),
-        override var blue: Player = Player(Team.TWO),
+        override var red: Player<Team> = Player(Team.RED),
+        override var blue: Player<Team> = Player(Team.BLUE),
         override var board: Board = Board(),
         turn: Int = 0,
-        private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.ONE),
-        private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.TWO),
+        private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.RED),
+        private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.BLUE),
         override var lastMove: Move? = null
-): TwoPlayerGameState<Player>() {
+): TwoPlayerGameState<Player<Team>, Team>(Team.RED) {
     
     @XStreamOmitField
     private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
@@ -50,8 +50,8 @@ class GameState @JvmOverloads constructor(
     
     fun getUndeployedPieces(owner: Team): MutableList<Piece> {
         return when(owner) {
-            Team.ONE -> undeployedRedPieces
-            Team.TWO -> undeployedBluePieces
+            Team.RED -> undeployedRedPieces
+            Team.BLUE -> undeployedBluePieces
         }
     }
     
@@ -61,10 +61,10 @@ class GameState @JvmOverloads constructor(
         return ownedPieces
     }
     
-    fun addPlayer(player: Player) {
+    fun addPlayer(player: Player<Team>) {
         when(player.color) {
-            Team.ONE -> red = player
-            Team.TWO -> blue = player
+            Team.RED -> red = player
+            Team.BLUE -> blue = player
         }
     }
     
@@ -72,7 +72,7 @@ class GameState @JvmOverloads constructor(
         return GameRuleLogic.freeBeeNeighbours(this.board, playerColor)
     }
     
-    fun getPlayerStats(p: Player): IntArray {
+    fun getPlayerStats(p: Player<Team>): IntArray {
         return getPlayerStats(p.color)
     }
     

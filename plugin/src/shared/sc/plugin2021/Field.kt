@@ -2,12 +2,13 @@ package sc.plugin2021
 
 import sc.api.plugins.IField
 
+// TODO: replace this by elements from the Color class
 enum class FieldContent(val letter: Char) {
     EMPTY('-'),
-    RED('R'),
-    GREEN('G'),
     BLUE('B'),
-    YELLOW('Y');
+    YELLOW('Y'),
+    RED('R'),
+    GREEN('G');
     
     override fun toString(): String = letter.toString()
 }

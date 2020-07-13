@@ -1,10 +1,6 @@
 package sc.plugin2021
 
-enum class PlayerColor {
-    RED, GREEN, BLUE, YELLOW
-}
-
-class Piece(val kind: Int, val rotation: Rotation, val color: PlayerColor) {
+class Piece(val kind: Int, val rotation: Rotation, val color: Color) {
     val shape: PieceShape = PieceShape.shapes[kind].second.rotate(rotation)
     
     override fun toString(): String {

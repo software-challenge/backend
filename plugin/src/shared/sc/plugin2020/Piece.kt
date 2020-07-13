@@ -2,7 +2,7 @@ package sc.plugin2020
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.shared.Team
+import sc.shared.ITeam
 
 @XStreamAlias(value = "piece")
 data class Piece(

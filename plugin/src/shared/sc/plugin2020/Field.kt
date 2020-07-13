@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.IField
 import sc.plugin2020.util.CubeCoordinates
-import sc.shared.Team
+import sc.plugin2020.Team
 import java.util.*
 
 @XStreamAlias("field")
@@ -34,8 +34,8 @@ class Field(
             if(isObstructed)
                 return FieldState.OBSTRUCTED
             return when(owner) {
-                Team.ONE -> FieldState.RED
-                Team.TWO -> FieldState.BLUE
+                Team.RED -> FieldState.RED
+                Team.BLUE -> FieldState.BLUE
                 null -> FieldState.EMPTY
             }
         }

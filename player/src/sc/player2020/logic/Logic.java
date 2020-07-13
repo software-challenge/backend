@@ -9,7 +9,7 @@ import sc.plugin2020.IGameHandler;
 import sc.plugin2020.Move;
 import sc.plugin2020.util.GameRuleLogic;
 import sc.shared.GameResult;
-import sc.shared.Team;
+import sc.shared.ITeam;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class Logic implements IGameHandler {
   /**
    * {@inheritDoc}
    */
-  public void gameEnded(GameResult data, Team color, String errorMessage) {
+  public void gameEnded(GameResult data, ITeam color, String errorMessage) {
     log.info("Das Spiel ist beendet.");
   }
 

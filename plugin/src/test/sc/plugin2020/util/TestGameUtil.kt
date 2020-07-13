@@ -2,13 +2,13 @@ package sc.plugin2020.util
 
 import org.junit.Assert
 import sc.plugin2020.*
-import sc.shared.Team
+import sc.shared.ITeam
 import java.security.InvalidParameterException
 import java.util.*
 
 object TestGameUtil {
 
-    private fun parsePiece(pc: Team, c: Char): Piece {
+    private fun parsePiece(pc: ITeam, c: Char): Piece {
         return when(c) {
             'Q' -> Piece(pc, PieceType.BEE)
             'B' -> Piece(pc, PieceType.BEETLE)
@@ -32,8 +32,8 @@ object TestGameUtil {
         val boardFields = ArrayList<Field>()
         for(i in fields.indices) {
             when(fieldDescriptors[i * 2]) {
-                'R' -> Field(fields[i][0], fields[i][1], parsePiece(Team.ONE, fieldDescriptors[i * 2 + 1]))
-                'B' -> Field(fields[i][0], fields[i][1], parsePiece(Team.TWO, fieldDescriptors[i * 2 + 1]))
+                'R' -> Field(fields[i][0], fields[i][1], parsePiece(ITeam.ONE, fieldDescriptors[i * 2 + 1]))
+                'B' -> Field(fields[i][0], fields[i][1], parsePiece(ITeam.TWO, fieldDescriptors[i * 2 + 1]))
                 'O' -> Field(fields[i][0], fields[i][1], true)
                 '-' -> Field(fields[i][0], fields[i][1])
                 else -> throw InvalidParameterException("Expected first character to be either B (blue), R (red) or O (obstructed), was: " + fieldDescriptors[i * 2])
@@ -44,7 +44,7 @@ object TestGameUtil {
 
     fun updateUndeployedPiecesFromBoard(gs: GameState, reset: Boolean = false) {
         if(reset) {
-            Team.values().forEach {
+            ITeam.values().forEach {
                 gs.getUndeployedPieces(it).clear()
                 gs.getUndeployedPieces(it).addAll(GameState.parsePiecesString(Constants.STARTING_PIECES, it))
             }
