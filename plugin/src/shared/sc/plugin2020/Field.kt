@@ -4,8 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.IField
+import sc.api.plugins.ITeam
 import sc.plugin2020.util.CubeCoordinates
-import sc.shared.PlayerColor
+import sc.plugin2020.Team
 import java.util.*
 
 @XStreamAlias("field")
@@ -34,8 +35,8 @@ class Field(
             if(isObstructed)
                 return FieldState.OBSTRUCTED
             return when(owner) {
-                PlayerColor.RED -> FieldState.RED
-                PlayerColor.BLUE -> FieldState.BLUE
+                Team.RED -> FieldState.RED
+                Team.BLUE -> FieldState.BLUE
                 null -> FieldState.EMPTY
             }
         }
@@ -53,8 +54,8 @@ class Field(
         get() = this
     
     /** @return owner of the uppermost piece on this field, or null if it is empty. */
-    val owner: PlayerColor?
-        get() = topPiece?.owner
+    val owner: Team?
+        get() = topPiece?.owner as Team?
     
     /** @return the uppermost piece on the field, or null is it is empty. */
     val topPiece: Piece?

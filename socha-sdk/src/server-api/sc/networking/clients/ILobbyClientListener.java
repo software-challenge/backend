@@ -1,5 +1,6 @@
 package sc.networking.clients;
 
+import sc.api.plugins.ITeam;
 import sc.framework.plugins.Player;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;

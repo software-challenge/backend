@@ -5,6 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
+import sc.api.plugins.ITeam;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.Player;
@@ -25,13 +26,13 @@ public class Game extends RoundBasedGameInstance<Player> {
   private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
   @XStreamOmitField
-  private List<PlayerColor> availableColors = new ArrayList<>();
+  private List<Team> availableColors = new ArrayList<>();
 
   private GameState gameState = new GameState();
 
   public Game() {
-    this.availableColors.add(PlayerColor.RED);
-    this.availableColors.add(PlayerColor.BLUE);
+    this.availableColors.add(Team.RED);
+    this.availableColors.add(Team.BLUE);
   }
 
   public Game(String pluginUUID) {
@@ -70,13 +71,13 @@ public class Game extends RoundBasedGameInstance<Player> {
   public Player onPlayerJoined() {
     final Player player;
     // When starting a game from a imported state the players should not be overwritten
-    PlayerColor playerColor = this.availableColors.remove(0);
-    if(PlayerColor.RED == playerColor && this.gameState.getPlayer(PlayerColor.RED) != null) {
-      player = this.gameState.getPlayer(PlayerColor.RED);
-    } else if(PlayerColor.BLUE == playerColor && this.gameState.getPlayer(PlayerColor.BLUE) != null) {
-      player = this.gameState.getPlayer(PlayerColor.BLUE);
+    Team team = this.availableColors.remove(0);
+    if(Team.RED == team && this.gameState.getPlayer(Team.RED) != null) {
+      player = this.gameState.getPlayer(Team.RED);
+    } else if(Team.BLUE == team && this.gameState.getPlayer(Team.BLUE) != null) {
+      player = this.gameState.getPlayer(Team.BLUE);
     } else {
-      player = new Player(playerColor);
+      player = new Player(team);
     }
 
     this.players.add(player);
@@ -103,7 +104,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     String reason = "";
     Player opponent = gameState.getOpponent(player);
     if(winCondition != null) {
-      PlayerColor winner = winCondition.getWinner();
+      ITeam winner = winCondition.getWinner();
       reason = winner != null ? winCondition.toString(gameState.getPlayer(winner).getDisplayName()) : winCondition.toString();
       if(player.getColor().equals(winCondition.getWinner())) {
         matchPoints = Constants.WIN_SCORE;
@@ -159,38 +160,38 @@ public class Game extends RoundBasedGameInstance<Player> {
       return null;
     }
 
-    boolean redBeeBlocked = GameRuleLogic.isBeeBlocked(gameState.getBoard(), PlayerColor.RED);
-    boolean blueBeeBlocked = GameRuleLogic.isBeeBlocked(gameState.getBoard(), PlayerColor.BLUE);
+    boolean redBeeBlocked = GameRuleLogic.isBeeBlocked(gameState.getBoard(), Team.RED);
+    boolean blueBeeBlocked = GameRuleLogic.isBeeBlocked(gameState.getBoard(), Team.BLUE);
     if(redBeeBlocked) {
       logger.info("Red bee is blocked");
       if(blueBeeBlocked) {
         logger.info("Blue bee is also blocked");
-        if(gameState.getPointsForPlayer(PlayerColor.RED) > gameState.getPointsForPlayer(PlayerColor.BLUE)) {
-          return new WinCondition(PlayerColor.RED, WinReason.BEE_FREE_FIELDS);
-        } else if(gameState.getPointsForPlayer(PlayerColor.RED) < gameState.getPointsForPlayer(PlayerColor.BLUE)) {
-          return new WinCondition(PlayerColor.BLUE, WinReason.BEE_FREE_FIELDS);
+        if(gameState.getPointsForPlayer(Team.RED) > gameState.getPointsForPlayer(Team.BLUE)) {
+          return new WinCondition(Team.RED, WinReason.BEE_FREE_FIELDS);
+        } else if(gameState.getPointsForPlayer(Team.RED) < gameState.getPointsForPlayer(Team.BLUE)) {
+          return new WinCondition(Team.BLUE, WinReason.BEE_FREE_FIELDS);
         } else {
           logger.info("Both Players have equal Points, no Winner");
           return new WinCondition(null, WinReason.ROUND_LIMIT_EQUAL);
         }
       }
-      return new WinCondition(PlayerColor.BLUE, WinReason.BEE_SURROUNDED);
+      return new WinCondition(Team.BLUE, WinReason.BEE_SURROUNDED);
     } else {
       logger.debug("Red bee is not surrounded");
       if(blueBeeBlocked) {
         logger.info("Blue bee is surrounded");
-        return new WinCondition(PlayerColor.RED, WinReason.BEE_SURROUNDED);
+        return new WinCondition(Team.RED, WinReason.BEE_SURROUNDED);
       }
     }
     logger.debug("Blue bee is not surrounded");
 
     if(this.gameState.getTurn() == 2 * Constants.ROUND_LIMIT) {
       // round limit reached
-      PlayerColor winner;
-      if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_ROUNDS] > stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {
-        winner = PlayerColor.RED;
-      } else if(stats[PlayerColor.RED.getIndex()][Constants.GAME_STATS_ROUNDS] < stats[PlayerColor.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {
-        winner = PlayerColor.BLUE;
+      Team winner;
+      if(stats[Team.RED.getIndex()][Constants.GAME_STATS_ROUNDS] > stats[Team.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {
+        winner = Team.RED;
+      } else if(stats[Team.RED.getIndex()][Constants.GAME_STATS_ROUNDS] < stats[Team.BLUE.getIndex()][Constants.GAME_STATS_ROUNDS]) {
+        winner = Team.BLUE;
       } else {
         return new WinCondition(null, WinReason.ROUND_LIMIT_EQUAL);
       }

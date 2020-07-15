@@ -2,6 +2,7 @@ package sc.shared
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import sc.api.plugins.ITeam
 import sc.protocol.responses.ProtocolMessage
 
 /** Nachricht, die zu Beginn eines Spiels an einen Client geschickt wird, um ihm seine Spielerfarbe mitzuteilen.  */
@@ -12,9 +13,8 @@ private constructor(
         @XStreamAsAttribute private val color: String
 ): ProtocolMessage {
     
-    constructor(color: PlayerColor): this(color.toString().toLowerCase())
+    constructor(color: ITeam<*>): this(color.toString().toLowerCase())
     
-    val playerColor: PlayerColor
-        get() = PlayerColor.valueOf(color.toUpperCase())
-    
+    val playerColor: ITeam<*>
+        get() = playerColor
 }

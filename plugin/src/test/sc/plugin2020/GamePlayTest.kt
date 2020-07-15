@@ -2,7 +2,6 @@ package sc.plugin2020
 
 import io.kotlintest.matchers.collections.shouldContain
 import io.kotlintest.matchers.collections.shouldNotContain
-import io.kotlintest.shouldBe
 import io.kotlintest.shouldThrow
 import io.kotlintest.specs.AnnotationSpec
 import org.junit.Assert.*
@@ -11,7 +10,7 @@ import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.GameRuleLogic
 import sc.plugin2020.util.TestGameUtil
 import sc.shared.InvalidMoveException
-import sc.shared.PlayerColor
+import sc.api.plugins.ITeam
 import java.security.InvalidParameterException
 
 class GamePlayTest: AnnotationSpec() {
@@ -90,7 +89,7 @@ class GamePlayTest: AnnotationSpec() {
             state.turn = 1
             val move = DragMove(CubeCoordinates(-1, 4), CubeCoordinates(0, 4))
             GameRuleLogic.performMove(state, move)
-            assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
+            assertTrue(GameRuleLogic.isBeeBlocked(state.board, Team.RED))
         }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -105,7 +104,7 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            assertTrue(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
+            assertTrue(GameRuleLogic.isBeeBlocked(state.board, Team.RED))
         }
         run {
             TestGameUtil.updateGamestateWithBoard(state, "" +
@@ -120,7 +119,7 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            assertFalse(GameRuleLogic.isBeeBlocked(state.board, PlayerColor.RED))
+            assertFalse(GameRuleLogic.isBeeBlocked(state.board, Team.RED))
         }
     }
     
@@ -139,7 +138,7 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
+            val move = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(0, 0))
             GameRuleLogic.validateMove(state, move)
         }
     }
@@ -159,7 +158,7 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(8, 0))
+            val move = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(8, 0))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
@@ -179,8 +178,8 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            state.getUndeployedPieces(PlayerColor.RED).clear()
-            val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 4))
+            state.getUndeployedPieces(Team.RED).clear()
+            val move = SetMove(Piece(Team.RED, PieceType.ANT), CubeCoordinates(-4, 4))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
@@ -200,11 +199,11 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val invalid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
+            val invalid1 = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(0, 0))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid1) }
-            val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 4))
+            val invalid2 = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(-3, 4))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid2) }
-            val valid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-4, 5))
+            val valid1 = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(-4, 5))
             GameRuleLogic.validateMove(state, valid1)
         }
         run {
@@ -220,7 +219,7 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val move = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(0, 0))
+            val move = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(0, 0))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, move) }
         }
     }
@@ -240,7 +239,7 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val invalid = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-2, 4))
+            val invalid = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(-2, 4))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid) }
         }
     }
@@ -260,9 +259,9 @@ class GamePlayTest: AnnotationSpec() {
                     "   ----------------" +
                     "    --------------" +
                     "     ------------")
-            val invalid1 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-3, 4))
+            val invalid1 = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(-3, 4))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid1) }
-            val invalid2 = SetMove(state.getUndeployedPieces(PlayerColor.RED)[0], CubeCoordinates(-1, 2))
+            val invalid2 = SetMove(state.getUndeployedPieces(Team.RED)[0], CubeCoordinates(-1, 2))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, invalid2) }
         }
     }
@@ -283,11 +282,11 @@ class GamePlayTest: AnnotationSpec() {
                     "    --------------" +
                     "     ------------")
             state.turn = 6
-            val setAnt = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(-4, 5))
+            val setAnt = SetMove(Piece(Team.RED, PieceType.ANT), CubeCoordinates(-4, 5))
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, setAnt) }
             val skip = SkipMove
             shouldThrow<InvalidMoveException> { GameRuleLogic.validateMove(state, skip) }
-            val setBee = SetMove(Piece(PlayerColor.RED, PieceType.BEE), CubeCoordinates(-4, 5))
+            val setBee = SetMove(Piece(Team.RED, PieceType.BEE), CubeCoordinates(-4, 5))
             GameRuleLogic.validateMove(state, setBee)
         }
     }
@@ -852,7 +851,7 @@ class GamePlayTest: AnnotationSpec() {
                 "   ----------------" +
                 "    --------------" +
                 "     ------------")
-        val move = SetMove(Piece(PlayerColor.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))
+        val move = SetMove(Piece(Team.RED, PieceType.ANT), CubeCoordinates(1, 2, -3))
         GameRuleLogic.performMove(state, move)
         assertEquals(PieceType.ANT, state.board.getField(1, 2, -3).topPiece?.type)
     }
