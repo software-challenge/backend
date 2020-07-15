@@ -38,9 +38,15 @@ class XMLTest {
         state.lastMove = SetMove(Piece(Team.BLUE, PieceType.GRASSHOPPER), CubeCoordinates(-2, 4))
         val xstream = Configuration.xStream
         val xml = """
-            |<state startPlayerColor="RED" turn="3" currentPlayerColor="BLUE">
-            |  <red color="RED" displayName=""/>
-            |  <blue color="BLUE" displayName="aBluePlayer"/>
+            |<state turn="3">
+            |  <startPlayerColor class="sc.plugin2020.Team">RED</startPlayerColor>
+            |  <currentPlayerColor class="sc.plugin2020.Team">BLUE</currentPlayerColor>
+            |  <red displayName="">
+            |    <color class="sc.plugin2020.Team">RED</color>
+            |  </red>
+            |  <blue displayName="aBluePlayer">
+            |    <color class="sc.plugin2020.Team">BLUE</color>
+            |  </blue>
             |  <board>
             |    <fields>
             |      <null/>
@@ -92,7 +98,9 @@ class XMLTest {
             |      <field x="-2" y="2" z="0" isObstructed="false"/>
             |      <field x="-2" y="3" z="-1" isObstructed="false"/>
             |      <field x="-2" y="4" z="-2" isObstructed="false">
-            |        <piece owner="BLUE" type="GRASSHOPPER"/>
+            |        <piece type="GRASSHOPPER">
+            |          <owner class="sc.plugin2020.Team">BLUE</owner>
+            |        </piece>
             |      </field>
             |      <field x="-2" y="5" z="-3" isObstructed="false"/>
             |    </fields>
@@ -116,8 +124,12 @@ class XMLTest {
             |      <field x="0" y="-2" z="2" isObstructed="false"/>
             |      <field x="0" y="-1" z="1" isObstructed="false"/>
             |      <field x="0" y="0" z="0" isObstructed="false">
-            |        <piece owner="RED" type="ANT"/>
-            |        <piece owner="BLUE" type="BEE"/>
+            |        <piece type="ANT">
+            |          <owner class="sc.plugin2020.Team">RED</owner>
+            |        </piece>
+            |        <piece type="BEE">
+            |          <owner class="sc.plugin2020.Team">BLUE</owner>
+            |        </piece>
             |      </field>
             |      <field x="0" y="1" z="-1" isObstructed="false"/>
             |      <field x="0" y="2" z="-2" isObstructed="false"/>
@@ -192,30 +204,70 @@ class XMLTest {
             |    </fields>
             |  </board>
             |  <undeployedRedPieces>
-            |    <piece owner="RED" type="BEE"/>
-            |    <piece owner="RED" type="SPIDER"/>
-            |    <piece owner="RED" type="SPIDER"/>
-            |    <piece owner="RED" type="SPIDER"/>
-            |    <piece owner="RED" type="GRASSHOPPER"/>
-            |    <piece owner="RED" type="GRASSHOPPER"/>
-            |    <piece owner="RED" type="BEETLE"/>
-            |    <piece owner="RED" type="BEETLE"/>
-            |    <piece owner="RED" type="ANT"/>
-            |    <piece owner="RED" type="ANT"/>
+            |    <piece type="BEE">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="SPIDER">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="SPIDER">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="SPIDER">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="GRASSHOPPER">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="GRASSHOPPER">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="BEETLE">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="BEETLE">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="ANT">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
+            |    <piece type="ANT">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
             |  </undeployedRedPieces>
             |  <undeployedBluePieces>
-            |    <piece owner="BLUE" type="SPIDER"/>
-            |    <piece owner="BLUE" type="SPIDER"/>
-            |    <piece owner="BLUE" type="SPIDER"/>
-            |    <piece owner="BLUE" type="GRASSHOPPER"/>
-            |    <piece owner="BLUE" type="BEETLE"/>
-            |    <piece owner="BLUE" type="BEETLE"/>
-            |    <piece owner="BLUE" type="ANT"/>
-            |    <piece owner="BLUE" type="ANT"/>
-            |    <piece owner="BLUE" type="ANT"/>
+            |    <piece type="SPIDER">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
+            |    <piece type="SPIDER">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
+            |    <piece type="SPIDER">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
+            |    <piece type="GRASSHOPPER">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
+            |    <piece type="BEETLE">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
+            |    <piece type="BEETLE">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
+            |    <piece type="ANT">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
+            |    <piece type="ANT">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
+            |    <piece type="ANT">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
             |  </undeployedBluePieces>
             |  <lastMove class="setmove">
-            |    <piece owner="BLUE" type="GRASSHOPPER"/>
+            |    <piece type="GRASSHOPPER">
+            |      <owner class="sc.plugin2020.Team">BLUE</owner>
+            |    </piece>
             |    <destination x="-2" y="4" z="-2"/>
             |  </lastMove>
             |</state>""".trimMargin()
@@ -235,7 +287,9 @@ class XMLTest {
         val expect = """
             |<room roomId="$roomId">
             |  <data class="setmove">
-            |    <piece owner="RED" type="ANT"/>
+            |    <piece type="ANT">
+            |      <owner class="sc.plugin2020.Team">RED</owner>
+            |    </piece>
             |    <destination x="1" y="2" z="-3"/>
             |  </data>
             |</room>""".trimMargin()
@@ -271,7 +325,9 @@ class XMLTest {
         val xml = """
             <room roomId="64a0482c-f368-4e33-9684-d5106228bb75">
               <data class="setmove">
-                <piece owner="RED" type="BEETLE" />
+                <piece type="BEETLE">
+                  <owner class="sc.plugin2020.Team">RED</owner>
+                </piece>
                 <destination x="-2" y="0" z="2"/>
               </data>
             </room>"""
