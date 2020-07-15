@@ -49,8 +49,7 @@ class GameState @JvmOverloads constructor(
     public override fun clone() = GameState(this)
     
     fun getUndeployedPieces(owner: ITeam<*>): MutableList<Piece> {
-        val team = owner as Team
-        return when(owner) {
+        return when(owner as Team) {
             Team.RED -> undeployedRedPieces
             Team.BLUE -> undeployedBluePieces
         }

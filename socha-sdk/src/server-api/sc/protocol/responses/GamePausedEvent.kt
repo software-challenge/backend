@@ -14,5 +14,5 @@ import sc.framework.plugins.Player
 @XStreamAlias(value = "paused")
 data class GamePausedEvent(
         @XStreamAsAttribute
-        val nextPlayer: Player<*>
+        val nextPlayer: Player
 ): ProtocolMessage

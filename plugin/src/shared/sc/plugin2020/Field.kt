@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.IField
+import sc.api.plugins.ITeam
 import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.Team
 import java.util.*
@@ -54,7 +55,7 @@ class Field(
     
     /** @return owner of the uppermost piece on this field, or null if it is empty. */
     val owner: Team?
-        get() = topPiece?.owner
+        get() = topPiece?.owner as Team?
     
     /** @return the uppermost piece on the field, or null is it is empty. */
     val topPiece: Piece?
