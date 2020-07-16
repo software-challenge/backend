@@ -11,7 +11,7 @@ import sc.shared.WinCondition
 
 
 @XStreamAlias(value = "game")
-class Game(UUID: String): RoundBasedGameInstance<Player>() {
+class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player>() {
     val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     val gameState = GameState()
     
