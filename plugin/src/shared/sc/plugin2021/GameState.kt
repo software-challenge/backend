@@ -45,10 +45,43 @@ class GameState @JvmOverloads constructor(
             currentTeam = currentPlayerFromTurn() as Team
         }
     
+    fun addPlayer(player: Player) {
+        when(player.color) {
+            Team.ONE -> first = player
+            Team.TWO -> second = player
+        }
+    }
+    
     override fun getPointsForPlayer(team: ITeam<*>): Int =
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
     private fun getPointsForColor(color: Color): Int =
             GameRuleLogic.getPointsFromDeployedPieces(deployedPieces[color]!!)
+    
+    override fun toString(): String = "GameState Zug $turn"
+    
+    override fun equals(other: Any?): Boolean {
+        return !(this === other) &&
+                other is GameState &&
+                first                 == other.first &&
+                second                == other.second &&
+                board                 == other.board &&
+                turn                  == other.turn &&
+                currentTeam           == other.currentTeam &&
+                undeployedPieceShapes == other.undeployedPieceShapes &&
+                deployedPieces        == other.deployedPieces
+    }
+    
+    override fun hashCode(): Int {
+        var result = first.hashCode()
+        result = 31 * result + second.hashCode()
+        result = 31 * result + (lastMove?.hashCode() ?: 0)
+        result = 31 * result + board.hashCode()
+        result = 31 * result + undeployedPieceShapes.hashCode()
+        result = 31 * result + deployedPieces.hashCode()
+        result = 31 * result + currentTeam.hashCode()
+        result = 31 * result + turn
+        return result
+    }
     
 }
