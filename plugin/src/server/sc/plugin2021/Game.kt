@@ -6,6 +6,7 @@ import sc.framework.plugins.RoundBasedGameInstance
 import sc.framework.plugins.Player
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.PlayerScore
+import sc.shared.WelcomeMessage
 import sc.shared.WinCondition
 
 
@@ -17,10 +18,20 @@ class Game(UUID: String): RoundBasedGameInstance<Player>() {
     init {
         pluginUUID = UUID
     }
+    
+    override fun start() {
+        players.forEach {it.notifyListeners(WelcomeMessage(it.color)) }
+        super.start()
+    }
    
-    override fun onPlayerJoined(): Player =
-            gameState.getPlayer(availableTeams.removeAt(0)) ?:
-            throw NullPointerException("Too many players joined the game!")
+    override fun onPlayerJoined(): Player {
+        val player = gameState.getPlayer(availableTeams.removeAt(0))
+                ?: throw NullPointerException("Too many players joined the game!")
+        
+        players.add(player)
+        gameState.addPlayer(player)
+        return player
+    }
     
     override fun getWinners(): MutableList<Player> {
         TODO("Not yet implemented")
@@ -31,7 +42,7 @@ class Game(UUID: String): RoundBasedGameInstance<Player>() {
     }
     
     override fun getPlayers(): MutableList<Player> {
-        TODO("Not yet implemented")
+        return players
     }
     
     override fun checkWinCondition(): WinCondition {
