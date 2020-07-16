@@ -31,9 +31,9 @@ interface IGameHandler {
      * aufgerufen, wenn das Spiel beendet ist.
      *
      * @param data         mit getScores() kann man die Punkte erfragen
-     * @param color        Playercolor
+     * @param team         Team des Spielers
      * @param errorMessage Fehlernachricht
      */
-    fun gameEnded(data: GameResult, color: ITeam<*>, errorMessage: String)
+    fun gameEnded(data: GameResult, team: Team, errorMessage: String)
     
 }
