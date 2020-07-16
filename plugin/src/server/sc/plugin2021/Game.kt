@@ -17,7 +17,10 @@ class Game(UUID: String): RoundBasedGameInstance<Player>() {
     init {
         pluginUUID = UUID
     }
-    
+   
+    override fun onPlayerJoined(): Player =
+            gameState.getPlayer(availableTeams.removeAt(0)) ?:
+            throw NullPointerException("Too many players joined the game!")
     
     override fun getWinners(): MutableList<Player> {
         TODO("Not yet implemented")
@@ -44,10 +47,6 @@ class Game(UUID: String): RoundBasedGameInstance<Player>() {
     }
     
     override fun loadFromFile(file: String?, turn: Int) {
-        TODO("Not yet implemented")
-    }
-    
-    override fun onPlayerJoined(): Player {
         TODO("Not yet implemented")
     }
     
