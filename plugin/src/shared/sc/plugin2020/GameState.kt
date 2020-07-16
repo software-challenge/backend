@@ -11,8 +11,8 @@ import sc.plugin2020.util.GameRuleLogic
 
 @XStreamAlias(value = "state")
 class GameState @JvmOverloads constructor(
-        override var red: Player = Player(Team.RED),
-        override var blue: Player = Player(Team.BLUE),
+        override var first: Player = Player(Team.RED),
+        override var second: Player = Player(Team.BLUE),
         override var board: Board = Board(),
         turn: Int = 0,
         private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.RED),
@@ -27,11 +27,11 @@ class GameState @JvmOverloads constructor(
     override var turn = turn
         set(value) {
             field = value
-            currentPlayerColor = currentPlayerFromTurn()
+            currentTeam = currentPlayerFromTurn() as Team
         }
     
     @XStreamAsAttribute
-    override var currentPlayerColor: ITeam<*> = currentPlayerFromTurn()
+    override var currentTeam: Team = currentPlayerFromTurn() as Team
         private set
     
     val gameStats: Array<IntArray>
@@ -43,19 +43,19 @@ class GameState @JvmOverloads constructor(
     }
     
     /** Copy constructor to create a new deeply copied state from the given [state]. */
-    constructor(state: GameState): this(state.red.clone(), state.blue.clone(), state.board.clone(), state.turn, ArrayList(state.undeployedRedPieces), ArrayList(state.undeployedBluePieces), state.lastMove)
+    constructor(state: GameState): this(state.first.clone(), state.second.clone(), state.board.clone(), state.turn, ArrayList(state.undeployedRedPieces), ArrayList(state.undeployedBluePieces), state.lastMove)
     
     /** Creates a deep copy of this [GameState]. */
     public override fun clone() = GameState(this)
     
-    fun getUndeployedPieces(owner: ITeam<*>): MutableList<Piece> {
-        return when(owner as Team) {
+    fun getUndeployedPieces(owner: Team): MutableList<Piece> {
+        return when(owner) {
             Team.RED -> undeployedRedPieces
             Team.BLUE -> undeployedBluePieces
         }
     }
     
-    fun getDeployedPieces(owner: ITeam<*>): List<Piece> {
+    fun getDeployedPieces(owner: Team): List<Piece> {
         val ownedPieces = allPieces.filterTo(ArrayList()) { it.owner == owner }
         getUndeployedPieces(owner).forEach { ownedPieces.remove(it) }
         return ownedPieces
@@ -63,21 +63,21 @@ class GameState @JvmOverloads constructor(
     
     fun addPlayer(player: Player) {
         when(player.color) {
-            Team.RED -> red = player
-            Team.BLUE -> blue = player
+            Team.RED -> first = player
+            Team.BLUE -> second = player
         }
     }
     
-    override fun getPointsForPlayer(playerColor: ITeam<*>): Int {
-        return GameRuleLogic.freeBeeNeighbours(this.board, playerColor)
+    override fun getPointsForPlayer(team: ITeam<*>): Int {
+        return GameRuleLogic.freeBeeNeighbours(this.board, team)
     }
     
     fun getPlayerStats(p: Player): IntArray {
-        return getPlayerStats(p.color)
+        return getPlayerStats(p.color as Team)
     }
     
-    fun getPlayerStats(playerColor: ITeam<*>): IntArray =
-            intArrayOf(this.getPointsForPlayer(playerColor))
+    fun getPlayerStats(team: Team): IntArray =
+            intArrayOf(this.getPointsForPlayer(team))
     
     override fun toString(): String = "GameState Zug $turn"
     
@@ -85,21 +85,21 @@ class GameState @JvmOverloads constructor(
         if(this === other) return true
         if(other !is GameState) return false
         
-        if(red != other.red) return false
-        if(blue != other.blue) return false
+        if(first != other.first) return false
+        if(second != other.second) return false
         if(board != other.board) return false
         if(undeployedRedPieces != other.undeployedRedPieces) return false
         if(undeployedBluePieces != other.undeployedBluePieces) return false
         if(allPieces.size != other.allPieces.size || !allPieces.containsAll(other.allPieces)) return false
         if(turn != other.turn) return false
-        if(currentPlayerColor != other.currentPlayerColor) return false
+        if(currentTeam != other.currentTeam) return false
         
         return true
     }
     
     override fun hashCode(): Int {
-        var result = red.hashCode()
-        result = 31 * result + blue.hashCode()
+        var result = first.hashCode()
+        result = 31 * result + second.hashCode()
         result = 31 * result + board.hashCode()
         result = 31 * result + undeployedRedPieces.hashCode()
         result = 31 * result + undeployedBluePieces.hashCode()

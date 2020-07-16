@@ -10,10 +10,14 @@ import sc.shared.WinCondition
 
 
 @XStreamAlias(value = "game")
-class Game(pluginUUID: String? = null): RoundBasedGameInstance<Player>() {
+class Game(UUID: String): RoundBasedGameInstance<Player>() {
+    val availableTeams = mutableListOf(Team.ONE, Team.TWO)
+    val gameState = GameState()
+    
     init {
-        this.pluginUUID = pluginUUID
+        pluginUUID = UUID
     }
+    
     
     override fun getWinners(): MutableList<Player> {
         TODO("Not yet implemented")
@@ -51,7 +55,7 @@ class Game(pluginUUID: String? = null): RoundBasedGameInstance<Player>() {
         TODO("Not yet implemented")
     }
     
-    override fun onRoundBasedAction(fromPlayer: Player?, data: ProtocolMessage?) {
+    override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage?) {
         TODO("Not yet implemented")
     }
     

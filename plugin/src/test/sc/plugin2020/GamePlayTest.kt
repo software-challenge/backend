@@ -10,7 +10,6 @@ import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.GameRuleLogic
 import sc.plugin2020.util.TestGameUtil
 import sc.shared.InvalidMoveException
-import sc.api.plugins.ITeam
 import java.security.InvalidParameterException
 
 class GamePlayTest: AnnotationSpec() {
@@ -887,7 +886,7 @@ class GamePlayTest: AnnotationSpec() {
                 "   ----------------" +
                 "    --------------" +
                 "     ------------")
-        assertEquals(7, GameRuleLogic.getPossibleSetMoveDestinations(state.board, state.currentPlayerColor).size)
+        assertEquals(7, GameRuleLogic.getPossibleSetMoveDestinations(state.board, state.currentTeam).size)
     }
     
     @Test

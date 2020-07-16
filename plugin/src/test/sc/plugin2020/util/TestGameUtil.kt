@@ -8,7 +8,7 @@ import java.util.*
 
 object TestGameUtil {
 
-    private fun parsePiece(pc: ITeam<*>, c: Char): Piece {
+    private fun parsePiece(pc: Team, c: Char): Piece {
         return when(c) {
             'Q' -> Piece(pc, PieceType.BEE)
             'B' -> Piece(pc, PieceType.BEETLE)
@@ -50,7 +50,7 @@ object TestGameUtil {
             }
         }
         gs.board.getPieces().forEach {
-            gs.getUndeployedPieces(it.owner).remove(it)
+            gs.getUndeployedPieces(it.owner as Team).remove(it)
         }
     }
 

@@ -96,7 +96,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         if(id == PlayerType.OBSERVER) return
         
         handler.onUpdate(gameState)
-        if(gameState.currentPlayerColor == team) {
+        if(gameState.currentTeam == team) {
             handler.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
         } else {
             handler.onUpdate(gameState.otherPlayer, gameState.currentPlayer)

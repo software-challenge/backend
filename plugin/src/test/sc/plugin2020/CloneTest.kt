@@ -4,7 +4,6 @@ import io.kotlintest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import sc.framework.plugins.Player
-import sc.api.plugins.ITeam
 
 class CloneTest: StringSpec({
     "clone Player" {
@@ -24,12 +23,12 @@ class CloneTest: StringSpec({
         clone.getField(0, 0, 0).pieces shouldNotBeSameInstanceAs board.getField(0, 0, 0).pieces
     }
     "clone GameState" {
-        val state = GameState(blue = Player(Team.BLUE, "aBluePlayer"), turn = 5)
+        val state = GameState(second = Player(Team.BLUE, "aBluePlayer"), turn = 5)
         val clone = state.clone()
         clone shouldBe state
         clone shouldNotBeSameInstanceAs state
         clone.getDeployedPieces(Team.RED) shouldBe state.getDeployedPieces(Team.RED)
-        clone.currentPlayerColor shouldBe state.currentPlayerColor
+        clone.currentTeam shouldBe state.currentTeam
         clone.currentPlayer shouldNotBeSameInstanceAs state.currentPlayer
         clone.lastMove shouldBe state.lastMove
         clone.board shouldBe state.board
@@ -37,10 +36,10 @@ class CloneTest: StringSpec({
     "clone another Game state" {
         val state = Game().gameState
         state.turn++
-        state.currentPlayerColor shouldBe Team.BLUE
+        state.currentTeam shouldBe Team.BLUE
         val clone = GameState(state)
         clone shouldBe state
         clone.turn shouldBe 1
-        clone.currentPlayerColor shouldBe state.currentPlayerColor
+        clone.currentTeam shouldBe state.currentTeam
     }
 })

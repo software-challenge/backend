@@ -7,7 +7,6 @@ import sc.plugin2020.util.CubeCoordinates
 import sc.plugin2020.util.TestGameUtil
 import sc.plugin2020.util.TestJUnitUtil
 import sc.protocol.responses.RoomPacket
-import sc.api.plugins.ITeam
 
 class XMLTest {
     
@@ -32,21 +31,20 @@ class XMLTest {
         TestJUnitUtil.assertContentEquals(listOf(Piece(Team.RED, PieceType.ANT)), state.getDeployedPieces(Team.RED))
         TestJUnitUtil.assertContentEquals(listOf(Piece(Team.BLUE, PieceType.BEE), Piece(Team.BLUE, PieceType.GRASSHOPPER)), state.getDeployedPieces(Team.BLUE))
         Assert.assertEquals(PieceType.BEE, state.board.getField(0, 0).topPiece?.type)
-        state.blue.displayName = "aBluePlayer"
+        state.second.displayName = "aBluePlayer"
         state.turn = 3
-        Assert.assertEquals(Team.BLUE, state.currentPlayerColor)
+        Assert.assertEquals(Team.BLUE, state.currentTeam)
         state.lastMove = SetMove(Piece(Team.BLUE, PieceType.GRASSHOPPER), CubeCoordinates(-2, 4))
         val xstream = Configuration.xStream
         val xml = """
-            |<state turn="3">
-            |  <startPlayerColor class="sc.plugin2020.Team">RED</startPlayerColor>
-            |  <currentPlayerColor class="sc.plugin2020.Team">BLUE</currentPlayerColor>
-            |  <red displayName="">
+            |<state turn="3" currentTeam="BLUE">
+            |  <startTeam class="sc.plugin2020.Team">RED</startTeam>
+            |  <first displayName="">
             |    <color class="sc.plugin2020.Team">RED</color>
-            |  </red>
-            |  <blue displayName="aBluePlayer">
+            |  </first>
+            |  <second displayName="aBluePlayer">
             |    <color class="sc.plugin2020.Team">BLUE</color>
-            |  </blue>
+            |  </second>
             |  <board>
             |    <fields>
             |      <null/>
