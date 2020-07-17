@@ -53,7 +53,7 @@ class BoardTest : StringSpec({
         val oldBoard = Board()
         val newBoard = Board()
         
-        val changingFields = listOf(
+        val changingFields = setOf(
                 Field(Coordinates(2, 3), Color.YELLOW),
                 Field(Coordinates(19, 2), Color.YELLOW),
                 Field(Coordinates(8, 3), Color.YELLOW),

@@ -23,8 +23,8 @@ class Board(
     operator fun set(position: Coordinates, color: Color) =
             set(position.x, position.y, color)
     
-    fun compare(other: Board): List<Field> {
-        val changedFields = mutableListOf<Field>()
+    fun compare(other: Board): Set<Field> {
+        val changedFields = mutableSetOf<Field>()
         for (y in 0 until Constants.BOARD_SIZE) {
             for (x in 0 until Constants.BOARD_SIZE) {
                 if (gameField[y][x] != other.gameField[y][x]) {
