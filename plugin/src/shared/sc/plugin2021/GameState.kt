@@ -2,6 +2,7 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.IBoard
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
@@ -16,23 +17,24 @@ class GameState @JvmOverloads constructor(
         override var lastMove: Move? = null
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
+    @XStreamAsAttribute
     override val board: Board = Board()
     
-    @XStreamAsAttribute
-    val undeployedPieceShapes = mutableMapOf(
-            Color.BLUE   to PieceShape.shapes,
-            Color.YELLOW to PieceShape.shapes,
-            Color.RED    to PieceShape.shapes,
-            Color.GREEN  to PieceShape.shapes,
-            Color.NONE   to emptyList()
+    @XStreamOmitField
+    val undeployedPieceShapes: MutableMap<Color, List<Pair<Int, PieceShape>>> = mutableMapOf(
+            Color.BLUE   to PieceShape.shapes.toMutableList(),
+            Color.YELLOW to PieceShape.shapes.toMutableList(),
+            Color.RED    to PieceShape.shapes.toMutableList(),
+            Color.GREEN  to PieceShape.shapes.toMutableList(),
+            Color.NONE   to emptyList<Pair<Int, PieceShape>>()
     )
     @XStreamAsAttribute
-    val deployedPieces = mutableMapOf(
-            Color.BLUE   to ArrayList<Piece>(),
-            Color.YELLOW to ArrayList<Piece>(),
-            Color.RED    to ArrayList<Piece>(),
-            Color.GREEN  to ArrayList<Piece>(),
-            Color.NONE   to ArrayList()
+    val deployedPieces: MutableMap<Color, List<Piece>> = mutableMapOf(
+            Color.BLUE   to mutableListOf<Piece>(),
+            Color.YELLOW to mutableListOf<Piece>(),
+            Color.RED    to mutableListOf<Piece>(),
+            Color.GREEN  to mutableListOf<Piece>(),
+            Color.NONE   to emptyList<Piece>()
     )
     
     @XStreamAsAttribute
@@ -63,13 +65,11 @@ class GameState @JvmOverloads constructor(
     override fun equals(other: Any?): Boolean {
         return !(this === other) &&
                 other is GameState &&
-                first                 == other.first &&
-                second                == other.second &&
-                board                 == other.board &&
-                turn                  == other.turn &&
-                currentTeam           == other.currentTeam &&
-                undeployedPieceShapes == other.undeployedPieceShapes &&
-                deployedPieces        == other.deployedPieces
+                first       == other.first &&
+                second      == other.second &&
+                board       == other.board &&
+                turn        == other.turn &&
+                currentTeam == other.currentTeam
     }
     
     override fun hashCode(): Int {
