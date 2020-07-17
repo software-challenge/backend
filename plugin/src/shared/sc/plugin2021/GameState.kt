@@ -21,12 +21,12 @@ class GameState @JvmOverloads constructor(
     override val board: Board = Board()
     
     @XStreamOmitField
-    val undeployedPieceShapes: MutableMap<Color, List<Pair<Int, PieceShape>>> = mutableMapOf(
-            Color.BLUE   to PieceShape.shapes.toMutableList(),
-            Color.YELLOW to PieceShape.shapes.toMutableList(),
-            Color.RED    to PieceShape.shapes.toMutableList(),
-            Color.GREEN  to PieceShape.shapes.toMutableList(),
-            Color.NONE   to emptyList<Pair<Int, PieceShape>>()
+    val undeployedPieceShapes: Map<Color, Map<Int, PieceShape>> = mapOf(
+            Color.BLUE   to PieceShape.shapesAsMutaleMap(),
+            Color.YELLOW to PieceShape.shapesAsMutaleMap(),
+            Color.RED    to PieceShape.shapesAsMutaleMap(),
+            Color.GREEN  to PieceShape.shapesAsMutaleMap(),
+            Color.NONE   to emptyMap<Int, PieceShape>()
     )
     @XStreamAsAttribute
     val deployedPieces: MutableMap<Color, List<Piece>> = mutableMapOf(

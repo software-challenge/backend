@@ -1,19 +1,40 @@
 package sc.plugin2021
 
 import sc.plugin2021.util.Constants
-import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.max
 
 // data structure to represent one shape of piece of Blokus. There are 21 different kinds, see https://en.wikipedia.org/wiki/Blokus
 // The shapes are represented as coordinate list of occupied fields, where the left upper corner of a shape is the origin (0,0), x-axis going to the right and y-axis going down
 class PieceShape(coordinates: Set<Coordinates>) {
     val coordinates: Set<Coordinates> = align(coordinates)
+    val asVectors: Set<Vector> = coordinates.map { it - origin }.toSet()
+    val dimension: Vector
     
-    fun rotate(rotation: Rotation): PieceShape = when (rotation) {
-        Rotation.NONE -> this
-        Rotation.RIGHT -> align(turnRight())
+    init {
+        var dx = 0
+        var dy = 0
+        coordinates.forEach {
+            dx = max(it.x, dx)
+            dy = max(it.y, dy)
+        }
+        dimension = Vector(dx, dy)
+    }
+    
+    /** Rotates the given shape based on the given rotation. */
+    fun rotate(rotation: Rotation): PieceShape = when(rotation) {
+        Rotation.NONE   -> this
+        Rotation.RIGHT  -> align(turnRight())
         Rotation.MIRROR -> align(mirror())
-        Rotation.LEFT -> align(turnLeft())
+        Rotation.LEFT   -> align(turnLeft())
+    }
+    
+    /** Flips the given shape along the y-axis */
+    fun flip(shouldFlip: Boolean = true): PieceShape = when(shouldFlip) {
+        false -> this
+        true  -> PieceShape(coordinates.map {
+            Coordinates(-it.x, it.y)
+        }.toSet())
     }
     
     private fun mirror(): PieceShape {
@@ -46,11 +67,12 @@ class PieceShape(coordinates: Set<Coordinates>) {
                 Coordinates(it.x - minX, it.y - minY)
             }.toSet()
         }
-    
         fun align(shape: PieceShape): PieceShape =
                 PieceShape(align(shape.coordinates))
-    
-        val shapes = listOf(
+        
+        val origin = Coordinates(0, 0)
+        
+        val shapes: Map<Int, PieceShape> = mapOf(
                 0 to PieceShape(setOf(Coordinates(0, 0))),
                 1 to PieceShape(setOf(Coordinates(0, 0), Coordinates(1, 0))),
                 2 to PieceShape(setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1))),
@@ -73,6 +95,12 @@ class PieceShape(coordinates: Set<Coordinates>) {
                 19 to PieceShape(setOf(Coordinates(1, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(2, 1), Coordinates(1, 2))),
                 20 to PieceShape(setOf(Coordinates(1, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(2, 1), Coordinates(3, 1)))
         )
+        
+        fun shapesAsMutaleMap(): MutableMap<Int, PieceShape> {
+            val map = mutableMapOf<Int, PieceShape>()
+            shapes.forEach { map[it.key] = it.value }
+            return map
+        }
     }
     
     override fun equals(other: Any?): Boolean {
