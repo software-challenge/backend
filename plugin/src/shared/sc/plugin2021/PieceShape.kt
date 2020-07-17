@@ -32,9 +32,9 @@ class PieceShape(coordinates: Set<Coordinates>) {
     /** Flips the given shape along the y-axis */
     fun flip(shouldFlip: Boolean = true): PieceShape = when(shouldFlip) {
         false -> this
-        true  -> PieceShape(coordinates.map {
+        true  -> align(PieceShape(coordinates.map {
             Coordinates(-it.x, it.y)
-        }.toSet())
+        }.toSet()))
     }
     
     private fun mirror(): PieceShape {

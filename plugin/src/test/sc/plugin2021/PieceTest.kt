@@ -29,4 +29,11 @@ class PieceTest: StringSpec({
             shape.flip(true).flip() shouldBe shape
         }
     }
+    "Piece coordination calculation" {
+        val position = Coordinates(2, 2)
+        val coordinates = setOf(Coordinates(2, 2), Coordinates(3, 2), Coordinates(2, 3))
+        val piece = Piece(Color.RED, 2, Rotation.NONE, true, position)
+    
+        piece.coordinates shouldBe coordinates
+    }
 })
