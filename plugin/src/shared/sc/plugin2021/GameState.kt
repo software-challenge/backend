@@ -46,7 +46,7 @@ class GameState @JvmOverloads constructor(
     val orderedColors: MutableList<Color> = mutableListOf()
     
     @XStreamAsAttribute
-    var currentColor = currentColorFromTurn()
+    var currentColor: Color
     
     @XStreamAsAttribute
     override var turn: Int = turn
@@ -62,6 +62,7 @@ class GameState @JvmOverloads constructor(
             orderedColors.add(_startColor)
             _startColor = _startColor.next
         }
+        currentColor = currentColorFromTurn()
     }
     
     fun currentColorFromTurn(): Color =
