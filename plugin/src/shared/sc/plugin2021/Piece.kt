@@ -22,4 +22,10 @@ class Piece(val color: Color,
                 shape == other.shape &&
                 position == other.position
     }
+    
+    override fun hashCode(): Int {
+        var result = color.hashCode()
+        result = 31 * result + coordinates.hashCode()
+        return result
+    }
 }
