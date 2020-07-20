@@ -1,12 +1,22 @@
 package sc.plugin2021
 
+import ch.qos.logback.core.pattern.color.BlueCompositeConverter
 import sc.plugin2021.Team
 import sc.plugin2021.util.Constants
 
 enum class Color(val team: Team, val letter: Char, val corner: Coordinates) {
-    NONE  (Team.NONE, '-', Coordinates(-1,                -1)),
-    BLUE  (Team.ONE,  'B', Coordinates(0,                 0)),
-    YELLOW(Team.ONE,  'Y', Coordinates(Constants.BOARD_SIZE, 0)),
-    RED   (Team.TWO,  'R', Coordinates(Constants.BOARD_SIZE, Constants.BOARD_SIZE)),
-    GREEN (Team.TWO,  'G', Coordinates(0,                 Constants.BOARD_SIZE));
+    NONE  (Team.NONE, '-', Coordinates(-1, -1)) { init {
+        NONE.next = NONE }},
+    BLUE  (Team.ONE,  'B', Coordinates(0, 0)),
+    
+    YELLOW(Team.ONE,  'Y', Coordinates(Constants.BOARD_SIZE, 0)) { init {
+            BLUE.next = YELLOW }},
+    RED   (Team.TWO,  'R', Coordinates(Constants.BOARD_SIZE, Constants.BOARD_SIZE)) { init {
+            YELLOW.next = RED }},
+    GREEN (Team.TWO,  'G', Coordinates(0, Constants.BOARD_SIZE)) { init {
+            RED.next = GREEN
+            GREEN.next = BLUE }};
+    
+    lateinit var next: Color
+        private set
 }

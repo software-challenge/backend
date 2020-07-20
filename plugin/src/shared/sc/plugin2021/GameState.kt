@@ -14,7 +14,8 @@ class GameState @JvmOverloads constructor(
         override var first: Player = Player(Team.ONE),
         override var second: Player = Player(Team.TWO),
         turn: Int = 0,
-        override var lastMove: Move? = null
+        override var lastMove: Move? = null,
+        startColor: Color = Color.BLUE
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     @XStreamAsAttribute
@@ -41,11 +42,30 @@ class GameState @JvmOverloads constructor(
     override var currentTeam = currentPlayerFromTurn() as Team
         private set
     
+    @XStreamOmitField
+    val orderedColors: MutableList<Color> = mutableListOf()
+    
+    @XStreamAsAttribute
+    var currentColor = currentColorFromTurn()
+    
+    @XStreamAsAttribute
     override var turn: Int = turn
         set(value) {
             field = value
             currentTeam = currentPlayerFromTurn() as Team
+            currentColor = currentColorFromTurn()
         }
+    
+    init {
+        var _startColor = startColor
+        for (x in 0 until 4) {
+            orderedColors.add(_startColor)
+            _startColor = _startColor.next
+        }
+    }
+    
+    fun currentColorFromTurn(): Color =
+            orderedColors[turn % 4]
     
     fun addPlayer(player: Player) {
         when(player.color) {

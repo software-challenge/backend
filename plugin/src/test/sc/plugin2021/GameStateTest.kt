@@ -8,26 +8,41 @@ import sc.plugin2021.util.Configuration
 // TODO: add more extensive tests with different GameStates
 class GameStateTest: StringSpec({
     "GameState starts correctly" {
-        val testGameState = GameState()
+        val gameState = GameState()
         
-        testGameState.board shouldBe Board()
+        gameState.board shouldBe Board()
         
-        testGameState.undeployedPieceShapes[Color.BLUE]   shouldBe PieceShape.shapes
-        testGameState.undeployedPieceShapes[Color.YELLOW] shouldBe PieceShape.shapes
-        testGameState.undeployedPieceShapes[Color.RED]    shouldBe PieceShape.shapes
-        testGameState.undeployedPieceShapes[Color.GREEN]  shouldBe PieceShape.shapes
-        testGameState.undeployedPieceShapes[Color.NONE]   shouldBe emptyList<Pair<Int, PieceShape>>()
+        gameState.undeployedPieceShapes[Color.BLUE]   shouldBe PieceShape.shapes
+        gameState.undeployedPieceShapes[Color.YELLOW] shouldBe PieceShape.shapes
+        gameState.undeployedPieceShapes[Color.RED]    shouldBe PieceShape.shapes
+        gameState.undeployedPieceShapes[Color.GREEN]  shouldBe PieceShape.shapes
+        gameState.undeployedPieceShapes[Color.NONE]   shouldBe emptyMap<Int, PieceShape>()
     
-        testGameState.deployedPieces[Color.BLUE]   shouldBe mutableListOf<Piece>()
-        testGameState.deployedPieces[Color.YELLOW] shouldBe mutableListOf<Piece>()
-        testGameState.deployedPieces[Color.RED]    shouldBe mutableListOf<Piece>()
-        testGameState.deployedPieces[Color.GREEN]  shouldBe mutableListOf<Piece>()
-        testGameState.deployedPieces[Color.NONE]   shouldBe emptyList<Piece>()
+        gameState.deployedPieces[Color.BLUE]   shouldBe mutableListOf<Piece>()
+        gameState.deployedPieces[Color.YELLOW] shouldBe mutableListOf<Piece>()
+        gameState.deployedPieces[Color.RED]    shouldBe mutableListOf<Piece>()
+        gameState.deployedPieces[Color.GREEN]  shouldBe mutableListOf<Piece>()
+        gameState.deployedPieces[Color.NONE]   shouldBe emptyList<Piece>()
      
         // TODO: adjust values accordingly
-        testGameState.getPointsForPlayer(Team.ONE)  shouldBe 2
-        testGameState.getPointsForPlayer(Team.TWO)  shouldBe 2
-        testGameState.getPointsForPlayer(Team.NONE) shouldBe 1
+        gameState.getPointsForPlayer(Team.ONE)  shouldBe 2
+        gameState.getPointsForPlayer(Team.TWO)  shouldBe 2
+        gameState.getPointsForPlayer(Team.NONE) shouldBe 1
+    }
+    "GameStates know currently active Color" {
+        var colorIter = Color.RED
+        val gameState = GameState(startColor = colorIter)
+        
+        for (x in 0 until 4) {
+            gameState.orderedColors[x] shouldBe colorIter
+            colorIter = colorIter.next
+        }
+    
+        gameState.currentColor = Color.RED
+        gameState.turn++
+        gameState.currentColor = Color.GREEN
+        gameState.turn = 2
+        gameState.currentColor = Color.YELLOW
     }
     "XML conversion works" {
         val xstream = Configuration.xStream
