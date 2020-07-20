@@ -63,7 +63,7 @@ object GameRuleLogic {
                     ?.let { getNeighbours(board, it) }?.count { field -> field.isEmpty }
                     ?: -1
 
-    /** @return true iff the given [coords] are within the Board size. */
+    /** @return true if the given [coords] are within the Board size. */
     @JvmStatic
     fun isOnBoard(coords: CubeCoordinates): Boolean {
         val shift = (Constants.BOARD_SIZE - 1) / 2
