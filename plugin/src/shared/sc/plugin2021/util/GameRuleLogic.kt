@@ -1,15 +1,23 @@
 package sc.plugin2021.util
 
-import com.sun.org.apache.xpath.internal.operations.Bool
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
 
 object GameRuleLogic {
     // TODO: Add all the needed logic as static (@JvmStatic) functions here
+    /** Calculates the score for the given list in pieces, assuming they are in order of placement. */
     @JvmStatic
     fun getPointsFromDeployedPieces(deployed: List<Piece>): Int {
-        // TODO: Look up correct calculation of points
-        return 1;
+        if (deployed.size == Constants.ROUND_LIMIT) {
+            // Perfect score: One point per piece + 15 completion bonus + 5 for solitary block being last
+            return if (deployed.last().kind == 0) 109
+            // Placed each piece: One point per piece + 15 completion bonus
+            else 104
+        }
+        // One point per block per piece placed
+        return deployed.map{ it.coordinates.size }.sum() +
+                if (Constants.MALUS_FOR_UNDEPLOYED) deployed.size - Constants.ROUND_LIMIT else 0
     }
     
     /** Performs the given [move] on the [gameState] if possible. */

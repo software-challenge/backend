@@ -1,11 +1,11 @@
 package sc.plugin2021
 
-import io.kotlintest.matchers.types.shouldNotBeSameInstanceAs
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.InvalidMoveException
 
@@ -42,5 +42,27 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(0, 0), Color.BLUE) shouldBe true
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(0, 0), Color.GREEN) shouldNotBe true
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(1, 0), Color.BLUE) shouldNotBe true
+    }
+    "Point score calculation works" {
+        if (Constants.MALUS_FOR_UNDEPLOYED)
+            GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe 0-21
+        else
+            GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe 0
+        
+        val fewPieces = listOf(
+                Piece(Color.BLUE, 3,  Rotation.NONE, true),
+                Piece(Color.BLUE, 4,  Rotation.NONE, true),
+                Piece(Color.BLUE, 15, Rotation.NONE, true),
+                Piece(Color.BLUE, 0,  Rotation.NONE, true)
+        )
+        if (Constants.MALUS_FOR_UNDEPLOYED)
+            GameRuleLogic.getPointsFromDeployedPieces(fewPieces) shouldBe 13-17
+        else
+            GameRuleLogic.getPointsFromDeployedPieces(fewPieces) shouldBe 13
+        
+        val allPieces = PieceShape.shapes.map{
+            Piece(Color.BLUE, it.key, Rotation.NONE, false)
+        }.toList()
+        GameRuleLogic.getPointsFromDeployedPieces(allPieces) shouldBe 89+15
     }
 })

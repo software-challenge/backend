@@ -1,7 +1,5 @@
 package sc.plugin2021.util
 
-import sc.plugin2021.PieceShape
-
 object Constants {
     /** Hard limit based on amount of possible shapes. */
     const val ROUND_LIMIT = 21
@@ -15,4 +13,5 @@ object Constants {
     const val SOFT_TIMEOUT = 2000L
     const val HARD_TIMEOUT = 10000L
     
+    const val MALUS_FOR_UNDEPLOYED = false
 }
