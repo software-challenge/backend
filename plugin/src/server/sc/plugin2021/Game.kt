@@ -3,8 +3,10 @@ package sc.plugin2021
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
+import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.RoundBasedGameInstance
 import sc.framework.plugins.Player
+import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
@@ -68,6 +70,9 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
     override fun getScoreFor(p: Player?): PlayerScore {
         TODO("Not yet implemented")
     }
+    
+    override fun getTimeoutFor(player: Player): ActionTimeout =
+            ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
     @Throws(InvalidMoveException::class, InvalidGameStateException::class)
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage?) {
