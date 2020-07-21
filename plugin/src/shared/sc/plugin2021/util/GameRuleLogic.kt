@@ -4,6 +4,8 @@ import sc.plugin2021.*
 import sc.shared.InvalidMoveException
 
 object GameRuleLogic {
+    const val SMALLEST_SCORE_POSSIBLE = -89
+    
     // TODO: Add all the needed logic as static (@JvmStatic) functions here
     /** Calculates the score for the given list in pieces.
      *  Assumes the game has ended and the pieces are in order of placement.
@@ -11,15 +13,13 @@ object GameRuleLogic {
     @JvmStatic
     fun getPointsFromDeployedPieces(deployed: List<Piece>): Int {
         if (deployed.size == Constants.ROUND_LIMIT) {
-            // Perfect score: One point per piece + 15 completion bonus + 5 for solitary block being last
-            return if (deployed.last().kind == 0) 109
-            // Placed each piece: One point per piece + 15 completion bonus
-            else 104
+            // Perfect score: 15 Points completion + 5 Points for solitary block last
+            return if (deployed.last().kind == 0) 20
+            // Placed each piece: 15 Points completion bonus
+            else 15
         }
-        // One point per block per piece placed
-        return deployed.map{ it.coordinates.size }.sum() +
-                // One malus point per piece not placed
-                if (Constants.MALUS_FOR_UNDEPLOYED) deployed.size - Constants.ROUND_LIMIT else 0
+        // One malus point per block per piece not placed
+        return SMALLEST_SCORE_POSSIBLE + deployed.map{ it.coordinates.size }.sum()
     }
     
     /** Performs the given [move] on the [gameState] if possible. */

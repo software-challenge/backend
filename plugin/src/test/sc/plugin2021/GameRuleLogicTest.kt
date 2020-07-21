@@ -44,10 +44,7 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(1, 0), Color.BLUE) shouldNotBe true
     }
     "Point score calculation works" {
-        if (Constants.MALUS_FOR_UNDEPLOYED)
-            GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe 0-21
-        else
-            GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe 0
+        GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
         
         val fewPieces = listOf(
                 Piece(Color.BLUE, 3,  Rotation.NONE, true),
@@ -55,14 +52,14 @@ class GameRuleLogicTest: StringSpec({
                 Piece(Color.BLUE, 15, Rotation.NONE, true),
                 Piece(Color.BLUE, 0,  Rotation.NONE, true)
         )
-        if (Constants.MALUS_FOR_UNDEPLOYED)
-            GameRuleLogic.getPointsFromDeployedPieces(fewPieces) shouldBe 13-17
-        else
-            GameRuleLogic.getPointsFromDeployedPieces(fewPieces) shouldBe 13
+        GameRuleLogic.getPointsFromDeployedPieces(fewPieces) shouldBe -76
         
         val allPieces = PieceShape.shapes.map{
             Piece(Color.BLUE, it.key, Rotation.NONE, false)
         }.toList()
-        GameRuleLogic.getPointsFromDeployedPieces(allPieces) shouldBe 89+15
+        GameRuleLogic.getPointsFromDeployedPieces(allPieces) shouldBe 15
+        
+        val perfectPieces = allPieces.reversed()
+        GameRuleLogic.getPointsFromDeployedPieces(perfectPieces) shouldBe 20
     }
 })
