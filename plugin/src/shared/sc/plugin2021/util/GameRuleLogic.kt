@@ -20,7 +20,8 @@ object GameRuleLogic {
         move.piece.coordinates.forEach {
             gameState.board[it] = move.piece.color
         }
-        gameState.undeployedPieceShapes[move.piece.color]!!.remove(move.piece.kind)
+        assert(gameState.undeployedPieceShapes[move.piece.color]!!.remove(move.piece.kind) != null)
+        gameState.deployedPieces[move.piece.color]!!.add(move.piece)
     }
 
     /** Checks if the given [move] is able to be performed for the given [gameState]. */
@@ -31,7 +32,7 @@ object GameRuleLogic {
             throw InvalidMoveException("The given Piece isn't from the active color: $move")
         
         // Check if piece has already been placed
-        gameState.undeployedPieceShapes[move.piece.color]!!.get(move.piece.kind) ?:
+        gameState.undeployedPieceShapes[move.piece.color]!![move.piece.kind] ?:
                 throw InvalidMoveException("Piece #${move.piece.kind} has already been placed before", move)
         
         move.piece.coordinates.forEach {

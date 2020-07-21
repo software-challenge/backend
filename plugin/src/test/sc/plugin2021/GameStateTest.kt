@@ -3,7 +3,11 @@ package sc.plugin2021
 import com.thoughtworks.xstream.XStream
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import sc.plugin2021.util.Configuration
+import sc.plugin2021.util.GameRuleLogic
+import sc.shared.InvalidMoveException
 
 // TODO: add more extensive tests with different GameStates
 class GameStateTest: StringSpec({
@@ -43,6 +47,30 @@ class GameStateTest: StringSpec({
         gameState.currentColor = Color.GREEN
         gameState.turn = 2
         gameState.currentColor = Color.YELLOW
+    }
+    "Pieces can only be placed once" {
+        val gameState = GameState()
+        val move = SetMove(
+                Piece(Color.BLUE, 4, Rotation.RIGHT, true))
+        gameState.board[2, 2] = Color.BLUE
+        
+        gameState.undeployedPieceShapes[Color.BLUE]!!.size shouldBe 21
+        gameState.deployedPieces[Color.BLUE]!!.size shouldBe 0
+        assertDoesNotThrow {
+            GameRuleLogic.performMove(gameState, move)
+        }
+        gameState.undeployedPieceShapes[Color.BLUE]!!.size shouldBe 20
+        gameState.deployedPieces[Color.BLUE]!!.size shouldBe 1
+        gameState.deployedPieces[Color.BLUE]!![0] shouldBe move.piece
+        
+        gameState.turn = 4
+        assertThrows<InvalidMoveException> {
+            GameRuleLogic.performMove(gameState, move)
+        }
+        gameState.undeployedPieceShapes[Color.BLUE]!!.size shouldBe 20
+        gameState.deployedPieces[Color.BLUE]!!.size shouldBe 1
+        gameState.deployedPieces[Color.BLUE]!![0] shouldBe move.piece
+        
     }
     "XML conversion works" {
         val xstream = Configuration.xStream
