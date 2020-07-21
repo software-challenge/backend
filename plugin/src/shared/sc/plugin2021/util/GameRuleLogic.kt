@@ -1,12 +1,13 @@
 package sc.plugin2021.util
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
 
 object GameRuleLogic {
     // TODO: Add all the needed logic as static (@JvmStatic) functions here
-    /** Calculates the score for the given list in pieces, assuming they are in order of placement. */
+    /** Calculates the score for the given list in pieces.
+     *  Assumes the game has ended and the pieces are in order of placement.
+     */
     @JvmStatic
     fun getPointsFromDeployedPieces(deployed: List<Piece>): Int {
         if (deployed.size == Constants.ROUND_LIMIT) {
@@ -17,6 +18,7 @@ object GameRuleLogic {
         }
         // One point per block per piece placed
         return deployed.map{ it.coordinates.size }.sum() +
+                // One malus point per piece not placed
                 if (Constants.MALUS_FOR_UNDEPLOYED) deployed.size - Constants.ROUND_LIMIT else 0
     }
     
