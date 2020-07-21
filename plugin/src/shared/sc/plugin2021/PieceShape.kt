@@ -96,7 +96,7 @@ class PieceShape(coordinates: Set<Coordinates>) {
                 20 to PieceShape(setOf(Coordinates(1, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(2, 1), Coordinates(3, 1)))
         )
         
-        fun shapesAsMutaleMap(): MutableMap<Int, PieceShape> {
+        fun shapesAsMutableMap(): MutableMap<Int, PieceShape> {
             val map = mutableMapOf<Int, PieceShape>()
             shapes.forEach { map[it.key] = it.value }
             return map

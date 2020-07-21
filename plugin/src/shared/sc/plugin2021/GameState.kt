@@ -23,10 +23,10 @@ class GameState @JvmOverloads constructor(
     
     @XStreamOmitField
     val undeployedPieceShapes: Map<Color, Map<Int, PieceShape>> = mapOf(
-            Color.BLUE   to PieceShape.shapesAsMutaleMap(),
-            Color.YELLOW to PieceShape.shapesAsMutaleMap(),
-            Color.RED    to PieceShape.shapesAsMutaleMap(),
-            Color.GREEN  to PieceShape.shapesAsMutaleMap(),
+            Color.BLUE   to PieceShape.shapesAsMutableMap(),
+            Color.YELLOW to PieceShape.shapesAsMutableMap(),
+            Color.RED    to PieceShape.shapesAsMutableMap(),
+            Color.GREEN  to PieceShape.shapesAsMutableMap(),
             Color.NONE   to emptyMap<Int, PieceShape>()
     )
     @XStreamAsAttribute
