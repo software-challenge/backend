@@ -2,7 +2,7 @@ package sc.plugin2021
 
 /** A Piece has a color, a position and a normalised shape. */
 class Piece(val color: Color,
-            kind: Int,
+            val kind: Int,
             rotation: Rotation,
             isFlipped: Boolean,
             val position: Coordinates = PieceShape.origin) {

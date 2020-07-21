@@ -16,8 +16,11 @@ object GameRuleLogic {
     @JvmStatic
     fun performMove(gameState: GameState, move: Move) {
         validateMove(gameState, move)
-
-        //TODO: Perform the move
+        
+        move.piece.coordinates.forEach {
+            gameState.board[it] = move.piece.color
+        }
+        gameState.undeployedPieceShapes[move.piece.color]!!.remove(move.piece.kind)
     }
 
     /** Checks if the given [move] is able to be performed for the given [gameState]. */
@@ -26,6 +29,10 @@ object GameRuleLogic {
         // Check if colors match
         if (move.piece.color != gameState.currentColor)
             throw InvalidMoveException("The given Piece isn't from the active color: $move")
+        
+        // Check if piece has already been placed
+        gameState.undeployedPieceShapes[move.piece.color]!!.get(move.piece.kind) ?:
+                throw InvalidMoveException("Piece #${move.piece.kind} has already been placed before", move)
         
         move.piece.coordinates.forEach {
             try { gameState.board[it] }
