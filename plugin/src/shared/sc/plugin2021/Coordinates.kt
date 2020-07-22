@@ -9,6 +9,9 @@ data class Coordinates(val x: Int, val y: Int) {
     operator fun minus(other: Coordinates): Vector {
         return Vector(x - other.x, y - other.y)
     }
+    operator fun minus(other: Vector): Coordinates {
+        return Coordinates(x - other.dx, y - other.dy)
+    }
 }
 
 data class Vector(val dx: Int, val dy: Int) {
