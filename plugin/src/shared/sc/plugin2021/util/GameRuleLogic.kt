@@ -57,9 +57,19 @@ object GameRuleLogic {
             if (bordersOnColor(gameState.board, it, move.piece.color))
                 throw InvalidMoveException("Field $it already borders on ${move.piece.color}", move)
         }
-        // Checks if the piece is connected to at least one tile of same color by corner
-        if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.piece.color) })
-            throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
+        if (gameState.deployedPieces[move.piece.color].isNullOrEmpty()) {
+            // If it's the first piece, check if it's a pentomino
+            if (move.piece.coordinates.size < 5)
+                throw InvalidMoveException("Piece ${move.piece.kind} is not a pentomino", move)
+            // and check if it touches the color's respective corner
+            if (move.piece.coordinates.none { it == move.piece.color.corner })
+                throw InvalidMoveException("The piece doesn't touch the color's corner", move)
+        }
+        else {
+            // Check if the piece is connected to at least one tile of same color by corner
+            if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.piece.color) })
+                throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
+        }
     }
     
     /** Checks if the given [position] is already obstructed by another piece. */

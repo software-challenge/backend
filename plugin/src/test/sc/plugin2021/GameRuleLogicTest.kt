@@ -1,5 +1,6 @@
 package sc.plugin2021
 
+import io.kotlintest.matchers.doubles.positive
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
@@ -12,15 +13,14 @@ import sc.shared.InvalidMoveException
 class GameRuleLogicTest: StringSpec({
     "Color validation works correctly" {
         val gameState = GameState()
-        gameState.board[Coordinates(1, 1)] = Color.BLUE
         
         assertThrows<InvalidMoveException> {
-            val invalidMove: Move = SetMove(Piece(Color.RED, 3, Rotation.NONE, false))
+            val invalidMove: Move = SetMove(Piece(Color.RED))
             GameRuleLogic.validateMove(gameState, invalidMove)
         }
         assertDoesNotThrow {
             val validMove: Move = SetMove(
-                    Piece(Color.BLUE, 11, Rotation.NONE, false, Coordinates(0, 2)))
+                    Piece(Color.BLUE, 17))
             GameRuleLogic.validateMove(gameState, validMove)
         }
     }
@@ -42,6 +42,38 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(0, 0), Color.BLUE) shouldBe true
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(0, 0), Color.GREEN) shouldNotBe true
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(1, 0), Color.BLUE) shouldNotBe true
+    }
+    "The first piece's special rules work" {
+        // Piece 12 is:   # # #
+        //              # #
+        val pieceDimension = PieceShape.shapes[12]?.dimension ?: Vector(0, 0)
+        val validPieces = listOf(
+                Piece(Color.BLUE,   12, isFlipped = true),
+                Piece(Color.YELLOW, 12, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
+                Piece(Color.RED,    12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 2, Constants.BOARD_SIZE - 4)),
+                Piece(Color.GREEN,  12, position = Coordinates(0, Constants.BOARD_SIZE - 2))
+        )
+        val invalidPieces = listOf(
+                Piece(Color.BLUE,   4), // Not a pentomino
+                Piece(Color.YELLOW, 12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
+                Piece(Color.RED,    12, position = Coordinates(13, 5)),
+                Piece(Color.GREEN,  12, Rotation.LEFT, position = Coordinates(Constants.BOARD_SIZE - 2, 0))
+        )
+        
+        assertThrows<InvalidMoveException> {
+            val gameState = GameState()
+            invalidPieces.forEach {
+                GameRuleLogic.performMove(gameState, SetMove(it))
+                gameState.turn++
+            }
+        }
+        assertDoesNotThrow {
+            val gameState = GameState()
+            validPieces.forEach {
+                GameRuleLogic.performMove(gameState, SetMove(it))
+                gameState.turn++
+            }
+        }
     }
     "Point score calculation works" {
         GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
