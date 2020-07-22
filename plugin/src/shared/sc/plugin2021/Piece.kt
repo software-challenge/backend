@@ -1,10 +1,10 @@
 package sc.plugin2021
 
 /** A Piece has a color, a position and a normalised shape. */
-class Piece(val color: Color,
-            val kind: Int,
-            rotation: Rotation,
-            isFlipped: Boolean,
+class Piece(val color: Color = Color.BLUE,
+            val kind: Int = 0,
+            rotation: Rotation = Rotation.NONE,
+            isFlipped: Boolean = false,
             val position: Coordinates = PieceShape.origin) {
     
     val shape: PieceShape = PieceShape.shapes[kind]?.flip(isFlipped)?.rotate(rotation) ?:
