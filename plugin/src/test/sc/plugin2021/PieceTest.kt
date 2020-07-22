@@ -10,9 +10,10 @@ class PieceTest: StringSpec({
             Piece(Color.GREEN, pieceShape.key, Rotation.NONE, false).shape shouldBe pieceShape.value
         }
         
-        Piece(Color.YELLOW, 4, Rotation.RIGHT, false).toString() shouldBe "YELLOW Piece 4:1"
-        Piece(Color.RED, 20, Rotation.LEFT, false).toString() shouldBe "RED Piece 20:3"
-        Piece(Color.BLUE, 15, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece 15:2 (flipped)"
+        Piece(Color.YELLOW, 4, Rotation.RIGHT, false).toString() shouldBe "YELLOW Piece 4:1 [0,0]"
+        Piece(Color.RED, 20, Rotation.LEFT, false).toString() shouldBe "RED Piece 20:3 [0,0]"
+        Piece(Color.BLUE, 15, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece 15:2 (flipped) [0,0]"
+        Piece(Color.GREEN, 2, Rotation.NONE, true, Coordinates(5, 9)).toString() shouldBe "GREEN Piece 2:0 (flipped) [5,9]"
     }
     "Test PieceShape arithmetic" {
         PieceShape(setOf(Coordinates(1, 2), Coordinates(3, 2))).coordinates.shouldBe(

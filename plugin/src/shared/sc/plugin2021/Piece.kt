@@ -12,7 +12,8 @@ class Piece(val color: Color = Color.BLUE,
     
     var coordinates: Set<Coordinates> = shape.asVectors.map { position + it }.toSet()
     
-    private val description: String = "$color Piece $kind:${rotation.value}${if(isFlipped) " (flipped)" else ""}"
+    private val description: String =
+            "$color Piece $kind:${rotation.value}${if(isFlipped) " (flipped)" else ""} [${position.x},${position.y}]"
     
     override fun toString(): String = description
     
