@@ -32,6 +32,10 @@ object GameRuleLogic {
         }
         assert(gameState.undeployedPieceShapes[move.piece.color]!!.remove(move.piece.kind) != null)
         gameState.deployedPieces[move.piece.color]!!.add(move.piece)
+        
+        // If it was the last piece for this color, remove him from the turn queue
+        if (gameState.undeployedPieceShapes[move.piece.color]!!.isEmpty())
+            gameState.orderedColors.remove(move.piece.color)
     }
 
     /** Checks if the given [move] is able to be performed for the given [gameState]. */

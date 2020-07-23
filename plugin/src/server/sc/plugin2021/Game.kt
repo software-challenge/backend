@@ -1,5 +1,6 @@
 package sc.plugin2021
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
@@ -85,7 +86,52 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
     }
     
     override fun getScoreFor(player: Player): PlayerScore {
-        TODO("Not yet implemented")
+        val team = player.color as Team
+        logger.debug("Get score for player $team (violated: ${if(player.hasViolated()) "yes" else "no"})")
+        val opponent = gameState.getOpponent(player)!!
+        val winCondition = checkWinCondition()
+        
+        var cause: ScoreCause = ScoreCause.REGULAR
+        var reason: String = ""
+        var score: Int = Constants.LOSE_SCORE
+        val points = gameState.getPointsForPlayer(team)
+        
+        // Is the game already finished?
+        if (winCondition?.reason == WinReason.EQUAL_SCORE)
+            score = Constants.DRAW_SCORE
+        if (winCondition?.reason == WinReason.DIFFERING_SCORES)
+            if (winCondition.winner == team)
+                score = Constants.WIN_SCORE
+        
+        // Opponent did something wrong
+        if (opponent.hasViolated() && !player.hasViolated() ||
+                opponent.hasLeft() && !player.hasLeft() ||
+                opponent.hasSoftTimeout() ||
+                opponent.hasHardTimeout())
+            score = Constants.WIN_SCORE
+        
+        when {
+            player.hasSoftTimeout() -> {
+                cause = ScoreCause.SOFT_TIMEOUT
+                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).softTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+            }
+            player.hasHardTimeout() -> {
+                cause = ScoreCause.SOFT_TIMEOUT
+                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+            }
+            player.hasViolated() -> {
+                cause = ScoreCause.RULE_VIOLATION
+                reason = player.violationReason!!
+            }
+            player.hasLeft() -> {
+                cause = ScoreCause.LEFT
+                reason = "Der Spieler hat das Spiel verlassen"
+            }
+            else -> {
+                score = Constants.DRAW_SCORE
+            }
+        }
+        return PlayerScore(cause, reason, score, points)
     }
     
     override fun getTimeoutFor(player: Player): ActionTimeout =
