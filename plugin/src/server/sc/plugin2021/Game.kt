@@ -8,6 +8,7 @@ import sc.framework.plugins.RoundBasedGameInstance
 import sc.framework.plugins.Player
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
+import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
 
@@ -51,8 +52,24 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         return players
     }
     
-    override fun checkWinCondition(): WinCondition {
-        TODO("Not yet implemented")
+    /**
+     * Checks if any player can still make moves.
+     * If so, returns null; otherwise returns
+     * the player with the highest cumulative score of its colors
+     */
+    override fun checkWinCondition(): WinCondition? {
+        if (!gameState.orderedColors.isEmpty())
+            return null
+        
+        val scoreMap: Map<Team, Int> = Team.valids().map {
+            it to gameState.getPointsForPlayer(it)
+        }.toMap()
+        
+        if (scoreMap[Team.ONE]!! > scoreMap[Team.TWO]!!)
+            return WinCondition(Team.ONE, WinReason.DIFFERING_SCORES)
+        if (scoreMap[Team.TWO]!! > scoreMap[Team.ONE]!!)
+            return WinCondition(Team.TWO, WinReason.DIFFERING_SCORES)
+        return WinCondition(null, WinReason.EQUAL_SCORE)
     }
     
     override fun loadGameInfo(gameInfo: Any?) {
@@ -67,7 +84,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         TODO("Not yet implemented")
     }
     
-    override fun getScoreFor(p: Player?): PlayerScore {
+    override fun getScoreFor(player: Player): PlayerScore {
         TODO("Not yet implemented")
     }
     

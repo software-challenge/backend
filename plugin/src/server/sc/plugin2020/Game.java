@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.api.plugins.ITeam;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.Player;
@@ -13,6 +12,7 @@ import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2020.util.Configuration;
 import sc.plugin2020.util.Constants;
 import sc.plugin2020.util.GameRuleLogic;
+import sc.plugin2020.util.WinReason;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
 

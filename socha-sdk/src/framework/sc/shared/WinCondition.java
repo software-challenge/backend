@@ -8,13 +8,13 @@ public class WinCondition implements Cloneable {
   private final ITeam<? extends ITeam<?>> winner;
 
   /** Sieggrund */
-  private final WinReason reason;
+  private final IWinReason reason;
 
   public ITeam<?> getWinner() {
     return winner;
   }
 
-  public WinReason getReason() {
+  public IWinReason getReason() {
     return reason;
   }
 
@@ -24,7 +24,7 @@ public class WinCondition implements Cloneable {
    * @param winner Farbe des Siegers
    * @param reason Text, der Sieg beschreibt
    */
-  public WinCondition(ITeam <? extends ITeam<?>> winner, WinReason reason) {
+  public WinCondition(ITeam <? extends ITeam<?>> winner, IWinReason reason) {
     this.winner = winner;
     this.reason = reason;
   }

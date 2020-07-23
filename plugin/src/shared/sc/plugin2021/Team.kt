@@ -15,4 +15,8 @@ enum class Team(override val index: Int, val colors: List<Color>): ITeam<Team> {
         override fun opponent(): Team = ONE
         override fun toString(): String = "Two"
     };
+    
+    companion object {
+        fun valids() = listOf(ONE, TWO)
+    }
 }
