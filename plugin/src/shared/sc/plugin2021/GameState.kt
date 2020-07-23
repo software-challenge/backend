@@ -47,6 +47,7 @@ class GameState @JvmOverloads constructor(
     
     @XStreamAsAttribute
     var currentColor: Color
+        get() = currentColorFromTurn()
     
     @XStreamAsAttribute
     override var turn: Int = turn
@@ -65,7 +66,7 @@ class GameState @JvmOverloads constructor(
         currentColor = currentColorFromTurn()
     }
     
-    fun currentColorFromTurn(): Color =
+    private fun currentColorFromTurn(): Color =
             orderedColors[turn % 4]
     
     fun addPlayer(player: Player) {
