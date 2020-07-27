@@ -1,35 +1,42 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 
 /** A Piece has a color, a position and a normalised shape. */
-class Piece(val color: Color = Color.BLUE,
-            val kind: Int = 0,
-            val rotation: Rotation = Rotation.NONE,
-            val isFlipped: Boolean = false,
-            val position: Coordinates = PieceShape.origin) {
+//@XStreamAlias(value = "piece")
+class Piece(@XStreamAsAttribute val color: Color = Color.BLUE,
+            @XStreamAsAttribute val kind: Int = 0,
+            @XStreamAsAttribute val rotation: Rotation = Rotation.NONE,
+            @XStreamAsAttribute val isFlipped: Boolean = false,
+            @XStreamAsAttribute val position: Coordinates = PieceShape.origin) {
     
     @XStreamOmitField
-    val shape: PieceShape = PieceShape.shapes[kind]?.flip(isFlipped)?.rotate(rotation) ?:
-            throw ArrayIndexOutOfBoundsException("The Piece type must be between 0 and 20 (was $kind)")
+    val shape: PieceShape
     
     @XStreamOmitField
-    var coordinates: Set<Coordinates> = shape.asVectors.map { position + it }.toSet()
-        private set
+    val coordinates: Set<Coordinates>
     
-    @XStreamOmitField
-    private val description: String =
-            "$color Piece $kind:${rotation.value}${if(isFlipped) " (flipped)" else ""} [${position.x},${position.y}]"
     
-    override fun toString(): String = description
+    init {
+        shape = PieceShape.shapes[kind]?.flip(isFlipped)?.rotate(rotation)
+                ?: throw ArrayIndexOutOfBoundsException("The Piece type must be between 0 and 20 (was $kind)")
+        coordinates = shape.asVectors.map { position + it }.toSet()
+    }
+
+    override fun toString(): String =
+            "$color Piece $kind:${rotation.value}${if (isFlipped) " (flipped)" else ""} [${position.x},${position.y}]"
     
     override fun equals(other: Any?): Boolean {
         return other is Piece &&
-                color == other.color &&
-                shape == other.shape &&
-                position == other.position
+                other.color == color &&
+                other.kind == kind &&
+                other.rotation == rotation &&
+                other.isFlipped == isFlipped &&
+                other.position == position
     }
-    
+
     override fun hashCode(): Int {
         var result = color.hashCode()
         result = 31 * result + coordinates.hashCode()

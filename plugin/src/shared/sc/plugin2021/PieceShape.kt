@@ -1,5 +1,7 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.plugin2021.util.Constants
 import kotlin.math.min
 import kotlin.math.max
@@ -7,9 +9,11 @@ import kotlin.math.max
 // data structure to represent one shape of piece of Blokus. There are 21 different kinds, see https://en.wikipedia.org/wiki/Blokus
 // The shapes are represented as coordinate list of occupied fields, where the left upper corner of a shape is the origin (0,0), x-axis going to the right and y-axis going down
 class PieceShape(coordinates: Set<Coordinates>) {
-    val coordinates: Set<Coordinates> = align(coordinates)
-    val asVectors: Set<Vector> = coordinates.map { it - origin }.toSet()
-    val dimension: Vector
+    @XStreamAsAttribute val coordinates: Set<Coordinates> = align(coordinates)
+    @XStreamAsAttribute val dimension: Vector
+    val asVectors: Set<Vector> by lazy {
+        coordinates.map { it - origin }.toSet()
+    }
     
     init {
         var dx = 0
@@ -20,7 +24,7 @@ class PieceShape(coordinates: Set<Coordinates>) {
         }
         dimension = Vector(dx, dy)
     }
-    
+
     /** Rotates the given shape based on the given rotation. */
     fun rotate(rotation: Rotation): PieceShape = when(rotation) {
         Rotation.NONE   -> this
@@ -28,7 +32,7 @@ class PieceShape(coordinates: Set<Coordinates>) {
         Rotation.MIRROR -> align(mirror())
         Rotation.LEFT   -> align(turnLeft())
     }
-    
+
     /** Flips the given shape along the y-axis */
     fun flip(shouldFlip: Boolean = true): PieceShape = when(shouldFlip) {
         false -> this
@@ -36,25 +40,25 @@ class PieceShape(coordinates: Set<Coordinates>) {
             Coordinates(-it.x, it.y)
         }.toSet()))
     }
-    
+
     private fun mirror(): PieceShape {
         return PieceShape(coordinates.map {
             Coordinates(-it.x, -it.y)
         }.toSet())
     }
-    
+
     private fun turnRight(): PieceShape {
         return PieceShape(coordinates.map {
             Coordinates(it.y, -it.x)
         }.toSet())
     }
-    
+
     private fun turnLeft(): PieceShape {
         return PieceShape(coordinates.map {
             Coordinates(-it.y, it.x)
         }.toSet())
     }
-    
+
     companion object {
         fun align(coordinates: Set<Coordinates>): Set<Coordinates> {
             var minX = Constants.BOARD_SIZE
@@ -69,9 +73,9 @@ class PieceShape(coordinates: Set<Coordinates>) {
         }
         fun align(shape: PieceShape): PieceShape =
                 PieceShape(align(shape.coordinates))
-        
+    
         val origin = Coordinates(0, 0)
-        
+    
         val shapes: Map<Int, PieceShape> = mapOf(
                 0 to PieceShape(setOf(Coordinates(0, 0))),
                 1 to PieceShape(setOf(Coordinates(0, 0), Coordinates(1, 0))),
@@ -101,9 +105,8 @@ class PieceShape(coordinates: Set<Coordinates>) {
         return other is PieceShape && other.coordinates.equals(coordinates) ||
                 other is Set<*> && other == coordinates
     }
-    
+
     override fun hashCode(): Int {
         return coordinates.hashCode()
     }
-    
 }

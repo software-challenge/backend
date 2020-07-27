@@ -13,7 +13,8 @@ object Configuration {
     val classesToRegister: List<Class<*>>
         get() = listOf(Board::class.java, Coordinates::class.java,
                 Field::class.java, GameState::class.java,
-                Move::class.java, Piece::class.java)
+                Move::class.java, Piece::class.java,
+                Color::class.java, Team::class.java)
 
     init {
         xStream = XStream()

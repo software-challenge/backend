@@ -1,5 +1,6 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.XStream
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import sc.plugin2021.util.Configuration
@@ -39,18 +40,39 @@ class PieceTest: StringSpec({
         piece.coordinates shouldBe coordinates
     }
     "XML conversion" {
-        val pieces: Map<Piece, String> = (listOf(
+        val pieces = listOf(
                 Piece(Color.YELLOW, 4, Rotation.RIGHT, false),
                 Piece(Color.RED, 20, Rotation.LEFT, false),
                 Piece(Color.BLUE, 15, Rotation.MIRROR, true),
                 Piece(Color.GREEN, 2, Rotation.NONE, true, Coordinates(5, 9))
-        ) zip listOf(
-                "YELLOW Piece 4:1 [0,0]",
-                "RED Piece 20:3 [0,0]",
-                "BLUE Piece 15:2 (flipped) [0,0]",
-                "GREEN Piece 2:0 (flipped) [5,9]"
-        )).toMap()
+        )
         
-        pieces.forEach { println(Configuration.xStream.toXML(it.key)) }
+        Configuration.xStream.toXML(pieces[0]) shouldBe """
+            <sc.plugin2021.Piece color="YELLOW" kind="4" rotation="RIGHT" isFlipped="false">
+              <position x="0" y="0"/>
+            </sc.plugin2021.Piece>
+        """.trimIndent()
+        Configuration.xStream.toXML(pieces[1]) shouldBe """
+            <sc.plugin2021.Piece color="RED" kind="20" rotation="LEFT" isFlipped="false">
+              <position x="0" y="0"/>
+            </sc.plugin2021.Piece>
+        """.trimIndent()
+        Configuration.xStream.toXML(pieces[2]) shouldBe """
+            <sc.plugin2021.Piece color="BLUE" kind="15" rotation="MIRROR" isFlipped="true">
+              <position x="0" y="0"/>
+            </sc.plugin2021.Piece>
+        """.trimIndent()
+        Configuration.xStream.toXML(pieces[3]) shouldBe """
+            <sc.plugin2021.Piece color="GREEN" kind="2" rotation="NONE" isFlipped="true">
+              <position x="5" y="9"/>
+            </sc.plugin2021.Piece>
+        """.trimIndent()
+        
+        pieces.forEach{
+            val xml = Configuration.xStream.toXML(it)
+            val converted = Configuration.xStream.fromXML(xml)
+            converted.toString() shouldBe it.toString()
+            converted shouldBe it
+        }
     }
 })

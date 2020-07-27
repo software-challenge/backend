@@ -1,6 +1,11 @@
 package sc.plugin2021
 
-data class Coordinates(val x: Int, val y: Int) {
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+
+data class Coordinates(
+        @XStreamAsAttribute val x: Int,
+        @XStreamAsAttribute val y: Int) {
+    
     override fun toString(): String = "[$x, $y]"
     
     operator fun plus(vector: Vector): Coordinates {
@@ -14,7 +19,9 @@ data class Coordinates(val x: Int, val y: Int) {
     }
 }
 
-data class Vector(val dx: Int, val dy: Int) {
+data class Vector(
+        @XStreamAsAttribute val dx: Int,
+        @XStreamAsAttribute val dy: Int) {
     operator fun times(scalar: Int): Vector {
         return Vector(scalar * dx, scalar * dy)
     }
