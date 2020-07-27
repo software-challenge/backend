@@ -1,6 +1,5 @@
 package sc.plugin2021
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
@@ -37,21 +36,28 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
                 ?: throw NullPointerException("Too many players joined the game!")
         
         players.add(player)
+        playerMap[player.color as Team] = player
         gameState.addPlayer(player)
         return player
     }
     
     override fun getWinners(): MutableList<Player> {
-        TODO("Not yet implemented")
+        val winCondition = checkWinCondition()
+        if (winCondition != null)
+            return winCondition.winner.let{players}
+        
+        // If no win condition is met, the player with highest score wins.
+        return listOfNotNull(players.maxBy {
+            gameState.getPointsForPlayer(it.color)
+        }).toMutableList()
     }
     
-    override fun getPlayerScores(): MutableList<PlayerScore> {
-        TODO("Not yet implemented")
-    }
+    override fun getPlayerScores(): MutableList<PlayerScore> =
+            getPlayers().map { getScoreFor(it) }.toMutableList()
     
-    override fun getPlayers(): MutableList<Player> {
-        return players
-    }
+    override fun getPlayers(): MutableList<Player> = players
+    
+    private val playerMap = mutableMapOf<Team, Player>()
     
     /**
      * Checks if any player can still make moves.
@@ -59,7 +65,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
      * the player with the highest cumulative score of its colors
      */
     override fun checkWinCondition(): WinCondition? {
-        if (!gameState.orderedColors.isEmpty())
+        if (gameState.orderedColors.isNotEmpty())
             return null
         
         val scoreMap: Map<Team, Int> = Team.valids().map {
@@ -154,9 +160,6 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         }
     }
     
-    override fun getCurrentState(): IGameState {
-        TODO("Not yet implemented")
-    }
-    
+    override fun getCurrentState(): IGameState = gameState
     
 }
