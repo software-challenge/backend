@@ -1,8 +1,7 @@
-package sc.plugin2020.util
+package sc.server.helpers
 
 import sc.shared.IWinReason
 
-// Copy of Hive WinReason due to package import issues...
 enum class WinReason (override val message: String): IWinReason {
     BEE_SURROUNDED("Das Spiel ist beendet.\n%s hat die gegnerische Biene umzingelt."),
     BEE_FREE_FIELDS("Das Spiel ist beendet.\n%s hat mehr freie Felder um seine Biene."),

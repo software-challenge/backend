@@ -7,9 +7,9 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.plugin2020.util.WinReason;
 import sc.protocol.responses.ProtocolMessage;
 import sc.server.helpers.TestTeam;
+import sc.server.helpers.WinReason;
 import sc.shared.*;
 
 import java.util.List;
