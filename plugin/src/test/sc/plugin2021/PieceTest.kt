@@ -2,6 +2,7 @@ package sc.plugin2021
 
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
+import sc.plugin2021.util.Configuration
 
 
 class PieceTest: StringSpec({
@@ -36,5 +37,20 @@ class PieceTest: StringSpec({
         val piece = Piece(Color.RED, 2, Rotation.NONE, true, position)
     
         piece.coordinates shouldBe coordinates
+    }
+    "XML conversion" {
+        val pieces: Map<Piece, String> = (listOf(
+                Piece(Color.YELLOW, 4, Rotation.RIGHT, false),
+                Piece(Color.RED, 20, Rotation.LEFT, false),
+                Piece(Color.BLUE, 15, Rotation.MIRROR, true),
+                Piece(Color.GREEN, 2, Rotation.NONE, true, Coordinates(5, 9))
+        ) zip listOf(
+                "YELLOW Piece 4:1 [0,0]",
+                "RED Piece 20:3 [0,0]",
+                "BLUE Piece 15:2 (flipped) [0,0]",
+                "GREEN Piece 2:0 (flipped) [5,9]"
+        )).toMap()
+        
+        pieces.forEach { println(Configuration.xStream.toXML(it.key)) }
     }
 })
