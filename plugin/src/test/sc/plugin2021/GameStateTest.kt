@@ -16,11 +16,11 @@ class GameStateTest: StringSpec({
         
         gameState.board shouldBe Board()
         
-        gameState.undeployedPieceShapes[Color.BLUE]   shouldBe PieceShape.shapes
-        gameState.undeployedPieceShapes[Color.YELLOW] shouldBe PieceShape.shapes
-        gameState.undeployedPieceShapes[Color.RED]    shouldBe PieceShape.shapes
-        gameState.undeployedPieceShapes[Color.GREEN]  shouldBe PieceShape.shapes
-        gameState.undeployedPieceShapes[Color.NONE]   shouldBe emptyMap<Int, PieceShape>()
+        gameState.undeployedPieceShapes[Color.BLUE]   shouldBe (0 until 21).toSet()
+        gameState.undeployedPieceShapes[Color.YELLOW] shouldBe (0 until 21).toSet()
+        gameState.undeployedPieceShapes[Color.RED]    shouldBe (0 until 21).toSet()
+        gameState.undeployedPieceShapes[Color.GREEN]  shouldBe (0 until 21).toSet()
+        gameState.undeployedPieceShapes[Color.NONE]   shouldBe emptySet<Int>()
     
         gameState.deployedPieces[Color.BLUE]   shouldBe mutableListOf<Piece>()
         gameState.deployedPieces[Color.YELLOW] shouldBe mutableListOf<Piece>()
@@ -29,9 +29,9 @@ class GameStateTest: StringSpec({
         gameState.deployedPieces[Color.NONE]   shouldBe emptyList<Piece>()
      
         // TODO: adjust values accordingly
-        gameState.getPointsForPlayer(Team.ONE)  shouldBe 2
-        gameState.getPointsForPlayer(Team.TWO)  shouldBe 2
-        gameState.getPointsForPlayer(Team.NONE) shouldBe 1
+        gameState.getPointsForPlayer(Team.ONE)  shouldBe -178 // Twice the lowest score, once per color
+        gameState.getPointsForPlayer(Team.TWO)  shouldBe -178
+        gameState.getPointsForPlayer(Team.NONE) shouldBe 0
     }
     "GameStates know currently active Color" {
         var colorIter = Color.RED
@@ -51,8 +51,7 @@ class GameStateTest: StringSpec({
     "Pieces can only be placed once" {
         val gameState = GameState()
         val move = SetMove(
-                Piece(Color.BLUE, 4, Rotation.RIGHT, true))
-        gameState.board[2, 2] = Color.BLUE
+                Piece(Color.BLUE, 14, Rotation.RIGHT, true))
         
         gameState.undeployedPieceShapes[Color.BLUE]!!.size shouldBe 21
         gameState.deployedPieces[Color.BLUE]!!.size shouldBe 0

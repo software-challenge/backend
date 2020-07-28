@@ -2,10 +2,10 @@ package sc.plugin2021
 
 import sc.api.plugins.IMove
 
-sealed class Move: IMove {
-    abstract val piece: Piece
-    
-    override fun toString(): String = piece.toString()
+sealed class Move(val color: Color): IMove {
+    abstract override fun toString(): String
 }
 
-class SetMove(override val piece: Piece): Move()
+class SetMove(val piece: Piece): Move(piece.color) {
+    override fun toString(): String = piece.toString()
+}

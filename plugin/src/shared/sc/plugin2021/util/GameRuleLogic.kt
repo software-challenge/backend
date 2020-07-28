@@ -12,7 +12,7 @@ object GameRuleLogic {
      */
     @JvmStatic
     fun getPointsFromDeployedPieces(deployed: List<Piece>): Int {
-        if (deployed.size == Constants.ROUND_LIMIT) {
+        if (deployed.size == Constants.TOTAL_PIECE_SHAPES) {
             // Perfect score: 15 Points completion + 5 Points for solitary block last
             return if (deployed.last().kind == 0) 20
             // Placed each piece: 15 Points completion bonus
@@ -25,28 +25,31 @@ object GameRuleLogic {
     /** Performs the given [move] on the [gameState] if possible. */
     @JvmStatic
     fun performMove(gameState: GameState, move: Move) {
-        validateMove(gameState, move)
+        if (move !is SetMove)
+            throw InvalidMoveException("This is not a valid move", move)
+        
+        validateSetMove(gameState, move)
         
         move.piece.coordinates.forEach {
-            gameState.board[it] = move.piece.color
+            gameState.board[it] = move.color
         }
-        assert(gameState.undeployedPieceShapes[move.piece.color]!!.remove(move.piece.kind) != null)
-        gameState.deployedPieces[move.piece.color]!!.add(move.piece)
+        gameState.undeployedPieceShapes[move.color]!!.remove(move.piece.kind)
+        gameState.deployedPieces[move.color]!!.add(move.piece)
         
         // If it was the last piece for this color, remove him from the turn queue
-        if (gameState.undeployedPieceShapes[move.piece.color]!!.isEmpty())
-            gameState.orderedColors.remove(move.piece.color)
+        if (gameState.undeployedPieceShapes[move.color]!!.isEmpty())
+            gameState.orderedColors.remove(move.color)
     }
 
     /** Checks if the given [move] is able to be performed for the given [gameState]. */
     @JvmStatic
-    fun validateMove(gameState: GameState, move: Move) {
+    fun validateSetMove(gameState: GameState, move: SetMove) {
         // Check if colors match
-        if (move.piece.color != gameState.currentColor)
-            throw InvalidMoveException("The given Piece isn't from the active color: $move")
+        if (move.color != gameState.currentColor)
+            throw InvalidMoveException("The given Piece isn't from the active color", move)
         
         // Check if piece has already been placed
-        gameState.undeployedPieceShapes[move.piece.color]!![move.piece.kind] ?:
+        gameState.undeployedPieceShapes[move.color]!!.find { it == move.piece.kind } ?:
                 throw InvalidMoveException("Piece #${move.piece.kind} has already been placed before", move)
         
         move.piece.coordinates.forEach {
@@ -58,20 +61,20 @@ object GameRuleLogic {
             if (isObstructed(gameState.board, it))
                 throw InvalidMoveException("Field $it already belongs to ${gameState.board[it].color}", move)
             // Checks if a part of the piece would border on another piece of same color
-            if (bordersOnColor(gameState.board, it, move.piece.color))
-                throw InvalidMoveException("Field $it already borders on ${move.piece.color}", move)
+            if (bordersOnColor(gameState.board, it, move.color))
+                throw InvalidMoveException("Field $it already borders on ${move.color}", move)
         }
-        if (gameState.deployedPieces[move.piece.color].isNullOrEmpty()) {
+        if (gameState.deployedPieces[move.color].isNullOrEmpty()) {
             // If it's the first piece, check if it's a pentomino
             if (move.piece.coordinates.size < 5)
                 throw InvalidMoveException("Piece ${move.piece.kind} is not a pentomino", move)
             // and check if it touches the color's respective corner
-            if (move.piece.coordinates.none { it == move.piece.color.corner })
+            if (move.piece.coordinates.none { it == move.color.corner })
                 throw InvalidMoveException("The piece doesn't touch the color's corner", move)
         }
         else {
             // Check if the piece is connected to at least one tile of same color by corner
-            if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.piece.color) })
+            if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.color) })
                 throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
         }
     }

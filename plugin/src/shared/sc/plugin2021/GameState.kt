@@ -3,10 +3,10 @@ package sc.plugin2021
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
-import sc.api.plugins.IBoard
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.api.plugins.ITeam
+import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 
 @XStreamAlias(value = "state")
@@ -22,12 +22,12 @@ class GameState @JvmOverloads constructor(
     override val board: Board = Board()
     
     @XStreamAsAttribute
-    val undeployedPieceShapes: Map<Color, MutableMap<Int, PieceShape>> = mapOf(
-            Color.BLUE   to PieceShape.shapes.toMutableMap(),
-            Color.YELLOW to PieceShape.shapes.toMutableMap(),
-            Color.RED    to PieceShape.shapes.toMutableMap(),
-            Color.GREEN  to PieceShape.shapes.toMutableMap(),
-            Color.NONE   to mutableMapOf<Int, PieceShape>()
+    val undeployedPieceShapes: Map<Color, MutableSet<Int>> = mapOf(
+            Color.BLUE   to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet(),
+            Color.YELLOW to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet(),
+            Color.RED    to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet(),
+            Color.GREEN  to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet(),
+            Color.NONE   to mutableSetOf<Int>()
     )
     @XStreamAsAttribute
     val deployedPieces: Map<Color, MutableList<Piece>> = mapOf(
@@ -79,8 +79,8 @@ class GameState @JvmOverloads constructor(
     override fun getPointsForPlayer(team: ITeam<*>): Int =
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
-    private fun getPointsForColor(color: Color): Int =
-            GameRuleLogic.getPointsFromDeployedPieces(deployedPieces[color]!!)
+    private fun getPointsForColor(color: Color): Int = if (color != Color.NONE)
+            GameRuleLogic.getPointsFromDeployedPieces(deployedPieces[color]!!) else 0
     
     override fun toString(): String = "GameState Zug $turn"
     

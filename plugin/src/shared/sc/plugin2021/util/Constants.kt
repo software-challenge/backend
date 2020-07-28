@@ -2,7 +2,7 @@ package sc.plugin2021.util
 
 object Constants {
     /** Hard limit based on amount of possible shapes. */
-    const val ROUND_LIMIT = 21
+    const val TOTAL_PIECE_SHAPES = 21
     
     const val LOSE_SCORE = 0
     const val DRAW_SCORE = 1

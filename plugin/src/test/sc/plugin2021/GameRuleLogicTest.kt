@@ -15,13 +15,13 @@ class GameRuleLogicTest: StringSpec({
         val gameState = GameState()
         
         assertThrows<InvalidMoveException> {
-            val invalidMove: Move = SetMove(Piece(Color.RED))
-            GameRuleLogic.validateMove(gameState, invalidMove)
+            val invalidMove = SetMove(Piece(Color.RED))
+            GameRuleLogic.validateSetMove(gameState, invalidMove)
         }
         assertDoesNotThrow {
-            val validMove: Move = SetMove(
+            val validMove = SetMove(
                     Piece(Color.BLUE, 17))
-            GameRuleLogic.validateMove(gameState, validMove)
+            GameRuleLogic.validateSetMove(gameState, validMove)
         }
     }
     "Position validation works" {
@@ -31,7 +31,7 @@ class GameRuleLogicTest: StringSpec({
         assertThrows<InvalidMoveException> {
             val invalidMove = SetMove(
                     Piece(Color.BLUE, 0, Rotation.NONE, false, Coordinates(-1, 2)))
-            GameRuleLogic.validateMove(gameState, invalidMove)
+            GameRuleLogic.validateSetMove(gameState, invalidMove)
         }
         GameRuleLogic.isObstructed(gameState.board, Coordinates(1, 1)) shouldBe true
         GameRuleLogic.isObstructed(gameState.board, Coordinates(0, 0)) shouldNotBe true
