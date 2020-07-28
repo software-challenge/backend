@@ -19,7 +19,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         val logger = LoggerFactory.getLogger(Game::class.java)
     }
     
-    val availableTeams = mutableListOf(Team.ONE, Team.TWO)
+    private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     val gameState = GameState()
     
     init {
