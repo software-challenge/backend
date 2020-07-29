@@ -37,11 +37,11 @@ object GameRuleLogic {
                 move.piece.coordinates.forEach {
                     gameState.board[it] = move.color
                 }
-                gameState.undeployedPieceShapes[move.color]!!.remove(move.piece.kind)
-                gameState.deployedPieces[move.color]!!.add(move.piece)
+                gameState.undeployedPieceShapes.getValue(move.color).remove(move.piece.kind)
+                gameState.deployedPieces.getValue(move.color).add(move.piece)
     
                 // If it was the last piece for this color, remove him from the turn queue
-                if (gameState.undeployedPieceShapes[move.color]!!.isEmpty())
+                if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty())
                     gameState.orderedColors.remove(move.color)
             }
         }
@@ -59,7 +59,7 @@ object GameRuleLogic {
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove) {
         // Check if piece has already been placed
-        gameState.undeployedPieceShapes[move.color]!!.find { it == move.piece.kind } ?:
+        gameState.undeployedPieceShapes.getValue(move.color).find { it == move.piece.kind } ?:
                 throw InvalidMoveException("Piece #${move.piece.kind} has already been placed before", move)
         
         move.piece.coordinates.forEach {

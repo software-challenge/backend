@@ -22,21 +22,15 @@ class GameState @JvmOverloads constructor(
     override val board: Board = Board()
     
     @XStreamAsAttribute
-    val undeployedPieceShapes: Map<Color, MutableSet<Int>> = mapOf(
-            Color.BLUE   to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet(),
-            Color.YELLOW to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet(),
-            Color.RED    to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet(),
-            Color.GREEN  to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet(),
-            Color.NONE   to mutableSetOf<Int>()
-    )
+    val undeployedPieceShapes: Map<Color, MutableSet<Int>> = Color.values().map {
+        if (it == Color.NONE) it to mutableSetOf<Int>()
+        else it to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet()
+    }.toMap()
+    
     @XStreamAsAttribute
-    val deployedPieces: Map<Color, MutableList<Piece>> = mapOf(
-            Color.BLUE   to mutableListOf<Piece>(),
-            Color.YELLOW to mutableListOf<Piece>(),
-            Color.RED    to mutableListOf<Piece>(),
-            Color.GREEN  to mutableListOf<Piece>(),
-            Color.NONE   to mutableListOf<Piece>()
-    )
+    val deployedPieces: Map<Color, MutableList<Piece>> = Color.values().map {
+        it to mutableListOf<Piece>()
+    }.toMap()
     
     @XStreamAsAttribute
     override var currentTeam = currentPlayerFromTurn() as Team
@@ -80,7 +74,7 @@ class GameState @JvmOverloads constructor(
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
     private fun getPointsForColor(color: Color): Int = if (color != Color.NONE)
-            GameRuleLogic.getPointsFromDeployedPieces(deployedPieces[color]!!) else 0
+            GameRuleLogic.getPointsFromDeployedPieces(deployedPieces.getValue(color)) else 0
     
     override fun toString(): String = "GameState Zug $turn"
     
