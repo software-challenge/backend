@@ -25,29 +25,39 @@ object GameRuleLogic {
     /** Performs the given [move] on the [gameState] if possible. */
     @JvmStatic
     fun performMove(gameState: GameState, move: Move) {
-        if (move !is SetMove)
-            throw InvalidMoveException("This is not a valid move", move)
+        validateMoveColor(gameState, move)
         
-        validateSetMove(gameState, move)
-        
-        move.piece.coordinates.forEach {
-            gameState.board[it] = move.color
+        when (move) {
+            is PassMove -> {
+                gameState.orderedColors.remove(move.color)
+            }
+            is SetMove -> {
+                validateSetMove(gameState, move)
+    
+                move.piece.coordinates.forEach {
+                    gameState.board[it] = move.color
+                }
+                gameState.undeployedPieceShapes[move.color]!!.remove(move.piece.kind)
+                gameState.deployedPieces[move.color]!!.add(move.piece)
+    
+                // If it was the last piece for this color, remove him from the turn queue
+                if (gameState.undeployedPieceShapes[move.color]!!.isEmpty())
+                    gameState.orderedColors.remove(move.color)
+            }
         }
-        gameState.undeployedPieceShapes[move.color]!!.remove(move.piece.kind)
-        gameState.deployedPieces[move.color]!!.add(move.piece)
-        
-        // If it was the last piece for this color, remove him from the turn queue
-        if (gameState.undeployedPieceShapes[move.color]!!.isEmpty())
-            gameState.orderedColors.remove(move.color)
+    }
+    
+    /** Checks if the given [move] has the right [color]. */
+    @JvmStatic
+    fun validateMoveColor(gameState: GameState, move: Move) {
+        // Check if colors match
+        if (move.color != gameState.currentColor)
+            throw InvalidMoveException("The given Move comes from an inactive color", move)
     }
 
     /** Checks if the given [move] is able to be performed for the given [gameState]. */
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove) {
-        // Check if colors match
-        if (move.color != gameState.currentColor)
-            throw InvalidMoveException("The given Piece isn't from the active color", move)
-        
         // Check if piece has already been placed
         gameState.undeployedPieceShapes[move.color]!!.find { it == move.piece.kind } ?:
                 throw InvalidMoveException("Piece #${move.piece.kind} has already been placed before", move)

@@ -94,4 +94,14 @@ class GameRuleLogicTest: StringSpec({
         val perfectPieces = allPieces.reversed()
         GameRuleLogic.getPointsFromDeployedPieces(perfectPieces) shouldBe 20
     }
+    "PassMoves let you pass out" {
+        val gameState = GameState()
+        assertThrows<InvalidMoveException> {
+            GameRuleLogic.performMove(gameState, PassMove(Color.RED))
+        }
+        assertDoesNotThrow {
+            GameRuleLogic.performMove(gameState, PassMove(Color.BLUE))
+        }
+        gameState.orderedColors.size shouldBe 3
+    }
 })

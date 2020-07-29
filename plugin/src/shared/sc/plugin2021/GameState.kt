@@ -67,7 +67,7 @@ class GameState @JvmOverloads constructor(
     }
     
     private fun currentColorFromTurn(): Color =
-            orderedColors[turn % 4]
+            orderedColors[turn % orderedColors.size]
     
     fun addPlayer(player: Player) {
         when(player.color) {
