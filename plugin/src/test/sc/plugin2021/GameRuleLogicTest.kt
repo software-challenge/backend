@@ -46,7 +46,6 @@ class GameRuleLogicTest: StringSpec({
     "The first piece's special rules work" {
         // Piece 12 is:   # # #
         //              # #
-        val pieceDimension = PieceShape.shapes[12]?.dimension ?: Vector(0, 0)
         val validPieces = listOf(
                 Piece(Color.BLUE,   12, isFlipped = true),
                 Piece(Color.YELLOW, 12, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
