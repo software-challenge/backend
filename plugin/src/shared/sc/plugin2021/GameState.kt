@@ -2,7 +2,6 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.api.plugins.ITeam
@@ -13,9 +12,9 @@ import sc.plugin2021.util.GameRuleLogic
 class GameState @JvmOverloads constructor(
         override var first: Player = Player(Team.ONE),
         override var second: Player = Player(Team.TWO),
-        turn: Int = 0,
         override var lastMove: Move? = null,
-        startColor: Color = Color.BLUE
+        startTurn: Int = 1,
+        val startColor: Color = Color.BLUE
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     @XStreamAsAttribute
@@ -32,36 +31,44 @@ class GameState @JvmOverloads constructor(
         it to mutableListOf<Piece>()
     }.toMap()
     
-    @XStreamAsAttribute
-    override var currentTeam = currentPlayerFromTurn() as Team
-        private set
+    override val currentTeam
+        get() = currentColor.team
     
-    @XStreamOmitField
+    @XStreamAsAttribute
     val orderedColors: MutableList<Color> = mutableListOf()
     
     @XStreamAsAttribute
-    var currentColor: Color
-        get() = currentColorFromTurn()
+    private var currentColorIndex: Int = 0
+    
+    val currentColor: Color
+        get() = orderedColors[currentColorIndex]
     
     @XStreamAsAttribute
-    override var turn: Int = turn
+    override var turn: Int = 1
         set(value) {
+            advance(value - field)
             field = value
-            currentTeam = currentPlayerFromTurn() as Team
-            currentColor = currentColorFromTurn()
         }
+    
+    @XStreamAsAttribute
+    override var round: Int = 1
     
     init {
-        var _startColor = startColor
-        for (x in 0 until 4) {
-            orderedColors.add(_startColor)
-            _startColor = _startColor.next
+        var colorIter = startColor
+        for (x in 0 until Constants.COLORS) {
+            orderedColors.add(colorIter)
+            colorIter = colorIter.next
         }
-        currentColor = currentColorFromTurn()
+        turn = startTurn
     }
     
-    private fun currentColorFromTurn(): Color =
-            orderedColors[turn % orderedColors.size]
+    private fun advance(turns: Int) {
+        if (turns < 0) throw IndexOutOfBoundsException("Can't go back in turns (Request was $turns), expected value bigger than $turn")
+        
+        val roundIncrementHelper = currentColorIndex + turns
+        currentColorIndex = roundIncrementHelper % orderedColors.size
+        round += (roundIncrementHelper - currentColorIndex) / orderedColors.size
+    }
     
     fun addPlayer(player: Player) {
         when(player.color) {

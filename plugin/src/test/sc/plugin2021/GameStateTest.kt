@@ -1,6 +1,5 @@
 package sc.plugin2021
 
-import com.thoughtworks.xstream.XStream
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -9,7 +8,6 @@ import sc.plugin2021.util.Configuration
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.InvalidMoveException
 
-// TODO: add more extensive tests with different GameStates
 class GameStateTest: StringSpec({
     "GameState starts correctly" {
         val gameState = GameState()
@@ -38,37 +36,38 @@ class GameStateTest: StringSpec({
         val gameState = GameState(startColor = colorIter)
         
         for (x in 0 until 4) {
-            gameState.orderedColors[x] shouldBe colorIter
+            gameState.currentColor shouldBe colorIter
+            gameState.turn++
             colorIter = colorIter.next
         }
     
-        gameState.currentColor = Color.RED
+        gameState.currentColor shouldBe  Color.RED
         gameState.turn++
-        gameState.currentColor = Color.GREEN
-        gameState.turn = 2
-        gameState.currentColor = Color.YELLOW
+        gameState.currentColor shouldBe  Color.GREEN
+        gameState.turn += 2
+        gameState.currentColor shouldBe  Color.YELLOW
     }
     "Pieces can only be placed once" {
         val gameState = GameState()
         val move = SetMove(
                 Piece(Color.BLUE, 14, Rotation.RIGHT, true))
         
-        gameState.undeployedPieceShapes[Color.BLUE]!!.size shouldBe 21
-        gameState.deployedPieces[Color.BLUE]!!.size shouldBe 0
+        gameState.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 21
+        gameState.deployedPieces.getValue(Color.BLUE).size shouldBe 0
         assertDoesNotThrow {
             GameRuleLogic.performMove(gameState, move)
         }
-        gameState.undeployedPieceShapes[Color.BLUE]!!.size shouldBe 20
-        gameState.deployedPieces[Color.BLUE]!!.size shouldBe 1
-        gameState.deployedPieces[Color.BLUE]!![0] shouldBe move.piece
+        gameState.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 20
+        gameState.deployedPieces.getValue(Color.BLUE).size shouldBe 1
+        gameState.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
         
-        gameState.turn = 4
+        gameState.turn += 4
         assertThrows<InvalidMoveException> {
             GameRuleLogic.performMove(gameState, move)
         }
-        gameState.undeployedPieceShapes[Color.BLUE]!!.size shouldBe 20
-        gameState.deployedPieces[Color.BLUE]!!.size shouldBe 1
-        gameState.deployedPieces[Color.BLUE]!![0] shouldBe move.piece
+        gameState.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 20
+        gameState.deployedPieces.getValue(Color.BLUE).size shouldBe 1
+        gameState.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
         
     }
     "XML conversion works" {
@@ -77,5 +76,31 @@ class GameStateTest: StringSpec({
     
         xstream.fromXML(xstream.toXML(state)).toString() shouldBe state.toString()
         xstream.fromXML(xstream.toXML(state))            shouldBe state
+    }
+    "GameStates advance accordingly" {
+        var gameState = GameState(startTurn = 3)
+        gameState.turn shouldBe 3
+        gameState.round shouldBe 1
+        gameState.currentColor shouldBe Color.RED
+        
+        gameState = GameState()
+        gameState.turn shouldBe 1
+        gameState.round shouldBe 1
+        gameState.currentColor shouldBe Color.BLUE
+    
+        gameState.turn +=10
+        gameState.turn shouldBe 11
+        gameState.round shouldBe 3
+        gameState.currentColor shouldBe Color.RED
+    
+        gameState.turn++
+        gameState.turn shouldBe 12
+        gameState.round shouldBe 3
+        gameState.currentColor shouldBe Color.GREEN
+    
+        gameState.turn++
+        gameState.turn shouldBe 13
+        gameState.round shouldBe 4
+        gameState.currentColor shouldBe Color.BLUE
     }
 })
