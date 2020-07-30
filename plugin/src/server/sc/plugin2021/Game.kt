@@ -154,6 +154,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
             logger.debug("Performing Move $data")
             logger.debug("Current Board: ${gameState.board}")
             GameRuleLogic.performMove(gameState, data)
+            gameState.turn++
             next(gameState.currentPlayer)
         } catch(e: InvalidMoveException) {
             super.catchInvalidMove(e, fromPlayer)

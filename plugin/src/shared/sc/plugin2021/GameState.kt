@@ -85,7 +85,7 @@ class GameState @JvmOverloads constructor(
             return GameRuleLogic.getPointsFromDeployedPieces(pieces)
     }
     
-    override fun toString(): String = "GameState Zug $turn"
+    override fun toString(): String = "GameState $round/$turn -> $currentColor"
     
     override fun equals(other: Any?): Boolean {
         return !(this === other) &&

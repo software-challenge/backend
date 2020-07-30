@@ -45,7 +45,7 @@ class Board(
     
     override fun toString(): String {
         return gameField.joinToString(separator = "") {
-            "${it.joinToString(separator = "") { it.letter.toString() }}\n"
+            "${it.joinToString(separator = "  ") { it.letter.toString() }}\n"
         }
     }
 }
