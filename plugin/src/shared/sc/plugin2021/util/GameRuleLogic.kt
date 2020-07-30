@@ -47,7 +47,7 @@ object GameRuleLogic {
         }
     }
     
-    /** Checks if the given [move] has the right [color]. */
+    /** Checks if the given [move] has the right [Color]. */
     @JvmStatic
     fun validateMoveColor(gameState: GameState, move: Move) {
         // Check if colors match
