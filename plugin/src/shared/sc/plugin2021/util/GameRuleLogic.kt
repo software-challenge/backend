@@ -79,9 +79,6 @@ object GameRuleLogic {
             // If it's the first piece, check if it's a pentomino
             if (move.piece.coordinates.size < 5)
                 throw InvalidMoveException("Piece ${move.piece.kind} is not a pentomino", move)
-            // and check if it touches the color's respective corner
-            if (move.piece.coordinates.none { it == move.color.corner })
-                throw InvalidMoveException("The piece doesn't touch the color's corner", move)
         } else {
             // Check if the piece is connected to at least one tile of same color by corner
             if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.color) })
