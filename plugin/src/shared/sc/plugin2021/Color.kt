@@ -16,4 +16,11 @@ enum class Color(val team: Team, val letter: Char, val corner: Coordinates) {
     
     lateinit var next: Color
         private set
+    
+    operator fun unaryPlus(): FieldContent = when(this) {
+        BLUE   -> FieldContent.BLUE
+        YELLOW -> FieldContent.YELLOW
+        RED    -> FieldContent.RED
+        GREEN  -> FieldContent.GREEN
+    }
 }
