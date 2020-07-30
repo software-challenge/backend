@@ -25,7 +25,7 @@ class GameRuleLogicTest: StringSpec({
     }
     "Position validation works" {
         val gameState: GameState = GameState()
-        gameState.board[Coordinates(1, 1)] = Color.BLUE
+        gameState.board[Coordinates(1, 1)] = FieldContent.BLUE
         
         assertThrows<InvalidMoveException> {
             val invalidMove = SetMove(

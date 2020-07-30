@@ -22,8 +22,7 @@ class GameState @JvmOverloads constructor(
     
     @XStreamAsAttribute
     val undeployedPieceShapes: Map<Color, MutableSet<Int>> = Color.values().map {
-        if (it == Color.NONE) it to mutableSetOf<Int>()
-        else it to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet()
+        it to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet()
     }.toMap()
     
     @XStreamAsAttribute
@@ -80,8 +79,10 @@ class GameState @JvmOverloads constructor(
     override fun getPointsForPlayer(team: ITeam<*>): Int =
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
-    private fun getPointsForColor(color: Color): Int = if (color != Color.NONE)
-            GameRuleLogic.getPointsFromDeployedPieces(deployedPieces.getValue(color)) else 0
+    private fun getPointsForColor(color: Color): Int {
+            val pieces = deployedPieces[color].let{listOf<Piece>()}
+            return GameRuleLogic.getPointsFromDeployedPieces(pieces)
+    }
     
     override fun toString(): String = "GameState Zug $turn"
     

@@ -15,15 +15,15 @@ class BoardTest : StringSpec({
     
         for (x in 0 until Constants.BOARD_SIZE) {
             for (y in 0 until Constants.BOARD_SIZE) {
-                board[x, y] shouldNotBeSameInstanceAs Field(Coordinates(x, y), Color.NONE)
-                board[x, y] shouldBe Field(Coordinates(x, y), Color.NONE)
+                board[x, y] shouldNotBeSameInstanceAs Field(Coordinates(x, y), FieldContent.EMPTY)
+                board[x, y] shouldBe Field(Coordinates(x, y), FieldContent.EMPTY)
             }
         }
         
-        board[0, 0] = Color.RED
-        board[1, 3] = Color.GREEN
-        board[5, 9] = Color.BLUE
-        board[8, 6] = Color.YELLOW
+        board[0, 0] = FieldContent.RED
+        board[1, 3] = FieldContent.GREEN
+        board[5, 9] = FieldContent.BLUE
+        board[8, 6] = FieldContent.YELLOW
         
         board.toString() shouldBe """
             R-------------------
@@ -54,13 +54,13 @@ class BoardTest : StringSpec({
         val newBoard = Board()
         
         val changingFields = setOf(
-                Field(Coordinates(2, 3), Color.YELLOW),
-                Field(Coordinates(19, 2), Color.YELLOW),
-                Field(Coordinates(8, 3), Color.YELLOW),
-                Field(Coordinates(4, 9), Color.YELLOW)
+                Field(Coordinates(2, 3), FieldContent.YELLOW),
+                Field(Coordinates(19, 2), FieldContent.YELLOW),
+                Field(Coordinates(8, 3), FieldContent.YELLOW),
+                Field(Coordinates(4, 9), FieldContent.YELLOW)
         )
         changingFields.forEach{
-            newBoard[it.coordinates] = it.color
+            newBoard[it.coordinates] = it.content
         }
         val changedFields = oldBoard.compare(newBoard)
         

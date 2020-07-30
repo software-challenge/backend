@@ -68,7 +68,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         if (gameState.orderedColors.isNotEmpty())
             return null
         
-        val scoreMap: Map<Team, Int> = Team.valids().map {
+        val scoreMap: Map<Team, Int> = Team.values().map {
             it to gameState.getPointsForPlayer(it)
         }.toMap()
         

@@ -55,10 +55,10 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     private lateinit var roomID: String
     
     /** The team the client belongs to in order to connect client and player. */
-    private var team: Team = when(id) {
+    private var team: Team? = when(id) {
             PlayerType.PLAYER_ONE -> Team.ONE
             PlayerType.PLAYER_TWO -> Team.TWO
-            else                  -> Team.NONE
+            else -> null
     }
     
     /** Tell this client to observe the game given by the preparation handler.

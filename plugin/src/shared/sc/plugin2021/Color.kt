@@ -1,12 +1,9 @@
 package sc.plugin2021
 
-import ch.qos.logback.core.pattern.color.BlueCompositeConverter
 import sc.plugin2021.Team
 import sc.plugin2021.util.Constants
 
 enum class Color(val team: Team, val letter: Char, val corner: Coordinates) {
-    NONE  (Team.NONE, '-', Coordinates(-1, -1)) { init {
-        NONE.next = NONE }},
     BLUE  (Team.ONE,  'B', Coordinates(0, 0)),
     
     YELLOW(Team.ONE,  'Y', Coordinates(Constants.BOARD_SIZE -1, 0)) { init {
@@ -19,4 +16,11 @@ enum class Color(val team: Team, val letter: Char, val corner: Coordinates) {
     
     lateinit var next: Color
         private set
+    
+    operator fun unaryPlus(): FieldContent = when(this) {
+        BLUE   -> FieldContent.BLUE
+        YELLOW -> FieldContent.YELLOW
+        RED    -> FieldContent.RED
+        GREEN  -> FieldContent.GREEN
+    }
 }
