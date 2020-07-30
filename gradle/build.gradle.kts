@@ -310,8 +310,6 @@ project("plugin") {
     }
     
     tasks.jar.get().archiveBaseName.set(game)
-    
-    tasks.test.get().useJUnitPlatform()
 }
 
 // == Utilities ==
