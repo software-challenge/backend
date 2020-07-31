@@ -1,10 +1,9 @@
 package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.plugin2021.util.Constants
-import kotlin.math.min
 import kotlin.math.max
+import kotlin.math.min
 
 // data structure to represent one shape of piece of Blokus. There are 21 different kinds, see https://en.wikipedia.org/wiki/Blokus
 // The shapes are represented as coordinate list of occupied fields, where the left upper corner of a shape is the origin (0,0), x-axis going to the right and y-axis going down
@@ -76,6 +75,7 @@ class PieceShape(coordinates: Set<Coordinates>) {
     
         val origin = Coordinates(0, 0)
     
+        // NOTE: Changing the keys of the shapes will break all code written with the old keys in mind!
         val shapes: Map<Int, PieceShape> = mapOf(
                 0 to PieceShape(setOf(Coordinates(0, 0))),
                 1 to PieceShape(setOf(Coordinates(0, 0), Coordinates(1, 0))),
