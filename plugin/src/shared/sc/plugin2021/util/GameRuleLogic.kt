@@ -14,7 +14,7 @@ object GameRuleLogic {
     fun getPointsFromDeployedPieces(deployed: List<Piece>): Int {
         if (deployed.size == Constants.TOTAL_PIECE_SHAPES) {
             // Perfect score: 15 Points completion + 5 Points for solitary block last
-            return if (deployed.last().kind == 0) 20
+            return if (deployed.last().kind == PieceShape.MONO) 20
             // Placed each piece: 15 Points completion bonus
             else 15
         }

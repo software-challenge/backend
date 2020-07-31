@@ -3,27 +3,25 @@ package sc.plugin2021
 import com.thoughtworks.xstream.XStream
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
-import sc.plugin2021.util.Configuration
+import sc.plugin2021.util.*
 
 
 class PieceTest: StringSpec({
     "Test Piece initialisation" {
         for (pieceShape in PieceShape.shapes) {
-            Piece(Color.GREEN, pieceShape.key, Rotation.NONE, false).shape shouldBe pieceShape.value
+            Piece(Color.GREEN, pieceShape.key, Rotation.NONE, false).shape shouldBe pieceShape.value.coordinates
         }
-        
-        Piece(Color.YELLOW, 4, Rotation.RIGHT, false).toString() shouldBe "YELLOW Piece 4:1 [0,0]"
-        Piece(Color.RED, 20, Rotation.LEFT, false).toString() shouldBe "RED Piece 20:3 [0,0]"
-        Piece(Color.BLUE, 15, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece 15:2 (flipped) [0,0]"
-        Piece(Color.GREEN, 2, Rotation.NONE, true, Coordinates(5, 9)).toString() shouldBe "GREEN Piece 2:0 (flipped) [5,9]"
+
+        Piece(Color.YELLOW, 4, Rotation.RIGHT, false).toString() shouldBe "YELLOW Piece TETRO_O:1 [0,0]"
+        Piece(Color.RED, 20, Rotation.LEFT, false).toString() shouldBe "RED Piece PENTO_Y:3 [0,0]"
+        Piece(Color.BLUE, 15, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece PENTO_P:2 (flipped) [0,0]"
+        Piece(Color.GREEN, 2, Rotation.NONE, true, Coordinates(5, 9)).toString() shouldBe "GREEN Piece TRIO_L:0 (flipped) [5,9]"
     }
     "Test PieceShape arithmetic" {
-        PieceShape(setOf(Coordinates(1, 2), Coordinates(3, 2))).coordinates.shouldBe(
-                setOf(Coordinates(0, 0), Coordinates(2, 0))
-        )
-        
+        setOf(Coordinates(1, 2), Coordinates(3, 2)).align() shouldBe setOf(Coordinates(0, 0), Coordinates(2, 0))
+
         for (pair in PieceShape.shapes) {
-            val shape = pair.value
+            val shape = pair.value.coordinates
             shape.rotate(Rotation.NONE) shouldBe shape
             shape.rotate(Rotation.RIGHT).rotate(Rotation.RIGHT) shouldBe shape.rotate(Rotation.MIRROR)
             shape.rotate(Rotation.MIRROR).rotate(Rotation.MIRROR) shouldBe shape
@@ -32,11 +30,29 @@ class PieceTest: StringSpec({
             shape.flip(true).flip() shouldBe shape
         }
     }
+    "Test Set transformation arithmetic" {
+        val shapes = listOf(
+                setOf(Coordinates(1, 0), Coordinates(2, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(0, 2)),
+                setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 2)),
+                setOf(Coordinates(2, 0), Coordinates(2, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(0, 2)),
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2))
+        )
+
+        PieceShape.PENTO_W.transform(Rotation.NONE,   false) shouldBe shapes[0]
+        PieceShape.PENTO_W.transform(Rotation.RIGHT,  false) shouldBe shapes[1]
+        PieceShape.PENTO_W.transform(Rotation.MIRROR, false) shouldBe shapes[2]
+        PieceShape.PENTO_W.transform(Rotation.LEFT,   false) shouldBe shapes[3]
+        PieceShape.PENTO_W.transform(Rotation.NONE,   true)  shouldBe shapes[1]
+        PieceShape.PENTO_W.transform(Rotation.RIGHT,  true)  shouldBe shapes[2]
+        PieceShape.PENTO_W.transform(Rotation.MIRROR, true)  shouldBe shapes[3]
+        PieceShape.PENTO_W.transform(Rotation.LEFT,   true)  shouldBe shapes[0]
+    }
     "Piece coordination calculation" {
         val position = Coordinates(2, 2)
         val coordinates = setOf(Coordinates(2, 2), Coordinates(3, 2), Coordinates(2, 3))
-        val piece = Piece(Color.RED, 2, Rotation.NONE, true, position)
+        val piece = Piece(Color.RED, PieceShape.TRIO_L, Rotation.NONE, true, position)
     
+        piece.shape shouldBe PieceShape.TRIO_L.coordinates.flip()
         piece.coordinates shouldBe coordinates
     }
     "XML conversion" {
@@ -46,28 +62,28 @@ class PieceTest: StringSpec({
                 Piece(Color.BLUE, 15, Rotation.MIRROR, true),
                 Piece(Color.GREEN, 2, Rotation.NONE, true, Coordinates(5, 9))
         )
-        
+
         Configuration.xStream.toXML(pieces[0]) shouldBe """
-            <sc.plugin2021.Piece color="YELLOW" kind="4" rotation="RIGHT" isFlipped="false">
+            <sc.plugin2021.Piece color="YELLOW" kind="TETRO_O" rotation="RIGHT" isFlipped="false">
               <position x="0" y="0"/>
             </sc.plugin2021.Piece>
         """.trimIndent()
         Configuration.xStream.toXML(pieces[1]) shouldBe """
-            <sc.plugin2021.Piece color="RED" kind="20" rotation="LEFT" isFlipped="false">
+            <sc.plugin2021.Piece color="RED" kind="PENTO_Y" rotation="LEFT" isFlipped="false">
               <position x="0" y="0"/>
             </sc.plugin2021.Piece>
         """.trimIndent()
         Configuration.xStream.toXML(pieces[2]) shouldBe """
-            <sc.plugin2021.Piece color="BLUE" kind="15" rotation="MIRROR" isFlipped="true">
+            <sc.plugin2021.Piece color="BLUE" kind="PENTO_P" rotation="MIRROR" isFlipped="true">
               <position x="0" y="0"/>
             </sc.plugin2021.Piece>
         """.trimIndent()
         Configuration.xStream.toXML(pieces[3]) shouldBe """
-            <sc.plugin2021.Piece color="GREEN" kind="2" rotation="NONE" isFlipped="true">
+            <sc.plugin2021.Piece color="GREEN" kind="TRIO_L" rotation="NONE" isFlipped="true">
               <position x="5" y="9"/>
             </sc.plugin2021.Piece>
         """.trimIndent()
-        
+
         pieces.forEach{
             val xml = Configuration.xStream.toXML(it)
             val converted = Configuration.xStream.fromXML(xml)

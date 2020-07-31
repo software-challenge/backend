@@ -3,26 +3,35 @@ package sc.plugin2021
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
+import sc.plugin2021.util.align
+import sc.plugin2021.util.flip
+import sc.plugin2021.util.print
+import sc.plugin2021.util.rotate
 
 /** A Piece has a color, a position and a normalised shape. */
 //@XStreamAlias(value = "piece")
 class Piece(@XStreamAsAttribute val color: Color = Color.BLUE,
-            @XStreamAsAttribute val kind: Int = 0,
+            @XStreamAsAttribute val kind: PieceShape = PieceShape.MONO,
             @XStreamAsAttribute val rotation: Rotation = Rotation.NONE,
             @XStreamAsAttribute val isFlipped: Boolean = false,
-            @XStreamAsAttribute val position: Coordinates = PieceShape.origin) {
+            @XStreamAsAttribute val position: Coordinates = Coordinates.origin) {
+    
+    constructor(color: Color = Color.BLUE,
+                kind: Int,
+                rotation: Rotation = Rotation.NONE,
+                isFlipped: Boolean = false,
+                position: Coordinates = Coordinates.origin):
+            this(color, PieceShape.shapes.getValue(kind), rotation, isFlipped, position)
     
     @XStreamOmitField
-    val shape: PieceShape
+    val shape: Set<Coordinates>
     
     @XStreamOmitField
     val coordinates: Set<Coordinates>
     
-    
     init {
-        shape = PieceShape.shapes[kind]?.flip(isFlipped)?.rotate(rotation)
-                ?: throw ArrayIndexOutOfBoundsException("The Piece type must be between 0 and 20 (was $kind)")
-        coordinates = shape.asVectors.map { position + it }.toSet()
+        shape = kind.transform(rotation, isFlipped)
+        coordinates = shape.map { position + +it }.toSet()
     }
 
     override fun toString(): String =
