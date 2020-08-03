@@ -79,7 +79,7 @@ object GameRuleLogic {
             if (move.piece.coordinates.size < 5)
                 throw InvalidMoveException("Piece ${move.piece.kind} is not a pentomino", move)
             // Check if it is placed correctly in a corner
-            if (move.piece.coordinates.none { isOnCorner(gameState.board, it)})
+            if (move.piece.coordinates.none { isOnCorner(it)})
                 // TODO: Add expected move to exception
                 throw InvalidMoveException("Expected the pentomino declaed as first piece", move)
         } else {
@@ -118,7 +118,7 @@ object GameRuleLogic {
     }
     
     @JvmStatic
-    fun isOnCorner(board: Board, position: Coordinates): Boolean = listOf(
+    fun isOnCorner(position: Coordinates): Boolean = listOf(
             Coordinates(0, 0),
             Coordinates(Constants.BOARD_SIZE - 1, 0),
             Coordinates(Constants.BOARD_SIZE - 1, Constants.BOARD_SIZE - 1),
