@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
+import sc.plugin2021.util.print
 import sc.shared.InvalidMoveException
 
 class GameRuleLogicTest: StringSpec({
@@ -68,6 +69,9 @@ class GameRuleLogicTest: StringSpec({
                     gameState.turn++
                 }
             }
+        }
+        validPieces.forEach{
+            it.coordinates.print(Vector(5, 5)).also{println()}
         }
         assertDoesNotThrow {
             val gameState = GameState()

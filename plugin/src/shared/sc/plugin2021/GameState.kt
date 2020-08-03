@@ -21,8 +21,8 @@ class GameState @JvmOverloads constructor(
     override val board: Board = Board()
     
     @XStreamAsAttribute
-    val undeployedPieceShapes: Map<Color, MutableSet<Int>> = Color.values().map {
-        it to (0 until Constants.TOTAL_PIECE_SHAPES).toMutableSet()
+    val undeployedPieceShapes: Map<Color, MutableSet<PieceShape>> = Color.values().map {
+        it to PieceShape.values().toMutableSet()
     }.toMap()
     
     @XStreamAsAttribute

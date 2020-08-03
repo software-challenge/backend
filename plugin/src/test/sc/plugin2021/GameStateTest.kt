@@ -14,10 +14,10 @@ class GameStateTest: StringSpec({
         
         gameState.board shouldBe Board()
         
-        gameState.undeployedPieceShapes[Color.BLUE]   shouldBe (0 until 21).toSet()
-        gameState.undeployedPieceShapes[Color.YELLOW] shouldBe (0 until 21).toSet()
-        gameState.undeployedPieceShapes[Color.RED]    shouldBe (0 until 21).toSet()
-        gameState.undeployedPieceShapes[Color.GREEN]  shouldBe (0 until 21).toSet()
+        gameState.undeployedPieceShapes[Color.BLUE]   shouldBe PieceShape.values().toSet()
+        gameState.undeployedPieceShapes[Color.YELLOW] shouldBe PieceShape.values().toSet()
+        gameState.undeployedPieceShapes[Color.RED]    shouldBe PieceShape.values().toSet()
+        gameState.undeployedPieceShapes[Color.GREEN]  shouldBe PieceShape.values().toSet()
     
         gameState.deployedPieces[Color.BLUE]   shouldBe mutableListOf<Piece>()
         gameState.deployedPieces[Color.YELLOW] shouldBe mutableListOf<Piece>()

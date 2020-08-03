@@ -17,12 +17,20 @@ data class Coordinates(
     operator fun minus(other: Vector): Coordinates {
         return Coordinates(x - other.dx, y - other.dy)
     }
+    operator fun unaryPlus(): Vector = Vector(x, y)
+    
+    companion object {
+        val origin = Coordinates(0, 0)
+    }
 }
 
 data class Vector(
         @XStreamAsAttribute val dx: Int,
         @XStreamAsAttribute val dy: Int) {
+    val area: Int = dx * dy
+    
     operator fun times(scalar: Int): Vector {
         return Vector(scalar * dx, scalar * dy)
     }
+    operator fun unaryPlus(): Coordinates = Coordinates(dx, dy)
 }
