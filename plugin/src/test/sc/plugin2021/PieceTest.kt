@@ -12,10 +12,10 @@ class PieceTest: StringSpec({
             Piece(Color.GREEN, pieceShape.key, Rotation.NONE, false).shape shouldBe pieceShape.value.coordinates
         }
 
-        Piece(Color.YELLOW, 4, Rotation.RIGHT, false).toString() shouldBe "YELLOW Piece TETRO_O:1 [0,0]"
-        Piece(Color.RED, 20, Rotation.LEFT, false).toString() shouldBe "RED Piece PENTO_Y:3 [0,0]"
-        Piece(Color.BLUE, 15, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece PENTO_P:2 (flipped) [0,0]"
-        Piece(Color.GREEN, 2, Rotation.NONE, true, Coordinates(5, 9)).toString() shouldBe "GREEN Piece TRIO_L:0 (flipped) [5,9]"
+        Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false).toString() shouldBe "YELLOW Piece TETRO_O:1 [0,0]"
+        Piece(Color.RED,    PieceShape.PENTO_Y, Rotation.LEFT, false).toString() shouldBe "RED Piece PENTO_Y:3 [0,0]"
+        Piece(Color.BLUE,   PieceShape.PENTO_P, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece PENTO_P:2 (flipped) [0,0]"
+        Piece(Color.GREEN,  PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9)).toString() shouldBe "GREEN Piece TRIO_L:0 (flipped) [5,9]"
     }
     "Test PieceShape arithmetic" {
         setOf(Coordinates(1, 2), Coordinates(3, 2)).align() shouldBe setOf(Coordinates(0, 0), Coordinates(2, 0))
@@ -57,10 +57,10 @@ class PieceTest: StringSpec({
     }
     "XML conversion" {
         val pieces = listOf(
-                Piece(Color.YELLOW, 4, Rotation.RIGHT, false),
-                Piece(Color.RED, 20, Rotation.LEFT, false),
-                Piece(Color.BLUE, 15, Rotation.MIRROR, true),
-                Piece(Color.GREEN, 2, Rotation.NONE, true, Coordinates(5, 9))
+                Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false),
+                Piece(Color.RED,    PieceShape.PENTO_Y, Rotation.LEFT, false),
+                Piece(Color.BLUE,   PieceShape.PENTO_P, Rotation.MIRROR, true),
+                Piece(Color.GREEN,  PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9))
         )
 
         Configuration.xStream.toXML(pieces[0]) shouldBe """

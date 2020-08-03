@@ -20,7 +20,7 @@ class GameRuleLogicTest: StringSpec({
         }
         assertDoesNotThrow {
             val validMove = SetMove(
-                    Piece(Color.BLUE, 17))
+                    Piece(Color.BLUE, PieceShape.PENTO_U))
             GameRuleLogic.performMove(gameState, validMove)
         }
     }
@@ -30,7 +30,7 @@ class GameRuleLogicTest: StringSpec({
         
         assertThrows<InvalidMoveException> {
             val invalidMove = SetMove(
-                    Piece(Color.BLUE, 0, Rotation.NONE, false, Coordinates(-1, 2)))
+                    Piece(Color.BLUE, PieceShape.MONO, Rotation.NONE, false, Coordinates(-1, 2)))
             GameRuleLogic.validateSetMove(gameState, invalidMove)
         }
         GameRuleLogic.isObstructed(gameState.board, Coordinates(1, 1)) shouldBe true
@@ -44,20 +44,20 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(1, 0), Color.BLUE) shouldNotBe true
     }
     "The first piece's special rules work" {
-        // Piece 12 is:   # # #
-        //              # #
+        // PENTO_S is:   # # #
+        //           : # #
         val invalidPieces = listOf(
-                Piece(Color.BLUE,   4), // Not a pentomino
-                Piece(Color.YELLOW, 12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
-                Piece(Color.RED,    12, position = Coordinates(13, 5)),
-                Piece(Color.GREEN,  12, Rotation.LEFT, position = Coordinates(Constants.BOARD_SIZE - 2, 0)),
-                Piece(Color.BLUE, 12, position = Coordinates(Constants.BOARD_SIZE - 4, 0)) // valid but will be obstructed
+                Piece(Color.BLUE,   PieceShape.TETRO_O),
+                Piece(Color.YELLOW, PieceShape.PENTO_S, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
+                Piece(Color.RED,    PieceShape.PENTO_S, position = Coordinates(13, 5)),
+                Piece(Color.GREEN,  PieceShape.PENTO_S, Rotation.LEFT, position = Coordinates(Constants.BOARD_SIZE - 2, 0)),
+                Piece(Color.BLUE,   PieceShape.PENTO_S, position = Coordinates(Constants.BOARD_SIZE - 4, 0)) // valid but will be obstructed
         )
         val validPieces = listOf(
-                Piece(Color.BLUE, 12, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
-                Piece(Color.YELLOW, 12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 2, Constants.BOARD_SIZE - 4)),
-                Piece(Color.RED,    12, position = Coordinates(0, Constants.BOARD_SIZE - 2)),
-                Piece(Color.GREEN,  12, isFlipped = true)
+                Piece(Color.BLUE,   PieceShape.PENTO_S, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
+                Piece(Color.YELLOW, PieceShape.PENTO_S, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 2, Constants.BOARD_SIZE - 4)),
+                Piece(Color.RED,    PieceShape.PENTO_S, position = Coordinates(0, Constants.BOARD_SIZE - 2)),
+                Piece(Color.GREEN,  PieceShape.PENTO_S, isFlipped = true)
         )
         
         assertDoesNotThrow {
@@ -85,10 +85,10 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
         
         val fewPieces = listOf(
-                Piece(Color.BLUE, 3,  Rotation.NONE, true),
-                Piece(Color.BLUE, 4,  Rotation.NONE, true),
-                Piece(Color.BLUE, 15, Rotation.NONE, true),
-                Piece(Color.BLUE, 0,  Rotation.NONE, true)
+                Piece(Color.BLUE, PieceShape.TRIO_I,  Rotation.NONE, true),
+                Piece(Color.BLUE, PieceShape.TETRO_O, Rotation.NONE, true),
+                Piece(Color.BLUE, PieceShape.PENTO_P, Rotation.NONE, true),
+                Piece(Color.BLUE, PieceShape.MONO,    Rotation.NONE, true)
         )
         GameRuleLogic.getPointsFromDeployedPieces(fewPieces) shouldBe -76
         
