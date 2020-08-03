@@ -7,6 +7,8 @@ enum class FieldContent(val letter: Char) {
     GREEN('G'),
     EMPTY('-');
     
+    fun empty(): Boolean = this == EMPTY
+    
     override fun toString(): String = letter.toString()
     
     operator fun unaryPlus(): Color? = when(this) {

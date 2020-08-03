@@ -15,12 +15,12 @@ class GameRuleLogicTest: StringSpec({
         
         assertThrows<InvalidMoveException> {
             val invalidMove = SetMove(Piece(Color.RED))
-            GameRuleLogic.validateSetMove(gameState, invalidMove)
+            GameRuleLogic.performMove(gameState, invalidMove)
         }
         assertDoesNotThrow {
             val validMove = SetMove(
                     Piece(Color.BLUE, 17))
-            GameRuleLogic.validateSetMove(gameState, validMove)
+            GameRuleLogic.performMove(gameState, validMove)
         }
     }
     "Position validation works" {
@@ -46,10 +46,10 @@ class GameRuleLogicTest: StringSpec({
         // Piece 12 is:   # # #
         //              # #
         val validPieces = listOf(
-                Piece(Color.BLUE,   12, isFlipped = true),
-                Piece(Color.YELLOW, 12, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
-                Piece(Color.RED,    12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 2, Constants.BOARD_SIZE - 4)),
-                Piece(Color.GREEN,  12, position = Coordinates(0, Constants.BOARD_SIZE - 2))
+                Piece(Color.BLUE, 12, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
+                Piece(Color.YELLOW, 12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 2, Constants.BOARD_SIZE - 4)),
+                Piece(Color.RED,    12, position = Coordinates(0, Constants.BOARD_SIZE - 2)),
+                Piece(Color.GREEN,  12, isFlipped = true)
         )
         val invalidPieces = listOf(
                 Piece(Color.BLUE,   4), // Not a pentomino

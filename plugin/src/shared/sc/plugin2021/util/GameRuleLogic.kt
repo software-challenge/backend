@@ -50,7 +50,6 @@ object GameRuleLogic {
     /** Checks if the given [move] has the right [Color]. */
     @JvmStatic
     fun validateMoveColor(gameState: GameState, move: Move) {
-        // Check if colors match
         if (move.color != gameState.currentColor)
             throw InvalidMoveException("The given Move comes from an inactive color", move)
     }
@@ -76,9 +75,13 @@ object GameRuleLogic {
                 throw InvalidMoveException("Field $it already borders on ${move.color}", move)
         }
         if (gameState.deployedPieces[move.color].isNullOrEmpty()) {
-            // If it's the first piece, check if it's a pentomino
+            // TODO: Check if the piece is the predetermined pentomino
             if (move.piece.coordinates.size < 5)
                 throw InvalidMoveException("Piece ${move.piece.kind} is not a pentomino", move)
+            // Check if it is placed correctly in a corner
+            if (move.piece.coordinates.none { isOnCorner(gameState.board, it)})
+                // TODO: Add expected move to exception
+                throw InvalidMoveException("Expected the pentomino declaed as first piece", move)
         } else {
             // Check if the piece is connected to at least one tile of same color by corner
             if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.color) })
@@ -112,5 +115,14 @@ object GameRuleLogic {
         try {
             board[position + it].content == +color
         } catch (e: ArrayIndexOutOfBoundsException) { false }
+    }
+    
+    @JvmStatic
+    fun isOnCorner(board: Board, position: Coordinates): Boolean = listOf(
+            Coordinates(0, 0),
+            Coordinates(Constants.BOARD_SIZE - 1, 0),
+            Coordinates(Constants.BOARD_SIZE - 1, Constants.BOARD_SIZE - 1),
+            Coordinates(0, Constants.BOARD_SIZE - 1)).any {
+        board[it].content.empty() && it == position
     }
 }
