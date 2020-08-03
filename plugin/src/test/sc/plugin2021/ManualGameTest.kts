@@ -1,7 +1,10 @@
+import org.junit.jupiter.api.assertDoesNotThrow
 import sc.plugin2021.Color
 import sc.plugin2021.Game
 import sc.plugin2021.helper.MoveParser
 import kotlin.system.exitProcess
+
+assertDoesNotThrow { MoveParser.selfCheck() }
 
 loop()
 
