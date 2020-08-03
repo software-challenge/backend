@@ -2,6 +2,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import sc.plugin2021.Color
 import sc.plugin2021.Game
 import sc.plugin2021.helper.MoveParser
+import kotlin.concurrent.fixedRateTimer
 import kotlin.system.exitProcess
 
 assertDoesNotThrow { MoveParser.selfCheck() }
@@ -21,9 +22,13 @@ fun loop() {
             println("Enter a move (see helper.MoveParser) or command (`:reset` or `:stop`)")
             print("> ")
     
-            val input: String = readLine()!!
+            val input: String = readLine() ?: continue
             if (input == ":reset") break
             if (input == ":stop")  exitProcess(0)
+            if (input.first() == ':') {
+                println("Unknown command. Expect a move, `:reset` or `:stop`")
+                continue
+            }
             
             val move = MoveParser.parse(input)
             println("$input -> $move")
