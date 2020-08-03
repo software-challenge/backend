@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.assertDoesNotThrow
 import sc.plugin2021.Color
 import sc.plugin2021.Game
+import sc.plugin2021.Move
 import sc.plugin2021.helper.MoveParser
 import kotlin.concurrent.fixedRateTimer
 import kotlin.system.exitProcess
@@ -30,7 +31,13 @@ fun loop() {
                 continue
             }
             
-            val move = MoveParser.parse(input)
+            var move: Move
+            try {
+                move = MoveParser.parse(input)
+            } catch (e: Exception) {
+                println(e)
+                continue
+            }
             println("$input -> $move")
             
             try {
