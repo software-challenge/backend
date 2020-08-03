@@ -45,24 +45,28 @@ class GameRuleLogicTest: StringSpec({
     "The first piece's special rules work" {
         // Piece 12 is:   # # #
         //              # #
+        val invalidPieces = listOf(
+                Piece(Color.BLUE,   4), // Not a pentomino
+                Piece(Color.YELLOW, 12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
+                Piece(Color.RED,    12, position = Coordinates(13, 5)),
+                Piece(Color.GREEN,  12, Rotation.LEFT, position = Coordinates(Constants.BOARD_SIZE - 2, 0)),
+                Piece(Color.BLUE, 12, position = Coordinates(Constants.BOARD_SIZE - 4, 0)) // valid but will be obstructed
+        )
         val validPieces = listOf(
                 Piece(Color.BLUE, 12, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
                 Piece(Color.YELLOW, 12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 2, Constants.BOARD_SIZE - 4)),
                 Piece(Color.RED,    12, position = Coordinates(0, Constants.BOARD_SIZE - 2)),
                 Piece(Color.GREEN,  12, isFlipped = true)
         )
-        val invalidPieces = listOf(
-                Piece(Color.BLUE,   4), // Not a pentomino
-                Piece(Color.YELLOW, 12, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
-                Piece(Color.RED,    12, position = Coordinates(13, 5)),
-                Piece(Color.GREEN,  12, Rotation.LEFT, position = Coordinates(Constants.BOARD_SIZE - 2, 0))
-        )
         
-        assertThrows<InvalidMoveException> {
+        assertDoesNotThrow {
             val gameState = GameState()
-            invalidPieces.forEach {
-                GameRuleLogic.performMove(gameState, SetMove(it))
-                gameState.turn++
+            GameRuleLogic.performMove(gameState, SetMove(validPieces.first()))
+            assertThrows<InvalidMoveException> {
+                invalidPieces.forEach {
+                    GameRuleLogic.performMove(gameState, SetMove(it))
+                    gameState.turn++
+                }
             }
         }
         assertDoesNotThrow {

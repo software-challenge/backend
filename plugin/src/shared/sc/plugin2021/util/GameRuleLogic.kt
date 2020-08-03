@@ -122,7 +122,5 @@ object GameRuleLogic {
             Coordinates(0, 0),
             Coordinates(Constants.BOARD_SIZE - 1, 0),
             Coordinates(Constants.BOARD_SIZE - 1, Constants.BOARD_SIZE - 1),
-            Coordinates(0, Constants.BOARD_SIZE - 1)).any {
-        board[it].content.empty() && it == position
-    }
+            Coordinates(0, Constants.BOARD_SIZE - 1)).contains(position)
 }
