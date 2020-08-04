@@ -53,7 +53,7 @@ fun Set<Coordinates>.align(): Set<Coordinates> {
 }
 
 /** Prints an ascii art of the piece. */
-fun Set<Coordinates>.print(dimension: Vector = Vector(5, 3)) {
+fun Set<Coordinates>.print(dimension: Vector = Vector(4, 5)) {
     val array = Array(dimension.area) {'-'}
     align().forEach { array[it.x + dimension.dx * it.y] = '#' }
     for (x in 0 until dimension.area) {

@@ -1,6 +1,7 @@
 package sc.plugin2021
 
 import com.thoughtworks.xstream.XStream
+import io.kotlintest.inspectors.forAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import sc.plugin2021.util.*
@@ -32,24 +33,24 @@ class PieceTest: StringSpec({
     }
     "Test Set transformation arithmetic" {
         val shapes = listOf(
-                setOf(Coordinates(1, 0), Coordinates(2, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(0, 2)),
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2)),
+                setOf(Coordinates(0, 2), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 0), Coordinates(2, 0)),
                 setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 2)),
-                setOf(Coordinates(2, 0), Coordinates(2, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(0, 2)),
-                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2))
+                setOf(Coordinates(0, 2), Coordinates(1, 2), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 0))
         )
 
         PieceShape.PENTO_W.transform(Rotation.NONE,   false) shouldBe shapes[0]
         PieceShape.PENTO_W.transform(Rotation.RIGHT,  false) shouldBe shapes[1]
         PieceShape.PENTO_W.transform(Rotation.MIRROR, false) shouldBe shapes[2]
         PieceShape.PENTO_W.transform(Rotation.LEFT,   false) shouldBe shapes[3]
-        PieceShape.PENTO_W.transform(Rotation.NONE,   true)  shouldBe shapes[1]
-        PieceShape.PENTO_W.transform(Rotation.RIGHT,  true)  shouldBe shapes[2]
-        PieceShape.PENTO_W.transform(Rotation.MIRROR, true)  shouldBe shapes[3]
-        PieceShape.PENTO_W.transform(Rotation.LEFT,   true)  shouldBe shapes[0]
+        PieceShape.PENTO_W.transform(Rotation.NONE,   true)  shouldBe shapes[3]
+        PieceShape.PENTO_W.transform(Rotation.RIGHT,  true)  shouldBe shapes[0]
+        PieceShape.PENTO_W.transform(Rotation.MIRROR, true)  shouldBe shapes[1]
+        PieceShape.PENTO_W.transform(Rotation.LEFT,   true)  shouldBe shapes[2]
     }
     "Piece coordination calculation" {
         val position = Coordinates(2, 2)
-        val coordinates = setOf(Coordinates(2, 2), Coordinates(3, 2), Coordinates(2, 3))
+        val coordinates = setOf(Coordinates(2, 3), Coordinates(3, 3), Coordinates(3, 2))
         val piece = Piece(Color.RED, PieceShape.TRIO_L, Rotation.NONE, true, position)
     
         piece.shape shouldBe PieceShape.TRIO_L.coordinates.flip()
