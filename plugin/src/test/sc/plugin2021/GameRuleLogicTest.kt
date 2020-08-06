@@ -12,7 +12,7 @@ import sc.shared.InvalidMoveException
 
 class GameRuleLogicTest: StringSpec({
     "Color validation works correctly" {
-        val gameState = GameState()
+        val gameState = GameState(startPiece = PieceShape.PENTO_U)
         
         assertThrows<InvalidMoveException> {
             val invalidMove = SetMove(Piece(Color.RED))
@@ -47,7 +47,8 @@ class GameRuleLogicTest: StringSpec({
         // PENTO_S is:   # # #
         //           : # #
         val invalidPieces = listOf(
-                Piece(Color.BLUE,   PieceShape.TETRO_O),
+                Piece(Color.GREEN,  PieceShape.TETRO_O),
+                Piece(Color.BLUE,   PieceShape.PENTO_S),
                 Piece(Color.YELLOW, PieceShape.PENTO_S, Rotation.RIGHT, position = Coordinates(Constants.BOARD_SIZE - 4, 0)),
                 Piece(Color.RED,    PieceShape.PENTO_S, position = Coordinates(13, 5)),
                 Piece(Color.GREEN,  PieceShape.PENTO_S, Rotation.LEFT, position = Coordinates(Constants.BOARD_SIZE - 2, 0)),
@@ -61,7 +62,7 @@ class GameRuleLogicTest: StringSpec({
         )
         
         assertDoesNotThrow {
-            val gameState = GameState()
+            val gameState = GameState(startPiece = PieceShape.PENTO_S)
             GameRuleLogic.performMove(gameState, SetMove(validPieces.first()))
             assertThrows<InvalidMoveException> {
                 invalidPieces.forEach {
@@ -70,11 +71,8 @@ class GameRuleLogicTest: StringSpec({
                 }
             }
         }
-        validPieces.forEach{
-            it.coordinates.print(Vector(5, 5)).also{println()}
-        }
         assertDoesNotThrow {
-            val gameState = GameState()
+            val gameState = GameState(startPiece = PieceShape.PENTO_S)
             validPieces.forEach {
                 GameRuleLogic.performMove(gameState, SetMove(it))
                 gameState.turn++

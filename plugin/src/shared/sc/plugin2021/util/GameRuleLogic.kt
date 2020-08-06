@@ -75,9 +75,8 @@ object GameRuleLogic {
                 throw InvalidMoveException("Field $it already borders on ${move.color}", move)
         }
         if (gameState.deployedPieces[move.color].isNullOrEmpty()) {
-            // TODO: Check if the piece is the predetermined pentomino
-            if (move.piece.coordinates.size < 5)
-                throw InvalidMoveException("Piece ${move.piece.kind} is not a pentomino", move)
+            if (move.piece.kind != gameState.startPiece)
+                throw InvalidMoveException("Expected the predetermined staring piece, ${gameState.startPiece}", move)
             // Check if it is placed correctly in a corner
             if (move.piece.coordinates.none { isOnCorner(it)})
                 // TODO: Add expected move to exception
@@ -123,4 +122,12 @@ object GameRuleLogic {
             Coordinates(Constants.BOARD_SIZE - 1, 0),
             Coordinates(Constants.BOARD_SIZE - 1, Constants.BOARD_SIZE - 1),
             Coordinates(0, Constants.BOARD_SIZE - 1)).contains(position)
+    
+    /** Returns a random pentomino which is not the `x` one (Used to get a valid starting piece). */
+    @JvmStatic
+    fun getRandomPentomino() =
+            PieceShape.values()
+                    .slice(9 until Constants.TOTAL_PIECE_SHAPES)
+                    .filter{ it.size == 5 && it != PieceShape.PENTO_X }
+                    .random()
 }

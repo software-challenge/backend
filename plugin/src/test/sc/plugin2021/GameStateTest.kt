@@ -45,7 +45,7 @@ class GameStateTest: StringSpec({
         gameState.currentColor shouldBe  Color.YELLOW
     }
     "Pieces can only be placed once" {
-        val gameState = GameState()
+        val gameState = GameState(startPiece = PieceShape.PENTO_I)
         val move = SetMove(
                 Piece(Color.BLUE, PieceShape.PENTO_I, Rotation.RIGHT, true))
         

@@ -14,7 +14,8 @@ class GameState @JvmOverloads constructor(
         override var second: Player = Player(Team.TWO),
         override var lastMove: Move? = null,
         startTurn: Int = 1,
-        val startColor: Color = Color.BLUE
+        val startColor: Color = Color.BLUE,
+        @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino()
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     @XStreamAsAttribute
