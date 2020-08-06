@@ -75,12 +75,12 @@ object GameRuleLogic {
                 throw InvalidMoveException("Field $it already borders on ${move.color}", move)
         }
         if (gameState.deployedPieces[move.color].isNullOrEmpty()) {
+            // Check if it's the requested shape
             if (move.piece.kind != gameState.startPiece)
                 throw InvalidMoveException("Expected the predetermined staring piece, ${gameState.startPiece}", move)
             // Check if it is placed correctly in a corner
             if (move.piece.coordinates.none { isOnCorner(it)})
-                // TODO: Add expected move to exception
-                throw InvalidMoveException("Expected the pentomino declaed as first piece", move)
+                throw InvalidMoveException("The Piece isn't located in a corner", move)
         } else {
             // Check if the piece is connected to at least one tile of same color by corner
             if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.color) })
