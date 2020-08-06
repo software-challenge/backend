@@ -53,7 +53,7 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     
     /** Applies all the given transformations. */
     fun transform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
-            coordinates.flip(shouldFlip).rotate(rotation)
+            coordinates.rotate(rotation).flip(shouldFlip)
     
     companion object {
         val shapes: Map<Int, PieceShape> = ((0 until Constants.TOTAL_PIECE_SHAPES) zip values()).toMap()

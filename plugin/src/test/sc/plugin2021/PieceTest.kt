@@ -44,9 +44,9 @@ class PieceTest: StringSpec({
         PieceShape.PENTO_W.transform(Rotation.MIRROR, false) shouldBe shapes[2]
         PieceShape.PENTO_W.transform(Rotation.LEFT,   false) shouldBe shapes[3]
         PieceShape.PENTO_W.transform(Rotation.NONE,   true)  shouldBe shapes[3]
-        PieceShape.PENTO_W.transform(Rotation.RIGHT,  true)  shouldBe shapes[0]
+        PieceShape.PENTO_W.transform(Rotation.RIGHT,  true)  shouldBe shapes[2]
         PieceShape.PENTO_W.transform(Rotation.MIRROR, true)  shouldBe shapes[1]
-        PieceShape.PENTO_W.transform(Rotation.LEFT,   true)  shouldBe shapes[2]
+        PieceShape.PENTO_W.transform(Rotation.LEFT,   true)  shouldBe shapes[0]
     }
     "Piece coordination calculation" {
         val position = Coordinates(2, 2)
