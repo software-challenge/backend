@@ -25,14 +25,16 @@ object GameRuleLogic {
     /** Performs the given [move] on the [gameState] if possible. */
     @JvmStatic
     fun performMove(gameState: GameState, move: Move) {
-        validateMoveColor(gameState, move)
+        if (Constants.VALIDATE_MOVE)
+            validateMoveColor(gameState, move)
         
         when (move) {
             is PassMove -> {
                 gameState.orderedColors.remove(move.color)
             }
             is SetMove -> {
-                validateSetMove(gameState, move)
+                if (Constants.VALIDATE_MOVE)
+                    validateSetMove(gameState, move)
                 
                 move.piece.coordinates.forEach {
                     gameState.board[it] = +move.color
@@ -127,7 +129,6 @@ object GameRuleLogic {
     @JvmStatic
     fun getRandomPentomino() =
             PieceShape.values()
-                    .slice(9 until Constants.TOTAL_PIECE_SHAPES)
                     .filter{ it.size == 5 && it != PieceShape.PENTO_X }
                     .random()
 }

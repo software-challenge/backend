@@ -13,4 +13,6 @@ object Constants {
     
     const val SOFT_TIMEOUT = 2000L
     const val HARD_TIMEOUT = 10000L
+    
+    const val VALIDATE_MOVE = false
 }
