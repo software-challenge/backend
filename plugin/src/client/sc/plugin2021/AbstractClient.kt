@@ -103,8 +103,15 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         }
     }
     
-    fun joinAnyGame() =
-            client.joinRoomRequest(gameType)
+    private fun start() {
+        client.start()
+        client.addListener(this)
+    }
+    
+    fun joinAnyGame() {
+        start()
+        client.joinRoomRequest(gameType)
+    }
     
     override fun onGameJoined(roomId: String) {}
     override fun onGamePrepared(response: PrepareGameProtocolMessage) {}
@@ -123,6 +130,8 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         }
     }
     
-    fun joinPreparedGame(reservation: String) =
-            client.joinPreparedGame(reservation)
+    fun joinPreparedGame(reservation: String) {
+        start()
+        client.joinPreparedGame(reservation)
+    }
 }

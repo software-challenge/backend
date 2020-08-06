@@ -3,12 +3,11 @@ package sc.plugin2021
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.host.IGamePluginHost
-import sc.plugin2020.GamePlugin
-import sc.plugin2020.util.Configuration.classesToRegister
+import sc.plugin2021.util.Configuration.classesToRegister
 import sc.plugins.PluginDescriptor
 import sc.shared.ScoreDefinition
 
-@PluginDescriptor(name = "Blokus", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
+@PluginDescriptor(name = "Blokus", uuid = "swc_2021_blokus", author = "")
 class GamePlugin: IGamePlugin {
     
     companion object {
