@@ -17,15 +17,16 @@ fun loop() {
         var current = game.onPlayerJoined()
         game.onPlayerJoined()
         game.start()
+        println("First piece is: ${game.gameState.startPiece}")
         while (true) {
             println(game.gameState)
             print(game.gameState.board)
             println("Enter a move (see helper.MoveParser) or command (`:reset` or `:stop`)")
             print("> ")
-    
+            
             val input: String = readLine() ?: continue
             if (input == ":reset") break
-            if (input == ":stop")  exitProcess(0)
+            if (input == ":stop") exitProcess(0)
             if (input.first() == ':') {
                 println("Unknown command. Expect a move, `:reset` or `:stop`")
                 continue
