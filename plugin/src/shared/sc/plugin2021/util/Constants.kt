@@ -13,4 +13,7 @@ object Constants {
     
     const val SOFT_TIMEOUT = 2000L
     const val HARD_TIMEOUT = 10000L
+    
+    /** Used to turn off move validation. If turned off, the GameState tests are supposed to and *will* fail. */
+    const val VALIDATE_MOVE = true
 }

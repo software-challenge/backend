@@ -25,14 +25,16 @@ object GameRuleLogic {
     /** Performs the given [move] on the [gameState] if possible. */
     @JvmStatic
     fun performMove(gameState: GameState, move: Move) {
-        validateMoveColor(gameState, move)
+        if (Constants.VALIDATE_MOVE)
+            validateMoveColor(gameState, move)
         
         when (move) {
             is PassMove -> {
-                gameState.orderedColors.remove(move.color)
+                gameState.removeActiveColor()
             }
             is SetMove -> {
-                validateSetMove(gameState, move)
+                if (Constants.VALIDATE_MOVE)
+                    validateSetMove(gameState, move)
                 
                 move.piece.coordinates.forEach {
                     gameState.board[it] = +move.color
@@ -42,7 +44,7 @@ object GameRuleLogic {
                 
                 // If it was the last piece for this color, remove him from the turn queue
                 if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty())
-                    gameState.orderedColors.remove(move.color)
+                    gameState.removeActiveColor()
             }
         }
     }
@@ -127,7 +129,6 @@ object GameRuleLogic {
     @JvmStatic
     fun getRandomPentomino() =
             PieceShape.values()
-                    .slice(9 until Constants.TOTAL_PIECE_SHAPES)
                     .filter{ it.size == 5 && it != PieceShape.PENTO_X }
                     .random()
 }

@@ -85,7 +85,16 @@ class GameState @JvmOverloads constructor(
             return GameRuleLogic.getPointsFromDeployedPieces(pieces)
     }
     
-    override fun toString(): String = "GameState Zug $turn"
+    /** Removes the currently active color from the queue.
+     *  The resulting active color will be the previous one; note that this is but a temporary value
+     *  Do not do anything with currentColor before the turn is done for good.
+     */
+    fun removeActiveColor() {
+        orderedColors.remove(currentColor)
+        currentColorIndex = (currentColorIndex + orderedColors.size - 1) % orderedColors.size
+    }
+    
+    override fun toString(): String = "GameState $round/$turn -> $currentColor"
     
     override fun equals(other: Any?): Boolean {
         return !(this === other) &&
