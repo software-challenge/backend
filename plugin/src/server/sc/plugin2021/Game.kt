@@ -11,6 +11,7 @@ import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
+import kotlin.math.log
 
 
 @XStreamAlias(value = "game")
@@ -151,10 +152,12 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         try {
             if (data !is Move)
                 throw InvalidMoveException("${fromPlayer.displayName} hat keinen validen Zug gesendet.")
+            
+            logger.debug("Current State: $gameState")
             logger.debug("Performing Move $data")
-            logger.debug("Current Board: ${gameState.board}")
             GameRuleLogic.performMove(gameState, data)
             gameState.turn++
+            logger.debug("Current Board:\n${gameState.board}")
             next(gameState.currentPlayer)
         } catch(e: InvalidMoveException) {
             super.catchInvalidMove(e, fromPlayer)

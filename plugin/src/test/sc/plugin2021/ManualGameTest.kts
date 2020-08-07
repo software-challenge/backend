@@ -21,7 +21,6 @@ fun loop() {
         println("First piece is: ${game.gameState.startPiece}")
         while (true) {
             println(game.gameState)
-            print(game.gameState.board)
             println("Enter a move (see helper.MoveParser) or command (`:reset` or `:stop`)")
             print("> ")
             
