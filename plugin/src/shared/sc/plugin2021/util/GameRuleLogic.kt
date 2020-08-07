@@ -30,7 +30,7 @@ object GameRuleLogic {
         
         when (move) {
             is PassMove -> {
-                gameState.orderedColors.remove(move.color)
+                gameState.removeActiveColor()
             }
             is SetMove -> {
                 if (Constants.VALIDATE_MOVE)
@@ -44,7 +44,7 @@ object GameRuleLogic {
                 
                 // If it was the last piece for this color, remove him from the turn queue
                 if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty())
-                    gameState.orderedColors.remove(move.color)
+                    gameState.removeActiveColor()
             }
         }
     }
