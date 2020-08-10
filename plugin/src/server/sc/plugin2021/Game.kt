@@ -15,7 +15,7 @@ import kotlin.math.log
 
 
 @XStreamAlias(value = "game")
-class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player>() {
+class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance() {
     companion object {
         val logger = LoggerFactory.getLogger(Game::class.java)
     }
@@ -23,9 +23,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     val gameState = GameState()
     
-    init {
-        pluginUUID = UUID
-    }
+    override val pluginUUID: String = UUID
     
     override fun start() {
         players.forEach {it.notifyListeners(WelcomeMessage(it.color)) }
@@ -42,21 +40,20 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         return player
     }
     
-    override fun getWinners(): MutableList<Player> {
-        val winCondition = checkWinCondition()
-        if (winCondition != null)
-            return winCondition.winner.let{players}
-        
-        // If no win condition is met, the player with highest score wins.
-        return listOfNotNull(players.maxBy {
-            gameState.getPointsForPlayer(it.color)
-        }).toMutableList()
-    }
+    override val winners: List<Player>
+        get() {
+            val winCondition = checkWinCondition()
+            if (winCondition != null)
+                return winCondition.winner.let{players}
+            
+            // If no win condition is met, the player with highest score wins.
+            return listOfNotNull(players.maxBy {
+                gameState.getPointsForPlayer(it.color)
+            }).toMutableList()
+        }
     
-    override fun getPlayerScores(): MutableList<PlayerScore> =
-            getPlayers().map { getScoreFor(it) }.toMutableList()
-    
-    override fun getPlayers(): MutableList<Player> = players
+    override val playerScores: List<PlayerScore>
+        get() = players.map { getScoreFor(it) }.toMutableList()
     
     private val playerMap = mutableMapOf<Team, Player>()
     
@@ -80,15 +77,15 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         return WinCondition(null, WinReason.EQUAL_SCORE)
     }
     
-    override fun loadGameInfo(gameInfo: Any?) {
+    override fun loadGameInfo(gameInfo: Any) {
         TODO("Not yet implemented")
     }
     
-    override fun loadFromFile(file: String?) {
+    override fun loadFromFile(file: String) {
         TODO("Not yet implemented")
     }
     
-    override fun loadFromFile(file: String?, turn: Int) {
+    override fun loadFromFile(file: String, turn: Int) {
         TODO("Not yet implemented")
     }
     
@@ -145,7 +142,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
     @Throws(InvalidMoveException::class, InvalidGameStateException::class)
-    override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage?) {
+    override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
         // This check is already done by super.onAction()
         assert(fromPlayer == activePlayer)
         

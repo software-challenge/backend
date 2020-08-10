@@ -2,6 +2,7 @@ package sc.plugin2020;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
@@ -22,8 +23,11 @@ import java.util.List;
 
 /** Minimales Spiel als Basis für neue Plugins. */
 @XStreamAlias(value = "game")
-public class Game extends RoundBasedGameInstance<Player> {
+public class Game extends RoundBasedGameInstance {
   private static final Logger logger = LoggerFactory.getLogger(Game.class);
+
+  @XStreamOmitField
+  private String pluginUUID;
 
   @XStreamOmitField
   private List<Team> availableColors = new ArrayList<>();
@@ -51,7 +55,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   /** Jemand hat etwas gesendet -> testen was es war (wenn es ein Zug war, dann validieren) */
   @Override
-  protected void onRoundBasedAction(Player fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
+  protected void onRoundBasedAction(Player fromPlayer, ProtocolMessage data) throws InvalidGameStateException {
     // NOTE: Checking if right player sent move was already done by onAction(Player, ProtocolMove)}.
     // There is no need to do it here again.
     try {
@@ -61,7 +65,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       logger.debug("Performing Move " + move.toString());
       logger.debug("Current Board: " + this.gameState.getBoard().toString());
       GameRuleLogic.performMove(this.gameState, move);
-      next(this.gameState.getCurrentPlayer());
+      next(this.gameState.getCurrentPlayer(), false);
     } catch(InvalidMoveException e) {
       super.catchInvalidMove(e, fromPlayer);
     }
@@ -80,7 +84,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       player = new Player(team);
     }
 
-    this.players.add(player);
+    addPlayer(player);
     this.gameState.addPlayer(player);
 
     return player;
@@ -89,7 +93,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests */
   @Override
   public void start() {
-    for(final Player p : this.players) {
+    for(final Player p : getPlayers()) {
       p.notifyListeners(new WelcomeMessage(p.getColor()));
     }
     super.start();
@@ -263,7 +267,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     WinCondition winCondition = checkWinCondition();
     List<Player> winners = new ArrayList<>();
     if(winCondition != null) {
-      for(Player player : this.players) {
+      for(Player player : getPlayers()) {
         if(player.getColor() == winCondition.getWinner()) {
           winners.add(player);
           break;
@@ -274,7 +278,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       // determined by matchpoints ("Siegpunkte"). The winning player has 2
       // matchpoints. Find this player. If no player has 2 matchpoints, it is a
       // draw.
-      for(Player player : this.players) {
+      for(Player player : getPlayers()) {
         if(getScoreFor(player).getValues().get(0).intValueExact() == Constants.WIN_SCORE) {
           winners.add(player);
           break;
@@ -284,10 +288,11 @@ public class Game extends RoundBasedGameInstance<Player> {
     return winners;
   }
 
-  /** Liste der Spieler. Reihenfolge: RED, BLUE */
+  /** Liste der Spieler. Reihenfolge: RED, BLUE
+   * @return*/
   @Override
-  public List<Player> getPlayers() {
-    return gameState.getPlayers();
+  public ArrayList<Player> getPlayers() {
+    return new ArrayList<Player>(gameState.getPlayers());
   }
 
   /** Liste der playerScores für jeden Spieler. Reihenfolge: RED, BLUE */
@@ -298,4 +303,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     return playerScores;
   }
 
+  @NotNull
+  @Override
+  public String getPluginUUID() {
+    return pluginUUID;
+  }
 }
