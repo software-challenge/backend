@@ -24,7 +24,7 @@ abstract class TwoPlayerGameState<P : Player>(
     abstract val currentTeam: ITeam<*>
 
     /** The Player whose team's turn it is. */
-    val currentPlayer: P
+    open val currentPlayer: P
         get() = getPlayer(currentTeam)!!
 
     /** The player opposite to the currently active one. */

@@ -584,7 +584,7 @@ public class GameRoom implements IGameListener {
 
     logger.info("Switching PAUSE from {} to {}.", isPauseRequested(), pause);
     this.pauseRequested = pause;
-    RoundBasedGameInstance<Player> pausableGame = (RoundBasedGameInstance<Player>) this.game;
+    RoundBasedGameInstance pausableGame = (RoundBasedGameInstance) this.game;
     // pause game after current turn has finished
     pausableGame.setPauseMode(pause);
 
@@ -615,7 +615,7 @@ public class GameRoom implements IGameListener {
     }
     if (isPauseRequested()) {
       logger.info("Stepping.");
-      ((RoundBasedGameInstance<Player>) this.game).afterPause();
+      ((RoundBasedGameInstance) this.game).afterPause();
     } else {
       logger.warn("Can't step if the game is not paused.");
     }
@@ -706,7 +706,7 @@ public class GameRoom implements IGameListener {
   }
 
   /**
-   * Remove specific player by calling {@link IGameInstance#onPlayerLeft(Player) onPlayerLeft(player)}
+   * Remove specific player by calling {@link IGameInstance#onPlayerLeft(Player, ScoreCause) onPlayerLeft(player)}
    *
    * @param player to be removed
    */

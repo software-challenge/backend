@@ -75,52 +75,46 @@ class GameStateTest: StringSpec({
         xstream.fromXML(xstream.toXML(state))            shouldBe state
     }
     "GameStates advance accordingly" {
-        var gameState = GameState(startTurn = 3)
-        gameState.turn shouldBe 3
+        var gameState = GameState(startTurn = 2)
+        gameState.turn shouldBe 2
         gameState.round shouldBe 1
         gameState.currentColor shouldBe Color.RED
         
         gameState = GameState()
-        gameState.turn shouldBe 1
+        gameState.turn shouldBe 0
         gameState.round shouldBe 1
         gameState.currentColor shouldBe Color.BLUE
     
         gameState.turn +=10
-        gameState.turn shouldBe 11
+        gameState.turn shouldBe 10
         gameState.round shouldBe 3
         gameState.currentColor shouldBe Color.RED
     
         gameState.turn++
-        gameState.turn shouldBe 12
+        gameState.turn shouldBe 11
         gameState.round shouldBe 3
         gameState.currentColor shouldBe Color.GREEN
     
         gameState.turn++
-        gameState.turn shouldBe 13
+        gameState.turn shouldBe 12
         gameState.round shouldBe 4
         gameState.currentColor shouldBe Color.BLUE
     }
     "Passed out colors behave correctly"  {
-        val gameState = GameState(startTurn = 3)
+        val gameState = GameState(startTurn = 2)
         gameState.orderedColors shouldBe listOf(Color.BLUE, Color.YELLOW, Color.RED, Color.GREEN)
         gameState.currentColor  shouldBe Color.RED
         
         GameRuleLogic.performMove(gameState, PassMove(Color.RED))
         gameState.orderedColors shouldBe listOf(Color.BLUE, Color.YELLOW, Color.GREEN)
-        gameState.currentColor  shouldBe Color.YELLOW
-        gameState.turn++
         gameState.currentColor  shouldBe Color.GREEN
         
         GameRuleLogic.performMove(gameState, PassMove(Color.GREEN))
         gameState.orderedColors shouldBe listOf(Color.BLUE, Color.YELLOW)
-        gameState.currentColor  shouldBe Color.YELLOW
-        gameState.turn++
         gameState.currentColor  shouldBe Color.BLUE
         
         GameRuleLogic.performMove(gameState, PassMove(Color.BLUE))
         gameState.orderedColors shouldBe listOf(Color.YELLOW)
-        gameState.currentColor  shouldBe Color.YELLOW
-        gameState.turn++
         gameState.currentColor  shouldBe Color.YELLOW
     }
 })

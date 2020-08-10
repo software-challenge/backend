@@ -104,14 +104,23 @@ abstract class RoundBasedGameInstance : IGameInstance {
         notifyOnGameOver(scores)
     }
     
-    fun next(nextPlayer: Player, firstTurn: Boolean = false) {
-        logger.debug("next round (${getRound()}) for player $nextPlayer")
+    fun next(nextPlayer: Player?, firstTurn: Boolean = false) {
+        logger.debug("Next round (${getCurrentState().round}) for player $nextPlayer")
         if (!firstTurn)
             turn++
         activePlayer = nextPlayer
+        
         // don't notify on new state if game is paused or client may begin to calculate something
         if (!isPaused())
             notifyOnNewState(getCurrentState())
+        
+        if (checkWinCondition() != null) {
+            println("Apocalypse")
+            notifyOnGameOver(generateScoreMap())
+        } else {
+            if (!this.isPaused())
+                notifyActivePlayer()
+        }
     }
     
     abstract fun getScoreFor(player: Player): PlayerScore

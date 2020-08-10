@@ -31,5 +31,4 @@ interface IGameState : ProtocolMessage, Cloneable {
 
     /** Aktuelle Rundenzahl */
     val round: Int
-        get() = turn / 2
 }

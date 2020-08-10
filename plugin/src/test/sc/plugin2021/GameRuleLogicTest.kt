@@ -67,15 +67,16 @@ class GameRuleLogicTest: StringSpec({
             assertThrows<InvalidMoveException> {
                 invalidPieces.forEach {
                     GameRuleLogic.performMove(gameState, SetMove(it))
-                    gameState.turn++
                 }
             }
         }
         assertDoesNotThrow {
             val gameState = GameState(startPiece = PieceShape.PENTO_S)
+            println(gameState.orderedColors)
             validPieces.forEach {
+                println("Move: ${it.color} - Active: ${gameState.currentColor}")
+                println("Turn: ${gameState.turn}")
                 GameRuleLogic.performMove(gameState, SetMove(it))
-                gameState.turn++
             }
         }
     }

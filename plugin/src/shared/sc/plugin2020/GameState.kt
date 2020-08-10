@@ -20,6 +20,9 @@ class GameState @JvmOverloads constructor(
         override var lastMove: Move? = null
 ): TwoPlayerGameState<Player>(Team.RED) {
     
+    override val round: Int
+        get() = turn / 2
+    
     @XStreamOmitField
     private var allPieces: Collection<Piece> = undeployedBluePieces + undeployedRedPieces + board.getPieces()
     
