@@ -25,7 +25,14 @@ abstract class TwoPlayerGameState<P : Player>(
 
     /** The Player whose team's turn it is. */
     val currentPlayer: P
-        get() = getPlayer(currentTeam)!!
+        get() {
+            try {
+                return getPlayer(currentTeam)!!
+            } catch (e: IllegalArgumentException) {
+                throw NullPointerException("Tried accessing the team of the currently active color - got:\n" +
+                        "'$e' (currentTeam is $currentTeam)")
+            }
+        }
 
     /** The player opposite to the currently active one. */
     val otherPlayer: P

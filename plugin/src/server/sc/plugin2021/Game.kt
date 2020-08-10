@@ -11,8 +11,6 @@ import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
-import kotlin.math.log
-
 
 @XStreamAlias(value = "game")
 class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player>() {

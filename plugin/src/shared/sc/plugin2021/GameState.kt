@@ -31,7 +31,7 @@ class GameState @JvmOverloads constructor(
         it to mutableListOf<Piece>()
     }.toMap()
     
-    override val currentTeam
+    override val currentTeam: Team
         get() = currentColor.team
     
     @XStreamAsAttribute
@@ -60,6 +60,8 @@ class GameState @JvmOverloads constructor(
             colorIter = colorIter.next
         }
         turn = startTurn
+        
+        println("Assert: Team of BLUE is ${Color.BLUE.team} (should be ONE)")
     }
     
     private fun advance(turns: Int) {
