@@ -11,6 +11,7 @@ import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
+import java.lang.IndexOutOfBoundsException
 
 @XStreamAlias(value = "game")
 class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance() {
@@ -30,7 +31,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance() {
    
     override fun onPlayerJoined(): Player {
         val player = gameState.getPlayer(availableTeams.removeAt(0))
-                ?: throw NullPointerException("Too many players joined the game!")
+                ?: throw IndexOutOfBoundsException("Too many players joined the game!")
         
         players.add(player)
         playerMap[player.color as Team] = player

@@ -5,30 +5,30 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
 
-abstract class TwoPlayerGameState<P : Player>(
+abstract class TwoPlayerGameState(
         @XStreamAsAttribute val startTeam: ITeam<*>
 ) : IGameState {
     
     @XStreamOmitField
     private val logger = LoggerFactory.getLogger(TwoPlayerGameState::class.java)
     
-    abstract val first: P
-    abstract val second: P
+    abstract val first: Player
+    abstract val second: Player
     abstract val board: IBoard
 
     /** List of all teams. */
-    val players: List<P>
+    val players: List<Player>
         get() = listOf(first, second)
     
     /** The Team active in the current turn. */
     abstract val currentTeam: ITeam<*>
 
     /** The Player whose team's turn it is. */
-    open val currentPlayer: P
+    open val currentPlayer: Player
         get() = getPlayer(currentTeam)!!
 
     /** The player opposite to the currently active one. */
-    val otherPlayer: P
+    val otherPlayer: Player
         get() = getPlayer(otherTeam)!!
 
     /** The Team opposite to the currently active one. */
@@ -36,7 +36,7 @@ abstract class TwoPlayerGameState<P : Player>(
         get() = currentTeam.opponent()
 
     /** Der Spieler, der das Spiel begonnen hat. */
-    val startPlayer: P
+    val startPlayer: Player
         get() = getPlayer(startTeam)!!
 
     /** Die Namen der beiden Spieler. */
@@ -46,10 +46,10 @@ abstract class TwoPlayerGameState<P : Player>(
     /** Letzter getaetigter Zug. */
     abstract val lastMove: IMove?
 
-    fun getOpponent(player: P) =
+    fun getOpponent(player: Player) =
             getPlayer(player.color.opponent())
 
-    fun getPlayer(team: ITeam<*>): P? = when(team.index) {
+    fun getPlayer(team: ITeam<*>): Player? = when(team.index) {
         0 -> first
         1 -> second
         else -> null

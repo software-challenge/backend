@@ -142,8 +142,7 @@ abstract class RoundBasedGameInstance : IGameInstance {
                 else ActionTimeout(false)
         
         val logger = logger
-        val playerToTimeout = player
-        
+    
         // Signal the JVM to do a GC run now and lower the probability that the GC
         // runs when the players sends back its move, resulting in disqualification
         // because of soft timeout
@@ -151,9 +150,9 @@ abstract class RoundBasedGameInstance : IGameInstance {
         
         requestTimeout = timeout
         timeout.start {
-            logger.warn("Player $playerToTimeout reached the timeout of ${timeout.hardTimeout}ms")
-            playerToTimeout.hardTimeout = true
-            onPlayerLeft(playerToTimeout, ScoreCause.HARD_TIMEOUT)
+            logger.warn("Player $player reached the timeout of ${timeout.hardTimeout}ms")
+            player.hardTimeout = true
+            onPlayerLeft(player, ScoreCause.HARD_TIMEOUT)
         }
         player.requestMove()
     }

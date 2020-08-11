@@ -15,7 +15,7 @@ import sc.shared.*;
 import java.util.List;
 import java.util.Map;
 
-public class TestGame extends RoundBasedGameInstance<TestPlayer> {
+public class TestGame extends RoundBasedGameInstance {
   private static final Logger logger = LoggerFactory.getLogger(TestGame.class);
 
   private TestGameState state = new TestGameState();
@@ -32,7 +32,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
 
       final TestMove move = (TestMove) data;
       move.perform(this.state);
-      next(this.state.getCurrentPlayer() == TestTeam.RED ? state.getRed() : state.getBlue());
+      next(this.state.getCurrentPlayer() == TestTeam.RED ? state.getRed() : state.getBlue(), false);
     }
   }
 
@@ -47,7 +47,8 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
 
   @Override
   public Player onPlayerJoined() throws TooManyPlayersException {
-    if (this.players.size() < 2) {
+    List<Player> players = getPlayers();
+    if (players.size() < 2) {
       if (players.size() == 0) {
         state.setRed(new TestPlayer(TestTeam.RED));
         players.add(state.getRed());
@@ -63,8 +64,8 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
 
   }
 
-  public List<TestPlayer> getTestPlayers() {
-    return this.players;
+  public List<Player> getTestPlayers() {
+    return getPlayers();
   }
 
   @Override
@@ -83,17 +84,12 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
     logger.debug("Player left {}", player);
     Map<Player, PlayerScore> result = generateScoreMap();
     result.put(player, new PlayerScore(false, "Spieler hat das Spiel verlassen."));
-    result.get(player).setCause(cause);
+    result.get(player).setCause((cause != null) ? cause : ScoreCause.LEFT);
     notifyOnGameOver(result);
   }
 
   @Override
-  public void onPlayerLeft(Player player) {
-    onPlayerLeft(player, ScoreCause.LEFT);
-  }
-
-  @Override
-  public PlayerScore getScoreFor(TestPlayer p) {
+  public PlayerScore getScoreFor(Player p) {
     return new PlayerScore(true, "Spieler hat gewonnen.");
   }
 
@@ -122,7 +118,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests */
   @Override
   public void start() {
-    for (final TestPlayer p : this.players) {
+    for (final Player p : this.getPlayers()) {
       p.notifyListeners(new WelcomeMessage(p.getColor()));
     }
 
@@ -130,8 +126,12 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   }
 
   @Override
-  protected ActionTimeout getTimeoutFor(TestPlayer player) {
+  protected ActionTimeout getTimeoutFor(Player player) {
     return new ActionTimeout(false, 100000000L, 20000000L);
   }
 
+  @Override
+  public String getPluginUUID() {
+    return "test";
+  }
 }

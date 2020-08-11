@@ -19,7 +19,7 @@ class GameState @JvmOverloads constructor(
         startTurn: Int = 0,
         val startColor: Color = Color.BLUE,
         @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino()
-): TwoPlayerGameState<Player>(Team.ONE) {
+): TwoPlayerGameState(Team.ONE) {
     
     companion object {
         val logger = LoggerFactory.getLogger(GameState::class.java)

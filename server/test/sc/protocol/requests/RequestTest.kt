@@ -402,7 +402,7 @@ class RequestTest: RealServerTest() {
         p1Listener.playerEventReceived = false
         p2Listener.playerEventReceived = false
         player1.send(PauseGameRequest(room.id, false))
-        TestHelper.waitUntilEqual(false, { (room.game as RoundBasedGameInstance<*>).isPaused }, 2000)
+        TestHelper.waitUntilEqual(false, { (room.game as RoundBasedGameInstance).isPaused() }, 2000)
         
         
         TestHelper.waitMillis(500)

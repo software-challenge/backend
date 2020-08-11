@@ -18,7 +18,7 @@ class GameState @JvmOverloads constructor(
         private val undeployedRedPieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.RED),
         private val undeployedBluePieces: MutableList<Piece> = parsePiecesString(Constants.STARTING_PIECES, Team.BLUE),
         override var lastMove: Move? = null
-): TwoPlayerGameState<Player>(Team.RED) {
+): TwoPlayerGameState(Team.RED) {
     
     override val round: Int
         get() = turn / 2

@@ -4,8 +4,10 @@ import sc.api.plugins.IGameState
 import sc.api.plugins.ITeam
 import sc.server.helpers.TestTeam
 
-class TestGameState: IGameState {
+class TestGameState(): IGameState {
     override var turn = 0
+    override var round = 1
+        get() = turn / 2
     var state = 0
     var lastPlayerIndex = 0
     var currentPlayer: TestTeam

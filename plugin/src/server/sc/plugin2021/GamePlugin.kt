@@ -3,6 +3,7 @@ package sc.plugin2021
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.host.IGamePluginHost
+import sc.framework.plugins.Player
 import sc.plugin2021.util.Configuration.classesToRegister
 import sc.plugins.PluginDescriptor
 import sc.shared.ScoreDefinition
