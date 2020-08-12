@@ -7,17 +7,14 @@ import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 
 class GameTest: StringSpec({
-    "Start and stop" {
+    "Game starting and stopping works" {
         Color.BLUE.team
         val game = Game()
         val state = game.gameState
-        val playerOne = game.onPlayerJoined()
-        val playerTwo = game.onPlayerJoined()
+        game.onPlayerJoined() shouldBe Team.ONE
+        game.onPlayerJoined() shouldBe Team.TWO
         
-        playerOne.color shouldBe Team.ONE
-        playerTwo.color shouldBe Team.TWO
         game.start()
-        
         game.onAction(state.currentPlayer, PassMove(state.currentColor))
         game.onAction(state.currentPlayer, PassMove(state.currentColor))
         game.onAction(state.currentPlayer, PassMove(state.currentColor))
