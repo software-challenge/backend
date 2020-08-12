@@ -91,6 +91,37 @@ class PieceTest: StringSpec({
             }
         }
     }
+    "Test Set transformation arithmetic (TETRO_L)" {
+        val shape = PieceShape.TETRO_L
+        val TID = listOf("NN", "RN", "MN", "LN", "NY", "RY", "MY", "LY")
+        val SHOULD = (TID zip listOf(
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(0, 2), Coordinates(1, 2)),
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 0), Coordinates(2, 0)),
+                setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1), Coordinates(1, 2)),
+                setOf(Coordinates(0, 1), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 0)),
+                setOf(Coordinates(1, 0), Coordinates(1, 1), Coordinates(1, 2), Coordinates(0, 2)),
+                setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(2, 0), Coordinates(2, 1)),
+                setOf(Coordinates(1, 0), Coordinates(0, 0), Coordinates(0, 1), Coordinates(0, 2)),
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(2, 1))
+        )).toMap()
+        val transformations = (TID zip (
+                (Rotation.values() zip List(Rotation.values().size) {false}) +
+                        (Rotation.values() zip List(Rotation.values().size) {true})
+                )).toMap()
+        val IS = transformations.map {
+            it.key to shape.transform(it.value.first, it.value.second)
+        }.toMap()
+        
+        TID.forEach {
+            try {
+                IS[it] shouldBe SHOULD[it]
+            } catch (e: AssertionFailedError) {
+                println("Expected:  $it  Actual:")
+                printShapes(SHOULD.getValue(it), IS.getValue(it))
+                throw e
+            }
+        }
+    }
     "Piece coordination calculation" {
         val position = Coordinates(2, 2)
         val coordinates = setOf(Coordinates(2, 3), Coordinates(3, 3), Coordinates(3, 2))
