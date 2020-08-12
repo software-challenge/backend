@@ -1,6 +1,7 @@
 package sc.plugin2021.util
 
 import sc.plugin2021.Coordinates
+import sc.plugin2021.FieldContent
 import sc.plugin2021.Rotation
 import sc.plugin2021.Vector
 
@@ -54,10 +55,24 @@ fun Set<Coordinates>.align(): Set<Coordinates> {
 
 /** Prints an ascii art of the piece. */
 fun Set<Coordinates>.print(dimension: Vector = Vector(4, 5)) {
-    val array = Array(dimension.area) {'-'}
-    align().forEach { array[it.x + dimension.dx * it.y] = '#' }
-    for (x in 0 until dimension.area) {
-        print("${array[x]}  ")
-        if (x % dimension.dx == dimension.dx - 1) println()
+    printShapes(this, dimension = dimension)
+}
+
+/** Prints all given shapes next to each other. */
+fun printShapes(vararg shapes: Set<Coordinates>, dimension: Vector = Vector(4, 5)) {
+    val width = shapes.size * (dimension.dx + 1)
+    val array = Array(dimension.dy * width) {FieldContent.EMPTY.letter}
+    for (n in array.indices) {
+        if ((n + 1) % (dimension.dx + 1) == 0) array[n] = ' '
     }
+    for (n in shapes.indices) {
+        shapes[n].align().forEach {
+            array[it.x + n * (dimension.dx + 1) + width * it.y] = '#'
+        }
+    }
+    for (x in array.indices) {
+        print("${array[x]}  ")
+        if ((x + 1) % width == 0 ) println()
+    }
+    println()
 }

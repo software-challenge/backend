@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream
 import io.kotlintest.inspectors.forAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
+import org.opentest4j.AssertionFailedError
 import sc.plugin2021.util.*
 
 
@@ -31,22 +32,64 @@ class PieceTest: StringSpec({
             shape.flip(true).flip() shouldBe shape
         }
     }
-    "Test Set transformation arithmetic" {
+    "Test Set transformation arithmetic (PENTO_W)" {
+        val TID = listOf("NN", "RN", "MN", "LN", "NY", "RY", "MY", "LY")
+        val shape = PieceShape.PENTO_W
         val shapes = listOf(
                 setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2)),
                 setOf(Coordinates(0, 2), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 0), Coordinates(2, 0)),
                 setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 2)),
                 setOf(Coordinates(0, 2), Coordinates(1, 2), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 0))
         )
-
-        PieceShape.PENTO_W.transform(Rotation.NONE,   false) shouldBe shapes[0]
-        PieceShape.PENTO_W.transform(Rotation.RIGHT,  false) shouldBe shapes[1]
-        PieceShape.PENTO_W.transform(Rotation.MIRROR, false) shouldBe shapes[2]
-        PieceShape.PENTO_W.transform(Rotation.LEFT,   false) shouldBe shapes[3]
-        PieceShape.PENTO_W.transform(Rotation.NONE,   true)  shouldBe shapes[3]
-        PieceShape.PENTO_W.transform(Rotation.RIGHT,  true)  shouldBe shapes[2]
-        PieceShape.PENTO_W.transform(Rotation.MIRROR, true)  shouldBe shapes[1]
-        PieceShape.PENTO_W.transform(Rotation.LEFT,   true)  shouldBe shapes[0]
+        val SHOULD = (TID zip (shapes + shapes.asReversed())).toMap()
+        val transformations = (TID zip (
+                (Rotation.values() zip List(Rotation.values().size) {false}) +
+                        (Rotation.values() zip List(Rotation.values().size) {true})
+                )).toMap()
+        val IS = transformations.map {
+            it.key to shape.transform(it.value.first, it.value.second)
+        }.toMap()
+    
+        TID.forEach {
+            try {
+                IS[it] shouldBe SHOULD[it]
+            } catch (e: AssertionFailedError) {
+                println("Expected:  $it  Actual:")
+                printShapes(SHOULD.getValue(it), IS.getValue(it))
+                throw e
+            }
+        }
+    }
+    "Test Set transformation arithmetic (PENTO_R)" {
+        val shape = PieceShape.PENTO_R
+        val TID = listOf("NN", "RN", "MN", "LN", "NY", "RY", "MY", "LY")
+        val SHOULD = (TID zip listOf(
+                setOf(Coordinates(0, 1), Coordinates(1, 2), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 0)),
+                setOf(Coordinates(0, 1), Coordinates(1, 0), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2)),
+                setOf(Coordinates(0, 2), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 0), Coordinates(2, 1)),
+                setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 1)),
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 1)),
+                setOf(Coordinates(0, 2), Coordinates(1, 2), Coordinates(1, 1), Coordinates(1, 0), Coordinates(2, 1)),
+                setOf(Coordinates(0, 1), Coordinates(1, 0), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 2)),
+                setOf(Coordinates(0, 1), Coordinates(1, 2), Coordinates(1, 1), Coordinates(1, 0), Coordinates(2, 0))
+        )).toMap()
+        val transformations = (TID zip (
+                (Rotation.values() zip List(Rotation.values().size) {false}) +
+                (Rotation.values() zip List(Rotation.values().size) {true})
+        )).toMap()
+        val IS = transformations.map {
+            it.key to shape.transform(it.value.first, it.value.second)
+        }.toMap()
+        
+        TID.forEach {
+            try {
+                IS[it] shouldBe SHOULD[it]
+            } catch (e: AssertionFailedError) {
+                println("Expected:  $it  Actual:")
+                printShapes(SHOULD.getValue(it), IS.getValue(it))
+                throw e
+            }
+        }
     }
     "Piece coordination calculation" {
         val position = Coordinates(2, 2)
