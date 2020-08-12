@@ -137,4 +137,10 @@ object GameRuleLogic {
             PieceShape.values()
                     .filter{ it.size == 5 && it != PieceShape.PENTO_X }
                     .random()
+    
+    /** Returns a list of all possible SetMoves. */
+    @JvmStatic
+    fun getPossibleMoves(): List<SetMove> {
+        return emptyList()
+    }
 }

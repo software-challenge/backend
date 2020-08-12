@@ -5,7 +5,6 @@ import sc.plugin2021.Move
 import sc.plugin2021.SetMove
 import sc.plugin2021.helper.MoveParser
 import sc.plugin2021.util.printShapes
-import kotlin.concurrent.fixedRateTimer
 import kotlin.system.exitProcess
 
 assertDoesNotThrow { MoveParser.selfCheck() }
