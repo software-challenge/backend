@@ -4,6 +4,7 @@ import sc.plugin2021.Game
 import sc.plugin2021.Move
 import sc.plugin2021.SetMove
 import sc.plugin2021.helper.MoveParser
+import sc.plugin2021.util.printShapes
 import kotlin.concurrent.fixedRateTimer
 import kotlin.system.exitProcess
 
@@ -46,8 +47,10 @@ fun loop() {
                 current = game.gameState.getOpponent(current)!!
             } catch (e: Exception) {
                 println(e)
-                if (move is SetMove)
-                    println("Piece was ${move.piece.coordinates}")
+                if (move is SetMove) {
+                    println("Piece was:")
+                    printShapes(move.piece.shape)
+                }
             }
         }
     }
