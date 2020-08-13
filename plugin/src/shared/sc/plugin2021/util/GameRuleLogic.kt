@@ -3,8 +3,6 @@ package sc.plugin2021.util
 import org.slf4j.LoggerFactory
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
-import kotlin.contracts.contract
-import kotlin.properties.Delegates
 
 object GameRuleLogic {
     val logger = LoggerFactory.getLogger(GameRuleLogic::class.java)
@@ -143,6 +141,8 @@ object GameRuleLogic {
     /** Returns a list of all possible SetMoves. */
     @JvmStatic
     fun getPossibleMoves(gameState: GameState): Set<SetMove> {
+        // TODO: Use appropriate move calculation here
+        // TODO: assert no move throws
 //        if (gameState.round == 1) return getPossibleStartMoves(gameState)
 //        val color = gameState.currentColor
 //
@@ -159,13 +159,13 @@ object GameRuleLogic {
         }.toSet()
     }
     
-//    /** Returns a list of possible SetMoves if it's the first round. */
-//    @JvmStatic
-//    fun getPossibleStartMoves(gameState: GameState): Set<SetMove> {
-//        val color = gameState.currentColor
-//
-//        return emptySet()
-//    }
+    /** Returns a list of possible SetMoves if it's the first round. */
+    @JvmStatic
+    fun getPossibleStartMoves(gameState: GameState): Set<SetMove> {
+        val color = gameState.currentColor
+        // TODO: calculate possible moves given it's the first turn
+        return emptySet()
+    }
     
     /**
      * Returns a list of all moves, impossible or not.
