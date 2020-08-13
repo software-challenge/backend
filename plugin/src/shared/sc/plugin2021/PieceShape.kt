@@ -43,6 +43,8 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     /** All different variants. Boiler plate for faster calculation of possible moves. */
     val variants: Map<Set<Coordinates>, Pair<Rotation, Boolean>>
     
+    val transformations: Map<Pair<Rotation, Boolean>, Set<Coordinates>>
+    
     init {
         var dx = 0
         var dy = 0
@@ -54,14 +56,22 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     
     
         val mapVariants = mutableMapOf<Set<Coordinates>, Pair<Rotation, Boolean>>()
+        val mapTransformations = mutableMapOf<Pair<Rotation, Boolean>, Set<Coordinates>>()
         for (rotation in Rotation.values()) {
             for (flip in listOf(false, true)) {
                 val shape = coordinates.rotate(rotation).flip(flip)
                 if (mapVariants[shape] == null) mapVariants += shape to Pair(rotation, flip)
+                mapTransformations += Pair(rotation, flip) to shape
             }
         }
         variants = mapVariants
+        transformations = mapTransformations
     }
+    
+    /** Does the same thing as transform, using the variants list. */
+    operator fun get(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
+            transformations[rotation to shouldFlip] ?: emptySet()
+            
 
     /** Applies all the given transformations. */
     fun transform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =

@@ -223,4 +223,11 @@ class PieceTest: StringSpec({
                 PieceShape.TETRO_O.coordinates to Pair(Rotation.NONE, false)
         )
     }
+    "Shape retrieval" {
+        PieceShape.values().forEach {
+            for (rotation in Rotation.values())
+                for (flip in listOf(false, true))
+                    it[rotation, flip] shouldBe it.transform(rotation, flip)
+        }
+    }
 })
