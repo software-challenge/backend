@@ -35,7 +35,7 @@ class Logic(private val client: SimpleClient): IGameHandler{
     override fun onRequestAction() {
         val startTime = System.currentTimeMillis()
         logger.info("Es wurde ein Zug angefordert.")
-        val possibleMoves = GameRuleLogic.getPossibleMoves()
+        val possibleMoves = GameRuleLogic.getPossibleMoves(gameState)
         sendAction(
                 if (possibleMoves.isEmpty()) PassMove(gameState.currentColor)
                 else possibleMoves.random())
