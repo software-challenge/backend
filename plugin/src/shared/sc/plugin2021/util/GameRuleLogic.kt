@@ -3,6 +3,7 @@ package sc.plugin2021.util
 import org.slf4j.LoggerFactory
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
+import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
 object GameRuleLogic {
@@ -142,17 +143,52 @@ object GameRuleLogic {
     /** Returns a list of all possible SetMoves. */
     @JvmStatic
     fun getPossibleMoves(gameState: GameState): Set<SetMove> {
-        if (gameState.round == 1) return getPossibleStartMoves(gameState)
-        val color = gameState.currentColor
+//        if (gameState.round == 1) return getPossibleStartMoves(gameState)
+//        val color = gameState.currentColor
+//
+//        return emptySet()
         
-        return emptySet()
+        return getAllMoves(gameState).filter {
+            try {
+                validateMoveColor(gameState, it)
+                validateSetMove(gameState, it)
+                true
+            } catch (e: InvalidMoveException) {
+                false
+            }
+        }.toSet()
     }
     
-    /** Returns a list of possible SetMoves if it's the first round. */
+//    /** Returns a list of possible SetMoves if it's the first round. */
+//    @JvmStatic
+//    fun getPossibleStartMoves(gameState: GameState): Set<SetMove> {
+//        val color = gameState.currentColor
+//
+//        return emptySet()
+//    }
+    
+    /**
+     * Returns a list of all moves, impossible or not.
+     *  There's no real usage, except maybe for cases where no Move validation happens
+     *  if `Constants.VALIDATE_MOVE` is false, then this function should return the same
+     *  Set as `::getPossibleMoves`
+     */
     @JvmStatic
-    fun getPossibleStartMoves(gameState: GameState): Set<SetMove> {
-        val color = gameState.currentColor
-        
-        return emptySet()
+    fun getAllMoves(gameState: GameState): Set<SetMove> {
+        val moves = mutableSetOf<SetMove>()
+        for (color in Color.values()) {
+            for (shape in PieceShape.values()) {
+                for (rotation in Rotation.values()) {
+                    for (flip in listOf(false, true)) {
+                        for (y in 0 until Constants.BOARD_SIZE) {
+                            for (x in 0 until Constants.BOARD_SIZE) {
+                                moves.add(SetMove(Piece(color, shape, rotation, flip, Coordinates(x, y))))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return moves
     }
 }

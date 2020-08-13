@@ -1,5 +1,6 @@
 package sc.plugin2021
 
+import io.kotlintest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
@@ -7,13 +8,12 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
-import sc.plugin2021.util.print
 import sc.shared.InvalidMoveException
 
 class GameRuleLogicTest: StringSpec({
     "Color validation works correctly" {
         val gameState = GameState(startPiece = PieceShape.PENTO_U)
-        
+
         assertThrows<InvalidMoveException> {
             val invalidMove = SetMove(Piece(Color.RED))
             GameRuleLogic.performMove(gameState, invalidMove)
@@ -27,7 +27,7 @@ class GameRuleLogicTest: StringSpec({
     "Position validation works" {
         val gameState: GameState = GameState()
         gameState.board[Coordinates(1, 1)] = FieldContent.BLUE
-        
+
         assertThrows<InvalidMoveException> {
             val invalidMove = SetMove(
                     Piece(Color.BLUE, PieceShape.MONO, Rotation.NONE, false, Coordinates(-1, 2)))
@@ -35,10 +35,10 @@ class GameRuleLogicTest: StringSpec({
         }
         GameRuleLogic.isObstructed(gameState.board, Coordinates(1, 1)) shouldBe true
         GameRuleLogic.isObstructed(gameState.board, Coordinates(0, 0)) shouldNotBe true
-        
+
         GameRuleLogic.bordersOnColor(gameState.board, Coordinates(1, 0), Color.BLUE) shouldBe true
         GameRuleLogic.bordersOnColor(gameState.board, Coordinates(0, 0), Color.BLUE) shouldNotBe true
-        
+
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(0, 0), Color.BLUE) shouldBe true
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(0, 0), Color.GREEN) shouldNotBe true
         GameRuleLogic.cornersOnColor(gameState.board, Coordinates(1, 0), Color.BLUE) shouldNotBe true
@@ -60,7 +60,7 @@ class GameRuleLogicTest: StringSpec({
                 Piece(Color.RED,    PieceShape.PENTO_S, position = Coordinates(0, Constants.BOARD_SIZE - 2)),
                 Piece(Color.GREEN,  PieceShape.PENTO_S, isFlipped = true)
         )
-        
+
         assertDoesNotThrow {
             val gameState = GameState(startPiece = PieceShape.PENTO_S)
             GameRuleLogic.performMove(gameState, SetMove(validPieces.first()))
@@ -79,7 +79,7 @@ class GameRuleLogicTest: StringSpec({
     }
     "Point score calculation works" {
         GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
-        
+
         val fewPieces = listOf(
                 Piece(Color.BLUE, PieceShape.TRIO_I,  Rotation.NONE, true),
                 Piece(Color.BLUE, PieceShape.TETRO_O, Rotation.NONE, true),
@@ -87,12 +87,12 @@ class GameRuleLogicTest: StringSpec({
                 Piece(Color.BLUE, PieceShape.MONO,    Rotation.NONE, true)
         )
         GameRuleLogic.getPointsFromDeployedPieces(fewPieces) shouldBe -76
-        
+
         val allPieces = PieceShape.shapes.map{
             Piece(Color.BLUE, it.key, Rotation.NONE, false)
         }.toList()
         GameRuleLogic.getPointsFromDeployedPieces(allPieces) shouldBe 15
-        
+
         val perfectPieces = allPieces.reversed()
         GameRuleLogic.getPointsFromDeployedPieces(perfectPieces) shouldBe 20
     }
@@ -105,5 +105,46 @@ class GameRuleLogicTest: StringSpec({
             GameRuleLogic.performMove(gameState, PassMove(Color.BLUE))
         }
         gameState.orderedColors.size shouldBe 3
+    }
+    "All possible moves get calculated" {
+        val state = GameState(startPiece = PieceShape.PENTO_W)
+        var SHOULD = setOf(
+                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.NONE, false, Coordinates(0, 0)),
+                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.MIRROR, false, Coordinates(0, 0)),
+                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(17, 0)),
+                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(17, 0)),
+                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.NONE, false, Coordinates(17, 17)),
+                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.MIRROR, false, Coordinates(17, 17)),
+                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(0, 17)),
+                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(0, 17))
+        ).map { SetMove(it) }.toSet()
+        var IS = GameRuleLogic.getPossibleMoves(state)
+        
+        IS shouldContainExactlyInAnyOrder SHOULD
+        GameRuleLogic.performMove(state, SHOULD.first())
+    
+        SHOULD = setOf(
+                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(17, 0)),
+                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(17, 0)),
+                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.NONE, false, Coordinates(17, 17)),
+                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.MIRROR, false, Coordinates(17, 17)),
+                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(0, 17)),
+                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(0, 17))
+        ).map { SetMove(it) }.toSet()
+        IS = GameRuleLogic.getPossibleMoves(state)
+    
+        IS shouldContainExactlyInAnyOrder SHOULD
+        GameRuleLogic.performMove(state, SHOULD.first())
+        
+        SHOULD = setOf(
+                Piece(Color.RED, PieceShape.PENTO_W, Rotation.NONE, false, Coordinates(17, 17)),
+                Piece(Color.RED, PieceShape.PENTO_W, Rotation.MIRROR, false, Coordinates(17, 17)),
+                Piece(Color.RED, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(0, 17)),
+                Piece(Color.RED, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(0, 17))
+        ).map { SetMove(it) }.toSet()
+        IS = GameRuleLogic.getPossibleMoves(state)
+        
+        IS shouldContainExactlyInAnyOrder SHOULD
+        GameRuleLogic.performMove(state, SHOULD.first())
     }
 })
