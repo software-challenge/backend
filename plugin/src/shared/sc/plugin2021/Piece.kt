@@ -37,13 +37,13 @@ class Piece(@XStreamAsAttribute val color: Color = Color.BLUE,
     override fun toString(): String =
             "$color Piece $kind:${rotation.value}${if (isFlipped) " (flipped)" else ""} [${position.x},${position.y}]"
     
-    override fun equals(other: Any?): Boolean {
-        return other is Piece &&
-                other.color == color &&
-                other.kind == kind &&
-                other.rotation == rotation &&
-                other.isFlipped == isFlipped &&
-                other.position == position
+    override fun equals(other: Any?): Boolean = when(other) {
+        is SetMove -> this == other.piece
+        is Piece -> {
+            this.color == other.color &&
+            this.coordinates == other.coordinates
+        }
+        else -> false
     }
 
     override fun hashCode(): Int {
