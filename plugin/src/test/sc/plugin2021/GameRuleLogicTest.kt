@@ -146,5 +146,13 @@ class GameRuleLogicTest: StringSpec({
         
         IS shouldContainExactlyInAnyOrder SHOULD
         GameRuleLogic.performMove(state, SHOULD.first())
+        
+        SHOULD = setOf(
+                Piece(Color.GREEN, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(0, 17)),
+                Piece(Color.GREEN, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(0, 17))
+        ).map { SetMove(it) }.toSet()
+        IS = GameRuleLogic.getPossibleMoves(state)
+        
+        IS shouldContainExactlyInAnyOrder SHOULD
     }
 })
