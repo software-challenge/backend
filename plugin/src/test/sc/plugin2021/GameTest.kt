@@ -11,8 +11,8 @@ class GameTest: StringSpec({
         Color.BLUE.team
         val game = Game()
         val state = game.gameState
-        game.onPlayerJoined() shouldBe Team.ONE
-        game.onPlayerJoined() shouldBe Team.TWO
+        game.onPlayerJoined().color shouldBe Team.ONE
+        game.onPlayerJoined().color shouldBe Team.TWO
         
         game.start()
         game.onAction(state.currentPlayer, PassMove(state.currentColor))
