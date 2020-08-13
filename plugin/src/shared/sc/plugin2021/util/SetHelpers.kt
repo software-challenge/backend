@@ -1,9 +1,10 @@
 package sc.plugin2021.util
 
-import sc.plugin2021.Coordinates
-import sc.plugin2021.FieldContent
-import sc.plugin2021.Rotation
-import sc.plugin2021.Vector
+import sc.plugin2021.*
+
+/**
+ * A Collection of methods callable on specific Sets or functions that take Sets as input.
+ */
 
 /** Rotates the given shape based on the given rotation. */
 fun Set<Coordinates>.rotate(rotation: Rotation): Set<Coordinates> = when(rotation) {

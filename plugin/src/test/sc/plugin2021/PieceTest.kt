@@ -166,4 +166,5 @@ class PieceTest: StringSpec({
             converted shouldBe it
         }
     }
+
 })
