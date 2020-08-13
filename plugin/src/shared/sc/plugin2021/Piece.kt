@@ -23,15 +23,20 @@ class Piece(@XStreamAsAttribute val color: Color = Color.BLUE,
                 position: Coordinates = Coordinates.origin):
             this(color, PieceShape.shapes.getValue(kind), rotation, isFlipped, position)
     
-    @XStreamOmitField
     val shape: Set<Coordinates>
+        get() = lazyShape()
     
-    @XStreamOmitField
     val coordinates: Set<Coordinates>
+        get() = lazyCoordinates()
     
-    init {
-        shape = kind.transform(rotation, isFlipped)
-        coordinates = shape.map { position + +it }.toSet()
+    private fun lazyShape(): Set<Coordinates> {
+        val shape by lazy {kind.transform(rotation, isFlipped)}
+        return shape
+    }
+    
+    private fun lazyCoordinates(): Set<Coordinates> {
+        val coordinates by lazy {shape.map{position + +it}.toSet()}
+        return coordinates
     }
 
     override fun toString(): String =
