@@ -68,13 +68,16 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
         transformations = mapTransformations
     }
     
-    /** Does the same thing as transform, using the variants list. */
+    /** Does the same thing as transform, providing the index operator. */
     operator fun get(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
-            transformations[rotation to shouldFlip] ?: emptySet()
-            
-
-    /** Applies all the given transformations. */
+            transform(rotation, shouldFlip)
+    
+    /** Returns a shape with all transformations applied. */
     fun transform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
+            transformations[rotation to shouldFlip] ?: emptySet()
+    
+    /** Applies all the given transformations manually instead of looking them up. */
+    fun legacyTransform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
             coordinates.rotate(rotation).flip(shouldFlip)
     
     companion object {

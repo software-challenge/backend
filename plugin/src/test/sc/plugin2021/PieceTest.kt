@@ -227,7 +227,7 @@ class PieceTest: StringSpec({
         PieceShape.values().forEach {
             for (rotation in Rotation.values())
                 for (flip in listOf(false, true))
-                    it[rotation, flip] shouldBe it.transform(rotation, flip)
+                    it[rotation, flip] shouldBe it.legacyTransform(rotation, flip)
         }
     }
 })
