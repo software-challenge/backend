@@ -59,7 +59,7 @@ object GameRuleLogic {
     @JvmStatic
     fun validateMoveColor(gameState: GameState, move: Move) {
         if (move.color != gameState.currentColor)
-            throw InvalidMoveException("The given Move comes from an inactive color", move)
+            throw InvalidMoveException("Expected move from ${gameState.currentColor}", move)
     }
     
     /** Checks if the given [move] is able to be performed for the given [gameState]. */

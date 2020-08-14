@@ -11,8 +11,6 @@ import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
-import kotlin.math.log
-
 
 @XStreamAlias(value = "game")
 class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player>() {
@@ -73,9 +71,9 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
             it to gameState.getPointsForPlayer(it)
         }.toMap()
         
-        if (scoreMap[Team.ONE]!! > scoreMap[Team.TWO]!!)
+        if (scoreMap.getValue(Team.ONE) > scoreMap.getValue(Team.TWO))
             return WinCondition(Team.ONE, WinReason.DIFFERING_SCORES)
-        if (scoreMap[Team.TWO]!! > scoreMap[Team.ONE]!!)
+        if (scoreMap.getValue(Team.TWO) > scoreMap.getValue(Team.TWO))
             return WinCondition(Team.TWO, WinReason.DIFFERING_SCORES)
         return WinCondition(null, WinReason.EQUAL_SCORE)
     }
@@ -99,7 +97,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
         val winCondition = checkWinCondition()
         
         var cause: ScoreCause = ScoreCause.REGULAR
-        var reason: String = ""
+        var reason = ""
         var score: Int = Constants.LOSE_SCORE
         val points = gameState.getPointsForPlayer(team)
         
@@ -146,12 +144,9 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
     
     @Throws(InvalidMoveException::class, InvalidGameStateException::class)
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage?) {
-        // This check is already done by super.onAction()
-        assert(fromPlayer == activePlayer)
-        
         try {
             if (data !is Move)
-                throw InvalidMoveException("${fromPlayer.displayName} hat keinen validen Zug gesendet.")
+                throw InvalidMoveException("${fromPlayer.displayName} did not send a proper move.")
             
             logger.debug("Current State: $gameState")
             logger.debug("Performing Move $data")
