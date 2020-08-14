@@ -1,9 +1,12 @@
 package sc.plugin2021.util
 
+import org.slf4j.LoggerFactory
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
 
 object GameRuleLogic {
+    val logger = LoggerFactory.getLogger(GameRuleLogic::class.java)
+    
     const val SMALLEST_SCORE_POSSIBLE = -89
     
     // TODO: Add all the needed logic as static (@JvmStatic) functions here
@@ -47,6 +50,9 @@ object GameRuleLogic {
                     gameState.removeActiveColor()
             }
         }
+        if (gameState.orderedColors.isNotEmpty())
+            gameState.turn++
+        gameState.lastMove = move
     }
     
     /** Checks if the given [move] has the right [Color]. */

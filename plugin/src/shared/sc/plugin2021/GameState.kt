@@ -2,9 +2,11 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import org.slf4j.LoggerFactory
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.api.plugins.ITeam
+import sc.api.plugins.exceptions.GameLogicException
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 
@@ -13,10 +15,14 @@ class GameState @JvmOverloads constructor(
         override var first: Player = Player(Team.ONE),
         override var second: Player = Player(Team.TWO),
         override var lastMove: Move? = null,
-        startTurn: Int = 1,
+        startTurn: Int = 0,
         val startColor: Color = Color.BLUE,
         @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino()
 ): TwoPlayerGameState<Player>(Team.ONE) {
+    
+    companion object {
+        val logger = LoggerFactory.getLogger(GameState::class.java)
+    }
     
     @XStreamAsAttribute
     override val board: Board = Board()
@@ -44,7 +50,7 @@ class GameState @JvmOverloads constructor(
         get() = orderedColors[currentColorIndex]
     
     @XStreamAsAttribute
-    override var turn: Int = 1
+    override var turn: Int = 0
         set(value) {
             advance(value - field)
             field = value
@@ -64,6 +70,9 @@ class GameState @JvmOverloads constructor(
     
     private fun advance(turns: Int) {
         if (turns < 0) throw IndexOutOfBoundsException("Can't go back in turns (Request was $turns), expected value bigger than $turn")
+        
+        if (orderedColors.isEmpty())
+            throw GameLogicException("Game has already ended - can't proceed to next turn")
         
         val roundIncrementHelper = currentColorIndex + turns
         currentColorIndex = roundIncrementHelper % orderedColors.size
@@ -91,7 +100,8 @@ class GameState @JvmOverloads constructor(
      */
     fun removeActiveColor() {
         orderedColors.remove(currentColor)
-        currentColorIndex = (currentColorIndex + orderedColors.size - 1) % orderedColors.size
+        if (orderedColors.isNotEmpty())
+            currentColorIndex = (currentColorIndex + orderedColors.size - 1) % orderedColors.size
     }
     
     override fun toString(): String = "GameState $round/$turn -> $currentColor"

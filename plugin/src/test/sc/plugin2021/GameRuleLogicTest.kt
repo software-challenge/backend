@@ -67,7 +67,6 @@ class GameRuleLogicTest: StringSpec({
             assertThrows<InvalidMoveException> {
                 invalidPieces.forEach {
                     GameRuleLogic.performMove(gameState, SetMove(it))
-                    gameState.turn++
                 }
             }
         }
@@ -75,7 +74,6 @@ class GameRuleLogicTest: StringSpec({
             val gameState = GameState(startPiece = PieceShape.PENTO_S)
             validPieces.forEach {
                 GameRuleLogic.performMove(gameState, SetMove(it))
-                gameState.turn++
             }
         }
     }

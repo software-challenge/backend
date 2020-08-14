@@ -6,6 +6,7 @@ import sc.server.helpers.TestTeam
 
 class TestGameState: IGameState {
     override var turn = 0
+    override val round get() = turn / 2
     var state = 0
     var lastPlayerIndex = 0
     var currentPlayer: TestTeam
