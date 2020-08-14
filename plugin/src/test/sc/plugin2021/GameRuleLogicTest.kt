@@ -107,16 +107,17 @@ class GameRuleLogicTest: StringSpec({
         gameState.orderedColors.size shouldBe 3
     }
     "All possible moves get calculated" {
-        val state = GameState(startPiece = PieceShape.PENTO_W)
+        val piece = PieceShape.PENTO_W
+        val state = GameState(startPiece = piece)
         var SHOULD = setOf(
-                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.NONE, false, Coordinates(0, 0)),
-                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.MIRROR, false, Coordinates(0, 0)),
-                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(17, 0)),
-                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(17, 0)),
-                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.NONE, false, Coordinates(17, 17)),
-                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.MIRROR, false, Coordinates(17, 17)),
-                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(0, 17)),
-                Piece(Color.BLUE, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(0, 17))
+                Piece(Color.BLUE, piece, Rotation.NONE, false, Coordinates(0, 0)),
+                Piece(Color.BLUE, piece, Rotation.MIRROR, false, Coordinates(0, 0)),
+                Piece(Color.BLUE, piece, Rotation.RIGHT, false, Coordinates(17, 0)),
+                Piece(Color.BLUE, piece, Rotation.LEFT, false, Coordinates(17, 0)),
+                Piece(Color.BLUE, piece, Rotation.NONE, false, Coordinates(17, 17)),
+                Piece(Color.BLUE, piece, Rotation.MIRROR, false, Coordinates(17, 17)),
+                Piece(Color.BLUE, piece, Rotation.RIGHT, false, Coordinates(0, 17)),
+                Piece(Color.BLUE, piece, Rotation.LEFT, false, Coordinates(0, 17))
         ).map { SetMove(it) }.toSet()
         var IS = GameRuleLogic.getPossibleMoves(state)
         
@@ -124,12 +125,12 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.performMove(state, SHOULD.first())
     
         SHOULD = setOf(
-                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(17, 0)),
-                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(17, 0)),
-                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.NONE, false, Coordinates(17, 17)),
-                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.MIRROR, false, Coordinates(17, 17)),
-                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(0, 17)),
-                Piece(Color.YELLOW, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(0, 17))
+                Piece(Color.YELLOW, piece, Rotation.RIGHT, false, Coordinates(17, 0)),
+                Piece(Color.YELLOW, piece, Rotation.LEFT, false, Coordinates(17, 0)),
+                Piece(Color.YELLOW, piece, Rotation.NONE, false, Coordinates(17, 17)),
+                Piece(Color.YELLOW, piece, Rotation.MIRROR, false, Coordinates(17, 17)),
+                Piece(Color.YELLOW, piece, Rotation.RIGHT, false, Coordinates(0, 17)),
+                Piece(Color.YELLOW, piece, Rotation.LEFT, false, Coordinates(0, 17))
         ).map { SetMove(it) }.toSet()
         IS = GameRuleLogic.getPossibleMoves(state)
     
@@ -137,10 +138,10 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.performMove(state, SHOULD.first())
         
         SHOULD = setOf(
-                Piece(Color.RED, PieceShape.PENTO_W, Rotation.NONE, false, Coordinates(17, 17)),
-                Piece(Color.RED, PieceShape.PENTO_W, Rotation.MIRROR, false, Coordinates(17, 17)),
-                Piece(Color.RED, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(0, 17)),
-                Piece(Color.RED, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(0, 17))
+                Piece(Color.RED, piece, Rotation.NONE, false, Coordinates(17, 17)),
+                Piece(Color.RED, piece, Rotation.MIRROR, false, Coordinates(17, 17)),
+                Piece(Color.RED, piece, Rotation.RIGHT, false, Coordinates(0, 17)),
+                Piece(Color.RED, piece, Rotation.LEFT, false, Coordinates(0, 17))
         ).map { SetMove(it) }.toSet()
         IS = GameRuleLogic.getPossibleMoves(state)
         
@@ -148,8 +149,8 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.performMove(state, SHOULD.first())
         
         SHOULD = setOf(
-                Piece(Color.GREEN, PieceShape.PENTO_W, Rotation.RIGHT, false, Coordinates(0, 17)),
-                Piece(Color.GREEN, PieceShape.PENTO_W, Rotation.LEFT, false, Coordinates(0, 17))
+                Piece(Color.GREEN, piece, Rotation.RIGHT, false, Coordinates(0, 17)),
+                Piece(Color.GREEN, piece, Rotation.LEFT, false, Coordinates(0, 17))
         ).map { SetMove(it) }.toSet()
         IS = GameRuleLogic.getPossibleMoves(state)
         

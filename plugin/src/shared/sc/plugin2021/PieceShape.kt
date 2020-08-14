@@ -33,10 +33,12 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     
     @XStreamAsAttribute
     val coordinates: Set<Coordinates> = coordinates.align()
+    
     @XStreamAsAttribute
-    val dimension: Vector
+    val dimension: Vector = coordinates.area()
     
     val asVectors: Set<Vector> by lazy {coordinates.map {it - Coordinates.origin}.toSet()}
+    
     @XStreamOmitField
     val size: Int = coordinates.size
     
@@ -46,15 +48,6 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     val transformations: Map<Pair<Rotation, Boolean>, Set<Coordinates>>
     
     init {
-        var dx = 0
-        var dy = 0
-        coordinates.forEach {
-            dx = max(it.x, dx)
-            dy = max(it.y, dy)
-        }
-        dimension = Vector(dx, dy)
-    
-    
         val mapVariants = mutableMapOf<Set<Coordinates>, Pair<Rotation, Boolean>>()
         val mapTransformations = mutableMapOf<Pair<Rotation, Boolean>, Set<Coordinates>>()
         for (rotation in Rotation.values()) {

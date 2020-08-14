@@ -2,6 +2,7 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import kotlin.math.min
 
 @XStreamAlias(value = "coordinates")
 data class Coordinates(
@@ -34,5 +35,9 @@ data class Vector(
     operator fun times(scalar: Int): Vector {
         return Vector(scalar * dx, scalar * dy)
     }
+    
+    operator fun compareTo(other: Vector): Int =
+            min(other.dx - dx, other.dy - dy)
+    
     operator fun unaryPlus(): Coordinates = Coordinates(dx, dy)
 }

@@ -125,11 +125,8 @@ object GameRuleLogic {
     }
     
     @JvmStatic
-    fun isOnCorner(position: Coordinates): Boolean = listOf(
-            Coordinates(0, 0),
-            Coordinates(Constants.BOARD_SIZE - 1, 0),
-            Coordinates(Constants.BOARD_SIZE - 1, Constants.BOARD_SIZE - 1),
-            Coordinates(0, Constants.BOARD_SIZE - 1)).contains(position)
+    fun isOnCorner(position: Coordinates): Boolean =
+            Corner.asSet().contains(position)
     
     /** Returns a random pentomino which is not the `x` one (Used to get a valid starting piece). */
     @JvmStatic
@@ -147,24 +144,22 @@ object GameRuleLogic {
 //        val color = gameState.currentColor
 //
 //        return emptySet()
-        
-        return getAllMoves(gameState).filter {
-            try {
-                validateMoveColor(gameState, it)
-                validateSetMove(gameState, it)
-                true
-            } catch (e: InvalidMoveException) {
-                false
-            }
-        }.toSet()
+    
+        return getAllMoves(gameState).filterValidMoves(gameState)
     }
     
     /** Returns a list of possible SetMoves if it's the first round. */
     @JvmStatic
     fun getPossibleStartMoves(gameState: GameState): Set<SetMove> {
         val color = gameState.currentColor
-        // TODO: calculate possible moves given it's the first turn
-        return emptySet()
+        val kind = gameState.startPiece
+        val moves  = mutableSetOf<SetMove>()
+        for (variant in kind.variants) {
+            for (corner in Corner.values()) {
+                moves.add(SetMove(Piece(color, kind, variant.key, corner.align(variant.key.area()))))
+            }
+        }
+        return moves.filterValidMoves(gameState)
     }
     
     /**
