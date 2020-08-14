@@ -230,4 +230,12 @@ class PieceTest: StringSpec({
                     it[rotation, flip] shouldBe it.legacyTransform(rotation, flip)
         }
     }
+    "Piece Constructor from Shape" {
+        PieceShape.values().forEach {
+            for (trafo in it.variants) {
+                Piece(kind = it, rotation = trafo.value.first, isFlipped = trafo.value.second) shouldBe
+                        Piece(kind = it, shape = trafo.key)
+            }
+        }
+    }
 })
