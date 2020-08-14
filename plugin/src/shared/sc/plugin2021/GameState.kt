@@ -33,7 +33,7 @@ class GameState @JvmOverloads constructor(
         it to PieceShape.values().toMutableSet()
     }.toMap()
     
-    @XStreamAsAttribute
+    @XStreamOmitField
     val deployedPieces: Map<Color, MutableList<Piece>> = Color.values().map {
         it to mutableListOf<Piece>()
     }.toMap()
