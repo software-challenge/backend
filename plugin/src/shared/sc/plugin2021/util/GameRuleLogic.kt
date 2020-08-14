@@ -139,13 +139,18 @@ object GameRuleLogic {
     @JvmStatic
     fun getPossibleMoves(gameState: GameState): Set<SetMove> {
         // TODO: Use appropriate move calculation here
-        // TODO: assert no move throws
-//        if (gameState.round == 1) return getPossibleStartMoves(gameState)
-//        val color = gameState.currentColor
-//
-//        return emptySet()
-    
-        return getAllMoves(gameState).filterValidMoves(gameState)
+        if (gameState.deployedPieces.getValue(gameState.currentColor).isEmpty()) return getPossibleStartMoves(gameState)
+        val color = gameState.currentColor
+
+        val moves = mutableSetOf<SetMove>()
+        gameState.undeployedPieceShapes.getValue(color).map {
+            val area = it.coordinates.area()
+            for (y in 0 until Constants.BOARD_SIZE - area.dy)
+                for (x in 0 until Constants.BOARD_SIZE - area.dx)
+                    for (variant in it.variants)
+                        moves += SetMove(Piece(color, it, variant.key, Coordinates(x, y)))
+        }
+        return moves
     }
     
     /** Returns a list of possible SetMoves if it's the first round. */

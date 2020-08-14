@@ -8,6 +8,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
+import sc.plugin2021.util.filterValidMoves
 import sc.shared.InvalidMoveException
 
 class GameRuleLogicTest: StringSpec({
@@ -106,9 +107,9 @@ class GameRuleLogicTest: StringSpec({
         }
         gameState.orderedColors.size shouldBe 3
     }
-    "All possible moves get calculated" {
+    "All possible start moves get calculated" {
         val piece = PieceShape.PENTO_W
-        val state = GameState(startPiece = piece)
+        var state = GameState(startPiece = piece)
         var SHOULD = setOf(
                 Piece(Color.BLUE, piece, Rotation.NONE, false, Coordinates(0, 0)),
                 Piece(Color.BLUE, piece, Rotation.MIRROR, false, Coordinates(0, 0)),
@@ -155,5 +156,15 @@ class GameRuleLogicTest: StringSpec({
         IS = GameRuleLogic.getPossibleMoves(state)
         
         IS shouldContainExactlyInAnyOrder SHOULD
+    
+        state = GameState()
+        GameRuleLogic.getPossibleMoves(state) shouldContainExactlyInAnyOrder
+                GameRuleLogic.getAllMoves(state).filterValidMoves(state)
+    
+        GameRuleLogic.getPossibleMoves(state) shouldContainExactlyInAnyOrder
+                GameRuleLogic.getPossibleMoves(state).filterValidMoves(state)
+    }
+    "All possible moves get calculated" {
+        // TODO: set up a mid-game state so that the list of possible moves is non-trivial
     }
 })
