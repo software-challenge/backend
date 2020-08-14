@@ -1,5 +1,8 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
+
+@XStreamAlias(value = "content")
 enum class FieldContent(val letter: Char) {
     BLUE('B'),
     YELLOW('Y'),

@@ -1,9 +1,11 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IBoard
 import sc.plugin2021.util.Constants
 import sc.plugin2021.Field
 
+@XStreamAlias(value = "board")
 class Board(
         private val gameField: Array<Array<FieldContent>> =
                 Array(Constants.BOARD_SIZE) { Array(Constants.BOARD_SIZE) { FieldContent.EMPTY }}

@@ -9,7 +9,7 @@ import sc.plugin2021.util.print
 import sc.plugin2021.util.rotate
 
 /** A Piece has a color, a position and a normalised shape. */
-//@XStreamAlias(value = "piece")
+@XStreamAlias(value = "piece")
 class Piece(@XStreamAsAttribute val color: Color = Color.BLUE,
             @XStreamAsAttribute val kind: PieceShape = PieceShape.MONO,
             @XStreamAsAttribute val rotation: Rotation = Rotation.NONE,

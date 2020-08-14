@@ -1,7 +1,9 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 
+@XStreamAlias(value = "coordinates")
 data class Coordinates(
         @XStreamAsAttribute val x: Int,
         @XStreamAsAttribute val y: Int) {

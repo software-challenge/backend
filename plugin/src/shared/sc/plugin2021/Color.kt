@@ -1,5 +1,8 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
+
+@XStreamAlias(value = "color")
 enum class Color(val team: Team) {
     BLUE  (Team.ONE),
     YELLOW(Team.TWO),

@@ -2,6 +2,7 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player

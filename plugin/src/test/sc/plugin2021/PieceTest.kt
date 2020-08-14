@@ -139,32 +139,31 @@ class PieceTest: StringSpec({
         )
     
         Configuration.xStream.toXML(pieces[0]) shouldBe """
-            <sc.plugin2021.Piece color="YELLOW" kind="TETRO_O" rotation="RIGHT" isFlipped="false">
+            <piece color="YELLOW" kind="TETRO_O" rotation="RIGHT" isFlipped="false">
               <position x="0" y="0"/>
-            </sc.plugin2021.Piece>
+            </piece>
         """.trimIndent()
         Configuration.xStream.toXML(pieces[1]) shouldBe """
-            <sc.plugin2021.Piece color="RED" kind="PENTO_Y" rotation="LEFT" isFlipped="false">
+            <piece color="RED" kind="PENTO_Y" rotation="LEFT" isFlipped="false">
               <position x="0" y="0"/>
-            </sc.plugin2021.Piece>
+            </piece>
         """.trimIndent()
         Configuration.xStream.toXML(pieces[2]) shouldBe """
-            <sc.plugin2021.Piece color="BLUE" kind="PENTO_P" rotation="MIRROR" isFlipped="true">
+            <piece color="BLUE" kind="PENTO_P" rotation="MIRROR" isFlipped="true">
               <position x="0" y="0"/>
-            </sc.plugin2021.Piece>
+            </piece>
         """.trimIndent()
         Configuration.xStream.toXML(pieces[3]) shouldBe """
-            <sc.plugin2021.Piece color="GREEN" kind="TRIO_L" rotation="NONE" isFlipped="true">
+            <piece color="GREEN" kind="TRIO_L" rotation="NONE" isFlipped="true">
               <position x="5" y="9"/>
-            </sc.plugin2021.Piece>
+            </piece>
         """.trimIndent()
 
         pieces.forEach{
             val xml = Configuration.xStream.toXML(it)
             val converted = Configuration.xStream.fromXML(xml) as Piece
             converted.toString() shouldBe it.toString()
-//            converted shouldBe it
-//            printShapes(it.coordinates, converted.coordinates)
+            converted shouldBe it
             println("Expected: ${it.coordinates} - Actual: ${converted.coordinates}")
         }
     }

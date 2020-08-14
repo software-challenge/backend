@@ -1,5 +1,6 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.plugin2021.util.Constants
@@ -8,6 +9,7 @@ import sc.plugin2021.util.rotate
 import sc.plugin2021.util.flip
 import kotlin.math.max
 
+@XStreamAlias(value = "shape")
 enum class PieceShape(coordinates: Set<Coordinates>) {
 /* 0*/  MONO   (setOf(Coordinates(0, 0))),
 /* 1*/  DOMINO (setOf(Coordinates(0, 0), Coordinates(1, 0))),
