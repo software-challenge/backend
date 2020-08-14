@@ -3,7 +3,6 @@ package sc.plugin2021
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IBoard
 import sc.plugin2021.util.Constants
-import sc.plugin2021.Field
 
 @XStreamAlias(value = "board")
 class Board(
@@ -49,5 +48,29 @@ class Board(
         return gameField.joinToString(separator = "") {
             "${it.joinToString(separator = "  ") { it.letter.toString() }}\n"
         }
+    }
+}
+
+/** The four corners on the Board, used to calculate the position of a piece in a corner. */
+enum class Corner(val position: Coordinates) {
+    UPPER_LEFT(Coordinates(0, 0)) {
+        override fun align(area: Vector): Coordinates = position
+    },
+    UPPER_RIGHT(Coordinates(Constants.BOARD_SIZE - 1, 0)) {
+        override fun align(area: Vector): Coordinates = Coordinates(position.x - area.dx, position.y)
+    },
+    LOWER_RIGHT(Coordinates(Constants.BOARD_SIZE - 1, Constants.BOARD_SIZE - 1)) {
+        override fun align(area: Vector): Coordinates = position - area
+    },
+    LOWER_LEFT(Coordinates(0, Constants.BOARD_SIZE - 1)) {
+        override fun align(area: Vector): Coordinates = Coordinates(position.x, position.y - area.dy)
+    };
+    
+    /** Returns the position a piece of given area has to be placed at to lie in the respective corner. */
+    abstract fun align(area: Vector): Coordinates
+    
+    companion object {
+        /** Returns a set of the positions of all corners. */
+        fun asSet(): Set<Coordinates> = values().map { it.position }.toSet()
     }
 }

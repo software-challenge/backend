@@ -2,11 +2,6 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamOmitField
-import sc.plugin2021.util.align
-import sc.plugin2021.util.flip
-import sc.plugin2021.util.print
-import sc.plugin2021.util.rotate
 
 /** A Piece has a color, a position and a normalised shape. */
 @XStreamAlias(value = "piece")
@@ -22,6 +17,15 @@ class Piece(@XStreamAsAttribute val color: Color = Color.BLUE,
                 isFlipped: Boolean = false,
                 position: Coordinates = Coordinates.origin):
             this(color, PieceShape.shapes.getValue(kind), rotation, isFlipped, position)
+    
+    constructor(color: Color = Color.BLUE,
+                kind: PieceShape = PieceShape.MONO,
+                shape: Set<Coordinates>,
+                position: Coordinates = Coordinates.origin):
+            this(color, kind, kind.variants.getValue(shape), position)
+    
+    private constructor(color: Color, kind: PieceShape, transformation: Pair<Rotation, Boolean>, position: Coordinates):
+            this(color, kind, transformation.first, transformation.second, position)
     
     val shape: Set<Coordinates>
         get() = lazyShape()

@@ -1,7 +1,7 @@
 package sc.plugin2021
 
-import com.thoughtworks.xstream.XStream
-import io.kotlintest.inspectors.forAll
+import io.kotlintest.matchers.maps.shouldContain
+import io.kotlintest.matchers.maps.shouldContainExactly
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import org.opentest4j.AssertionFailedError
@@ -122,6 +122,37 @@ class PieceTest: StringSpec({
             }
         }
     }
+    "Test Set transformation arithmetic (TRIO_L)" {
+        val shape = PieceShape.TRIO_L
+        val TID = listOf("NN", "RN", "MN", "LN", "NY", "RY", "MY", "LY")
+        val SHOULD = (TID zip listOf(
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1)),
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 0)),
+                setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1)),
+                setOf(Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 0)),
+                setOf(Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 0)),
+                setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1)),
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 0)),
+                setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1))
+        )).toMap()
+        val transformations = (TID zip (
+                (Rotation.values() zip List(Rotation.values().size) {false}) +
+                        (Rotation.values() zip List(Rotation.values().size) {true})
+                )).toMap()
+        val IS = transformations.map {
+            it.key to shape.transform(it.value.first, it.value.second)
+        }.toMap()
+        
+        TID.forEach {
+            try {
+                IS[it] shouldBe SHOULD[it]
+            } catch (e: AssertionFailedError) {
+                println("Expected:  $it  Actual:")
+                printShapes(SHOULD.getValue(it), IS.getValue(it))
+                throw e
+            }
+        }
+    }
     "Piece coordination calculation" {
         val position = Coordinates(2, 2)
         val coordinates = setOf(Coordinates(2, 3), Coordinates(3, 3), Coordinates(3, 2))
@@ -164,10 +195,43 @@ class PieceTest: StringSpec({
             val converted = Configuration.xStream.fromXML(xml) as Piece
             converted.toString() shouldBe it.toString()
             converted shouldBe it
-            println("Expected: ${it.coordinates} - Actual: ${converted.coordinates}")
         }
     }
     "Piece transformation calculation" {
-    
+        PieceShape.values().forEach {
+            it.variants shouldContain (it.coordinates to Pair(Rotation.NONE, false))
+        }
+        
+        PieceShape.MONO.variants shouldContainExactly mapOf(
+                PieceShape.MONO.coordinates to Pair(Rotation.NONE, false)
+        )
+        PieceShape.DOMINO.variants shouldContainExactly mapOf(
+                PieceShape.DOMINO.coordinates to Pair(Rotation.NONE, false),
+                PieceShape.DOMINO.transform(Rotation.RIGHT, false) to Pair(Rotation.RIGHT, false)
+        )
+        PieceShape.TRIO_L.variants shouldContainExactly mapOf(
+                PieceShape.TRIO_L.coordinates to Pair(Rotation.NONE, false),
+                PieceShape.TRIO_L.transform(Rotation.NONE, true) to Pair(Rotation.NONE, true),
+                PieceShape.TRIO_L.transform(Rotation.RIGHT, false) to Pair(Rotation.RIGHT, false),
+                PieceShape.TRIO_L.transform(Rotation.RIGHT, true) to Pair(Rotation.RIGHT, true)
+        )
+        PieceShape.TETRO_O.variants shouldContainExactly mapOf(
+                PieceShape.TETRO_O.coordinates to Pair(Rotation.NONE, false)
+        )
+    }
+    "Shape retrieval" {
+        PieceShape.values().forEach {
+            for (rotation in Rotation.values())
+                for (flip in listOf(false, true))
+                    it[rotation, flip] shouldBe it.legacyTransform(rotation, flip)
+        }
+    }
+    "Piece Constructor from Shape" {
+        PieceShape.values().forEach {
+            for (trafo in it.variants) {
+                Piece(kind = it, rotation = trafo.value.first, isFlipped = trafo.value.second) shouldBe
+                        Piece(kind = it, shape = trafo.key)
+            }
+        }
     }
 })

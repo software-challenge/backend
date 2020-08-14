@@ -3,10 +3,7 @@ package sc.plugin2021
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
-import sc.plugin2021.util.Constants
-import sc.plugin2021.util.align
-import sc.plugin2021.util.rotate
-import sc.plugin2021.util.flip
+import sc.plugin2021.util.*
 import kotlin.math.max
 
 @XStreamAlias(value = "shape")
@@ -36,25 +33,44 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     
     @XStreamAsAttribute
     val coordinates: Set<Coordinates> = coordinates.align()
+    
     @XStreamAsAttribute
-    val dimension: Vector
+    val dimension: Vector = coordinates.area()
     
     val asVectors: Set<Vector> by lazy {coordinates.map {it - Coordinates.origin}.toSet()}
+    
     @XStreamOmitField
     val size: Int = coordinates.size
     
+    /** All different variants. Boiler plate for faster calculation of possible moves. */
+    val variants: Map<Set<Coordinates>, Pair<Rotation, Boolean>>
+    
+    val transformations: Map<Pair<Rotation, Boolean>, Set<Coordinates>>
+    
     init {
-        var dx = 0
-        var dy = 0
-        coordinates.forEach {
-            dx = max(it.x, dx)
-            dy = max(it.y, dy)
+        val mapVariants = mutableMapOf<Set<Coordinates>, Pair<Rotation, Boolean>>()
+        val mapTransformations = mutableMapOf<Pair<Rotation, Boolean>, Set<Coordinates>>()
+        for (rotation in Rotation.values()) {
+            for (flip in listOf(false, true)) {
+                val shape = coordinates.rotate(rotation).flip(flip)
+                if (mapVariants[shape] == null) mapVariants += shape to Pair(rotation, flip)
+                mapTransformations += Pair(rotation, flip) to shape
+            }
         }
-        dimension = Vector(dx, dy)
+        variants = mapVariants
+        transformations = mapTransformations
     }
     
-    /** Applies all the given transformations. */
+    /** Does the same thing as transform, providing the index operator. */
+    operator fun get(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
+            transform(rotation, shouldFlip)
+    
+    /** Returns a shape with all transformations applied. */
     fun transform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
+            transformations[rotation to shouldFlip] ?: emptySet()
+    
+    /** Applies all the given transformations manually instead of looking them up. */
+    fun legacyTransform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
             coordinates.rotate(rotation).flip(shouldFlip)
     
     companion object {

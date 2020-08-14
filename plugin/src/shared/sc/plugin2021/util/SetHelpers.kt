@@ -1,6 +1,8 @@
 package sc.plugin2021.util
 
 import sc.plugin2021.*
+import sc.shared.InvalidMoveException
+import java.lang.IndexOutOfBoundsException
 
 /**
  * A Collection of methods callable on specific Sets or functions that take Sets as input.
@@ -54,13 +56,27 @@ fun Set<Coordinates>.align(): Set<Coordinates> {
     }.toSet()
 }
 
+/** Returns the rectangular area the Set of Coordinates lies in. */
+fun Set<Coordinates>.area(): Vector {
+    var dx = 0
+    var dy = 0
+    forEach {
+        dx = kotlin.math.max(it.x, dx)
+        dy = kotlin.math.max(it.y, dy)
+    }
+    return Vector(dx, dy)
+}
+
 /** Prints an ascii art of the piece. */
-fun Set<Coordinates>.print(dimension: Vector = Vector(4, 5)) {
+fun Set<Coordinates>.print(dimension: Vector = area()) {
     printShapes(this, dimension = dimension)
 }
 
 /** Prints all given shapes next to each other. */
 fun printShapes(vararg shapes: Set<Coordinates>, dimension: Vector = Vector(4, 5)) {
+    if (shapes.any{it.area() < dimension})
+        throw IndexOutOfBoundsException("The largest shape has to fit in the given dimension")
+        
     val width = shapes.size * (dimension.dx + 1)
     val array = Array(dimension.dy * width) {FieldContent.EMPTY.letter}
     for (n in array.indices) {
@@ -77,3 +93,15 @@ fun printShapes(vararg shapes: Set<Coordinates>, dimension: Vector = Vector(4, 5
     }
     println()
 }
+
+/** Filters all moves, returning only those who pass the validation functions. */
+fun Set<SetMove>.filterValidMoves(gameState: GameState): Set<SetMove> =
+        filter {
+            try {
+                GameRuleLogic.validateMoveColor(gameState, it)
+                GameRuleLogic.validateSetMove(gameState, it)
+                true
+            } catch(e: InvalidMoveException) {
+                false
+            }
+        }.toSet()
