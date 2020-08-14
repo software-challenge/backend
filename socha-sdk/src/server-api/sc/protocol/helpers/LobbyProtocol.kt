@@ -10,7 +10,7 @@ object LobbyProtocol {
 
     @JvmStatic
     fun registerMessages(xStream: XStream): XStream {
-        registerAdditionalMessages(xStream, listOf(ProtocolErrorMessage::class.java, GamePausedEvent::class.java, JoinGameProtocolMessage::class.java, LeftGameEvent::class.java, MementoPacket::class.java, PrepareGameProtocolMessage::class.java, ObservationProtocolMessage::class.java, RoomPacket::class.java))
+        registerAdditionalMessages(xStream, listOf(ProtocolErrorMessage::class.java, GamePausedEvent::class.java, JoinGameProtocolMessage::class.java, LeftGameEvent::class.java, MementoPacket::class.java, PrepareGameProtocolMessage::class.java, ObservationProtocolMessage::class.java, RoomPacket::class.java, WelcomeMessage::class.java))
     
         registerAdditionalMessages(xStream, listOf(AuthenticateRequest::class.java, CancelRequest::class.java, FreeReservationRequest::class.java, JoinPreparedRoomRequest::class.java, JoinRoomRequest::class.java, ObservationRequest::class.java, PauseGameRequest::class.java, ControlTimeoutRequest::class.java, PrepareGameRequest::class.java, StepRequest::class.java, GetScoreForPlayerRequest::class.java, TestModeRequest::class.java, PlayerScorePacket::class.java, TestModeMessage::class.java, GameRoomMessage::class.java))
     
