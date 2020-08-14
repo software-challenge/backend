@@ -209,10 +209,6 @@ class PieceTest: StringSpec({
                 PieceShape.DOMINO.coordinates to Pair(Rotation.NONE, false),
                 PieceShape.DOMINO.transform(Rotation.RIGHT, false) to Pair(Rotation.RIGHT, false)
         )
-        PieceShape.TRIO_L.variants.forEach {
-            println(it)
-            it.key.print()
-        }
         PieceShape.TRIO_L.variants shouldContainExactly mapOf(
                 PieceShape.TRIO_L.coordinates to Pair(Rotation.NONE, false),
                 PieceShape.TRIO_L.transform(Rotation.NONE, true) to Pair(Rotation.NONE, true),
