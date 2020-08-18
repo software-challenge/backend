@@ -97,15 +97,12 @@ class GameRuleLogicTest: StringSpec({
         val perfectPieces = allPieces.reversed()
         GameRuleLogic.getPointsFromDeployedPieces(perfectPieces) shouldBe 20
     }
-    "PassMoves let you pass out" {
-        val gameState = GameState()
+    "After the color check, PassMoves throw" {
+        val state = GameState()
         assertThrows<InvalidMoveException> {
-            GameRuleLogic.performMove(gameState, PassMove(Color.RED))
+            GameRuleLogic.performMove(state, PassMove(Color.BLUE))
         }
-        assertDoesNotThrow {
-            GameRuleLogic.performMove(gameState, PassMove(Color.BLUE))
-        }
-        gameState.orderedColors.size shouldBe 3
+        state.orderedColors.size shouldBe 4
     }
     "All possible start moves get calculated" {
         val piece = PieceShape.PENTO_W

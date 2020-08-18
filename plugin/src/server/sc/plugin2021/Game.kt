@@ -154,6 +154,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
             next(if(gameState.orderedColors.isNotEmpty()) gameState.currentPlayer else null)
             logger.debug("Current Board:\n${gameState.board}")
         } catch(e: InvalidMoveException) {
+            gameState.removeActiveColor()
             super.catchInvalidMove(e, fromPlayer)
         }
     }
