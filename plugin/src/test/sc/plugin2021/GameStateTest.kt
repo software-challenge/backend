@@ -100,21 +100,4 @@ class GameStateTest: StringSpec({
         gameState.round shouldBe 4
         gameState.currentColor shouldBe Color.BLUE
     }
-    "Passed out colors behave correctly"  {
-        val gameState = GameState(startTurn = 2)
-        gameState.orderedColors shouldBe listOf(Color.BLUE, Color.YELLOW, Color.RED, Color.GREEN)
-        gameState.currentColor  shouldBe Color.RED
-        
-        GameRuleLogic.performMove(gameState, PassMove(Color.RED))
-        gameState.orderedColors shouldBe listOf(Color.BLUE, Color.YELLOW, Color.GREEN)
-        gameState.currentColor  shouldBe Color.GREEN
-        
-        GameRuleLogic.performMove(gameState, PassMove(Color.GREEN))
-        gameState.orderedColors shouldBe listOf(Color.BLUE, Color.YELLOW)
-        gameState.currentColor  shouldBe Color.BLUE
-        
-        GameRuleLogic.performMove(gameState, PassMove(Color.BLUE))
-        gameState.orderedColors shouldBe listOf(Color.YELLOW)
-        gameState.currentColor  shouldBe Color.YELLOW
-    }
 })

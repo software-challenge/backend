@@ -45,7 +45,6 @@ fun loop() {
                 game.onAction(game.gameState.getPlayer(move.color.team), move)
                 current = game.gameState.getOpponent(current)!!
             } catch (e: Exception) {
-                println(e)
                 if (move is SetMove) {
                     println("Piece was:")
                     printShapes(move.piece.shape)

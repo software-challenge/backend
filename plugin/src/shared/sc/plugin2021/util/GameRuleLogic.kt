@@ -33,7 +33,7 @@ object GameRuleLogic {
         
         when (move) {
             is PassMove -> {
-                gameState.removeActiveColor()
+                throw InvalidMoveException("Color ${move.color} intentionally passed out", move)
             }
             is SetMove -> {
                 if (Constants.VALIDATE_MOVE)
