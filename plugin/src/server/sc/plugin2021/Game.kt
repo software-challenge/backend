@@ -41,14 +41,22 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
     }
     
     override fun getWinners(): MutableList<Player> {
-        val winCondition = checkWinCondition()
-        if (winCondition != null)
-            return winCondition.winner.let{players}
+        if (players.first().violated) {
+            if (players.last().violated)
+                return mutableListOf()
+            return players.subList(1, 2)
+        }
+        if (players.last().violated)
+            return players.subList(0, 1)
         
-        // If no win condition is met, the player with highest score wins.
-        return listOfNotNull(players.maxBy {
-            gameState.getPointsForPlayer(it.color)
-        }).toMutableList()
+        val first = gameState.getPointsForPlayer(players.first().color)
+        val second = gameState.getPointsForPlayer(players.last().color)
+        
+        if (first > second)
+            return players.subList(0, 1)
+        if (first < second)
+            return players.subList(1, 2)
+        return players
     }
     
     override fun getPlayerScores(): MutableList<PlayerScore> =
@@ -64,8 +72,9 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
      * the player with the highest cumulative score of its colors
      */
     override fun checkWinCondition(): WinCondition? {
-        if (gameState.orderedColors.isNotEmpty())
-            return null
+        if (gameState.orderedColors.any {
+            GameRuleLogic.getPossibleMoves(gameState).isNotEmpty()
+        }) return null
         
         val scoreMap: Map<Team, Int> = Team.values().map {
             it to gameState.getPointsForPlayer(it)
@@ -114,28 +123,28 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
                 opponent.hasSoftTimeout() ||
                 opponent.hasHardTimeout())
             score = Constants.WIN_SCORE
-        
-        when {
-            player.hasSoftTimeout() -> {
-                cause = ScoreCause.SOFT_TIMEOUT
-                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).softTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+        else
+            when {
+                player.hasSoftTimeout() -> {
+                    cause = ScoreCause.SOFT_TIMEOUT
+                    reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).softTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+                }
+                player.hasHardTimeout() -> {
+                    cause = ScoreCause.SOFT_TIMEOUT
+                    reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+                }
+                player.hasViolated() -> {
+                    cause = ScoreCause.RULE_VIOLATION
+                    reason = player.violationReason!!
+                }
+                player.hasLeft() -> {
+                    cause = ScoreCause.LEFT
+                    reason = "Der Spieler hat das Spiel verlassen"
+                }
+                else -> {
+                    score = Constants.DRAW_SCORE
+                }
             }
-            player.hasHardTimeout() -> {
-                cause = ScoreCause.SOFT_TIMEOUT
-                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
-            }
-            player.hasViolated() -> {
-                cause = ScoreCause.RULE_VIOLATION
-                reason = player.violationReason!!
-            }
-            player.hasLeft() -> {
-                cause = ScoreCause.LEFT
-                reason = "Der Spieler hat das Spiel verlassen"
-            }
-            else -> {
-                score = Constants.DRAW_SCORE
-            }
-        }
         return PlayerScore(cause, reason, score, points)
     }
     
