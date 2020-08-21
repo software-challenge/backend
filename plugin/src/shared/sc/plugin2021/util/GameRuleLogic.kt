@@ -9,7 +9,6 @@ object GameRuleLogic {
     
     const val SMALLEST_SCORE_POSSIBLE = -89
     
-    // TODO: Add all the needed logic as static (@JvmStatic) functions here
     /** Calculates the score for the given list in pieces.
      *  Assumes the game has ended and the pieces are in order of placement.
      */
@@ -96,6 +95,16 @@ object GameRuleLogic {
         }
     }
     
+    /** Returns true if [move] is valid, false otherwise. */
+    @JvmStatic
+    fun isValidSetMove(gameState: GameState, move: SetMove) =
+            try {
+                validateSetMove(gameState, move)
+                true
+            } catch (e: InvalidMoveException) {
+                false
+            }
+    
     /** Checks if the given [position] is already obstructed by another piece. */
     @JvmStatic
     fun isObstructed(board: Board, position: Coordinates): Boolean =
@@ -130,6 +139,10 @@ object GameRuleLogic {
     fun isOnCorner(position: Coordinates): Boolean =
             Corner.asSet().contains(position)
     
+    @JvmStatic
+    fun isFirstMove(gameState: GameState) =
+            gameState.deployedPieces.getValue(gameState.currentColor).isEmpty()
+    
     /** Returns a random pentomino which is not the `x` one (Used to get a valid starting piece). */
     @JvmStatic
     fun getRandomPentomino() =
@@ -139,35 +152,13 @@ object GameRuleLogic {
     
     /** Returns a list of all possible SetMoves. */
     @JvmStatic
-    fun getPossibleMoves(gameState: GameState): Set<SetMove> {
-        // TODO: Use appropriate move calculation here
-        if (gameState.deployedPieces.getValue(gameState.currentColor).isEmpty()) return getPossibleStartMoves(gameState)
-        val color = gameState.currentColor
-
-        val moves = mutableSetOf<SetMove>()
-        gameState.undeployedPieceShapes.getValue(color).map {
-            val area = it.coordinates.area()
-            for (y in 0 until Constants.BOARD_SIZE - area.dy)
-                for (x in 0 until Constants.BOARD_SIZE - area.dx)
-                    for (variant in it.variants)
-                        moves += SetMove(Piece(color, it, variant.key, Coordinates(x, y)))
-        }
-        return moves
-    }
+    fun getPossibleMoves(gameState: GameState) =
+            streamPossibleMoves(gameState).toSet()
     
     /** Returns a list of possible SetMoves if it's the first round. */
     @JvmStatic
-    fun getPossibleStartMoves(gameState: GameState): Set<SetMove> {
-        val color = gameState.currentColor
-        val kind = gameState.startPiece
-        val moves  = mutableSetOf<SetMove>()
-        for (variant in kind.variants) {
-            for (corner in Corner.values()) {
-                moves.add(SetMove(Piece(color, kind, variant.key, corner.align(variant.key.area()))))
-            }
-        }
-        return moves.filterValidMoves(gameState)
-    }
+    fun getPossibleStartMoves(gameState: GameState) =
+            streamPossibleStartMoves(gameState).toSet()
     
     /**
      * Returns a list of all moves, impossible or not.
@@ -176,7 +167,7 @@ object GameRuleLogic {
      *  Set as `::getPossibleMoves`
      */
     @JvmStatic
-    fun getAllMoves(gameState: GameState): Set<SetMove> {
+    fun getAllMoves(): Set<SetMove> {
         val moves = mutableSetOf<SetMove>()
         for (color in Color.values()) {
             for (shape in PieceShape.values()) {
@@ -193,4 +184,38 @@ object GameRuleLogic {
         }
         return moves
     }
+    
+    /** Ensures the currently active color of [gameState] can perform a move. */
+    @JvmStatic
+    fun validateMovability(gameState: GameState) {
+        if (streamPossibleMoves(gameState).none { isValidSetMove(gameState, it) })
+            gameState.removeActiveColor()
+    }
+    
+    /** Streams all possible moves in the current turn of [gameState]. */
+    @JvmStatic
+    fun streamPossibleMoves(gameState: GameState) =
+            if (isFirstMove(gameState))
+                streamPossibleStartMoves(gameState)
+            else sequence<SetMove> {
+                val color = gameState.currentColor
+                gameState.undeployedPieceShapes.getValue(color).map {
+                    val area = it.coordinates.area()
+                    for (y in 0 until Constants.BOARD_SIZE - area.dy)
+                        for (x in 0 until Constants.BOARD_SIZE - area.dx)
+                            for (variant in it.variants)
+                                yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
+                }
+            }.filter { isValidSetMove(gameState, it) }
+    
+    /** Streams all possible moves if it's the first turn of [gameState]. */
+    @JvmStatic
+    fun streamPossibleStartMoves(gameState: GameState) = sequence<SetMove> {
+        val kind = gameState.startPiece
+        for (variant in kind.variants) {
+            for (corner in Corner.values()) {
+                yield(SetMove(Piece(gameState.currentColor, kind, variant.key, corner.align(variant.key.area()))))
+            }
+        }
+    }.filter { isValidSetMove(gameState, it) }
 }
