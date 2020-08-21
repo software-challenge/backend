@@ -122,6 +122,7 @@ object GameRuleLogic {
         } catch (e: ArrayIndexOutOfBoundsException) { false }
     }
     
+    /** Returns true if the given [Coordinates] touch a corner of a field of same color. */
     @JvmStatic
     fun cornersOnColor(board: Board, position: Coordinates, color: Color): Boolean = listOf(
             Vector(1, 1),
@@ -133,6 +134,7 @@ object GameRuleLogic {
         } catch (e: ArrayIndexOutOfBoundsException) { false }
     }
     
+    /** Returns true if the given [Coordinates] are a corner. */
     @JvmStatic
     fun isOnCorner(position: Coordinates): Boolean =
             Corner.asSet().contains(position)
