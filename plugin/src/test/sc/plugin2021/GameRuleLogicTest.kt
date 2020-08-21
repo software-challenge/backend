@@ -156,7 +156,7 @@ class GameRuleLogicTest: StringSpec({
     
         state = GameState()
         GameRuleLogic.getPossibleMoves(state) shouldContainExactlyInAnyOrder
-                GameRuleLogic.getAllMoves(state).filterValidMoves(state)
+                GameRuleLogic.getAllMoves().filterValidMoves(state)
     
         GameRuleLogic.getPossibleMoves(state) shouldContainExactlyInAnyOrder
                 GameRuleLogic.getPossibleMoves(state).filterValidMoves(state)
