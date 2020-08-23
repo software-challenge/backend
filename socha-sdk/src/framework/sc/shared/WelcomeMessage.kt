@@ -15,6 +15,6 @@ private constructor(
     
     constructor(color: ITeam<*>): this(color.toString().toLowerCase())
     
-    val playerColor: ITeam<*>
-        get() = playerColor
+    val playerColor: String
+        get() = color
 }

@@ -88,7 +88,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     if(data instanceof MoveRequest) {
       this.handler.onRequestAction();
     } else if(data instanceof WelcomeMessage) {
-      this.color = (Team) ((WelcomeMessage) data).getPlayerColor();
+      this.color = Team.valueOf(((WelcomeMessage) data).getPlayerColor());
     }
     this.roomId = roomId;
   }
