@@ -38,6 +38,9 @@ class GameState @JvmOverloads constructor(
         it to mutableListOf<Piece>()
     }.toMap()
     
+    @XStreamAsAttribute
+    val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
+    
     override val currentTeam
         get() = currentColor.team
     
@@ -95,8 +98,9 @@ class GameState @JvmOverloads constructor(
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
     private fun getPointsForColor(color: Color): Int {
-            val pieces = deployedPieces[color].let{listOf<Piece>()}
-            return GameRuleLogic.getPointsFromDeployedPieces(pieces)
+        val pieces = undeployedPieceShapes.getValue(color)
+        val lastMono = lastMoveMono[color] ?: false
+        return GameRuleLogic.getPointsFromUndeployed(pieces, lastMono)
     }
     
     /** Removes the currently active color from the queue.
