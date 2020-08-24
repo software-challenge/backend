@@ -94,7 +94,7 @@ class GameState @JvmOverloads constructor(
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
     private fun getPointsForColor(color: Color): Int {
-        val pieces = undeployedPieceShapes.getValue(color)
+        val pieces = undeployedPieceShapes[color] ?: return GameRuleLogic.SMALLEST_SCORE_POSSIBLE
         val lastMono = lastMoveMono[color] ?: false
         return GameRuleLogic.getPointsFromUndeployed(pieces, lastMono)
     }

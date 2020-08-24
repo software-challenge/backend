@@ -79,23 +79,17 @@ class GameRuleLogicTest: StringSpec({
         }
     }
     "Point score calculation works" {
-        GameRuleLogic.getPointsFromUndeployed(emptySet()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
+        GameRuleLogic.getPointsFromUndeployed(PieceShape.values().toSet()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
 
-        val fewPieces = listOf(
-                Piece(Color.BLUE, PieceShape.TRIO_I,  Rotation.NONE, true),
-                Piece(Color.BLUE, PieceShape.TETRO_O, Rotation.NONE, true),
-                Piece(Color.BLUE, PieceShape.PENTO_P, Rotation.NONE, true),
-                Piece(Color.BLUE, PieceShape.MONO,    Rotation.NONE, true)
+        val fewPieces = setOf(
+                PieceShape.MONO,
+                PieceShape.PENTO_W,
+                PieceShape.TETRO_I
         )
-        GameRuleLogic.getPointsFromUndeployed(fewPieces.map{it.kind}.toSet()) shouldBe -76
+        GameRuleLogic.getPointsFromUndeployed(fewPieces) shouldBe -10
 
-        val allPieces = PieceShape.shapes.map{
-            Piece(Color.BLUE, it.key, Rotation.NONE, false)
-        }.toList()
-        GameRuleLogic.getPointsFromUndeployed(allPieces.map{it.kind}.toSet(), false) shouldBe 15
-
-        val perfectPieces = allPieces.reversed()
-        GameRuleLogic.getPointsFromUndeployed(perfectPieces.map{it.kind}.toSet(), true) shouldBe 20
+        GameRuleLogic.getPointsFromUndeployed(emptySet(), false) shouldBe 15
+        GameRuleLogic.getPointsFromUndeployed(emptySet(), true) shouldBe 20
     }
     "After the color check, PassMoves throw" {
         val state = GameState()
