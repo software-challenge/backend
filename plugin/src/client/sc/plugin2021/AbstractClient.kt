@@ -74,7 +74,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
             handler.onRequestAction()
         }
         if(data is WelcomeMessage) {
-            team = Team.valueOf(data.playerColor)
+            team = Team.valueOf(data.playerColor.toUpperCase())
         }
         roomID = roomId
     }
