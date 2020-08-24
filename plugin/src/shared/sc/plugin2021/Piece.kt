@@ -42,6 +42,9 @@ class Piece(@XStreamAsAttribute val color: Color = Color.BLUE,
         val coordinates by lazy {shape.map{position + +it}.toSet()}
         return coordinates
     }
+    
+    fun transform(rotation: Rotation, isFlipped: Boolean = false): Piece =
+            Piece(color, kind, rotation, isFlipped, position)
 
     override fun toString(): String =
             "$color Piece $kind:${rotation.value}${if (isFlipped) " (flipped)" else ""} [${position.x},${position.y}]"
