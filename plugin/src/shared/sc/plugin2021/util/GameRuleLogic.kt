@@ -9,19 +9,16 @@ object GameRuleLogic {
     
     const val SMALLEST_SCORE_POSSIBLE = -89
     
-    /** Calculates the score for the given list in pieces.
-     *  Assumes the game has ended and the pieces are in order of placement.
+    /**
+     * Calculates the score for a given set of unused [PieceShape]s.
+     * Needs an additional flag to give out 5 extra points if the Monomino was placed last.
      */
     @JvmStatic
-    fun getPointsFromDeployedPieces(deployed: List<Piece>): Int {
-        if (deployed.size == Constants.TOTAL_PIECE_SHAPES) {
-            // Perfect score: 15 Points completion + 5 Points for solitary block last
-            return if (deployed.last().kind == PieceShape.MONO) 20
-            // Placed each piece: 15 Points completion bonus
-            else 15
+    fun getPointsFromUndeployed(undeployed: Set<PieceShape>, monoLast: Boolean = false): Int {
+        return if (undeployed.isEmpty()) {
+            if (monoLast) 20 else 15
         }
-        // One malus point per block per piece not placed
-        return SMALLEST_SCORE_POSSIBLE + deployed.map { it.coordinates.size }.sum()
+        else - undeployed.map { it.coordinates.size }.sum()
     }
     
     /** Performs the given [move] on the [gameState] if possible. */
@@ -45,8 +42,10 @@ object GameRuleLogic {
                 gameState.deployedPieces.getValue(move.color).add(move.piece)
                 
                 // If it was the last piece for this color, remove him from the turn queue
-                if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty())
+                if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty()) {
+                    gameState.lastMoveMono += move.color to (move.piece.kind == PieceShape.MONO)
                     gameState.removeActiveColor()
+                }
             }
         }
         if (gameState.orderedColors.isNotEmpty())

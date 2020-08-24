@@ -79,7 +79,7 @@ class GameRuleLogicTest: StringSpec({
         }
     }
     "Point score calculation works" {
-        GameRuleLogic.getPointsFromDeployedPieces(emptyList()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
+        GameRuleLogic.getPointsFromUndeployed(emptySet()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
 
         val fewPieces = listOf(
                 Piece(Color.BLUE, PieceShape.TRIO_I,  Rotation.NONE, true),
@@ -87,15 +87,15 @@ class GameRuleLogicTest: StringSpec({
                 Piece(Color.BLUE, PieceShape.PENTO_P, Rotation.NONE, true),
                 Piece(Color.BLUE, PieceShape.MONO,    Rotation.NONE, true)
         )
-        GameRuleLogic.getPointsFromDeployedPieces(fewPieces) shouldBe -76
+        GameRuleLogic.getPointsFromUndeployed(fewPieces.map{it.kind}.toSet()) shouldBe -76
 
         val allPieces = PieceShape.shapes.map{
             Piece(Color.BLUE, it.key, Rotation.NONE, false)
         }.toList()
-        GameRuleLogic.getPointsFromDeployedPieces(allPieces) shouldBe 15
+        GameRuleLogic.getPointsFromUndeployed(allPieces.map{it.kind}.toSet(), false) shouldBe 15
 
         val perfectPieces = allPieces.reversed()
-        GameRuleLogic.getPointsFromDeployedPieces(perfectPieces) shouldBe 20
+        GameRuleLogic.getPointsFromUndeployed(perfectPieces.map{it.kind}.toSet(), true) shouldBe 20
     }
     "After the color check, PassMoves throw" {
         val state = GameState()
