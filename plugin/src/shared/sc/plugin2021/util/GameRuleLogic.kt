@@ -140,7 +140,7 @@ object GameRuleLogic {
     
     @JvmStatic
     fun isFirstMove(gameState: GameState) =
-            gameState.deployedPieces.getValue(gameState.currentColor).isEmpty()
+            gameState.undeployedPieceShapes.getValue(gameState.currentColor).size == Constants.TOTAL_PIECE_SHAPES
     
     /** Returns a random pentomino which is not the `x` one (Used to get a valid starting piece). */
     @JvmStatic

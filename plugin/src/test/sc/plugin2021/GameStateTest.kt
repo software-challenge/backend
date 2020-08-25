@@ -10,61 +10,61 @@ import sc.shared.InvalidMoveException
 
 class GameStateTest: StringSpec({
     "GameState starts correctly" {
-        val gameState = GameState()
+        val state = GameState()
         
-        gameState.board shouldBe Board()
+        state.board shouldBe Board()
         
-        gameState.undeployedPieceShapes[Color.BLUE]   shouldBe PieceShape.values().toSet()
-        gameState.undeployedPieceShapes[Color.YELLOW] shouldBe PieceShape.values().toSet()
-        gameState.undeployedPieceShapes[Color.RED]    shouldBe PieceShape.values().toSet()
-        gameState.undeployedPieceShapes[Color.GREEN]  shouldBe PieceShape.values().toSet()
+        state.undeployedPieceShapes[Color.BLUE]   shouldBe PieceShape.values().toSet()
+        state.undeployedPieceShapes[Color.YELLOW] shouldBe PieceShape.values().toSet()
+        state.undeployedPieceShapes[Color.RED]    shouldBe PieceShape.values().toSet()
+        state.undeployedPieceShapes[Color.GREEN]  shouldBe PieceShape.values().toSet()
     
-        gameState.deployedPieces[Color.BLUE]   shouldBe mutableListOf<Piece>()
-        gameState.deployedPieces[Color.YELLOW] shouldBe mutableListOf<Piece>()
-        gameState.deployedPieces[Color.RED]    shouldBe mutableListOf<Piece>()
-        gameState.deployedPieces[Color.GREEN]  shouldBe mutableListOf<Piece>()
+        state.deployedPieces[Color.BLUE]   shouldBe mutableListOf<Piece>()
+        state.deployedPieces[Color.YELLOW] shouldBe mutableListOf<Piece>()
+        state.deployedPieces[Color.RED]    shouldBe mutableListOf<Piece>()
+        state.deployedPieces[Color.GREEN]  shouldBe mutableListOf<Piece>()
      
         // TODO: adjust values accordingly
-        gameState.getPointsForPlayer(Team.ONE)  shouldBe -178 // Twice the lowest score, once per color
-        gameState.getPointsForPlayer(Team.TWO)  shouldBe -178
+        state.getPointsForPlayer(Team.ONE)  shouldBe -178 // Twice the lowest score, once per color
+        state.getPointsForPlayer(Team.TWO)  shouldBe -178
     }
     "GameStates know currently active Color" {
         var colorIter = Color.RED
-        val gameState = GameState(startColor = colorIter)
+        val state = GameState(startColor = colorIter)
         
         for (x in 0 until 4) {
-            gameState.currentColor shouldBe colorIter
-            gameState.turn++
+            state.currentColor shouldBe colorIter
+            state.turn++
             colorIter = colorIter.next
         }
     
-        gameState.currentColor shouldBe  Color.RED
-        gameState.turn++
-        gameState.currentColor shouldBe  Color.GREEN
-        gameState.turn += 2
-        gameState.currentColor shouldBe  Color.YELLOW
+        state.currentColor shouldBe  Color.RED
+        state.turn++
+        state.currentColor shouldBe  Color.GREEN
+        state.turn += 2
+        state.currentColor shouldBe  Color.YELLOW
     }
     "Pieces can only be placed once" {
-        val gameState = GameState(startPiece = PieceShape.PENTO_I)
+        val state = GameState(startPiece = PieceShape.PENTO_I)
         val move = SetMove(
                 Piece(Color.BLUE, PieceShape.PENTO_I, Rotation.RIGHT, true))
         
-        gameState.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 21
-        gameState.deployedPieces.getValue(Color.BLUE).size shouldBe 0
+        state.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 21
+        state.deployedPieces.getValue(Color.BLUE).size shouldBe 0
         assertDoesNotThrow {
-            GameRuleLogic.performMove(gameState, move)
+            GameRuleLogic.performMove(state, move)
         }
-        gameState.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 20
-        gameState.deployedPieces.getValue(Color.BLUE).size shouldBe 1
-        gameState.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
+        state.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 20
+        state.deployedPieces.getValue(Color.BLUE).size shouldBe 1
+        state.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
         
-        gameState.turn += 4
+        state.turn += 4
         assertThrows<InvalidMoveException> {
-            GameRuleLogic.performMove(gameState, move)
+            GameRuleLogic.performMove(state, move)
         }
-        gameState.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 20
-        gameState.deployedPieces.getValue(Color.BLUE).size shouldBe 1
-        gameState.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
+        state.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 20
+        state.deployedPieces.getValue(Color.BLUE).size shouldBe 1
+        state.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
         
     }
     "XML conversion works" {
@@ -73,31 +73,36 @@ class GameStateTest: StringSpec({
     
         xstream.fromXML(xstream.toXML(state)).toString() shouldBe state.toString()
         xstream.fromXML(xstream.toXML(state))            shouldBe state
+        
+        val transformed = xstream.fromXML(xstream.toXML(GameState())) as GameState
+        transformed.deployedPieces shouldBe null
+        GameRuleLogic.isFirstMove(transformed) shouldBe true
+        transformed.getPointsForPlayer(Team.ONE)
     }
     "GameStates advance accordingly" {
-        var gameState = GameState(startTurn = 2)
-        gameState.turn shouldBe 2
-        gameState.round shouldBe 1
-        gameState.currentColor shouldBe Color.RED
+        var state = GameState(startTurn = 2)
+        state.turn shouldBe 2
+        state.round shouldBe 1
+        state.currentColor shouldBe Color.RED
         
-        gameState = GameState()
-        gameState.turn shouldBe 0
-        gameState.round shouldBe 1
-        gameState.currentColor shouldBe Color.BLUE
+        state = GameState()
+        state.turn shouldBe 0
+        state.round shouldBe 1
+        state.currentColor shouldBe Color.BLUE
     
-        gameState.turn +=10
-        gameState.turn shouldBe 10
-        gameState.round shouldBe 3
-        gameState.currentColor shouldBe Color.RED
+        state.turn +=10
+        state.turn shouldBe 10
+        state.round shouldBe 3
+        state.currentColor shouldBe Color.RED
     
-        gameState.turn++
-        gameState.turn shouldBe 11
-        gameState.round shouldBe 3
-        gameState.currentColor shouldBe Color.GREEN
+        state.turn++
+        state.turn shouldBe 11
+        state.round shouldBe 3
+        state.currentColor shouldBe Color.GREEN
     
-        gameState.turn++
-        gameState.turn shouldBe 12
-        gameState.round shouldBe 4
-        gameState.currentColor shouldBe Color.BLUE
+        state.turn++
+        state.turn shouldBe 12
+        state.round shouldBe 4
+        state.currentColor shouldBe Color.BLUE
     }
 })
