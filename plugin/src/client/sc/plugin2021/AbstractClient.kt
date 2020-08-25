@@ -30,9 +30,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         private val gameType = GamePlugin.PLUGIN_UUID
     }
     
-    /** The handler reacts to messages from the server received by the lobby client.
-     *  It *must* be initialised before start.
-     */
+    /** The handler reacts to messages from the server received by the lobby client. */
     protected lateinit var handler: IGameHandler
     
     /** Initialise game handler. */
@@ -44,7 +42,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     private val client = try {
         LobbyClient(Configuration.xStream, Configuration.classesToRegister, host, port)
     } catch(e: ConnectException) {
-        logger.error("Could not connect to Server: " + e.message)
+        logger.error("Could not connect to Server: ${e.message}")
         exitProcess(1)
     }
     
@@ -85,13 +83,13 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     
     /** Called when an erroneous message is sent to the room. */
     override fun onError(roomId: String, error: ProtocolErrorMessage) {
-        logger.debug("onError: Client {} received error {}", this, error.message)
+        logger.debug("onError: Client $this received error ${error.message}")
         this.error = error.message
     }
     
     override fun onNewState(roomId: String, state: Any) {
         val gameState = state as GameState
-        logger.debug("{} got a new state {}", this, gameState)
+        logger.debug("$this got a new state $gameState")
         
         if(id == PlayerType.OBSERVER) return
         
@@ -119,14 +117,14 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     override fun onGameObserved(roomId: String) {}
     
     override fun onGameLeft(roomId: String) {
-        logger.info("{} got game left {}", this, roomId)
+        logger.info("$this got game left $roomID")
         client.stop()
     }
     
     override fun onGameOver(roomId: String, data: GameResult) {
-        logger.info("{} on Game Over with game result {}", this, data)
+        logger.info("$this on Game Over with game result $data")
         if (this::handler.isInitialized) {
-            handler.gameEnded(data, team, error.orEmpty())
+            handler.gameEnded(data, team, error)
         }
     }
     
