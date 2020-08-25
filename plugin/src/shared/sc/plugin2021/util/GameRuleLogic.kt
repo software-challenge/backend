@@ -80,7 +80,7 @@ object GameRuleLogic {
             if (bordersOnColor(gameState.board, it, move.color))
                 throw InvalidMoveException("Field $it already borders on ${move.color}", move)
         }
-        if (gameState.deployedPieces?.getValue(move.color).isNullOrEmpty()) {
+        if (isFirstMove(gameState)) {
             // Check if it's the requested shape
             if (move.piece.kind != gameState.startPiece)
                 throw InvalidMoveException("Expected the predetermined staring piece, ${gameState.startPiece}", move)
@@ -154,6 +154,11 @@ object GameRuleLogic {
     fun getPossibleMoves(gameState: GameState) =
             streamPossibleMoves(gameState).toSet()
     
+    /** Returns a list of all possible SetMoves, regardless of whether it's the first round. */
+    @JvmStatic
+    fun getAllPossibleMoves(gameState: GameState) =
+            streamAllPossibleMoves(gameState).toSet()
+    
     /** Returns a list of possible SetMoves if it's the first round. */
     @JvmStatic
     fun getPossibleStartMoves(gameState: GameState) =
@@ -196,16 +201,22 @@ object GameRuleLogic {
     fun streamPossibleMoves(gameState: GameState) =
             if (isFirstMove(gameState))
                 streamPossibleStartMoves(gameState)
-            else sequence<SetMove> {
-                val color = gameState.currentColor
-                gameState.undeployedPieceShapes.getValue(color).map {
-                    val area = it.coordinates.area()
-                    for (y in 0 until Constants.BOARD_SIZE - area.dy)
-                        for (x in 0 until Constants.BOARD_SIZE - area.dx)
-                            for (variant in it.variants)
-                                yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
-                }
-            }.filter { isValidSetMove(gameState, it) }
+            else
+                streamAllPossibleMoves(gameState)
+    
+    /** Streams all possible moves regardless of whether it's the first turn. */
+    @JvmStatic
+    fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
+        val color = gameState.currentColor
+        gameState.undeployedPieceShapes.getValue(color).map {
+            val area = it.coordinates.area()
+            for (y in 0 until Constants.BOARD_SIZE - area.dy)
+                for (x in 0 until Constants.BOARD_SIZE - area.dx)
+                    for (variant in it.variants) {
+                        yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
+                    }
+        }
+    }.filter { isValidSetMove(gameState, it) }
     
     /** Streams all possible moves if it's the first turn of [gameState]. */
     @JvmStatic

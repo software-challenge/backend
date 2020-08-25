@@ -34,6 +34,6 @@ interface IGameHandler {
      * @param team         Team des Spielers
      * @param errorMessage Fehlernachricht
      */
-    fun gameEnded(data: GameResult, team: Team?, errorMessage: String)
+    fun gameEnded(data: GameResult, team: Team?, errorMessage: String?)
     
 }
