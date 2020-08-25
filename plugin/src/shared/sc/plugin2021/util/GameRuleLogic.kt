@@ -196,16 +196,21 @@ object GameRuleLogic {
     fun streamPossibleMoves(gameState: GameState) =
             if (isFirstMove(gameState))
                 streamPossibleStartMoves(gameState)
-            else sequence<SetMove> {
-                val color = gameState.currentColor
-                gameState.undeployedPieceShapes.getValue(color).map {
-                    val area = it.coordinates.area()
-                    for (y in 0 until Constants.BOARD_SIZE - area.dy)
-                        for (x in 0 until Constants.BOARD_SIZE - area.dx)
-                            for (variant in it.variants)
-                                yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
-                }
-            }.filter { isValidSetMove(gameState, it) }
+            else
+                streamAllPossibleMoves(gameState)
+    
+    /** Streams all possible moves regardless of whether it's the first turn. */
+    @JvmStatic
+    fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
+        val color = gameState.currentColor
+        gameState.undeployedPieceShapes.getValue(color).map {
+            val area = it.coordinates.area()
+            for (y in 0 until Constants.BOARD_SIZE - area.dy)
+                for (x in 0 until Constants.BOARD_SIZE - area.dx)
+                    for (variant in it.variants)
+                        yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
+        }
+    }.filter { isValidSetMove(gameState, it) }
     
     /** Streams all possible moves if it's the first turn of [gameState]. */
     @JvmStatic
