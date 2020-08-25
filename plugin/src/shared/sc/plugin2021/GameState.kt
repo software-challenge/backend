@@ -44,6 +44,9 @@ class GameState @JvmOverloads constructor(
     override val currentTeam
         get() = currentColor.team
     
+    override val currentPlayer
+        get() = getPlayer(currentTeam)!!
+    
     @XStreamAsAttribute
     val orderedColors: MutableList<Color> = mutableListOf()
     

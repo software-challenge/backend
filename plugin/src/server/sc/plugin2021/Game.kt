@@ -27,6 +27,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
     
     override fun start() {
         players.forEach {it.notifyListeners(WelcomeMessage(it.color)) }
+//        next(players.first(), true)
         super.start()
     }
    

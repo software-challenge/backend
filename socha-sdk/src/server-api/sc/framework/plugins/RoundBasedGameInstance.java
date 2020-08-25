@@ -67,7 +67,9 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
         errorMsg = Optional.of("We didn't request a data from you yet.");
       }
     } else {
-      errorMsg = Optional.of("It's not your turn yet.");
+      errorMsg = Optional.of(String.format(
+              "It's not your turn yet; expected: %s, got: %s (msg was %s).",
+              this.activePlayer, fromPlayer, data));
     }
     if (errorMsg.isPresent()) {
       fromPlayer.notifyListeners(new ProtocolErrorMessage(data, errorMsg.get()));
@@ -90,7 +92,7 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
    * @return WinCondition with winner and reason or null, if no win condition is
    * yet met.
    */
-  protected abstract WinCondition checkWinCondition();
+  public abstract WinCondition checkWinCondition();
 
   /**
    * At any time this method might be invoked by the server. Any open handles
