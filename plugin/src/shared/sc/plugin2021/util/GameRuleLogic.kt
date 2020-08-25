@@ -39,7 +39,7 @@ object GameRuleLogic {
                     gameState.board[it] = +move.color
                 }
                 gameState.undeployedPieceShapes.getValue(move.color).remove(move.piece.kind)
-                gameState.deployedPieces.getValue(move.color).add(move.piece)
+                gameState.deployedPieces?.getValue(move.color).add(move.piece)
                 
                 // If it was the last piece for this color, remove him from the turn queue
                 if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty()) {
@@ -80,7 +80,7 @@ object GameRuleLogic {
             if (bordersOnColor(gameState.board, it, move.color))
                 throw InvalidMoveException("Field $it already borders on ${move.color}", move)
         }
-        if (gameState.deployedPieces[move.color].isNullOrEmpty()) {
+        if (gameState.deployedPieces?.getValue(move.color).isNullOrEmpty()) {
             // Check if it's the requested shape
             if (move.piece.kind != gameState.startPiece)
                 throw InvalidMoveException("Expected the predetermined staring piece, ${gameState.startPiece}", move)

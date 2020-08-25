@@ -131,7 +131,6 @@ class GameState @JvmOverloads constructor(
         result = 31 * result + (lastMove?.hashCode() ?: 0)
         result = 31 * result + board.hashCode()
         result = 31 * result + undeployedPieceShapes.hashCode()
-        result = 31 * result + deployedPieces.hashCode()
         result = 31 * result + currentTeam.hashCode()
         result = 31 * result + turn
         return result
