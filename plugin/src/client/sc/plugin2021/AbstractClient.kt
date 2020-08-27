@@ -47,7 +47,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     }
     
     /** Storage for the reason of a rule violation, if any occurs. */
-    private lateinit var error: String
+    private var error: String? = null
     fun getError() = error
     
     private lateinit var roomID: String

@@ -45,7 +45,7 @@ class Logic(private val client: SimpleClient): IGameHandler{
         client.sendMove(move)
     }
     
-    override fun gameEnded(data: GameResult, team: Team?, errorMessage: String) {
+    override fun gameEnded(data: GameResult, team: Team?, errorMessage: String?) {
         logger.info("Das Spiel ist beendet.")
     }
     
