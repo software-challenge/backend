@@ -9,4 +9,7 @@ enum class Rotation(val value: Int) {
     RIGHT(1),
     MIRROR(2),
     LEFT(3);
+    
+    fun rotate(rotation: Rotation): Rotation =
+            Rotation.values()[(Rotation.values().size + value + rotation.value) % Rotation.values().size]
 }
