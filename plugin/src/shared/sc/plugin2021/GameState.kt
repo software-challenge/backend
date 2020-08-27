@@ -48,7 +48,11 @@ class GameState @JvmOverloads constructor(
     private var currentColorIndex: Int = 0
     
     val currentColor: Color
-        get() = orderedColors[currentColorIndex]
+        get() = try {
+            orderedColors[currentColorIndex]
+        } catch (e: IndexOutOfBoundsException) {
+            throw GameLogicException("Trying to access the currently active color after the game has ended")
+        }
     
     @XStreamAsAttribute
     override var turn: Int = 0
