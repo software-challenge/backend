@@ -208,22 +208,14 @@ object GameRuleLogic {
     @JvmStatic
     fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
         val color = gameState.currentColor
-    
-        var ctr = 0
-        println("GameRuleLogic - [F] UndeployedPieceShapes[$color]")
-        println("Amount of undeployed pieces: ${gameState.undeployedPieceShapes.getValue(color).size}")
-    
         gameState.undeployedPieceShapes.getValue(color).map {
             val area = it.coordinates.area()
             for (y in 0 until Constants.BOARD_SIZE - area.dy)
                 for (x in 0 until Constants.BOARD_SIZE - area.dx)
                     for (variant in it.variants) {
-                        val move = SetMove(Piece(color, it, variant.key, Coordinates(x, y)))
-                        if (isValidSetMove(gameState, move)) ++ctr
-                        yield(move)
+                        yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
                     }
         }
-        println("Found $ctr valid SetMoves!")
     }.filter { isValidSetMove(gameState, it) }
     
     /** Streams all possible moves if it's the first turn of [gameState]. */
