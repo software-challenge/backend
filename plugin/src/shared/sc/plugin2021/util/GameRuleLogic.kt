@@ -36,9 +36,7 @@ object GameRuleLogic {
                 if (Constants.VALIDATE_MOVE)
                     validateSetMove(gameState, move)
                 
-                move.piece.coordinates.forEach {
-                    gameState.board[it] = +move.color
-                }
+                performSetMove(gameState.board, move)
                 gameState.undeployedPieceShapes.getValue(move.color).remove(move.piece.kind)
                 gameState.deployedPieces?.getValue(move.color).add(move.piece)
                 
@@ -67,20 +65,9 @@ object GameRuleLogic {
         // Check if piece has already been placed
         gameState.undeployedPieceShapes.getValue(move.color).find { it == move.piece.kind }
                 ?: throw InvalidMoveException("Piece #${move.piece.kind} has already been placed before", move)
+
+        validateSetMove(gameState.board, move)
         
-        move.piece.coordinates.forEach {
-            try {
-                gameState.board[it]
-            } catch (e: ArrayIndexOutOfBoundsException) {
-                throw InvalidMoveException("Field $it is out of bounds", move)
-            }
-            // Checks if a part of the piece is obstructed
-            if (isObstructed(gameState.board, it))
-                throw InvalidMoveException("Field $it already belongs to ${gameState.board[it].content}", move)
-            // Checks if a part of the piece would border on another piece of same color
-            if (bordersOnColor(gameState.board, it, move.color))
-                throw InvalidMoveException("Field $it already borders on ${move.color}", move)
-        }
         if (isFirstMove(gameState)) {
             // Check if it's the requested shape
             if (move.piece.kind != gameState.startPiece)
@@ -92,6 +79,32 @@ object GameRuleLogic {
             // Check if the piece is connected to at least one tile of same color by corner
             if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.color) })
                 throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
+        }
+    }
+    
+    /** Validates a SetMove on a board. */
+    @JvmStatic
+    fun validateSetMove(board: Board, move: SetMove) {
+        move.piece.coordinates.forEach {
+            try {
+                board[it]
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                throw InvalidMoveException("Field $it is out of bounds", move)
+            }
+            // Checks if a part of the piece is obstructed
+            if (isObstructed(board, it))
+                throw InvalidMoveException("Field $it already belongs to ${board[it].content}", move)
+            // Checks if a part of the piece would border on another piece of same color
+            if (bordersOnColor(board, it, move.color))
+                throw InvalidMoveException("Field $it already borders on ${move.color}", move)
+        }
+    }
+    
+    /** Places the given Piece on the given board. */
+    @JvmStatic
+    fun performSetMove(board: Board, move: SetMove) {
+        move.piece.coordinates.forEach {
+            board[it] = +move.color
         }
     }
     
