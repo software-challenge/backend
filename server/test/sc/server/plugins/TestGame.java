@@ -37,7 +37,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   }
 
   @Override
-  protected WinCondition checkWinCondition() {
+  public WinCondition checkWinCondition() {
     if (this.getRound() > 1) {
       logger.info("Someone won");
       return new WinCondition(((TestGameState) this.getCurrentState()).getState() % 2 == 0 ? TestTeam.RED : TestTeam.BLUE, WinReason.ROUND_LIMIT_FREE_FIELDS);

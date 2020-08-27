@@ -1,6 +1,7 @@
 package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.IBoard
 import sc.plugin2021.util.Constants
 
