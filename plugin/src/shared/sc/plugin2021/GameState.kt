@@ -115,7 +115,7 @@ class GameState @JvmOverloads constructor(
         orderedColors.remove(currentColor)
         if (orderedColors.isNotEmpty())
             currentColorIndex = (currentColorIndex + orderedColors.size - 1) % orderedColors.size
-        logger.info("Remaining Colors: $orderedColors")
+        logger.debug("Remaining Colors: $orderedColors")
     }
     
     override fun toString(): String = "GameState $round/$turn -> $currentColor"
