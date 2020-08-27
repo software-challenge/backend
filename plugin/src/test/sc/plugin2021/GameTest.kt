@@ -16,26 +16,32 @@ class GameTest: StringSpec({
         Color.BLUE.team
         val game = Game()
         val state = game.gameState
-        val first = game.onPlayerJoined()
-        val second = game.onPlayerJoined()
+        val player = Pair(game.onPlayerJoined(), game.onPlayerJoined())
         
-        first.color  shouldBe Team.ONE
-        second.color shouldBe Team.TWO
+        player.first.color  shouldBe Team.ONE
+        player.second.color shouldBe Team.TWO
         
         game.start()
         
-        val e: InvalidMoveException = assertThrows {
-            state.currentPlayer shouldBe first
-            state.currentColor  shouldBe Color.BLUE
-            game.onAction(state.currentPlayer, PassMove(state.currentColor))
-        }
+        state.currentPlayer shouldBe player.first
+        state.currentColor  shouldBe Color.BLUE
+        game.onAction(state.currentPlayer, PassMove(state.currentColor))
     
-        game.winners shouldBe listOf(second)
+        state.currentPlayer shouldBe player.second
+        state.currentColor  shouldBe Color.YELLOW
+        game.onAction(state.currentPlayer, PassMove(state.currentColor))
+    
+        state.currentPlayer shouldBe player.first
+        state.currentColor  shouldBe Color.RED
+        game.onAction(player.first, PassMove(Color.RED))
+    
+        state.currentPlayer shouldBe player.second
+        state.currentColor  shouldBe Color.GREEN
+        game.onAction(player.second, PassMove(Color.GREEN))
+    
+        game.winners shouldBe player.toList()
         
-        game.playerScores shouldContainExactly listOf(
-                PlayerScore(ScoreCause.RULE_VIOLATION, e.message, Constants.LOSE_SCORE, -178),
-                PlayerScore(ScoreCause.REGULAR, "", Constants.WIN_SCORE, -178)
-        )
+        game.playerScores shouldContainExactly List(2) {PlayerScore(ScoreCause.REGULAR, "", Constants.DRAW_SCORE, -178)}
     }
     "A few moves can be performd without issues" {
         val game = Game()

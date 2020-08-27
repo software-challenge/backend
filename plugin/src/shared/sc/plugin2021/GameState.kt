@@ -111,9 +111,11 @@ class GameState @JvmOverloads constructor(
      *  Do not do anything with currentColor before the turn is done for good.
      */
     fun removeActiveColor() {
+        logger.info("Removed $currentColor from the game")
         orderedColors.remove(currentColor)
         if (orderedColors.isNotEmpty())
             currentColorIndex = (currentColorIndex + orderedColors.size - 1) % orderedColors.size
+        logger.debug("Remaining Colors: $orderedColors")
     }
     
     override fun toString(): String = "GameState $round/$turn -> $currentColor"

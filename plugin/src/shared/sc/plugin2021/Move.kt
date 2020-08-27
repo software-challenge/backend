@@ -16,5 +16,10 @@ class SetMove(val piece: Piece): Move(piece.color) {
 
 @XStreamAlias(value = "passmove")
 class PassMove(color: Color): Move(color) {
-    override fun toString(): String = "$color passed out"
+    override fun toString(): String = "$color passed"
+}
+
+@XStreamAlias(value = "skipmove")
+class SkipMove(color: Color): Move(color) {
+    override fun toString(): String = "$color skipped"
 }
