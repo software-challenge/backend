@@ -118,7 +118,7 @@ class GameState @JvmOverloads constructor(
         logger.debug("Remaining Colors: $orderedColors")
     }
     
-    override fun toString(): String = "GameState $round/$turn -> $currentColor"
+    override fun toString(): String = "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
     
     override fun equals(other: Any?): Boolean {
         return !(this === other) &&
