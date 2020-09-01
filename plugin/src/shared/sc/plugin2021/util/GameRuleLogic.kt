@@ -62,16 +62,14 @@ object GameRuleLogic {
     /** Checks if the given [move] is able to be performed for the given [gameState]. */
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove) {
-        // Check if piece has already been placed
-        gameState.undeployedPieceShapes.getValue(move.color).find { it == move.piece.kind }
-                ?: throw InvalidMoveException("Piece #${move.piece.kind} has already been placed before", move)
-
+        // Check whether the color's move is currently active
+        validateMoveColor(gameState, move)
+        // Check whether the shape is valid
+        validateShape(gameState, move.piece.kind, move.color)
+        // Check whether the piece can be placed
         validateSetMove(gameState.board, move)
         
         if (isFirstMove(gameState)) {
-            // Check if it's the requested shape
-            if (move.piece.kind != gameState.startPiece)
-                throw InvalidMoveException("Expected the predetermined staring piece, ${gameState.startPiece}", move)
             // Check if it is placed correctly in a corner
             if (move.piece.coordinates.none { isOnCorner(it)})
                 throw InvalidMoveException("The Piece isn't located in a corner", move)
@@ -82,7 +80,19 @@ object GameRuleLogic {
         }
     }
     
-    /** Validates a SetMove on a board. */
+    /** Validates the [PieceShape] of a [SetMove] depending on the current [GameState]. */
+    @JvmStatic
+    fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor) {
+        if (isFirstMove(gameState)) {
+            if (shape != gameState.startPiece)
+                throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
+        } else {
+            if (!gameState.undeployedPieceShapes.getValue(color).contains(shape))
+                throw InvalidMoveException("Piece ${shape} has already been placed before")
+        }
+    }
+    
+    /** Validates a [SetMove] on a [board]. */
     @JvmStatic
     fun validateSetMove(board: Board, move: SetMove) {
         move.piece.coordinates.forEach {
