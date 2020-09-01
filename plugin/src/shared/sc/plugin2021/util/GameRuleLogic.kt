@@ -62,7 +62,9 @@ object GameRuleLogic {
     /** Checks if the given [move] is able to be performed for the given [gameState]. */
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove) {
+        // Check whether the shape is valid
         validateShape(gameState, move.piece.kind, move.color)
+        // Check whether the piece can be placed
         validateSetMove(gameState.board, move)
         
         if (isFirstMove(gameState)) {
@@ -84,7 +86,7 @@ object GameRuleLogic {
                 throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
         } else {
             if (!gameState.undeployedPieceShapes.getValue(color).contains(shape))
-                throw InvalidMoveException("Piece ${shape} has already been placed before")
+                throw InvalidMoveException("Piece $shape has already been placed before")
         }
     }
     
