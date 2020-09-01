@@ -62,10 +62,7 @@ object GameRuleLogic {
     /** Checks if the given [move] is able to be performed for the given [gameState]. */
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove) {
-        // Check if piece has already been placed
-        gameState.undeployedPieceShapes.getValue(move.color).find { it == move.piece.kind }
-                ?: throw InvalidMoveException("Piece #${move.piece.kind} has already been placed before", move)
-
+        validateShape(gameState, move)
         validateSetMove(gameState.board, move)
         
         if (isFirstMove(gameState)) {
@@ -82,7 +79,20 @@ object GameRuleLogic {
         }
     }
     
-    /** Validates a SetMove on a board. */
+    /** Validates the [PieceShape] of a [SetMove] depending on the current [GameState]. */
+    @JvmStatic
+    fun validateShape(gameState: GameState, move: SetMove) {
+        val shape = move.piece.kind
+        if (isFirstMove(gameState)) {
+            if (shape != gameState.startPiece)
+                throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
+        } else {
+            if (!gameState.undeployedPieceShapes.getValue(move.color).contains(move.piece.kind))
+                throw InvalidMoveException("Piece ${move.piece.kind} has already been placed before", move)
+        }
+    }
+    
+    /** Validates a [SetMove] on a [board]. */
     @JvmStatic
     fun validateSetMove(board: Board, move: SetMove) {
         move.piece.coordinates.forEach {
