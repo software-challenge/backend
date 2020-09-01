@@ -66,9 +66,6 @@ object GameRuleLogic {
         validateSetMove(gameState.board, move)
         
         if (isFirstMove(gameState)) {
-            // Check if it's the requested shape
-            if (move.piece.kind != gameState.startPiece)
-                throw InvalidMoveException("Expected the predetermined staring piece, ${gameState.startPiece}", move)
             // Check if it is placed correctly in a corner
             if (move.piece.coordinates.none { isOnCorner(it)})
                 throw InvalidMoveException("The Piece isn't located in a corner", move)
