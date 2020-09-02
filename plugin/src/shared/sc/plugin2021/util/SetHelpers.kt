@@ -96,12 +96,4 @@ fun printShapes(vararg shapes: Set<Coordinates>, dimension: Vector = Vector(4, 5
 
 /** Filters all moves, returning only those who pass the validation functions. */
 fun Set<SetMove>.filterValidMoves(gameState: GameState): Set<SetMove> =
-        filter {
-            try {
-                GameRuleLogic.validateMoveColor(gameState, it)
-                GameRuleLogic.validateSetMove(gameState, it)
-                true
-            } catch(e: InvalidMoveException) {
-                false
-            }
-        }.toSet()
+        filter { GameRuleLogic.isValidSetMove(gameState, it) }.toSet()

@@ -62,6 +62,8 @@ object GameRuleLogic {
     /** Checks if the given [move] is able to be performed for the given [gameState]. */
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove) {
+        // Check whether the color's move is currently active
+        validateMoveColor(gameState, move)
         // Check whether the shape is valid
         validateShape(gameState, move.piece.kind, move.color)
         // Check whether the piece can be placed
