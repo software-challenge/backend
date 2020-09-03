@@ -161,12 +161,8 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
             logger.debug("Current State: $gameState")
             logger.debug("Performing Move $data")
             GameRuleLogic.performMove(gameState, data)
-            if (!isGameOver()) {
-                GameRuleLogic.validateMovability(gameState)
-                next(gameState.currentPlayer)
-            } else {
-                next(null)
-            }
+            GameRuleLogic.validateMovability(gameState)
+            next(if (isGameOver()) null else gameState.currentPlayer)
             logger.debug("Current Board:\n${gameState.board}")
         } catch(e: InvalidMoveException) {
             super.catchInvalidMove(e, fromPlayer)

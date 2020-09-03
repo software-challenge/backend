@@ -216,8 +216,11 @@ object GameRuleLogic {
     /** Ensures the currently active color of [gameState] can perform a move. */
     @JvmStatic
     fun validateMovability(gameState: GameState) {
-        if (streamPossibleMoves(gameState).none { isValidSetMove(gameState, it) })
+        if (gameState.orderedColors.isEmpty()) return
+        if (streamPossibleMoves(gameState).none { isValidSetMove(gameState, it) }) {
             gameState.removeActiveColor()
+            validateMovability(gameState)
+        }
     }
     
     /** Streams all possible moves in the current turn of [gameState]. */
