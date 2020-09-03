@@ -57,7 +57,12 @@ class GameState @JvmOverloads constructor(
         get() = try {
             orderedColors[currentColorIndex]
         } catch (e: IndexOutOfBoundsException) {
-            throw GameLogicException("Trying to access the currently active color after the game has ended")
+            logger.error("""
+                :-- Exception on accessing currentColor --:
+                orderedColors:     $orderedColors
+                currentColorIndex: $currentColorIndex
+            """.trimIndent())
+            throw GameLogicException("Trying to access the currently active color with invalid index")
         }
     
     @XStreamAsAttribute
@@ -111,14 +116,17 @@ class GameState @JvmOverloads constructor(
      *  Do not do anything with currentColor before the turn is done for good.
      */
     fun removeActiveColor() {
-        logger.info("Removed $currentColor from the game")
-        orderedColors.remove(currentColor)
+        logger.info("Removing $currentColor from the game")
+        orderedColors.removeAt(currentColorIndex)
         if (orderedColors.isNotEmpty())
             currentColorIndex = (currentColorIndex + orderedColors.size - 1) % orderedColors.size
         logger.debug("Remaining Colors: $orderedColors")
     }
     
-    override fun toString(): String = "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
+    override fun toString(): String =
+            if (orderedColors.isNotEmpty())
+                "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
+            else "GameState finished at $round/$turn"
     
     override fun equals(other: Any?): Boolean {
         return !(this === other) &&
