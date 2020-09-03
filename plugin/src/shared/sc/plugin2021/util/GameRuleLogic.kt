@@ -215,11 +215,11 @@ object GameRuleLogic {
     
     /** Ensures the currently active color of [gameState] can perform a move. */
     @JvmStatic
-    fun validateMovability(gameState: GameState) {
+    fun removeInvalidColors(gameState: GameState) {
         if (gameState.orderedColors.isEmpty()) return
         if (streamPossibleMoves(gameState).none { isValidSetMove(gameState, it) }) {
             gameState.removeActiveColor()
-            validateMovability(gameState)
+            removeInvalidColors(gameState)
         }
     }
     

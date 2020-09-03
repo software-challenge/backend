@@ -30,6 +30,8 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         private val gameType = GamePlugin.PLUGIN_UUID
     }
     
+    var isGameOver = false
+    
     /** The handler reacts to messages from the server received by the lobby client. */
     protected lateinit var handler: IGameHandler
     
@@ -94,10 +96,12 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         if(id == PlayerType.OBSERVER) return
         
         handler.onUpdate(gameState)
-        if(gameState.currentTeam == team) {
-            handler.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
-        } else {
-            handler.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
+        if (gameState.orderedColors.isNotEmpty()) {
+            if(gameState.currentTeam == team) {
+                handler.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
+            } else {
+                handler.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
+            }
         }
     }
     
@@ -123,6 +127,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     
     override fun onGameOver(roomId: String, data: GameResult) {
         logger.info("$this on Game Over with game result $data")
+        isGameOver = true
         if (this::handler.isInitialized) {
             handler.gameEnded(data, team, error)
         }

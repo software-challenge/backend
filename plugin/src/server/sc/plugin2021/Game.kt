@@ -171,7 +171,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
     override fun getCurrentState(): IGameState = gameState
     
     fun isGameOver(): Boolean {
-        GameRuleLogic.validateMovability(gameState)
+        GameRuleLogic.removeInvalidColors(gameState)
         return gameState.orderedColors.isEmpty()
     }
 }
