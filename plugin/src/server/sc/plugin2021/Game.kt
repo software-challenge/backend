@@ -161,7 +161,6 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
             logger.debug("Current State: $gameState")
             logger.debug("Performing Move $data")
             GameRuleLogic.performMove(gameState, data)
-            GameRuleLogic.validateMovability(gameState)
             next(if (isGameOver()) null else gameState.currentPlayer)
             logger.debug("Current Board:\n${gameState.board}")
         } catch(e: InvalidMoveException) {
@@ -171,5 +170,8 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
     
     override fun getCurrentState(): IGameState = gameState
     
-    fun isGameOver(): Boolean = gameState.orderedColors.isEmpty()
+    fun isGameOver(): Boolean {
+        GameRuleLogic.validateMovability(gameState)
+        return gameState.orderedColors.isEmpty()
+    }
 }
