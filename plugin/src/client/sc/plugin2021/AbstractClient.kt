@@ -15,14 +15,15 @@ import java.io.IOException
 import java.net.ConnectException
 import kotlin.system.exitProcess
 
-/** Abstract client following the SDK.
+/**
+ * Abstract client as specified in the SDK.
  * Contains a LobbyClient as actual client;
  * this class is a plugin specific abstract wrapper.
  */
 abstract class AbstractClient @Throws(IOException::class) constructor(
         host: String,
         port: Int,
-        private val id: PlayerType = PlayerType.PLAYER_ONE
+        private val type: PlayerType = PlayerType.PLAYER_ONE
 ): ILobbyClientListener {
     
     companion object {
@@ -52,19 +53,17 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     private var error: String? = null
     fun getError() = error
     
+    /** Current room of the player. */
     private lateinit var roomID: String
     
     /** The team the client belongs to in order to connect client and player. */
-    private var team: Team? = when(id) {
+    private var team: Team? = when(type) {
             PlayerType.PLAYER_ONE -> Team.ONE
             PlayerType.PLAYER_TWO -> Team.TWO
             else -> null
     }
     
-    /** Tell this client to observe the game given by the preparation handler.
-     *
-     * @return controllable game
-     */
+    /** Tell this client to observe the game given by the preparation handler. */
     fun observeGame(handle: PrepareGameProtocolMessage): IControllableGame =
             client.observe(handle)
     
@@ -89,11 +88,15 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         this.error = error.message
     }
     
+    /**
+     * Called when game state has been received.
+     * Happens after a client made a move.
+     */
     override fun onNewState(roomId: String, state: Any) {
         val gameState = state as GameState
         logger.debug("$this got a new state $gameState")
         
-        if(id == PlayerType.OBSERVER) return
+        if(type == PlayerType.OBSERVER) return
         
         handler.onUpdate(gameState)
         if (gameState.orderedColors.isNotEmpty()) {
