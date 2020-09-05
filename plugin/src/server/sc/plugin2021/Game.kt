@@ -33,7 +33,7 @@ class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player
    
     override fun onPlayerJoined(): Player {
         val player = gameState.getPlayer(availableTeams.removeAt(0))
-                ?: throw NullPointerException("Too many players joined the game!")
+                ?: throw IllegalStateException("Too many players joined the game!")
         
         players.add(player)
         playerMap[player.color as Team] = player

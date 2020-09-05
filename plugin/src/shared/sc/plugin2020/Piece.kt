@@ -7,7 +7,7 @@ import sc.api.plugins.ITeam
 @XStreamAlias(value = "piece")
 data class Piece(
         @field:XStreamAsAttribute
-        val owner: ITeam<*>,
+        val owner: ITeam,
         @field: XStreamAsAttribute
         val type: PieceType)
 

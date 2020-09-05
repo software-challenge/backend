@@ -106,7 +106,7 @@ class GameState @JvmOverloads constructor(
         }
     }
     
-    override fun getPointsForPlayer(team: ITeam<*>): Int =
+    override fun getPointsForPlayer(team: ITeam): Int =
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
     private fun getPointsForColor(color: Color): Int {

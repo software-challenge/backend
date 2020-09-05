@@ -28,7 +28,7 @@ object GameRuleLogic {
 
     /** @return the [Team] that has to make the next Move. */
     @JvmStatic
-    fun getCurrentPlayerColor(gameState: GameState): ITeam<*> = gameState.currentTeam
+    fun getCurrentPlayerColor(gameState: GameState): ITeam = gameState.currentTeam
 
     /** Validates & executes the [move] on the [gameState]. */
     @JvmStatic
@@ -58,7 +58,7 @@ object GameRuleLogic {
 
     /** @return number of free (empty & not obstructed) fields around the Bee - -1 if no Bee has been placed. */
     @JvmStatic
-    fun freeBeeNeighbours(board: Board, color: ITeam<*>): Int =
+    fun freeBeeNeighbours(board: Board, color: ITeam): Int =
             board.fields.find { it.pieces.contains(Piece(color, PieceType.BEE)) }
                     ?.let { getNeighbours(board, it) }?.count { field -> field.isEmpty }
                     ?: -1
