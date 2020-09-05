@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
 
 abstract class TwoPlayerGameState<P : Player>(
-        @XStreamAsAttribute val startTeam: ITeam<*>
+        @XStreamAsAttribute val startTeam: ITeam
 ) : IGameState {
     
     @XStreamOmitField
@@ -21,7 +21,7 @@ abstract class TwoPlayerGameState<P : Player>(
         get() = listOf(first, second)
     
     /** The Team active in the current turn. */
-    abstract val currentTeam: ITeam<*>
+    abstract val currentTeam: ITeam
 
     /** The Player whose team's turn it is. */
     open val currentPlayer: P
@@ -32,7 +32,7 @@ abstract class TwoPlayerGameState<P : Player>(
         get() = getPlayer(otherTeam)!!
 
     /** The Team opposite to the currently active one. */
-    val otherTeam: ITeam<*>
+    val otherTeam: ITeam
         get() = currentTeam.opponent()
 
     /** Der Spieler, der das Spiel begonnen hat. */
@@ -49,7 +49,7 @@ abstract class TwoPlayerGameState<P : Player>(
     fun getOpponent(player: P) =
             getPlayer(player.color.opponent())
 
-    fun getPlayer(team: ITeam<*>): P? = when(team.index) {
+    fun getPlayer(team: ITeam): P? = when(team.index) {
         0 -> first
         1 -> second
         else -> null
@@ -57,11 +57,11 @@ abstract class TwoPlayerGameState<P : Player>(
     
     /** Calculates the color of the current player from the [turn] and the [startTeam].
      * Based on the assumption that the current player switches every turn. */
-    fun currentPlayerFromTurn(): ITeam<*> =
+    fun currentPlayerFromTurn(): ITeam =
             if(turn.rem(2) == 0) startTeam else startTeam.opponent()
 
     /** Gibt die angezeigte Punktzahl des Spielers zurueck. */
-    abstract fun getPointsForPlayer(team: ITeam<*>): Int
+    abstract fun getPointsForPlayer(team: ITeam): Int
 
     override fun toString() =
             "GameState(turn=$turn,currentPlayer=${currentPlayer.color})"

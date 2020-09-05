@@ -42,7 +42,11 @@ class GameState @JvmOverloads constructor(
     val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
     
     override val currentTeam
-        get() = currentColor.team
+        get() = when(currentColor) {
+            Color.BLUE, Color.RED -> Team.ONE
+            Color.YELLOW, Color.GREEN -> Team.TWO
+        }
+//        get() = currentColor.team
     
     override val currentPlayer
         get() = getPlayer(currentTeam)!!
@@ -102,7 +106,7 @@ class GameState @JvmOverloads constructor(
         }
     }
     
-    override fun getPointsForPlayer(team: ITeam<*>): Int =
+    override fun getPointsForPlayer(team: ITeam): Int =
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
     private fun getPointsForColor(color: Color): Int {

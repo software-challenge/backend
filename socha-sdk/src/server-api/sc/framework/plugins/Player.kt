@@ -14,7 +14,7 @@ private val logger = LoggerFactory.getLogger(Player::class.java)
 
 @XStreamAlias(value = "player")
 open class Player @JvmOverloads constructor(
-        @XStreamAsAttribute var color: ITeam<*>,
+        @XStreamAsAttribute var color: ITeam,
         @XStreamAsAttribute var displayName: String = "") : Cloneable {
     
     public override fun clone() = Player(color, displayName)
