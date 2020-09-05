@@ -220,6 +220,12 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     }
   }
 
+  protected void onRoomMessage(String roomId, ProtocolMessage data) {
+    for (ILobbyClientListener listener : this.listeners) {
+      listener.onRoomMessage(roomId, data);
+    }
+  }
+
   protected void onError(String roomId, ProtocolErrorMessage error) {
     if (error.getOriginalRequest() != null) {
       logger.warn("The request {} caused the following error: {}",
@@ -237,12 +243,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   public void sendMessageToRoom(String roomId, ProtocolMessage o) {
     send(new RoomPacket(roomId, o));
-  }
-
-  protected void onRoomMessage(String roomId, ProtocolMessage data) {
-    for (ILobbyClientListener listener : this.listeners) {
-      listener.onRoomMessage(roomId, data);
-    }
   }
 
   /**

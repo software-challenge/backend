@@ -2,6 +2,7 @@ package sc.plugin2020;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
@@ -10,8 +11,8 @@ import sc.networking.clients.LobbyClient;
 import sc.plugin2020.util.Configuration;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.shared.GameResult;
-import sc.api.plugins.ITeam;
 import sc.shared.WelcomeMessage;
 
 import java.io.IOException;
@@ -76,7 +77,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
   /** Called when a new message is sent to the room, e.g. move requests. */
   @Override
-  public void onRoomMessage(String roomId, Object data) {
+  public void onRoomMessage(String roomId, ProtocolMessage data) {
     if(data instanceof MoveRequest) {
       this.handler.onRequestAction();
     } else if(data instanceof WelcomeMessage) {
@@ -102,7 +103,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
    * Happens after a client made a move.
    */
   @Override
-  public void onNewState(String roomId, Object state) {
+  public void onNewState(String roomId, IGameState state) {
     sc.plugin2020.GameState gameState = (GameState) state;
     logger.debug("{} got new state {}", this, gameState);
 
