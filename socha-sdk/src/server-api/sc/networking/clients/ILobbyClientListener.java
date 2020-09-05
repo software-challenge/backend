@@ -1,18 +1,19 @@
 package sc.networking.clients;
 
-import sc.api.plugins.ITeam;
+import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.shared.GameResult;
 
 public interface ILobbyClientListener {
 
-  void onNewState(String roomId, Object state);
+  void onNewState(String roomId, IGameState state);
+
+  void onRoomMessage(String roomId, ProtocolMessage data);
 
   void onError(String roomId, ProtocolErrorMessage error);
-
-  void onRoomMessage(String roomId, Object data);
 
   void onGamePrepared(PrepareGameProtocolMessage response);
 

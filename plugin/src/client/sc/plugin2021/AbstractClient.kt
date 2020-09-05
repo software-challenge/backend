@@ -1,6 +1,7 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.IGameState
 import sc.framework.plugins.Player
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.IControllableGame
@@ -9,6 +10,7 @@ import sc.networking.clients.LobbyClient
 import sc.plugin2021.util.Configuration
 import sc.protocol.responses.PrepareGameProtocolMessage
 import sc.protocol.responses.ProtocolErrorMessage
+import sc.protocol.responses.ProtocolMessage
 import sc.shared.GameResult
 import sc.shared.WelcomeMessage
 import java.io.IOException
@@ -54,7 +56,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     fun getError() = error
     
     /** Current room of the player. */
-    private lateinit var roomID: String
+    private lateinit var roomId: String
     
     /** The team the client belongs to in order to connect client and player. */
     private var team: Team? = when(type) {
@@ -68,19 +70,19 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
             client.observe(handle)
     
     /** Called for any new message sent to the game room, e.g., move requests. */
-    override fun onRoomMessage(roomId: String, data: Any) {
+    override fun onRoomMessage(roomId: String, data: ProtocolMessage) {
         if(data is MoveRequest) {
             handler.onRequestAction()
         }
         if(data is WelcomeMessage) {
             team = Team.valueOf(data.color.toUpperCase())
         }
-        roomID = roomId
+        this.roomId = roomId
     }
     
     /** Sends the selected move to the server. */
     fun sendMove(move: Move) =
-            client.sendMessageToRoom(roomID, move)
+            client.sendMessageToRoom(roomId, move)
     
     /** Called when an erroneous message is sent to the room. */
     override fun onError(roomId: String, error: ProtocolErrorMessage) {
@@ -92,7 +94,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
      * Called when game state has been received.
      * Happens after a client made a move.
      */
-    override fun onNewState(roomId: String, state: Any) {
+    override fun onNewState(roomId: String, state: IGameState) {
         val gameState = state as GameState
         logger.debug("$this got a new state $gameState")
         
@@ -124,7 +126,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     override fun onGameObserved(roomId: String) {}
     
     override fun onGameLeft(roomId: String) {
-        logger.info("$this got game left $roomID")
+        logger.info("$this got game left ${this.roomId}")
         client.stop()
     }
     

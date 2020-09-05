@@ -1,9 +1,11 @@
 package sc.server.client;
 
+import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
 import sc.networking.clients.ILobbyClientListener;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.shared.GameResult;
 
 public class TestLobbyClientListener implements ILobbyClientListener {
@@ -45,7 +47,7 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onNewState(String roomId, Object state) {
+  public void onNewState(String roomId, IGameState state) {
     newStateReceived = true;
     this.roomId = roomId;
     this.newState = state;
@@ -59,7 +61,7 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onRoomMessage(String roomId, Object data) {
+  public void onRoomMessage(String roomId, ProtocolMessage data) {
     roomMessageReceived = true;
     this.roomId = roomId;
     this.roomMessage = data;
