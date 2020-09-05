@@ -50,8 +50,6 @@ open class Player @JvmOverloads constructor(
 
     fun hasHardTimeout() = hardTimeout
 
-    /** @return Reason for violation
-     */
     @XStreamOmitField
     var violationReason: String? = null
 
