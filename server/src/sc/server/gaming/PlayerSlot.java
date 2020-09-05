@@ -17,6 +17,7 @@ public class PlayerSlot {
       throw new IllegalStateException("Room must not be null.");
 
     this.room = room;
+    descriptor = new SlotDescriptor();
   }
 
   public PlayerRole getRole() {
@@ -85,15 +86,12 @@ public class PlayerSlot {
   }
 
   public SlotDescriptor getDescriptor() {
-    if (this.descriptor == null) {
-      return SlotDescriptor.DEFAULT_DESCRIPTOR;
-    }
-
     return this.descriptor;
   }
 
   public void setDescriptor(SlotDescriptor descriptor) {
-    this.descriptor = descriptor;
+    if (descriptor == null) this.descriptor = new SlotDescriptor();
+    else this.descriptor = descriptor;
   }
 
   public IClient getClient() {
