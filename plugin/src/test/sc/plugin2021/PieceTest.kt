@@ -1,9 +1,11 @@
 package sc.plugin2021
 
+import io.kotlintest.data.forall
 import io.kotlintest.matchers.maps.shouldContain
 import io.kotlintest.matchers.maps.shouldContainExactly
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
+import io.kotlintest.tables.row
 import org.opentest4j.AssertionFailedError
 import sc.plugin2021.util.*
 
@@ -162,39 +164,33 @@ class PieceTest: StringSpec({
         piece.coordinates shouldBe coordinates
     }
     "XML conversion" {
-        val pieces = listOf(
-                Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false),
-                Piece(Color.RED,    PieceShape.PENTO_Y, Rotation.LEFT, false),
-                Piece(Color.BLUE,   PieceShape.PENTO_P, Rotation.MIRROR, true),
-                Piece(Color.GREEN,  PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9))
-        )
-    
-        Configuration.xStream.toXML(pieces[0]) shouldBe """
-            <piece color="YELLOW" kind="TETRO_O" rotation="RIGHT" isFlipped="false">
-              <position x="0" y="0"/>
-            </piece>
-        """.trimIndent()
-        Configuration.xStream.toXML(pieces[1]) shouldBe """
-            <piece color="RED" kind="PENTO_Y" rotation="LEFT" isFlipped="false">
-              <position x="0" y="0"/>
-            </piece>
-        """.trimIndent()
-        Configuration.xStream.toXML(pieces[2]) shouldBe """
-            <piece color="BLUE" kind="PENTO_P" rotation="MIRROR" isFlipped="true">
-              <position x="0" y="0"/>
-            </piece>
-        """.trimIndent()
-        Configuration.xStream.toXML(pieces[3]) shouldBe """
-            <piece color="GREEN" kind="TRIO_L" rotation="NONE" isFlipped="true">
-              <position x="5" y="9"/>
-            </piece>
-        """.trimIndent()
-
-        pieces.forEach{
-            val xml = Configuration.xStream.toXML(it)
-            val converted = Configuration.xStream.fromXML(xml) as Piece
-            converted.toString() shouldBe it.toString()
-            converted shouldBe it
+        forall(
+            row(Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false), """
+                    <piece color="YELLOW" kind="TETRO_O" rotation="RIGHT" isFlipped="false">
+                      <position x="0" y="0"/>
+                    </piece>
+                """.trimIndent()),
+            row(Piece(Color.RED, PieceShape.PENTO_Y, Rotation.LEFT, false), """
+                    <piece color="RED" kind="PENTO_Y" rotation="LEFT" isFlipped="false">
+                      <position x="0" y="0"/>
+                    </piece>
+                """.trimIndent()),
+            row(Piece(Color.BLUE, PieceShape.PENTO_P, Rotation.MIRROR, true), """
+                    <piece color="BLUE" kind="PENTO_P" rotation="MIRROR" isFlipped="true">
+                      <position x="0" y="0"/>
+                    </piece>
+                """.trimIndent()),
+            row(Piece(Color.GREEN, PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9)), """
+                    <piece color="GREEN" kind="TRIO_L" rotation="NONE" isFlipped="true">
+                      <position x="5" y="9"/>
+                    </piece>
+                """.trimIndent())
+        ) {piece, xml ->
+            Configuration.xStream.toXML(piece) shouldBe xml
+            
+            val converted = Configuration.xStream.fromXML(Configuration.xStream.toXML(piece)) as Piece
+            converted.toString() shouldBe piece.toString()
+            converted shouldBe piece
         }
     }
     "Piece transformation calculation" {
