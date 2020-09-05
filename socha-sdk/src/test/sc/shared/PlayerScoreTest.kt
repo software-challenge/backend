@@ -1,6 +1,5 @@
 package sc.shared
 
-import com.thoughtworks.xstream.XStream
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.StringSpec
@@ -17,12 +16,9 @@ class PlayerScoreTest: StringSpec({
         playerScoreUnknown1 shouldNotBe playerScoreScores
         playerScoreScores shouldBe playerScoreScores
     }
-    "convert XML" {
+    "XML Serialization" {
         val playerScore = PlayerScore(ScoreCause.REGULAR, "Game ended regularly", 0, 1, 2)
-        val xstream = XStream().apply {
-            setMode(XStream.NO_REFERENCES)
-            autodetectAnnotations(true)
-        }
+        val xstream = getXStream()
         val playerScoreXML = """
             <score cause="REGULAR" reason="Game ended regularly">
               <part>0</part>
