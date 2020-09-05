@@ -1,6 +1,6 @@
-# Software-Challenge [![Build Status](https://travis-ci.com/CAU-Kiel-Tech-Inf/socha.svg?branch=master)](https://travis-ci.com/CAU-Kiel-Tech-Inf/socha)
+# Software-Challenge [![Build Status](https://travis-ci.com/CAU-Kiel-Tech-Inf/backend.svg?branch=master)](https://travis-ci.com/CAU-Kiel-Tech-Inf/backend)
 
-Dies ist das offizielle Repository der [Software-Challenge](https://www.software-challenge.de/), ein Programmierwettbewerb für Schüler.
+Dies ist das offizielle Repository der [Software-Challenge](https://www.software-challenge.de), ein Programmierwettbewerb für Schüler.
 Ziel hierbei ist, für ein jährlich wechselndes Spiel eine künstliche Intelligenz zu entwickeln, die den Gegenspieler besiegt.
 Das Repository besteht aus Server, Client und Spiel-Plugins.
 
@@ -27,7 +27,7 @@ Detaillierte Informationen zu unserem Kollaborations-Stil findet ihr in der [Kul
 
 ## Build
 
-Als Build-Tool wird [Gradle](https://gradle.org/) verwendet. Das gesamte Projekt kann sofort nach dem Checkout per `./gradlew build` gebaut werden, es ist keine Installation von Programmen nötig.
+Als Build-Tool wird [Gradle](https://gradle.org) verwendet. Das gesamte Projekt kann sofort nach dem Checkout per `./gradlew build` gebaut werden, es ist keine Installation von Programmen nötig.
 
 Die wichtigsten Tasks:
 
