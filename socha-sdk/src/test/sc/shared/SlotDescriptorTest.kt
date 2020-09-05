@@ -1,9 +1,11 @@
 package sc.shared
 
 import com.thoughtworks.xstream.XStream
+import io.kotlintest.data.forall
 import io.kotlintest.specs.StringSpec
 import io.kotlintest.inspectors.forAll
 import io.kotlintest.shouldBe
+import io.kotlintest.tables.row
 
 class SlotDescriptorTest : StringSpec({
     "convert XML" {
@@ -11,23 +13,22 @@ class SlotDescriptorTest : StringSpec({
             setMode(XStream.NO_REFERENCES)
             autodetectAnnotations(true)
         }
-        val descriptors = listOf(
-                SlotDescriptor() to
-                """<slotDescriptor displayName="Unknown" canTimeout="true" shouldBePaused="true"/>""",
+        forall(
+                row(SlotDescriptor(),
+                """<slotDescriptor displayName="Unknown" canTimeout="true" shouldBePaused="true"/>"""),
                 
-                SlotDescriptor("Display Name") to
-                """<slotDescriptor displayName="Display Name" canTimeout="true" shouldBePaused="true"/>""",
+                row(SlotDescriptor("Display Name"),
+                """<slotDescriptor displayName="Display Name" canTimeout="true" shouldBePaused="true"/>"""),
                 
-                SlotDescriptor("name", false) to
-                """<slotDescriptor displayName="name" canTimeout="false" shouldBePaused="true"/>""",
+                row(SlotDescriptor("name", false),
+                """<slotDescriptor displayName="name" canTimeout="false" shouldBePaused="true"/>"""),
                 
-                SlotDescriptor("another name", true, false) to
-                """<slotDescriptor displayName="another name" canTimeout="true" shouldBePaused="false"/>"""
+                row(SlotDescriptor("another name", true, false),
+                """<slotDescriptor displayName="another name" canTimeout="true" shouldBePaused="false"/>""")
         )
-        
-        descriptors.forAll {
-            xstream.toXML(it.first) shouldBe it.second
-            xstream.fromXML(it.second).toString() shouldBe it.first.toString()
+        { descriptor, xml ->
+            xstream.toXML(descriptor) shouldBe xml
+            xstream.fromXML(xml).toString() shouldBe descriptor.toString()
         }
     }
 })
