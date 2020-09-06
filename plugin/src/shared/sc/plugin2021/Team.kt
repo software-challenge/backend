@@ -5,7 +5,7 @@ import sc.api.plugins.ITeam
 import sc.shared.WelcomeMessage
 
 @XStreamAlias(value = "team")
-enum class Team(override val index: Int, val colors: List<Color>): ITeam<Team> {
+enum class Team(override val index: Int, val colors: List<Color>): ITeam {
     ONE(0, listOf(Color.BLUE, Color.YELLOW)) {
         override fun opponent(): Team = TWO
         override fun toString(): String = "One"

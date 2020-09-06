@@ -8,7 +8,7 @@ import sc.api.plugins.ITeam;
 public class TestPlayer extends Player {
   private static Logger logger = LoggerFactory.getLogger(TestPlayer.class);
 
-  public TestPlayer(ITeam<?> pc) {
+  public TestPlayer(ITeam pc) {
     super(pc);
   }
 
