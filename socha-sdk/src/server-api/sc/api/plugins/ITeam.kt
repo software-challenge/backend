@@ -2,9 +2,9 @@ package sc.api.plugins
 
 /** This represents the team a player is in / is playing for.
  *  Concrete implementations belong into the corresponding plugin. */
-interface ITeam {
+interface ITeam<out T> {
     val index: Int
     
-    fun opponent(): ITeam
+    fun opponent(): ITeam<*>
     override fun toString(): String
 }

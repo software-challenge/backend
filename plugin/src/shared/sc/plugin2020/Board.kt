@@ -104,7 +104,7 @@ data class Board(
     override fun hashCode(): Int =
             gameField.contentDeepHashCode()
     
-    fun getFieldsOwnedBy(owner: ITeam): List<Field> = fields.filter { it.owner == owner }
+    fun getFieldsOwnedBy(owner: ITeam<*>): List<Field> = fields.filter { it.owner == owner }
     
     companion object {
         private const val SHIFT = (Constants.BOARD_SIZE - 1) / 2

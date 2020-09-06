@@ -2,7 +2,7 @@ package sc.server.helpers
 
 import sc.api.plugins.ITeam
 
-enum class TestTeam(override val index: Int, val displayName: String): ITeam {
+enum class TestTeam(override val index: Int, val displayName: String): ITeam<TestTeam> {
     RED(0, "Rot") {
         val letter = name.first()
         

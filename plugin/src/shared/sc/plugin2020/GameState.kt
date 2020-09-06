@@ -71,7 +71,7 @@ class GameState @JvmOverloads constructor(
         }
     }
     
-    override fun getPointsForPlayer(team: ITeam): Int {
+    override fun getPointsForPlayer(team: ITeam<*>): Int {
         return GameRuleLogic.freeBeeNeighbours(this.board, team)
     }
     

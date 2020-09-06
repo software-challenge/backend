@@ -10,7 +10,11 @@ import sc.protocol.responses.ProtocolMessage
 @XStreamAlias(value = "welcomeMessage")
 data class WelcomeMessage
 private constructor(
-        @XStreamAsAttribute val color: String
+        @XStreamAsAttribute private val color: String
 ): ProtocolMessage {
-    constructor(color: ITeam): this(color.toString())
+    
+    constructor(color: ITeam<*>): this(color.toString().toLowerCase())
+    
+    val playerColor: String
+        get() = color
 }
