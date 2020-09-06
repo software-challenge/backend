@@ -12,5 +12,6 @@ data class WelcomeMessage
 private constructor(
         @XStreamAsAttribute val color: String
 ): ProtocolMessage {
-    constructor(color: ITeam): this(color.toString())
+    
+    constructor(color: ITeam): this(color.toString().toLowerCase())
 }
