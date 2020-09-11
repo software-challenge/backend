@@ -18,9 +18,8 @@ import java.net.ConnectException
 import kotlin.system.exitProcess
 
 /**
- * Abstract client as specified in the SDK.
- * Contains a LobbyClient as actual client;
- * this class is a plugin specific abstract wrapper.
+ * Eine abstrakte Implementation des [ILobbyClientListener].
+ * Hier sind alle Methoden implementiert, die unabhängig von der Logik der Clients der Spieler sind.
  */
 abstract class AbstractClient @Throws(IOException::class) constructor(
         host: String,
