@@ -2,6 +2,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.InputStream
 import java.util.concurrent.atomic.AtomicBoolean
+import sc.gradle.ScriptsTask
 
 plugins {
     maven
@@ -10,6 +11,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.28.0"
     id("se.patrikerdes.use-latest-versions") version "0.2.13"
     id("org.jetbrains.dokka") version "0.9.17"
+    id("scripts-task")
 }
 
 val gameName by extra { property("socha.gameName") as String }

@@ -1,3 +1,5 @@
+package sc.gradle
+
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 import java.io.File
@@ -18,5 +20,11 @@ open class ScriptsTask : DefaultTask() {
             writeText("#!/bin/sh\n$content \"$@\"")
             setExecutable(true)
         }
+    }
+}
+
+class PlaceholderPlugin: Plugin<Project> {
+    override fun apply(target: Project) {
+        // no-op
     }
 }
