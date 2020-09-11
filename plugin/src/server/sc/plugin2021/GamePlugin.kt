@@ -18,7 +18,7 @@ class GamePlugin: IGamePlugin {
         
         val SCORE_DEFINITION = ScoreDefinition().apply {
             add("Gewinner")
-            add(ScoreFragment("\u2205 nicht gelegte Quadrate", ScoreAggregation.AVERAGE))
+            add(ScoreFragment("\u2205 Punkte", ScoreAggregation.AVERAGE))
         }
     }
     
