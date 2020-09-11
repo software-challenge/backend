@@ -1,4 +1,5 @@
 import java.util.Scanner
+import sc.gradle.ScriptsTask
 
 plugins {
     application
