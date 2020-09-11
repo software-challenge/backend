@@ -28,6 +28,12 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
   }
 
   @Override
+  public void reload() {
+    GamePluginInstance i = new GamePluginInstance(sc.plugin2021.GamePlugin.class);
+    this.availablePlugins.add(i);
+  }
+
+  @Override
   protected GamePluginInstance createPluginInstance(Class<?> definition, URI jarUri) {
     GamePluginInstance instance = new GamePluginInstance(definition);
     logger.info("GamePlugin '{}' {{}} was loaded.", instance
@@ -76,11 +82,6 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
     return getPlugin(uuid) != null;
   }
 
-  @Override
-  public String getPluginFolder() {
-    return Configuration.getPluginPath();
-  }
-
   public Iterable<String> getPluginUUIDs() {
     return CollectionHelper.map(this.getAvailablePlugins(), val -> val.getDescription().uuid());
   }
@@ -89,10 +90,4 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
   protected Class<?> getPluginInterface() {
     return IGamePlugin.class;
   }
-
-  @Override
-  protected void addJarToClassloader(URL url) {
-    Configuration.addXStreamClassloaderURL(url);
-  }
-
 }

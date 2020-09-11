@@ -17,6 +17,7 @@ application {
 
 dependencies {
     implementation(project(":sdk"))
+    implementation(project(":plugin"))
 
     testImplementation("junit", "junit", "4.12")
 }
