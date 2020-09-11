@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     application
     id("com.github.johnrengelman.shadow") version "5.2.0"
@@ -90,7 +92,7 @@ tasks {
                 from(prepareZip.destinationDir)
                 into(execDir)
             }
-            val command = arrayListOf("./gradlew", "shadowJar", "--quiet", "--offline")
+            val command = arrayListOf(if(OperatingSystem.current() == OperatingSystem.WINDOWS) "./gradlew.bat" else "./gradlew", "shadowJar", "--quiet", "--offline")
             testLogDir.mkdirs()
             val process = ProcessBuilder(command).directory(execDir)
                     .redirectOutput(testLogDir.resolve("player-shadowJar-build.log"))
