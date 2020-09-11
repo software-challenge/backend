@@ -79,17 +79,23 @@ class GameRuleLogicTest: StringSpec({
         }
     }
     "Point score calculation works" {
-        GameRuleLogic.getPointsFromUndeployed(PieceShape.values().toSet()) shouldBe GameRuleLogic.SMALLEST_SCORE_POSSIBLE
-
+        GameRuleLogic.getPointsFromUndeployed(emptySet(), false) shouldBe
+                GameRuleLogic.SUM_MAX_SQUARES + 15
+        GameRuleLogic.getPointsFromUndeployed(emptySet(), true) shouldBe
+                GameRuleLogic.SUM_MAX_SQUARES + 15 + 5
+        
+        GameRuleLogic.getPointsFromUndeployed(PieceShape.values().toSet()) shouldBe 0
+        GameRuleLogic.getPointsFromUndeployed(PieceShape.values().toSet(), true) shouldBe 0
+        
         val fewPieces = setOf(
                 PieceShape.MONO,
                 PieceShape.PENTO_W,
                 PieceShape.TETRO_I
         )
-        GameRuleLogic.getPointsFromUndeployed(fewPieces) shouldBe -10
-
-        GameRuleLogic.getPointsFromUndeployed(emptySet(), false) shouldBe 15
-        GameRuleLogic.getPointsFromUndeployed(emptySet(), true) shouldBe 20
+        GameRuleLogic.getPointsFromUndeployed(fewPieces) shouldBe
+                GameRuleLogic.SUM_MAX_SQUARES - fewPieces.map{it.coordinates.size}.sum()
+        GameRuleLogic.getPointsFromUndeployed(fewPieces, true) shouldBe
+                GameRuleLogic.SUM_MAX_SQUARES - fewPieces.map{it.coordinates.size}.sum()
     }
     "After the color check, PassMoves remove the color" {
         val state = GameState()

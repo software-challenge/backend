@@ -7,7 +7,7 @@ import sc.shared.InvalidMoveException
 object GameRuleLogic {
     val logger = LoggerFactory.getLogger(GameRuleLogic::class.java)
     
-    const val SMALLEST_SCORE_POSSIBLE = -89
+    const val SUM_MAX_SQUARES = 89
     
     /**
      * Calculates the score for a given set of unused [PieceShape]s.
@@ -15,10 +15,15 @@ object GameRuleLogic {
      */
     @JvmStatic
     fun getPointsFromUndeployed(undeployed: Set<PieceShape>, monoLast: Boolean = false): Int {
-        return if (undeployed.isEmpty()) {
-            if (monoLast) 20 else 15
+        // If all pieces were placed:
+        if (undeployed.isEmpty()) {
+            // Return sum of all squares plus 15 bonus points
+            return SUM_MAX_SQUARES + 15 +
+            // If the Monomino was the last placed piece, add another 5 points
+            if (monoLast) 5 else 0
         }
-        else - undeployed.map { it.coordinates.size }.sum()
+        // One point per block per piece placed
+        return SUM_MAX_SQUARES - undeployed.map{ it.coordinates.size }.sum()
     }
     
     /** Performs the given [move] on the [gameState] if possible. */

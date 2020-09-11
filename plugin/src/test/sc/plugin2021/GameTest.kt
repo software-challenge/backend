@@ -41,7 +41,8 @@ class GameTest: StringSpec({
     
         game.winners shouldBe player.toList()
         
-        game.playerScores shouldContainExactly List(2) {PlayerScore(ScoreCause.REGULAR, "", Constants.DRAW_SCORE, -178)}
+        game.playerScores shouldContainExactly List(2)
+        {PlayerScore(ScoreCause.REGULAR, "", Constants.DRAW_SCORE, 0)}
     }
     "A few moves can be performd without issues" {
         val game = Game()
