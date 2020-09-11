@@ -34,14 +34,14 @@ Die wichtigsten Tasks:
 | Task | Beschreibung
 | ------ | ------------
 | `build` | Baut alles, deployt und testet
-| `test` | Führt Unittests aus
-| `check` | Führt alle Tests aus
 | `deploy` | Erstellt hochladbare ZIP-Pakete
+| `check` | Führt alle Tests aus
+| `test` | Führt Unittests aus
 | `integrationTest` | Testet ein komplettes Spiel sowie den TestClient
 | `startServer` oder `:server:run` | Führt den Server direkt vom Quellcode aus
 | `:server:startProduction` | Startet den gepackten Server
 | `:player:run` | Startet den SimpleClient direkt vom Sourcecode
-| `:player:shadowJar` | Baut eine jar des SimpleClient
+| `:player:shadowJar` | Baut den SimpleClient als fat-jar
 | `:test-client:run` | Startet den TestClient
 
 ### Unterprojekte
