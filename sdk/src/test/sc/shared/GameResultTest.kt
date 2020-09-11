@@ -14,7 +14,7 @@ class GameResultTest: StringSpec({
     val definition = ScoreDefinition("winner")
     val scoreRegular = PlayerScore(ScoreCause.REGULAR, "", 1)
     val scores = listOf(scoreRegular, PlayerScore(ScoreCause.LEFT, "Player left", 0))
-    val winners = listOf(Player(TestTeam, "bluez"))
+    val winners = listOf(Player(TestTeam.BLUE, "bluez"))
     
     "PlayerScore toString with ScoreDefinition" {
         scoreRegular.toString(definition) shouldContain "winner=1"
