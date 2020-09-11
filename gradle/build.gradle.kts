@@ -224,13 +224,14 @@ tasks {
 
 allprojects {
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
     
     repositories {
         jcenter()
         maven("http://dist.wso2.org/maven2")
     }
+    
     if (this.name in documentedProjects) {
         apply(plugin = "maven")
         tasks {
@@ -263,8 +264,9 @@ allprojects {
             }
         }
     }
+    
     afterEvaluate {
-        doAfterEvaluate.forEach { it(this) }
+        doAfterEvaluate.forEach { action -> action(this) }
         tasks {
             forEach { if (it.name != clean.name) it.mustRunAfter(clean.get()) }
             test {
