@@ -51,7 +51,9 @@ tasks {
         dependsOn(project(":test-client").tasks.jar, ":player:shadowJar", makeRunnable)
         destinationDirectory.set(deployDir)
         archiveBaseName.set("software-challenge-server")
-        from(project(":test-client").buildDir.resolve("libs"), runnableDir)
+        from(runnableDir)
+        if(project.property("enableTestClient") as Boolean)
+            from(project(":test-client").buildDir.resolve("libs"))
         doFirst {
             from(project(":player").tasks["shadowJar"].outputs)
             Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "HEAD")).inputStream.copyTo(runnableDir.resolve("version").outputStream())

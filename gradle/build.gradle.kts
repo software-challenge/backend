@@ -28,6 +28,9 @@ val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
 val testLogDir by extra { buildDir.resolve("tests") }
 val documentedProjects = arrayOf("sdk", "plugin")
 
+val enableTestClient by extra { versionObject.minor > 0 }
+val enableIntegrationTesting = !project.hasProperty("nointegration") && (versionObject.minor > 0 || enableTestClient)
+
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
@@ -201,7 +204,9 @@ tasks {
     
     val integrationTest by creating {
         group = "verification"
-        dependsOn(testGame, testTestClient)
+        dependsOn(testGame)
+        if(enableTestClient)
+            dependsOn(testTestClient)
         shouldRunAfter(test)
     }
     
@@ -212,7 +217,7 @@ tasks {
         dependOnSubprojects()
     }
     check {
-        if (!project.hasProperty("nointegration") && versionObject.minor > 0)
+        if (enableIntegrationTesting)
             dependsOn(integrationTest)
     }
     build {
