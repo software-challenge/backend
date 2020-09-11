@@ -2,4 +2,3 @@ rootProject.buildFileName = 'gradle/build.gradle.kts'
 
 include 'sdk', 'server', 'plugin', 'player', 'test-client'
 project(':test-client').projectDir = file('helpers/test-client')
-project(':sdk').projectDir = file('socha-sdk')
