@@ -8,10 +8,11 @@ plugins {
     maven
     `java-library`
     kotlin("jvm") version "1.3.71"
-    id("com.github.ben-manes.versions") version "0.28.0"
-    id("se.patrikerdes.use-latest-versions") version "0.2.13"
     id("org.jetbrains.dokka") version "0.9.17"
     id("scripts-task")
+    
+    id("com.github.ben-manes.versions") version "0.31.0"
+    id("se.patrikerdes.use-latest-versions") version "0.2.14"
 }
 
 val gameName by extra { property("socha.gameName") as String }
@@ -285,7 +286,7 @@ project("sdk") {
     
     dependencies {
         api(kotlin("stdlib"))
-        api("com.thoughtworks.xstream", "xstream", "1.4.11.1")
+        api("com.thoughtworks.xstream", "xstream", "1.4.12")
         api("jargs", "jargs", "1.0")
         api("ch.qos.logback", "logback-classic", "1.2.3")
         
