@@ -2,7 +2,7 @@ package sc.plugin2020.util
 
 import sc.plugin2020.*
 import sc.shared.InvalidMoveException
-import sc.shared.PlayerColor
+import sc.api.plugins.ITeam
 import java.util.*
 import kotlin.math.abs
 
@@ -26,9 +26,9 @@ object GameRuleLogic {
         return board.getField(CubeCoordinates(coords.x + direction.shift(1).x, coords.y + direction.shift(1).y, coords.z + direction.shift(1).z))
     }
 
-    /** @return the [PlayerColor] that has to make the next Move. */
+    /** @return the [Team] that has to make the next Move. */
     @JvmStatic
-    fun getCurrentPlayerColor(gameState: GameState): PlayerColor = gameState.currentPlayerColor
+    fun getCurrentPlayerColor(gameState: GameState): ITeam = gameState.currentTeam
 
     /** Validates & executes the [move] on the [gameState]. */
     @JvmStatic
@@ -37,7 +37,7 @@ object GameRuleLogic {
         // apply move
         when (move) {
             is SetMove -> {
-                gameState.getUndeployedPieces(move.piece.owner).remove(move.piece)
+                gameState.getUndeployedPieces(move.piece.owner as Team).remove(move.piece)
                 gameState.board.getField(move.destination).pieces.add(move.piece)
             }
             is DragMove -> {
@@ -53,17 +53,17 @@ object GameRuleLogic {
     /** Whether the Bee is completely blocked.
      * @return true iff [freeBeeNeighbours] returns 0 */
     @JvmStatic
-    fun isBeeBlocked(board: Board, color: PlayerColor): Boolean =
+    fun isBeeBlocked(board: Board, color: Team): Boolean =
             freeBeeNeighbours(board, color) == 0
 
     /** @return number of free (empty & not obstructed) fields around the Bee - -1 if no Bee has been placed. */
     @JvmStatic
-    fun freeBeeNeighbours(board: Board, color: PlayerColor): Int =
+    fun freeBeeNeighbours(board: Board, color: ITeam): Int =
             board.fields.find { it.pieces.contains(Piece(color, PieceType.BEE)) }
                     ?.let { getNeighbours(board, it) }?.count { field -> field.isEmpty }
                     ?: -1
 
-    /** @return true iff the given [coords] are within the Board size. */
+    /** @return true if the given [coords] are within the Board size. */
     @JvmStatic
     fun isOnBoard(coords: CubeCoordinates): Boolean {
         val shift = (Constants.BOARD_SIZE - 1) / 2
@@ -101,28 +101,28 @@ object GameRuleLogic {
         if (!gameState.board.getField(move.destination).isEmpty)
             throw InvalidMoveException("Set destination is not empty", move)
 
-        if (gameState.currentPlayerColor != move.piece.owner)
-            throw InvalidMoveException("The piece ${move.piece} does not belong to the current Player(${gameState.currentPlayerColor})", move)
+        if (gameState.currentTeam != move.piece.owner)
+            throw InvalidMoveException("The piece ${move.piece} does not belong to the current Player(${gameState.currentTeam})", move)
 
-        val ownedFields = gameState.board.fields.filter { it.owner == gameState.currentPlayerColor }
+        val ownedFields = gameState.board.fields.filter { it.owner == gameState.currentTeam }
         if (ownedFields.isEmpty()) {
-            val otherPlayerFields = gameState.board.fields.filter { it.owner == gameState.otherPlayerColor }
+            val otherPlayerFields = gameState.board.fields.filter { it.owner == gameState.otherTeam }
             if (otherPlayerFields.isNotEmpty()) {
                 if (move.destination !in otherPlayerFields.flatMap { getNeighbours(gameState.board, it.coordinates) })
                     throw InvalidMoveException("Your first piece has to touch the piece of the other player", move)
             }
         } else {
-            if (!gameState.getUndeployedPieces(gameState.currentPlayerColor).contains(move.piece))
+            if (!gameState.getUndeployedPieces(gameState.currentTeam).contains(move.piece))
                 throw InvalidMoveException("Piece ${move.piece} is not an undeployed piece of the current player", move)
 
             if (gameState.round >= 3 && !gameState.hasPlayerPlacedBee() && move.piece.type != PieceType.BEE)
                 throw InvalidMoveException("The bee must be placed in fourth round latest", move)
 
             val destinationNeighbours = getNeighbours(gameState.board, move.destination)
-            if (!destinationNeighbours.any { it.owner == gameState.currentPlayerColor })
+            if (!destinationNeighbours.any { it.owner == gameState.currentTeam })
                 throw InvalidMoveException("A newly placed piece must touch an own piece", move)
 
-            if (destinationNeighbours.any { it.owner == gameState.otherPlayerColor })
+            if (destinationNeighbours.any { it.owner == gameState.otherTeam })
                 throw InvalidMoveException("A newly placed piece must not touch a piece of the other player", move)
         }
     }
@@ -140,7 +140,7 @@ object GameRuleLogic {
 
         val pieceToDrag = availablePieces.peek()
 
-        if (pieceToDrag.owner !== gameState.currentPlayerColor)
+        if (pieceToDrag.owner !== gameState.currentTeam)
             throw InvalidMoveException("Trying to move piece of the other player", move)
 
         if (move.start == move.destination)
@@ -317,7 +317,7 @@ object GameRuleLogic {
     /** @return true iff the current Player has his Bee deployed. */
     @JvmStatic
     fun GameState.hasPlayerPlacedBee() =
-            getDeployedPieces(currentPlayerColor).any { it.type == PieceType.BEE }
+            getDeployedPieces(currentTeam).any { it.type == PieceType.BEE }
 
     /** @return true iff there are no pieces on the Board. */
     @JvmStatic
@@ -338,7 +338,7 @@ object GameRuleLogic {
         if (gameState.mustPlayerPlaceBee())
             return emptyList()
 
-        return gameState.board.getFieldsOwnedBy(gameState.currentPlayerColor).flatMap { startField ->
+        return gameState.board.getFieldsOwnedBy(gameState.currentTeam).flatMap { startField ->
             when (startField.topPiece?.type) {
                 PieceType.BEE -> this.getAccessibleNeighbours(gameState.board, startField)
                 PieceType.BEETLE -> this.getNeighbours(gameState.board, startField)
@@ -362,7 +362,7 @@ object GameRuleLogic {
                     .toSet()
 
     @JvmStatic
-    fun getPossibleSetMoveDestinations(board: Board, owner: PlayerColor): Collection<CubeCoordinates> =
+    fun getPossibleSetMoveDestinations(board: Board, owner: Team): Collection<CubeCoordinates> =
             board.getFieldsOwnedBy(owner)
                     .asSequence()
                     .flatMap { this.getNeighbours(board, it).asSequence() }
@@ -372,25 +372,25 @@ object GameRuleLogic {
 
     @JvmStatic
     fun getPossibleSetMoves(gameState: GameState): List<SetMove> {
-        val undeployed = gameState.getUndeployedPieces(gameState.currentPlayerColor)
+        val undeployed = gameState.getUndeployedPieces(gameState.currentTeam)
         val setDestinations =
                 if (undeployed.size == Constants.STARTING_PIECES.length) {
                     // current player has not placed any pieces yet (first or second turn)
-                    if (gameState.getUndeployedPieces(gameState.otherPlayerColor).size == Constants.STARTING_PIECES.length) {
+                    if (gameState.getUndeployedPieces(gameState.otherTeam as Team).size == Constants.STARTING_PIECES.length) {
                         gameState.board.fields.filter { it.isEmpty }
                     } else {
-                        gameState.board.getFieldsOwnedBy(gameState.otherPlayerColor)
+                        gameState.board.getFieldsOwnedBy(gameState.otherTeam)
                                 .flatMap { getNeighbours(gameState.board, it).filter { it.isEmpty } }
                     }
                 } else {
-                    this.getPossibleSetMoveDestinations(gameState.board, gameState.currentPlayerColor)
+                    this.getPossibleSetMoveDestinations(gameState.board, gameState.currentTeam)
                 }
 
         val possiblePieceTypes = if (gameState.mustPlayerPlaceBee()) listOf(PieceType.BEE) else undeployed.map { it.type }.toSet()
         return setDestinations
                 .flatMap {
                     possiblePieceTypes.map { u ->
-                        SetMove(Piece(gameState.currentPlayerColor, u), it)
+                        SetMove(Piece(gameState.currentTeam, u), it)
                     }
                 }
     }

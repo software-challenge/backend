@@ -352,8 +352,8 @@ public class GameRoom implements IGameListener {
     // set attributes for player
     // TODO check whether this is needed for prepared games
     player.setDisplayName(slot.getDescriptor().getDisplayName());
-    player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
-    player.setCanTimeout(slot.getDescriptor().isCanTimeout());
+    player.setShouldBePaused(slot.getDescriptor().getShouldBePaused());
+    player.setCanTimeout(slot.getDescriptor().getCanTimeout());
 
     if (slot.isEmpty()) // needed for forced step, if client crashes before joining room
     {
@@ -636,7 +636,7 @@ public class GameRoom implements IGameListener {
 
     for (int i = 0; i < descriptors.length; i++) {
       this.playerSlots.get(i).setDescriptor(descriptors[i]);
-      if (descriptors[i].isShouldBePaused()) {
+      if (descriptors[i].getShouldBePaused()) {
         pause(true);
       }
     }

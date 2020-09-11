@@ -1,3 +1,5 @@
+import sc.gradle.ScriptsTask
+
 plugins {
     java
     application

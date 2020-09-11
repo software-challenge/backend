@@ -21,6 +21,7 @@ application {
 
 dependencies {
     implementation(project(":plugin"))
+    implementation(kotlin("script-runtime"))
 }
 
 tasks {

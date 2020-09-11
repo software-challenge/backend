@@ -2,6 +2,7 @@ package sc.plugin2020;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
@@ -10,8 +11,8 @@ import sc.networking.clients.LobbyClient;
 import sc.plugin2020.util.Configuration;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.shared.GameResult;
-import sc.shared.PlayerColor;
 import sc.shared.WelcomeMessage;
 
 import java.io.IOException;
@@ -24,27 +25,25 @@ import java.net.ConnectException;
 public abstract class AbstractClient implements ILobbyClientListener {
   private static final Logger logger = LoggerFactory.getLogger(AbstractClient.class);
 
-  /** The handler reacts to messages from the server received by the lobby client */
+  /** The handler reacts to messages from the server received by the lobby client. */
   protected IGameHandler handler;
 
-  /** The lobby client, that connects to the room */
+  /** The lobby client that connects to the room. */
   private LobbyClient client;
 
   private String gameType;
 
-  /** If the client made an error (rule violation), store reason here */
+  /** If the client made an error (rule violation), store reason here. */
   private String error;
 
-  /** current id to identify the client instance internal */
+  /** Current id to identify the client instance internally. */
   private PlayerType id;
-  /** the current room in which the player is */
+  /** Current room of the player. */
   private String roomId;
-  /** the current host */
   private String host;
-  /** the current port */
   private int port;
-  /** current figurecolor to identify which client belongs to which player */
-  private PlayerColor color;
+  /** Current team color to identify which client belongs to which player. */
+  private Team color;
 
   public AbstractClient(String host, int port, PlayerType id) throws IOException {
     this.gameType = GamePlugin.PLUGIN_UUID;
@@ -71,38 +70,28 @@ public abstract class AbstractClient implements ILobbyClientListener {
     this.handler = handler;
   }
 
-  /**
-   * Tell this client to observe the game given by the preparation handler
-   *
-   * @return controllable game
-   */
+  /** Tell this client to observe the game given by the preparation handler. */
   public IControllableGame observeGame(PrepareGameProtocolMessage handle) {
     return this.client.observe(handle);
   }
 
-  /**
-   * Called when a new message is sent to the room, e.g. move requests
-   */
+  /** Called when a new message is sent to the room, e.g. move requests. */
   @Override
-  public void onRoomMessage(String roomId, Object data) {
+  public void onRoomMessage(String roomId, ProtocolMessage data) {
     if(data instanceof MoveRequest) {
       this.handler.onRequestAction();
     } else if(data instanceof WelcomeMessage) {
-      this.color = ((WelcomeMessage) data).getPlayerColor();
+      this.color = Team.valueOf(((WelcomeMessage) data).getColor());
     }
     this.roomId = roomId;
   }
 
-  /**
-   * sends the <code>move</code> to the server
-   *
-   * @param move the move you want to do
-   */
+  /** Sends the <code>move</code> to the server. */
   public void sendMove(Move move) {
     this.client.sendMessageToRoom(this.roomId, move);
   }
 
-  /** Called when an error is sent to the room */
+  /** Called when an error is sent to the room. */
   @Override
   public void onError(String roomId, ProtocolErrorMessage response) {
     logger.debug("onError: Client {} received error {}", this, response.getMessage());
@@ -114,7 +103,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
    * Happens after a client made a move.
    */
   @Override
-  public void onNewState(String roomId, Object state) {
+  public void onNewState(String roomId, IGameState state) {
     sc.plugin2020.GameState gameState = (GameState) state;
     logger.debug("{} got new state {}", this, gameState);
 
@@ -181,7 +170,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
     return this.error;
   }
 
-  public PlayerColor getColor() {
+  public Team getColor() {
     return this.color;
   }
 

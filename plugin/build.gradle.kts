@@ -11,6 +11,7 @@ dependencies {
     testImplementation("junit", "junit", "4.13")
     testImplementation("io.kotest", "kotest-runner-junit5-jvm", "4.0.5")
     testImplementation("io.kotest", "kotest-assertions-core", "4.0.5")
+    testImplementation(kotlin("script-runtime"))
 }
 
 tasks.jar.get().archiveBaseName.set(game)
