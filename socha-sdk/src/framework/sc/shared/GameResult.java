@@ -8,6 +8,10 @@ import sc.protocol.responses.ProtocolMessage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Das Endergebnis eines Spiels.
+ * Mit getScores() können die Punkte abgefragt werden.
+ */
 @XStreamAlias(value = "result")
 public class GameResult implements ProtocolMessage {
   private final ScoreDefinition definition;
