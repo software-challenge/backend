@@ -61,7 +61,7 @@ tasks {
         archiveBaseName.set("software-challenge-server")
         from(project(":test-client").buildDir.resolve("libs"), project(":player").buildDir.resolve("libs"), runnableDir)
         doFirst {
-            runnableDir.resolve("version").writeText(Scanner(Runtime.getRuntime().exec("git rev-parse HEAD").inputStream).next())
+            Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "HEAD")).inputStream.copyTo(runnableDir.resolve("version").outputStream())
         }
     }
 
@@ -75,9 +75,11 @@ tasks {
 
     val dockerImage by creating(Exec::class) {
         dependsOn(makeRunnable)
-        val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD")).inputStream.reader().readText().trim()
-        val relativeRunnable = runnableDir.relativeTo(project.projectDir)
-        commandLine("docker", "build", "--no-cache", "-t", "swc_game-server:latest", "-t", "swc_game-server:$tag", "--build-arg", "game_server_dir=$relativeRunnable", ".")
+		doFirst {
+			val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD")).inputStream.reader().readText().trim()
+			val relativeRunnable = runnableDir.relativeTo(project.projectDir)
+			commandLine("docker", "build", "--no-cache", "-t", "swc_game-server:latest", "-t", "swc_game-server:$tag", "--build-arg", "game_server_dir=$relativeRunnable", ".")
+		}
     }
 
     jar {
