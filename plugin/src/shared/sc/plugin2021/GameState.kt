@@ -123,7 +123,7 @@ class GameState @JvmOverloads constructor(
         logger.info("Removing $currentColor from the game")
         orderedColors.removeAt(currentColorIndex)
         if (orderedColors.isNotEmpty())
-            currentColorIndex = (currentColorIndex + orderedColors.size - 1) % orderedColors.size
+            currentColorIndex = (currentColorIndex + orderedColors.size) % orderedColors.size
         logger.debug("Remaining Colors: $orderedColors")
     }
     
