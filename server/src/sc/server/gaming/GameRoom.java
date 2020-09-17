@@ -242,9 +242,10 @@ public class GameRoom implements IGameListener {
    * @param data State Object that derives Object
    */
   @Override
-  public void onStateChanged(IGameState data) {
+  public void onStateChanged(IGameState data, boolean observersOnly) {
     sendStateToObservers(data);
-    sendStateToPlayers(data);
+    if (!observersOnly)
+      sendStateToPlayers(data);
   }
 
 
