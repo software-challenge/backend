@@ -10,7 +10,7 @@ import sc.shared.PlayerScore;
 public interface IGameListener {
   void onGameOver(Map<Player, PlayerScore> results) throws InvalidScoreDefinitionException;
 
-  void onStateChanged(IGameState data);
+  void onStateChanged(IGameState data, boolean observersOnly);
 
   void onPaused(Player nextPlayer);
 }

@@ -166,10 +166,8 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
       turn++;
     }
     this.activePlayer = nextPlayer;
-    // don't notify on new state if game is paused or client may begin to calculate something
-    if (!this.isPaused()) {
-      notifyOnNewState(getCurrentState());
-    }
+    // if paused, notify observers only (so they can update the GUI appropriately)
+    notifyOnNewState(getCurrentState(), this.isPaused());
 
     if (checkWinCondition() != null) {
       notifyOnGameOver(generateScoreMap());
@@ -235,7 +233,7 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
   /** Notifies players about the new state, sends a MoveRequest to active player */
   public void afterPause() {
     logger.info("Sending MoveRequest to player {}.", this.activePlayer);
-    notifyOnNewState(getCurrentState());
+    notifyOnNewState(getCurrentState(), false);
     notifyActivePlayer();
   }
 
@@ -293,11 +291,11 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
     }
   }
 
-  protected void notifyOnNewState(IGameState mementoState) {
+  protected void notifyOnNewState(IGameState mementoState, boolean observersOnly) {
     for (IGameListener listener : this.listeners) {
       logger.debug("notifying {} about new game state", listener);
       try {
-        listener.onStateChanged(mementoState);
+        listener.onStateChanged(mementoState, observersOnly);
       } catch (Exception e) {
         logger.error("NewState Notification caused an exception.", e);
       }
