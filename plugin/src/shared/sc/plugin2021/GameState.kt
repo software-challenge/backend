@@ -116,7 +116,7 @@ class GameState @JvmOverloads constructor(
     }
     
     /** Removes the currently active color from the queue.
-     *  The resulting active color will be the previous one; note that this is but a temporary value
+     *  The resulting active color will be the previous one; note that this is but a temporary value.
      *  Do not do anything with currentColor before the turn is done for good.
      */
     fun removeActiveColor() {

@@ -40,7 +40,7 @@ object GameRuleLogic {
                 gameState.undeployedPieceShapes.getValue(move.color).remove(move.piece.kind)
                 gameState.deployedPieces?.getValue(move.color).add(move.piece)
                 
-                // If it was the last piece for this color, remove him from the turn queue
+                // If it was the last piece for this color, remove it from the turn queue
                 if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty()) {
                     gameState.lastMoveMono += move.color to (move.piece.kind == PieceShape.MONO)
                     gameState.removeActiveColor()
