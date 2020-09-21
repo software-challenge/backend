@@ -10,6 +10,7 @@ import sc.api.plugins.ITeam
 import sc.api.plugins.exceptions.GameLogicException
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
+import java.lang.Exception
 
 @XStreamAlias(value = "state")
 class GameState @JvmOverloads constructor(
@@ -98,7 +99,14 @@ class GameState @JvmOverloads constructor(
         currentColorIndex = roundIncrementHelper % orderedColors.size
         round += (roundIncrementHelper - currentColorIndex) / orderedColors.size
     }
-    
+
+    fun tryAdvance(turns: Int = 1): Boolean = try {
+        turn += turns
+        true
+    } catch (e: Exception) {
+        false
+    }
+
     fun addPlayer(player: Player) {
         when(player.color) {
             Team.ONE -> first = player

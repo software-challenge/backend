@@ -26,29 +26,12 @@ object GameRuleLogic {
     fun performMove(gameState: GameState, move: Move) {
         if (Constants.VALIDATE_MOVE)
             validateMoveColor(gameState, move)
-        
+
         when (move) {
-            is SkipMove -> {}
-            is PassMove -> {
-                gameState.removeActiveColor()
-            }
-            is SetMove -> {
-                if (Constants.VALIDATE_MOVE)
-                    validateSetMove(gameState, move)
-                
-                performSetMove(gameState.board, move)
-                gameState.undeployedPieceShapes.getValue(move.color).remove(move.piece.kind)
-                gameState.deployedPieces?.getValue(move.color).add(move.piece)
-                
-                // If it was the last piece for this color, remove it from the turn queue
-                if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty()) {
-                    gameState.lastMoveMono += move.color to (move.piece.kind == PieceShape.MONO)
-                    gameState.removeActiveColor()
-                }
-            }
+            is SkipMove -> performSkipMove(gameState)
+            is PassMove -> performPassMove(gameState)
+            is SetMove -> performSetMove(gameState, move)
         }
-        if (gameState.orderedColors.isNotEmpty())
-            gameState.turn++
         gameState.lastMove = move
     }
     
@@ -79,7 +62,26 @@ object GameRuleLogic {
                 throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
         }
     }
-    
+
+    /** Performs the given [SetMove]. */
+    @JvmStatic
+    fun performSetMove(gameState: GameState, move: SetMove) {
+        validateSetMove(gameState, move)
+
+        if (Constants.VALIDATE_MOVE)
+            validateSetMove(gameState, move)
+
+        performSetMove(gameState.board, move)
+        gameState.undeployedPieceShapes.getValue(move.color).remove(move.piece.kind)
+        gameState.deployedPieces?.getValue(move.color).add(move.piece)
+
+        // If it was the last piece for this color, remove it from the turn queue
+        if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty())
+            gameState.lastMoveMono += move.color to (move.piece.kind == PieceShape.MONO)
+
+        gameState.tryAdvance()
+    }
+
     /** Validates the [PieceShape] of a [SetMove] depending on the current [GameState]. */
     @JvmStatic
     fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor) {
@@ -91,7 +93,17 @@ object GameRuleLogic {
                 throw InvalidMoveException("Piece ${shape} has already been placed before")
         }
     }
-    
+
+    /** Returns true if [move] is valid, false otherwise. */
+    @JvmStatic
+    fun isValidSetMove(gameState: GameState, move: SetMove) =
+            try {
+                validateSetMove(gameState, move)
+                true
+            } catch (e: InvalidMoveException) {
+                false
+            }
+
     /** Validates a [SetMove] on a [board]. */
     @JvmStatic
     fun validateSetMove(board: Board, move: SetMove) {
@@ -117,16 +129,17 @@ object GameRuleLogic {
             board[it] = +move.color
         }
     }
-    
-    /** Returns true if [move] is valid, false otherwise. */
+
+    /** Skips a turn. */
     @JvmStatic
-    fun isValidSetMove(gameState: GameState, move: SetMove) =
-            try {
-                validateSetMove(gameState, move)
-                true
-            } catch (e: InvalidMoveException) {
-                false
-            }
+    fun performSkipMove(gameState: GameState) {
+        if (!gameState.tryAdvance())
+            logger.error("Couldn't proceed to next turn!")
+    }
+
+    fun performPassMove(gameState: GameState) {
+        gameState.removeActiveColor()
+    }
     
     /** Checks if the given [position] is already obstructed by another piece. */
     @JvmStatic
