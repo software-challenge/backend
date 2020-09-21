@@ -77,11 +77,11 @@ object GameRuleLogic {
             validateSetMove(gameState, move)
 
         performSetMove(gameState.board, move)
-        gameState.undeployedPieceShapes.getValue(move.color).remove(move.piece.kind)
+        gameState.undeployedPieceShapes(move.color).remove(move.piece.kind)
         gameState.deployedPieces?.getValue(move.color).add(move.piece)
 
         // If it was the last piece for this color, remove it from the turn queue
-        if (gameState.undeployedPieceShapes.getValue(move.color).isEmpty())
+        if (gameState.undeployedPieceShapes(move.color).isEmpty())
             gameState.lastMoveMono += move.color to (move.piece.kind == PieceShape.MONO)
 
         gameState.tryAdvance()
@@ -94,7 +94,7 @@ object GameRuleLogic {
             if (shape != gameState.startPiece)
                 throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
         } else {
-            if (!gameState.undeployedPieceShapes.getValue(color).contains(shape))
+            if (!gameState.undeployedPieceShapes(color).contains(shape))
                 throw InvalidMoveException("Piece ${shape} has already been placed before")
         }
     }
@@ -184,7 +184,7 @@ object GameRuleLogic {
     
     @JvmStatic
     fun isFirstMove(gameState: GameState) =
-            gameState.undeployedPieceShapes.getValue(gameState.currentColor).size == Constants.TOTAL_PIECE_SHAPES
+            gameState.undeployedPieceShapes(gameState.currentColor).size == Constants.TOTAL_PIECE_SHAPES
     
     /** Returns a random pentomino which is not the `x` one (Used to get a valid starting piece). */
     @JvmStatic
@@ -255,7 +255,7 @@ object GameRuleLogic {
     @JvmStatic
     fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
         val color = gameState.currentColor
-        gameState.undeployedPieceShapes.getValue(color).map {
+        gameState.undeployedPieceShapes(color).map {
             val area = it.coordinates.area()
             for (y in 0 until Constants.BOARD_SIZE - area.dy)
                 for (x in 0 until Constants.BOARD_SIZE - area.dx)

@@ -13,7 +13,10 @@ import sc.shared.ScoreCause
 
 class GameTest: StringSpec({
     "Game starting works" {
-        Color.BLUE.team
+        println(Color.BLUE)
+        println(Color.RED)
+        println(Color.YELLOW)
+        println(Color.GREEN)
         val game = Game()
         val state = game.gameState
         val player = Pair(game.onPlayerJoined(), game.onPlayerJoined())
