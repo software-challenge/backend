@@ -223,9 +223,10 @@ public class GameRoom implements IGameListener {
 
   /** Send updated GameState to all players and observers. */
   @Override
-  public void onStateChanged(IGameState data) {
+  public void onStateChanged(IGameState data, boolean observersOnly) {
     sendStateToObservers(data);
-    sendStateToPlayers(data);
+    if (!observersOnly)
+      sendStateToPlayers(data);
   }
 
 

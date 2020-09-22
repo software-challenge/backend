@@ -25,8 +25,8 @@ class GameStateTest: StringSpec({
         state.deployedPieces[Color.GREEN]  shouldBe mutableListOf<Piece>()
      
         // TODO: adjust values accordingly
-        state.getPointsForPlayer(Team.ONE)  shouldBe -178 // Twice the lowest score, once per color
-        state.getPointsForPlayer(Team.TWO)  shouldBe -178
+        state.getPointsForPlayer(Team.ONE)  shouldBe 0
+        state.getPointsForPlayer(Team.TWO)  shouldBe 0
     }
     "GameStates know currently active Color" {
         var colorIter = Color.RED

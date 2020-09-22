@@ -28,6 +28,9 @@ val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
 val testLogDir by extra { buildDir.resolve("tests") }
 val documentedProjects = arrayOf("sdk", "plugin")
 
+val enableTestClient by extra { versionObject.minor > 0 }
+val enableIntegrationTesting = !project.hasProperty("nointegration") && (versionObject.minor > 0 || enableTestClient)
+
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
@@ -201,7 +204,9 @@ tasks {
     
     val integrationTest by creating {
         group = "verification"
-        dependsOn(testGame, testTestClient)
+        dependsOn(testGame)
+        if(enableTestClient)
+            dependsOn(testTestClient)
         shouldRunAfter(test)
     }
     
@@ -212,7 +217,7 @@ tasks {
         dependOnSubprojects()
     }
     check {
-        if (!project.hasProperty("nointegration") && versionObject.minor > 0)
+        if (enableIntegrationTesting)
             dependsOn(integrationTest)
     }
     build {
@@ -224,13 +229,14 @@ tasks {
 
 allprojects {
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
     
     repositories {
         jcenter()
         maven("http://dist.wso2.org/maven2")
     }
+    
     if (this.name in documentedProjects) {
         apply(plugin = "maven")
         tasks {
@@ -263,8 +269,9 @@ allprojects {
             }
         }
     }
+    
     afterEvaluate {
-        doAfterEvaluate.forEach { it(this) }
+        doAfterEvaluate.forEach { action -> action(this) }
         tasks {
             forEach { if (it.name != clean.name) it.mustRunAfter(clean.get()) }
             test {

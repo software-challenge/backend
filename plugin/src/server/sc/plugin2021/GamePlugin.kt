@@ -18,7 +18,7 @@ class GamePlugin: IGamePlugin {
         
         val SCORE_DEFINITION = ScoreDefinition(arrayOf(
                 ScoreFragment("Gewinner"),
-            ScoreFragment("\u2205 belegte Felder", ScoreAggregation.AVERAGE)
+                ScoreFragment("\u2205 Punkte", ScoreAggregation.AVERAGE)
         ))
     }
     
