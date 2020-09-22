@@ -4,8 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.shared.SlotDescriptor
-import java.util.*
 
+/** Request to prepare a game of [gameType] with two reserved slots according to [slotDescriptors]. */
 @XStreamAlias("prepare")
 class PrepareGameRequest(
         @XStreamAsAttribute
@@ -18,7 +18,7 @@ class PrepareGameRequest(
      * Create a prepared game with descriptors for each player.
      * The player descriptors default to "Player1" and "Player2".
      *
-     * @param gameType    name of the Game as String
+     * @param gameType    type of the game (plugin id)
      * @param descriptor1 descriptor for Player 1
      * @param descriptor2 descriptor for Player 2
      */

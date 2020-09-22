@@ -122,12 +122,9 @@ public class GameRoomManager {
   }
 
   /**
-   * Open new GameRoom and join Client
+   * Open new GameRoom and join the client.
    *
-   * @param client   Client to join the game
-   * @param gameType String of current game
-   *
-   * @return GameRoomMessage for new GameRoom, null im unsuccessful
+   * @return GameRoomMessage with roomId, null if unsuccessful
    *
    * @throws RescuableClientException if game could not be created
    */
@@ -141,12 +138,9 @@ public class GameRoomManager {
   }
 
   /**
-   * Called after JoinRoomRequest. Client joins already existing GameRoom or opens new one
+   * Called on JoinRoomRequest. Client joins an already existing open GameRoom or opens new one and joins.
    *
-   * @param client   to join the game
-   * @param gameType String of current game
-   *
-   * @return GameRoomMessage with roomId an success null if unsuccessful
+   * @return GameRoomMessage with roomId, null if unsuccessful
    *
    * @throws RescuableClientException if client could not join room
    */
@@ -161,7 +155,7 @@ public class GameRoomManager {
     return createAndJoinGame(client, gameType);
   }
 
-  /** Create an unmodifiable Collection of the {@link GameRoom GameRooms} */
+  /** Create an unmodifiable Collection of the {@link GameRoom GameRooms}. */
   public synchronized Collection<GameRoom> getGames() {
     return Collections.unmodifiableCollection(this.rooms.values());
   }
@@ -175,14 +169,10 @@ public class GameRoomManager {
   }
 
   /**
-   * Creates a new GameRoom {@link #createGame(String) createGame}, set descriptors of PlayerSlots,
-   * if exists load state of game from file
+   * Creates a new GameRoom through {@link #createGame(String) createGame} with reserved PlayerSlots according to the
+   * descriptors and loads a game state from a file if provided.
    *
-   * @param gameType     String of current game
-   * @param descriptors  which are displayName, canTimeout and shouldBePaused
-   * @param loadGameInfo Object for game information
-   *
-   * @return new PrepareGameProtocolMessage with roomId and slots
+   * @return new PrepareGameProtocolMessage with roomId and slot reservations
    *
    * @throws RescuableClientException if game could not be created
    */
@@ -199,11 +189,9 @@ public class GameRoomManager {
   }
 
   /**
-   * Calls {@link #prepareGame}
+   * Overload for {@link #prepareGame}.
    *
-   * @param prepared PrepareGameRequest with gameType and slotsDescriptors
-   *
-   * @return new PrepareGameProtocolMessage with roomId and slots
+   * @return new PrepareGameProtocolMessage with roomId and slot reservations
    *
    * @throws RescuableClientException if game could not be created
    */
@@ -216,16 +204,13 @@ public class GameRoomManager {
   }
 
   /**
-   * Getter for GameRoom
-   *
    * @param roomId String Id of room to be found
    *
-   * @return returns GameRoom specified by rooId
+   * @return returns GameRoom specified by roomId
    *
    * @throws RescuableClientException if no room could be found
    */
-  public synchronized GameRoom findRoom(String roomId)
-          throws RescuableClientException {
+  public synchronized GameRoom findRoom(String roomId) throws RescuableClientException {
     GameRoom room = this.rooms.get(roomId);
 
     if (room == null) {
@@ -235,11 +220,7 @@ public class GameRoomManager {
     return room;
   }
 
-  /**
-   * Remove specified room from game
-   *
-   * @param gameRoom to be removed
-   */
+  /** Remove specified room from this manager. */
   public void remove(GameRoom gameRoom) {
     this.rooms.remove(gameRoom.getId());
   }
@@ -249,9 +230,8 @@ public class GameRoomManager {
   }
 
   /**
-   * Called by gameRoom after game ended and test mode enabled to save results in playerScores
+   * Called by gameRoom after game ended and test mode enabled to save results in playerScores.
    *
-   * @param result       GameResult
    * @param name1        displayName of player1
    * @param name2        displayName of player2
    *
