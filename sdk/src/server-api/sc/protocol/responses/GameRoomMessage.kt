@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 @XStreamAlias(value = "joinedGameRoom")
 data class GameRoomMessage(
         @XStreamAsAttribute
-        private val roomId: String,
+        val roomId: String,
         @XStreamAsAttribute
-        private val existing: Boolean
+        val existing: Boolean
 ): ProtocolMessage
