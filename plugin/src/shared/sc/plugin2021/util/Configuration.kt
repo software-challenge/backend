@@ -1,8 +1,10 @@
 package sc.plugin2021.util
 
 import com.thoughtworks.xstream.XStream
+import com.thoughtworks.xstream.converters.Converter
 import sc.protocol.helpers.LobbyProtocol
 import sc.plugin2021.*
+import sc.plugin2021.xstream.BoardConverter
 
 object Configuration {
     @JvmStatic
@@ -22,5 +24,7 @@ object Configuration {
         xStream.classLoader = Configuration::class.java.classLoader
         LobbyProtocol.registerMessages(xStream)
         LobbyProtocol.registerAdditionalMessages(xStream, classesToRegister)
+
+        xStream.registerConverter(BoardConverter())
     }
 }

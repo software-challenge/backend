@@ -12,8 +12,6 @@ enum class FieldContent(val letter: Char) {
     
     fun empty(): Boolean = this == EMPTY
     
-    override fun toString(): String = letter.toString()
-    
     operator fun unaryPlus(): Color? = when(this) {
         BLUE   -> Color.BLUE
         YELLOW -> Color.YELLOW
