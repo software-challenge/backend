@@ -140,6 +140,8 @@ object GameRuleLogic {
     fun performSkipMove(gameState: GameState) {
         if (!gameState.tryAdvance())
             logger.error("Couldn't proceed to next turn!")
+        if (isFirstMove(gameState))
+            throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
     }
 
     fun performPassMove(gameState: GameState) {
