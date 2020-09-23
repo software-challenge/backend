@@ -1,7 +1,6 @@
 package sc.plugin2021.util
 
 import org.slf4j.LoggerFactory
-import sc.api.plugins.exceptions.GameLogicException
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
 
