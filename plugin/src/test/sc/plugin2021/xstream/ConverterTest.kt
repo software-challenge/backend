@@ -4,6 +4,7 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import sc.plugin2021.Board
 import sc.plugin2021.FieldContent
+import sc.plugin2021.GameState
 import sc.plugin2021.util.Configuration
 
 class ConverterTest: StringSpec ({
@@ -15,7 +16,6 @@ class ConverterTest: StringSpec ({
         board[5, 9] = FieldContent.BLUE
         board[8, 6] = FieldContent.YELLOW
 
-        println(x.toXML(board))
         x.fromXML(x.toXML(board)) shouldBe board
     }
 })
