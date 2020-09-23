@@ -1,6 +1,7 @@
 package sc.plugin2021.util
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.exceptions.GameLogicException
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
 
@@ -140,6 +141,8 @@ object GameRuleLogic {
     fun performSkipMove(gameState: GameState) {
         if (!gameState.tryAdvance())
             logger.error("Couldn't proceed to next turn!")
+        if (isFirstMove(gameState))
+            throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
     }
 
     fun performPassMove(gameState: GameState) {
