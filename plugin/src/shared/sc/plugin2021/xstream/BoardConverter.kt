@@ -19,11 +19,13 @@ class BoardConverter: Converter {
 
         for (y in 0 until Constants.BOARD_SIZE) {
             for (x in 0 until Constants.BOARD_SIZE) {
-                writer.startNode("field")
-                writer.addAttribute("x", x.toString())
-                writer.addAttribute("y", y.toString())
-                writer.addAttribute("content", board[x, y].content.toString())
-                writer.endNode()
+                if (board[x, y].content != FieldContent.EMPTY) {
+                    writer.startNode("field")
+                    writer.addAttribute("x", x.toString())
+                    writer.addAttribute("y", y.toString())
+                    writer.addAttribute("content", board[x, y].content.toString())
+                    writer.endNode()
+                }
             }
         }
     }
