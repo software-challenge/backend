@@ -51,10 +51,6 @@ class GameState @JvmOverloads constructor(
     
     override val currentTeam
         get() = currentColor.team
-//        get() = when(currentColor) {
-//            Color.BLUE, Color.RED -> Team.ONE
-//            Color.YELLOW, Color.GREEN -> Team.TWO
-//        }
 
     override val currentPlayer
         get() = getPlayer(currentTeam)!!
