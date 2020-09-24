@@ -50,12 +50,12 @@ class GameState @JvmOverloads constructor(
     val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
     
     override val currentTeam
-        get() = when(currentColor) {
-            Color.BLUE, Color.RED -> Team.ONE
-            Color.YELLOW, Color.GREEN -> Team.TWO
-        }
-//        get() = currentColor.team
-    
+        get() = currentColor.team
+//        get() = when(currentColor) {
+//            Color.BLUE, Color.RED -> Team.ONE
+//            Color.YELLOW, Color.GREEN -> Team.TWO
+//        }
+
     override val currentPlayer
         get() = getPlayer(currentTeam)!!
     
