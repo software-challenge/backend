@@ -28,12 +28,19 @@ class GameState @JvmOverloads constructor(
     
     @XStreamAsAttribute
     override val board: Board = Board()
-    
-    @XStreamAsAttribute
-    val undeployedPieceShapes: Map<Color, MutableSet<PieceShape>> = Color.values().map {
-        it to PieceShape.values().toMutableSet()
-    }.toMap()
-    
+
+    fun undeployedPieceShapes(color: Color): MutableSet<PieceShape> = when (color) {
+        Color.BLUE -> blueShapes
+        Color.YELLOW -> yellowShapes
+        Color.RED -> redShapes
+        Color.GREEN -> greenShapes
+    }
+
+    private val blueShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+    private val yellowShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+    private val redShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+    private val greenShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+
     @XStreamOmitField
     val deployedPieces: Map<Color, MutableList<Piece>> = Color.values().map {
         it to mutableListOf<Piece>()
@@ -43,12 +50,8 @@ class GameState @JvmOverloads constructor(
     val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
     
     override val currentTeam
-        get() = when(currentColor) {
-            Color.BLUE, Color.RED -> Team.ONE
-            Color.YELLOW, Color.GREEN -> Team.TWO
-        }
-//        get() = currentColor.team
-    
+        get() = currentColor.team
+
     override val currentPlayer
         get() = getPlayer(currentTeam)!!
     
@@ -118,7 +121,7 @@ class GameState @JvmOverloads constructor(
             (team as Team).colors.map { getPointsForColor(it) }.sum()
     
     private fun getPointsForColor(color: Color): Int {
-        val pieces = undeployedPieceShapes[color] ?: return 0
+        val pieces = undeployedPieceShapes(color)
         val lastMono = lastMoveMono[color] ?: false
         return GameRuleLogic.getPointsFromUndeployed(pieces, lastMono)
     }
@@ -149,16 +152,23 @@ class GameState @JvmOverloads constructor(
                 turn        == other.turn &&
                 currentTeam == other.currentTeam
     }
-    
+
     override fun hashCode(): Int {
         var result = first.hashCode()
         result = 31 * result + second.hashCode()
         result = 31 * result + (lastMove?.hashCode() ?: 0)
+        result = 31 * result + startColor.hashCode()
+        result = 31 * result + startPiece.hashCode()
         result = 31 * result + board.hashCode()
-        result = 31 * result + undeployedPieceShapes.hashCode()
-        result = 31 * result + currentTeam.hashCode()
+        result = 31 * result + blueShapes.hashCode()
+        result = 31 * result + yellowShapes.hashCode()
+        result = 31 * result + redShapes.hashCode()
+        result = 31 * result + greenShapes.hashCode()
+        result = 31 * result + lastMoveMono.hashCode()
+        result = 31 * result + orderedColors.hashCode()
+        result = 31 * result + currentColorIndex
         result = 31 * result + turn
+        result = 31 * result + round
         return result
     }
-    
 }

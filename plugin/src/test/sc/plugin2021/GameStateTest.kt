@@ -14,10 +14,10 @@ class GameStateTest: StringSpec({
         
         state.board shouldBe Board()
         
-        state.undeployedPieceShapes[Color.BLUE]   shouldBe PieceShape.values().toSet()
-        state.undeployedPieceShapes[Color.YELLOW] shouldBe PieceShape.values().toSet()
-        state.undeployedPieceShapes[Color.RED]    shouldBe PieceShape.values().toSet()
-        state.undeployedPieceShapes[Color.GREEN]  shouldBe PieceShape.values().toSet()
+        state.undeployedPieceShapes(Color.BLUE)   shouldBe PieceShape.values().toSet()
+        state.undeployedPieceShapes(Color.YELLOW) shouldBe PieceShape.values().toSet()
+        state.undeployedPieceShapes(Color.RED)    shouldBe PieceShape.values().toSet()
+        state.undeployedPieceShapes(Color.GREEN)  shouldBe PieceShape.values().toSet()
     
         state.deployedPieces[Color.BLUE]   shouldBe mutableListOf<Piece>()
         state.deployedPieces[Color.YELLOW] shouldBe mutableListOf<Piece>()
@@ -49,12 +49,12 @@ class GameStateTest: StringSpec({
         val move = SetMove(
                 Piece(Color.BLUE, PieceShape.PENTO_I, Rotation.RIGHT, true))
         
-        state.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 21
+        state.undeployedPieceShapes(Color.BLUE).size shouldBe 21
         state.deployedPieces.getValue(Color.BLUE).size shouldBe 0
         assertDoesNotThrow {
             GameRuleLogic.performMove(state, move)
         }
-        state.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 20
+        state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
         state.deployedPieces.getValue(Color.BLUE).size shouldBe 1
         state.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
         
@@ -62,7 +62,7 @@ class GameStateTest: StringSpec({
         assertThrows<InvalidMoveException> {
             GameRuleLogic.performMove(state, move)
         }
-        state.undeployedPieceShapes.getValue(Color.BLUE).size shouldBe 20
+        state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
         state.deployedPieces.getValue(Color.BLUE).size shouldBe 1
         state.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
         
