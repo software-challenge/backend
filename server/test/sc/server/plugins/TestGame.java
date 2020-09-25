@@ -20,6 +20,10 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
 
   private TestGameState state = new TestGameState();
 
+  public TestGame() {
+    super(TestPlugin.TEST_PLUGIN_UUID);
+  }
+
   @Override
   protected void onRoundBasedAction(Player fromPlayer, ProtocolMessage data) {
     if (data instanceof TestMove) {

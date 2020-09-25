@@ -34,7 +34,7 @@ class CloneTest: StringSpec({
         clone.board shouldBe state.board
     }
     "clone another Game state" {
-        val state = Game().gameState
+        val state = Game("").gameState
         state.turn++
         state.currentTeam shouldBe Team.BLUE
         val clone = GameState(state)

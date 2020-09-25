@@ -30,14 +30,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   private GameState gameState = new GameState();
 
-  public Game() {
+  public Game(String pluginUUID) {
+    super(pluginUUID);
     this.availableColors.add(Team.RED);
     this.availableColors.add(Team.BLUE);
-  }
-
-  public Game(String pluginUUID) {
-    this();
-    this.pluginUUID = pluginUUID;
   }
 
   public GameState getGameState() {

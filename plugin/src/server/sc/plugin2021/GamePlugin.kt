@@ -23,7 +23,7 @@ class GamePlugin: IGamePlugin {
     }
     
     override fun createGame(): IGameInstance {
-        return Game(PLUGIN_UUID)
+        return Game()
     }
     
     override fun initialize(host: IGamePluginHost) {

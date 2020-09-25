@@ -35,7 +35,11 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
   protected final List<P> players = new ArrayList<>();
 
   @XStreamOmitField
-  protected String pluginUUID;
+  protected final String pluginUUID;
+
+  protected RoundBasedGameInstance(String pluginUUID) {
+    this.pluginUUID = pluginUUID;
+  }
 
   public int getRound() {
     return this.turn / 2;

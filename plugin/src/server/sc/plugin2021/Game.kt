@@ -13,17 +13,13 @@ import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
 
 @XStreamAlias(value = "game")
-class Game(UUID: String = GamePlugin.PLUGIN_UUID): RoundBasedGameInstance<Player>() {
+class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     companion object {
         val logger = LoggerFactory.getLogger(Game::class.java)
     }
     
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     val gameState = GameState()
-    
-    init {
-        pluginUUID = UUID
-    }
     
     override fun start() {
         players.forEach {it.notifyListeners(WelcomeMessage(it.color)) }
