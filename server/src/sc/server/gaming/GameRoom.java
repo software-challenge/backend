@@ -103,46 +103,17 @@ public class GameRoom implements IGameListener {
     this.result = generateGameResult(results);
     logger.info("The game {} is over. (regular={})", getId(), this.result.isRegular());
     broadcast(this.result);
-    // save replay after game over
+
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
-      List<SlotDescriptor> slotDescriptors = new ArrayList<>();
-      for (PlayerSlot slot : this.getSlots()) {
-        slotDescriptors.add(slot.getDescriptor());
-      }
-      String fileName = HelperMethods.generateReplayFilename(this.getGame().getPluginUUID(), slotDescriptors);
-      try {
-        File f = new File(fileName);
-        f.getParentFile().mkdirs();
-        f.createNewFile();
-
-        List<ProtocolMessage> replayHistory = replayObserver.getHistory();
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        writer.write("<protocol>\n");
-        for (ProtocolMessage element : replayHistory) {
-          if (!(element instanceof IGameState))
-            continue;
-          IGameState state = (IGameState) element;
-          MementoPacket data = new MementoPacket(state, null);
-          RoomPacket roomPacket = new RoomPacket(this.getId(), data);
-          String xmlReplay = Configuration.getXStream().toXML(roomPacket);
-          writer.write(xmlReplay + "\n");
-          writer.flush();
-        }
-
-        String result = Configuration.getXStream().toXML(new RoomPacket(this.getId(), replayObserver.getResult()));
-        writer.write(result + "\n");
-        writer.write("</protocol>");
-        writer.flush();
-        writer.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      saveReplay();
     }
+
     // save playerScore if test mode enabled
     if (Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE))) {
       List<Player> players = game.getPlayers();
       gameRoomManager.addResultToScore(this.getResult(), players.get(0).getDisplayName(), players.get(1).getDisplayName());
     }
+
     kickAllClients();
     cancel();
   }
@@ -172,6 +143,41 @@ public class GameRoom implements IGameListener {
       scores.add(score);
     }
     return new GameResult(scoreDefinition, scores, this.game.getWinners());
+  }
+
+  private void saveReplay() {
+    List<SlotDescriptor> slotDescriptors = new ArrayList<>();
+    for (PlayerSlot slot : this.getSlots()) {
+      slotDescriptors.add(slot.getDescriptor());
+    }
+    String fileName = HelperMethods.generateReplayFilename(this.getGame().getPluginUUID(), slotDescriptors);
+    try {
+      File f = new File(fileName);
+      f.getParentFile().mkdirs();
+      f.createNewFile();
+
+      List<ProtocolMessage> replayHistory = replayObserver.getHistory();
+      BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+      writer.write("<protocol>\n");
+      for (ProtocolMessage element : replayHistory) {
+        if (!(element instanceof IGameState))
+          continue;
+        IGameState state = (IGameState) element;
+        MementoPacket data = new MementoPacket(state, null);
+        RoomPacket roomPacket = new RoomPacket(this.getId(), data);
+        String xmlReplay = Configuration.getXStream().toXML(roomPacket);
+        writer.write(xmlReplay + "\n");
+        writer.flush();
+      }
+
+      String result = Configuration.getXStream().toXML(new RoomPacket(this.getId(), replayObserver.getResult()));
+      writer.write(result + "\n");
+      writer.write("</protocol>");
+      writer.flush();
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
