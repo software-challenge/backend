@@ -1,6 +1,7 @@
 package sc.server.gaming
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertThrows
@@ -9,19 +10,30 @@ import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
 import sc.server.network.Client
 import sc.server.plugins.TestPlugin
+import sc.shared.PlayerScore
+import sc.shared.ScoreCause
 import sc.shared.SlotDescriptor
 
 class GameRoomTest: StringSpec({
     val stringInterface = StringNetworkInterface("")
     val client = Client(stringInterface, Configuration.getXStream()).apply { start() }
     
-    "create and join game" {
+    "create, join, end game" {
         val manager = GameRoomManager().apply { pluginManager.loadPlugin(TestPlugin::class.java, pluginApi) }
+        // TODO Replay observing
+        // Configuration.set(Configuration.SAVE_REPLAY, "true")
         
         manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).existing shouldBe false
         manager.games shouldHaveSize 1
-        manager.games.single().game.players shouldHaveSize 1
+        val room = manager.games.single()
+        room.game.players shouldHaveSize 1
         manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).existing shouldBe true
+        
+        val playersScores = room.game.players.associateWith { PlayerScore(ScoreCause.REGULAR, "Game terminated", 0) }
+        room.onGameOver(playersScores)
+        room.result.isRegular shouldBe true
+        room.result.scores shouldContainExactly playersScores.values
+        room.isOver shouldBe true
     }
     
     "prepare game & claim reservations" {
