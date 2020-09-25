@@ -67,17 +67,17 @@ public class GameRoom implements IGameListener {
     this.game = game;
     this.prepared = prepared;
     game.addGameListener(this);
-    // if option is set, add observer to save replay
+
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
       try {
         logger.debug("Save replay is active and try to save it to file");
         LobbyClient lobbyClient = new LobbyClient(Configuration.getXStream(), null,
                 "127.0.0.1", Configuration.getPort());
         lobbyClient.start();
-        replayObserver = new ObservingClient(lobbyClient, this.getId());
         lobbyClient.authenticate(Configuration.getAdministrativePassword());
-        replay = lobbyClient.observe(this.getId());
+        replayObserver = lobbyClient.observe(this.getId());
       } catch (IOException e) {
+        logger.warn("Failed to start replay recording");
         e.printStackTrace();
       }
     }

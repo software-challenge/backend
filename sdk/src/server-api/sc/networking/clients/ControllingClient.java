@@ -17,9 +17,8 @@ public class ControllingClient extends ObservingClient implements IAdministrativ
   private boolean pauseHitReceived;
 
   public ControllingClient(LobbyClient client, String roomId) {
-    super(client, roomId);
+    super(roomId);
     this.client = client;
-    client.addListener((IAdministrativeListener) this);
   }
 
   @Override

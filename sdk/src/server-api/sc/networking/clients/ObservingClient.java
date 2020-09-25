@@ -13,14 +13,10 @@ import java.util.List;
 
 public class ObservingClient implements IControllableGame, IHistoryListener {
 
-  public ObservingClient(IPollsHistory client, String roomId) {
-    this.poller = client;
+  public ObservingClient(String roomId) {
     this.roomId = roomId;
-    this.poller.addListener(this);
     this.replay = false;
   }
-
-  protected final IPollsHistory poller;
 
   public final String roomId;
 
