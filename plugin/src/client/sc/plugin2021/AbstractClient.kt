@@ -36,17 +36,12 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     var isGameOver = false
     
     /** The handler reacts to messages from the server received by the lobby client. */
-    protected lateinit var handler: IGameHandler
-    
-    /** Initialise game handler. */
-    fun setGameHandler(handler: IGameHandler) {
-        this.handler = handler
-    }
+    protected var handler: IGameHandler? = null
     
     /** The lobby client that connects to the room. Stops on connection failure. */
     private val client = try {
         LobbyClient(Configuration.xStream, Configuration.classesToRegister, host, port)
-    } catch(e: ConnectException) {
+    } catch (e: ConnectException) {
         logger.error("Could not connect to Server: ${e.message}")
         exitProcess(1)
     }
@@ -59,10 +54,10 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     private lateinit var roomId: String
     
     /** The team the client belongs to in order to connect client and player. */
-    private var team: Team? = when(type) {
-            PlayerType.PLAYER_ONE -> Team.ONE
-            PlayerType.PLAYER_TWO -> Team.TWO
-            else -> null
+    private var team: Team? = when (type) {
+        PlayerType.PLAYER_ONE -> Team.ONE
+        PlayerType.PLAYER_TWO -> Team.TWO
+        else -> null
     }
     
     /** Tell this client to observe the game given by the preparation handler. */
@@ -71,10 +66,10 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     
     /** Called for any new message sent to the game room, e.g., move requests. */
     override fun onRoomMessage(roomId: String, data: ProtocolMessage) {
-        if(data is MoveRequest) {
-            handler.onRequestAction()
+        if (data is MoveRequest) {
+            handler?.onRequestAction()
         }
-        if(data is WelcomeMessage) {
+        if (data is WelcomeMessage) {
             team = Team.valueOf(data.color.toUpperCase())
         }
         this.roomId = roomId
@@ -98,14 +93,14 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         val gameState = state as GameState
         logger.debug("$this got a new state $gameState")
         
-        if(type == PlayerType.OBSERVER) return
+        if (type == PlayerType.OBSERVER) return
         
-        handler.onUpdate(gameState)
+        handler?.onUpdate(gameState)
         if (gameState.orderedColors.isNotEmpty()) {
-            if(gameState.currentTeam == team) {
-                handler.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
+            if (gameState.currentTeam == team) {
+                handler?.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
             } else {
-                handler.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
+                handler?.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
             }
         }
     }
@@ -133,9 +128,7 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     override fun onGameOver(roomId: String, data: GameResult) {
         logger.info("$this on Game Over with game result $data")
         isGameOver = true
-        if (this::handler.isInitialized) {
-            handler.gameEnded(data, team, error)
-        }
+        handler?.gameEnded(data, team, error)
     }
     
     fun joinPreparedGame(reservation: String) {
