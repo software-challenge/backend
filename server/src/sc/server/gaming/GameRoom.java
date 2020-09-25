@@ -41,7 +41,7 @@ public class GameRoom implements IGameListener {
   private final ScoreDefinition scoreDefinition;
   private final IGameInstance game;
   private final List<ObserverRole> observers = new ArrayList<>();
-  private final List<PlayerSlot> playerSlots = new ArrayList<>(2);
+  private final List<PlayerSlot> playerSlots = new ArrayList<>(getMaximumPlayerCount());
   private final boolean prepared;
   private GameStatus status = GameStatus.CREATED;
   private GameResult result = null;
@@ -382,7 +382,7 @@ public class GameRoom implements IGameListener {
 
       return true;
     } else {
-      return this.playerSlots.size() == 2;
+      return this.playerSlots.size() == getMaximumPlayerCount();
     }
   }
 
@@ -629,7 +629,7 @@ public class GameRoom implements IGameListener {
    */
   public void openSlots(SlotDescriptor[] descriptors)
           throws TooManyPlayersException {
-    if (descriptors.length > 2) {
+    if (descriptors.length > getMaximumPlayerCount()) {
       throw new TooManyPlayersException();
     }
     this.playerSlots.add(new PlayerSlot(this));
