@@ -30,7 +30,8 @@ class GameResultTest: StringSpec({
         gameResultWinnersEmpty shouldBe gameResultWinnersNull
         gameResultWinnersEmpty.hashCode() shouldBe gameResultWinnersNull.hashCode()
     }
-    "GameResult XML" {
+    "GameResult XML".config(enabled = false) {
+        // FIXME needs https://github.com/CAU-Kiel-Tech-Inf/backend/issues/295
         val xstream = getXStream()
         
         val gameResultXMLWinner = """
