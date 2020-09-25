@@ -148,7 +148,7 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
-    @Throws(InvalidMoveException::class, InvalidGameStateException::class)
+    @Throws(InvalidMoveException::class)
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage?) {
         try {
             if (data !is Move)

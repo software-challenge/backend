@@ -54,7 +54,7 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
    * @throws GameLogicException if any invalid action is done, i.e. game rule violation
    */
   public final void onAction(Player fromPlayer, ProtocolMessage data)
-          throws GameLogicException, InvalidGameStateException, InvalidMoveException {
+          throws GameLogicException, InvalidMoveException {
     Optional<String> errorMsg = Optional.empty();
     if (fromPlayer.equals(this.activePlayer)) {
       if (wasMoveRequested()) {
@@ -86,7 +86,7 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
   }
 
   protected abstract void onRoundBasedAction(Player fromPlayer, ProtocolMessage data)
-          throws GameLogicException, InvalidGameStateException, InvalidMoveException;
+          throws GameLogicException, InvalidMoveException;
 
   /**
    * Checks if a win condition in the current game state is met.

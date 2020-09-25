@@ -47,7 +47,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   /** Jemand hat etwas gesendet -> testen was es war (wenn es ein Zug war, dann validieren) */
   @Override
-  protected void onRoundBasedAction(Player fromPlayer, ProtocolMessage data) throws InvalidGameStateException, InvalidMoveException {
+  protected void onRoundBasedAction(Player fromPlayer, ProtocolMessage data) throws InvalidMoveException {
     // NOTE: Checking if right player sent move was already done by onAction(Player, ProtocolMove)}.
     // There is no need to do it here again.
     try {
