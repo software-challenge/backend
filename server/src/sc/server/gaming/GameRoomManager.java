@@ -105,10 +105,10 @@ public class GameRoomManager {
       logger.debug("Turns is to load is: " + turn);
       if (turn > 0) {
         logger.debug("Loading from non default turn");
-        room.getGame().loadFromFile(gameFile, turn);
+        room.game.loadFromFile(gameFile, turn);
       } else {
         logger.debug("Loading first gameState found");
-        room.getGame().loadFromFile(gameFile);
+        room.game.loadFromFile(gameFile);
       }
     }
 
@@ -182,7 +182,7 @@ public class GameRoomManager {
     room.openSlots(descriptors);
 
     if (loadGameInfo != null) {
-      room.getGame().loadGameInfo(loadGameInfo);
+      room.game.loadGameInfo(loadGameInfo);
     }
 
     return new PrepareGameProtocolMessage(room.getId(), room.reserveAllSlots());

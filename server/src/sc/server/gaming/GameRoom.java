@@ -39,8 +39,6 @@ public class GameRoom implements IGameListener {
   private final String id;
   private final GameRoomManager gameRoomManager;
   private final ScoreDefinition scoreDefinition;
-  private final IGameInstance game;
-  private final List<ObserverRole> observers = new ArrayList<>();
   private final List<PlayerSlot> playerSlots = new ArrayList<>(getMaximumPlayerCount());
   private final boolean prepared;
   private GameStatus status = GameStatus.CREATED;
@@ -48,12 +46,8 @@ public class GameRoom implements IGameListener {
   private boolean pauseRequested = false;
   private ObservingClient replayObserver;
 
-  /** currently unused */
-  private IControllableGame replay;
-
-  public List<ObserverRole> getObservers() {
-    return observers;
-  }
+  public final IGameInstance game;
+  public final List<ObserverRole> observers = new ArrayList<>();
 
   public enum GameStatus {
     CREATED, ACTIVE, OVER
@@ -81,10 +75,6 @@ public class GameRoom implements IGameListener {
         e.printStackTrace();
       }
     }
-  }
-
-  public IGameInstance getGame() {
-    return this.game;
   }
 
   /**
@@ -150,7 +140,7 @@ public class GameRoom implements IGameListener {
     for (PlayerSlot slot : this.getSlots()) {
       slotDescriptors.add(slot.getDescriptor());
     }
-    String fileName = HelperMethods.generateReplayFilename(this.getGame().getPluginUUID(), slotDescriptors);
+    String fileName = HelperMethods.generateReplayFilename(this.game.getPluginUUID(), slotDescriptors);
     try {
       File f = new File(fileName);
       f.getParentFile().mkdirs();
@@ -334,7 +324,7 @@ public class GameRoom implements IGameListener {
 
     openSlot.setClient(client); // set role of Slot as PlayerRole
 
-    if (!isPrepared()) // is set when game is game is created or prepared
+    if (!this.prepared) // is set when game is game is created or prepared
     {
       logger.debug("GameRoom was not prepared, syncSlots");
       // seems to happen every time a client manually connects to server (JoinRoomRequest)
@@ -355,7 +345,7 @@ public class GameRoom implements IGameListener {
    */
   private void syncSlot(PlayerSlot slot) throws RescuableClientException {
     // create new player in gameState of game
-    Player player = getGame().onPlayerJoined();
+    Player player = game.onPlayerJoined();
     // set attributes for player
     // TODO check whether this is needed for prepared games
     player.setDisplayName(slot.getDescriptor().getDisplayName());
@@ -379,7 +369,7 @@ public class GameRoom implements IGameListener {
    * @return true, if two PlayerSlots are filled
    */
   private boolean isReady() {
-    if (isPrepared()) {
+    if (this.prepared) {
       for (PlayerSlot slot : this.playerSlots) {
         if (slot.isEmpty()) {
           return false;
@@ -419,7 +409,7 @@ public class GameRoom implements IGameListener {
    * @throws RescuableClientException
    */
   private void start() throws RescuableClientException {
-    if (isPrepared()) // sync slots for prepared game. This was already called for PlayerSlots in a game created by a join
+    if (this.prepared) // sync slots for prepared game. This was already called for PlayerSlots in a game created by a join
     {
       for (PlayerSlot slot : this.playerSlots) {
         // creates players in gameState and sets their attributes
@@ -647,15 +637,6 @@ public class GameRoom implements IGameListener {
         pause(true);
       }
     }
-  }
-
-  /**
-   * If game is prepared return true
-   *
-   * @return true if Game is prepared
-   */
-  public boolean isPrepared() {
-    return this.prepared;
   }
 
   /**
