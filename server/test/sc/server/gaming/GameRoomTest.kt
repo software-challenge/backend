@@ -9,6 +9,7 @@ import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
 import sc.server.network.Client
 import sc.server.plugins.TestPlugin
+import sc.shared.SlotDescriptor
 
 class GameRoomTest: StringSpec({
     val stringInterface = StringNetworkInterface("")
@@ -19,13 +20,15 @@ class GameRoomTest: StringSpec({
         
         manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).existing shouldBe false
         manager.games shouldHaveSize 1
+        manager.games.single().game.players shouldHaveSize 1
         manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).existing shouldBe true
     }
     
     "prepare game & claim reservations" {
         val manager = GameRoomManager().apply { pluginManager.loadPlugin(TestPlugin::class.java, pluginApi) }
+        val player2name = "opponent"
         
-        val reservations = manager.prepareGame(PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID)).reservations
+        val reservations = manager.prepareGame(PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, descriptor2 = SlotDescriptor(player2name))).reservations
         manager.games shouldHaveSize 1
         val room = manager.games.first()
         room.clients shouldHaveSize 0
@@ -43,11 +46,16 @@ class GameRoomTest: StringSpec({
             ReservationManager.redeemReservationCode(client, reservations[0])
         }
         room.clients shouldHaveSize 1
-        // join second client
+        room.game.players shouldHaveSize 0
+        // join second client and sync
         ReservationManager.redeemReservationCode(client, reservations[1])
         room.clients shouldHaveSize 2
+        room.game.players shouldHaveSize 2
         // reject extra client
         room.join(client) shouldBe false
         room.clients shouldHaveSize 2
+        // check game
+        room.game.players[0].displayName shouldBe "Player1"
+        room.game.players[1].displayName shouldBe player2name
     }
 })

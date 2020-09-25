@@ -13,6 +13,7 @@ import sc.server.helpers.TestTeam;
 import sc.server.helpers.WinReason;
 import sc.shared.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -116,7 +117,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
 
   @Override
   public List<Player> getPlayers() {
-    return null;
+    return new ArrayList<>(players);
   }
 
   /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests */
