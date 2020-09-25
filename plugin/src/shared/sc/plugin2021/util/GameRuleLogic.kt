@@ -78,7 +78,7 @@ object GameRuleLogic {
 
         performSetMove(gameState.board, move)
         gameState.undeployedPieceShapes(move.color).remove(move.piece.kind)
-        gameState.deployedPieces?.getValue(move.color).add(move.piece)
+        gameState.deployedPieces.getValue(move.color).add(move.piece)
 
         // If it was the last piece for this color, remove it from the turn queue
         if (gameState.undeployedPieceShapes(move.color).isEmpty())
@@ -95,11 +95,11 @@ object GameRuleLogic {
                 throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
         } else {
             if (!gameState.undeployedPieceShapes(color).contains(shape))
-                throw InvalidMoveException("Piece ${shape} has already been placed before")
+                throw InvalidMoveException("Piece $shape has already been placed before")
         }
     }
 
-    /** Returns true if [move] is valid, false otherwise. */
+    /** @return true if [move] is valid, false otherwise. */
     @JvmStatic
     fun isValidSetMove(gameState: GameState, move: SetMove) =
             try {
@@ -127,7 +127,7 @@ object GameRuleLogic {
         }
     }
     
-    /** Places the given Piece on the given board. */
+    /** Places a Piece on the given [board] according to [move]. */
     @JvmStatic
     fun performSetMove(board: Board, move: SetMove) {
         move.piece.coordinates.forEach {
