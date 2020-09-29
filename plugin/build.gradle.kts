@@ -14,5 +14,11 @@ dependencies {
     testImplementation(kotlin("script-runtime"))
 }
 
-tasks.jar.get().archiveBaseName.set(game)
-tasks.test.get().useJUnitPlatform()
+tasks{
+    jar {
+        archiveBaseName.set(game)
+    }
+    test {
+        useJUnitPlatform()
+    }
+}

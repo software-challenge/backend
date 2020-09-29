@@ -18,4 +18,8 @@ dependencies {
     testImplementation("io.kotest", "kotest-assertions-core", "4.0.5")
 }
 
-tasks.test.get().useJUnitPlatform()
+tasks{
+    test {
+        useJUnitPlatform()
+    }
+}
