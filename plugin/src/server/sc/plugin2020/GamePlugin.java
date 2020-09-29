@@ -10,13 +10,10 @@ import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 
-/**
- * Abstrakte Beschreibung des Spiels Hive für die Software-Challenge 2020
- */
-@PluginDescriptor(name = "Hive", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
+/** Abstrakte Beschreibung des Spiels Hive für die Software-Challenge 2020. */
+@PluginDescriptor(name = "Hive", uuid = GamePlugin.PLUGIN_UUID)
 public class GamePlugin implements IGamePlugin {
 
-  public static final String PLUGIN_AUTHOR = "";
   public static final String PLUGIN_UUID = "swc_2020_hive";
 
   // NOTE: Always write the XML representation of unicode characters, not the character directly, as it confuses the

@@ -7,7 +7,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface PluginDescriptor {
   String name();
 
-  String author() default "Anonymous";
-
   String uuid();
 }
