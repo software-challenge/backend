@@ -10,11 +10,10 @@ import sc.shared.ScoreDefinition
 import sc.shared.ScoreFragment
 import sc.helpers.xStream as xstream
 
-@PluginDescriptor(name = "Blokus", uuid = "swc_2021_blokus", author = "")
+@PluginDescriptor(name = "Blokus", uuid = "swc_2021_blokus")
 class GamePlugin: IGamePlugin {
     
     companion object {
-        val PLUGIN_AUTHOR = ""
         val PLUGIN_UUID = "swc_2021_blokus"
         
         val SCORE_DEFINITION = ScoreDefinition(arrayOf(

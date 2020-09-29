@@ -10,7 +10,7 @@ import sc.shared.ScoreDefinition;
 
 import java.util.Arrays;
 
-@PluginDescriptor(author = "Chuck", name = "TestPlugin", uuid = TestPlugin.TEST_PLUGIN_UUID)
+@PluginDescriptor(name = "TestPlugin", uuid = TestPlugin.TEST_PLUGIN_UUID)
 public class TestPlugin implements IGamePlugin {
   public static final String TEST_PLUGIN_UUID = "012345-norris";
 
