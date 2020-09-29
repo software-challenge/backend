@@ -41,7 +41,7 @@ public class NewClientListener implements Runnable, Closeable {
     return this.queue.take();
   }
 
-  /** Accept clients in blocking mode. */
+  /** Wait for a client to connect and add it to the queue. */
   private void acceptClient() {
     try {
       Socket clientSocket = this.serverSocket.accept();
@@ -76,7 +76,8 @@ public class NewClientListener implements Runnable, Closeable {
   }
 
   /**
-   * Start the listener and create a daemon thread from this object.<br>
+   * Start the listener and create a daemon thread from this object.
+   *
    * The SocketListener then watches the {@link Configuration#getPort()} for new connecting clients.
    */
   public void start() throws IOException {

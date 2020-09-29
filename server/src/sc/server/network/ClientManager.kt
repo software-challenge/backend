@@ -10,10 +10,10 @@ import java.util.*
 /** The ClientManager serves as a lookup table for all active connections.  */
 class ClientManager : Runnable, IClientListener {
 
-    /** List of all XStreamClients */
+    /** List of all XStreamClients. */
     val clients = ArrayList<Client>()
 
-    /** Listener waits for new clients to connect  */
+    /** Listener waits for new clients to connect. */
     private val clientListener = NewClientListener()
 
     private var running: Boolean = false
@@ -27,8 +27,8 @@ class ClientManager : Runnable, IClientListener {
     }
 
     /**
-     * Adds the given `newClient` and notifies all listeners by
-     * invoking `onClientConnected`.<br></br>
+     * Adds the given `newClient` and notifies all listeners by invoking `onClientConnected`.
+     *
      * *(only used by tests and addAll())*
      */
     fun add(newClient: Client) {
@@ -41,7 +41,7 @@ class ClientManager : Runnable, IClientListener {
         onClientConnected = consumer
     }
 
-    /** Fetch new clients  */
+    /** Fetch new clients. */
     override fun run() {
         running = true
 
@@ -68,7 +68,7 @@ class ClientManager : Runnable, IClientListener {
     /**
      * Starts the ClientManager and ClientListener in it's own daemon thread. This method should be used only once.
      *
-     * @see NewClientListener#start()
+     * @see NewClientListener.start
      */
     @Throws(IOException::class)
     fun start() {
@@ -90,35 +90,18 @@ class ClientManager : Runnable, IClientListener {
         }
     }
 
-    /**
-     * On client disconnect remove it from the list
-     *
-     * @param source client which disconnected
-     */
+    /** Remove disconnected client. */
     override fun onClientDisconnected(source: Client) {
         logger.info("Removing client {} from client manager", source)
         clients.remove(source)
     }
 
-    /**
-     * Do nothing on error
-     *
-     * @param source client, which rose the error
-     * @param packet which contains the error
-     */
+    /** Do nothing on error. */
     override fun onError(source: Client, packet: ProtocolErrorMessage) {
         // TODO Error handling needs to happen
     }
 
-    /**
-     * Ignore any request
-     *
-     * @param source client, which send the package
-     * @param packet to be handled
-     *
-     * @throws RescuableClientException never
-     */
-    @Throws(RescuableClientException::class)
+    /** Ignore any request. */
     override fun onRequest(source: Client, packet: PacketCallback) {
         // TODO Handle Request?
     }
