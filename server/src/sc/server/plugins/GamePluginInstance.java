@@ -2,9 +2,8 @@ package sc.server.plugins;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.host.IGamePluginHost;
 
-public class GamePluginInstance extends PluginInstance<IGamePluginHost, IGamePlugin> {
+public class GamePluginInstance extends PluginInstance<IGamePlugin> {
 
   public GamePluginInstance(Class<?> definition) {
     super(definition);

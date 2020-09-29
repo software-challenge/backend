@@ -3,9 +3,12 @@ package sc.server.plugins;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.host.IGamePluginHost;
+import sc.helpers.XStreamKt;
 import sc.plugins.PluginDescriptor;
+import sc.protocol.helpers.LobbyProtocol;
 import sc.shared.ScoreDefinition;
+
+import java.util.Arrays;
 
 @PluginDescriptor(author = "Chuck", name = "TestPlugin", uuid = TestPlugin.TEST_PLUGIN_UUID)
 public class TestPlugin implements IGamePlugin {
@@ -19,11 +22,8 @@ public class TestPlugin implements IGamePlugin {
   }
 
   @Override
-  public void initialize(IGamePluginHost host) {
-    host.registerProtocolClass(TestTurnRequest.class);
-    host.registerProtocolClass(TestGameState.class);
-    host.registerProtocolClass(TestPlayer.class);
-    host.registerProtocolClass(TestMove.class);
+  public void initialize() {
+    LobbyProtocol.registerAdditionalMessages(XStreamKt.getXStream(), Arrays.asList(TestTurnRequest.class, TestGameState.class, TestPlayer.class, TestMove.class));
   }
 
   @Override

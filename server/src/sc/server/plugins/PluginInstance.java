@@ -3,7 +3,7 @@ package sc.server.plugins;
 import sc.plugins.IPlugin;
 import sc.plugins.PluginDescriptor;
 
-public class PluginInstance<HostType, PluginType extends IPlugin<HostType>> {
+public class PluginInstance<PluginType extends IPlugin> {
   private final Class<?> definition;
   private PluginType instance;
   private final PluginDescriptor description;
@@ -27,9 +27,9 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>> {
     return this.description;
   }
 
-  public void load(HostType host) throws PluginLoaderException {
+  public void load() throws PluginLoaderException {
     this.instantiate();
-    this.instance.initialize(host);
+    this.instance.initialize();
   }
 
   public void unload() {

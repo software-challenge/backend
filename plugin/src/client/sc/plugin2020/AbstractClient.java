@@ -48,7 +48,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
   public AbstractClient(String host, int port, PlayerType id) throws IOException {
     this.gameType = GamePlugin.PLUGIN_UUID;
     try {
-      this.client = new LobbyClient(Configuration.getXStream(), Configuration.getClassesToRegister(), host, port);
+      this.client = new LobbyClient(host, port);
     } catch(ConnectException e) {
       logger.error("Could not connect to Server: " + e.getMessage());
       System.exit(1);

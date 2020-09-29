@@ -2,7 +2,6 @@ package sc;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.thoughtworks.xstream.XStream;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
 import org.slf4j.LoggerFactory;
@@ -11,7 +10,6 @@ import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
 import sc.plugin2021.util.Constants;
-import sc.protocol.helpers.LobbyProtocol;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;
@@ -21,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -132,7 +129,7 @@ public class TestClient extends XStreamClient {
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         Thread.sleep(1000);
       }
-      testclient = new TestClient(Configuration.getXStream(), sc.plugin2020.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
+      testclient = new TestClient(host, port, numberOfTests);
       Runtime.getRuntime().addShutdownHook(new Thread(testclient::printScores));
     } catch (Exception e) {
       logger.error("Error while initializing: " + e.toString());
@@ -155,11 +152,9 @@ public class TestClient extends XStreamClient {
 
   private ExecutorService waiter = Executors.newSingleThreadExecutor();
 
-  public TestClient(XStream xstream, Collection<Class<?>> protocolClasses,
-                    String host, int port, int totalTests) throws IOException {
-    super(xstream, createTcpNetwork(host, port));
-    LobbyProtocol.registerMessages(xstream);
-    LobbyProtocol.registerAdditionalMessages(xstream, protocolClasses);
+  public TestClient(String host, int port, int totalTests) throws IOException {
+    super(createTcpNetwork(host, port));
+
     this.host = host;
     this.port = port;
     this.totalTests = totalTests;

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.host.IRequestResult;
 import sc.framework.plugins.Player;
+import sc.helpers.XStreamKt;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.protocol.helpers.LobbyProtocol;
@@ -42,25 +43,15 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   public static final String DEFAULT_HOST = "127.0.0.1";
 
-  public LobbyClient(XStream xStream) throws IOException {
-    this(xStream, null);
+  public LobbyClient() throws IOException {
+    this(DEFAULT_HOST, SharedConfiguration.DEFAULT_PORT);
   }
 
-  public LobbyClient(XStream xStream, Collection<Class<?>> protocolClasses)
-          throws IOException {
-    this(xStream, protocolClasses, DEFAULT_HOST,
-            SharedConfiguration.DEFAULT_PORT);
+  public LobbyClient(String host, int port) throws IOException {
+    super(createTcpNetwork(host, port));
   }
 
-  public LobbyClient(XStream xstream, Collection<Class<?>> protocolClasses,
-                     String host, int port) throws IOException {
-    super(xstream, createTcpNetwork(host, port));
-    LobbyProtocol.registerMessages(xstream);
-    LobbyProtocol.registerAdditionalMessages(xstream, protocolClasses);
-  }
-
-  private static INetworkInterface createTcpNetwork(String host, int port)
-          throws IOException {
+  private static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
     logger.info("Creating TCP Network for {}:{}", host, port);
     return new TcpNetwork(new Socket(host, port));
   }

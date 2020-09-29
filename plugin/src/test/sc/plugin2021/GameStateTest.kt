@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.core.spec.style.StringSpec
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import sc.plugin2021.util.Configuration
+import sc.plugin2021.GamePlugin.Companion.xStream
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.InvalidMoveException
 
@@ -68,13 +68,12 @@ class GameStateTest: StringSpec({
         
     }
     "XML conversion works" {
-        val xstream = Configuration.xStream
         val state = GameState()
     
-        xstream.fromXML(xstream.toXML(state)).toString() shouldBe state.toString()
-        xstream.fromXML(xstream.toXML(state))            shouldBe state
+        xStream.fromXML(xStream.toXML(state)).toString() shouldBe state.toString()
+        xStream.fromXML(xStream.toXML(state))            shouldBe state
         
-        val transformed = xstream.fromXML(xstream.toXML(GameState())) as GameState
+        val transformed = xStream.fromXML(xStream.toXML(GameState())) as GameState
         transformed.deployedPieces shouldBe null
         GameRuleLogic.isFirstMove(transformed) shouldBe true
         transformed.getPointsForPlayer(Team.ONE)

@@ -33,29 +33,29 @@ public class GameLoader implements IHistoryListener {
     this(Arrays.asList(clazz));
   }
 
-  public Object loadGame(XStream xstream, String filename) {
+  public Object loadGame(String filename) {
     try {
-      return loadGame(xstream, new File(filename));
+      return loadGame(new File(filename));
     } catch (IOException e) {
       e.printStackTrace();
       return null;
     }
   }
 
-  public Object loadGame(XStream xstream, File file) throws IOException {
-    return loadGame(xstream, new FileInputStream(file), file.getName().endsWith(".gz"));
+  public Object loadGame(File file) throws IOException {
+    return loadGame(new FileInputStream(file), file.getName().endsWith(".gz"));
   }
 
-  public Object loadGame(XStream xstream, FileInputStream stream, boolean gzip) throws IOException {
+  public Object loadGame(FileInputStream stream, boolean gzip) throws IOException {
     if (gzip) {
-      return loadGame(xstream, new GZIPInputStream(stream));
+      return loadGame(new GZIPInputStream(stream));
     } else {
-      return loadGame(xstream, stream);
+      return loadGame(stream);
     }
   }
 
-  public Object loadGame(XStream xstream, InputStream file) throws IOException {
-    client = new GameLoaderClient(xstream, file);
+  public Object loadGame(InputStream file) throws IOException {
+    client = new GameLoaderClient(file);
     client.addListener(this);
     client.start();
     while (!finished && !client.isClosed()) {

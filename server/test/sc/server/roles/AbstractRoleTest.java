@@ -32,7 +32,7 @@ public abstract class AbstractRoleTest {
     this.gameMgr = this.lobby;
     this.pluginMgr = this.gameMgr.getPluginManager();
 
-    this.pluginMgr.loadPlugin(TestPlugin.class, this.gameMgr.getPluginApi());
+    this.pluginMgr.loadPlugin(TestPlugin.class);
     Assert.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
 
     this.lobby.start();

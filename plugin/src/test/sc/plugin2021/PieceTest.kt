@@ -7,6 +7,7 @@ import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import org.opentest4j.AssertionFailedError
+import sc.plugin2021.GamePlugin.Companion.xStream
 import sc.plugin2021.util.*
 
 
@@ -186,9 +187,9 @@ class PieceTest: StringSpec({
                     </piece>
                 """.trimIndent())
         ) {piece, xml ->
-            Configuration.xStream.toXML(piece) shouldBe xml
+            xStream.toXML(piece) shouldBe xml
             
-            val converted = Configuration.xStream.fromXML(Configuration.xStream.toXML(piece)) as Piece
+            val converted = xStream.fromXML(xStream.toXML(piece)) as Piece
             converted.toString() shouldBe piece.toString()
             converted shouldBe piece
         }

@@ -1,12 +1,10 @@
 package sc.server.network;
 
-import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.networking.UnprocessedPacketException;
 import sc.protocol.responses.ProtocolMessage;
 import sc.protocol.responses.RoomPacket;
-import sc.server.Configuration;
 import sc.server.helpers.StringNetworkInterface;
 import sc.shared.InvalidGameStateException;
 
@@ -20,16 +18,13 @@ public class MockClient extends Client {
   private final static Logger logger = LoggerFactory.getLogger(MockClient.class);
   private final Queue<Object> outgoingMessages = new ArrayDeque<>();
   private BlockingQueue<Object> objects = new LinkedBlockingQueue<>();
-  private final XStream xStream;
 
-  public MockClient(StringNetworkInterface stringInterface, XStream xStream)
-          throws IOException {
-    super(stringInterface, xStream);
-    this.xStream = xStream;
+  public MockClient(StringNetworkInterface stringInterface) throws IOException {
+    super(stringInterface);
   }
 
   public MockClient() throws IOException {
-    this(new StringNetworkInterface("<protocol>"), Configuration.getXStream());
+    this(new StringNetworkInterface("<protocol>"));
   }
 
   @Override

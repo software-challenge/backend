@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.core.spec.style.StringSpec
+import sc.helpers.xStream
 
 class PlayerScoreTest: StringSpec({
     "check equality" {
@@ -19,19 +20,15 @@ class PlayerScoreTest: StringSpec({
     }
     "convert XML" {
         val playerScore = PlayerScore(ScoreCause.REGULAR, "Game ended regularly", 0, 1, 2)
-        val xstream = XStream().apply {
-            setMode(XStream.NO_REFERENCES)
-            autodetectAnnotations(true)
-        }
         val playerScoreXML = """
             <score cause="REGULAR" reason="Game ended regularly">
               <part>0</part>
               <part>1</part>
               <part>2</part>
             </score>""".trimIndent()
-        val playerScoreToXML = xstream.toXML(playerScore)
+        val playerScoreToXML = xStream.toXML(playerScore)
         playerScoreToXML shouldBe playerScoreXML
-        xstream.fromXML(playerScoreXML) shouldBe playerScore
-        xstream.fromXML(playerScoreToXML) shouldBe playerScore
+        xStream.fromXML(playerScoreXML) shouldBe playerScore
+        xStream.fromXML(playerScoreToXML) shouldBe playerScore
     }
 })

@@ -3,6 +3,7 @@ package sc.server.network;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import sc.helpers.XStreamKt;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.server.Configuration;
 import sc.server.helpers.ExamplePacket;
@@ -22,13 +23,12 @@ public class ClientXmlReadTest {
 
     @Override
     public void onClientDisconnected(Client source) {
-      // I don't care
+      // ignore
     }
 
     @Override
     public void onError(Client source, ProtocolErrorMessage packet) {
-      // TODO Auto-generated method stub
-
+      // ignore
     }
   }
 
@@ -37,7 +37,7 @@ public class ClientXmlReadTest {
 
   @Before
   public void setup() {
-    Configuration.getXStream().alias("example", ExamplePacket.class);
+    XStreamKt.getXStream().alias("example", ExamplePacket.class);
   }
 
   @Test//(timeout=2000)
@@ -45,7 +45,7 @@ public class ClientXmlReadTest {
     StringNetworkInterface stringInterface = new StringNetworkInterface(
             "<protocol>\n<example />");
     StupidClientListener clientListener = new StupidClientListener();
-    MockClient client = new MockClient(stringInterface, Configuration.getXStream());
+    MockClient client = new MockClient(stringInterface);
     client.addClientListener(clientListener);
     client.start();
     Assert.assertNotNull(client.receive());
@@ -56,7 +56,7 @@ public class ClientXmlReadTest {
   @Test
   public void clientSendPacketTest() throws IOException {
     StringNetworkInterface stringInterface = new StringNetworkInterface(EMPTY_OBJECT_STREAM);
-    Client client = new Client(stringInterface, Configuration.getXStream());
+    Client client = new Client(stringInterface);
     client.start();
     client.send(new ExamplePacket());
     String data = stringInterface.getData();

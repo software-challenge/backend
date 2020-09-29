@@ -1,9 +1,8 @@
 package sc.plugins;
 
 
-public interface IPlugin<HostType> {
-  void initialize(HostType host);
+public interface IPlugin {
+  void initialize();
 
-  /** Open handles should be */
-  void unload();
+  default void unload() {};
 }

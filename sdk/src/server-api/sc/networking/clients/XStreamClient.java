@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.helpers.XStreamKt;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
 import sc.protocol.responses.CloseConnection;
@@ -25,7 +26,7 @@ public abstract class XStreamClient {
   private ObjectInputStream in;
   private final Thread receiveThread;
   private DisconnectCause disconnectCause = DisconnectCause.NOT_DISCONNECTED;
-  protected final XStream xStream;
+  protected final XStream xStream = XStreamKt.getXStream();
   private boolean closed = false;
   private boolean ready = false;
   private final Object readyLock = new Object();
@@ -60,16 +61,12 @@ public abstract class XStreamClient {
     }
   }
 
-  public XStreamClient(final XStream xstream, final INetworkInterface networkInterface) throws IOException {
+  public XStreamClient(final INetworkInterface networkInterface) throws IOException {
     if (networkInterface == null)
       throw new IllegalArgumentException("networkInterface must not be null.");
 
-    if (xstream == null)
-      throw new IllegalArgumentException("xstream must not be null.");
-
-    this.xStream = xstream;
     this.networkInterface = networkInterface;
-    this.out = xstream.createObjectOutputStream(networkInterface.getOutputStream(), "protocol");
+    this.out = xStream.createObjectOutputStream(networkInterface.getOutputStream(), "protocol");
     this.receiveThread = new Thread(new Runnable() {
       @Override
       public void run() {

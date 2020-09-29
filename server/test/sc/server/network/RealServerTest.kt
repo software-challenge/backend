@@ -24,7 +24,7 @@ abstract class RealServerTest {
         get() = NewClientListener.lastUsedPort
     
     fun connectClient(host: String, port: Int): LobbyClient {
-        val client = LobbyClient(Configuration.getXStream(), null, host, port)
+        val client = LobbyClient(host, port)
         client.start()
         return client
     }
@@ -39,7 +39,7 @@ abstract class RealServerTest {
         this.gameMgr = this.lobby
         this.pluginMgr = this.gameMgr.pluginManager
         
-        this.pluginMgr.loadPlugin(TestPlugin::class.java, this.gameMgr.pluginApi)
+        this.pluginMgr.loadPlugin(TestPlugin::class.java)
         Assert.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID))
         
         NewClientListener.lastUsedPort = 0
@@ -67,8 +67,7 @@ abstract class RealServerTest {
                 throw RuntimeException("Could not find an open port to connect to.")
             val mySocket = Socket("localhost",
                     NewClientListener.lastUsedPort)
-            val result = TestTcpClient(
-                    Configuration.getXStream(), mySocket)
+            val result = TestTcpClient(mySocket)
             result.start()
             return result
         } catch (e: IOException) {

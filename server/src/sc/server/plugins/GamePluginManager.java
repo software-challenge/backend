@@ -6,21 +6,18 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.helpers.CollectionHelper;
-import sc.server.Configuration;
-import sc.server.gaming.GamePluginApi;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 
 public class GamePluginManager extends PluginManager<GamePluginInstance> {
   protected static Logger logger = LoggerFactory.getLogger(GamePluginInstance.class);
 
-  public void activateAllPlugins(GamePluginApi context) {
+  public void activateAllPlugins() {
     for (GamePluginInstance plugins : getAvailablePlugins()) {
       try {
-        plugins.load(context);
+        plugins.load();
       } catch (PluginLoaderException e) {
         logger.error("Failed to load plugin.", e);
       }
@@ -53,10 +50,10 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
             + gameType, getPluginUUIDs());
   }
 
-  public void loadPlugin(Class<?> type, GamePluginApi context)
+  public void loadPlugin(Class<?> type)
           throws PluginLoaderException {
     GamePluginInstance instance = new GamePluginInstance(type);
-    instance.load(context);
+    instance.load();
     this.addPlugin(instance);
   }
 

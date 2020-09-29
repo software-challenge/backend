@@ -25,7 +25,6 @@ import java.util.*;
  */
 public class GameRoomManager {
   private Map<String, GameRoom> rooms;
-  private GamePluginApi pluginApi;
 
   private final GamePluginManager gamePluginManager = new GamePluginManager();
 
@@ -36,9 +35,8 @@ public class GameRoomManager {
   /** Default constructor, initializes rooms, loads available plugins */
   public GameRoomManager() {
     this.rooms = new HashMap<>();
-    this.pluginApi = new GamePluginApi();
     this.gamePluginManager.reload();
-    this.gamePluginManager.activateAllPlugins(this.pluginApi);
+    this.gamePluginManager.activateAllPlugins();
   }
 
   /**
@@ -162,10 +160,6 @@ public class GameRoomManager {
 
   public GamePluginManager getPluginManager() {
     return this.gamePluginManager;
-  }
-
-  public GamePluginApi getPluginApi() {
-    return this.pluginApi;
   }
 
   /**

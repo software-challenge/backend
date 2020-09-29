@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import sc.framework.plugins.IPerspectiveAware;
 import sc.framework.plugins.IPerspectiveProvider;
+import sc.helpers.XStreamKt;
 import sc.server.Configuration;
 
 public class ConverterTest {
@@ -40,8 +41,7 @@ public class ConverterTest {
     HasSecrets data = new HasSecrets();
     data.setPerspective(HasSecrets.goodFriend);
 
-    XStream xStream = Configuration.getXStream();
-    String msg = xStream.toXML(data);
+    String msg = XStreamKt.getXStream().toXML(data);
 
     Assert.assertNotSame(-1, msg.indexOf(data.secret));
     Assert.assertNotSame(-1, msg.indexOf(data.unimportant));
@@ -52,8 +52,7 @@ public class ConverterTest {
     HasSecrets data = new HasSecrets();
     data.setPerspective(null);
 
-    XStream xStream = Configuration.getXStream();
-    String msg = xStream.toXML(data);
+    String msg = XStreamKt.getXStream().toXML(data);
 
     Assert.assertNotSame(-1, msg.indexOf(data.secret));
     Assert.assertNotSame(-1, msg.indexOf(data.unimportant));
