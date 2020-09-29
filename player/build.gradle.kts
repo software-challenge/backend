@@ -110,8 +110,4 @@ tasks {
         }
     }
     
-    test {
-        dependsOn(playerTest)
-    }
-    
 }
