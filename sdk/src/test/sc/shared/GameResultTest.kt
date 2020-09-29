@@ -9,6 +9,7 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import sc.api.plugins.TestTeam
 import sc.framework.plugins.Player
+import sc.helpers.xStream
 
 class GameResultTest: StringSpec({
     val definition = ScoreDefinition("winner")
@@ -32,8 +33,6 @@ class GameResultTest: StringSpec({
     }
     "GameResult XML".config(enabled = false) {
         // FIXME needs https://github.com/CAU-Kiel-Tech-Inf/backend/issues/295
-        val xstream = getXStream()
-        
         val gameResultXMLWinner = """
                 <result>
                   <definition>
@@ -71,10 +70,10 @@ class GameResultTest: StringSpec({
                 row(gameResultWinnersNull, gameResultXMLNoWinner)
         )
         { result, xml ->
-            val toXML = xstream.toXML(result)
+            val toXML = xStream.toXML(result)
             toXML shouldBe xml
-            xstream.fromXML(xml) shouldBe result
-            xstream.fromXML(toXML) shouldBe result
+            xStream.fromXML(xml) shouldBe result
+            xStream.fromXML(toXML) shouldBe result
         }
     }
 })

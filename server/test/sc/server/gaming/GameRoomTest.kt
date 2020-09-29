@@ -6,7 +6,6 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertThrows
 import sc.protocol.requests.PrepareGameRequest
-import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
 import sc.server.network.Client
 import sc.server.plugins.TestPlugin
@@ -16,10 +15,10 @@ import sc.shared.SlotDescriptor
 
 class GameRoomTest: StringSpec({
     val stringInterface = StringNetworkInterface("")
-    val client = Client(stringInterface, Configuration.getXStream()).apply { start() }
+    val client = Client(stringInterface).apply { start() }
     
     "create, join, end game" {
-        val manager = GameRoomManager().apply { pluginManager.loadPlugin(TestPlugin::class.java, pluginApi) }
+        val manager = GameRoomManager().apply { pluginManager.loadPlugin(TestPlugin::class.java) }
         // TODO Replay observing
         // Configuration.set(Configuration.SAVE_REPLAY, "true")
         
@@ -37,7 +36,7 @@ class GameRoomTest: StringSpec({
     }
     
     "prepare game & claim reservations" {
-        val manager = GameRoomManager().apply { pluginManager.loadPlugin(TestPlugin::class.java, pluginApi) }
+        val manager = GameRoomManager().apply { pluginManager.loadPlugin(TestPlugin::class.java) }
         val player2name = "opponent"
         
         val reservations = manager.prepareGame(PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, descriptor2 = SlotDescriptor(player2name))).reservations

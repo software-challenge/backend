@@ -201,7 +201,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   public void loadFromFile(String file) {
     logger.info("Loading game from: " + file);
     GameLoader gl = new GameLoader(GameState.class);
-    Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
+    Object gameInfo = gl.loadGame(file);
     if(gameInfo != null) {
       loadGameInfo(gameInfo);
     }
@@ -239,7 +239,7 @@ public class Game extends RoundBasedGameInstance<Player> {
       e.printStackTrace();
     }
     GameLoader gl = new GameLoader(GameState.class);
-    Object gameInfo = gl.loadGame(Configuration.getXStream(), "./tmp_replay.xml");
+    Object gameInfo = gl.loadGame("./tmp_replay.xml");
     if(gameInfo != null) {
       loadGameInfo(gameInfo);
     }

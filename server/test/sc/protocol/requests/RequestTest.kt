@@ -5,6 +5,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import sc.framework.plugins.RoundBasedGameInstance
+import sc.helpers.xStream
 import sc.networking.clients.LobbyClient
 import sc.server.Configuration
 import sc.server.client.PlayerListener
@@ -84,7 +85,6 @@ class RequestTest: RealServerTest() {
     
     @Test
     fun prepareXmlTest() {
-        val xStream = Configuration.getXStream()
         val request = xStream.fromXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<prepare gameType=\"swc_2018_hase_und_igel\">\n" +
                 "  <slot displayName=\"Häschenschule\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +

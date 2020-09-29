@@ -48,8 +48,7 @@ public class NewClientListener implements Runnable, Closeable {
 
       logger.info("A Client connected...");
 
-      Client newClient = new Client(new TcpNetwork(clientSocket),
-              Configuration.getXStream());
+      Client newClient = new Client(new TcpNetwork(clientSocket));
 
       try {
         this.queue.put(newClient);

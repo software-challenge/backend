@@ -2,9 +2,10 @@ package sc.plugin2020;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.host.IGamePluginHost;
+import sc.helpers.XStreamKt;
 import sc.plugin2020.util.Configuration;
 import sc.plugins.PluginDescriptor;
+import sc.protocol.helpers.LobbyProtocol;
 import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
@@ -30,8 +31,8 @@ public class GamePlugin implements IGamePlugin {
   }
 
   @Override
-  public void initialize(IGamePluginHost host) {
-    host.registerProtocolClasses(Configuration.getClassesToRegister());
+  public void initialize() {
+    LobbyProtocol.registerAdditionalMessages(XStreamKt.getXStream(), Configuration.getClassesToRegister());
   }
 
   @Override

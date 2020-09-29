@@ -25,8 +25,8 @@ public final class GameLoaderClient extends XStreamClient implements IPollsHisto
 
   private List<IHistoryListener> listeners = new ArrayList<>();
 
-  public GameLoaderClient(XStream xstream, InputStream inputStream) throws IOException {
-    super(xstream, new FileSystemInterface(inputStream));
+  public GameLoaderClient(InputStream inputStream) throws IOException {
+    super(new FileSystemInterface(inputStream));
     logger.trace("Loading game from {}", inputStream);
   }
 

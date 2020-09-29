@@ -1,17 +1,13 @@
 package sc.shared
 
-import com.thoughtworks.xstream.XStream
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import io.kotest.data.forAll
+import sc.helpers.xStream
 
 class SlotDescriptorTest : StringSpec({
     "convert XML" {
-        val xstream = XStream().apply {
-            setMode(XStream.NO_REFERENCES)
-            autodetectAnnotations(true)
-        }
         forAll(
                 row(SlotDescriptor(),
                 """<slotDescriptor displayName="Unknown" canTimeout="true" shouldBePaused="true"/>"""),
@@ -26,8 +22,8 @@ class SlotDescriptorTest : StringSpec({
                 """<slotDescriptor displayName="another name" canTimeout="true" shouldBePaused="false"/>""")
         )
         { descriptor, xml ->
-            xstream.toXML(descriptor) shouldBe xml
-            xstream.fromXML(xml).toString() shouldBe descriptor.toString()
+            xStream.toXML(descriptor) shouldBe xml
+            xStream.fromXML(xml).toString() shouldBe descriptor.toString()
         }
     }
 })

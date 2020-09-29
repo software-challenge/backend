@@ -7,7 +7,6 @@ import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.IControllableGame
 import sc.networking.clients.ILobbyClientListener
 import sc.networking.clients.LobbyClient
-import sc.plugin2021.util.Configuration
 import sc.protocol.responses.PrepareGameProtocolMessage
 import sc.protocol.responses.ProtocolErrorMessage
 import sc.protocol.responses.ProtocolMessage
@@ -39,8 +38,8 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     protected var handler: IGameHandler? = null
     
     /** The lobby client that connects to the room. Stops on connection failure. */
-    private val client = try {
-        LobbyClient(Configuration.xStream, Configuration.classesToRegister, host, port)
+    private val client: LobbyClient = try {
+        LobbyClient(host, port)
     } catch (e: ConnectException) {
         logger.error("Could not connect to Server: ${e.message}")
         exitProcess(1)

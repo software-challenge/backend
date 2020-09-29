@@ -32,8 +32,8 @@ public class Client extends XStreamClient implements IClient {
   private final List<IClientListener> clientListeners = new ArrayList<>();
   private final Collection<IClientRole> roles = new ArrayList<>();
 
-  public Client(INetworkInterface networkInterface, XStream configuredXStream) throws IOException {
-    super(configuredXStream, networkInterface);
+  public Client(INetworkInterface networkInterface) throws IOException {
+    super(networkInterface);
   }
 
   /** @return roles of this client. */

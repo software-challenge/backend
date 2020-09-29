@@ -16,14 +16,8 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-/**
- * The <code>PluginManager</code> loads all available plugins from the plugin-
- * directory.
- *
- * @author mja
- * @author rra
- */
-public abstract class PluginManager<PluginInstanceType extends PluginInstance<?, ?>> {
+/** The <code>PluginManager</code> loads all available plugins from the plugin directory. */
+public abstract class PluginManager<PluginInstanceType extends PluginInstance<?>> {
 
   protected static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
 
@@ -43,8 +37,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
     this.availablePlugins.clear();
   }
 
-  protected abstract PluginInstanceType createPluginInstance(
-          Class<?> definition, URI jarURI);
+  protected abstract PluginInstanceType createPluginInstance(Class<?> definition, URI jarURI);
 
   public Collection<PluginInstanceType> getAvailablePlugins() {
     return this.availablePlugins;

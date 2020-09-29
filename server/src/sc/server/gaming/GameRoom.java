@@ -11,6 +11,7 @@ import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.helpers.HelperMethods;
+import sc.helpers.XStreamKt;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
@@ -64,8 +65,7 @@ public class GameRoom implements IGameListener {
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
       try {
         logger.debug("Save replay is active and try to save it to file");
-        LobbyClient lobbyClient = new LobbyClient(Configuration.getXStream(), null,
-                "127.0.0.1", Configuration.getPort());
+        LobbyClient lobbyClient = new LobbyClient("127.0.0.1", Configuration.getPort());
         lobbyClient.start();
         lobbyClient.authenticate(Configuration.getAdministrativePassword());
         replayObserver = lobbyClient.observe(this.getId());
@@ -149,12 +149,12 @@ public class GameRoom implements IGameListener {
         IGameState state = (IGameState) element;
         MementoPacket data = new MementoPacket(state, null);
         RoomPacket roomPacket = new RoomPacket(this.getId(), data);
-        String xmlReplay = Configuration.getXStream().toXML(roomPacket);
+        String xmlReplay = XStreamKt.getXStream().toXML(roomPacket);
         writer.write(xmlReplay + "\n");
         writer.flush();
       }
 
-      String result = Configuration.getXStream().toXML(new RoomPacket(this.getId(), replayObserver.getResult()));
+      String result = XStreamKt.getXStream().toXML(new RoomPacket(this.getId(), replayObserver.getResult()));
       writer.write(result + "\n");
       writer.write("</protocol>");
       writer.flush();
