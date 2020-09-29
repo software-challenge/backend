@@ -204,7 +204,7 @@ tasks {
     
     val integrationTest by creating {
         group = "verification"
-        dependsOn(testGame)
+        dependsOn(testGame, ":player:playerTest")
         if(enableTestClient)
             dependsOn(testTestClient)
         shouldRunAfter(test)
