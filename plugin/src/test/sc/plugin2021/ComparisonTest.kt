@@ -1,15 +1,13 @@
 package sc.plugin2021
 
-import io.kotlintest.matchers.types.shouldNotBeSameInstanceAs
-import io.kotlintest.shouldBe
-import io.kotlintest.shouldNotBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.core.spec.style.StringSpec
 import sc.plugin2021.util.Constants
 
 class ComparisonTest: StringSpec({
     "Coordinate comparison" {
         Coordinates(3, 2) shouldBe Coordinates(3, 2)
-        Coordinates(3, 2) shouldNotBeSameInstanceAs  Coordinates(3, 2)
         Coordinates(3, 2) shouldNotBe Coordinates(2, 3)
         Coordinates(3, 2) shouldNotBe Board()
     }

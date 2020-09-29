@@ -38,12 +38,12 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     }
     
     override fun getWinners(): MutableList<Player> {
-        if (players.first().violated) {
-            if (players.last().violated)
+        if (players.first().hasViolated()) {
+            if (players.last().hasViolated())
                 return mutableListOf()
             return players.subList(1, 2)
         }
-        if (players.last().violated)
+        if (players.last().hasViolated())
             return players.subList(0, 1)
         
         val first = gameState.getPointsForPlayer(players.first().color)

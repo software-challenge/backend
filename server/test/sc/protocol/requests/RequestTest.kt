@@ -1,14 +1,11 @@
 package sc.protocol.requests
 
-import com.thoughtworks.xstream.XStream
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import sc.framework.plugins.RoundBasedGameInstance
 import sc.networking.clients.LobbyClient
-import sc.protocol.helpers.LobbyProtocol
-import sc.protocol.responses.ProtocolMessage
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
@@ -22,7 +19,6 @@ import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.server.plugins.TestTurnRequest
 import sc.shared.WelcomeMessage
-import java.util.*
 
 private const val PASSWORD = "TEST_PASSWORD"
 
@@ -50,8 +46,8 @@ class RequestTest: RealServerTest() {
     fun joinRoomRequest() {
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         
-        TestHelper.assertEqualsWithTimeout(1, { lobby.gameManager.games.size })
-        assertEquals(1, lobby.gameManager.games.iterator().next().clients.size.toLong())
+        TestHelper.assertEqualsWithTimeout(1, { lobby.games.size })
+        assertEquals(1, lobby.games.iterator().next().clients.size.toLong())
     }
     
     @Test
@@ -80,20 +76,15 @@ class RequestTest: RealServerTest() {
         TestHelper.waitMillis(200)
         assertNotNull(listener.response)
         
-        assertEquals(1, lobby.gameManager.games.size.toLong())
-        assertEquals(0, lobby.gameManager.games.iterator().next().clients.size.toLong())
-        assertTrue(lobby.gameManager.games.iterator().next().isPauseRequested)
+        assertEquals(1, lobby.games.size.toLong())
+        assertEquals(0, lobby.games.iterator().next().clients.size.toLong())
+        assertTrue(lobby.games.iterator().next().isPauseRequested)
         
     }
     
     @Test
     fun prepareXmlTest() {
-        val xStream = XStream()
-        xStream.setMode(XStream.NO_REFERENCES)
-        xStream.classLoader = Configuration::class.java.classLoader
-        LobbyProtocol.registerMessages(xStream)
-        LobbyProtocol.registerAdditionalMessages(xStream,
-                Arrays.asList(*arrayOf<Class<*>>(ProtocolMessage::class.java)))
+        val xStream = Configuration.getXStream()
         val request = xStream.fromXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<prepare gameType=\"swc_2018_hase_und_igel\">\n" +
                 "  <slot displayName=\"Häschenschule\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +
@@ -116,11 +107,11 @@ class RequestTest: RealServerTest() {
         val reservation = response.reservations[0]
         player1.joinPreparedGame(reservation)
         TestHelper.waitMillis(200)
-        assertEquals(1, lobby.gameManager.games.iterator().next().clients.size.toLong())
+        assertEquals(1, lobby.games.iterator().next().clients.size.toLong())
         
         player2.joinPreparedGame(response.reservations[1])
         TestHelper.waitMillis(200)
-        assertEquals(2, lobby.gameManager.games.iterator().next().clients.size.toLong())
+        assertEquals(2, lobby.games.iterator().next().clients.size.toLong())
         
         player3.joinPreparedGame(response.reservations[1])
         TestHelper.waitMillis(200)
@@ -134,7 +125,7 @@ class RequestTest: RealServerTest() {
         
         TestHelper.waitMillis(200)
         
-        val gameRoom = lobby.gameManager.games.iterator().next()
+        val gameRoom = lobby.games.iterator().next()
         player3.addListener(TestObserverListener())
         player3.authenticate(PASSWORD)
         player3.observe(gameRoom.id)
@@ -168,7 +159,7 @@ class RequestTest: RealServerTest() {
         TestHelper.waitMillis(500)
         
         // Room was created
-        val room = lobby.gameManager.games.iterator().next()
+        val room = lobby.games.iterator().next()
         val sp1 = room.slots[0].role.player
         sp1.addPlayerListener(p1Listener)
         admin.send(PauseGameRequest(room.id, true))
@@ -188,8 +179,8 @@ class RequestTest: RealServerTest() {
         assertTrue(room.isPauseRequested)
         val pr1 = room.slots[0].role
         val pr2 = room.slots[1].role
-        assertTrue(pr1.player.isShouldBePaused)
-        assertTrue(pr2.player.isShouldBePaused)
+        assertTrue(pr1.player.shouldBePaused)
+        assertTrue(pr2.player.shouldBePaused)
         
         
         // Wait for it to register
@@ -223,7 +214,7 @@ class RequestTest: RealServerTest() {
         TestHelper.waitMillis(500)
         
         // Room was created
-        val room = lobby.gameManager.games.iterator().next()
+        val room = lobby.games.iterator().next()
         val sp1 = room.slots[0].role.player
         sp1.addPlayerListener(p1Listener)
         admin.send(PauseGameRequest(room.id, true))
@@ -242,8 +233,8 @@ class RequestTest: RealServerTest() {
         
         val pr1 = room.slots[0].role
         val pr2 = room.slots[1].role
-        assertTrue(pr1.player.isShouldBePaused)
-        assertTrue(pr2.player.isShouldBePaused)
+        assertTrue(pr1.player.shouldBePaused)
+        assertTrue(pr2.player.shouldBePaused)
         
         
         // Wait for it to register
@@ -303,7 +294,7 @@ class RequestTest: RealServerTest() {
         listener.newStateReceived = false
         
         // Game should be deleted, because player3 send invalid move
-        assertEquals(0L, lobby.gameManager.games.size.toLong())
+        assertEquals(0L, lobby.games.size.toLong())
         
     }
     
@@ -317,11 +308,11 @@ class RequestTest: RealServerTest() {
         player1.addListener(listener)
         
         // Wait for messages to get to server
-        assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isNotEmpty() }, 1000))
+        assertTrue(TestHelper.waitUntilTrue({ lobby.games.isNotEmpty() }, 1000))
         
         player1.send(CancelRequest(listener.roomId))
-        assertTrue(TestHelper.waitUntilTrue({ lobby.gameManager.games.isEmpty() }, 3000))
-        assertEquals(0, lobby.gameManager.games.size.toLong())
+        assertTrue(TestHelper.waitUntilTrue({ lobby.games.isEmpty() }, 3000))
+        assertEquals(0, lobby.games.size.toLong())
     }
     
     @Test
@@ -353,14 +344,14 @@ class RequestTest: RealServerTest() {
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         
-        TestHelper.waitUntilEqual(1, { lobby.gameManager.games.size }, 2000)
+        TestHelper.waitUntilEqual(1, { lobby.games.size }, 2000)
         var room = gameMgr.games.iterator().next()
-        assertTrue(room.slots[0].role.player.isCanTimeout)
+        assertTrue(room.slots[0].role.player.canTimeout)
         val req = ControlTimeoutRequest(room.id, false, 0)
         player1.send(req)
         TestHelper.waitMillis(2000)
         room = gameMgr.games.iterator().next()
-        assertFalse(room.slots[0].role.player.isCanTimeout)
+        assertFalse(room.slots[0].role.player.canTimeout)
     }
     
     @Test
@@ -373,7 +364,7 @@ class RequestTest: RealServerTest() {
         player1.addListener(listener)
         
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        TestHelper.waitUntilEqual(1, { lobby.gameManager.games.size }, 2000)
+        TestHelper.waitUntilEqual(1, { lobby.games.size }, 2000)
         val room = gameMgr.games.iterator().next()
         room.slots[0].role.player.addPlayerListener(p1Listener)
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)

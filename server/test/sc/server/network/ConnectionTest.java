@@ -23,7 +23,7 @@ public class ConnectionTest extends RealServerTest {
     waitForConnect(1);
 
     client.send(new JoinRoomRequest(TestPlugin.TEST_PLUGIN_UUID));
-    TestHelper.INSTANCE.assertEqualsWithTimeout(1, () -> ConnectionTest.this.getLobby().getGameManager().getGames().size(), 1, TimeUnit.SECONDS);
+    TestHelper.INSTANCE.assertEqualsWithTimeout(1, () -> ConnectionTest.this.getLobby().getGames().size(), 1, TimeUnit.SECONDS);
   }
 
   @Ignore

@@ -55,8 +55,7 @@ public class ClientXmlReadTest {
 
   @Test
   public void clientSendPacketTest() throws IOException {
-    StringNetworkInterface stringInterface = new StringNetworkInterface(
-            EMPTY_OBJECT_STREAM);
+    StringNetworkInterface stringInterface = new StringNetworkInterface(EMPTY_OBJECT_STREAM);
     Client client = new Client(stringInterface, Configuration.getXStream());
     client.start();
     client.send(new ExamplePacket());

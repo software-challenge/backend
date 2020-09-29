@@ -133,14 +133,14 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
    *
    * @param player the player that left.
    * @param cause  the cause for the leave. If none is provided, then it will either be {@link ScoreCause#RULE_VIOLATION}
-   *               or {@link ScoreCause#LEFT}, depending on whether the player has {@link Player#getViolated()}
+   *               or {@link ScoreCause#LEFT}, depending on whether the player has {@link Player#hasViolated()}
    */
   public void onPlayerLeft(Player player, ScoreCause cause) {
     if(cause == ScoreCause.REGULAR)
       return;
 
     if (cause == null) {
-      if (!player.getViolated()) {
+      if (!player.hasViolated()) {
         player.setLeft(true);
         cause = ScoreCause.LEFT;
       } else {
@@ -153,7 +153,7 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
     for (Entry<Player, PlayerScore> entry : scores.entrySet()) {
       if (entry.getKey() == player) {
         PlayerScore score = entry.getValue();
-        score.setCause(cause);
+        entry.setValue(new PlayerScore(cause, score.getReason(), score.getParts()));
       }
     }
 
@@ -203,7 +203,7 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
    * @param player player to make a move
    */
   protected synchronized final void requestMove(P player) {
-    final ActionTimeout timeout = player.isCanTimeout() ? getTimeoutFor(player)
+    final ActionTimeout timeout = player.getCanTimeout() ? getTimeoutFor(player)
             : new ActionTimeout(false);
 
     final Logger logger = RoundBasedGameInstance.logger;
@@ -315,10 +315,9 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
    * @throws InvalidMoveException Always thrown
    */
   public void catchInvalidMove(InvalidMoveException e, Player author) throws InvalidMoveException {
-    author.setViolated(true);
     String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
-    author.setViolationReason(e.getMessage());
     logger.error(err, e);
+    author.setViolationReason(e.getMessage());
     author.notifyListeners(new ProtocolErrorMessage(e.move, err));
     throw e;
   }

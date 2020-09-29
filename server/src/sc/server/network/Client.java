@@ -20,9 +20,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A generic client. This represents a client in the server. Clients which
- * connect to the server (as separate programs or running as threads started by
- * the server) are represented by {@link sc.networking.clients.LobbyClient}.
+ * A generic client. This represents a client in the server.
+ *
+ * Clients which connect to the server (as separate programs or running as threads started by the server)
+ * are represented by {@link sc.networking.clients.LobbyClient}.
  */
 public class Client extends XStreamClient implements IClient {
   private static final Logger logger = LoggerFactory.getLogger(Client.class);
@@ -35,32 +36,18 @@ public class Client extends XStreamClient implements IClient {
     super(configuredXStream, networkInterface);
   }
 
-  /**
-   * Getter for the roles. Roles can be {@link sc.server.gaming.PlayerRole PlayerRole},
-   * {@link sc.server.gaming.ObserverRole ObserverRole} or {@link AdministratorRole AdministratorRole}
-   *
-   * @return Collection of roles
-   */
+  /** @return roles of this client. */
   public Collection<IClientRole> getRoles() {
     return Collections.unmodifiableCollection(this.roles);
   }
 
-  /**
-   * Add another role to the client.Roles can be {@link sc.server.gaming.PlayerRole PlayerRole},
-   * {@link sc.server.gaming.ObserverRole ObserverRole} or {@link AdministratorRole AdministratorRole}
-   *
-   * @param role to be added
-   */
+  /** Add another role to the client. */
   @Override
   public void addRole(IClientRole role) {
     this.roles.add(role);
   }
 
-  /**
-   * Send a package to the server
-   *
-   * @param packet message to be send
-   */
+  /** Send a package to the server. */
   @Override
   public synchronized void send(ProtocolMessage packet) {
     if (!isClosed()) {
@@ -72,12 +59,8 @@ public class Client extends XStreamClient implements IClient {
     }
   }
 
-  /**
-   * Call listener that handle new Packages
-   *
-   * @param packet which just arrived
-   */
-  private void notifyOnPacket(Object packet) throws UnprocessedPacketException, InvalidGameStateException {
+  /** Call listener that handle new Packages. */
+  private void notifyOnPacket(Object packet) throws UnprocessedPacketException {
     /*
      * NOTE that method is called in the receiver thread. Messages should
      * only be passed to listeners. No callbacks should be invoked directly
@@ -121,11 +104,7 @@ public class Client extends XStreamClient implements IClient {
     }
   }
 
-  /**
-   * Call listeners upon error
-   *
-   * @param packet which rose the error
-   */
+  /** Call listeners upon error. */
   private synchronized void notifyOnError(ProtocolErrorMessage packet) {
     for (IClientListener listener : this.clientListeners) {
       try {
@@ -136,7 +115,7 @@ public class Client extends XStreamClient implements IClient {
     }
   }
 
-  /** Call listeners upon disconnect */
+  /** Call listeners upon disconnect. */
   private synchronized void notifyOnDisconnect() {
     if (!this.notifiedOnDisconnect) {
       this.notifiedOnDisconnect = true;
@@ -152,7 +131,7 @@ public class Client extends XStreamClient implements IClient {
     }
   }
 
-  /** Add a {@link IClientListener listener} to the client */
+  /** Add a {@link IClientListener listener} to the client. */
   public void addClientListener(IClientListener listener) {
     this.clientListeners.add(listener);
   }
@@ -162,7 +141,7 @@ public class Client extends XStreamClient implements IClient {
   }
 
   /**
-   * Test if this client is a administrator
+   * Test if this client is an administrator.
    *
    * @return true iff this client has an AdministratorRole
    */
@@ -216,13 +195,9 @@ public class Client extends XStreamClient implements IClient {
     notifyOnDisconnect();
   }
 
-  /**
-   * Received new package, which is send to all listener
-   *
-   * @param o received package
-   */
+  /** Forward received package to listeners. */
   @Override
-  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException {
+  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException {
     /*
      * NOTE that this method is called in the receiver thread. Messages
      * should only be passed to listeners. No callbacks should be invoked

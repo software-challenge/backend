@@ -16,10 +16,10 @@ class GamePlugin: IGamePlugin {
         val PLUGIN_AUTHOR = ""
         val PLUGIN_UUID = "swc_2021_blokus"
         
-        val SCORE_DEFINITION = ScoreDefinition().apply {
-            add("Gewinner")
-            add(ScoreFragment("\u2205 Punkte", ScoreAggregation.AVERAGE))
-        }
+        val SCORE_DEFINITION = ScoreDefinition(arrayOf(
+                ScoreFragment("Gewinner"),
+                ScoreFragment("\u2205 Punkte", ScoreAggregation.AVERAGE)
+        ))
     }
     
     override fun createGame(): IGameInstance {

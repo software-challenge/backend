@@ -1,8 +1,9 @@
 package sc.shared
 
-import io.kotlintest.shouldBe
-import io.kotlintest.shouldNotBe
-import io.kotlintest.specs.StringSpec
+import com.thoughtworks.xstream.XStream
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.core.spec.style.StringSpec
 
 class PlayerScoreTest: StringSpec({
     "check equality" {
@@ -16,9 +17,12 @@ class PlayerScoreTest: StringSpec({
         playerScoreUnknown1 shouldNotBe playerScoreScores
         playerScoreScores shouldBe playerScoreScores
     }
-    "XML Serialization" {
+    "convert XML" {
         val playerScore = PlayerScore(ScoreCause.REGULAR, "Game ended regularly", 0, 1, 2)
-        val xstream = getXStream()
+        val xstream = XStream().apply {
+            setMode(XStream.NO_REFERENCES)
+            autodetectAnnotations(true)
+        }
         val playerScoreXML = """
             <score cause="REGULAR" reason="Game ended regularly">
               <part>0</part>

@@ -1,6 +1,6 @@
 package sc.plugin2021.helper
 
-import io.kotlintest.shouldBe
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import sc.plugin2021.*

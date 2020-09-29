@@ -1,11 +1,11 @@
 package sc.plugin2021
 
-import io.kotlintest.data.forall
-import io.kotlintest.matchers.maps.shouldContain
-import io.kotlintest.matchers.maps.shouldContainExactly
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
-import io.kotlintest.tables.row
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.data.forAll
+import io.kotest.data.row
+import io.kotest.matchers.maps.shouldContain
+import io.kotest.matchers.maps.shouldContainExactly
+import io.kotest.matchers.shouldBe
 import org.opentest4j.AssertionFailedError
 import sc.plugin2021.util.*
 
@@ -164,7 +164,7 @@ class PieceTest: StringSpec({
         piece.coordinates shouldBe coordinates
     }
     "XML conversion" {
-        forall(
+        forAll(
             row(Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false), """
                     <piece color="YELLOW" kind="TETRO_O" rotation="RIGHT" isFlipped="false">
                       <position x="0" y="0"/>

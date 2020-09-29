@@ -17,6 +17,11 @@ import java.io.IOException;
 
 public abstract class AbstractRoleTest {
 
+  protected Lobby lobby;
+  protected ClientManager clientMgr;
+  protected GameRoomManager gameMgr;
+  protected GamePluginManager pluginMgr;
+
   @Before
   public void setup() throws IOException, PluginLoaderException {
     // Random PortAllocation
@@ -24,7 +29,7 @@ public abstract class AbstractRoleTest {
 
     this.lobby = new Lobby();
     this.clientMgr = this.lobby.getClientManager();
-    this.gameMgr = this.lobby.getGameManager();
+    this.gameMgr = this.lobby;
     this.pluginMgr = this.gameMgr.getPluginManager();
 
     this.pluginMgr.loadPlugin(TestPlugin.class, this.gameMgr.getPluginApi());
@@ -37,11 +42,6 @@ public abstract class AbstractRoleTest {
   public void tearDown() {
     this.lobby.close();
   }
-
-  protected Lobby lobby;
-  protected ClientManager clientMgr;
-  protected GameRoomManager gameMgr;
-  protected GamePluginManager pluginMgr;
 
   protected MockClient connectClient(boolean administrator) {
     MockClient client;

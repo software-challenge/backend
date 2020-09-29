@@ -43,11 +43,7 @@ public class Score implements Iterable<ScoreValue> {
   }
 
   public ScoreDefinition getScoreDefinition() {
-    ScoreDefinition scoreDefinition = new ScoreDefinition();
-    for (ScoreValue scoreValue : this) {
-      scoreDefinition.add(scoreValue.getFragment());
-    }
-    return scoreDefinition;
+    return new ScoreDefinition((ScoreFragment[]) scoreValues.stream().map(ScoreValue::getFragment).toArray());
   }
 
   public List<ScoreValue> getScoreValues() {

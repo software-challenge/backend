@@ -11,16 +11,7 @@ import sc.shared.ScoreDefinition;
 public class TestPlugin implements IGamePlugin {
   public static final String TEST_PLUGIN_UUID = "012345-norris";
 
-  public static final ScoreDefinition SCORE_DEFINITION;
-
-  static {
-    SCORE_DEFINITION = new ScoreDefinition();
-    SCORE_DEFINITION.add("winner");
-  }
-
-  public TestPlugin() {
-
-  }
+  public static final ScoreDefinition SCORE_DEFINITION = new ScoreDefinition("winner");
 
   @Override
   public IGameInstance createGame() {
@@ -37,8 +28,6 @@ public class TestPlugin implements IGamePlugin {
 
   @Override
   public void unload() {
-    // TODO Auto-generated method stub
-
   }
 
   @Override

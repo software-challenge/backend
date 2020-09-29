@@ -37,7 +37,7 @@ public class HelperMethods {
   public static String generateReplayFilename(String pluginUuid, List<SlotDescriptor> descriptors) {
     StringBuilder replayFileName = new StringBuilder("./replays/replay");
     replayFileName.append("_");
-    replayFileName.append(pluginUuid); // something like hui_2018
+    replayFileName.append(pluginUuid);
     for (SlotDescriptor descriptor : descriptors) {
       replayFileName.append("_");
       replayFileName.append(descriptor.getDisplayName().replace(' ', '_'));

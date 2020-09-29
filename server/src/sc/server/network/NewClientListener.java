@@ -17,20 +17,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 /** Listener, which waits for new clients */
 public class NewClientListener implements Runnable, Closeable {
 
-
-  /* private fields */
   private ServerSocket serverSocket;
   private Thread thread;
 
-  /* final fields */
   private final BlockingQueue<Client> queue;
 
-
-  /* static fields */
   protected static final Logger logger = LoggerFactory.getLogger(NewClientListener.class);
   public static int lastUsedPort = 0;
 
-  /* constructor */
   NewClientListener() {
     this.serverSocket = null;
     this.thread = null;
@@ -38,8 +32,8 @@ public class NewClientListener implements Runnable, Closeable {
   }
 
   /**
-   * Returns a new connected client, if a new one is available. Otherwise this
-   * method blocks until a new client connects.
+   * Returns a new connected client, if a new one is available.
+   * Otherwise this method blocks until a new client connects.
    *
    * @throws InterruptedException If interrupted while waiting for a new client.
    */
@@ -47,7 +41,7 @@ public class NewClientListener implements Runnable, Closeable {
     return this.queue.take();
   }
 
-  /** Accept clients in blocking mode */
+  /** Wait for a client to connect and add it to the queue. */
   private void acceptClient() {
     try {
       Socket clientSocket = this.serverSocket.accept();
@@ -72,7 +66,7 @@ public class NewClientListener implements Runnable, Closeable {
     }
   }
 
-  /** infinite loop to wait asynchronously for clients */
+  /** Infinite loop to wait asynchronously for clients. */
   @Override
   public void run() {
     while (!this.serverSocket.isClosed() && !Thread.interrupted()) {
@@ -82,9 +76,9 @@ public class NewClientListener implements Runnable, Closeable {
   }
 
   /**
-   * Start the listener and create a daemon thread from this object
+   * Start the listener and create a daemon thread from this object.
    *
-   * @throws IOException
+   * The SocketListener then watches the {@link Configuration#getPort()} for new connecting clients.
    */
   public void start() throws IOException {
     startSocketListener();
@@ -95,7 +89,7 @@ public class NewClientListener implements Runnable, Closeable {
   }
 
   /**
-   * Start the listener, whilst opening a port
+   * Start listening on the configured port.
    *
    * @throws IOException if server could not be started on set port
    */
@@ -119,7 +113,7 @@ public class NewClientListener implements Runnable, Closeable {
     }
   }
 
-  /** close the socket */
+  /** Close the socket. */
   @Override
   public void close() {
     try {

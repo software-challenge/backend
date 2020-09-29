@@ -24,7 +24,6 @@ import java.util.*;
  * which seem to be dead-locked or have caused a timeout.
  */
 public class GameRoomManager {
-  /* Private fields  */
   private Map<String, GameRoom> rooms;
   private GamePluginApi pluginApi;
 
@@ -86,7 +85,7 @@ public class GameRoomManager {
     logger.info("Created new game of type " + gameType);
 
     String roomId = generateRoomId();
-    GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(), prepared);
+    GameRoom room = new GameRoom(roomId, this, plugin.getPlugin().getScoreDefinition(), plugin.createGame(), prepared);
     // pause room if specified in server.properties on joinRoomRequest
     if (!prepared) {
       boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
@@ -106,10 +105,10 @@ public class GameRoomManager {
       logger.debug("Turns is to load is: " + turn);
       if (turn > 0) {
         logger.debug("Loading from non default turn");
-        room.getGame().loadFromFile(gameFile, turn);
+        room.game.loadFromFile(gameFile, turn);
       } else {
         logger.debug("Loading first gameState found");
-        room.getGame().loadFromFile(gameFile);
+        room.game.loadFromFile(gameFile);
       }
     }
 
@@ -123,12 +122,9 @@ public class GameRoomManager {
   }
 
   /**
-   * Open new GameRoom and join Client
+   * Open new GameRoom and join the client.
    *
-   * @param client   Client to join the game
-   * @param gameType String of current game
-   *
-   * @return GameRoomMessage for new GameRoom, null im unsuccessful
+   * @return GameRoomMessage with roomId, null if unsuccessful
    *
    * @throws RescuableClientException if game could not be created
    */
@@ -142,12 +138,9 @@ public class GameRoomManager {
   }
 
   /**
-   * Called after JoinRoomRequest. Client joins already existing GameRoom or opens new one
+   * Called on JoinRoomRequest. Client joins an already existing open GameRoom or opens new one and joins.
    *
-   * @param client   to join the game
-   * @param gameType String of current game
-   *
-   * @return GameRoomMessage with roomId an success null if unsuccessful
+   * @return GameRoomMessage with roomId, null if unsuccessful
    *
    * @throws RescuableClientException if client could not join room
    */
@@ -162,7 +155,7 @@ public class GameRoomManager {
     return createAndJoinGame(client, gameType);
   }
 
-  /** Create an unmodifiable Collection of the {@link GameRoom GameRooms} */
+  /** Create an unmodifiable Collection of the {@link GameRoom GameRooms}. */
   public synchronized Collection<GameRoom> getGames() {
     return Collections.unmodifiableCollection(this.rooms.values());
   }
@@ -176,14 +169,10 @@ public class GameRoomManager {
   }
 
   /**
-   * Creates a new GameRoom {@link #createGame(String) createGame}, set descriptors of PlayerSlots,
-   * if exists load state of game from file
+   * Creates a new GameRoom through {@link #createGame(String) createGame} with reserved PlayerSlots according to the
+   * descriptors and loads a game state from a file if provided.
    *
-   * @param gameType     String of current game
-   * @param descriptors  which are displayName, canTimeout and shouldBePaused
-   * @param loadGameInfo Object for game information
-   *
-   * @return new PrepareGameProtocolMessage with roomId and slots
+   * @return new PrepareGameProtocolMessage with roomId and slot reservations
    *
    * @throws RescuableClientException if game could not be created
    */
@@ -193,18 +182,16 @@ public class GameRoomManager {
     room.openSlots(descriptors);
 
     if (loadGameInfo != null) {
-      room.getGame().loadGameInfo(loadGameInfo);
+      room.game.loadGameInfo(loadGameInfo);
     }
 
     return new PrepareGameProtocolMessage(room.getId(), room.reserveAllSlots());
   }
 
   /**
-   * Calls {@link #prepareGame}
+   * Overload for {@link #prepareGame}.
    *
-   * @param prepared PrepareGameRequest with gameType and slotsDescriptors
-   *
-   * @return new PrepareGameProtocolMessage with roomId and slots
+   * @return new PrepareGameProtocolMessage with roomId and slot reservations
    *
    * @throws RescuableClientException if game could not be created
    */
@@ -217,16 +204,13 @@ public class GameRoomManager {
   }
 
   /**
-   * Getter for GameRoom
-   *
    * @param roomId String Id of room to be found
    *
-   * @return returns GameRoom specified by rooId
+   * @return returns GameRoom specified by roomId
    *
    * @throws RescuableClientException if no room could be found
    */
-  public synchronized GameRoom findRoom(String roomId)
-          throws RescuableClientException {
+  public synchronized GameRoom findRoom(String roomId) throws RescuableClientException {
     GameRoom room = this.rooms.get(roomId);
 
     if (room == null) {
@@ -236,11 +220,7 @@ public class GameRoomManager {
     return room;
   }
 
-  /**
-   * Remove specified room from game
-   *
-   * @param gameRoom to be removed
-   */
+  /** Remove specified room from this manager. */
   public void remove(GameRoom gameRoom) {
     this.rooms.remove(gameRoom.getId());
   }
@@ -250,16 +230,14 @@ public class GameRoomManager {
   }
 
   /**
-   * Called by gameRoom after game ended and test mode enabled to save results in playerScores
+   * Called by gameRoom after game ended and test mode enabled to save results in playerScores.
    *
-   * @param result       GameResult
-   * @param playerScores List of playerScores
    * @param name1        displayName of player1
    * @param name2        displayName of player2
    *
    * @throws InvalidScoreDefinitionException if scoreDefinitions do not match
    */
-  public void addResultToScore(GameResult result, List<PlayerScore> playerScores, String name1, String name2) throws InvalidScoreDefinitionException {
+  public void addResultToScore(GameResult result, String name1, String name2) throws InvalidScoreDefinitionException {
     if (name1.equals(name2)) {
       logger.warn("Both player playerScores have the same displayName. Won't save test relevant data");
       return;
@@ -283,9 +261,10 @@ public class GameRoomManager {
       this.scores.add(secondScore);
     }
 
+    final List<PlayerScore> playerScores = result.getScores();
     firstScore.setNumberOfTests(firstScore.getNumberOfTests() + 1);
     secondScore.setNumberOfTests(secondScore.getNumberOfTests() + 1);
-    for (int i = 0; i < scoreDefinition.size(); i++) {
+    for (int i = 0; i < scoreDefinition.getSize(); i++) {
       ScoreFragment fragment = scoreDefinition.get(i);
       ScoreValue firstValue = firstScore.getScoreValues().get(i);
       ScoreValue secondValue = secondScore.getScoreValues().get(i);
@@ -293,27 +272,22 @@ public class GameRoomManager {
         logger.error("Could not add current game result to score. Score definition of player and result do not match.");
         throw new InvalidScoreDefinitionException("ScoreDefinition of player does not match expected score definition");
       }
-      // average = oldaverage * ((#tests - 1)/ #tests) + newValue / #tests
       if (fragment.getAggregation().equals(ScoreAggregation.AVERAGE)) {
-        firstValue.setValue((firstValue.getValue().
-                multiply(
-                        (new BigDecimal(firstScore.getNumberOfTests() - 1)
-                                .divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
-                )).add(
-                playerScores.get(0).getValues().get(i).divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
-        secondValue.setValue((secondValue.getValue().
-                multiply(
-                        (new BigDecimal(secondScore.getNumberOfTests() - 1)
-                                .divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
-                )).add(
-                playerScores.get(1).getValues().get(i).divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
-        firstValue.setValue(firstValue.getValue().round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2)));
-        secondValue.setValue(secondValue.getValue().round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2)));
+        firstValue.setValue(updateAverage(firstValue.getValue(), firstScore.getNumberOfTests(), playerScores.get(0).getValues().get(i)));
+        secondValue.setValue(updateAverage(secondValue.getValue(), secondScore.getNumberOfTests(), playerScores.get(1).getValues().get(i)));
       } else if (fragment.getAggregation().equals(ScoreAggregation.SUM)) {
         firstValue.setValue(firstValue.getValue().add(playerScores.get(0).getValues().get(i)));
         secondValue.setValue(secondValue.getValue().add(playerScores.get(1).getValues().get(i)));
       }
     }
+  }
+
+  /** Calculates a new average value: average = oldAverage * ((#amount - 1)/ #amount) + newValue / #amount */
+  private BigDecimal updateAverage(BigDecimal oldAverage, int amount, BigDecimal newValue) {
+    BigDecimal decAmount = new BigDecimal(amount);
+    return oldAverage.multiply(decAmount.subtract(BigDecimal.ONE).divide(decAmount, Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+            .add(newValue.divide(decAmount, Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+            .round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2));
   }
 
 }

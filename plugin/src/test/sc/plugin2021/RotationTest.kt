@@ -1,7 +1,7 @@
 package sc.plugin2021
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.core.spec.style.StringSpec
 
 class RotationTest: StringSpec ({
     "Rotations can get rotated" {
