@@ -43,10 +43,8 @@ data class PlayerScore(
     fun toString(definition: ScoreDefinition): String {
         if(!matches(definition))
             throw IllegalArgumentException("$definition does not match $this")
-        return "PlayerScore(cause=$cause, reason='$reason', parts=[${(0..parts.lastIndex).joinToString { i -> "${definition.get(i).name}=${parts[i]}" }}])"
+        return "PlayerScore(cause=$cause, reason='$reason', parts=[${parts.withIndex().joinToString { "${definition[it.index].name}=${it.value}" }}])"
     }
     
-    override fun toString(): String {
-        return "PlayerScore(cause=$cause, reason='$reason', parts=${parts.contentToString()})"
-    }
+    override fun toString(): String = "PlayerScore(cause=$cause, reason='$reason', parts=${parts.contentToString()})"
 }

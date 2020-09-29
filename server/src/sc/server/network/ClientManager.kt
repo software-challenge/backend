@@ -92,7 +92,7 @@ class ClientManager : Runnable, IClientListener {
 
     /** Remove disconnected client. */
     override fun onClientDisconnected(source: Client) {
-        logger.info("Removing client {} from client manager", source)
+        logger.info("Removing client $source from client manager")
         clients.remove(source)
     }
 

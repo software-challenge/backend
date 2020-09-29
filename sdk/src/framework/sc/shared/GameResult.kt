@@ -18,7 +18,7 @@ data class GameResult(
         get() = scores.all { it.cause == ScoreCause.REGULAR }
     
     override fun toString() =
-            "GameResult(winner=$winners, scores=[${(0..scores.lastIndex).joinToString { i -> "Player${i + 1}${scores[i].toString(definition).removePrefix("PlayerScore")}" }}])"
+            "GameResult(winner=$winners, scores=[${scores.withIndex().joinToString { "Player${it.index + 1}${it.value.toString(definition).removePrefix("PlayerScore")}" }}])"
     
     override fun equals(other: Any?) =
             other is GameResult &&

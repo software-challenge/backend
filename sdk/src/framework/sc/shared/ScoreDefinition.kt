@@ -9,7 +9,7 @@ class ScoreDefinition(
         private val fragments: Array<ScoreFragment>
 ): Iterable<ScoreFragment>, RandomAccess {
     
-    constructor(vararg fragments: String): this(fragments.map { ScoreFragment(it) }.toTypedArray())
+    constructor(vararg fragments: String): this(Array<ScoreFragment>(fragments.size) { ScoreFragment(fragments[it]) })
     
     val size
         get() = fragments.size
