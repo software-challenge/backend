@@ -3,7 +3,7 @@ git
 gradle
 travis
 
-# Subprojects
+# Modules
 testclient
 player
 server

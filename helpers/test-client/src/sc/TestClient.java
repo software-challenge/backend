@@ -10,7 +10,7 @@ import sc.framework.plugins.Player;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
-import sc.plugin2020.util.Constants;
+import sc.plugin2021.util.Constants;
 import sc.protocol.helpers.LobbyProtocol;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
@@ -268,8 +268,7 @@ public class TestClient extends XStreamClient {
                 logger.error("{} crashed, look into {}", player.name, logDir);
                 exit(2);
               }
-            // Max game length: turns(Roundlimit * 2) * turnlength(2 seconds), one second buffer per round
-            if (slept > Constants.ROUND_LIMIT * 5) {
+            if (slept > Constants.GAME_TIMEOUT) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
             }
