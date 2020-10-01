@@ -85,7 +85,7 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
             transformations[rotation to shouldFlip] ?: emptySet()
     
     /** Berechnet die gewollte Transformation. */
-    fun legacyTransform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
+    private fun legacyTransform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
             coordinates.rotate(rotation).flip(shouldFlip)
     
     companion object {
