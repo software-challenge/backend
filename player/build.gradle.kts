@@ -64,16 +64,13 @@ tasks {
     }
     
     val deploy by creating(Zip::class) {
-        dependsOn(shadowJar.get(), prepareZip)
+        dependsOn(shadowJar, prepareZip)
         destinationDirectory.set(deployDir)
         archiveFileName.set("simpleclient-$gameName-src.zip")
         from(prepareZip.destinationDir)
         doFirst {
-            copy {
-                from("build/libs")
-                into(deployDir)
-                rename("defaultplayer.jar", project.property("deployedPlayer") as String)
-            }
+            shadowJar.get().outputs.files.singleFile.copyTo(
+                    deployDir.resolve(project.property("deployedPlayer") as String), true)
         }
     }
     
@@ -81,17 +78,18 @@ tasks {
         args = System.getProperty("args", "").split(" ")
     }
     
-    val playerTest by creating {
+    val playerTest by creating(Copy::class) {
         dependsOn(prepareZip)
         val execDir = File(System.getProperty("java.io.tmpdir")).resolve("socha-player")
         doFirst {
             execDir.deleteRecursively()
             execDir.mkdirs()
-            
-            copy {
-                from(prepareZip.destinationDir)
-                into(execDir)
-            }
+        }
+        
+        from(prepareZip.destinationDir)
+        into(execDir)
+        
+        doLast {
             val command = arrayListOf(if(OperatingSystem.current() == OperatingSystem.WINDOWS) "./gradlew.bat" else "./gradlew", "shadowJar", "--quiet", "--offline")
             testLogDir.mkdirs()
             val process = ProcessBuilder(command).directory(execDir)

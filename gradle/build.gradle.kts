@@ -62,7 +62,7 @@ tasks {
         dependsOn(doc)
         dependOnSubprojects()
         group = "distribution"
-        description = "Zips everything up for release into build/deploy/"
+        description = "Zips everything up for release into ${deployDir.relativeTo(projectDir)}"
         outputs.dir(deployDir)
     }
     
