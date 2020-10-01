@@ -25,7 +25,7 @@ class SetMove(val piece: Piece): Move() {
 
 /** Ein Zug, der die Farbe aus dem Spiel entfernt. */
 @XStreamAlias(value = "passmove")
-class PassMove(override val color: Color): Move() {
+private class PassMove(override val color: Color): Move() {
     override fun toString(): String = "$color passed"
 }
 
