@@ -4,11 +4,9 @@ import sc.plugin2021.*
 import sc.shared.InvalidMoveException
 import java.lang.IndexOutOfBoundsException
 
-/**
- * A Collection of methods callable on specific Sets or functions that take Sets as input.
- */
+// A Collection of methods callable on specific Sets or functions that take Sets as input.
 
-/** Rotates the given shape based on the given rotation. */
+/** Drehe die Koordinaten um die gegebene Anzahl an Rotationen. */
 fun Set<Coordinates>.rotate(rotation: Rotation): Set<Coordinates> = when(rotation) {
     Rotation.NONE   -> this
     Rotation.RIGHT  -> turnRight().align()
@@ -16,7 +14,7 @@ fun Set<Coordinates>.rotate(rotation: Rotation): Set<Coordinates> = when(rotatio
     Rotation.LEFT   -> turnLeft().align()
 }
 
-/** Flips the given shape along the y-axis. */
+/** Spiegel die Koordinaten entlang der y-Achse. */
 fun Set<Coordinates>.flip(shouldFlip: Boolean = true): Set<Coordinates> = when(shouldFlip) {
     false -> this
     true  -> this.map {
@@ -24,26 +22,31 @@ fun Set<Coordinates>.flip(shouldFlip: Boolean = true): Set<Coordinates> = when(s
     }.toSet().align()
 }
 
-/** Performs a 180 degrees rotation. */
+/** Drehe die Koordinaten um 180 Grad. */
 fun Set<Coordinates>.mirror(): Set<Coordinates> {
     return map {
         Coordinates(-it.x, -it.y)
     }.toSet()
 }
 
+/** Drehe die Koordinaten 90 Grad im Uhrzeigersinn. */
 fun Set<Coordinates>.turnRight(): Set<Coordinates> {
     return map {
         Coordinates(-it.y, it.x)
     }.toSet()
 }
 
+/** Drehe die Koordinaten 90 Grad gegen den Uhrzeigersinn. */
 fun Set<Coordinates>.turnLeft(): Set<Coordinates> {
     return map {
         Coordinates(it.y, -it.x)
     }.toSet()
 }
 
-/** Aligns a the coordinates along the x/y-axes (thus, the lowest coordinate is 0). */
+/**
+ * Bewege die Koordinaten in die linke obere Ecke (Punkt(0, 0)).
+ * (Dabei werden die Puknte effektiv an den beiden Achsen angelegt).
+ */
 fun Set<Coordinates>.align(): Set<Coordinates> {
     var minX = Constants.BOARD_SIZE
     var minY = Constants.BOARD_SIZE
@@ -56,7 +59,10 @@ fun Set<Coordinates>.align(): Set<Coordinates> {
     }.toSet()
 }
 
-/** Returns the rectangular area the Set of Coordinates lies in. */
+/**
+ * Berechne die Ausmaße des kleinstmöglichen Rechtecks, welches alle Koordinaten umfasst.
+ * @return ein Vector von der linken oberen Ecke zur rechten unteren Ecke
+ */
 fun Set<Coordinates>.area(): Vector {
     var dx = 0
     var dy = 0
@@ -67,12 +73,15 @@ fun Set<Coordinates>.area(): Vector {
     return Vector(dx, dy)
 }
 
-/** Prints an ascii art of the piece. */
+/**
+ * Gebe die Form der Koordinaten zur Konsole aus.
+ * @param dimension die Ausmaße der entstehenden Graphik
+ */
 fun Set<Coordinates>.print(dimension: Vector = area()) {
     printShapes(this, dimension = dimension)
 }
 
-/** Prints all given shapes next to each other. */
+/** Gebe die gegebenen Formen zur Konsole aus, alle in gegebenen Ausmaßen. */
 fun printShapes(vararg shapes: Set<Coordinates>, dimension: Vector = Vector(4, 5)) {
     if (shapes.any{it.area() < dimension})
         throw IndexOutOfBoundsException("The largest shape has to fit in the given dimension")
@@ -94,6 +103,6 @@ fun printShapes(vararg shapes: Set<Coordinates>, dimension: Vector = Vector(4, 5
     println()
 }
 
-/** Filters all moves, returning only those who pass the validation functions. */
+/** Entferne alle Züge, die nicht auf den gegebenen Spielstand anwendbar sind. */
 fun Set<SetMove>.filterValidMoves(gameState: GameState): Set<SetMove> =
         filter { GameRuleLogic.isValidSetMove(gameState, it) }.toSet()
