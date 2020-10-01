@@ -85,14 +85,6 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.getPointsFromUndeployed(fewPieces, true) shouldBe
                 GameRuleLogic.SUM_MAX_SQUARES - fewPieces.map{it.coordinates.size}.sum()
     }
-    "After the color check, PassMoves remove the color" {
-        val state = GameState()
-        assertDoesNotThrow {
-            GameRuleLogic.performMove(state, PassMove(Color.BLUE))
-        }
-        state.orderedColors.size shouldBe 3
-        state.currentColor shouldBe Color.YELLOW
-    }
     "All possible start moves get calculated" {
         val piece = PieceShape.PENTO_W
         var state = GameState(startPiece = piece)

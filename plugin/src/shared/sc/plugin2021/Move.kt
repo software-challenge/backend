@@ -23,12 +23,6 @@ class SetMove(val piece: Piece): Move() {
     override fun hashCode(): Int = piece.hashCode()
 }
 
-/** Ein Zug, der die Farbe aus dem Spiel entfernt. */
-@XStreamAlias(value = "passmove")
-private class PassMove(override val color: Color): Move() {
-    override fun toString(): String = "$color passed"
-}
-
 /** Ein Zug, der die aktuelle Runde aussetzt. */
 @XStreamAlias(value = "skipmove")
 class SkipMove(override val color: Color): Move() {

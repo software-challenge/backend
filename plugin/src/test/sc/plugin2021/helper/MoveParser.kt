@@ -18,8 +18,8 @@ object MoveParser {
         val pieceFragments = move.split("|")
         val color = Color.valueOf(pieceFragments[0])
         
-        if (pieceFragments[1] == "pass")
-            return PassMove(color)
+        if (pieceFragments[1] == "skip")
+            return SkipMove(color)
         
         val type = pieceFragments[1].split(":")
         val kind: PieceShape = if (type[0].toIntOrNull() != null)
@@ -41,7 +41,7 @@ object MoveParser {
                 "BLUE|3:0:0|3,18"   to SetMove(Piece(Color.BLUE, 3, Rotation.NONE, false, Coordinates(3, 18))),
                 "YELLOW|14:1:1|0,2" to SetMove(Piece(Color.YELLOW, 14, Rotation.RIGHT, true, Coordinates(0, 2))),
                 "RED|10:3:0|13,15"  to SetMove(Piece(Color.RED, 10, Rotation.LEFT, false, Coordinates(13, 15))),
-                "GREEN|pass" to PassMove(Color.GREEN)
+                "GREEN|skip" to SkipMove(Color.GREEN)
         ).forEach{
             parse(it.first).toString() shouldBe it.second.toString()
         }
@@ -49,7 +49,7 @@ object MoveParser {
                 "BLUE|TRIO_I:0:0|3,18"   to SetMove(Piece(Color.BLUE, 3, Rotation.NONE, false, Coordinates(3, 18))),
                 "YELLOW|PENTO_I:1:1|0,2" to SetMove(Piece(Color.YELLOW, 14, Rotation.RIGHT, true, Coordinates(0, 2))),
                 "RED|PENTO_T:3:0|13,15"  to SetMove(Piece(Color.RED, 10, Rotation.LEFT, false, Coordinates(13, 15))),
-                "GREEN|pass" to PassMove(Color.GREEN)
+                "GREEN|skip" to SkipMove(Color.GREEN)
         ).forEach{
             parse(it.first).toString() shouldBe it.second.toString()
         }

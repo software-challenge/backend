@@ -48,7 +48,6 @@ object GameRuleLogic {
 
         when (move) {
             is SkipMove -> performSkipMove(gameState)
-            is PassMove -> performPassMove(gameState)
             is SetMove -> performSetMove(gameState, move)
         }
         gameState.lastMove = move
@@ -164,10 +163,6 @@ object GameRuleLogic {
             throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
     }
 
-    private fun performPassMove(gameState: GameState) {
-        gameState.removeActiveColor()
-    }
-    
     /** Check if the given [position] is already obstructed by another piece. */
     @JvmStatic
     private fun isObstructed(board: Board, position: Coordinates): Boolean =

@@ -44,7 +44,7 @@ class Logic(private val client: SimpleClient): IGameHandler{
         
         /** Ein zufälliger, valider Move wird an den Server zurückgesendet. */
         sendAction(
-                if (possibleMoves.isEmpty()) PassMove(gameState.currentColor)
+                if (possibleMoves.isEmpty()) SkipMove(gameState.currentColor)
                 else possibleMoves.random())
     }
     
