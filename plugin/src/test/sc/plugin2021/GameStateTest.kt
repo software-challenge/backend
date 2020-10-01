@@ -69,14 +69,14 @@ class GameStateTest: StringSpec({
     }
     "XML conversion works" {
         val state = GameState()
+        val transformed = xStream.fromXML(xStream.toXML(GameState(startPiece = state.startPiece))) as GameState
+        transformed.toString() shouldBe state.toString()
+        transformed            shouldBe state
     
-        xStream.fromXML(xStream.toXML(state)).toString() shouldBe state.toString()
-        xStream.fromXML(xStream.toXML(state))            shouldBe state
-        
-        val transformed = xStream.fromXML(xStream.toXML(GameState())) as GameState
-        transformed.deployedPieces shouldBe null
         GameRuleLogic.isFirstMove(transformed) shouldBe true
+        transformed.deployedPieces shouldBe null
         transformed.getPointsForPlayer(Team.ONE)
+        transformed.board.isEmpty()
     }
     "GameStates advance accordingly" {
         var state = GameState(startTurn = 2)

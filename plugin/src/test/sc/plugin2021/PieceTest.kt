@@ -8,6 +8,7 @@ import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import org.opentest4j.AssertionFailedError
 import sc.plugin2021.GamePlugin.Companion.xStream
+import sc.plugin2021.helper.shouldSerializeTo
 import sc.plugin2021.util.*
 
 
@@ -186,12 +187,8 @@ class PieceTest: StringSpec({
                       <position x="5" y="9"/>
                     </piece>
                 """.trimIndent())
-        ) {piece, xml ->
-            xStream.toXML(piece) shouldBe xml
-            
-            val converted = xStream.fromXML(xStream.toXML(piece)) as Piece
-            converted.toString() shouldBe piece.toString()
-            converted shouldBe piece
+        ) { piece, xml ->
+            piece shouldSerializeTo  xml
         }
     }
     "Piece transformation calculation" {

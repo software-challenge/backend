@@ -13,6 +13,9 @@ class Board(
                 Array(Constants.BOARD_SIZE) { Array(Constants.BOARD_SIZE) { FieldContent.EMPTY }}
 ): IBoard {
     
+    /** Checks that all fields of the board are [FieldContent.EMPTY]. */
+    fun isEmpty() = gameField.all { it.all { it == FieldContent.EMPTY } }
+    
     override fun getField(x: Int, y: Int): Field =
             get(x, y)
     
