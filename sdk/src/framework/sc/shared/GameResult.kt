@@ -5,6 +5,11 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.framework.plugins.Player
 import sc.protocol.responses.ProtocolMessage
 
+/**
+ * Das Endergebnis eines Spiels.
+ * @property scores die Punktzahlen aller Spieler.
+ * @property winners eine Liste an Gewinnern, sofern es welche gibt.
+ */
 @XStreamAlias(value = "result")
 data class GameResult(
         val definition: ScoreDefinition,
