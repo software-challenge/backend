@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.plugin2021.util.*
 import kotlin.math.max
 
+/** Eine Enumeration aller 21 verschiedenen Formen, als Set of [Coordinates]. */
 @XStreamAlias(value = "shape")
 enum class PieceShape(coordinates: Set<Coordinates>) {
 /* 0*/  MONO   (setOf(Coordinates(0, 0))),
@@ -30,21 +31,28 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
 /*19*/  PENTO_X(setOf(Coordinates(1, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(2, 1), Coordinates(1, 2))),
 /*20*/  PENTO_Y(setOf(Coordinates(0, 1), Coordinates(1, 0), Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3)));
     
-    
+    /** Die normalisierten Koordinaten, die die tatsächliche Form ausmachen. */
     @XStreamAsAttribute
     val coordinates: Set<Coordinates> = coordinates.align()
     
+    /** Ein Vector, der das kleinstmögliche Rechteck beschreibt, dass die vollständige Form umfasst. */
     @XStreamAsAttribute
     val dimension: Vector = coordinates.area()
     
+    /** Die Form als Sammlung aus Vektoren. */
     val asVectors: Set<Vector> by lazy {coordinates.map {it - Coordinates.origin}.toSet()}
     
+    /** Die Größe Der Form, als Anzahl an Feldern, die es belegt. */
     @XStreamOmitField
     val size: Int = coordinates.size
     
-    /** All different variants. Boiler plate for faster calculation of possible moves. */
+    // Boilerplate to make getPossibleMoves calculation faster, by removing duplicate variants
+    /**
+     * Eine Sammlung aller möglichen Varianten der Form, zusammen mit einer Transformation, die sie erzeugt hat.
+     * @see get */
     val variants: Map<Set<Coordinates>, Pair<Rotation, Boolean>>
     
+    /** Eine Map aller Transformationen sowie die entsprechende resultierende Variante. */
     val transformations: Map<Pair<Rotation, Boolean>, Set<Coordinates>>
     
     init {
@@ -61,19 +69,27 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
         transformations = mapTransformations
     }
     
-    /** Does the same thing as transform, providing the index operator. */
+    /**
+     * Index Operator, der die den Parametern entsprechende Variation zurückgibt.
+     * Syntax: PieceShape[Rotation, shouldFlip]
+     * @param rotation um wie viel die Form rotiert werden soll
+     * @param shouldFlip ob die Form entlang der y-Achse gespiegelt werden soll
+     * @return Ein Set an [Coordinates], welches die entsprechend gedrehte Variante der ursprünglichen Form ist.
+     */
     operator fun get(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
             transform(rotation, shouldFlip)
     
-    /** Returns a shape with all transformations applied. */
+    /** Transformiert die Form entsprechend.
+     * @see get */
     fun transform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
             transformations[rotation to shouldFlip] ?: emptySet()
     
-    /** Applies all the given transformations manually instead of looking them up. */
-    fun legacyTransform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
+    /** Berechnet die gewollte Transformation. */
+    private fun legacyTransform(rotation: Rotation, shouldFlip: Boolean): Set<Coordinates> =
             coordinates.rotate(rotation).flip(shouldFlip)
     
     companion object {
+        /** Eine Map, die anhand des Index' des Enums die entsprechende Form zurückgibt. */
         val shapes: Map<Int, PieceShape> = ((0 until Constants.TOTAL_PIECE_SHAPES) zip values()).toMap()
     }
 }

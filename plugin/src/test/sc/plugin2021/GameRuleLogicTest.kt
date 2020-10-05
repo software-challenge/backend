@@ -29,20 +29,8 @@ class GameRuleLogicTest: StringSpec({
         val gameState: GameState = GameState()
         gameState.board[Coordinates(1, 1)] = FieldContent.BLUE
 
-        assertThrows<InvalidMoveException> {
-            val invalidMove = SetMove(
-                    Piece(Color.BLUE, PieceShape.MONO, Rotation.NONE, false, Coordinates(-1, 2)))
-            GameRuleLogic.validateSetMove(gameState, invalidMove)
-        }
-        GameRuleLogic.isObstructed(gameState.board, Coordinates(1, 1)) shouldBe true
-        GameRuleLogic.isObstructed(gameState.board, Coordinates(0, 0)) shouldNotBe true
-
-        GameRuleLogic.bordersOnColor(gameState.board, Coordinates(1, 0), Color.BLUE) shouldBe true
-        GameRuleLogic.bordersOnColor(gameState.board, Coordinates(0, 0), Color.BLUE) shouldNotBe true
-
-        GameRuleLogic.cornersOnColor(gameState.board, Coordinates(0, 0), Color.BLUE) shouldBe true
-        GameRuleLogic.cornersOnColor(gameState.board, Coordinates(0, 0), Color.GREEN) shouldNotBe true
-        GameRuleLogic.cornersOnColor(gameState.board, Coordinates(1, 0), Color.BLUE) shouldNotBe true
+        val invalidMove = SetMove(Piece(Color.BLUE, PieceShape.MONO, Rotation.NONE, false, Coordinates(-1, 2)))
+        GameRuleLogic.isValidSetMove (gameState, invalidMove) shouldBe false
     }
     "The first piece's special rules work" {
         // PENTO_S is:   # # #
@@ -97,14 +85,6 @@ class GameRuleLogicTest: StringSpec({
         GameRuleLogic.getPointsFromUndeployed(fewPieces, true) shouldBe
                 GameRuleLogic.SUM_MAX_SQUARES - fewPieces.map{it.coordinates.size}.sum()
     }
-    "After the color check, PassMoves remove the color" {
-        val state = GameState()
-        assertDoesNotThrow {
-            GameRuleLogic.performMove(state, PassMove(Color.BLUE))
-        }
-        state.orderedColors.size shouldBe 3
-        state.currentColor shouldBe Color.YELLOW
-    }
     "All possible start moves get calculated" {
         val piece = PieceShape.PENTO_W
         var state = GameState(startPiece = piece)
@@ -156,9 +136,6 @@ class GameRuleLogicTest: StringSpec({
         IS shouldContainExactlyInAnyOrder SHOULD
     
         state = GameState()
-        GameRuleLogic.getPossibleMoves(state) shouldContainExactlyInAnyOrder
-                GameRuleLogic.getAllMoves().filterValidMoves(state)
-    
         GameRuleLogic.getPossibleMoves(state) shouldContainExactlyInAnyOrder
                 GameRuleLogic.getPossibleMoves(state).filterValidMoves(state)
     }

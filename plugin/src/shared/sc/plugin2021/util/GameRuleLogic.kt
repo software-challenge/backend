@@ -4,14 +4,24 @@ import org.slf4j.LoggerFactory
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
 
+/**
+ * Eine Sammlung an Funktionen, die die Spielregeln logisch umsetzen.
+ * Sie beinhalten primär Funktionen, um
+ * * den Spielstand zu modifizieren
+ * * mögliche Züge zu berechnen
+ * * und die Punkte einer Farbe zu berechnen.
+ */
 object GameRuleLogic {
     val logger = LoggerFactory.getLogger(GameRuleLogic::class.java)
     
     const val SUM_MAX_SQUARES = 89
     
     /**
-     * Calculates the score for a given set of unused [PieceShape]s.
-     * Needs an additional flag to give out 5 extra points if the Monomino was placed last.
+     * Berechne den Punktestand anhand der gegebenen [PieceShape]s.
+     * @param undeployed eine Sammlung aller nicht gelegten [PieceShape]s
+     * @param monoLast ob der letzte gelegte Stein das Monomino war
+     *
+     * @return die erreichte Punktezahl
      */
     @JvmStatic
     fun getPointsFromUndeployed(undeployed: Set<PieceShape>, monoLast: Boolean = false): Int {
@@ -26,7 +36,11 @@ object GameRuleLogic {
         return SUM_MAX_SQUARES - undeployed.map{ it.coordinates.size }.sum()
     }
     
-    /** Performs the given [move] on the [gameState] if possible. */
+    /**
+     * Führe den gegebenen [Move] im gebenenen [GameState] aus.
+     * @param gameState der aktuelle Spielstand
+     * @param move der auszuführende Zug
+     */
     @JvmStatic
     fun performMove(gameState: GameState, move: Move) {
         if (Constants.VALIDATE_MOVE)
@@ -34,22 +48,21 @@ object GameRuleLogic {
 
         when (move) {
             is SkipMove -> performSkipMove(gameState)
-            is PassMove -> performPassMove(gameState)
             is SetMove -> performSetMove(gameState, move)
         }
         gameState.lastMove = move
     }
     
-    /** Checks if the given [move] has the right [Color]. */
+    /** Check if the given [move] has the right [Color]. */
     @JvmStatic
-    fun validateMoveColor(gameState: GameState, move: Move) {
+    private fun validateMoveColor(gameState: GameState, move: Move) {
         if (move.color != gameState.currentColor)
             throw InvalidMoveException("Expected move from ${gameState.currentColor}", move)
     }
     
-    /** Checks if the given [move] is able to be performed for the given [gameState]. */
+    /** Check if the given [move] is able to be performed for the given [gameState]. */
     @JvmStatic
-    fun validateSetMove(gameState: GameState, move: SetMove) {
+    private fun validateSetMove(gameState: GameState, move: SetMove) {
         // Check whether the color's move is currently active
         validateMoveColor(gameState, move)
         // Check whether the shape is valid
@@ -68,9 +81,9 @@ object GameRuleLogic {
         }
     }
 
-    /** Performs the given [SetMove]. */
+    /** Perform the given [SetMove]. */
     @JvmStatic
-    fun performSetMove(gameState: GameState, move: SetMove) {
+    private fun performSetMove(gameState: GameState, move: SetMove) {
         validateSetMove(gameState, move)
 
         if (Constants.VALIDATE_MOVE)
@@ -87,9 +100,9 @@ object GameRuleLogic {
         gameState.tryAdvance()
     }
 
-    /** Validates the [PieceShape] of a [SetMove] depending on the current [GameState]. */
+    /** Validate the [PieceShape] of a [SetMove] depending on the current [GameState]. */
     @JvmStatic
-    fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor) {
+    private fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor) {
         if (isFirstMove(gameState)) {
             if (shape != gameState.startPiece)
                 throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
@@ -99,7 +112,13 @@ object GameRuleLogic {
         }
     }
 
-    /** @return true if [move] is valid, false otherwise. */
+    /**
+     * Prüft, ob der gegebene [Move] zulässig ist.
+     * @param gameState der aktuelle Spielstand
+     * @param move der zu überprüfende Zug
+     *
+     * @return ob der Zug zulässig ist
+     */
     @JvmStatic
     fun isValidSetMove(gameState: GameState, move: SetMove) =
             try {
@@ -109,9 +128,9 @@ object GameRuleLogic {
                 false
             }
 
-    /** Validates a [SetMove] on a [board]. */
+    /** Validate a [SetMove] on a [board]. */
     @JvmStatic
-    fun validateSetMove(board: Board, move: SetMove) {
+    private fun validateSetMove(board: Board, move: SetMove) {
         move.piece.coordinates.forEach {
             try {
                 board[it]
@@ -127,35 +146,31 @@ object GameRuleLogic {
         }
     }
     
-    /** Places a Piece on the given [board] according to [move]. */
+    /** Place a Piece on the given [board] according to [move]. */
     @JvmStatic
-    fun performSetMove(board: Board, move: SetMove) {
+    private fun performSetMove(board: Board, move: SetMove) {
         move.piece.coordinates.forEach {
             board[it] = +move.color
         }
     }
 
-    /** Skips a turn. */
+    /** Skip a turn. */
     @JvmStatic
-    fun performSkipMove(gameState: GameState) {
+    private fun performSkipMove(gameState: GameState) {
         if (!gameState.tryAdvance())
             logger.error("Couldn't proceed to next turn!")
         if (isFirstMove(gameState))
             throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
     }
 
-    fun performPassMove(gameState: GameState) {
-        gameState.removeActiveColor()
-    }
-    
-    /** Checks if the given [position] is already obstructed by another piece. */
+    /** Check if the given [position] is already obstructed by another piece. */
     @JvmStatic
-    fun isObstructed(board: Board, position: Coordinates): Boolean =
+    private fun isObstructed(board: Board, position: Coordinates): Boolean =
             board[position].content != FieldContent.EMPTY
     
-    /** Checks if the given [position] already borders on another piece of same [color]. */
+    /** Check if the given [position] already borders on another piece of same [color]. */
     @JvmStatic
-    fun bordersOnColor(board: Board, position: Coordinates, color: Color): Boolean = listOf(
+    private fun bordersOnColor(board: Board, position: Coordinates, color: Color): Boolean = listOf(
             Vector(1, 0),
             Vector(0, 1),
             Vector(-1, 0),
@@ -165,9 +180,9 @@ object GameRuleLogic {
         } catch (e: ArrayIndexOutOfBoundsException) { false }
     }
     
-    /** Returns true if the given [Coordinates] touch a corner of a field of same color. */
+    /** Return true if the given [Coordinates] touch a corner of a field of same color. */
     @JvmStatic
-    fun cornersOnColor(board: Board, position: Coordinates, color: Color): Boolean = listOf(
+    private fun cornersOnColor(board: Board, position: Coordinates, color: Color): Boolean = listOf(
             Vector(1, 1),
             Vector(1, -1),
             Vector(-1, -1),
@@ -177,45 +192,46 @@ object GameRuleLogic {
         } catch (e: ArrayIndexOutOfBoundsException) { false }
     }
     
-    /** Returns true if the given [Coordinates] are a corner. */
+    /** Return true if the given [Coordinates] are a corner. */
     @JvmStatic
-    fun isOnCorner(position: Coordinates): Boolean =
+    private fun isOnCorner(position: Coordinates): Boolean =
             Corner.asSet().contains(position)
     
+    /** Gib zurück, ob sich der [GameState] noch in der ersten Runde befindet. */
     @JvmStatic
     fun isFirstMove(gameState: GameState) =
             gameState.undeployedPieceShapes(gameState.currentColor).size == Constants.TOTAL_PIECE_SHAPES
     
-    /** Returns a random pentomino which is not the `x` one (Used to get a valid starting piece). */
+    /** Return a random pentomino which is not the `x` one (Used to get a valid starting piece). */
     @JvmStatic
     fun getRandomPentomino() =
             PieceShape.values()
                     .filter{ it.size == 5 && it != PieceShape.PENTO_X }
                     .random()
     
-    /** Returns a list of all possible SetMoves. */
+    /** Gib eine Sammlung an möglichen [SetMove]s zurück. */
     @JvmStatic
     fun getPossibleMoves(gameState: GameState) =
             streamPossibleMoves(gameState).toSet()
     
-    /** Returns a list of all possible SetMoves, regardless of whether it's the first round. */
+    /** Return a list of all possible SetMoves, regardless of whether it's the first round. */
     @JvmStatic
-    fun getAllPossibleMoves(gameState: GameState) =
+    private fun getAllPossibleMoves(gameState: GameState) =
             streamAllPossibleMoves(gameState).toSet()
     
-    /** Returns a list of possible SetMoves if it's the first round. */
+    /** Return a list of possible SetMoves if it's the first round. */
     @JvmStatic
-    fun getPossibleStartMoves(gameState: GameState) =
+    private fun getPossibleStartMoves(gameState: GameState) =
             streamPossibleStartMoves(gameState).toSet()
     
     /**
-     * Returns a list of all moves, impossible or not.
+     * Return a list of all moves, impossible or not.
      *  There's no real usage, except maybe for cases where no Move validation happens
      *  if `Constants.VALIDATE_MOVE` is false, then this function should return the same
      *  Set as `::getPossibleMoves`
      */
     @JvmStatic
-    fun getAllMoves(): Set<SetMove> {
+    private fun getAllMoves(): Set<SetMove> {
         val moves = mutableSetOf<SetMove>()
         for (color in Color.values()) {
             for (shape in PieceShape.values()) {
@@ -233,7 +249,7 @@ object GameRuleLogic {
         return moves
     }
     
-    /** Ensures the currently active color of [gameState] can perform a move. */
+    /** Entferne alle Farben, die keine Steine mehr auf dem Feld platzieren können. */
     @JvmStatic
     fun removeInvalidColors(gameState: GameState) {
         if (gameState.orderedColors.isEmpty()) return
@@ -243,7 +259,7 @@ object GameRuleLogic {
         }
     }
     
-    /** Streams all possible moves in the current turn of [gameState]. */
+    /** Gib Eine Sequenz an möglichen [SetMove]s zurück. */
     @JvmStatic
     fun streamPossibleMoves(gameState: GameState) =
             if (isFirstMove(gameState))
@@ -251,9 +267,9 @@ object GameRuleLogic {
             else
                 streamAllPossibleMoves(gameState)
     
-    /** Streams all possible moves regardless of whether it's the first turn. */
+    /** Stream all possible moves regardless of whether it's the first turn. */
     @JvmStatic
-    fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
+    private fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
         val color = gameState.currentColor
         gameState.undeployedPieceShapes(color).map {
             val area = it.coordinates.area()
@@ -265,9 +281,9 @@ object GameRuleLogic {
         }
     }.filter { isValidSetMove(gameState, it) }
     
-    /** Streams all possible moves if it's the first turn of [gameState]. */
+    /** Stream all possible moves if it's the first turn of [gameState]. */
     @JvmStatic
-    fun streamPossibleStartMoves(gameState: GameState) = sequence<SetMove> {
+    private fun streamPossibleStartMoves(gameState: GameState) = sequence<SetMove> {
         val kind = gameState.startPiece
         for (variant in kind.variants) {
             for (corner in Corner.values()) {

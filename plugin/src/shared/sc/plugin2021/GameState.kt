@@ -12,13 +12,23 @@ import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import java.lang.Exception
 
+/**
+ * Der aktuelle Spielstand.
+ * Er hält alle Informationen zur momentanen Runde,
+ * mit deren Hilfe der nächste Zug berechnet werden kann.
+ */
 @XStreamAlias(value = "state")
 class GameState @JvmOverloads constructor(
+        /** Das erste Team, @see [Team]. */
         override var first: Player = Player(Team.ONE),
+        /** Das zweite Team, @see [Team]. */
         override var second: Player = Player(Team.TWO),
+        /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
         startTurn: Int = 0,
+        /** Die Farbe, die anfängt. */
         val startColor: Color = Color.BLUE,
+        /** Der Spielstein, der in der ersten Runde gesetzt werden muss. */
         @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino()
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
@@ -26,9 +36,11 @@ class GameState @JvmOverloads constructor(
         val logger = LoggerFactory.getLogger(GameState::class.java)
     }
     
+    /** Das aktuelle Spielfeld. */
     @XStreamAsAttribute
     override val board: Board = Board()
 
+    /** Gib eine Liste aller nicht gesetzter Steine der [Color] zurück. */
     fun undeployedPieceShapes(color: Color): MutableSet<PieceShape> = when (color) {
         Color.BLUE -> blueShapes
         Color.YELLOW -> yellowShapes
@@ -46,21 +58,26 @@ class GameState @JvmOverloads constructor(
         it to mutableListOf<Piece>()
     }.toMap()
     
+    /** Eine Map, die speichert, ob, wenn alle Steine gelegt wurden, das Monomino zuletzt gelegt wurde. */
     @XStreamAsAttribute
     val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
     
+    /** Das Team, das am Zug ist. */
     override val currentTeam
         get() = currentColor.team
 
+    /** Der Spieler, der am Zug ist. */
     override val currentPlayer
         get() = getPlayer(currentTeam)!!
     
+    /** Eine Liste aller Farben, die momentan im Spiel sind. */
     @XStreamAsAttribute
     val orderedColors: MutableList<Color> = mutableListOf()
     
     @XStreamAsAttribute
     private var currentColorIndex: Int = 0
     
+    /** Die Farbe, die am Zug ist. */
     val currentColor: Color
         get() = try {
             orderedColors[currentColorIndex]
@@ -73,6 +90,7 @@ class GameState @JvmOverloads constructor(
             throw GameLogicException("Trying to access the currently active color with invalid index")
         }
     
+    /** Die Anzahl an bereits getätigten Zügen. */
     @XStreamAsAttribute
     override var turn: Int = 0
         set(value) {
@@ -80,6 +98,7 @@ class GameState @JvmOverloads constructor(
             field = value
         }
     
+    /** Die Rundenanzahl. */
     @XStreamAsAttribute
     override var round: Int = 1
     
@@ -102,7 +121,12 @@ class GameState @JvmOverloads constructor(
         currentColorIndex = roundIncrementHelper % orderedColors.size
         round += (roundIncrementHelper - currentColorIndex) / orderedColors.size
     }
-
+    
+    /**
+     * Versuche, zum nächsten Zug überzugehen.
+     * Schlage fehl, wenn das Spiel bereits zu ende ist.
+     * @return Ob es erfolgreich war.
+     */
     fun tryAdvance(turns: Int = 1): Boolean = try {
         turn += turns
         true
@@ -116,19 +140,22 @@ class GameState @JvmOverloads constructor(
             Team.TWO -> second = player
         }
     }
-    
+
+    /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForPlayer(team: ITeam): Int =
             (team as Team).colors.map { getPointsForColor(it) }.sum()
-    
+
     private fun getPointsForColor(color: Color): Int {
         val pieces = undeployedPieceShapes(color)
         val lastMono = lastMoveMono[color] ?: false
         return GameRuleLogic.getPointsFromUndeployed(pieces, lastMono)
     }
     
-    /** Removes the currently active color from the queue.
-     *  The resulting active color will be the previous one; note that this is but a temporary value.
-     *  Do not do anything with currentColor before the turn is done for good.
+    /**
+     * Entferne die Farbe, die momentan am Zug ist.
+     * Die resultierende aktive Farbe wird dann die des letzten Zuges sein.
+     *
+     * Diese Funktion wird von der [GameRuleLogic] benötigt und sollte nie so aufgerufen werden.
      */
     fun removeActiveColor() {
         logger.info("Removing $currentColor from the game")
