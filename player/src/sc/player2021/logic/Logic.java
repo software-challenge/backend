@@ -13,6 +13,7 @@ import sc.shared.GameResult;
 import sc.api.plugins.ITeam;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Das Herz des Clients:
@@ -50,7 +51,7 @@ public class Logic implements IGameHandler {
   public void onRequestAction() {
     long startTime = System.currentTimeMillis();
     log.info("Es wurde ein Zug angefordert.");
-    List possibleMoves = List.copyOf(GameRuleLogic.getPossibleMoves(gameState));
+    List possibleMoves = new ArrayList<>(GameRuleLogic.getPossibleMoves(gameState));
     sendAction((Move) possibleMoves.get((int) (Math.random() * possibleMoves.size())));
   }
 
