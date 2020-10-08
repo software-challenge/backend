@@ -50,8 +50,8 @@ public class Logic implements IGameHandler {
   public void onRequestAction() {
     long startTime = System.currentTimeMillis();
     log.info("Es wurde ein Zug angefordert.");
-    List<Move> possibleMoves = GameRuleLogic.getPossibleMoves(gameState);
-    sendAction(possibleMoves.get((int) (Math.random() * possibleMoves.size())));
+    List possibleMoves = List.copyOf(GameRuleLogic.getPossibleMoves(gameState));
+    sendAction((Move) possibleMoves.get((int) (Math.random() * possibleMoves.size())));
   }
 
   /**

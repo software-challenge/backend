@@ -23,9 +23,11 @@ import kotlin.system.exitProcess
 abstract class AbstractClient @Throws(IOException::class) constructor(
         host: String,
         port: Int,
-        private val type: PlayerType = PlayerType.PLAYER_ONE
+        private val type: PlayerType
 ): ILobbyClientListener {
     
+    constructor(host: String, port: Int): this(host, port, PlayerType.PLAYER_ONE) {}
+
     companion object {
         private val logger = LoggerFactory.getLogger(AbstractClient::class.java);
         private val gameType = GamePlugin.PLUGIN_UUID
