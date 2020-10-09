@@ -1,5 +1,10 @@
 package sc.plugin2021.util
 
+/**
+ * Wird optional bei Validierung von Zügen zurückgegeben, falls ein Zug nicht valide ist.
+ * MoveMistakes entstehen bei Zügen, die theoretisch möglich sein könnten,
+ * es aber bei dem jeweiligen Spielstand nicht sind.
+ */
 enum class MoveMistake(val msg: String = "") {
     WRONG_COLOR("Die Farbe des Zuges ist nicht an der Reihe"),
     NOT_IN_CORNER("Der erste Zug muss auf eine freie Ecke gesetzt werden"),
