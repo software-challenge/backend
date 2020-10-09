@@ -1,7 +1,7 @@
 plugins {
     java
     application
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 sourceSets.main.get().java.srcDir("src")

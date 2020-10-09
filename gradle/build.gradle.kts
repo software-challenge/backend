@@ -7,12 +7,12 @@ import sc.gradle.ScriptsTask
 plugins {
     maven
     `java-library`
-    kotlin("jvm") version "1.3.71"
+    kotlin("jvm") version "1.4.10"
     id("org.jetbrains.dokka") version "0.9.17"
     id("scripts-task")
     
-    id("com.github.ben-manes.versions") version "0.31.0"
-    id("se.patrikerdes.use-latest-versions") version "0.2.14"
+    id("com.github.ben-manes.versions") version "0.33.0"
+    id("se.patrikerdes.use-latest-versions") version "0.2.15"
 }
 
 val gameName by extra { property("socha.gameName") as String }
@@ -34,6 +34,14 @@ val enableIntegrationTesting = !project.hasProperty("nointegration") && (version
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
+    apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "se.patrikerdes.use-latest-versions")
+    
+    dependencies {
+        testImplementation("junit", "junit", "4.13")
+        testImplementation("io.kotest", "kotest-runner-junit5-jvm", "4.2.6")
+        testImplementation("io.kotest", "kotest-assertions-core", "4.2.6")
+    }
 }
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
