@@ -44,7 +44,7 @@ object GameRuleLogic {
     @JvmStatic
     fun performMove(gameState: GameState, move: Move) {
         if (Constants.VALIDATE_MOVE)
-            validateMoveColor(gameState, move)
+            validateMoveColor(gameState, move, true)
 
         when (move) {
             is SkipMove -> performSkipMove(gameState)
@@ -55,29 +55,44 @@ object GameRuleLogic {
     
     /** Check if the given [move] has the right [Color]. */
     @JvmStatic
-    private fun validateMoveColor(gameState: GameState, move: Move) {
+    private fun validateMoveColor(gameState: GameState, move: Move, throws: Boolean = false): MoveMistake? {
         if (move.color != gameState.currentColor)
-            throw InvalidMoveException("Expected move from ${gameState.currentColor}", move)
+            if (throws) {
+                throw InvalidMoveException("Expected move from ${gameState.currentColor}", move)
+            } else {
+                return MoveMistake.WRONG_COLOR
+            }
+        return null
     }
     
     /** Check if the given [move] is able to be performed for the given [gameState]. */
     @JvmStatic
-    private fun validateSetMove(gameState: GameState, move: SetMove) {
+    private fun validateSetMove(gameState: GameState, move: SetMove, throws: Boolean = false): MoveMistake? {
         // Check whether the color's move is currently active
-        validateMoveColor(gameState, move)
+        return validateMoveColor(gameState, move, throws) ?:
         // Check whether the shape is valid
-        validateShape(gameState, move.piece.kind, move.color)
+        validateShape(gameState, move.piece.kind, move.color, throws) ?:
         // Check whether the piece can be placed
-        validateSetMove(gameState.board, move)
+        validateSetMove(gameState.board, move, throws) ?:
         
         if (isFirstMove(gameState)) {
             // Check if it is placed correctly in a corner
             if (move.piece.coordinates.none { isOnCorner(it)})
-                throw InvalidMoveException("The Piece isn't located in a corner", move)
+                if (throws) {
+                    throw InvalidMoveException("The Piece isn't located in a corner", move)
+                } else {
+                    MoveMistake.NOT_IN_CORNER
+                }
+            else null
         } else {
             // Check if the piece is connected to at least one tile of same color by corner
             if (move.piece.coordinates.none { cornersOnColor(gameState.board, Field(it, move.color)) })
-                throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
+                if (throws) {
+                    throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
+                } else {
+                    MoveMistake.NO_SHARED_CORNER
+                }
+            else null
         }
     }
 
@@ -87,7 +102,7 @@ object GameRuleLogic {
         validateSetMove(gameState, move)
 
         if (Constants.VALIDATE_MOVE)
-            validateSetMove(gameState, move)
+            validateSetMove(gameState, move, true)
 
         performSetMove(gameState.board, move)
         gameState.undeployedPieceShapes(move.color).remove(move.piece.kind)
@@ -102,14 +117,23 @@ object GameRuleLogic {
 
     /** Validate the [PieceShape] of a [SetMove] depending on the current [GameState]. */
     @JvmStatic
-    private fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor) {
+    private fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor, throws: Boolean = false): MoveMistake? {
         if (isFirstMove(gameState)) {
             if (shape != gameState.startPiece)
-                throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
+                if (throws) {
+                    throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
+                } else {
+                    return MoveMistake.WRONG_SHAPE
+                }
         } else {
             if (!gameState.undeployedPieceShapes(color).contains(shape))
-                throw InvalidMoveException("Piece $shape has already been placed before")
+                if (throws) {
+                    throw InvalidMoveException("Piece $shape has already been placed before")
+                } else {
+                    return MoveMistake.DUPLICATE_SHAPE
+                }
         }
+        return null
     }
 
     /**
@@ -121,29 +145,39 @@ object GameRuleLogic {
      */
     @JvmStatic
     fun isValidSetMove(gameState: GameState, move: SetMove) =
-            try {
-                validateSetMove(gameState, move)
-                true
-            } catch (e: InvalidMoveException) {
-                false
-            }
+            validateSetMove(gameState, move) == null
 
     /** Validate a [SetMove] on a [board]. */
     @JvmStatic
-    private fun validateSetMove(board: Board, move: SetMove) {
+    private fun validateSetMove(board: Board, move: SetMove, throws: Boolean = false): MoveMistake? {
+        // throw IndexOutOfBounds if the initial position only is out of bounds
+        board[move.piece.position]
         move.piece.coordinates.forEach {
             try {
                 board[it]
             } catch (e: ArrayIndexOutOfBoundsException) {
-                throw InvalidMoveException("Field $it is out of bounds", move)
+                if (throws) {
+                    throw InvalidMoveException("Field $it is out of bounds", move)
+                } else {
+                    return MoveMistake.OUT_OF_BOUNDS
+                }
             }
             // Checks if a part of the piece is obstructed
             if (board.isObstructed(it))
-                throw InvalidMoveException("Field $it already belongs to ${board[it].content}", move)
+                if (throws) {
+                    throw InvalidMoveException("Field $it already belongs to ${board[it].content}", move)
+                } else {
+                    return MoveMistake.OBSTRUCTED
+                }
             // Checks if a part of the piece would border on another piece of same color
             if (bordersOnColor(board, Field(it, move.color)))
-                throw InvalidMoveException("Field $it already borders on ${move.color}", move)
+                if (throws) {
+                    throw InvalidMoveException("Field $it already borders on ${move.color}", move)
+                } else {
+                    return MoveMistake.TOUCHES_SAME_COLOR
+                }
         }
+        return null
     }
     
     /** Place a Piece on the given [board] according to [move]. */
@@ -154,13 +188,23 @@ object GameRuleLogic {
         }
     }
 
+    @JvmStatic
+    fun validateSkipMove(gameState: GameState, throws: Boolean = false): MoveMistake? {
+        if (isFirstMove(gameState))
+            if (throws) {
+                throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
+            } else {
+                return MoveMistake.SKIP_FIRST_TURN
+            }
+        return null
+    }
+
     /** Skip a turn. */
     @JvmStatic
     private fun performSkipMove(gameState: GameState) {
         if (!gameState.tryAdvance())
             logger.error("Couldn't proceed to next turn!")
-        if (isFirstMove(gameState))
-            throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
+       validateSkipMove(gameState, true)
     }
 
     /** Prüfe, ob das gegebene [Field] bereits an eins mit gleicher Farbe angrenzt. */
