@@ -76,7 +76,7 @@ object GameRuleLogic {
                 throw InvalidMoveException("The Piece isn't located in a corner", move)
         } else {
             // Check if the piece is connected to at least one tile of same color by corner
-            if (move.piece.coordinates.none { cornersOnColor(gameState.board, it, move.color) })
+            if (move.piece.coordinates.none { cornersOnColor(gameState.board, Field(it, move.color)) })
                 throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
         }
     }
@@ -141,7 +141,7 @@ object GameRuleLogic {
             if (board.isObstructed(it))
                 throw InvalidMoveException("Field $it already belongs to ${board[it].content}", move)
             // Checks if a part of the piece would border on another piece of same color
-            if (bordersOnColor(board, it, move.color))
+            if (bordersOnColor(board, Field(it, move.color)))
                 throw InvalidMoveException("Field $it already borders on ${move.color}", move)
         }
     }
@@ -163,33 +163,33 @@ object GameRuleLogic {
             throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
     }
 
-    /** Check if the given [position] already borders on another piece of same [color]. */
+    /** Prüfe, ob das gegebene [Field] bereits an eins mit gleicher Farbe angrenzt. */
     @JvmStatic
-    private fun bordersOnColor(board: Board, position: Coordinates, color: Color): Boolean = listOf(
+    fun bordersOnColor(board: Board, field: Field): Boolean = listOf(
             Vector(1, 0),
             Vector(0, 1),
             Vector(-1, 0),
             Vector(0, -1)).any {
         try {
-            board[position + it].content == +color
+            board[field.coordinates + it].content == field.content && !field.isEmpty
         } catch (e: ArrayIndexOutOfBoundsException) { false }
     }
     
-    /** Return true if the given [Coordinates] touch a corner of a field of same color. */
+    /** Prüfe, ob das gegebene Feld an die Ecke eines Feldes gleicher Farbe angrenzt. */
     @JvmStatic
-    private fun cornersOnColor(board: Board, position: Coordinates, color: Color): Boolean = listOf(
+    fun cornersOnColor(board: Board, field: Field): Boolean = listOf(
             Vector(1, 1),
             Vector(1, -1),
             Vector(-1, -1),
             Vector(-1, 1)).any {
         try {
-            board[position + it].content == +color
+            board[field.coordinates + it].content == field.content && !field.isEmpty
         } catch (e: ArrayIndexOutOfBoundsException) { false }
     }
     
-    /** Return true if the given [Coordinates] are a corner. */
+    /** Prüfe, ob die gegebene Position eine Ecke des Spielfelds ist. */
     @JvmStatic
-    private fun isOnCorner(position: Coordinates): Boolean =
+    fun isOnCorner(position: Coordinates): Boolean =
             Corner.values().any { it.position == position }
     
     /** Gib zurück, ob sich der [GameState] noch in der ersten Runde befindet. */
