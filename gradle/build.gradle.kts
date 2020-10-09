@@ -34,6 +34,8 @@ val enableIntegrationTesting = !project.hasProperty("nointegration") && (version
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
+    apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "se.patrikerdes.use-latest-versions")
 }
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
