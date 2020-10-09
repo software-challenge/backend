@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import kotlin.math.min
 
-/** Eine 2D Koordinate der Form [x, y]. */
+/** Eine 2D Koordinate der Form (x, y). */
 @XStreamAlias(value = "coordinates")
 data class Coordinates(
         @XStreamAsAttribute val x: Int,
@@ -28,7 +28,7 @@ data class Coordinates(
     operator fun unaryPlus(): Vector = Vector(x, y)
     
     companion object {
-        /** Der Ursprung des Koordinatensystems, [0,0]. */
+        /** Der Ursprung des Koordinatensystems (0, 0). */
         val origin = Coordinates(0, 0)
     }
 }
@@ -51,9 +51,9 @@ data class Vector(
 
     /**
      * Vergleicht die beiden Vektoren. Der Rückgabewert ist
-     * * positiv, wenn beide Größen dieses Vektors kleiner sind als die des anderen.
-     * * null, wenn beide Vektoren gleich groß sind.
-     * * negativ, wenn mindestens eine Größe dieses Vektors größer als die des anderen ist.
+     * - positiv, wenn beide Größen dieses Vektors kleiner sind als die des anderen.
+     * - null, wenn beide Vektoren gleich groß sind.
+     * - negativ, wenn mindestens eine Größe dieses Vektors größer als die des anderen ist.
      */
     operator fun compareTo(other: Vector): Int =
             min(other.dx - dx, other.dy - dy)

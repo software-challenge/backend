@@ -71,7 +71,7 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     
     /**
      * Index Operator, der die den Parametern entsprechende Variation zurückgibt.
-     * Syntax: PieceShape[Rotation, shouldFlip]
+     * Syntax: `PieceShape[Rotation, shouldFlip]`
      * @param rotation um wie viel die Form rotiert werden soll
      * @param shouldFlip ob die Form entlang der y-Achse gespiegelt werden soll
      * @return Ein Set an [Coordinates], welches die entsprechend gedrehte Variante der ursprünglichen Form ist.
