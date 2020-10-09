@@ -16,7 +16,11 @@ class Board(
 
     /** Prüft, ob alle Felder leer sind. */
     fun isEmpty() = gameField.all { it.all { it == FieldContent.EMPTY } }
-
+    
+    /** Prüft, ob auf dieser [position] bereits eine Spielerfarbe liegt. */
+    fun isObstructed(position: Coordinates): Boolean =
+            this[position].content != FieldContent.EMPTY
+    
     /**
      * Gibt das Feld an den gegebenen Koordinaten zurück.
      * @see get
@@ -88,9 +92,4 @@ enum class Corner(val position: Coordinates) {
     
     /** Berechne die Koordinaten, die ein Stein haben muss, um in der entsprechenden Ecke platziert zu werden. */
     abstract fun align(area: Vector): Coordinates
-    
-    companion object {
-        /** Gib eine Sammlung der vier Ecken als [Set] zurück. */
-        fun asSet(): Set<Coordinates> = values().map { it.position }.toSet()
-    }
 }

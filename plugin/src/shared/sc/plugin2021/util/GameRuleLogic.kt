@@ -138,7 +138,7 @@ object GameRuleLogic {
                 throw InvalidMoveException("Field $it is out of bounds", move)
             }
             // Checks if a part of the piece is obstructed
-            if (isObstructed(board, it))
+            if (board.isObstructed(it))
                 throw InvalidMoveException("Field $it already belongs to ${board[it].content}", move)
             // Checks if a part of the piece would border on another piece of same color
             if (bordersOnColor(board, it, move.color))
@@ -163,11 +163,6 @@ object GameRuleLogic {
             throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
     }
 
-    /** Check if the given [position] is already obstructed by another piece. */
-    @JvmStatic
-    private fun isObstructed(board: Board, position: Coordinates): Boolean =
-            board[position].content != FieldContent.EMPTY
-    
     /** Check if the given [position] already borders on another piece of same [color]. */
     @JvmStatic
     private fun bordersOnColor(board: Board, position: Coordinates, color: Color): Boolean = listOf(
@@ -195,7 +190,7 @@ object GameRuleLogic {
     /** Return true if the given [Coordinates] are a corner. */
     @JvmStatic
     private fun isOnCorner(position: Coordinates): Boolean =
-            Corner.asSet().contains(position)
+            Corner.values().any { it.position == position }
     
     /** Gib zurück, ob sich der [GameState] noch in der ersten Runde befindet. */
     @JvmStatic
