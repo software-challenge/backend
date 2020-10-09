@@ -53,9 +53,9 @@ object GameRuleLogic {
         gameState.lastMove = move
     }
     
-    /** Check if the given [move] has the right [Color]. */
+    /** Prüfe, ob die Farbe des gegebenen [Move]s der aktiven Farbe des [GameState]s entspricht. */
     @JvmStatic
-    private fun validateMoveColor(gameState: GameState, move: Move, throws: Boolean = false): MoveMistake? {
+    fun validateMoveColor(gameState: GameState, move: Move, throws: Boolean = false): MoveMistake? {
         if (move.color != gameState.currentColor)
             if (throws) {
                 throw InvalidMoveException("Expected move from ${gameState.currentColor}", move)
@@ -65,9 +65,14 @@ object GameRuleLogic {
         return null
     }
     
-    /** Check if the given [move] is able to be performed for the given [gameState]. */
+    /**
+     * Prüfe, ob der gegebene [SetMove] gesetzt werden könnte.
+     * @param throws wenn true, wirft die Methode bei invaliden Zügen einen Fehler.
+     *
+     * @return gibt einen [MoveMistake] zurück, wenn der Zug nicht valide wahr, ansonsten null
+     */
     @JvmStatic
-    private fun validateSetMove(gameState: GameState, move: SetMove, throws: Boolean = false): MoveMistake? {
+    fun validateSetMove(gameState: GameState, move: SetMove, throws: Boolean = false): MoveMistake? {
         // Check whether the color's move is currently active
         return validateMoveColor(gameState, move, throws) ?:
         // Check whether the shape is valid
@@ -115,9 +120,15 @@ object GameRuleLogic {
         gameState.tryAdvance()
     }
 
-    /** Validate the [PieceShape] of a [SetMove] depending on the current [GameState]. */
+    /**
+     * Prüfe, ob der gegebene Spielstein auf dem Spielfeld platziert werden könnte.
+     * Fehler treten auf, wenn
+     * - im ersten Zug nicht der vorgegebene Stein
+     * - in nachfolgenden Zügen bereits gesetzte Steine
+     * gesetzt werden würde(n).
+     */
     @JvmStatic
-    private fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor, throws: Boolean = false): MoveMistake? {
+    fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor, throws: Boolean = false): MoveMistake? {
         if (isFirstMove(gameState)) {
             if (shape != gameState.startPiece)
                 if (throws) {
@@ -137,7 +148,7 @@ object GameRuleLogic {
     }
 
     /**
-     * Prüft, ob der gegebene [Move] zulässig ist.
+     * Prüfe, ob der gegebene [Move] zulässig ist.
      * @param gameState der aktuelle Spielstand
      * @param move der zu überprüfende Zug
      *
@@ -147,9 +158,9 @@ object GameRuleLogic {
     fun isValidSetMove(gameState: GameState, move: SetMove) =
             validateSetMove(gameState, move) == null
 
-    /** Validate a [SetMove] on a [board]. */
+    /** Prüfe, ob der gegebene [SetMove] auf dem [Board] platziert werden kann. */
     @JvmStatic
-    private fun validateSetMove(board: Board, move: SetMove, throws: Boolean = false): MoveMistake? {
+    fun validateSetMove(board: Board, move: SetMove, throws: Boolean = false): MoveMistake? {
         // throw IndexOutOfBounds if the initial position only is out of bounds
         board[move.piece.position]
         move.piece.coordinates.forEach {
