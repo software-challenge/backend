@@ -63,6 +63,8 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     
     private val playerMap = mutableMapOf<Team, Player>()
     
+    override fun getRound(): Int = gameState.round
+    
     /**
      * Checks if any player can still make moves.
      * If so, returns null; otherwise returns
@@ -167,6 +169,10 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     override fun getCurrentState(): IGameState = gameState
     
     fun isGameOver(): Boolean {
+        if (round > Constants.ROUND_LIMIT) {
+            gameState.orderedColors.clear()
+            return true
+        }
         GameRuleLogic.removeInvalidColors(gameState)
         return gameState.orderedColors.isEmpty()
     }

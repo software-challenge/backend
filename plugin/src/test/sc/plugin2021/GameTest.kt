@@ -1,6 +1,6 @@
 package sc.plugin2021
 
-import io.kotest.matchers.shouldBe
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.shouldNotBe
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
@@ -15,7 +15,7 @@ class GameTest: StringSpec({
         val state = game.gameState
         Pair(game.onPlayerJoined(), game.onPlayerJoined())
         game.start()
-        
+
         while (true) {
             try {
                 val condition = game.checkWinCondition()
@@ -31,5 +31,22 @@ class GameTest: StringSpec({
                 break
             }
         }
+    }
+    "A game in which everyone skips only ends eventually in a draw" {
+        val game = Game()
+        val state = game.gameState
+        Pair(game.onPlayerJoined(), game.onPlayerJoined())
+        game.start()
+
+        for (s in 0 until 4)
+            game.onAction(state.currentPlayer, GameRuleLogic.streamPossibleMoves(state).first())
+        
+        shouldNotThrowAny {
+            while (!game.isGameOver())
+                game.onAction(state.currentPlayer, SkipMove(state.currentColor))
+        }
+    
+        game.playerScores shouldContainExactly List(2)
+        {PlayerScore(ScoreCause.REGULAR, "", Constants.DRAW_SCORE, 10)}
     }
 })
