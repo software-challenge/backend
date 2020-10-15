@@ -1,16 +1,18 @@
 package sc.plugin2021
 
 import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldNotBe
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
+import sc.api.plugins.exceptions.GameLogicException
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 
 class GameTest: StringSpec({
-    "A few moves can be performd without issues" {
+    "A few moves can be performed without issues" {
         val game = Game()
         val state = game.gameState
         Pair(game.onPlayerJoined(), game.onPlayerJoined())
@@ -44,6 +46,9 @@ class GameTest: StringSpec({
         shouldNotThrowAny {
             while (!game.isGameOver())
                 game.onAction(state.currentPlayer, SkipMove(state.currentColor))
+        }
+        shouldThrow<GameLogicException> {
+            game.onAction(state.currentPlayer, SkipMove(state.currentColor))
         }
     
         game.playerScores shouldContainExactly List(2)
