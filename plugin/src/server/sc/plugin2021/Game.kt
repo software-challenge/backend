@@ -171,7 +171,6 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     fun isGameOver(): Boolean {
         if (round > Constants.ROUND_LIMIT) {
             gameState.orderedColors.clear()
-            return true
         }
         GameRuleLogic.removeInvalidColors(gameState)
         return gameState.orderedColors.isEmpty()
