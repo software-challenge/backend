@@ -264,41 +264,6 @@ object GameRuleLogic {
     fun getPossibleMoves(gameState: GameState) =
             streamPossibleMoves(gameState).toSet()
     
-    /** Return a list of all possible SetMoves, regardless of whether it's the first round. */
-    @JvmStatic
-    private fun getAllPossibleMoves(gameState: GameState) =
-            streamAllPossibleMoves(gameState).toSet()
-    
-    /** Return a list of possible SetMoves if it's the first round. */
-    @JvmStatic
-    private fun getPossibleStartMoves(gameState: GameState) =
-            streamPossibleStartMoves(gameState).toSet()
-    
-    /**
-     * Return a list of all moves, impossible or not.
-     *  There's no real usage, except maybe for cases where no Move validation happens
-     *  if `Constants.VALIDATE_MOVE` is false, then this function should return the same
-     *  Set as `::getPossibleMoves`
-     */
-    @JvmStatic
-    private fun getAllMoves(): Set<SetMove> {
-        val moves = mutableSetOf<SetMove>()
-        for (color in Color.values()) {
-            for (shape in PieceShape.values()) {
-                for (rotation in Rotation.values()) {
-                    for (flip in listOf(false, true)) {
-                        for (y in 0 until Constants.BOARD_SIZE) {
-                            for (x in 0 until Constants.BOARD_SIZE) {
-                                moves.add(SetMove(Piece(color, shape, rotation, flip, Coordinates(x, y))))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return moves
-    }
-    
     /** Entferne alle Farben, die keine Steine mehr auf dem Feld platzieren können. */
     @JvmStatic
     fun removeInvalidColors(gameState: GameState) {
