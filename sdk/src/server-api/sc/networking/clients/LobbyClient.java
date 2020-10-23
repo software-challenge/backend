@@ -312,6 +312,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     String roomId = handle.getRoomId();
     ControllingClient controller = new ControllingClient(this, roomId);
     addListener((IAdministrativeListener) controller);
+    addListener((IHistoryListener) controller);
     start();
     logger.debug("Sending observation request for roomId: {}", roomId);
     send(new ObservationRequest(roomId));
