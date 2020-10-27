@@ -3,10 +3,14 @@ package sc.plugin2021
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.blocking.forAll
 import io.kotest.data.row
+import io.kotest.matchers.collections.beEmpty
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import sc.plugin2021.GamePlugin.Companion.xStream
+import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.InvalidMoveException
 
@@ -16,15 +20,10 @@ class GameStateTest: StringSpec({
         
         state.board shouldBe Board()
         
-        state.undeployedPieceShapes(Color.BLUE)   shouldBe PieceShape.values().toSet()
-        state.undeployedPieceShapes(Color.YELLOW) shouldBe PieceShape.values().toSet()
-        state.undeployedPieceShapes(Color.RED)    shouldBe PieceShape.values().toSet()
-        state.undeployedPieceShapes(Color.GREEN)  shouldBe PieceShape.values().toSet()
-    
-        state.deployedPieces[Color.BLUE]   shouldBe mutableListOf<Piece>()
-        state.deployedPieces[Color.YELLOW] shouldBe mutableListOf<Piece>()
-        state.deployedPieces[Color.RED]    shouldBe mutableListOf<Piece>()
-        state.deployedPieces[Color.GREEN]  shouldBe mutableListOf<Piece>()
+        Color.values().forEach { color ->
+            state.undeployedPieceShapes(color)  shouldBe PieceShape.values().toSet()
+            state.deployedPieces[color]!!.should(beEmpty())
+        }
      
         // TODO: adjust values accordingly
         state.getPointsForPlayer(Team.ONE)  shouldBe 0
@@ -34,17 +33,18 @@ class GameStateTest: StringSpec({
         var colorIter = Color.RED
         val state = GameState(startColor = colorIter)
         
-        for (x in 0 until 4) {
+        state.orderedColors.size shouldBe Constants.COLORS
+        for (x in 0 until Constants.COLORS) {
             state.currentColor shouldBe colorIter
             state.turn++
             colorIter = colorIter.next
         }
     
-        state.currentColor shouldBe  Color.RED
+        state.currentColor shouldBe Color.RED
         state.turn++
-        state.currentColor shouldBe  Color.GREEN
+        state.currentColor shouldBe Color.GREEN
         state.turn += 2
-        state.currentColor shouldBe  Color.YELLOW
+        state.currentColor shouldBe Color.YELLOW
     }
     "Pieces can only be placed once" {
         val state = GameState(startPiece = PieceShape.PENTO_I)
@@ -91,25 +91,26 @@ class GameStateTest: StringSpec({
             state.round shouldBe round
             state.currentColor shouldBe color
         }
+    
+        GameState().run {
+            turn shouldBe 0
+            round shouldBe 1
+            currentColor shouldBe Color.BLUE
         
-        val state = GameState()
-        state.turn shouldBe 0
-        state.round shouldBe 1
-        state.currentColor shouldBe Color.BLUE
-    
-        state.turn +=10
-        state.turn shouldBe 10
-        state.round shouldBe 3
-        state.currentColor shouldBe Color.RED
-    
-        state.turn++
-        state.turn shouldBe 11
-        state.round shouldBe 3
-        state.currentColor shouldBe Color.GREEN
-    
-        state.turn++
-        state.turn shouldBe 12
-        state.round shouldBe 4
-        state.currentColor shouldBe Color.BLUE
+            turn +=10
+            turn shouldBe 10
+            round shouldBe 3
+            currentColor shouldBe Color.RED
+        
+            turn++
+            turn shouldBe 11
+            round shouldBe 3
+            currentColor shouldBe Color.GREEN
+        
+            turn++
+            turn shouldBe 12
+            round shouldBe 4
+            currentColor shouldBe Color.BLUE
+        }
     }
 })
