@@ -80,15 +80,10 @@ class GameState @JvmOverloads constructor(
     
     /** Die Farbe, die am Zug ist. */
     val currentColor: Color
-        get() = try {
+        get() = if (orderedColors.isEmpty()) {
+            throw IndexOutOfBoundsException("Trying to access currentColor while there are no colors in the game!")
+        } else {
             orderedColors[currentColorIndex]
-        } catch (e: IndexOutOfBoundsException) {
-            logger.error("""
-                :-- Exception on accessing currentColor --:
-                orderedColors:     $orderedColors
-                currentColorIndex: $currentColorIndex
-            """.trimIndent())
-            throw GameLogicException("Trying to access the currently active color with invalid index")
         }
     
     /** Die Anzahl an bereits getätigten Zügen. */
@@ -104,7 +99,7 @@ class GameState @JvmOverloads constructor(
     override var round: Int = 1 + startTurn / orderedColors.size
     
     private fun advance(turns: Int) {
-        if (turns < 0) throw IndexOutOfBoundsException("Can't go back in turns (Request was $turns), expected value bigger than $turn")
+        if (turns < 0) throw IndexOutOfBoundsException("Can't go back in turns (request was $turns): Expected value bigger than $turn")
         
         if (orderedColors.isEmpty())
             throw GameLogicException("Game has already ended - can't proceed to next turn")
