@@ -4,7 +4,6 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.blocking.forAll
 import io.kotest.data.row
 import io.kotest.matchers.collections.beEmpty
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -24,10 +23,10 @@ class GameStateTest: StringSpec({
             state.undeployedPieceShapes(color)  shouldBe PieceShape.values().toSet()
             state.deployedPieces[color]!!.should(beEmpty())
         }
-     
+        
         // TODO: adjust values accordingly
-        state.getPointsForPlayer(Team.ONE)  shouldBe 0
-        state.getPointsForPlayer(Team.TWO)  shouldBe 0
+        state.getPointsForPlayer(Team.ONE) shouldBe 0
+        state.getPointsForPlayer(Team.TWO) shouldBe 0
     }
     "GameStates know currently active Color" {
         var colorIter = Color.RED
@@ -39,7 +38,7 @@ class GameStateTest: StringSpec({
             state.turn++
             colorIter = colorIter.next
         }
-    
+        
         state.currentColor shouldBe Color.RED
         state.turn++
         state.currentColor shouldBe Color.GREEN
@@ -73,8 +72,8 @@ class GameStateTest: StringSpec({
         val state = GameState()
         val transformed = xStream.fromXML(xStream.toXML(GameState(startPiece = state.startPiece))) as GameState
         transformed.toString() shouldBe state.toString()
-        transformed            shouldBe state
-    
+        transformed shouldBe state
+        
         GameRuleLogic.isFirstMove(transformed) shouldBe true
         transformed.deployedPieces shouldBe null
         transformed.getPointsForPlayer(Team.ONE)
@@ -97,7 +96,7 @@ class GameStateTest: StringSpec({
             round shouldBe 1
             currentColor shouldBe Color.BLUE
         
-            turn +=10
+            turn += 10
             turn shouldBe 10
             round shouldBe 3
             currentColor shouldBe Color.RED
