@@ -7,7 +7,6 @@ import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import org.opentest4j.AssertionFailedError
-import sc.plugin2021.GamePlugin.Companion.xStream
 import sc.plugin2021.helper.shouldSerializeTo
 import sc.plugin2021.util.*
 

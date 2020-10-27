@@ -4,8 +4,8 @@ import io.kotest.matchers.shouldBe
 import sc.plugin2021.GamePlugin
 
 infix fun <T : Any> T.shouldSerializeTo(serialized: String) {
-    GamePlugin.xStream.toXML(this) shouldBe serialized
-    val deserialized = GamePlugin.xStream.fromXML(serialized)
+    GamePlugin.loadXStream().toXML(this) shouldBe serialized
+    val deserialized = GamePlugin.loadXStream().fromXML(serialized)
     deserialized.toString() shouldBe this.toString()
     deserialized shouldBe this
 }

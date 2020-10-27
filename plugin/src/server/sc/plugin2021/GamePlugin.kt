@@ -1,20 +1,23 @@
 package sc.plugin2021
 
+import com.thoughtworks.xstream.XStream
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
+import sc.helpers.xStream
 import sc.plugin2021.xstream.BoardConverter
 import sc.plugins.PluginDescriptor
 import sc.protocol.helpers.LobbyProtocol
 import sc.shared.ScoreAggregation
 import sc.shared.ScoreDefinition
 import sc.shared.ScoreFragment
-import sc.helpers.xStream as xstream
+import java.util.concurrent.atomic.AtomicBoolean
 
 @PluginDescriptor(name = "Blokus", uuid = "swc_2021_blokus")
 class GamePlugin: IGamePlugin {
     
     companion object {
         val PLUGIN_UUID = "swc_2021_blokus"
+        val loaded = AtomicBoolean(false)
         
         val SCORE_DEFINITION = ScoreDefinition(arrayOf(
                 ScoreFragment("Gewinner"),
@@ -28,15 +31,16 @@ class GamePlugin: IGamePlugin {
                     Color::class.java, Team::class.java)
         
         fun registerXStream() {
-            LobbyProtocol.registerAdditionalMessages(xstream, classesToRegister)
-            
-            xstream.registerConverter(BoardConverter())
+            if (loaded.compareAndSet(false, true)) {
+                LobbyProtocol.registerAdditionalMessages(xStream, classesToRegister)
+                xStream.registerConverter(BoardConverter())
+            }
         }
-        
+    
         @JvmStatic
-        val xStream by lazy {
+        fun loadXStream(): XStream {
             registerXStream()
-            xstream
+            return xStream
         }
     }
     
