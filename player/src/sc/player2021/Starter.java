@@ -17,7 +17,7 @@ import java.io.File;
 public class Starter extends AbstractClient {
   private static final Logger logger = LoggerFactory.getLogger(Starter.class);
 
-  public Starter(String host, int port, String reservation) throws Exception {
+  public Starter(String host, int port, String reservation) {
     // client starten
     super(host, port);
 
