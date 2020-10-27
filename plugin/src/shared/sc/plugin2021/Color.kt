@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 
 /** Die vier verschiedenen Farben im Spiel. */
 @XStreamAlias(value = "color")
-enum class Color() {
+enum class Color {
     BLUE,
     YELLOW,
     RED,
@@ -15,10 +15,7 @@ enum class Color() {
         GREEN.next  = BLUE
     }};
 
-    /**
-     * Die Farbe, die als nächstes am Zug ist, sofern sie noch im Spiel ist.
-     * Achtung: Da die Farbe den Spielstand nicht kennt, werden auch Farben ausgegeben, die nicht mehr im Spiel sind.
-     */
+    /** Die nächste Farbe in der Reihenfolge. */
     lateinit var next: Color
         private set
 
@@ -29,7 +26,7 @@ enum class Color() {
             YELLOW, GREEN -> Team.TWO
         }
 
-    /** Konvertiert die Farbe zu einem entsprechenden [FieldContent]. */
+    /** @return [FieldContent], der dieser Farbe entspricht. */
     operator fun unaryPlus(): FieldContent = when(this) {
         BLUE   -> FieldContent.BLUE
         YELLOW -> FieldContent.YELLOW
