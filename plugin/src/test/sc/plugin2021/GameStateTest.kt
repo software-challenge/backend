@@ -1,7 +1,9 @@
 package sc.plugin2021
 
-import io.kotest.matchers.shouldBe
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.data.blocking.forAll
+import io.kotest.data.row
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import sc.plugin2021.GamePlugin.Companion.xStream
@@ -79,12 +81,18 @@ class GameStateTest: StringSpec({
         transformed.board.isEmpty()
     }
     "GameStates advance accordingly" {
-        var state = GameState(startTurn = 2)
-        state.turn shouldBe 2
-        state.round shouldBe 1
-        state.currentColor shouldBe Color.RED
+        forAll(
+                row(2, 1, Color.RED),
+                row(7, 2, Color.GREEN),
+                row(8, 3, Color.BLUE)
+        ) { turn, round, color ->
+            val state = GameState(startTurn = turn)
+            state.turn shouldBe turn
+            state.round shouldBe round
+            state.currentColor shouldBe color
+        }
         
-        state = GameState()
+        val state = GameState()
         state.turn shouldBe 0
         state.round shouldBe 1
         state.currentColor shouldBe Color.BLUE
