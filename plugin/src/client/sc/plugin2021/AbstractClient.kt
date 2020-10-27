@@ -99,13 +99,13 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         
         if (type == PlayerType.OBSERVER) return
         
-        handler?.onUpdate(gameState)
         if (gameState.orderedColors.isNotEmpty()) {
             if (gameState.currentTeam == team) {
                 handler?.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
             } else {
                 handler?.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
             }
+            handler?.onUpdate(gameState)
         }
     }
     
