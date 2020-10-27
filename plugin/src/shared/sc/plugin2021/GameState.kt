@@ -14,6 +14,7 @@ import java.lang.Exception
 
 /**
  * Der aktuelle Spielstand.
+ *
  * Er hält alle Informationen zur momentanen Runde,
  * mit deren Hilfe der nächste Zug berechnet werden kann.
  */
@@ -58,7 +59,7 @@ class GameState @JvmOverloads constructor(
         it to mutableListOf<Piece>()
     }.toMap()
     
-    /** Eine Map, die speichert, ob, wenn alle Steine gelegt wurden, das Monomino zuletzt gelegt wurde. */
+    /** Speichert für jede Farbe, die alle Steine gelegt hat, ob das Monomino zuletzt gelegt wurde. */
     @XStreamAsAttribute
     val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
     
@@ -98,7 +99,7 @@ class GameState @JvmOverloads constructor(
             field = value
         }
     
-    /** Die Rundenanzahl. */
+    /** Die Rundenzahl. */
     @XStreamAsAttribute
     override var round: Int = 1
     
