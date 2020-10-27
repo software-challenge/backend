@@ -30,6 +30,10 @@ abstract class AbstractClient(
     companion object {
         private val logger = LoggerFactory.getLogger(AbstractClient::class.java);
         private val gameType = GamePlugin.PLUGIN_UUID
+    
+        init {
+            GamePlugin.registerXStream()
+        }
     }
     
     var isGameOver = false
