@@ -12,7 +12,6 @@ import sc.protocol.responses.ProtocolErrorMessage
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.GameResult
 import sc.shared.WelcomeMessage
-import java.io.IOException
 import java.net.ConnectException
 import kotlin.system.exitProcess
 
@@ -20,7 +19,7 @@ import kotlin.system.exitProcess
  * Eine abstrakte Implementation des [ILobbyClientListener].
  * Hier sind alle Methoden implementiert, die unabhängig von der Logik der Clients der Spieler sind.
  */
-abstract class AbstractClient @Throws(IOException::class) constructor(
+abstract class AbstractClient(
         host: String,
         port: Int,
         private val type: PlayerType
@@ -47,13 +46,13 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     }
     
     /** Storage for the reason of a rule violation, if any occurs. */
-    private var error: String? = null
-    fun getError() = error
+    var error: String? = null
+        private set
     
     /** Current room of the player. */
     private lateinit var roomId: String
     
-    /** The team the client belongs to in order to connect client and player. */
+    /** The team the client belongs to. Needed to connect client and player. */
     private var team: Team? = when (type) {
         PlayerType.PLAYER_ONE -> Team.ONE
         PlayerType.PLAYER_TWO -> Team.TWO
@@ -66,11 +65,9 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
     
     /** Called for any new message sent to the game room, e.g., move requests. */
     override fun onRoomMessage(roomId: String, data: ProtocolMessage) {
-        if (data is MoveRequest) {
-            handler?.onRequestAction()
-        }
-        if (data is WelcomeMessage) {
-            team = Team.valueOf(data.color.toUpperCase())
+        when(data) {
+            is MoveRequest -> handler?.onRequestAction()
+            is WelcomeMessage -> team = Team.valueOf(data.color.toUpperCase())
         }
         this.roomId = roomId
     }
@@ -105,11 +102,13 @@ abstract class AbstractClient @Throws(IOException::class) constructor(
         }
     }
     
+    /** Start the LobbyClient [client] and listen to it. */
     private fun start() {
         client.start()
         client.addListener(this)
     }
     
+    /** [start] and join any game with the appropriate [gameType]. */
     fun joinAnyGame() {
         start()
         client.joinRoomRequest(gameType)
