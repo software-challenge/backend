@@ -72,10 +72,11 @@ class GameState @JvmOverloads constructor(
     
     /** Eine Liste aller Farben, die momentan im Spiel sind. */
     @XStreamAsAttribute
-    val orderedColors: MutableList<Color> = mutableListOf()
+    val orderedColors: MutableList<Color> =
+            Constants.COLORS.downTo(2).fold(mutableListOf(startColor), { acc, _ -> acc.add(acc.last().next); acc })
     
     @XStreamAsAttribute
-    private var currentColorIndex: Int = 0
+    private var currentColorIndex: Int = startTurn % orderedColors.size
     
     /** Die Farbe, die am Zug ist. */
     val currentColor: Color
@@ -92,7 +93,7 @@ class GameState @JvmOverloads constructor(
     
     /** Die Anzahl an bereits getätigten Zügen. */
     @XStreamAsAttribute
-    override var turn: Int = 0
+    override var turn: Int = startTurn
         set(value) {
             advance(value - field)
             field = value
@@ -100,16 +101,7 @@ class GameState @JvmOverloads constructor(
     
     /** Die Rundenanzahl. */
     @XStreamAsAttribute
-    override var round: Int = 1
-    
-    init {
-        var colorIter = startColor
-        for (x in 0 until Constants.COLORS) {
-            orderedColors.add(colorIter)
-            colorIter = colorIter.next
-        }
-        turn = startTurn
-    }
+    override var round: Int = 1 + startTurn / orderedColors.size
     
     private fun advance(turns: Int) {
         if (turns < 0) throw IndexOutOfBoundsException("Can't go back in turns (Request was $turns), expected value bigger than $turn")
