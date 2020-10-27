@@ -1,11 +1,13 @@
 package sc.plugin2021.util
 
+import sc.plugin2021.Color
+
 /** Eine Sammlung an verschiedenen Konstanten, die im Spiel verwendet werden. */
 object Constants {
     /** Anzahl an verschiedenen Spielsteinen. */
     const val TOTAL_PIECE_SHAPES = 21
     /** Anzahl an im Spiel verfügbaren Farben. */
-    const val COLORS = 4
+    val COLORS = Color.values().size
     
     /** Punkte für eine Niederlage. */
     const val LOSE_SCORE = 0
@@ -24,7 +26,8 @@ object Constants {
     
     // Max game length: turns(ROUND_LIMIT * 2) * SOFT_TIMEOUT, one second buffer per round
     /** Zeit (in ms), die ein Spiel höchstens dauern sollte. */
-    const val GAME_TIMEOUT = TOTAL_PIECE_SHAPES * COLORS * SOFT_TIMEOUT
+    @JvmField
+    val GAME_TIMEOUT = TOTAL_PIECE_SHAPES * COLORS * SOFT_TIMEOUT
 
     /** Kontrolliert, ob Züge vor dem Setzen validiert werden. Existiert nur für Testzwecke. */
     const val VALIDATE_MOVE = true
