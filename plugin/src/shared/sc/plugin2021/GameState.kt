@@ -40,7 +40,7 @@ class GameState @JvmOverloads constructor(
     /** Das aktuelle Spielfeld. */
     @XStreamAsAttribute
     override val board: Board = Board()
-
+    
     /** Gib eine Liste aller nicht gesetzter Steine der [Color] zurück. */
     fun undeployedPieceShapes(color: Color): MutableSet<PieceShape> = when (color) {
         Color.BLUE -> blueShapes
@@ -48,12 +48,12 @@ class GameState @JvmOverloads constructor(
         Color.RED -> redShapes
         Color.GREEN -> greenShapes
     }
-
+    
     private val blueShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
     private val yellowShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
     private val redShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
     private val greenShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-
+    
     @XStreamOmitField
     val deployedPieces: Map<Color, MutableList<Piece>> = Color.values().map {
         it to mutableListOf<Piece>()
@@ -66,7 +66,7 @@ class GameState @JvmOverloads constructor(
     /** Das Team, das am Zug ist. */
     override val currentTeam
         get() = currentColor.team
-
+    
     /** Der Spieler, der am Zug ist. */
     override val currentPlayer
         get() = getPlayer(currentTeam)!!
@@ -134,18 +134,18 @@ class GameState @JvmOverloads constructor(
     } catch (e: Exception) {
         false
     }
-
+    
     fun addPlayer(player: Player) {
-        when(player.color) {
+        when (player.color) {
             Team.ONE -> first = player
             Team.TWO -> second = player
         }
     }
-
+    
     /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForPlayer(team: ITeam): Int =
             (team as Team).colors.map { getPointsForColor(it) }.sum()
-
+    
     private fun getPointsForColor(color: Color): Int {
         val pieces = undeployedPieceShapes(color)
         val lastMono = lastMoveMono[color] ?: false
@@ -158,7 +158,7 @@ class GameState @JvmOverloads constructor(
      *
      * Diese Funktion wird von der [GameRuleLogic] benötigt und sollte nie so aufgerufen werden.
      */
-    fun removeActiveColor() {
+    internal fun removeActiveColor() {
         logger.info("Removing $currentColor from the game")
         orderedColors.removeAt(currentColorIndex)
         if (orderedColors.isNotEmpty())
@@ -173,14 +173,14 @@ class GameState @JvmOverloads constructor(
     
     override fun equals(other: Any?): Boolean {
         return !(this === other) &&
-                other is GameState &&
-                first       == other.first &&
-                second      == other.second &&
-                board       == other.board &&
-                turn        == other.turn &&
-                currentTeam == other.currentTeam
+               other is GameState &&
+               first == other.first &&
+               second == other.second &&
+               board == other.board &&
+               turn == other.turn &&
+               currentTeam == other.currentTeam
     }
-
+    
     override fun hashCode(): Int {
         var result = first.hashCode()
         result = 31 * result + second.hashCode()
