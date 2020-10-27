@@ -9,23 +9,25 @@ import io.kotest.matchers.shouldBe
 import org.opentest4j.AssertionFailedError
 import sc.plugin2021.GamePlugin.Companion.xStream
 import sc.plugin2021.helper.shouldSerializeTo
-import sc.plugin2021.util.*
-
+import sc.plugin2021.util.align
+import sc.plugin2021.util.flip
+import sc.plugin2021.util.printShapes
+import sc.plugin2021.util.rotate
 
 class PieceTest: StringSpec({
     "Test Piece initialisation" {
         for (pieceShape in PieceShape.shapes) {
             Piece(Color.GREEN, pieceShape.key, Rotation.NONE, false).shape shouldBe pieceShape.value.coordinates
         }
-
+        
         Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false).toString() shouldBe "YELLOW Piece TETRO_O:1 [0,0]"
-        Piece(Color.RED,    PieceShape.PENTO_Y, Rotation.LEFT, false).toString() shouldBe "RED Piece PENTO_Y:3 [0,0]"
-        Piece(Color.BLUE,   PieceShape.PENTO_P, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece PENTO_P:2 (flipped) [0,0]"
-        Piece(Color.GREEN,  PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9)).toString() shouldBe "GREEN Piece TRIO_L:0 (flipped) [5,9]"
+        Piece(Color.RED, PieceShape.PENTO_Y, Rotation.LEFT, false).toString() shouldBe "RED Piece PENTO_Y:3 [0,0]"
+        Piece(Color.BLUE, PieceShape.PENTO_P, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece PENTO_P:2 (flipped) [0,0]"
+        Piece(Color.GREEN, PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9)).toString() shouldBe "GREEN Piece TRIO_L:0 (flipped) [5,9]"
     }
     "Test PieceShape arithmetic" {
         setOf(Coordinates(1, 2), Coordinates(3, 2)).align() shouldBe setOf(Coordinates(0, 0), Coordinates(2, 0))
-
+        
         for (pair in PieceShape.shapes) {
             val shape = pair.value.coordinates
             shape.rotate(Rotation.NONE) shouldBe shape
@@ -47,13 +49,13 @@ class PieceTest: StringSpec({
         )
         val SHOULD = (TID zip (shapes + shapes.asReversed())).toMap()
         val transformations = (TID zip (
-                (Rotation.values() zip List(Rotation.values().size) {false}) +
-                        (Rotation.values() zip List(Rotation.values().size) {true})
-                )).toMap()
+                (Rotation.values() zip List(Rotation.values().size) { false }) +
+                (Rotation.values() zip List(Rotation.values().size) { true })
+                                       )).toMap()
         val IS = transformations.map {
             it.key to shape.transform(it.value.first, it.value.second)
         }.toMap()
-    
+        
         TID.forEach {
             try {
                 IS[it] shouldBe SHOULD[it]
@@ -78,9 +80,9 @@ class PieceTest: StringSpec({
                 setOf(Coordinates(0, 1), Coordinates(1, 2), Coordinates(1, 1), Coordinates(1, 0), Coordinates(2, 0))
         )).toMap()
         val transformations = (TID zip (
-                (Rotation.values() zip List(Rotation.values().size) {false}) +
-                (Rotation.values() zip List(Rotation.values().size) {true})
-        )).toMap()
+                (Rotation.values() zip List(Rotation.values().size) { false }) +
+                (Rotation.values() zip List(Rotation.values().size) { true })
+                                       )).toMap()
         val IS = transformations.map {
             it.key to shape.transform(it.value.first, it.value.second)
         }.toMap()
@@ -109,9 +111,9 @@ class PieceTest: StringSpec({
                 setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(2, 1))
         )).toMap()
         val transformations = (TID zip (
-                (Rotation.values() zip List(Rotation.values().size) {false}) +
-                        (Rotation.values() zip List(Rotation.values().size) {true})
-                )).toMap()
+                (Rotation.values() zip List(Rotation.values().size) { false }) +
+                (Rotation.values() zip List(Rotation.values().size) { true })
+                                       )).toMap()
         val IS = transformations.map {
             it.key to shape.transform(it.value.first, it.value.second)
         }.toMap()
@@ -140,9 +142,9 @@ class PieceTest: StringSpec({
                 setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1))
         )).toMap()
         val transformations = (TID zip (
-                (Rotation.values() zip List(Rotation.values().size) {false}) +
-                        (Rotation.values() zip List(Rotation.values().size) {true})
-                )).toMap()
+                (Rotation.values() zip List(Rotation.values().size) { false }) +
+                (Rotation.values() zip List(Rotation.values().size) { true })
+                                       )).toMap()
         val IS = transformations.map {
             it.key to shape.transform(it.value.first, it.value.second)
         }.toMap()
@@ -161,34 +163,34 @@ class PieceTest: StringSpec({
         val position = Coordinates(2, 2)
         val coordinates = setOf(Coordinates(2, 3), Coordinates(3, 3), Coordinates(3, 2))
         val piece = Piece(Color.RED, PieceShape.TRIO_L, Rotation.NONE, true, position)
-    
+        
         piece.shape shouldBe PieceShape.TRIO_L.coordinates.flip()
         piece.coordinates shouldBe coordinates
     }
     "XML conversion" {
         forAll(
-            row(Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false), """
+                row(Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false), """
                     <piece color="YELLOW" kind="TETRO_O" rotation="RIGHT" isFlipped="false">
                       <position x="0" y="0"/>
                     </piece>
                 """.trimIndent()),
-            row(Piece(Color.RED, PieceShape.PENTO_Y, Rotation.LEFT, false), """
+                row(Piece(Color.RED, PieceShape.PENTO_Y, Rotation.LEFT, false), """
                     <piece color="RED" kind="PENTO_Y" rotation="LEFT" isFlipped="false">
                       <position x="0" y="0"/>
                     </piece>
                 """.trimIndent()),
-            row(Piece(Color.BLUE, PieceShape.PENTO_P, Rotation.MIRROR, true), """
+                row(Piece(Color.BLUE, PieceShape.PENTO_P, Rotation.MIRROR, true), """
                     <piece color="BLUE" kind="PENTO_P" rotation="MIRROR" isFlipped="true">
                       <position x="0" y="0"/>
                     </piece>
                 """.trimIndent()),
-            row(Piece(Color.GREEN, PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9)), """
+                row(Piece(Color.GREEN, PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9)), """
                     <piece color="GREEN" kind="TRIO_L" rotation="NONE" isFlipped="true">
                       <position x="5" y="9"/>
                     </piece>
                 """.trimIndent())
         ) { piece, xml ->
-            piece shouldSerializeTo  xml
+            piece shouldSerializeTo xml
         }
     }
     "Piece transformation calculation" {
