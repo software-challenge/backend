@@ -3,7 +3,7 @@ package sc.plugin2021
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldNotBe
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import sc.api.plugins.exceptions.GameLogicException
 import sc.plugin2021.util.Constants
@@ -11,7 +11,7 @@ import sc.plugin2021.util.GameRuleLogic
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 
-class GameTest: StringSpec({
+class GameTest: FreeSpec({
     "A few moves can be performed without issues" {
         val game = Game()
         val state = game.gameState
@@ -34,7 +34,7 @@ class GameTest: StringSpec({
             }
         }
     }
-    "A game in which everyone skips only ends eventually in a draw" {
+    "A game of skips eventually ends in a draw" {
         val game = Game()
         val state = game.gameState
         Pair(game.onPlayerJoined(), game.onPlayerJoined())
@@ -47,7 +47,7 @@ class GameTest: StringSpec({
             while (!game.isGameOver())
                 game.onAction(state.currentPlayer, SkipMove(state.currentColor))
         }
-        shouldThrow<GameLogicException> {
+        shouldThrow<java.lang.IndexOutOfBoundsException> {
             game.onAction(state.currentPlayer, SkipMove(state.currentColor))
         }
     
