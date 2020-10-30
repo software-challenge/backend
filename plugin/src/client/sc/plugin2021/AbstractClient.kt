@@ -22,10 +22,10 @@ import kotlin.system.exitProcess
 abstract class AbstractClient(
         host: String,
         port: Int,
-        private val type: PlayerType
+        private val role: ClientRole
 ): ILobbyClientListener {
     
-    constructor(host: String, port: Int): this(host, port, PlayerType.PLAYER_ONE) {}
+    constructor(host: String, port: Int): this(host, port, ClientRole.PLAYER_ONE)
 
     companion object {
         private val logger = LoggerFactory.getLogger(AbstractClient::class.java);
@@ -57,9 +57,9 @@ abstract class AbstractClient(
     private lateinit var roomId: String
     
     /** The team the client belongs to. Needed to connect client and player. */
-    private var team: Team? = when (type) {
-        PlayerType.PLAYER_ONE -> Team.ONE
-        PlayerType.PLAYER_TWO -> Team.TWO
+    private var team: Team? = when (role) {
+        ClientRole.PLAYER_ONE -> Team.ONE
+        ClientRole.PLAYER_TWO -> Team.TWO
         else -> null
     }
     
@@ -94,7 +94,7 @@ abstract class AbstractClient(
         val gameState = state as GameState
         logger.debug("$this got a new state $gameState")
         
-        if (type == PlayerType.OBSERVER) return
+        if (role == ClientRole.OBSERVER) return
         
         if (gameState.orderedColors.isNotEmpty()) {
             if (gameState.currentTeam == team) {
