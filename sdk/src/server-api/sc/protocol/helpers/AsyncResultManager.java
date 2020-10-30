@@ -17,7 +17,7 @@ public class AsyncResultManager {
       if (response instanceof ProtocolErrorMessage) {
         handler.handleError((ProtocolErrorMessage) response);
       } else {
-        handler.operate(response);
+        handler.accept(response);
       }
     }
   }

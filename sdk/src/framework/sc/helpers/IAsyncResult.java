@@ -2,6 +2,6 @@ package sc.helpers;
 
 import sc.protocol.responses.ProtocolMessage;
 
-public interface IAsyncResult {
-  void operate(ProtocolMessage result);
-}
+import java.util.function.Consumer;
+
+public interface IAsyncResult extends Consumer<ProtocolMessage> {}
