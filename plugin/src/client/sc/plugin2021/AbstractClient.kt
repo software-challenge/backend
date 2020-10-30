@@ -21,12 +21,9 @@ import kotlin.system.exitProcess
  */
 abstract class AbstractClient(
         host: String,
-        port: Int,
-        private val role: ClientRole
+        port: Int
 ): ILobbyClientListener {
     
-    constructor(host: String, port: Int): this(host, port, ClientRole.PLAYER_ONE)
-
     companion object {
         private val logger = LoggerFactory.getLogger(AbstractClient::class.java);
         private val gameType = GamePlugin.PLUGIN_UUID
@@ -57,11 +54,8 @@ abstract class AbstractClient(
     private lateinit var roomId: String
     
     /** The team the client belongs to. Needed to connect client and player. */
-    private var team: Team? = when (role) {
-        ClientRole.PLAYER_ONE -> Team.ONE
-        ClientRole.PLAYER_TWO -> Team.TWO
-        else -> null
-    }
+    var team: Team? = null
+        private set
     
     /** Tell this client to observe the game given by the preparation handler. */
     fun observeGame(handle: PrepareGameProtocolMessage): IControllableGame =
@@ -93,17 +87,16 @@ abstract class AbstractClient(
     override fun onNewState(roomId: String, state: IGameState) {
         val gameState = state as GameState
         logger.debug("$this got a new state $gameState")
-        
-        if (role == ClientRole.OBSERVER) return
-        
-        if (gameState.orderedColors.isNotEmpty()) {
-            if (gameState.currentTeam == team) {
-                handler?.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
-            } else {
-                handler?.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
-            }
-            handler?.onUpdate(gameState)
+    
+        if (team == null || gameState.orderedColors.isEmpty())
+            return
+    
+        if (gameState.currentTeam == team) {
+            handler?.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
+        } else {
+            handler?.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
         }
+        handler?.onUpdate(gameState)
     }
     
     /** Start the LobbyClient [client] and listen to it. */
