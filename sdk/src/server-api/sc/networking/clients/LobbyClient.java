@@ -267,23 +267,21 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(request);
   }
 
-  @SuppressWarnings("unchecked")
   protected RequestResult blockingRequest(ProtocolMessage request,
                                           Class<? extends ProtocolMessage> response) throws InterruptedException {
-    final RequestResult requestResult = new RequestResult();
+    final RequestResult[] requestResult = {null};
     final Object beacon = new Object();
     synchronized(beacon) {
       IRequestResult blockingHandler = new IRequestResult() {
-
         @Override
         public void handleError(ProtocolErrorMessage e) {
-          requestResult.setError(e);
+          requestResult[0] = new RequestResult.Error(e);
           notifySemaphore();
         }
 
         @Override
-        public void operate(ProtocolMessage result) {
-          requestResult.setResult(result);
+        public void accept(ProtocolMessage result) {
+          requestResult[0] = new RequestResult.Success<>(result);
           notifySemaphore();
         }
 
@@ -297,7 +295,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       beacon.wait();
     }
 
-    return requestResult;
+    return requestResult[0];
   }
 
   public void addListener(ILobbyClientListener listener) {
