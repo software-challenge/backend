@@ -10,8 +10,6 @@
       <option name="PACKAGES_TO_USE_STAR_IMPORTS">
         <value>
           <package name="java.util" alias="false" withSubpackages="false" />
-          <package name="kotlinx.android.synthetic" alias="false" withSubpackages="true" />
-          <package name="io.ktor" alias="false" withSubpackages="true" />
         </value>
       </option>
       <option name="PACKAGES_IMPORT_LAYOUT">
@@ -25,9 +23,6 @@
       </option>
       <option name="SPACE_BEFORE_EXTEND_COLON" value="false" />
     </JetCodeStyleSettings>
-    <MarkdownNavigatorCodeStyleSettings>
-      <option name="RIGHT_MARGIN" value="72" />
-    </MarkdownNavigatorCodeStyleSettings>
     <codeStyleSettings language="JAVA">
       <option name="SPACE_BEFORE_SYNCHRONIZED_PARENTHESES" value="false" />
       <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
@@ -36,6 +31,7 @@
       <option name="KEEP_SIMPLE_CLASSES_IN_ONE_LINE" value="true" />
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="4" />
         <option name="TAB_SIZE" value="2" />
       </indentOptions>
     </codeStyleSettings>
@@ -43,6 +39,7 @@
       <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
       <option name="WRAP_FIRST_METHOD_IN_CALL_CHAIN" value="true" />
       <indentOptions>
+        <option name="CONTINUATION_INDENT_SIZE" value="4" />
         <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
       </indentOptions>
     </codeStyleSettings>
