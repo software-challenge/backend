@@ -21,7 +21,6 @@ class GameStateTest: StringSpec({
         
         Color.values().forEach { color ->
             state.undeployedPieceShapes(color)  shouldBe PieceShape.values().toSet()
-            state.deployedPieces[color]!!.should(beEmpty())
         }
         
         // TODO: adjust values accordingly
@@ -51,22 +50,16 @@ class GameStateTest: StringSpec({
                 Piece(Color.BLUE, PieceShape.PENTO_I, Rotation.RIGHT, true))
         
         state.undeployedPieceShapes(Color.BLUE).size shouldBe 21
-        state.deployedPieces.getValue(Color.BLUE).size shouldBe 0
         assertDoesNotThrow {
             GameRuleLogic.performMove(state, move)
         }
         state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
-        state.deployedPieces.getValue(Color.BLUE).size shouldBe 1
-        state.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
-        
+
         state.turn += 4
         assertThrows<InvalidMoveException> {
             GameRuleLogic.performMove(state, move)
         }
         state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
-        state.deployedPieces.getValue(Color.BLUE).size shouldBe 1
-        state.deployedPieces.getValue(Color.BLUE)[0] shouldBe move.piece
-        
     }
     "XML conversion works" {
         val state = GameState()
@@ -75,7 +68,6 @@ class GameStateTest: StringSpec({
         transformed shouldBe state
         
         GameRuleLogic.isFirstMove(transformed) shouldBe true
-        transformed.deployedPieces shouldBe null
         transformed.getPointsForPlayer(Team.ONE)
         transformed.board.isEmpty()
     }
