@@ -1,43 +1,9 @@
+# Build artifacts
 build/
-deploy/
-bin/
-doc/
-log/
 out/
 .gradle/
-.kotlintest/
-
-# Copied files
-/server/configuration/server.properties
-/server/plugins
-/server/lib/
-/socha-sdk/lib/socha-sdk\.jar
-/players/**/lib/
-/plugins/**/lib/
-/helpers/test-client/lib/
-
-# Eclipse Project files
-.project
-.metadata
-.classpath
-*.recommenders
 
 # IntelliJ project files
 .idea/*
 !.idea/codeStyles/
 *.iml
-
-# Latex artifacts
-*.dvi
-*.aux
-*.idx
-*.toc
-*.out
-*.log
-
-# VSCode configuration files
-.vscode
-# RVM Project Config
-.rvmrc
-
-!gradle.properties
