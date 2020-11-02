@@ -5,7 +5,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldNotBe
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContainExactly
-import sc.api.plugins.exceptions.GameLogicException
+import io.kotest.matchers.shouldBe
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.PlayerScore
@@ -44,14 +44,16 @@ class GameTest: FreeSpec({
             game.onAction(state.currentPlayer, GameRuleLogic.streamPossibleMoves(state).first())
         
         shouldNotThrowAny {
-            while (!game.isGameOver())
+            while (!game.checkGameOver()) {
                 game.onAction(state.currentPlayer, SkipMove(state.currentColor))
+            }
         }
         shouldThrow<java.lang.IndexOutOfBoundsException> {
             game.onAction(state.currentPlayer, SkipMove(state.currentColor))
         }
     
-        game.playerScores shouldContainExactly List(2)
-        {PlayerScore(ScoreCause.REGULAR, "", Constants.DRAW_SCORE, 10)}
+        game.playerScores shouldContainExactly List(2) {
+            PlayerScore(ScoreCause.REGULAR, "", Constants.DRAW_SCORE, 10)
+        }
     }
 })
