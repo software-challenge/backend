@@ -15,7 +15,8 @@ class GameTest: FreeSpec({
     "A few moves can be performed without issues" {
         val game = Game()
         val state = game.gameState
-        Pair(game.onPlayerJoined(), game.onPlayerJoined())
+        game.onPlayerJoined().color shouldBe Team.ONE
+        game.onPlayerJoined().color shouldBe Team.TWO
         game.start()
 
         while (true) {
