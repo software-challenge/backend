@@ -58,16 +58,16 @@ Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1
 
 Zuerst sollte sichergestellt werden, dass die neuste Version von IntelliJ IDEA verwendet wird, da es ansonsten Probleme mit Kotlin geben kann.
 
-In IntelliJ kann man das Projekt bequem von Gradle importieren, wodurch alle Module und Bibliotheken automatisch geladen werden. Dazu sind folgende Schritte notwendig:
+In IntelliJ kann man das Projekt bequem von Gradle importieren, wodurch alle Module und Bibliotheken automatisch geladen werden.
+Dazu sind folgende Schritte notwendig:
 
-- Projekt klonen: `git clone git@github.com:CAU-Kiel-Tech-Inf/socha.git`
-- In IntelliJ auf "File" > "New" > "Project from existing sources" > socha Verzeichnis auswählen
+- Projekt klonen: `git clone --recurse-submodules git@github.com:CAU-Kiel-Tech-Inf/backend.git`
+- In IntelliJ: "File" > "New" > "Project from existing sources" > Projektverzeichnis auswählen
   - "Import project from external model" > "Gradle" auswählen
   - Im folgenden Fenster:
     - "Use auto-import" ankreuzen
     - bei "Gradle JVM" JDK 8 auswählen, wenn sie nicht schon ausgewählt ist
     - "Finish" drücken
 - Warten, bis das Gradle-Build fertig ist
-- Einmal im Terminal `git checkout .idea` ausführen, um sich die codeStyles zurückzuholen
 
 Nun können Gradle-Tasks auch direkt in IntelliJ vom Gradle-Tool-Fenster ausgeführt werden; dieses befindet sich normalerweise in der rechten Andockleiste.

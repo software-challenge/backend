@@ -2,7 +2,6 @@ readme
 git
 gradle
 travis
-idea
 
 # Modules
 testclient
