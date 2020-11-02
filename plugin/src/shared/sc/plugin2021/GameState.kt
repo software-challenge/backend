@@ -54,11 +54,6 @@ class GameState @JvmOverloads constructor(
     private val redShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
     private val greenShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
     
-    @XStreamOmitField
-    val deployedPieces: Map<Color, MutableList<Piece>> = Color.values().map {
-        it to mutableListOf<Piece>()
-    }.toMap()
-    
     /** Speichert für jede Farbe, die alle Steine gelegt hat, ob das Monomino zuletzt gelegt wurde. */
     @XStreamAsAttribute
     val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
