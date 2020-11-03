@@ -10,6 +10,7 @@ enum class Color {
     RED,
     GREEN;
 
+    /** Die nächste Farbe in der Reihenfolge. */
     val next: Color
         get() = when (this) {
             BLUE -> YELLOW
@@ -18,6 +19,7 @@ enum class Color {
             GREEN -> BLUE
         }
 
+    /** Das Team, zu der die Farbe gehört. */
     val team: Team
         get() = when (this) {
             BLUE, RED -> Team.ONE
