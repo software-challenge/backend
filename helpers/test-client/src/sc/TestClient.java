@@ -311,9 +311,9 @@ public class TestClient extends XStreamClient {
   private void prepareNewClients() {
     SlotDescriptor[] slots = new SlotDescriptor[2];
     for (int i = 0; i < 2; i++)
-      slots[(finishedTests + i) % 2] = new SlotDescriptor(players[i].name, players[i].canTimeout, false);
+      slots[(finishedTests + i) % 2] = new SlotDescriptor(players[i].name, players[i].canTimeout);
     logger.debug("Prepared client slots: " + Arrays.toString(slots));
-    send(new PrepareGameRequest(gameType, slots[0], slots[1]));
+    send(new PrepareGameRequest(gameType, slots[0], slots[1], false));
   }
 
   private static void exit(int status) {

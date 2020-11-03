@@ -62,10 +62,10 @@ public class PlayerTest extends AbstractRoleTest {
     MockClient player2 = connectClient();
     MockClient observer = connectClient(true);
 
-    SlotDescriptor slot1 = new SlotDescriptor("player1", true, false);
-    SlotDescriptor slot2 = new SlotDescriptor("player2", true, false);
+    SlotDescriptor slot1 = new SlotDescriptor("player1", true);
+    SlotDescriptor slot2 = new SlotDescriptor("player2", true);
 
-    this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, slot1, slot2)));
+    this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, slot1, slot2, false)));
     PrepareGameProtocolMessage prepared = admin.seekMessage(PrepareGameProtocolMessage.class);
 
     this.lobby.onRequest(observer, new PacketCallback(
@@ -76,8 +76,7 @@ public class PlayerTest extends AbstractRoleTest {
             new JoinPreparedRoomRequest(prepared.getReservations().get(1))));
 
     String roomId = player1.seekMessage(JoinGameProtocolMessage.class).getRoomId();
-    String roomId2 = player2.seekMessage(JoinGameProtocolMessage.class)
-            .getRoomId();
+    String roomId2 = player2.seekMessage(JoinGameProtocolMessage.class).getRoomId();
     Assert.assertEquals(roomId, roomId2);
 
     shouldInitializeCorrectly(roomId, player1, player2, observer);

@@ -1,15 +1,12 @@
 package sc.networking.clients;
 
-import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.host.IRequestResult;
 import sc.framework.plugins.Player;
-import sc.helpers.XStreamKt;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
-import sc.protocol.helpers.LobbyProtocol;
 import sc.protocol.helpers.AsyncResultManager;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.requests.*;
@@ -21,7 +18,6 @@ import sc.shared.SlotDescriptor;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -174,14 +170,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   @SuppressWarnings("unchecked")
   public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(
-          String gameType, SlotDescriptor descriptor1, SlotDescriptor descriptor2)
-          throws InterruptedException {
-    return blockingRequest(new PrepareGameRequest(gameType, descriptor1, descriptor2),
-            PrepareGameProtocolMessage.class);
-  }
-
-  @SuppressWarnings("unchecked")
-  public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(
           PrepareGameRequest request) throws InterruptedException {
     return blockingRequest(request, PrepareGameProtocolMessage.class);
   }
@@ -192,9 +180,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   public void prepareGame(String gameType, boolean startPaused) {
     send(new PrepareGameRequest(
-            gameType,
-            new SlotDescriptor("player1", false, startPaused),
-            new SlotDescriptor("player2", false, startPaused))
+        gameType,
+        new SlotDescriptor("player1", false),
+        new SlotDescriptor("player2", false),
+        startPaused)
     );
   }
 

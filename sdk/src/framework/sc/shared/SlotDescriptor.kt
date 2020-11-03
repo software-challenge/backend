@@ -4,16 +4,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 
 @XStreamAlias(value = "slotDescriptor")
-class SlotDescriptor(
-        @XStreamAsAttribute val displayName: String,
-        @XStreamAsAttribute val canTimeout: Boolean,
-        @XStreamAsAttribute val shouldBePaused: Boolean) {
+class SlotDescriptor
+@JvmOverloads constructor(
+    @XStreamAsAttribute val displayName: String = "Unknown",
+    @XStreamAsAttribute val canTimeout: Boolean = true) {
     
-    constructor(displayName: String, canTimeout: Boolean) : this(displayName, canTimeout, true)
-    constructor(displayName: String) : this(displayName, true, true)
-    constructor() : this("Unknown", true, true)
-    
-    override fun toString(): String {
-        return "SlotDescriptor{displayName=$displayName, canTimeout=$canTimeout, shouldBePaused=$shouldBePaused"
-    }
+    override fun toString(): String = "SlotDescriptor{displayName=$displayName, canTimeout=$canTimeout"
 }
