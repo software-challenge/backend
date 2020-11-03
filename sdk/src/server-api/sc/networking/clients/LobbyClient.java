@@ -269,6 +269,9 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   protected RequestResult blockingRequest(ProtocolMessage request,
                                           Class<? extends ProtocolMessage> response) throws InterruptedException {
+    // TODO return a proper future here
+    // This is really old async code, so the variable needs to be final but still manipulatable - IDEA suggested to
+    // use an array and we'll stay with that until we reimplement it properly.
     final RequestResult[] requestResult = {null};
     final Object beacon = new Object();
     synchronized(beacon) {
