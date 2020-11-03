@@ -12,35 +12,25 @@ import java.util.Collections;
 import java.util.List;
 
 public class ObservingClient implements IControllableGame, IHistoryListener {
+  private static final Logger logger = LoggerFactory.getLogger(ObservingClient.class);
 
-  public ObservingClient(String roomId) {
+  public ObservingClient(String roomId, boolean isPaused) {
     this.roomId = roomId;
-    this.replay = false;
+    this.paused = isPaused;
   }
 
   public final String roomId;
 
-  private static final Logger logger = LoggerFactory.getLogger(ObservingClient.class);
+  private final boolean replay = false;
 
-  private final boolean replay;
-
+  protected int position = 0;
+  protected boolean paused;
   private boolean gameOver = false;
 
   private final List<ProtocolMessage> history = new ArrayList<>();
-
   private final List<IUpdateListener> listeners = new ArrayList<>();
 
-  protected int position = 0;
-
-  protected PlayMode mode = PlayMode.PAUSED;
-
   private GameResult result = null;
-
-  private ProtocolErrorMessage error = null;
-
-  enum PlayMode {
-    PLAYING, PAUSED
-  }
 
   protected void addObservation(ProtocolMessage observation) {
     boolean firstObservation = this.history.isEmpty();
@@ -54,7 +44,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
   }
 
   private boolean canAutoStep() {
-    return !this.replay || this.mode == PlayMode.PLAYING;
+    return !this.replay || !this.paused;
   }
 
   @Override
@@ -101,7 +91,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
 
   @Override
   public void pause() {
-    this.mode = PlayMode.PAUSED;
+    paused = true;
     notifyOnUpdate();
   }
 
@@ -124,7 +114,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
 
   @Override
   public void unpause() {
-    this.mode = PlayMode.PLAYING;
+    paused = false;
 
     if (this.replay) {
       next();
@@ -191,7 +181,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
 
   @Override
   public boolean isPaused() {
-    return this.mode == PlayMode.PAUSED;
+    return paused;
   }
 
   @Override
@@ -219,7 +209,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
 
   @Override
   public void cancel() {
-    this.mode = PlayMode.PAUSED;
+    paused = true;
   }
 
   @Override
