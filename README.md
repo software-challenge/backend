@@ -54,6 +54,13 @@ Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1
 
     ./gradlew :test-client:run -Dargs="--player1 ../../player/build/libs/defaultplayer.jar --player2 ../../player/build/libs/defaultplayer.jar --tests 3"
 
+### Tests
+
+Unsere Unittests nutzen das [Kotest-Framework](https://kotest.io) mit [JUnit](https://junit.org) im Hintergrund.
+
+Dabei setzen wir auf die [ShouldSpec](https://kotest.io/styles/#should-spec) und ggf. [BehaviorSpec](https://kotest.io/styles/#behavior-spec).
+Bisherige Tests nutzen die StringSpec, welche jedoch wegen fehlendem nesting auf Dauer zu unübersichtlich ist.
+
 ### Arbeiten mit IntelliJ IDEA
 
 Zuerst sollte sichergestellt werden, dass die neuste Version von IntelliJ IDEA verwendet wird, da es ansonsten Probleme mit Kotlin geben kann.
