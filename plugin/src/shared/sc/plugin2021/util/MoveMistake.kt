@@ -37,7 +37,7 @@ enum class MoveMistake {
         override fun toString(color: Color): String = "Farbe $color hat einen Stein nicht vollständig aufs Spielfeld gelegt"
     },
     OBSTRUCTED {
-        override fun toString(): String = "Der Spielstein würde eine andere Farbe überlagern"
+        override fun toString(): String = "Der Spielstein würde einen bereits gelegten Stein überlagern"
         override fun toString(color: Color): String = "Farbe $color hat einen Stein auf einen anderen Stein gelegt"
     },
     TOUCHES_SAME_COLOR {
