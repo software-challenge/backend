@@ -61,7 +61,10 @@ Zuerst sollte sichergestellt werden, dass die neuste Version von IntelliJ IDEA v
 In IntelliJ kann man das Projekt bequem von Gradle importieren, wodurch alle Module und Bibliotheken automatisch geladen werden.
 Dazu sind folgende Schritte notwendig:
 
-- Projekt klonen: `git clone --recurse-submodules git@github.com:CAU-Kiel-Tech-Inf/backend.git`
+- Projekt klonen:
+  ```sh
+  git clone git@github.com:CAU-Kiel-Tech-Inf/backend.git --recurse-submodules --shallow-submodules
+  ```
 - In IntelliJ: "File" > "New" > "Project from existing sources" > Projektverzeichnis auswählen
   - "Import project from external model" > "Gradle" auswählen
   - Im folgenden Fenster:
