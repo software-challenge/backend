@@ -4,11 +4,7 @@ import sc.plugin2021.Color
 import sc.plugin2021.Move
 import sc.plugin2021.PieceShape
 
-/**
- * Wird optional bei Validierung von Zügen zurückgegeben, falls ein Zug nicht valide ist.
- * MoveMistakes entstehen bei Zügen, die theoretisch möglich sein könnten,
- * es aber bei dem jeweiligen Spielstand nicht sind.
- */
+/** Wird optional bei Validierung von Zügen zurückgegeben, falls ein Zug laut Regeln verboten ist. */
 sealed class MoveMistake(
         val color: Color
 )
