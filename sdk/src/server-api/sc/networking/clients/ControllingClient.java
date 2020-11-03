@@ -16,8 +16,8 @@ public class ControllingClient extends ObservingClient implements IAdministrativ
   private boolean allowOneStep = false;
   private boolean pauseHitReceived;
 
-  public ControllingClient(LobbyClient client, String roomId) {
-    super(roomId);
+  public ControllingClient(LobbyClient client, String roomId, boolean isPaused) {
+    super(roomId, isPaused);
     this.client = client;
   }
 

@@ -300,23 +300,27 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   /** Takes control of the game in the given room and pauses it. */
   public IControllableGame observeAndControl(String roomId) {
-    return observeAndControl(roomId, true);
+    final IControllableGame controller = observeAndControl(roomId, true);
+    controller.pause();
+    return controller;
   }
 
   /** Takes control of the game in the given room.
-   * @param pause whether to pause the game upon taking control. */
-  public IControllableGame observeAndControl(String roomId, boolean pause) {
-    ControllingClient controller = new ControllingClient(this, roomId);
+   * @param isPaused whether the game to observe is already paused. */
+  public IControllableGame observeAndControl(String roomId, boolean isPaused) {
+    ControllingClient controller = new ControllingClient(this, roomId, isPaused);
     addListener((IAdministrativeListener) controller);
     addListener((IHistoryListener) controller);
     requestObservation(roomId);
-    if(pause)
-      controller.pause();
     return controller;
   }
 
   public ObservingClient observe(String roomId) {
-    ObservingClient observer = new ObservingClient(roomId);
+    return observe(roomId, true);
+  }
+
+  public ObservingClient observe(String roomId, boolean isPaused) {
+    ObservingClient observer = new ObservingClient(roomId, isPaused);
     addListener(observer);
     requestObservation(roomId);
     return observer;
