@@ -170,9 +170,10 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized PrepareGameProtocolMessage prepareGame(String gameType, SlotDescriptor[] descriptors, Object loadGameInfo)
+  public synchronized PrepareGameProtocolMessage prepareGame(String gameType, boolean paused, SlotDescriptor[] descriptors, Object loadGameInfo)
           throws RescuableClientException {
     GameRoom room = createGame(gameType, true);
+    room.pause(paused);
     room.openSlots(descriptors);
 
     if (loadGameInfo != null) {
@@ -192,6 +193,7 @@ public class GameRoomManager {
   public synchronized PrepareGameProtocolMessage prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
     return prepareGame(
             prepared.getGameType(),
+            prepared.getPause(),
             prepared.getSlotDescriptors(),
             null
     );
