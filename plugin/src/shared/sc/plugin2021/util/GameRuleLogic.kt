@@ -212,9 +212,9 @@ object GameRuleLogic {
     /** Skip a turn. */
     @JvmStatic
     private fun performSkipMove(gameState: GameState) {
+        validateSkipMove(gameState, true)
         if (!gameState.tryAdvance())
             logger.error("Couldn't proceed to next turn!")
-       validateSkipMove(gameState, true)
     }
 
     /** Prüfe, ob das gegebene [Field] bereits an eins mit gleicher Farbe angrenzt. */

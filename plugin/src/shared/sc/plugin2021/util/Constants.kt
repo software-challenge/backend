@@ -18,6 +18,9 @@ object Constants {
     
     /** Die Länge des Spielfelds als Anzahl an Felders. */
     const val BOARD_SIZE = 20
+
+    /** Die Anzahl an erlaubten Runden. */
+    const val ROUND_LIMIT = 25
     
     /** Zeit (in ms), die für einen Zug zur Verfügung steht. */
     const val SOFT_TIMEOUT = 2000L

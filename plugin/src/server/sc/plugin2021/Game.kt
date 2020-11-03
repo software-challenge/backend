@@ -63,6 +63,8 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     
     private val playerMap = mutableMapOf<Team, Player>()
     
+    override fun getRound(): Int = gameState.round
+    
     /**
      * Checks if any player can still make moves.
      * If so, returns null; otherwise returns
@@ -157,7 +159,7 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
             logger.debug("Current State: $gameState")
             logger.debug("Performing Move $data")
             GameRuleLogic.performMove(gameState, data)
-            next(if (isGameOver()) null else gameState.currentPlayer)
+            next(if (checkGameOver()) null else gameState.currentPlayer)
             logger.debug("Current Board:\n${gameState.board}")
         } catch(e: InvalidMoveException) {
             super.catchInvalidMove(e, fromPlayer)
@@ -166,8 +168,14 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     
     override fun getCurrentState(): IGameState = gameState
     
-    fun isGameOver(): Boolean {
+    val isGameOver: Boolean
+        get() = gameState.orderedColors.isEmpty() || round > Constants.ROUND_LIMIT
+
+    fun checkGameOver(): Boolean {
+        if (round > Constants.ROUND_LIMIT) {
+            gameState.orderedColors.clear()
+        }
         GameRuleLogic.removeInvalidColors(gameState)
-        return gameState.orderedColors.isEmpty()
+        return isGameOver
     }
 }
