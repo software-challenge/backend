@@ -150,9 +150,12 @@ class GameRuleLogicTest: StringSpec({
         game.start()
 
         while (!game.checkGameOver()) {
-                val moves = GameRuleLogic.getPossibleMoves(state)
-                moves shouldNotBe emptySet<SetMove>()
-                game.onAction(state.currentPlayer, moves.random())
+            val SHOULD = GameRuleLogic.getPossibleMoves(state)
+            val IS = GameRuleLogic.getPossibleMovesSmartly(state)
+
+            IS shouldBe SHOULD
+
+            game.onAction(state.currentPlayer, SHOULD.random())
         }
     }
 })

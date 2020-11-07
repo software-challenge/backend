@@ -297,4 +297,30 @@ object GameRuleLogic {
             }
         }
     }.filter { isValidSetMove(gameState, it) }
+
+    @JvmStatic
+    fun getPossibleMovesSmartly(gameState: GameState) =
+            streamPossibleMovesSmartly(gameState).toSet()
+
+    @JvmStatic
+    private fun streamPossibleMovesSmartly(gameState: GameState) =
+            if (isFirstMove(gameState))
+                streamPossibleStartMoves(gameState)
+            else
+                streamAllMovesSmartly(gameState)
+
+    @JvmStatic
+    private fun streamAllMovesSmartly(gameState: GameState) = sequence<SetMove> {
+        val validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
+
+        for (field in validFields)
+            for (shape in gameState.undeployedPieceShapes(gameState.currentColor))
+                for (variant in shape.variants.filter { it.key.contains(field) })
+                    yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, field)))
+    }
+
+    @JvmStatic
+    private fun getValidFields(board: Board, color: Color): Set<Coordinates> {
+        return emptySet()
+    }
 }
