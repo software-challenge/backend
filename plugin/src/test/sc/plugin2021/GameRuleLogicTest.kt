@@ -142,4 +142,17 @@ class GameRuleLogicTest: StringSpec({
     "All possible moves get calculated" {
         // TODO: set up a mid-game state so that the list of possible moves is non-trivial
     }
+    "All possible moves get calculated efficiently" {
+        val game = Game()
+        val state = game.gameState
+        game.onPlayerJoined().color shouldBe Team.ONE
+        game.onPlayerJoined().color shouldBe Team.TWO
+        game.start()
+
+        while (!game.checkGameOver()) {
+                val moves = GameRuleLogic.getPossibleMoves(state)
+                moves shouldNotBe emptySet<SetMove>()
+                game.onAction(state.currentPlayer, moves.random())
+        }
+    }
 })
