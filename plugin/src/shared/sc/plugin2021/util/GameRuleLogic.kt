@@ -219,27 +219,19 @@ object GameRuleLogic {
 
     /** Prüfe, ob das gegebene [Field] bereits an eins mit gleicher Farbe angrenzt. */
     @JvmStatic
-    fun bordersOnColor(board: Board, field: Field): Boolean = listOf(
-            Vector(1, 0),
-            Vector(0, 1),
-            Vector(-1, 0),
-            Vector(0, -1)).any {
-        try {
-            board[field.coordinates + it].content == field.content && !field.isEmpty
-        } catch (e: ArrayIndexOutOfBoundsException) { false }
-    }
+    fun bordersOnColor(board: Board, field: Field): Boolean =
+            field.coordinates.neighbors.any {
+                try { board[it].content == field.content && !field.isEmpty }
+                catch (e: ArrayIndexOutOfBoundsException) { false }
+            }
     
     /** Prüfe, ob das gegebene Feld an die Ecke eines Feldes gleicher Farbe angrenzt. */
     @JvmStatic
-    fun cornersOnColor(board: Board, field: Field): Boolean = listOf(
-            Vector(1, 1),
-            Vector(1, -1),
-            Vector(-1, -1),
-            Vector(-1, 1)).any {
-        try {
-            board[field.coordinates + it].content == field.content && !field.isEmpty
-        } catch (e: ArrayIndexOutOfBoundsException) { false }
-    }
+    fun cornersOnColor(board: Board, field: Field): Boolean =
+            field.coordinates.corners.any {
+                try { board[it].content == field.content && !field.isEmpty }
+                catch (e: ArrayIndexOutOfBoundsException) { false }
+            }
     
     /** Prüfe, ob die gegebene Position eine Ecke des Spielfelds ist. */
     @JvmStatic
