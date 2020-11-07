@@ -258,11 +258,6 @@ object GameRuleLogic {
                     .filter{ it.size == 5 && it != PieceShape.PENTO_X }
                     .random()
     
-    /** Gib eine Sammlung an möglichen [SetMove]s zurück. */
-    @JvmStatic
-    fun getPossibleMoves(gameState: GameState) =
-            streamPossibleMoves(gameState).toSet()
-    
     /** Entferne alle Farben, die keine Steine mehr auf dem Feld platzieren können. */
     @JvmStatic
     fun removeInvalidColors(gameState: GameState) {
@@ -272,7 +267,12 @@ object GameRuleLogic {
             removeInvalidColors(gameState)
         }
     }
-    
+
+    /** Gib eine Sammlung an möglichen [SetMove]s zurück. */
+    @JvmStatic
+    fun getPossibleMoves(gameState: GameState) =
+            streamPossibleMoves(gameState).toSet()
+
     /** Gib Eine Sequenz an möglichen [SetMove]s zurück. */
     @JvmStatic
     fun streamPossibleMoves(gameState: GameState) =
@@ -286,12 +286,12 @@ object GameRuleLogic {
     private fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
         val color = gameState.currentColor
         gameState.undeployedPieceShapes(color).map {
-            val area = it.coordinates.area()
-            for (y in 0 until Constants.BOARD_SIZE - area.dy)
-                for (x in 0 until Constants.BOARD_SIZE - area.dx)
-                    for (variant in it.variants) {
+            for (variant in it.variants) {
+                val area = variant.key.area()
+                for (y in 0 until Constants.BOARD_SIZE - area.dy)
+                    for (x in 0 until Constants.BOARD_SIZE - area.dx)
                         yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
-                    }
+            }
         }
     }.filter { isValidSetMove(gameState, it) }
     
