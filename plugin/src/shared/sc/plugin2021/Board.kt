@@ -69,6 +69,13 @@ class Board(
             "${it.joinToString(separator = "  ") { it.letter.toString() }}\n"
         }
     }
+
+    companion object {
+        /** @return ob die gegebene Position innerhalb des Spielfelds liegt. */
+        fun contains(position: Coordinates) =
+                position.x >= 0 && position.x < Constants.BOARD_SIZE &&
+                position.y >= 0 && position.y < Constants.BOARD_SIZE
+    }
 }
 
 /** Die Ecken des Spielfelds. */
