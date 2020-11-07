@@ -1,5 +1,6 @@
 package sc.plugin2021
 
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.core.spec.style.StringSpec
@@ -151,9 +152,10 @@ class GameRuleLogicTest: StringSpec({
 
         while (!game.checkGameOver()) {
             val SHOULD = GameRuleLogic.getPossibleMoves(state)
-            val IS = GameRuleLogic.getPossibleMovesSmartly(state)
 
-            IS shouldBe SHOULD
+            shouldNotThrow<ArrayIndexOutOfBoundsException> {
+                GameRuleLogic.getPossibleMovesSmartly(state) shouldBe SHOULD
+            }
 
             game.onAction(state.currentPlayer, SHOULD.random())
         }
