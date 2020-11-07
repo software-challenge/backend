@@ -313,14 +313,36 @@ object GameRuleLogic {
     private fun streamAllMovesSmartly(gameState: GameState) = sequence<SetMove> {
         val validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
 
+        logger.debug("$validFields")
+
         for (field in validFields)
             for (shape in gameState.undeployedPieceShapes(gameState.currentColor))
                 for (variant in shape.variants.filter { it.key.contains(field) })
-                    yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, field)))
-    }
+                    for (x in field.x - variant.key.area().dx..field.x)
+                        for (y in field.y - variant.key.area().dy..field.y) {
+                            val move = SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y)))
+                            logger.debug("$move is valid: ${isValidSetMove(gameState, move)}")
+                            yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
+                        }
+    }.filter { isValidSetMove(gameState, it) }
 
     @JvmStatic
-    private fun getValidFields(board: Board, color: Color): Set<Coordinates> {
-        return emptySet()
+    private fun getValidFields(board: Board, color: Color): Set<Coordinates> =
+            getColoredFields(board, color, Corner.values().map { it.position }.filter {
+                board[it].content == +color }.toMutableSet()
+            ).flatMap { it.corners }.filter {
+                Board.contains(it) && board[it].isEmpty && it.corners.none {
+                    Board.contains(it) && board[it].content == +color
+                }
+            }.toSet()
+
+    @JvmStatic
+    private fun getColoredFields(board: Board, color: Color, coloredFields: MutableSet<Coordinates>): Set<Coordinates> {
+        logger.debug("$coloredFields")
+        val copy = coloredFields.toSet()
+        coloredFields.addAll(coloredFields.flatMap { it.corners + it.neighbors }.filter {
+            Board.contains(it) && board[it].content == +color
+        })
+        return if (coloredFields == copy) coloredFields else getColoredFields(board, color, coloredFields)
     }
 }
