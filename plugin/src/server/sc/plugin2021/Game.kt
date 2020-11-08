@@ -140,9 +140,6 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
                     cause = ScoreCause.LEFT
                     reason = "Der Spieler hat das Spiel verlassen"
                 }
-                else -> {
-                    score = Constants.DRAW_SCORE
-                }
             }
         return PlayerScore(cause, reason, score, points)
     }
