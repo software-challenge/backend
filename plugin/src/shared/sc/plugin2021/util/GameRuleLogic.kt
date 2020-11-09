@@ -160,8 +160,6 @@ object GameRuleLogic {
     /** Prüfe, ob der gegebene [SetMove] auf dem [Board] platziert werden kann. */
     @JvmStatic
     fun validateSetMove(board: Board, move: SetMove, throws: Boolean = false): MoveMistake? {
-        // throw IndexOutOfBounds if the initial position only is out of bounds
-        board[move.piece.position]
         move.piece.coordinates.forEach {
             try {
                 board[it]

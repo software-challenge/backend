@@ -153,9 +153,7 @@ class GameRuleLogicTest: StringSpec({
         while (!game.checkGameOver()) {
             val SHOULD = GameRuleLogic.getPossibleMoves(state)
 
-            shouldNotThrow<ArrayIndexOutOfBoundsException> {
-                GameRuleLogic.getPossibleMovesSmartly(state) shouldBe SHOULD
-            }
+            GameRuleLogic.getPossibleMovesSmartly(state) shouldBe SHOULD
 
             game.onAction(state.currentPlayer, SHOULD.random())
         }
