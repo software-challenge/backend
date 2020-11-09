@@ -275,10 +275,11 @@ object GameRuleLogic {
     
     /** Stream all possible moves regardless of whether it's the first turn. */
     @JvmStatic
-    private fun streamAllPossibleMoves(gameState: GameState): Sequence<SetMove> = sequenceOf(
+    private fun streamAllPossibleMoves(gameState: GameState): Sequence<SetMove> = sequence {
         gameState.undeployedPieceShapes(gameState.currentColor).map {
-            streamPossibleMovesForShape(gameState, it)
-        }).flatten().flatten()
+            yieldAll(streamPossibleMovesForShape(gameState, it))
+        }
+    }
 
     /** Gib eine Sammlung aller möglichen [SetMove]s für die gegebene [PieceShape] zurück. */
     @JvmStatic
