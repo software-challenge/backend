@@ -311,29 +311,43 @@ object GameRuleLogic {
     }.filter { isValidSetMove(gameState, it) }
 
     @JvmStatic
-    fun getPossibleMovesSmartly(gameState: GameState) =
+    fun getPossibleMovesSmartly(gameState: GameState): Set<SetMove> =
             streamPossibleMovesSmartly(gameState).toSet()
 
     @JvmStatic
-    private fun streamPossibleMovesSmartly(gameState: GameState) =
+    fun streamPossibleMovesSmartly(gameState: GameState): Sequence<SetMove> =
             if (isFirstMove(gameState))
                 streamPossibleStartMoves(gameState)
             else
                 streamAllMovesSmartly(gameState)
 
     @JvmStatic
-    private fun streamAllMovesSmartly(gameState: GameState) = sequence<SetMove> {
+    fun streamAllMovesSmartly(gameState: GameState) = sequence<SetMove> {
         val validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
 
-        for (field in validFields)
-            for (shape in gameState.undeployedPieceShapes(gameState.currentColor))
-                for (variant in shape.variants)
-                    for (x in field.x - variant.key.area.dx..field.x)
-                        for (y in field.y - variant.key.area.dy..field.y)
-                            yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
-    }.filter { isValidSetMove(gameState, it) }
+        for (shape in gameState.undeployedPieceShapes(gameState.currentColor))
+            yieldAll(streamMovesForShapeSmartly(gameState, shape, validFields))
+    }
 
     @JvmStatic
+    fun streamMovesForShapeSmartly(
+            gameState: GameState,
+            shape: PieceShape,
+            validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
+    ) = sequence<SetMove> {
+        for (field in validFields) {
+            for (variant in shape.variants) {
+                val area = variant.key.area
+                for (x in field.x - area.dx..field.x) {
+                    for (y in field.y - area.dy..field.y) {
+                        yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
+                    }
+                }
+            }
+        }
+    }.filter { GameRuleLogic.isValidSetMove(gameState, it) }
+
+@JvmStatic
     private fun getValidFields(board: Board, color: Color): Set<Coordinates> {
         val coloredFields = getColoredFields(board, color, Corner.values().map { it.position }.filter {
             board[it].content == +color
