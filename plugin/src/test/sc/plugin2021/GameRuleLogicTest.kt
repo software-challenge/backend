@@ -1,8 +1,6 @@
 package sc.plugin2021
 
-import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -142,20 +140,5 @@ class GameRuleLogicTest: StringSpec({
     }
     "All possible moves get calculated" {
         // TODO: set up a mid-game state so that the list of possible moves is non-trivial
-    }
-    "All possible moves get calculated efficiently" {
-        val game = Game()
-        val state = game.gameState
-        game.onPlayerJoined().color shouldBe Team.ONE
-        game.onPlayerJoined().color shouldBe Team.TWO
-        game.start()
-
-        while (!game.checkGameOver()) {
-            val SHOULD = GameRuleLogic.getPossibleMoves(state)
-
-            GameRuleLogic.getPossibleMovesSmartly(state) shouldBe SHOULD
-
-            game.onAction(state.currentPlayer, SHOULD.random())
-        }
     }
 })

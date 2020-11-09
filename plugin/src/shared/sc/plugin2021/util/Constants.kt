@@ -27,9 +27,6 @@ object Constants {
     /** Zeit (in ms), ab dem eine Zuganfrage abgebrochen wird. */
     const val HARD_TIMEOUT = 10000L
 
-    /** Runde, ab der der originale Algorithmus zur Berechnung möglicher Züge verwendet wird. */
-    const val BRUTE_FORCE_ROUND = 26
-    
     // Max game length: turns(ROUND_LIMIT * 2) * SOFT_TIMEOUT, one second buffer per round
     /** Zeit (in ms), die ein Spiel höchstens dauern sollte. */
     @JvmField

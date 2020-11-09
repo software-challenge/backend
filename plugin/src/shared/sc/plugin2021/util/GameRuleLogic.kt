@@ -269,38 +269,7 @@ object GameRuleLogic {
             if (isFirstMove(gameState))
                 streamPossibleStartMoves(gameState)
             else
-                if (gameState.round < Constants.BRUTE_FORCE_ROUND)
-                    streamAllMovesSmartly(gameState)
-                else
-                    streamAllPossibleMoves(gameState)
-
-    
-    /** Stream all possible moves regardless of whether it's the first turn. */
-    @JvmStatic
-    private fun streamAllPossibleMoves(gameState: GameState): Sequence<SetMove> = sequence {
-        gameState.undeployedPieceShapes(gameState.currentColor).map {
-            yieldAll(streamPossibleMovesForShape(gameState, it))
-        }
-    }
-
-    /** Gib eine Sammlung aller möglichen [SetMove]s für die gegebene [PieceShape] zurück. */
-    @JvmStatic
-    fun getPossibleMovesForShape(gameState: GameState, shape: PieceShape): Set<SetMove> =
-            streamPossibleMovesForShape(gameState, shape).toSet()
-
-    /** Gib eine Sequenz an möglichen [SetMove]s zurück. */
-    @JvmStatic
-    fun streamPossibleMovesForShape(gameState: GameState, shape: PieceShape) = sequence<SetMove> {
-        val color = gameState.currentColor
-        for (variant in shape.variants) {
-            val area = variant.key.area
-            for (y in 0 until Constants.BOARD_SIZE - area.dy) {
-                for (x in 0 until Constants.BOARD_SIZE - area.dx) {
-                    yield(SetMove(Piece(color, shape, variant.key, Coordinates(x, y))))
-                }
-            }
-        }
-    }.filter { isValidSetMove(gameState, it) }
+                streamAllPossibleMoves(gameState)
 
     /** Stream all possible moves if it's the first turn of [gameState]. */
     @JvmStatic
@@ -314,26 +283,21 @@ object GameRuleLogic {
     }.filter { isValidSetMove(gameState, it) }
 
     @JvmStatic
-    fun getPossibleMovesSmartly(gameState: GameState): Set<SetMove> =
-            streamPossibleMovesSmartly(gameState).toSet()
-
-    @JvmStatic
-    fun streamPossibleMovesSmartly(gameState: GameState): Sequence<SetMove> =
-            if (isFirstMove(gameState))
-                streamPossibleStartMoves(gameState)
-            else
-                streamAllMovesSmartly(gameState)
-
-    @JvmStatic
-    fun streamAllMovesSmartly(gameState: GameState) = sequence<SetMove> {
+    fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
         val validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
 
         for (shape in gameState.undeployedPieceShapes(gameState.currentColor))
-            yieldAll(streamMovesForShapeSmartly(gameState, shape, validFields))
+            yieldAll(streamPossibleMovesForShape(gameState, shape, validFields))
     }
 
+    /** Gib eine Sammlung aller möglichen [SetMove]s für die gegebene [PieceShape] zurück. */
     @JvmStatic
-    fun streamMovesForShapeSmartly(
+    fun getPossibleMovesForShape(gameState: GameState, shape: PieceShape): Set<SetMove> =
+            streamPossibleMovesForShape(gameState, shape).toSet()
+
+    /** Gib eine Sequenz aller möglichen [SetMove]s für die gegebene [PieceShape] zurück. */
+    @JvmStatic
+    fun streamPossibleMovesForShape(
             gameState: GameState,
             shape: PieceShape,
             validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
@@ -348,9 +312,10 @@ object GameRuleLogic {
                 }
             }
         }
-    }.filter { GameRuleLogic.isValidSetMove(gameState, it) }
+    }.filter { isValidSetMove(gameState, it) }
 
-@JvmStatic
+    /** @return all [Coordinates] the currently active [Color] can place [Piece]s upon. */
+    @JvmStatic
     private fun getValidFields(board: Board, color: Color): Set<Coordinates> {
         val coloredFields = getColoredFields(board, color, Corner.values().map { it.position }.filter {
             board[it].content == +color
@@ -365,6 +330,7 @@ object GameRuleLogic {
         return validFields
     }
 
+    /** @return all [Coordinates] belonging to the currently active [Color]. */
     @JvmStatic
     private fun getColoredFields(board: Board, color: Color, coloredFields: MutableSet<Coordinates>): Set<Coordinates> {
         val copy = coloredFields.toSet()
