@@ -37,7 +37,7 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     
     /** Ein Vector, der das kleinstmögliche Rechteck beschreibt, dass die vollständige Form umfasst. */
     @XStreamAsAttribute
-    val dimension: Vector = coordinates.area()
+    val dimension: Vector = coordinates.area
     
     /** Die Form als Sammlung aus Vektoren. */
     val asVectors: Set<Vector> by lazy {coordinates.map {it - Coordinates.origin}.toSet()}

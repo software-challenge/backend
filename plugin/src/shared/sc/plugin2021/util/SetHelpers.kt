@@ -63,27 +63,28 @@ fun Set<Coordinates>.align(): Set<Coordinates> {
  * Berechne die Ausmaße des kleinstmöglichen Rechtecks, welches alle Koordinaten umfasst.
  * @return ein Vector von der linken oberen Ecke zur rechten unteren Ecke
  */
-fun Set<Coordinates>.area(): Vector {
-    var dx = 0
-    var dy = 0
-    forEach {
-        dx = kotlin.math.max(it.x, dx)
-        dy = kotlin.math.max(it.y, dy)
+val Set<Coordinates>.area: Vector
+    get() {
+        var dx = 0
+        var dy = 0
+        forEach {
+            dx = kotlin.math.max(it.x, dx)
+            dy = kotlin.math.max(it.y, dy)
+        }
+        return Vector(dx, dy)
     }
-    return Vector(dx, dy)
-}
 
 /**
  * Gebe die Form der Koordinaten zur Konsole aus.
  * @param dimension die Ausmaße der entstehenden Graphik
  */
-fun Set<Coordinates>.print(dimension: Vector = area()) {
+fun Set<Coordinates>.print(dimension: Vector = area) {
     printShapes(this, dimension = dimension)
 }
 
 /** Gebe die gegebenen Formen zur Konsole aus, alle in gegebenen Ausmaßen. */
 fun printShapes(vararg shapes: Set<Coordinates>, dimension: Vector = Vector(4, 5)) {
-    if (shapes.any{it.area() < dimension})
+    if (shapes.any{ it.area < dimension })
         throw IndexOutOfBoundsException("The largest shape has to fit in the given dimension")
         
     val width = shapes.size * (dimension.dx + 1)

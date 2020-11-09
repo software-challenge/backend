@@ -290,7 +290,7 @@ object GameRuleLogic {
     fun streamPossibleMovesForShape(gameState: GameState, shape: PieceShape) = sequence<SetMove> {
         val color = gameState.currentColor
         for (variant in shape.variants) {
-            val area = variant.key.area()
+            val area = variant.key.area
             for (y in 0 until Constants.BOARD_SIZE - area.dy) {
                 for (x in 0 until Constants.BOARD_SIZE - area.dx) {
                     yield(SetMove(Piece(color, shape, variant.key, Coordinates(x, y))))
@@ -305,7 +305,7 @@ object GameRuleLogic {
         val kind = gameState.startPiece
         for (variant in kind.variants) {
             for (corner in Corner.values()) {
-                yield(SetMove(Piece(gameState.currentColor, kind, variant.key, corner.align(variant.key.area()))))
+                yield(SetMove(Piece(gameState.currentColor, kind, variant.key, corner.align(variant.key.area))))
             }
         }
     }.filter { isValidSetMove(gameState, it) }
@@ -328,8 +328,8 @@ object GameRuleLogic {
         for (field in validFields)
             for (shape in gameState.undeployedPieceShapes(gameState.currentColor))
                 for (variant in shape.variants)
-                    for (x in field.x - variant.key.area().dx..field.x)
-                        for (y in field.y - variant.key.area().dy..field.y)
+                    for (x in field.x - variant.key.area.dx..field.x)
+                        for (y in field.y - variant.key.area.dy..field.y)
                             yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
     }.filter { isValidSetMove(gameState, it) }
 
