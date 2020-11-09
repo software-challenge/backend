@@ -269,7 +269,11 @@ object GameRuleLogic {
             if (isFirstMove(gameState))
                 streamPossibleStartMoves(gameState)
             else
-                streamAllPossibleMoves(gameState)
+                if (gameState.round < Constants.BRUTE_FORCE_ROUND)
+                    streamAllMovesSmartly(gameState)
+                else
+                    streamAllPossibleMoves(gameState)
+
     
     /** Stream all possible moves regardless of whether it's the first turn. */
     @JvmStatic
