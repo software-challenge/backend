@@ -265,7 +265,7 @@ object GameRuleLogic {
     fun getPossibleMoves(gameState: GameState) =
             streamPossibleMoves(gameState).toSet()
 
-    /** Gib Eine Sequenz an möglichen [SetMove]s zurück. */
+    /** Gib eine Sequenz an möglichen [SetMove]s zurück. */
     @JvmStatic
     fun streamPossibleMoves(gameState: GameState) =
             if (isFirstMove(gameState))
@@ -275,18 +275,30 @@ object GameRuleLogic {
     
     /** Stream all possible moves regardless of whether it's the first turn. */
     @JvmStatic
-    private fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
+    private fun streamAllPossibleMoves(gameState: GameState): Sequence<SetMove> = sequenceOf(
+        gameState.undeployedPieceShapes(gameState.currentColor).map {
+            streamPossibleMovesForShape(gameState, it)
+        }).flatten().flatten()
+
+    /** Gib eine Sammlung aller möglichen [SetMove]s für die gegebene [PieceShape] zurück. */
+    @JvmStatic
+    fun getPossibleMovesForShape(gameState: GameState, shape: PieceShape): Set<SetMove> =
+            streamPossibleMovesForShape(gameState, shape).toSet()
+
+    /** Gib eine Sequenz an möglichen [SetMove]s zurück. */
+    @JvmStatic
+    fun streamPossibleMovesForShape(gameState: GameState, shape: PieceShape) = sequence<SetMove> {
         val color = gameState.currentColor
-        gameState.undeployedPieceShapes(color).map {
-            for (variant in it.variants) {
-                val area = variant.key.area()
-                for (y in 0 until Constants.BOARD_SIZE - area.dy)
-                    for (x in 0 until Constants.BOARD_SIZE - area.dx)
-                        yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
+        for (variant in shape.variants) {
+            val area = variant.key.area()
+            for (y in 0 until Constants.BOARD_SIZE - area.dy) {
+                for (x in 0 until Constants.BOARD_SIZE - area.dx) {
+                    yield(SetMove(Piece(color, shape, variant.key, Coordinates(x, y))))
+                }
             }
         }
     }.filter { isValidSetMove(gameState, it) }
-    
+
     /** Stream all possible moves if it's the first turn of [gameState]. */
     @JvmStatic
     private fun streamPossibleStartMoves(gameState: GameState) = sequence<SetMove> {
