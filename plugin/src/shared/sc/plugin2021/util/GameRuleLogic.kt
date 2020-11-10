@@ -301,7 +301,7 @@ object GameRuleLogic {
             gameState: GameState,
             shape: PieceShape,
             validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
-    ) = sequence<SetMove> {
+    ) = if (isFirstMove(gameState)) streamPossibleStartMoves(gameState) else sequence<SetMove> {
         for (field in validFields) {
             for (variant in shape.variants) {
                 val area = variant.key.area
