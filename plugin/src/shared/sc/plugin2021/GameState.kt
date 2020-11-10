@@ -42,7 +42,7 @@ class GameState @JvmOverloads constructor(
     override val board: Board = Board()
     
     /** Gib eine Liste aller nicht gesetzter Steine der [Color] zurück. */
-    fun undeployedPieceShapes(color: Color): MutableSet<PieceShape> = when (color) {
+    fun undeployedPieceShapes(color: Color = currentColor): MutableSet<PieceShape> = when (color) {
         Color.BLUE -> blueShapes
         Color.YELLOW -> yellowShapes
         Color.RED -> redShapes
