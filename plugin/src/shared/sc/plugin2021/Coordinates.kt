@@ -26,7 +26,15 @@ data class Coordinates(
     }
     /** Wandelt die [Coordinates] in einen entsprechenden [Vector]. */
     operator fun unaryPlus(): Vector = Vector(x, y)
-    
+
+    /** Gibt ein Set der vier Ecken dieser Koordinaten zurück. */
+    val corners: Set<Coordinates>
+        get() = Vector.diagonals.map { this + it }.toSet()
+
+    /** Gibt ein Set der vier benachbarten Felder dieser Koordinaten zurück. */
+    val neighbors: Set<Coordinates>
+        get() = Vector.cardinals.map { this + it }.toSet()
+
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
         val origin = Coordinates(0, 0)
@@ -60,4 +68,21 @@ data class Vector(
 
     /** Konvertiert den Vektor zu entsprechendn [Coordinates]. */
     operator fun unaryPlus(): Coordinates = Coordinates(dx, dy)
+
+    companion object {
+        /** Die vier Vektoren in diagonaler Richtung. */
+        val diagonals: Set<Vector> = setOf(
+                Vector(-1, -1),
+                Vector(-1, 1),
+                Vector(1, -1),
+                Vector(1, 1)
+        )
+        /** Die vier Vektoren in kardinaler Richtung. */
+        val cardinals: Set<Vector> = setOf(
+                Vector(-1, 0),
+                Vector(0, -1),
+                Vector(1, 0),
+                Vector(0, 1)
+        )
+    }
 }

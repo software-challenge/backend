@@ -160,8 +160,6 @@ object GameRuleLogic {
     /** Prüfe, ob der gegebene [SetMove] auf dem [Board] platziert werden kann. */
     @JvmStatic
     fun validateSetMove(board: Board, move: SetMove, throws: Boolean = false): MoveMistake? {
-        // throw IndexOutOfBounds if the initial position only is out of bounds
-        board[move.piece.position]
         move.piece.coordinates.forEach {
             try {
                 board[it]
@@ -219,27 +217,19 @@ object GameRuleLogic {
 
     /** Prüfe, ob das gegebene [Field] bereits an eins mit gleicher Farbe angrenzt. */
     @JvmStatic
-    fun bordersOnColor(board: Board, field: Field): Boolean = listOf(
-            Vector(1, 0),
-            Vector(0, 1),
-            Vector(-1, 0),
-            Vector(0, -1)).any {
-        try {
-            board[field.coordinates + it].content == field.content && !field.isEmpty
-        } catch (e: ArrayIndexOutOfBoundsException) { false }
-    }
+    fun bordersOnColor(board: Board, field: Field): Boolean =
+            field.coordinates.neighbors.any {
+                try { board[it].content == field.content && !field.isEmpty }
+                catch (e: ArrayIndexOutOfBoundsException) { false }
+            }
     
     /** Prüfe, ob das gegebene Feld an die Ecke eines Feldes gleicher Farbe angrenzt. */
     @JvmStatic
-    fun cornersOnColor(board: Board, field: Field): Boolean = listOf(
-            Vector(1, 1),
-            Vector(1, -1),
-            Vector(-1, -1),
-            Vector(-1, 1)).any {
-        try {
-            board[field.coordinates + it].content == field.content && !field.isEmpty
-        } catch (e: ArrayIndexOutOfBoundsException) { false }
-    }
+    fun cornersOnColor(board: Board, field: Field): Boolean =
+            field.coordinates.corners.any {
+                try { board[it].content == field.content && !field.isEmpty }
+                catch (e: ArrayIndexOutOfBoundsException) { false }
+            }
     
     /** Prüfe, ob die gegebene Position eine Ecke des Spielfelds ist. */
     @JvmStatic
@@ -258,11 +248,6 @@ object GameRuleLogic {
                     .filter{ it.size == 5 && it != PieceShape.PENTO_X }
                     .random()
     
-    /** Gib eine Sammlung an möglichen [SetMove]s zurück. */
-    @JvmStatic
-    fun getPossibleMoves(gameState: GameState) =
-            streamPossibleMoves(gameState).toSet()
-    
     /** Entferne alle Farben, die keine Steine mehr auf dem Feld platzieren können. */
     @JvmStatic
     fun removeInvalidColors(gameState: GameState) {
@@ -272,37 +257,86 @@ object GameRuleLogic {
             removeInvalidColors(gameState)
         }
     }
-    
-    /** Gib Eine Sequenz an möglichen [SetMove]s zurück. */
+
+    /** Gib eine Sammlung an möglichen [SetMove]s zurück. */
+    @JvmStatic
+    fun getPossibleMoves(gameState: GameState) =
+            streamPossibleMoves(gameState).toSet()
+
+    /** Gib eine Sequenz an möglichen [SetMove]s zurück. */
     @JvmStatic
     fun streamPossibleMoves(gameState: GameState) =
             if (isFirstMove(gameState))
                 streamPossibleStartMoves(gameState)
             else
                 streamAllPossibleMoves(gameState)
-    
-    /** Stream all possible moves regardless of whether it's the first turn. */
-    @JvmStatic
-    private fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
-        val color = gameState.currentColor
-        gameState.undeployedPieceShapes(color).map {
-            val area = it.coordinates.area()
-            for (y in 0 until Constants.BOARD_SIZE - area.dy)
-                for (x in 0 until Constants.BOARD_SIZE - area.dx)
-                    for (variant in it.variants) {
-                        yield(SetMove(Piece(color, it, variant.key, Coordinates(x, y))))
-                    }
-        }
-    }.filter { isValidSetMove(gameState, it) }
-    
+
     /** Stream all possible moves if it's the first turn of [gameState]. */
     @JvmStatic
     private fun streamPossibleStartMoves(gameState: GameState) = sequence<SetMove> {
         val kind = gameState.startPiece
         for (variant in kind.variants) {
             for (corner in Corner.values()) {
-                yield(SetMove(Piece(gameState.currentColor, kind, variant.key, corner.align(variant.key.area()))))
+                yield(SetMove(Piece(gameState.currentColor, kind, variant.key, corner.align(variant.key.area))))
             }
         }
     }.filter { isValidSetMove(gameState, it) }
+
+    @JvmStatic
+    fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
+        val validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
+
+        for (shape in gameState.undeployedPieceShapes(gameState.currentColor))
+            yieldAll(streamPossibleMovesForShape(gameState, shape, validFields))
+    }
+
+    /** Gib eine Sammlung aller möglichen [SetMove]s für die gegebene [PieceShape] zurück. */
+    @JvmStatic
+    fun getPossibleMovesForShape(gameState: GameState, shape: PieceShape): Set<SetMove> =
+            streamPossibleMovesForShape(gameState, shape).toSet()
+
+    /** Gib eine Sequenz aller möglichen [SetMove]s für die gegebene [PieceShape] zurück. */
+    @JvmStatic
+    fun streamPossibleMovesForShape(
+            gameState: GameState,
+            shape: PieceShape,
+            validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
+    ) = sequence<SetMove> {
+        for (field in validFields) {
+            for (variant in shape.variants) {
+                val area = variant.key.area
+                for (x in field.x - area.dx..field.x) {
+                    for (y in field.y - area.dy..field.y) {
+                        yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
+                    }
+                }
+            }
+        }
+    }.filter { isValidSetMove(gameState, it) }
+
+    /** @return all [Coordinates] the currently active [Color] can place [Piece]s upon. */
+    @JvmStatic
+    private fun getValidFields(board: Board, color: Color): Set<Coordinates> {
+        val coloredFields = getColoredFields(board, color, Corner.values().map { it.position }.filter {
+            board[it].content == +color
+        }.toMutableSet())
+
+        val validFields = coloredFields.flatMap { it.corners }.filter {
+            Board.contains(it) && board[it].isEmpty && it.neighbors.none {
+                Board.contains(it) && board[it].content == +color
+            }
+        }.toSet()
+
+        return validFields
+    }
+
+    /** @return all [Coordinates] belonging to the currently active [Color]. */
+    @JvmStatic
+    private fun getColoredFields(board: Board, color: Color, coloredFields: MutableSet<Coordinates>): Set<Coordinates> {
+        val copy = coloredFields.toSet()
+        coloredFields.addAll(coloredFields.flatMap { it.corners + it.neighbors }.filter {
+            Board.contains(it) && board[it].content == +color
+        })
+        return if (coloredFields == copy) copy else getColoredFields(board, color, coloredFields)
+    }
 }
