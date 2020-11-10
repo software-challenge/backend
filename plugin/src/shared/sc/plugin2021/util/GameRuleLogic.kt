@@ -239,7 +239,7 @@ object GameRuleLogic {
     /** Gib zurück, ob sich der [GameState] noch in der ersten Runde befindet. */
     @JvmStatic
     fun isFirstMove(gameState: GameState) =
-            gameState.undeployedPieceShapes(gameState.currentColor).size == Constants.TOTAL_PIECE_SHAPES
+            gameState.undeployedPieceShapes().size == Constants.TOTAL_PIECE_SHAPES
     
     /** Return a random pentomino which is not the `x` one (Used to get a valid starting piece). */
     @JvmStatic
@@ -286,7 +286,7 @@ object GameRuleLogic {
     fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
         val validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
 
-        for (shape in gameState.undeployedPieceShapes(gameState.currentColor))
+        for (shape in gameState.undeployedPieceShapes())
             yieldAll(streamPossibleMovesForShape(gameState, shape, validFields))
     }
 
