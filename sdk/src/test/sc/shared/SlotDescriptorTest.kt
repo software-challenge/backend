@@ -10,16 +10,16 @@ class SlotDescriptorTest : StringSpec({
     "convert XML" {
         forAll(
                 row(SlotDescriptor(),
-                """<slotDescriptor displayName="Unknown" canTimeout="true" shouldBePaused="true"/>"""),
+                """<slotDescriptor displayName="Unknown" canTimeout="true"/>"""),
                 
                 row(SlotDescriptor("Display Name"),
-                """<slotDescriptor displayName="Display Name" canTimeout="true" shouldBePaused="true"/>"""),
+                """<slotDescriptor displayName="Display Name" canTimeout="true"/>"""),
                 
                 row(SlotDescriptor("name", false),
-                """<slotDescriptor displayName="name" canTimeout="false" shouldBePaused="true"/>"""),
+                """<slotDescriptor displayName="name" canTimeout="false"/>"""),
                 
-                row(SlotDescriptor("another name", true, false),
-                """<slotDescriptor displayName="another name" canTimeout="true" shouldBePaused="false"/>""")
+                row(SlotDescriptor("another name", true),
+                """<slotDescriptor displayName="another name" canTimeout="true"/>""")
         )
         { descriptor, xml ->
             xStream.toXML(descriptor) shouldBe xml
