@@ -30,17 +30,16 @@ class GameState @JvmOverloads constructor(
         /** Die Farbe, die anfängt. */
         val startColor: Color = Color.BLUE,
         /** Der Spielstein, der in der ersten Runde gesetzt werden muss. */
-        @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino()
+        @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino(),
+        /** Das aktuelle Spielfeld. */
+        @XStreamAsAttribute override val board: Board = Board()
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     companion object {
         val logger = LoggerFactory.getLogger(GameState::class.java)
     }
     
-    /** Das aktuelle Spielfeld. */
-    @XStreamAsAttribute
-    override val board: Board = Board()
-    
+
     /** Gib eine Liste aller nicht gesetzter Steine der [Color] zurück. */
     fun undeployedPieceShapes(color: Color = currentColor): MutableSet<PieceShape> = when (color) {
         Color.BLUE -> blueShapes
