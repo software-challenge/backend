@@ -74,16 +74,16 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
         if (gameState.orderedColors.any {
             GameRuleLogic.getPossibleMoves(gameState).isNotEmpty()
         }) return null
-        
-        val scoreMap: Map<Team, Int> = Team.values().map {
+
+        val scores: Map<Team, Int> = Team.values().map {
             it to gameState.getPointsForPlayer(it)
         }.toMap()
-        
-        if (scoreMap.getValue(Team.ONE) > scoreMap.getValue(Team.TWO))
-            return WinCondition(Team.ONE, WinReason.DIFFERING_SCORES)
-        if (scoreMap.getValue(Team.TWO) > scoreMap.getValue(Team.TWO))
-            return WinCondition(Team.TWO, WinReason.DIFFERING_SCORES)
-        return WinCondition(null, WinReason.EQUAL_SCORE)
+
+        return when {
+            scores.getValue(Team.ONE) > scores.getValue(Team.TWO) -> WinCondition(Team.ONE, WinReason.DIFFERING_SCORES)
+            scores.getValue(Team.ONE) < scores.getValue(Team.TWO) -> WinCondition(Team.TWO, WinReason.DIFFERING_SCORES)
+            else -> WinCondition(null, WinReason.EQUAL_SCORE)
+        }
     }
     
     override fun loadGameInfo(gameInfo: Any?) {
@@ -139,9 +139,6 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
                 player.hasLeft() -> {
                     cause = ScoreCause.LEFT
                     reason = "Der Spieler hat das Spiel verlassen"
-                }
-                else -> {
-                    score = Constants.DRAW_SCORE
                 }
             }
         return PlayerScore(cause, reason, score, points)
