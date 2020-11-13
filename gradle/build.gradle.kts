@@ -71,7 +71,7 @@ tasks {
     }
     
     val release by creating {
-        dependsOn(deploy)
+        dependsOn(check)
         group = "distribution"
         description = "Prepares a new Release by bumping the version and creating a commit with a git tag of the new version"
         doLast {
@@ -102,7 +102,7 @@ tasks {
             println("Version: $newVersion")
             println("Beschreibung: $desc")
             exec { commandLine("git", "add", "gradle.properties") }
-            exec { commandLine("git", "commit", "-m", "release: $newVersion", "--no-verify") }
+            exec { commandLine("git", "commit", "-m", "release: $newVersion") }
             exec { commandLine("git", "tag", newVersion, "-m", desc) }
             exec { commandLine("git", "push", "--follow-tags") }
         }

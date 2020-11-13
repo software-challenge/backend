@@ -9,7 +9,7 @@ do test -z "$a" || [[ "$a" == \#* ]] || scopes+="$a|";
 done;
 scopes="${scopes%\|})"
 
-cat "$1" | grep -Eq "(fix|feat|docs|style|refactor|test|chore|rework|release)(\($scopes\))?: [a-z]"
+cat "$1" | grep -Eq "(fix|feat|docs|style|refactor|test|chore|rework|release)(\($scopes\))?: [0-9a-z]"
 result=$?
 if test $result -ne 0
 then echo "Please check that the commit message adheres to the guidelines at http://karma-runner.github.io/latest/dev/git-commit-msg.html and the scope is one of $scopes as defined in $scopes_file"
