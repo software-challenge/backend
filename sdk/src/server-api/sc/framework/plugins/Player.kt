@@ -35,9 +35,6 @@ open class Player @JvmOverloads constructor(
     var canTimeout: Boolean = false
 
     @XStreamOmitField
-    var shouldBePaused: Boolean = false
-
-    @XStreamOmitField
     var left = false
 
     fun hasLeft() = left

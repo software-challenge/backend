@@ -87,8 +87,8 @@ class RequestTest: RealServerTest() {
     fun prepareXmlTest() {
         val request = xStream.fromXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<prepare gameType=\"swc_2018_hase_und_igel\">\n" +
-                "  <slot displayName=\"Häschenschule\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +
-                "  <slot displayName=\"Testhase\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +
+                "  <slot displayName=\"Häschenschule\" canTimeout=\"true\"/>\n" +
+                "  <slot displayName=\"Testhase\" canTimeout=\"true\"/>\n" +
                 "</prepare>")
         assertEquals(PrepareGameRequest::class.java, request.javaClass)
         assertEquals("Häschenschule", (request as PrepareGameRequest).slotDescriptors[0].displayName)
@@ -163,11 +163,10 @@ class RequestTest: RealServerTest() {
         val sp1 = room.slots[0].role.player
         sp1.addPlayerListener(p1Listener)
         admin.send(PauseGameRequest(room.id, true))
-        admin.observe(room.id)
+        admin.observe(room.id, false)
         
         // Wait for admin
         TestHelper.waitUntilTrue({ listener.observedReceived }, 2000)
-        
         
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         TestHelper.waitMillis(500)
@@ -176,18 +175,11 @@ class RequestTest: RealServerTest() {
         // Wait for the server to register that
         TestHelper.waitUntilTrue({ room.isPauseRequested }, 2000)
         
-        assertTrue(room.isPauseRequested)
-        val pr1 = room.slots[0].role
-        val pr2 = room.slots[1].role
-        assertTrue(pr1.player.shouldBePaused)
-        assertTrue(pr2.player.shouldBePaused)
-        
-        
         // Wait for it to register
         // no state will be send if game is paused TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000);
         listener.newStateReceived = false
         
-        assertTrue(TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000))
+        TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000)
         p1Listener.playerEventReceived = false
         assertEquals(p1Listener.requests.size.toLong(), 1)
         assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
@@ -231,11 +223,7 @@ class RequestTest: RealServerTest() {
         // Wait for the server to register that
         TestHelper.waitUntilTrue({ room.isPauseRequested }, 2000)
         
-        val pr1 = room.slots[0].role
-        val pr2 = room.slots[1].role
-        assertTrue(pr1.player.shouldBePaused)
-        assertTrue(pr2.player.shouldBePaused)
-        
+        // TODO the section above duplicates the one of the previous test, clean that up
         
         // Wait for it to register
         // no state will be send if game is paused TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000);
