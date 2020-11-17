@@ -301,18 +301,25 @@ object GameRuleLogic {
             gameState: GameState,
             shape: PieceShape,
             validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
-    ) = if (isFirstMove(gameState)) streamPossibleStartMoves(gameState) else sequence<SetMove> {
-        for (field in validFields) {
-            for (variant in shape.variants) {
-                val area = variant.key.area
-                for (x in field.x - area.dx..field.x) {
-                    for (y in field.y - area.dy..field.y) {
-                        yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
+    ): Sequence<SetMove> {
+        return if (isFirstMove(gameState)) {
+            if (shape == gameState.startPiece)
+                streamPossibleStartMoves(gameState)
+            else
+                sequenceOf()
+        } else sequence<SetMove> {
+            for (field in validFields) {
+                for (variant in shape.variants) {
+                    val area = variant.key.area
+                    for (x in field.x - area.dx..field.x) {
+                        for (y in field.y - area.dy..field.y) {
+                            yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
+                        }
                     }
                 }
             }
-        }
-    }.filter { isValidSetMove(gameState, it) }
+        }.filter { isValidSetMove(gameState, it) }
+    }
 
     /** @return all [Coordinates] the currently active [Color] can place [Piece]s upon. */
     @JvmStatic
