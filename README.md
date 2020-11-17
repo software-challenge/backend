@@ -59,7 +59,7 @@ Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1
 Unsere Unittests nutzen das [Kotest-Framework](https://kotest.io) mit [JUnit](https://junit.org) im Hintergrund.
 
 Dabei setzen wir auf die [WordSpec](https://kotest.io/styles/#word-spec), da man damit semantisch übersichtlich sowohl einfache Tests als auch Behavior Driven Development umsetzen kann.
-Bisherige Tests nutzen die StringSpec, welche jedoch wegen fehlendem nesting auf Dauer zu unübersichtlich ist, und in manchen Fällen auch noch direkt JUnit.
+Bisherige Tests nutzen die StringSpec, welche jedoch schnell unübersichtlich wird da sie keine Verschachtelung erlaubt, und in manchen Fällen auch noch direkt JUnit.
 Diese sollten bei größeren Änderungen direkt zum neuen Stil migriert werden.
 
 ### Arbeiten mit IntelliJ IDEA
