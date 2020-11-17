@@ -8,7 +8,8 @@ sourceSets {
 dependencies {
     api(project(":sdk"))
     
-    testImplementation(kotlin("script-runtime"))
+    testImplementation(project(":sdk").dependencyProject.sourceSets.test.get().output)
+    testImplementation(kotlin("script-runtime")) // for the ManualGameTest
 }
 
 tasks{
