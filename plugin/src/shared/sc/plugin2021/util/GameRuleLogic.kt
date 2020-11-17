@@ -116,7 +116,9 @@ object GameRuleLogic {
         if (gameState.undeployedPieceShapes(move.color).isEmpty())
             gameState.lastMoveMono += move.color to (move.piece.kind == PieceShape.MONO)
 
-        gameState.tryAdvance()
+        do {
+            gameState.tryAdvance()
+        } while (!gameState.validColors.contains(gameState.currentColor))
     }
 
     /**
