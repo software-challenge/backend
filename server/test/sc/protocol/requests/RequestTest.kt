@@ -30,17 +30,12 @@ class RequestTest: RealServerTest() {
     
     @Before
     fun prepare() {
-        try {
-            player1 = connectClient("localhost", serverPort)
-            TestHelper.waitMillis(200)
-            player2 = connectClient("localhost", serverPort)
-            TestHelper.waitMillis(200)
-            player3 = connectClient("localhost", serverPort)
-            TestHelper.waitMillis(200)
-        } catch (e: Exception) {
-            // happens if port is already in use
-            e.printStackTrace()
-        }
+        player1 = connectClient("localhost", serverPort)
+        TestHelper.waitMillis(200)
+        player2 = connectClient("localhost", serverPort)
+        TestHelper.waitMillis(200)
+        player3 = connectClient("localhost", serverPort)
+        TestHelper.waitMillis(200)
     }
     
     @Test
@@ -80,18 +75,6 @@ class RequestTest: RealServerTest() {
         assertEquals(1, lobby.games.size.toLong())
         assertEquals(0, lobby.games.iterator().next().clients.size.toLong())
         assertTrue(lobby.games.iterator().next().isPauseRequested)
-        
-    }
-    
-    @Test
-    fun prepareXmlTest() {
-        val request = xStream.fromXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<prepare gameType=\"swc_2018_hase_und_igel\">\n" +
-                "  <slot displayName=\"Häschenschule\" canTimeout=\"true\"/>\n" +
-                "  <slot displayName=\"Testhase\" canTimeout=\"true\"/>\n" +
-                "</prepare>")
-        assertEquals(PrepareGameRequest::class.java, request.javaClass)
-        assertEquals("Häschenschule", (request as PrepareGameRequest).slotDescriptors[0].displayName)
     }
     
     @Test
