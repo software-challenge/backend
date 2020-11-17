@@ -21,14 +21,14 @@ data class PrepareGameRequest(
      * The player descriptors default to "Player1" and "Player2".
      *
      * @param gameType type of the game (plugin id)
-     * @param pause whether the game should start paused - default true
+     * @param pause whether the game should start paused
      */
     @JvmOverloads
     constructor(
         gameType: String,
         descriptor1: SlotDescriptor = SlotDescriptor("Player1"),
         descriptor2: SlotDescriptor = SlotDescriptor("Player2"),
-        pause: Boolean = true
+        pause: Boolean = false
     ): this(gameType, arrayOf(descriptor1, descriptor2), pause)
     
     override fun equals(other: Any?): Boolean =
