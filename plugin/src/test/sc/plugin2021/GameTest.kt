@@ -6,6 +6,7 @@ import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import sc.api.plugins.exceptions.GameLogicException
 import io.kotest.matchers.shouldNotBe
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
@@ -40,14 +41,14 @@ class GameTest: WordSpec({
                         break
                     }
                 }
-                
+
                 val scores = game.playerScores
                 val score1 = game.getScoreFor(one)
                 val score2 = game.getScoreFor(two)
                 scores shouldBe listOf(score1, score2)
                 score1.cause shouldBe ScoreCause.REGULAR
                 score2.cause shouldBe ScoreCause.REGULAR
-                
+
                 val points1 = BigDecimal(state.getPointsForPlayer(one.color))
                 val points2 = BigDecimal(state.getPointsForPlayer(two.color))
                 when {
@@ -68,16 +69,16 @@ class GameTest: WordSpec({
             "end in a draw when everyone skips" {
                 for (s in 0 until 4)
                     game.onAction(state.currentPlayer, GameRuleLogic.streamPossibleMoves(state).first())
-                
+
                 shouldNotThrowAny {
                     while (!game.checkGameOver()) {
                         game.onAction(state.currentPlayer, SkipMove(state.currentColor))
                     }
                 }
-                shouldThrow<java.lang.IndexOutOfBoundsException> {
+                shouldThrow<GameLogicException> {
                     game.onAction(state.currentPlayer, SkipMove(state.currentColor))
                 }
-                
+
                 game.playerScores shouldContainExactly List(2) {
                     PlayerScore(ScoreCause.REGULAR, "", Constants.DRAW_SCORE, 10)
                 }

@@ -165,14 +165,15 @@ public abstract class RoundBasedGameInstance<P extends Player> implements IGameI
   }
 
   protected final void next(P nextPlayer, boolean firstTurn) {
-    logger.debug("next round ({}) for player {}", getRound(), nextPlayer);
-    if (!firstTurn) {
-      turn++;
+    if (nextPlayer != null) {
+      logger.debug("next round ({}) for player {}", getRound(), nextPlayer);
+      if (!firstTurn) {
+        turn++;
+      }
+      this.activePlayer = nextPlayer;
+      // if paused, notify observers only (so they can update the GUI appropriately)
+      notifyOnNewState(getCurrentState(), this.isPaused());
     }
-    this.activePlayer = nextPlayer;
-    // if paused, notify observers only (so they can update the GUI appropriately)
-    notifyOnNewState(getCurrentState(), this.isPaused());
-
     if (checkWinCondition() != null) {
       notifyOnGameOver(generateScoreMap());
     } else {
