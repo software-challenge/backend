@@ -7,7 +7,7 @@ import sc.shared.SlotDescriptor
 
 /** Request to prepare a game of [gameType] with two reserved slots according to [slotDescriptors]. */
 @XStreamAlias("prepare")
-class PrepareGameRequest(
+data class PrepareGameRequest(
     @XStreamAsAttribute
     val gameType: String,
     @XStreamImplicit(itemFieldName = "slot")
@@ -31,7 +31,14 @@ class PrepareGameRequest(
         pause: Boolean = true
     ): this(gameType, arrayOf(descriptor1, descriptor2), pause)
     
-    override fun toString() =
-        "PrepareGameRequest(gameType=$gameType, pause=$pause, slotDescriptors=${slotDescriptors.contentToString()})"
+    override fun equals(other: Any?): Boolean =
+        other is PrepareGameRequest && gameType == other.gameType && pause == other.pause && slotDescriptors.contentDeepEquals(other.slotDescriptors)
+    
+    override fun hashCode(): Int {
+        var result = gameType.hashCode()
+        result = 31 * result + slotDescriptors.contentHashCode()
+        result = 31 * result + pause.hashCode()
+        return result
+    }
     
 }
