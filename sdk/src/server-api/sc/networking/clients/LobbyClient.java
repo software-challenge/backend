@@ -316,7 +316,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   public ObservingClient observe(String roomId) {
-    return observe(roomId, true);
+    return observe(roomId, false);
   }
 
   public ObservingClient observe(String roomId, boolean isPaused) {
