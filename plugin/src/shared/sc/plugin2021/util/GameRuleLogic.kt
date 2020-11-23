@@ -60,7 +60,7 @@ object GameRuleLogic {
             if (throws) {
                 throw InvalidMoveException("Expected move from ${gameState.currentColor}", move)
             } else {
-                return MoveMistake.WrongColor(move.color)
+                return MoveMistake.WRONG_COLOR
             }
         return null
     }
@@ -86,7 +86,7 @@ object GameRuleLogic {
                 if (throws) {
                     throw InvalidMoveException("The Piece isn't located in a corner", move)
                 } else {
-                    MoveMistake.NotInCorner(move)
+                    MoveMistake.NOT_IN_CORNER
                 }
             else null
         } else {
@@ -95,7 +95,7 @@ object GameRuleLogic {
                 if (throws) {
                     throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
                 } else {
-                    MoveMistake.NoSharedCorner(move)
+                    MoveMistake.NO_SHARED_CORNER
                 }
             else null
         }
@@ -135,14 +135,14 @@ object GameRuleLogic {
                 if (throws) {
                     throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
                 } else {
-                    return MoveMistake.WrongShape(shape, color)
+                    return MoveMistake.WRONG_SHAPE
                 }
         } else {
             if (!gameState.undeployedPieceShapes(color).contains(shape))
                 if (throws) {
                     throw InvalidMoveException("Piece $shape has already been placed before")
                 } else {
-                    return MoveMistake.DuplicateShape(shape, color)
+                    return MoveMistake.DUPLICATE_SHAPE
                 }
         }
         return null
@@ -169,7 +169,7 @@ object GameRuleLogic {
                 if (throws) {
                     throw InvalidMoveException("Field $it is out of bounds", move)
                 } else {
-                    return MoveMistake.OutOfBounds(move)
+                    return MoveMistake.OUT_OF_BOUNDS
                 }
             }
             // Checks if a part of the piece is obstructed
@@ -177,14 +177,14 @@ object GameRuleLogic {
                 if (throws) {
                     throw InvalidMoveException("Field $it already belongs to ${board[it].content}", move)
                 } else {
-                    return MoveMistake.Obstructed(move)
+                    return MoveMistake.OBSTRUCTED
                 }
             // Checks if a part of the piece would border on another piece of same color
             if (bordersOnColor(board, Field(it, move.color)))
                 if (throws) {
                     throw InvalidMoveException("Field $it already borders on ${move.color}", move)
                 } else {
-                    return MoveMistake.TouchesSameColor(move.color)
+                    return MoveMistake.TOUCHES_SAME_COLOR
                 }
         }
         return null
@@ -204,7 +204,7 @@ object GameRuleLogic {
             if (throws) {
                 throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
             } else {
-                return MoveMistake.SkipFirstTurn(gameState.currentColor)
+                return MoveMistake.SKIP_FIRST_TURN
             }
         return null
     }
