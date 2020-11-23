@@ -58,7 +58,7 @@ object GameRuleLogic {
     fun validateMoveColor(gameState: GameState, move: Move, throws: Boolean = false): MoveMistake? {
         if (move.color != gameState.currentColor)
             if (throws) {
-                throw InvalidMoveException("Expected move from ${gameState.currentColor}", move)
+                throw InvalidMoveException(MoveMistake.WRONG_COLOR, move)
             } else {
                 return MoveMistake.WRONG_COLOR
             }
@@ -84,7 +84,7 @@ object GameRuleLogic {
             // Check if it is placed correctly in a corner
             if (move.piece.coordinates.none { isOnCorner(it)})
                 if (throws) {
-                    throw InvalidMoveException("The Piece isn't located in a corner", move)
+                    throw InvalidMoveException(MoveMistake.NOT_IN_CORNER, move)
                 } else {
                     MoveMistake.NOT_IN_CORNER
                 }
@@ -93,7 +93,7 @@ object GameRuleLogic {
             // Check if the piece is connected to at least one tile of same color by corner
             if (move.piece.coordinates.none { cornersOnColor(gameState.board, Field(it, move.color)) })
                 if (throws) {
-                    throw InvalidMoveException("${move.piece} shares no corner with another piece of same color", move)
+                    throw InvalidMoveException(MoveMistake.NO_SHARED_CORNER, move)
                 } else {
                     MoveMistake.NO_SHARED_CORNER
                 }
@@ -133,14 +133,14 @@ object GameRuleLogic {
         if (isFirstMove(gameState)) {
             if (shape != gameState.startPiece)
                 if (throws) {
-                    throw InvalidMoveException("$shape is not the requested first shape, ${gameState.startPiece}")
+                    throw InvalidMoveException(MoveMistake.WRONG_SHAPE)
                 } else {
                     return MoveMistake.WRONG_SHAPE
                 }
         } else {
             if (!gameState.undeployedPieceShapes(color).contains(shape))
                 if (throws) {
-                    throw InvalidMoveException("Piece $shape has already been placed before")
+                    throw InvalidMoveException(MoveMistake.DUPLICATE_SHAPE)
                 } else {
                     return MoveMistake.DUPLICATE_SHAPE
                 }
@@ -167,7 +167,7 @@ object GameRuleLogic {
                 board[it]
             } catch (e: ArrayIndexOutOfBoundsException) {
                 if (throws) {
-                    throw InvalidMoveException("Field $it is out of bounds", move)
+                    throw InvalidMoveException(MoveMistake.OUT_OF_BOUNDS, move)
                 } else {
                     return MoveMistake.OUT_OF_BOUNDS
                 }
@@ -175,14 +175,14 @@ object GameRuleLogic {
             // Checks if a part of the piece is obstructed
             if (board.isObstructed(it))
                 if (throws) {
-                    throw InvalidMoveException("Field $it already belongs to ${board[it].content}", move)
+                    throw InvalidMoveException(MoveMistake.OBSTRUCTED, move)
                 } else {
                     return MoveMistake.OBSTRUCTED
                 }
             // Checks if a part of the piece would border on another piece of same color
             if (bordersOnColor(board, Field(it, move.color)))
                 if (throws) {
-                    throw InvalidMoveException("Field $it already borders on ${move.color}", move)
+                    throw InvalidMoveException(MoveMistake.TOUCHES_SAME_COLOR, move)
                 } else {
                     return MoveMistake.TOUCHES_SAME_COLOR
                 }
@@ -202,7 +202,7 @@ object GameRuleLogic {
     fun validateSkipMove(gameState: GameState, throws: Boolean = false): MoveMistake? {
         if (isFirstMove(gameState))
             if (throws) {
-                throw InvalidMoveException("Can't Skip on first round", SkipMove(gameState.currentColor))
+                throw InvalidMoveException(MoveMistake.SKIP_FIRST_TURN, SkipMove(gameState.currentColor))
             } else {
                 return MoveMistake.SKIP_FIRST_TURN
             }
