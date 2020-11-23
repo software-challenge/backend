@@ -1,13 +1,13 @@
 package sc.plugin2021.util
 
-import sc.plugin2021.Color
+import sc.shared.IMoveMistake
 
 /**
  * Wird optional bei Validierung von Zügen zurückgegeben, falls ein Zug nicht valide ist.
  * MoveMistakes entstehen bei Zügen, die theoretisch möglich sein könnten,
  * es aber bei dem jeweiligen Spielstand nicht sind.
  */
-enum class MoveMistake {
+enum class MoveMistake: IMoveMistake {
     WRONG_COLOR {
         override fun toString(): String = "Die Farbe des Zuges ist nicht an der Reihe"
     },
@@ -35,6 +35,4 @@ enum class MoveMistake {
     TOUCHES_SAME_COLOR {
         override fun toString(): String = "Der Spielstein berührt ein Feld gleicher Farbe"
     };
-
-    abstract override fun toString(): String
 }
