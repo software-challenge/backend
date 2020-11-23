@@ -34,5 +34,8 @@ enum class MoveMistake: IMoveMistake {
     },
     TOUCHES_SAME_COLOR {
         override fun toString(): String = "Der Spielstein berührt ein Feld gleicher Farbe"
+    },
+    INVALID_FORMAT {
+        override fun toString(): String = "Der Zug konnte nicht erkannt werden"
     };
 }

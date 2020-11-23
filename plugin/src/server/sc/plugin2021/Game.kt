@@ -8,6 +8,7 @@ import sc.framework.plugins.RoundBasedGameInstance
 import sc.framework.plugins.Player
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
+import sc.plugin2021.util.MoveMistake
 import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
@@ -149,7 +150,7 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage?) {
         try {
             if (data !is Move)
-                throw InvalidMoveException("${fromPlayer.displayName} did not send a proper move.")
+                throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
             
             logger.debug("Current State: $gameState")
             logger.debug("Performing Move $data")
