@@ -14,7 +14,7 @@ import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/** Listener, which waits for new clients */
+/** Listener that waits for new clients and returns ready TCP connections to them. */
 public class NewClientListener implements Runnable, Closeable {
 
   private ServerSocket serverSocket;
