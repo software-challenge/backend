@@ -1,14 +1,14 @@
 package sc.server.network
 
 import org.slf4j.LoggerFactory
-import sc.api.plugins.exceptions.RescuableClientException
 import sc.protocol.responses.ProtocolErrorMessage
 import sc.server.ServiceManager
+import java.io.Closeable
 import java.io.IOException
 import java.util.*
 
 /** The ClientManager serves as a lookup table for all active connections.  */
-class ClientManager : Runnable, IClientListener {
+class ClientManager : Runnable, IClientListener, Closeable {
 
     /** List of all XStreamClients. */
     val clients = ArrayList<Client>()
@@ -77,7 +77,7 @@ class ClientManager : Runnable, IClientListener {
             serviceThread = ServiceManager.createService(javaClass.simpleName, this).apply { start() }
     }
 
-    fun close() {
+    override fun close() {
         running = false
         serviceThread?.interrupt()
         clientListener.close()

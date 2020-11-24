@@ -16,13 +16,14 @@ import sc.server.network.IClientListener
 import sc.server.network.PacketCallback
 import sc.shared.InvalidGameStateException
 import sc.shared.Score
+import java.io.Closeable
 import java.io.IOException
 
 /**
  * The lobby will help clients find an open game or create new games to play with
  * another client.
  */
-class Lobby: GameRoomManager(), IClientListener {
+open class Lobby: GameRoomManager(), IClientListener, Closeable {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
     
     val clientManager = ClientManager().also {
@@ -32,7 +33,7 @@ class Lobby: GameRoomManager(), IClientListener {
     /** @see ClientManager.start */
     @Throws(IOException::class)
     fun start() {
-        this.clientManager.start()
+        clientManager.start()
     }
     
     /**
@@ -138,8 +139,8 @@ class Lobby: GameRoomManager(), IClientListener {
         return null
     }
     
-    fun close() {
-        this.clientManager.close()
+    override fun close() {
+        clientManager.close()
     }
     
     override fun onError(source: Client, errorPacket: ProtocolErrorMessage) {
