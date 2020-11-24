@@ -8,9 +8,7 @@ import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.Player;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.protocol.responses.ProtocolMessage;
-import sc.server.Configuration;
 import sc.server.helpers.TestTeam;
-import sc.server.helpers.WinReason;
 import sc.shared.*;
 
 import java.util.ArrayList;
@@ -46,7 +44,11 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer> {
   public WinCondition checkWinCondition() {
     if (this.getRound() > 1) {
       logger.info("Someone won");
-      return new WinCondition(((TestGameState) this.getCurrentState()).getState() % 2 == 0 ? TestTeam.RED : TestTeam.BLUE, WinReason.ROUND_LIMIT_FREE_FIELDS);
+      return new WinCondition(((TestGameState) this.getCurrentState()).getState() % 2 == 0 ? TestTeam.RED : TestTeam.BLUE, new IWinReason() {
+        public String getMessage() {
+          return "TestTeam %s hat gewonnen";
+        }
+      });
     }
     return null;
   }

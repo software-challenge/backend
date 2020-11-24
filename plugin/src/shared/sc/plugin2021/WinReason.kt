@@ -7,12 +7,7 @@ import sc.shared.IWinReason
 @XStreamAlias(value = "winreason")
 enum class WinReason(override val message: String): IWinReason {
     /** Beide Teams haben die gleiche Punktzahl. */
-    EQUAL_SCORE("Das Spiel ist beendet.\nBeide Teams haben die gleiche Punktzahl erzielt.") {
-        override fun getMessage(playerName: String?) = message
-    },
+    EQUAL_SCORE("Beide Teams haben die gleiche Punktzahl erzielt."),
     /** Ein Team hat eine höhere Punktzahl als das andere. */
-    DIFFERING_SCORES("Das Spiel ist beended.\n%s hat am meisten Punkte erzielt.") {
-        override fun getMessage(playerName: String?) =
-                String.format(message, playerName.let{"???"})
-    };
+    DIFFERING_SCORES("%s hat am meisten Punkte erzielt.");
 }
