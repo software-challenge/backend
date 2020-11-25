@@ -14,15 +14,10 @@ public class PluginInstance<PluginType extends IPlugin> {
     this.description = definition.getAnnotation(PluginDescriptor.class);
   }
 
-  public PluginInstance(PluginType instance) {
-    this((Class<? extends PluginType>)instance.getClass());
-    this.instance = instance;
-  }
-
   @SuppressWarnings("unchecked")
-  private Class<? extends PluginType> uncheckedDefinitionCast(
-          Class<?> definition) throws ClassCastException {
-    return (Class<? extends PluginType>) definition;
+  public PluginInstance(PluginType instance) {
+    this((Class<? extends PluginType>) instance.getClass());
+    this.instance = instance;
   }
 
   public PluginType getPlugin() {
@@ -48,8 +43,7 @@ public class PluginInstance<PluginType extends IPlugin> {
 
   private void instantiate() throws PluginLoaderException {
     try {
-      Class<? extends PluginType> castedDefintion = uncheckedDefinitionCast(this.definition);
-      this.instance = castedDefintion.newInstance();
+      this.instance = definition.newInstance();
     } catch (IllegalAccessException | ClassCastException e) {
       throw new PluginLoaderException(e);
     } catch (InstantiationException e) {

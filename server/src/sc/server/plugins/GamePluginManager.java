@@ -1,6 +1,5 @@
 package sc.server.plugins;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
@@ -12,6 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.ServiceLoader;
 
+/** Load & provide information about plugins. */
 public class GamePluginManager extends PluginManager<IGamePlugin, GamePluginInstance> {
   protected static Logger logger = LoggerFactory.getLogger(GamePluginInstance.class);
 
@@ -25,8 +25,10 @@ public class GamePluginManager extends PluginManager<IGamePlugin, GamePluginInst
     }
   }
 
+  /** Clear all available plugins and add all derivatives of {@link IGamePlugin} available through {@link ServiceLoader}. */
   @Override
   public void reload() {
+    this.availablePlugins.clear();
     ServiceLoader.load(getPluginInterface()).iterator().forEachRemaining((plugin) -> {
       this.availablePlugins.add(new GamePluginInstance(plugin));
     });
@@ -40,16 +42,14 @@ public class GamePluginManager extends PluginManager<IGamePlugin, GamePluginInst
     return instance;
   }
 
-  public IGameInstance createGameOf(String gameType)
-          throws UnknownGameTypeException {
+  public IGameInstance createGameOf(String gameType) throws UnknownGameTypeException {
     for (GamePluginInstance plugin : getAvailablePlugins()) {
       if (plugin.getDescription().uuid().equals(gameType)) {
         return plugin.getPlugin().createGame();
       }
     }
 
-    throw new UnknownGameTypeException("Could not create a game of type: "
-            + gameType, getPluginUUIDs());
+    throw new UnknownGameTypeException("Could not create a game of type: " + gameType, getPluginUUIDs());
   }
 
   public void loadPlugin(Class<? extends IGamePlugin> type) throws PluginLoaderException {
