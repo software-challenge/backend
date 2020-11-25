@@ -16,7 +16,4 @@ tasks{
     jar {
         archiveBaseName.set(game)
     }
-    test {
-        useJUnitPlatform()
-    }
 }
