@@ -10,8 +10,9 @@ import sc.helpers.CollectionHelper;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.ServiceLoader;
 
-public class GamePluginManager extends PluginManager<GamePluginInstance> {
+public class GamePluginManager extends PluginManager<IGamePlugin, GamePluginInstance> {
   protected static Logger logger = LoggerFactory.getLogger(GamePluginInstance.class);
 
   public void activateAllPlugins() {
@@ -26,12 +27,13 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
 
   @Override
   public void reload() {
-    GamePluginInstance i = new GamePluginInstance(sc.plugin2021.GamePlugin.class);
-    this.availablePlugins.add(i);
+    ServiceLoader.load(getPluginInterface()).iterator().forEachRemaining((plugin) -> {
+      this.availablePlugins.add(new GamePluginInstance(plugin));
+    });
   }
 
   @Override
-  protected GamePluginInstance createPluginInstance(Class<?> definition, URI jarUri) {
+  protected GamePluginInstance createPluginInstance(Class<? extends IGamePlugin> definition, URI jarUri) {
     GamePluginInstance instance = new GamePluginInstance(definition);
     logger.info("GamePlugin '{}' {{}} was loaded.", instance
             .getDescription().name(), instance.getDescription().uuid());
@@ -50,8 +52,7 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
             + gameType, getPluginUUIDs());
   }
 
-  public void loadPlugin(Class<?> type)
-          throws PluginLoaderException {
+  public void loadPlugin(Class<? extends IGamePlugin> type) throws PluginLoaderException {
     GamePluginInstance instance = new GamePluginInstance(type);
     instance.load();
     this.addPlugin(instance);
@@ -84,7 +85,7 @@ public class GamePluginManager extends PluginManager<GamePluginInstance> {
   }
 
   @Override
-  protected Class<?> getPluginInterface() {
+  protected Class<IGamePlugin> getPluginInterface() {
     return IGamePlugin.class;
   }
 }

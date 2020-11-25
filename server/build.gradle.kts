@@ -17,7 +17,7 @@ application {
 
 dependencies {
     implementation(project(":sdk"))
-    implementation(project(":plugin"))
+    runtimeOnly(project(":plugin"))
 }
 
 val deployDir: File by project
