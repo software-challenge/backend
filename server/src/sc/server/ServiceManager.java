@@ -8,16 +8,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** Manages all threads */
-
+/** Manages all threads. */
 public abstract class ServiceManager {
   private static Logger logger = LoggerFactory.getLogger(ServiceManager.class);
 
-  private static Set<Thread> threads = new HashSet<Thread>();
-  private static Set<Thread> killedThreads = new HashSet<Thread>();
+  private static Set<Thread> threads = new HashSet<>();
+  private static Set<Thread> killedThreads = new HashSet<>();
 
   /**
-   * Creates a new Thread
+   * Creates a new Thread.
    *
    * @param name   Name of new Thread
    * @param target instance of Runnable
@@ -26,8 +25,7 @@ public abstract class ServiceManager {
     return createService(name, target, true);
   }
 
-  private static synchronized Thread createService(String name,
-                                                   Runnable target, boolean daemon) {
+  private static synchronized Thread createService(String name, Runnable target, boolean daemon) {
     logger.debug("Spawning thread for new service (name={}, daemon={})",
             name, daemon);
 
