@@ -1,8 +1,13 @@
 val game: String by project
 
 sourceSets {
-    main.get().java.srcDirs("src/client", "src/server", "src/shared")
-    test.get().java.srcDir("src/test")
+    main {
+        java.setSrcDirs(listOf("src/shared", "src/client", "src/server"))
+        resources.setSrcDirs(listOf("src/resources"))
+    }
+    test {
+        java.setSrcDirs(listOf("src/test"))
+    }
 }
 
 dependencies {

@@ -4,13 +4,19 @@ import sc.plugins.IPlugin;
 import sc.plugins.PluginDescriptor;
 
 public class PluginInstance<PluginType extends IPlugin> {
-  private final Class<?> definition;
-  private PluginType instance;
+  private final Class<? extends PluginType> definition;
   private final PluginDescriptor description;
 
-  public PluginInstance(Class<?> definition) {
+  private PluginType instance;
+
+  public PluginInstance(Class<? extends PluginType> definition) {
     this.definition = definition;
     this.description = definition.getAnnotation(PluginDescriptor.class);
+  }
+
+  public PluginInstance(PluginType instance) {
+    this((Class<? extends PluginType>)instance.getClass());
+    this.instance = instance;
   }
 
   @SuppressWarnings("unchecked")
@@ -28,7 +34,11 @@ public class PluginInstance<PluginType extends IPlugin> {
   }
 
   public void load() throws PluginLoaderException {
-    this.instantiate();
+    if (instance == null) {
+      if(definition == null)
+        throw new IllegalStateException("Plugin instance and definition are null!");
+      this.instantiate();
+    }
     this.instance.initialize();
   }
 
@@ -40,17 +50,13 @@ public class PluginInstance<PluginType extends IPlugin> {
     try {
       Class<? extends PluginType> castedDefintion = uncheckedDefinitionCast(this.definition);
       this.instance = castedDefintion.newInstance();
-    } catch (IllegalAccessException e) {
+    } catch (IllegalAccessException | ClassCastException e) {
       throw new PluginLoaderException(e);
     } catch (InstantiationException e) {
       throw new PluginLoaderException(
-              "Could not instanciate the plugin ("
-                      + this.definition.getCanonicalName()
-                      + "). "
+              "Could not instantiate the plugin (" + this.definition.getCanonicalName() + "). "
                       + "Plugin must be a class with a public parameterless constructor and must not be nested.",
               e);
-    } catch (ClassCastException e) {
-      throw new PluginLoaderException(e);
     }
   }
 

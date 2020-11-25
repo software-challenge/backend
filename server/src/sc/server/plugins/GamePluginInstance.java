@@ -5,8 +5,12 @@ import sc.api.plugins.IGamePlugin;
 
 public class GamePluginInstance extends PluginInstance<IGamePlugin> {
 
-  public GamePluginInstance(Class<?> definition) {
+  public GamePluginInstance(Class<? extends IGamePlugin> definition) {
     super(definition);
+  }
+
+  public GamePluginInstance(IGamePlugin instance) {
+    super(instance);
   }
 
   public IGameInstance createGame() {

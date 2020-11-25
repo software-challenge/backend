@@ -2,22 +2,16 @@ package sc.server.plugins;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.plugins.IPlugin;
 import sc.plugins.PluginDescriptor;
-import sc.server.Configuration;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 /** The <code>PluginManager</code> loads all available plugins from the plugin directory. */
-public abstract class PluginManager<PluginInstanceType extends PluginInstance<?>> {
+public abstract class PluginManager<PluginType extends IPlugin, PluginInstanceType extends PluginInstance<PluginType>> {
 
   protected static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
 
@@ -37,13 +31,13 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?>
     this.availablePlugins.clear();
   }
 
-  protected abstract PluginInstanceType createPluginInstance(Class<?> definition, URI jarURI);
+  protected abstract PluginInstanceType createPluginInstance(Class<? extends PluginType> definition, URI jarURI);
 
   public Collection<PluginInstanceType> getAvailablePlugins() {
     return this.availablePlugins;
   }
 
-  protected abstract Class<?> getPluginInterface();
+  protected abstract Class<? extends PluginType> getPluginInterface();
 
   public Collection<PluginInstanceType> getActivePlugins() {
     return this.activePlugins;
