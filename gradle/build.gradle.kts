@@ -42,6 +42,12 @@ subprojects {
         testImplementation("io.kotest", "kotest-runner-junit5-jvm", "4.2.6")
         testImplementation("io.kotest", "kotest-assertions-core", "4.2.6")
     }
+    
+    tasks {
+        test {
+            useJUnitPlatform()
+        }
+    }
 }
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()

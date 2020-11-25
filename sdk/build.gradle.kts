@@ -13,9 +13,3 @@ dependencies {
     implementation("net.sf.kxml", "kxml2", "2.3.0")
     implementation("xmlpull", "xmlpull", "1.1.3.1")
 }
-
-tasks{
-    test {
-        useJUnitPlatform()
-    }
-}
