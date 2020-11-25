@@ -1,12 +1,12 @@
-package sc.protocol.requests
+package sc.server.network
 
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import sc.framework.plugins.RoundBasedGameInstance
-import sc.helpers.xStream
 import sc.networking.clients.LobbyClient
+import sc.protocol.requests.*
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
@@ -15,7 +15,6 @@ import sc.server.client.TestPreparedGameResponseListener
 import sc.server.gaming.GameRoom
 import sc.server.gaming.ObserverRole
 import sc.server.helpers.TestHelper
-import sc.server.network.RealServerTest
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.server.plugins.TestTurnRequest
@@ -370,7 +369,7 @@ class RequestTest: RealServerTest() {
         TestHelper.waitMillis(500)
         assertTrue(p2Listener.playerEventReceived)
         assertEquals(p2Listener.requests[p2Listener.requests.size - 1].javaClass,
-                TestTurnRequest::class.java)
+            TestTurnRequest::class.java)
     }
     
 }
