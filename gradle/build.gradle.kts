@@ -42,7 +42,6 @@ subprojects {
     apply(plugin = "se.patrikerdes.use-latest-versions")
     
     dependencies {
-        testImplementation("junit", "junit", "4.13")
         testImplementation("io.kotest", "kotest-runner-junit5-jvm", "4.2.6")
         testImplementation("io.kotest", "kotest-assertions-core", "4.2.6")
     }
