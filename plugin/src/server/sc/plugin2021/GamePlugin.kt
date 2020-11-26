@@ -44,6 +44,8 @@ class GamePlugin: IGamePlugin {
         }
     }
     
+    override fun id() = PLUGIN_UUID
+    
     override fun createGame(): IGameInstance {
         return Game()
     }

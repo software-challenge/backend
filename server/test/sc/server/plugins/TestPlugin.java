@@ -17,6 +17,11 @@ public class TestPlugin implements IGamePlugin {
   public static final ScoreDefinition SCORE_DEFINITION = new ScoreDefinition("winner");
 
   @Override
+  public String id() {
+    return TEST_PLUGIN_UUID;
+  }
+
+  @Override
   public IGameInstance createGame() {
     return new TestGame();
   }
