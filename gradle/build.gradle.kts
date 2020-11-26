@@ -21,7 +21,11 @@ val versionObject = KotlinVersion(versions[0], versions[1], versions[2])
 version = versions.joinToString(".") { it.toString() }
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
-println("Current version: $version Game: $game")
+
+val javaVersion = JavaVersion.current()
+println("Current version: $version Game: $game (Java version: $javaVersion)")
+if(javaVersion != JavaVersion.VERSION_1_8)
+    System.err.println("Java version is the recommended version - expect issues with generating documentation (consider using '-x doc' if you don't care)")
 
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
@@ -58,6 +62,7 @@ tasks {
     }
     
     val doc by creating(DokkaTask::class) {
+        logging.level = LogLevel.QUIET
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
         subProjects = listOf("sdk", "plugin")
@@ -255,6 +260,7 @@ allprojects {
         apply(plugin = "org.jetbrains.dokka")
         tasks {
             val doc by creating(DokkaTask::class) {
+                logging.level = LogLevel.QUIET
                 outputDirectory = buildDir.resolve("doc").toString()
                 outputFormat = "javadoc"
             }
