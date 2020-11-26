@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":sdk"))
     runtimeOnly(project(":plugin"))
     
-    testImplementation("junit", "junit", "4.13") // legacy java tests
+    testImplementation("junit", "junit", "4.13.1") // legacy java tests
 }
 
 val deployDir: File by project

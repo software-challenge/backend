@@ -1,17 +1,17 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import sc.gradle.ScriptsTask
 import java.io.InputStream
 import java.util.concurrent.atomic.AtomicBoolean
-import sc.gradle.ScriptsTask
 
 plugins {
     maven
     `java-library`
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.20"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
-    id("com.github.ben-manes.versions") version "0.33.0"
+    id("com.github.ben-manes.versions") version "0.36.0"
     id("se.patrikerdes.use-latest-versions") version "0.2.15"
 }
 
@@ -42,8 +42,8 @@ subprojects {
     apply(plugin = "se.patrikerdes.use-latest-versions")
     
     dependencies {
-        testImplementation("io.kotest", "kotest-runner-junit5-jvm", "4.2.6")
-        testImplementation("io.kotest", "kotest-assertions-core", "4.2.6")
+        testImplementation("io.kotest", "kotest-runner-junit5-jvm", "4.3.1")
+        testImplementation("io.kotest", "kotest-assertions-core", "4.3.1")
     }
     
     tasks {

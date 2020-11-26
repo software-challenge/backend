@@ -5,7 +5,7 @@ sourceSets {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("com.thoughtworks.xstream", "xstream", "1.4.13")
+    api("com.thoughtworks.xstream", "xstream", "1.4.14")
     api("jargs", "jargs", "1.0")
     api("ch.qos.logback", "logback-classic", "1.2.3")
     
