@@ -1,6 +1,7 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.framework.plugins.Player
 import sc.framework.plugins.protocol.MoveRequest
@@ -13,6 +14,7 @@ import sc.protocol.responses.ProtocolMessage
 import sc.shared.GameResult
 import sc.shared.WelcomeMessage
 import java.net.ConnectException
+import java.util.*
 import kotlin.system.exitProcess
 
 /**
@@ -25,11 +27,15 @@ abstract class AbstractClient(
 ): ILobbyClientListener {
     
     companion object {
-        private val logger = LoggerFactory.getLogger(AbstractClient::class.java);
-        private val gameType = GamePlugin.PLUGIN_UUID
+        private val logger = LoggerFactory.getLogger(AbstractClient::class.java)
+        private val plugin: IGamePlugin = ServiceLoader.load(IGamePlugin::class.java).iterator().run {
+            if(!hasNext()) throw IllegalStateException("Can't find current game plugin!")
+            next()
+        }
+        private val gameType = plugin.id()
     
         init {
-            GamePlugin.registerXStream()
+            plugin.initialize()
         }
     }
     
