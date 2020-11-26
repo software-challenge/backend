@@ -13,8 +13,8 @@ val testLogDir: File by project
 val version = rootProject.version.toString()
 
 sourceSets.main {
-    java.srcDir("src")
-    resources.srcDir("src")
+    java.srcDir("src/main")
+    resources.srcDir("src/resources")
 }
 
 application {
