@@ -70,6 +70,10 @@ class GameState @JvmOverloads constructor(
     @XStreamOmitField
     internal val validColors: MutableSet<Color> = Color.values().toMutableSet()
 
+    /** Prüfe, ob die gegebene Farbe noch im Spiel ist. */
+    fun isValid(color: Color = currentColor): Boolean =
+            validColors.contains(color)
+
     /** Die Farbe, die am Zug ist. */
     val currentColor: Color
         get() = orderedColors[turn % Constants.COLORS]
