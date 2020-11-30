@@ -72,6 +72,7 @@ class GameTest: WordSpec({
 
                 shouldNotThrowAny {
                     while (!game.checkGameOver()) {
+                        Game.logger.debug("is Game Over? ${game.isGameOver} - ${state.round} > ${Constants.ROUND_LIMIT}")
                         game.onAction(state.currentPlayer, SkipMove(state.currentColor))
                     }
                 }

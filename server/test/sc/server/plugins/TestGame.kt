@@ -43,45 +43,40 @@ class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID)
         throw TooManyPlayersException()
     }
 
-    val testPlayers: List<TestPlayer>
-        get() = players
+    override val playerScores: List<PlayerScore> = emptyList()
 
-    override fun getPlayerScores(): List<PlayerScore> = emptyList()
-
-    override fun getCurrentState(): IGameState = state
+    override val currentState: IGameState
+        get() = state
 
     override fun onPlayerLeft(player: Player, cause: ScoreCause?) {
         // this.players.remove(player);
         logger.debug("Player left $player")
-        val result = generateScoreMap()
-        result[player] = PlayerScore(cause, "Spieler hat das Spiel verlassen.", 0)
+        val result = generateScoreMap().toMutableMap()
+        result[player] = PlayerScore(cause ?: ScoreCause.LEFT, "Spieler hat das Spiel verlassen.", 0)
         notifyOnGameOver(result)
     }
 
-    override fun onPlayerLeft(player: Player) {
-        onPlayerLeft(player, ScoreCause.LEFT)
-    }
-
-    override fun getScoreFor(p: TestPlayer?): PlayerScore? {
+    override fun getScoreFor(p: TestPlayer): PlayerScore {
         return PlayerScore(true, "Spieler hat gewonnen.")
     }
 
     override fun loadFromFile(file: String) {}
     override fun loadFromFile(file: String, turn: Int) {}
     override fun loadGameInfo(gameInfo: Any) {}
-    override fun getWinners(): List<Player> = emptyList()
 
-    override fun getPlayers(): List<Player> = testPlayers.toList()
+    override val winners: List<Player> = emptyList()
+
+    override val players: MutableList<TestPlayer> = ArrayList<TestPlayer>(super.players)
 
     /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests  */
     override fun start() {
-        testPlayers.forEach {
+        players.forEach {
             it.notifyListeners(WelcomeMessage(it.color))
         }
         super.start()
     }
 
-    override fun getTimeoutFor(player: TestPlayer?): ActionTimeout? {
+    override fun getTimeoutFor(player: TestPlayer): ActionTimeout {
         return ActionTimeout(false, 100000000L, 20000000L)
     }
 
