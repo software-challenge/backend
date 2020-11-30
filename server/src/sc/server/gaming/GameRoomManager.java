@@ -268,10 +268,10 @@ public class GameRoomManager {
         logger.error("Could not add current game result to score. Score definition of player and result do not match.");
         throw new InvalidScoreDefinitionException("ScoreDefinition of player does not match expected score definition");
       }
-      if (fragment.getAggregation().equals(ScoreAggregation.AVERAGE)) {
+      if (Objects.equals(fragment.getAggregation(), ScoreAggregation.AVERAGE)) {
         firstValue.setValue(updateAverage(firstValue.getValue(), firstScore.getNumberOfTests(), playerScores.get(0).getValues().get(i)));
         secondValue.setValue(updateAverage(secondValue.getValue(), secondScore.getNumberOfTests(), playerScores.get(1).getValues().get(i)));
-      } else if (fragment.getAggregation().equals(ScoreAggregation.SUM)) {
+      } else if (Objects.equals(fragment.getAggregation(), ScoreAggregation.SUM)) {
         firstValue.setValue(firstValue.getValue().add(playerScores.get(0).getValues().get(i)));
         secondValue.setValue(secondValue.getValue().add(playerScores.get(1).getValues().get(i)));
       }
