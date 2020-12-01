@@ -4,6 +4,7 @@ import sc.shared.IMoveMistake
 
 /**
  * Wird optional bei Validierung von Zügen zurückgegeben, falls ein Zug nicht valide ist.
+ *
  * MoveMistakes entstehen bei Zügen, die theoretisch möglich sein könnten,
  * es aber bei dem jeweiligen Spielstand nicht sind.
  */
