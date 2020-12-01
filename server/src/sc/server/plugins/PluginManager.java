@@ -6,11 +6,10 @@ import sc.plugins.IPlugin;
 import sc.plugins.PluginDescriptor;
 
 import java.lang.annotation.Annotation;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/** The <code>PluginManager</code> loads all available plugins from the plugin directory. */
+/** A <code>PluginManager</code> loads available plugins. */
 public abstract class PluginManager<PluginType extends IPlugin, PluginInstanceType extends PluginInstance<PluginType>> {
 
   protected static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
@@ -31,7 +30,7 @@ public abstract class PluginManager<PluginType extends IPlugin, PluginInstanceTy
     this.availablePlugins.clear();
   }
 
-  protected abstract PluginInstanceType createPluginInstance(Class<? extends PluginType> definition, URI jarURI);
+  protected abstract PluginInstanceType createPluginInstance(Class<? extends PluginType> definition);
 
   public Collection<PluginInstanceType> getAvailablePlugins() {
     return this.availablePlugins;

@@ -6,7 +6,6 @@ import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.helpers.CollectionHelper;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.ServiceLoader;
@@ -25,7 +24,7 @@ public class GamePluginManager extends PluginManager<IGamePlugin, GamePluginInst
     }
   }
 
-  /** Clear all available plugins and add all derivatives of {@link IGamePlugin} available through {@link ServiceLoader}. */
+  /** Clear all available plugins and add all subclasses of {@link IGamePlugin} available through {@link ServiceLoader}. */
   @Override
   public void reload() {
     this.availablePlugins.clear();
@@ -35,7 +34,7 @@ public class GamePluginManager extends PluginManager<IGamePlugin, GamePluginInst
   }
 
   @Override
-  protected GamePluginInstance createPluginInstance(Class<? extends IGamePlugin> definition, URI jarUri) {
+  protected GamePluginInstance createPluginInstance(Class<? extends IGamePlugin> definition) {
     GamePluginInstance instance = new GamePluginInstance(definition);
     logger.info("GamePlugin '{}' {{}} was loaded.", instance
             .getDescription().name(), instance.getDescription().uuid());
