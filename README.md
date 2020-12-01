@@ -54,6 +54,14 @@ Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1
 
     ./gradlew :test-client:run -Dargs="--player1 ../../player/build/libs/defaultplayer.jar --player2 ../../player/build/libs/defaultplayer.jar --tests 3"
 
+### Tests
+
+Unsere Unittests nutzen das [Kotest-Framework](https://kotest.io) mit [JUnit](https://junit.org) im Hintergrund.
+
+Dabei setzen wir auf die [WordSpec](https://kotest.io/styles/#word-spec), da man damit semantisch übersichtlich sowohl einfache Tests als auch Behavior Driven Development umsetzen kann.
+Bisherige Tests nutzen die StringSpec, welche jedoch schnell unübersichtlich wird da sie keine Verschachtelung erlaubt, und in manchen Fällen auch noch direkt JUnit.
+Diese sollten bei größeren Änderungen direkt zum neuen Stil migriert werden.
+
 ### Arbeiten mit IntelliJ IDEA
 
 Zuerst sollte sichergestellt werden, dass die neuste Version von IntelliJ IDEA verwendet wird, da es ansonsten Probleme mit Kotlin geben kann.
@@ -61,7 +69,10 @@ Zuerst sollte sichergestellt werden, dass die neuste Version von IntelliJ IDEA v
 In IntelliJ kann man das Projekt bequem von Gradle importieren, wodurch alle Module und Bibliotheken automatisch geladen werden.
 Dazu sind folgende Schritte notwendig:
 
-- Projekt klonen: `git clone --recurse-submodules git@github.com:CAU-Kiel-Tech-Inf/backend.git`
+- Projekt klonen:
+  ```sh
+  git clone git@github.com:CAU-Kiel-Tech-Inf/backend.git --recurse-submodules --shallow-submodules
+  ```
 - In IntelliJ: "File" > "New" > "Project from existing sources" > Projektverzeichnis auswählen
   - "Import project from external model" > "Gradle" auswählen
   - Im folgenden Fenster:
