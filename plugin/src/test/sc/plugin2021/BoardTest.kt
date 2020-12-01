@@ -1,68 +1,78 @@
 package sc.plugin2021
 
+import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.shouldBe
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
-import sc.plugin2021.util.Constants
 
-class BoardTest : StringSpec({
-    "Test correct board initialisation" {
-        val board = Board()
-        
-        board shouldNotBeSameInstanceAs Board()
-        board shouldBe Board()
-    
-        for (x in 0 until Constants.BOARD_SIZE) {
-            for (y in 0 until Constants.BOARD_SIZE) {
-                board[x, y] shouldNotBeSameInstanceAs Field(Coordinates(x, y), FieldContent.EMPTY)
-                board[x, y] shouldBe Field(Coordinates(x, y), FieldContent.EMPTY)
+class BoardTest : WordSpec({
+    isolationMode = IsolationMode.InstancePerLeaf
+    val changingFields = setOf(
+            Field(Coordinates(2, 3), FieldContent.YELLOW),
+            Field(Coordinates(19, 2), FieldContent.YELLOW),
+            Field(Coordinates(8, 3), FieldContent.YELLOW),
+            Field(Coordinates(4, 9), FieldContent.YELLOW)
+    )
+    "Boards " When {
+        val one = Board()
+        val two = Board()
+        "compared" Should {
+            "equal each other" {
+                one shouldBe two
             }
         }
-        
-        board[0, 0] = FieldContent.RED
-        board[1, 3] = FieldContent.GREEN
-        board[5, 9] = FieldContent.BLUE
-        board[8, 6] = FieldContent.YELLOW
-        
-        board.toString() shouldBe """
-            R  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  G  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  Y  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  B  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-            
-        """.trimIndent()
-    }
-    "Check Board comparison" {
-        val oldBoard = Board()
-        val newBoard = Board()
-        
-        val changingFields = setOf(
-                Field(Coordinates(2, 3), FieldContent.YELLOW),
-                Field(Coordinates(19, 2), FieldContent.YELLOW),
-                Field(Coordinates(8, 3), FieldContent.YELLOW),
-                Field(Coordinates(4, 9), FieldContent.YELLOW)
-        )
-        changingFields.forEach{
-            newBoard[it.coordinates] = it.content
+        "they differ" Should {
+            changingFields.forEach { two[it.coordinates] = it.content }
+            "not equal each other" {
+                one shouldNotBe two
+            }
+            "produce a list of differences" {
+                one.compare(two) shouldBe changingFields
+            }
         }
-        val changedFields = oldBoard.compare(newBoard)
-        
-        changedFields shouldBe changingFields
+        "both are equally modified" Should {
+            changingFields.forEach { two[it.coordinates] = it.content }
+            changingFields.forEach { one[it.coordinates] = it.content }
+            "equal each other" {
+                one shouldBe two
+            }
+            "produce an empty changelist" {
+                one.compare(two) shouldHaveSize 0
+            }
+        }
+        "converted to string" Should {
+            one[0, 0] = FieldContent.RED
+            one[1, 3] = FieldContent.GREEN
+            one[5, 9] = FieldContent.BLUE
+            one[8, 6] = FieldContent.YELLOW
+            val view = one.toString()
+            "produce an accurate view" {
+                view shouldBe """
+                    R  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  G  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  Y  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  B  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                    -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+                
+                """.trimIndent()
+            }
+        }
     }
 })

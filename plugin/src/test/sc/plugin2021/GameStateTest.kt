@@ -1,107 +1,97 @@
 package sc.plugin2021
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.data.blocking.forAll
-import io.kotest.data.row
-import io.kotest.matchers.collections.beEmpty
-import io.kotest.matchers.should
+import io.kotest.assertions.throwables.shouldNotThrow
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.IsolationMode
+import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import sc.plugin2021.util.Constants
 import sc.plugin2021.GamePlugin.Companion.loadXStream
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.InvalidMoveException
 
-class GameStateTest: StringSpec({
-    "GameState starts correctly" {
-        val state = GameState()
-        
-        state.board shouldBe Board()
-        
-        Color.values().forEach { color ->
-            state.undeployedPieceShapes(color)  shouldBe PieceShape.values().toSet()
-        }
-        
-        // TODO: adjust values accordingly
-        state.getPointsForPlayer(Team.ONE) shouldBe 0
-        state.getPointsForPlayer(Team.TWO) shouldBe 0
-    }
-    "GameStates know currently active Color" {
-        var colorIter = Color.RED
-        val state = GameState(startColor = colorIter)
-        
-        state.orderedColors.size shouldBe Constants.COLORS
-        for (x in 0 until Constants.COLORS) {
-            state.currentColor shouldBe colorIter
-            state.turn++
-            colorIter = colorIter.next
-        }
-        
-        state.currentColor shouldBe Color.RED
-        state.turn++
-        state.currentColor shouldBe Color.GREEN
-        state.turn += 2
-        state.currentColor shouldBe Color.YELLOW
-    }
-    "Pieces can only be placed once" {
+class GameStateTest: WordSpec({
+    isolationMode = IsolationMode.InstancePerLeaf
+    "GameStates" When {
         val state = GameState(startPiece = PieceShape.PENTO_I)
-        val move = SetMove(
-                Piece(Color.BLUE, PieceShape.PENTO_I, Rotation.RIGHT, true))
-        
-        state.undeployedPieceShapes(Color.BLUE).size shouldBe 21
-        assertDoesNotThrow {
-            GameRuleLogic.performMove(state, move)
+        "constructed" Should {
+            "have an empty board" {
+                state.board shouldBe Board()
+            }
+            "have each PieceShape available for each color" {
+                Color.values().forEach { color ->
+                    state.undeployedPieceShapes(color) shouldBe PieceShape.values().toSet()
+                }
+            }
+            "start with no points for either player" {
+                state.getPointsForPlayer(Team.ONE) shouldBe 0
+                state.getPointsForPlayer(Team.TWO) shouldBe 0
+            }
         }
-        state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
+        "asked for the current color" Should {
+            "return the correct color" {
+                state.orderedColors.size shouldBe Constants.COLORS
+                for (color in Color.values()) {
+                    state.currentColor shouldBe color
+                    state.turn++
+                }
 
-        state.turn += 4
-        assertThrows<InvalidMoveException> {
-            GameRuleLogic.performMove(state, move)
+                state.currentColor shouldBe Color.BLUE
+                state.turn++
+                state.currentColor shouldBe Color.YELLOW
+                state.turn += 2
+                state.currentColor shouldBe Color.GREEN
+            }
         }
-        state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
-    }
-    "XML conversion works" {
-        val state = GameState()
-        val transformed = loadXStream().fromXML(loadXStream().toXML(GameState(startPiece = state.startPiece))) as GameState
-        transformed.toString() shouldBe state.toString()
-        transformed shouldBe state
-        
-        GameRuleLogic.isFirstMove(transformed) shouldBe true
-        transformed.getPointsForPlayer(Team.ONE)
-        transformed.board.isEmpty()
-    }
-    "GameStates advance accordingly" {
-        forAll(
-                row(2, 1, Color.RED),
-                row(7, 2, Color.GREEN),
-                row(8, 3, Color.BLUE)
-        ) { turn, round, color ->
-            val state = GameState(startTurn = turn)
-            state.turn shouldBe turn
-            state.round shouldBe round
-            state.currentColor shouldBe color
+        "a piece is placed a second time" Should {
+            val move = SetMove(Piece(Color.BLUE, PieceShape.PENTO_I, Rotation.RIGHT, true))
+            state.undeployedPieceShapes(Color.BLUE).size shouldBe 21
+            shouldNotThrow<InvalidMoveException> {
+                GameRuleLogic.performMove(state, move)
+            }
+            state.turn += 4
+            state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
+            "throw a InvalidMoveException" {
+                shouldThrow<InvalidMoveException> {
+                    GameRuleLogic.performMove(state, move)
+                }
+            }
+            state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
         }
-    
-        GameState().run {
-            turn shouldBe 0
-            round shouldBe 1
-            currentColor shouldBe Color.BLUE
-        
-            turn += 10
-            turn shouldBe 10
-            round shouldBe 3
-            currentColor shouldBe Color.RED
-        
-            turn++
-            turn shouldBe 11
-            round shouldBe 3
-            currentColor shouldBe Color.GREEN
-        
-            turn++
-            turn shouldBe 12
-            round shouldBe 4
-            currentColor shouldBe Color.BLUE
+        "serialised and deserialised" Should {
+            val transformed = loadXStream().fromXML(loadXStream().toXML(GameState(startPiece = state.startPiece))) as GameState
+            "equal the original GameState" {
+                transformed.toString() shouldBe state.toString()
+                transformed shouldBe state
+
+                GameRuleLogic.isFirstMove(transformed) shouldBe true
+                transformed.getPointsForPlayer(Team.ONE)
+                transformed.board.isEmpty()
+            }
+        }
+        "turn number increases" Should {
+            "let turn, round and currentcolor advance accordingly" {
+                GameState().run {
+                    turn shouldBe 0
+                    round shouldBe 1
+                    currentColor shouldBe Color.BLUE
+
+                    turn += 10
+                    turn shouldBe 10
+                    round shouldBe 3
+                    currentColor shouldBe Color.RED
+
+                    turn++
+                    turn shouldBe 11
+                    round shouldBe 3
+                    currentColor shouldBe Color.GREEN
+
+                    turn++
+                    turn shouldBe 12
+                    round shouldBe 4
+                    currentColor shouldBe Color.BLUE
+                }
+            }
         }
     }
 })
