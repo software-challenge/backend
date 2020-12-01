@@ -62,9 +62,8 @@ object GameRuleLogic {
     
     /**
      * Prüfe, ob der gegebene [SetMove] gesetzt werden könnte.
-     * @param throws wenn true, wirft die Methode bei invaliden Zügen einen Fehler.
      *
-     * @return gibt einen [MoveMistake] zurück, wenn der Zug nicht valide wahr, ansonsten null
+     * @throws InvalidMoveException wenn der Zug nicht valide war
      */
     @JvmStatic
     fun validateSetMove(gameState: GameState, move: SetMove) {
@@ -112,6 +111,8 @@ object GameRuleLogic {
      * - im ersten Zug nicht der vorgegebene Stein
      * - in nachfolgenden Zügen bereits gesetzte Steine
      * gesetzt werden würde(n).
+     *
+     * @throws InvalidMoveException wenn der Zug nicht valide war
      */
     @JvmStatic
     fun validateShape(gameState: GameState, shape: PieceShape, color: Color = gameState.currentColor) {
@@ -140,7 +141,10 @@ object GameRuleLogic {
                 false
             }
 
-    /** Prüfe, ob der gegebene [SetMove] auf dem [Board] platziert werden kann. */
+    /** Prüfe, ob der gegebene [SetMove] auf dem [Board] platziert werden kann.
+    *
+    * @throws InvalidMoveException wenn der Zug nicht valide war
+    */
     @JvmStatic
     fun validateSetMove(board: Board, move: SetMove) {
         move.piece.coordinates.forEach {
@@ -166,6 +170,11 @@ object GameRuleLogic {
         }
     }
 
+    /**
+     * Prüfe, ob die aktuelle Farbe den Zug überspringen kann.
+     *
+     * @throws InvalidMoveException wenn der Zug nicht valide war
+     */
     @JvmStatic
     fun validateSkipMove(gameState: GameState) {
         if (isFirstMove(gameState))
