@@ -3,7 +3,7 @@ package sc.shared
 import sc.api.plugins.ITeam
 
 /**
- * Erzeugt eine neue Condition mit Sieger und Gewinngrund.
+ * Eine Zusammenfassung eines Sieges mit Sieger und Beschreibung.
  *
  * @param winner Farbe des Siegers.
  * @param reason Text, der Sieg beschreibt.
