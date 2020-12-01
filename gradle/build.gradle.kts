@@ -22,10 +22,11 @@ version = versions.joinToString(".") { it.toString() }
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
 
+val javaTargetVersion = JavaVersion.VERSION_1_8
 val javaVersion = JavaVersion.current()
 println("Current version: $version Game: $game (Java version: $javaVersion)")
-if(javaVersion != JavaVersion.VERSION_1_8)
-    System.err.println("Java version is the recommended version - expect issues with generating documentation (consider using '-x doc' if you don't care)")
+if(javaVersion != javaTargetVersion)
+    System.err.println("Java version $javaTargetVersion is the recommended version - expect issues with generating documentation (consider using '-x doc' if you don't care)")
 
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
@@ -244,7 +245,7 @@ tasks {
 allprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions{
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
+            jvmTarget = javaTargetVersion.toString()
             freeCompilerArgs = listOf("-Xjvm-default=all")
         }
     }
