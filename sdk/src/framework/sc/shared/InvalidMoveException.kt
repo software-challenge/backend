@@ -1,11 +1,14 @@
 package sc.shared
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.IMove
 import kotlin.RuntimeException
 
-/** NOTE: It is important to have information about the move in the reason
- *  because that is the only place where the invalid move is logged */
+/**
+ * Wird bei Zügen geworfen, die nicht regelkonform ausgeführt werden können.
+ *
+ * @param mistake ist die Art der Regelverletzung.
+ * @param move ist der Zug, der den Fehler verursacht hat.
+ */
 class InvalidMoveException @JvmOverloads constructor(
         @JvmField val mistake: IMoveMistake,
         @JvmField val move: IMove? = null):
