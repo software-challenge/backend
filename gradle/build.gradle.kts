@@ -217,7 +217,7 @@ tasks {
             println("Testing TestClient...")
             val testClient =
                 ProcessBuilder(
-                    project("test-client").tasks.getByName<ScriptsTask>("createScripts").content.split(" ")
+                    project("test-client").tasks.getByName<ScriptsTask>("createStartScripts").content.split(" ")
                     + listOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
                 )
                     .redirectOutput(testLogDir.resolve("test-client.log"))

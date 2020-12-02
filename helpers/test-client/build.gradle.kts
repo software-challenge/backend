@@ -19,14 +19,14 @@ dependencies {
 }
 
 tasks {
-    val createScripts by creating(ScriptsTask::class) {
+    val createStartScripts by creating(ScriptsTask::class) {
         destinationDir = file("build/libs")
         fileName = "start-tests"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
     }
 
     jar {
-        dependsOn(createScripts)
+        dependsOn(createStartScripts)
         doFirst {
             copy {
                 from("src/logback-tests.xml")
