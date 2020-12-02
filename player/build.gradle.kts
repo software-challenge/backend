@@ -28,10 +28,12 @@ dependencies {
 
 tasks {
     shadowJar {
+        group = "distribution"
         archiveFileName.set("defaultplayer.jar")
     }
     
     val prepareZip by creating(Copy::class) {
+        group = "distribution"
         into(buildDir.resolve("zip"))
         with(copySpec {
             from("buildscripts")
@@ -64,6 +66,7 @@ tasks {
     }
     
     val deploy by creating(Zip::class) {
+        group = "distribution"
         dependsOn(shadowJar, prepareZip)
         destinationDirectory.set(deployDir)
         archiveFileName.set("simpleclient-$gameName-src.zip")
@@ -79,13 +82,14 @@ tasks {
     }
     
     val playerTest by creating(Copy::class) {
+        group = "verification"
         dependsOn(prepareZip)
+        
         val execDir = File(System.getProperty("java.io.tmpdir")).resolve("socha-player")
         doFirst {
             execDir.deleteRecursively()
             execDir.mkdirs()
         }
-        
         from(prepareZip.destinationDir)
         into(execDir)
         

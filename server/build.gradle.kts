@@ -34,6 +34,7 @@ tasks {
     }
     
     val copyConfig by creating(Copy::class) {
+        group = "distribution"
         from("configuration/logback-release.xml", "configuration/server.properties.example")
         into(runnableDir)
         rename("logback-release.xml", "logback.xml")
@@ -41,12 +42,14 @@ tasks {
     }
     
     val makeRunnable by creating(Copy::class) {
+        group = "distribution"
         dependsOn(jar, copyConfig, createScripts)
         from(configurations.default)
         into(runnableDir.resolve("lib"))
     }
     
     val deploy by creating(Zip::class) {
+        group = "distribution"
         dependsOn(project(":test-client").tasks.jar, ":player:shadowJar", makeRunnable)
         destinationDirectory.set(deployDir)
         archiveBaseName.set("software-challenge-server")
@@ -60,6 +63,7 @@ tasks {
     }
     
     val startProduction by creating(JavaExec::class) {
+        group = "application"
         dependsOn(makeRunnable)
         classpath = files(configurations.default, runnableDir.resolve("software-challenge-server.jar"))
         main = "sc.server.Application"
@@ -68,6 +72,7 @@ tasks {
     }
     
     val dockerImage by creating(Exec::class) {
+        group = "application"
         dependsOn(makeRunnable)
 		doFirst {
 			val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD")).inputStream.reader().readText().trim()
