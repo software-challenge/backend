@@ -25,7 +25,7 @@ val game by extra { "${gameName}_$year" }
 val javaTargetVersion = JavaVersion.VERSION_1_8
 val javaVersion = JavaVersion.current()
 println("Current version: $version Game: $game (Java version: $javaVersion)")
-if(javaVersion != javaTargetVersion)
+if (javaVersion != javaTargetVersion)
     System.err.println("Java version $javaTargetVersion is the recommended version - expect issues with generating documentation (consider using '-x doc' if you don't care)")
 
 val deployDir by extra { buildDir.resolve("deploy") }
@@ -87,9 +87,9 @@ tasks {
         description = "Prepares a new Release by bumping the version and creating a commit with a git tag of the new version"
         doLast {
             fun edit(original: String, version: String, new: Int) =
-                    if (original.startsWith("socha.version.$version"))
-                        "socha.version.$version=${new.toString().padStart(2, '0')}"
-                    else original
+                if (original.startsWith("socha.version.$version"))
+                    "socha.version.$version=${new.toString().padStart(2, '0')}"
+                else original
             
             var newVersion = version
             val filter: (String) -> String = when {
@@ -105,7 +105,7 @@ tasks {
                 else -> throw InvalidUserDataException("Gib entweder -Ppatch oder -Pminor an, um die Versionsnummer automatisch zu inkrementieren, oder ändere sie selbst in gradle.properties und gib dann -Pmanual an!")
             }
             val desc = project.properties["m"]?.toString()
-                    ?: throw InvalidUserDataException("Das Argument -Pm=\"Beschreibung dieser Version\" wird benötigt")
+                       ?: throw InvalidUserDataException("Das Argument -Pm=\"Beschreibung dieser Version\" wird benötigt")
             
             val propsFile = file("gradle.properties")
             propsFile.writeText(propsFile.readLines().joinToString("\n") { filter(it) })
@@ -119,6 +119,16 @@ tasks {
         }
     }
     
+    clean {
+        dependOnSubprojects()
+    }
+    test {
+        dependOnSubprojects()
+    }
+    build {
+        dependsOn(deploy)
+    }
+    
     val maxGameLength = 150L
     
     val clearTestLogs by creating(Delete::class) {
@@ -130,16 +140,21 @@ tasks {
         dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
         doFirst {
             testLogDir.mkdirs()
-            val server = ProcessBuilder("java",
+            val server =
+                ProcessBuilder(
+                    "java",
                     "-Dlogback.configurationFile=${project("server").projectDir.resolve("configuration/logback-trace.xml")}",
-                    "-jar", project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath)
-                    .redirectOutput(testLogDir.resolve("server.log")).redirectError(testLogDir.resolve("server-err.log"))
-                    .directory(project("server").buildDir.resolve("runnable")).start()
+                    "-jar", project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath
+                )
+                    .redirectOutput(testLogDir.resolve("server.log"))
+                    .redirectError(testLogDir.resolve("server-err.log"))
+                    .directory(project("server").buildDir.resolve("runnable"))
+                    .start()
             Thread.sleep(400)
             val startClient: (Int) -> Process = {
                 Thread.sleep(100)
                 ProcessBuilder("java", "-jar", deployDir.resolve(deployedPlayer).absolutePath)
-                        .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
+                    .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
             startClient(2)
@@ -200,10 +215,13 @@ tasks {
             Runtime.getRuntime().exec("unzip software-challenge-server.zip -d $unzipped", null, deployDir).waitFor()
             
             println("Testing TestClient...")
-            val testClient = ProcessBuilder(
-                    project("test-client").tasks.getByName<ScriptsTask>("createScripts").content.split(" ") +
-                            listOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055"))
-                    .redirectOutput(testLogDir.resolve("test-client.log")).redirectError(testLogDir.resolve("test-client-err.log"))
+            val testClient =
+                ProcessBuilder(
+                    project("test-client").tasks.getByName<ScriptsTask>("createScripts").content.split(" ")
+                    + listOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
+                )
+                    .redirectOutput(testLogDir.resolve("test-client.log"))
+                    .redirectError(testLogDir.resolve("test-client-err.log"))
                     .directory(unzipped).start()
             if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
@@ -220,23 +238,14 @@ tasks {
     val integrationTest by creating {
         group = "verification"
         dependsOn(testGame, ":player:playerTest")
-        if(enableTestClient)
+        if (enableTestClient)
             dependsOn(testTestClient)
         shouldRunAfter(test)
     }
     
-    clean {
-        dependOnSubprojects()
-    }
-    test {
-        dependOnSubprojects()
-    }
     check {
         if (enableIntegrationTesting)
             dependsOn(integrationTest)
-    }
-    build {
-        dependsOn(deploy)
     }
 }
 
@@ -244,7 +253,7 @@ tasks {
 
 allprojects {
     tasks.withType<KotlinCompile> {
-        kotlinOptions{
+        kotlinOptions {
             jvmTarget = javaTargetVersion.toString()
             freeCompilerArgs = listOf("-Xjvm-default=all")
         }
@@ -317,14 +326,4 @@ fun Task.dependOnSubprojects() {
             if (it != rootProject)
                 dependsOn(it.tasks.findByName(name) ?: return@add)
         }
-}
-
-// "run" task won't work when recursive, see https://stackoverflow.com/q/51903863/6723250
-gradle.taskGraph.whenReady {
-    val hasRootRunTask = hasTask(":run")
-    if (hasRootRunTask) {
-        allTasks.forEach { task ->
-            task.enabled = task.name != "run"
-        }
-    }
 }
