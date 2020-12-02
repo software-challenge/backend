@@ -74,9 +74,10 @@ tasks {
     val dockerImage by creating(Exec::class) {
         group = "application"
         dependsOn(makeRunnable)
+        workingDir = projectDir.resolve("configuration")
 		doFirst {
 			val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD")).inputStream.reader().readText().trim()
-			val relativeRunnable = runnableDir.relativeTo(project.projectDir)
+			val relativeRunnable = runnableDir.relativeTo(workingDir)
 			commandLine("docker", "build", "--no-cache", "-t", "swc_game-server:latest", "-t", "swc_game-server:$tag", "--build-arg", "game_server_dir=$relativeRunnable", ".")
 		}
     }
