@@ -82,7 +82,9 @@ tasks {
     
     jar {
         destinationDirectory.set(runnableDir)
-        manifest.attributes["Class-Path"] = configurations.default.get().joinToString(" ") { "lib/" + it.name }
+        doFirst {
+            manifest.attributes["Class-Path"] = configurations.default.get().joinToString(" ") { "lib/" + it.name }
+        }
     }
     
     run.configure {

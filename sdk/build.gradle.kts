@@ -1,6 +1,29 @@
+import kotlinx.coroutines.channels.consumesAll
+
 sourceSets {
-    main.get().java.srcDirs("src/framework", "src/server-api")
-    test.get().java.srcDir("src/test")
+    main.get().java.setSrcDirs(listOf("src/framework", "src/server-api"))
+    test.get().java.setSrcDirs(listOf("src/test"))
+    create("testConfig") {
+        java.setSrcDirs(listOf("src/testConfig"))
+        compileClasspath += main.get().output
+        runtimeClasspath += main.get().output
+    }
+}
+
+configurations {
+    val testConfigApi by getting { extendsFrom(api.get()) }
+    val testConfig by creating {
+        extendsFrom(testConfigApi)
+        isCanBeResolved = false
+        isCanBeConsumed = true
+    }
+}
+
+artifacts {
+    val kt = tasks["compileTestConfigKotlin"]
+    add("testConfig", kt.outputs.files.singleFile) {
+        builtBy(kt)
+    }
 }
 
 dependencies {
@@ -12,4 +35,8 @@ dependencies {
     implementation("org.hamcrest", "hamcrest-core", "2.2")
     implementation("net.sf.kxml", "kxml2", "2.3.0")
     implementation("xmlpull", "xmlpull", "1.1.3.1")
+    
+    val kotestVersion = "4.3.1"
+    "testConfigApi"("io.kotest", "kotest-runner-junit5-jvm", kotestVersion)
+    "testConfigApi"("io.kotest", "kotest-assertions-core", kotestVersion)
 }
