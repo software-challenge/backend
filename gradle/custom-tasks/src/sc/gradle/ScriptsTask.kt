@@ -9,6 +9,10 @@ open class ScriptsTask : DefaultTask() {
     lateinit var destinationDir: File
     lateinit var fileName: String
     lateinit var content: String
+    
+    init {
+        group = "distribution"
+    }
 
     @TaskAction
     fun createScripts() {
