@@ -13,11 +13,10 @@ sourceSets {
 dependencies {
     api(project(":sdk"))
     
-    testImplementation(project(":sdk").dependencyProject.sourceSets.test.get().output)
     testImplementation(kotlin("script-runtime")) // for the ManualGameTest
 }
 
-tasks{
+tasks {
     jar {
         archiveBaseName.set(game)
     }
