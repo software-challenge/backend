@@ -27,7 +27,7 @@ val deployDir: File by project
 tasks {
     val runnableDir = buildDir.resolve("runnable")
     
-    val createScripts by creating(ScriptsTask::class) {
+    val createStartScripts by creating(ScriptsTask::class) {
         destinationDir = runnableDir
         fileName = "start"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar server.jar"
@@ -43,7 +43,7 @@ tasks {
     
     val makeRunnable by creating(Copy::class) {
         group = "distribution"
-        dependsOn(jar, copyConfig, createScripts)
+        dependsOn(jar, copyConfig, createStartScripts)
         from(configurations.default)
         into(runnableDir.resolve("lib"))
     }
