@@ -321,9 +321,9 @@ object GameRuleLogic {
         }.filter { isValidSetMove(gameState, it) }
     }
 
-    /** @return all [Coordinates] the currently active [Color] can place [Piece]s upon. */
+    /** @return alle [Coordinates], auf die die aktuelle [Color] Steine platzieren könnte. */
     @JvmStatic
-    private fun getValidFields(board: Board, color: Color): Set<Coordinates> {
+    fun getValidFields(board: Board, color: Color): Set<Coordinates> {
         val coloredFields = getColoredFields(board, color, Corner.values().map { it.position }.filter {
             board[it].content == +color
         }.toMutableSet())
