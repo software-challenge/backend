@@ -8,11 +8,7 @@ import sc.framework.plugins.Player
 import sc.framework.plugins.RoundBasedGameInstance
 import sc.protocol.responses.ProtocolMessage
 import sc.server.helpers.TestTeam
-import sc.server.helpers.WinReason
-import sc.shared.PlayerScore
-import sc.shared.ScoreCause
-import sc.shared.WelcomeMessage
-import sc.shared.WinCondition
+import sc.shared.*
 import java.util.*
 
 class TestGame : RoundBasedGameInstance<TestPlayer?>(TestPlugin.TEST_PLUGIN_UUID) {
@@ -33,11 +29,10 @@ class TestGame : RoundBasedGameInstance<TestPlayer?>(TestPlugin.TEST_PLUGIN_UUID
     override fun checkWinCondition(): WinCondition? {
         return if (this.round > 1) {
             logger.info("Someone won")
-            WinCondition(if (state.state % 2 == 0) TestTeam.RED else TestTeam.BLUE, WinReason.ROUND_LIMIT_FREE_FIELDS)
+            WinCondition(if (state.state % 2 == 0) TestTeam.RED else TestTeam.BLUE, TestWinReason.WIN)
         } else null
     }
 
-    @Throws(TooManyPlayersException::class)
     override fun onPlayerJoined(): Player {
         if (players.size < 2) {
             return if (players.isEmpty()) {
