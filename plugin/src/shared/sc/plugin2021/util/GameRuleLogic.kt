@@ -326,27 +326,26 @@ object GameRuleLogic {
 
     /** @return alle [Coordinates], auf die die aktuelle [Color] Steine platzieren könnte. */
     @JvmStatic
-    fun getValidFields(board: Board, color: Color): Set<Coordinates> {
-        val coloredFields = getColoredFields(board, color, Corner.values().map { it.position }.filter {
-            board[it].content == +color
-        }.toMutableSet())
+    fun getValidFields(board: Board, color: Color): Set<Coordinates> =
+            getColoredFields(board, color).flatMap { it.corners }.filter {
+                Board.contains(it) && board[it].isEmpty && it.neighbors.none {
+                    Board.contains(it) && board[it].content == +color
+                }
+            }.toSet()
 
-        val validFields = coloredFields.flatMap { it.corners }.filter {
-            Board.contains(it) && board[it].isEmpty && it.neighbors.none {
-                Board.contains(it) && board[it].content == +color
-            }
-        }.toSet()
-
-        return validFields
-    }
-
-    /** @return all [Coordinates] belonging to the currently active [Color]. */
+    /** @return alle [Coordinates], deren Position auf dem [Board] die gegebene [Color] hat. */
     @JvmStatic
-    private fun getColoredFields(board: Board, color: Color, coloredFields: MutableSet<Coordinates>): Set<Coordinates> {
+    fun getColoredFields(board: Board, color: Color): Set<Coordinates> =
+            getColoredFieldsRecursively(board, color, Corner.values().map { it.position }.filter {
+                board[it].content == +color
+            }.toMutableSet())
+
+    /** Recursive function filling [coloredFields] with all [Coordinates] on the [Board] with the given [Color]. */
+    private fun getColoredFieldsRecursively(board: Board, color: Color, coloredFields: MutableSet<Coordinates>): Set<Coordinates> {
         val copy = coloredFields.toSet()
         coloredFields.addAll(coloredFields.flatMap { it.corners + it.neighbors }.filter {
             Board.contains(it) && board[it].content == +color
         })
-        return if (coloredFields == copy) copy else getColoredFields(board, color, coloredFields)
+        return if (coloredFields == copy) copy else getColoredFieldsRecursively(board, color, coloredFields)
     }
 }
