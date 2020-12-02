@@ -31,7 +31,7 @@ if(javaVersion != javaTargetVersion)
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
 val testLogDir by extra { buildDir.resolve("tests") }
-val documentedProjects = arrayOf("sdk", "plugin")
+val documentedProjects = listOf("sdk", "plugin")
 
 val enableTestClient by extra { versionObject.minor > 0 }
 val enableIntegrationTesting = !project.hasProperty("nointegration") && (versionObject.minor > 0 || enableTestClient)
@@ -63,10 +63,10 @@ tasks {
     
     val doc by creating(DokkaTask::class) {
         group = "documentation"
-        logging.level = LogLevel.QUIET
+        dependsOn(documentedProjects.map { ":$it:classes" })
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
-        subProjects = listOf("sdk", "plugin")
+        subProjects = documentedProjects
         configuration {
             reportUndocumented = false
             moduleName = "Software-Challenge API $version"
@@ -262,7 +262,7 @@ allprojects {
         tasks {
             val doc by creating(DokkaTask::class) {
                 group = "documentation"
-                logging.level = LogLevel.QUIET
+                dependsOn(classes)
                 outputDirectory = buildDir.resolve("doc").toString()
                 outputFormat = "javadoc"
             }
