@@ -65,9 +65,7 @@ tasks {
     val startProduction by creating(JavaExec::class) {
         group = "application"
         dependsOn(makeRunnable)
-        classpath = files(configurations.default, runnableDir.resolve("software-challenge-server.jar"))
-        main = "sc.server.Application"
-        workingDir = runnableDir
+        classpath = jar.get().outputs.files
         jvmArgs = listOf("-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=../../logback-production.xml", "-Djava.security.egd=file:/dev/./urandom", "-XX:MaxGCPauseMillis=100", "-XX:GCPauseIntervalMillis=2050", "-XX:+UseConcMarkSweepGC", "-XX:+CMSParallelRemarkEnabled", "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:CMSInitiatingOccupancyFraction=70", "-XX:+ScavengeBeforeFullGC", "-XX:+CMSScavengeBeforeRemark")
     }
     
