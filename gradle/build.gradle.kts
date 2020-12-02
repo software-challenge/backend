@@ -57,11 +57,12 @@ subprojects {
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 tasks {
     val startServer by creating {
-        dependsOn(":server:run")
         group = "application"
+        dependsOn(":server:run")
     }
     
     val doc by creating(DokkaTask::class) {
+        group = "documentation"
         logging.level = LogLevel.QUIET
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
@@ -74,16 +75,16 @@ tasks {
     }
     
     val deploy by creating {
+        group = "distribution"
         dependsOn(doc)
         dependOnSubprojects()
-        group = "distribution"
         description = "Zips everything up for release into ${deployDir.relativeTo(projectDir)}"
         outputs.dir(deployDir)
     }
     
     val release by creating {
-        dependsOn(check)
         group = "distribution"
+        dependsOn(check)
         description = "Prepares a new Release by bumping the version and creating a commit with a git tag of the new version"
         doLast {
             fun edit(original: String, version: String, new: Int) =
@@ -260,17 +261,20 @@ allprojects {
         apply(plugin = "org.jetbrains.dokka")
         tasks {
             val doc by creating(DokkaTask::class) {
+                group = "documentation"
                 logging.level = LogLevel.QUIET
                 outputDirectory = buildDir.resolve("doc").toString()
                 outputFormat = "javadoc"
             }
             val docJar by creating(Jar::class) {
+                group = "build"
                 dependsOn(doc)
                 archiveBaseName.set(jar.get().archiveBaseName)
                 archiveClassifier.set("javadoc")
                 from(doc.outputDirectory)
             }
             val sourcesJar by creating(Jar::class) {
+                group = "build"
                 archiveBaseName.set(jar.get().archiveBaseName)
                 archiveClassifier.set("sources")
                 from(sourceSets.main.get().allSource)
