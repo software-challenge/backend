@@ -11,8 +11,8 @@ class ConverterTest {
         val secret = "i-am-secret"
         val unimportant = "i-am-unimportant"
         private var perspective: Any? = null
-        override fun getPerspective(): Any {
-            return perspective!!
+        override fun getPerspective(): Any? {
+            return perspective
         }
 
         fun setPerspective(o: Any?) {
