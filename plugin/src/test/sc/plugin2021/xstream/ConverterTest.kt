@@ -143,6 +143,12 @@ class ConverterTest: WordSpec({
                         <shape>PENTO_Y</shape>
                       </greenShapes>
                       <lastMoveMono class="linked-hash-map"/>
+                      <validColors class="linked-hash-set">
+                        <color>BLUE</color>
+                        <color>YELLOW</color>
+                        <color>RED</color>
+                        <color>GREEN</color>
+                      </validColors>
                       <first displayName="">
                         <color class="team">ONE</color>
                       </first>
