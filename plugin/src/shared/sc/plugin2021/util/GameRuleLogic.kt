@@ -116,7 +116,9 @@ object GameRuleLogic {
         if (gameState.undeployedPieceShapes(move.color).isEmpty())
             gameState.lastMoveMono += move.color to (move.piece.kind == PieceShape.MONO)
 
-        gameState.tryAdvance()
+        do {
+            gameState.tryAdvance()
+        } while (!gameState.validColors.contains(gameState.currentColor))
     }
 
     /**
@@ -251,9 +253,10 @@ object GameRuleLogic {
     /** Entferne alle Farben, die keine Steine mehr auf dem Feld platzieren können. */
     @JvmStatic
     fun removeInvalidColors(gameState: GameState) {
-        if (gameState.orderedColors.isEmpty()) return
+        if (gameState.validColors.isEmpty()) return
         if (streamPossibleMoves(gameState).none { isValidSetMove(gameState, it) }) {
-            gameState.removeActiveColor()
+            gameState.remove()
+            gameState.turn++
             removeInvalidColors(gameState)
         }
     }

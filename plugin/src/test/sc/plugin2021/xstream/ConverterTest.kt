@@ -42,7 +42,7 @@ class ConverterTest: WordSpec({
         "serialised" Should {
             "be encoded properly" {
                 state shouldSerializeTo """
-                    <state currentColorIndex="0" turn="0" round="1" startPiece="PENTO_L">
+                    <state turn="0" round="1" startPiece="PENTO_L">
                       <startTeam class="team">ONE</startTeam>
                       <board>
                         <field x="0" y="0" content="RED"/>
@@ -143,19 +143,12 @@ class ConverterTest: WordSpec({
                         <shape>PENTO_Y</shape>
                       </greenShapes>
                       <lastMoveMono class="linked-hash-map"/>
-                      <orderedColors>
-                        <color>BLUE</color>
-                        <color>YELLOW</color>
-                        <color>RED</color>
-                        <color>GREEN</color>
-                      </orderedColors>
                       <first displayName="">
                         <color class="team">ONE</color>
                       </first>
                       <second displayName="">
                         <color class="team">TWO</color>
                       </second>
-                      <startColor>BLUE</startColor>
                     </state>""".trimIndent()
             }
         }

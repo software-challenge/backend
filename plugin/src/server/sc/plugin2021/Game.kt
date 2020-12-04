@@ -71,9 +71,7 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
      * the player with the highest cumulative score of its colors
      */
     override fun checkWinCondition(): WinCondition? {
-        if (gameState.orderedColors.any {
-            GameRuleLogic.getPossibleMoves(gameState).isNotEmpty()
-        }) return null
+        if (!checkGameOver()) return null
 
         val scores: Map<Team, Int> = Team.values().map {
             it to gameState.getPointsForPlayer(it)
@@ -166,11 +164,11 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     override fun getCurrentState(): IGameState = gameState
     
     val isGameOver: Boolean
-        get() = gameState.orderedColors.isEmpty() || round > Constants.ROUND_LIMIT
+        get() = gameState.validColors.isEmpty() || round > Constants.ROUND_LIMIT
 
     fun checkGameOver(): Boolean {
         if (round > Constants.ROUND_LIMIT) {
-            gameState.orderedColors.clear()
+            gameState.validColors.clear()
         }
         GameRuleLogic.removeInvalidColors(gameState)
         return isGameOver
