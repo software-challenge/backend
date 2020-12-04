@@ -67,7 +67,6 @@ class GameState @JvmOverloads constructor(
     val orderedColors: List<Color>
         get() = Color.values().toList()
 
-    @XStreamOmitField
     internal val validColors: MutableSet<Color> = Color.values().toMutableSet()
 
     /** Prüfe, ob die gegebene Farbe noch im Spiel ist. */
