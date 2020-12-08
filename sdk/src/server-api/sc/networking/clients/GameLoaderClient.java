@@ -1,6 +1,5 @@
 package sc.networking.clients;
 
-import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
@@ -12,13 +11,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * This client serves the purpose to load a game state from
- * any XML file (a replay for example). It is used to load
- * a given board to play on (i.e.).
- *
- * @author sca
+ * any XML file (a replay for example).
+ * It is used to load a given board to play on.
  */
 public final class GameLoaderClient extends XStreamClient implements IPollsHistory {
   private static Logger logger = LoggerFactory.getLogger(GameLoaderClient.class);
