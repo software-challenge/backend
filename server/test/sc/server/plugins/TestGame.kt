@@ -28,7 +28,6 @@ class TestGame : RoundBasedGameInstance<TestPlayer?>(TestPlugin.TEST_PLUGIN_UUID
 
     override fun checkWinCondition(): WinCondition? {
         return if (this.round > 1) {
-            logger.info("Someone won")
             WinCondition(if (state.state % 2 == 0) TestTeam.RED else TestTeam.BLUE, TestWinReason.WIN)
         } else null
     }
