@@ -2,8 +2,7 @@ package sc.networking.clients;
 
 import sc.shared.GameResult;
 
-public interface IControllableGame extends IPollsUpdates
-{
+public interface IControllableGame extends IPollsUpdates {
 	public void next();
 
 	public void previous();

@@ -123,12 +123,12 @@ abstract class AbstractClient(
     override fun onGameObserved(roomId: String) {}
     
     override fun onGameLeft(roomId: String) {
-        logger.info("$this got game left ${this.roomId}")
+        logger.info("$this: Got game left in room $roomId")
         client.stop()
     }
     
     override fun onGameOver(roomId: String, data: GameResult) {
-        logger.info("$this on Game Over with game result $data")
+        logger.info("$this: Game over with result $data")
         isGameOver = true
         handler?.gameEnded(data, team, error)
     }
