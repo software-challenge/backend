@@ -48,8 +48,8 @@ class TestGame : RoundBasedGameInstance<TestPlayer?>(TestPlugin.TEST_PLUGIN_UUID
         throw TooManyPlayersException()
     }
 
-    val testPlayers: List<TestPlayer?>
-        get() = players
+    val testPlayers: List<TestPlayer>
+        get() = players.filterNotNull()
 
     override fun getPlayerScores(): List<PlayerScore> = emptyList()
 
@@ -80,8 +80,8 @@ class TestGame : RoundBasedGameInstance<TestPlayer?>(TestPlugin.TEST_PLUGIN_UUID
 
     /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests  */
     override fun start() {
-        for (p in players) {
-            p!!.notifyListeners(WelcomeMessage(p.color))
+        testPlayers.forEach {
+            it.notifyListeners(WelcomeMessage(it.color))
         }
         super.start()
     }
