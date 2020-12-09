@@ -75,7 +75,7 @@ class TestGame : RoundBasedGameInstance<TestPlayer?>(TestPlugin.TEST_PLUGIN_UUID
     override fun loadGameInfo(gameInfo: Any) {}
     override fun getWinners(): List<Player> = emptyList()
 
-    override fun getPlayers(): List<Player> = ArrayList<Player>(players)
+    override fun getPlayers(): List<Player> = testPlayers.toList()
 
     /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests  */
     override fun start() {
