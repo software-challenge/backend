@@ -384,6 +384,23 @@ public class GameRoom implements IGameListener {
     return Collections.unmodifiableList(this.playerSlots);
   }
 
+  public void ensureOpenSlots(int count) throws TooManyPlayersException {
+    if (count > getMaximumPlayerCount()) {
+      throw new TooManyPlayersException();
+    }
+    while (playerSlots.size() < count) {
+      this.playerSlots.add(new PlayerSlot(this));
+    }
+  }
+
+  /** Set descriptors of PlayerSlots. */
+  public void openSlots(SlotDescriptor[] descriptors) throws TooManyPlayersException {
+    ensureOpenSlots(descriptors.length);
+    for (int i = 0; i < descriptors.length; i++) {
+      this.playerSlots.get(i).setDescriptor(descriptors[i]);
+    }
+  }
+
   /**
    * Threadsafe method to reserve all PlayerSlots.
    *
@@ -536,20 +553,6 @@ public class GameRoom implements IGameListener {
   @Override
   public void onPaused(Player nextPlayer) {
     observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(nextPlayer)));
-  }
-
-  /** Set descriptors of PlayerSlots. */
-  public void openSlots(SlotDescriptor[] descriptors)
-          throws TooManyPlayersException {
-    if (descriptors.length > getMaximumPlayerCount()) {
-      throw new TooManyPlayersException();
-    }
-    this.playerSlots.add(new PlayerSlot(this));
-    this.playerSlots.add(new PlayerSlot(this));
-
-    for (int i = 0; i < descriptors.length; i++) {
-      this.playerSlots.get(i).setDescriptor(descriptors[i]);
-    }
   }
 
   /** Return true if GameStatus is OVER. */
