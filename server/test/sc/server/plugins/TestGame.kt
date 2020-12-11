@@ -11,7 +11,7 @@ import sc.server.helpers.TestTeam
 import sc.shared.*
 import java.util.*
 
-class TestGame : RoundBasedGameInstance<TestPlayer?>(TestPlugin.TEST_PLUGIN_UUID) {
+class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
     private val state = TestGameState()
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
         /*
@@ -35,20 +35,16 @@ class TestGame : RoundBasedGameInstance<TestPlayer?>(TestPlugin.TEST_PLUGIN_UUID
     override fun onPlayerJoined(): Player {
         if (players.size < 2) {
             return if (players.isEmpty()) {
-                state.red = TestPlayer(TestTeam.RED)
-                players.add(state.red)
                 state.red
             } else {
-                state.blue = TestPlayer(TestTeam.BLUE)
-                players.add(state.blue)
                 state.blue
-            }
+            }.also { players.add(it) }
         }
         throw TooManyPlayersException()
     }
 
     val testPlayers: List<TestPlayer>
-        get() = players.filterNotNull()
+        get() = players
 
     override fun getPlayerScores(): List<PlayerScore> = emptyList()
 

@@ -9,26 +9,14 @@ class TestGameState: IGameState {
     override val round get() = turn / 2
     var state = 0
     var lastPlayerIndex = 0
-    var currentPlayer: TestTeam
-    var startPlayer: TestTeam
-    
-    var red: TestPlayer
-    var blue: TestPlayer
-    
-    init {
-        this.currentPlayer = TestTeam.RED
-        this.startPlayer = TestTeam.RED
-        this.red = TestPlayer(TestTeam.RED)
-        this.blue = TestPlayer(TestTeam.BLUE)
-    }
+    var currentPlayer = TestTeam.RED
+    val startPlayer = TestTeam.RED
+    val red = TestPlayer(TestTeam.RED)
+    val blue = TestPlayer(TestTeam.BLUE)
     
     /** wechselt den Spieler, der aktuell an der Reihe ist anhand von `turn`  */
     fun switchCurrentPlayer() {
-        currentPlayer = if (turn % 2 == 0) {
-            TestTeam.RED
-        } else {
-            TestTeam.BLUE
-        }
+        currentPlayer = TestTeam.values()[(turn + startPlayer.index) % 2]
     }
     
 }
