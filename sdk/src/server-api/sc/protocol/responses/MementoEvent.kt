@@ -7,7 +7,7 @@ import sc.framework.plugins.IPerspectiveProvider
 
 /** Sent to update the current state and potentially also a new perspective. */
 @XStreamAlias("memento")
-class MementoPacket(
+class MementoEvent(
         val state: IGameState,
         @XStreamOmitField private val perspective: Any?
 ): ProtocolMessage, IPerspectiveProvider {

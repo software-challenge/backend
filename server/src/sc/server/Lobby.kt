@@ -3,10 +3,10 @@ package sc.server
 import org.slf4j.LoggerFactory
 import sc.api.plugins.exceptions.RescuableClientException
 import sc.protocol.requests.*
-import sc.protocol.responses.PlayerScorePacket
+import sc.protocol.responses.PlayerScoreResponse
 import sc.protocol.responses.ProtocolErrorMessage
 import sc.protocol.responses.RoomPacket
-import sc.protocol.responses.TestModeMessage
+import sc.protocol.responses.TestModeResponse
 import sc.server.gaming.GameRoomManager
 import sc.server.gaming.PlayerRole
 import sc.server.gaming.ReservationManager
@@ -110,18 +110,18 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                         // TODO check whether all clients receive game over message
                         this.games.remove(room)
                     }
-                    is GetScoreForPlayerRequest -> {
+                    is PlayerScoreRequest -> {
                         val displayName = packet.displayName
                         val score = getScoreOfPlayer(displayName)
                                 ?: throw IllegalArgumentException("Score for \"$displayName\" could not be found!")
                         logger.debug("Sending score of player \"{}\"", displayName)
-                        source.send(PlayerScorePacket(score))
+                        source.send(PlayerScoreResponse(score))
                     }
                     is TestModeRequest -> {
                         val testMode = packet.testMode
                         logger.info("Setting Test mode to {}", testMode)
                         Configuration.set(Configuration.TEST_MODE, testMode.toString())
-                        source.send(TestModeMessage(testMode))
+                        source.send(TestModeResponse(testMode))
                     }
                 }
                 else -> throw RescuableClientException("Unhandled Packet of type: " + packet.javaClass)

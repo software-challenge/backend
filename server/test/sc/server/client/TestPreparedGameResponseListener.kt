@@ -3,17 +3,16 @@ package sc.server.client
 import sc.api.plugins.IGameState
 import sc.framework.plugins.Player
 import sc.networking.clients.ILobbyClientListener
-import sc.protocol.responses.PrepareGameProtocolMessage
+import sc.protocol.responses.GamePreparedResponse
 import sc.protocol.responses.ProtocolErrorMessage
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.GameResult
 
 class TestPreparedGameResponseListener : ILobbyClientListener {
-    lateinit var response: PrepareGameProtocolMessage
+    lateinit var response: GamePreparedResponse
 
-    override fun onGamePrepared(gameResponse: PrepareGameProtocolMessage) {
-        response = gameResponse
-        println("------------------got here")
+    override fun onGamePrepared(response: GamePreparedResponse) {
+        this.response = response
     }
 
     override fun onNewState(roomId: String, state: IGameState) {}

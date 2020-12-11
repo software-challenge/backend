@@ -8,10 +8,7 @@ import sc.framework.plugins.RoundBasedGameInstance
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
 import sc.server.Configuration
-import sc.server.client.PlayerListener
-import sc.server.client.TestLobbyClientListener
-import sc.server.client.TestObserverListener
-import sc.server.client.TestPreparedGameResponseListener
+import sc.server.client.*
 import sc.server.gaming.GameRoom
 import sc.server.gaming.ObserverRole
 import sc.server.helpers.TestHelper

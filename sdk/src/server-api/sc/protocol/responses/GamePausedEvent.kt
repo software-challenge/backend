@@ -9,7 +9,7 @@ import sc.framework.plugins.Player
 /**
  * Indicates that the game has been paused.
  *
- * @param nextPlayer the Player who will be next
+ * @param nextPlayer the next Player to move after unpausing
  */
 @XStreamAlias(value = "paused")
 data class GamePausedEvent(

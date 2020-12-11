@@ -45,11 +45,11 @@ public class PlayerTest extends AbstractRoleTest {
 
     Assert.assertEquals(1, this.gameMgr.getGames().size());
 
-    JoinGameProtocolMessage msg;
-    msg = player1.seekMessage(JoinGameProtocolMessage.class); // did we receive it?
+    JoinedRoomResponse msg;
+    msg = player1.seekMessage(JoinedRoomResponse.class); // did we receive it?
     Assert.assertNotNull(msg.getRoomId());
 
-    msg = player2.seekMessage(JoinGameProtocolMessage.class); // did we receive it?
+    msg = player2.seekMessage(JoinedRoomResponse.class); // did we receive it?
 
     Assert.assertNotNull(msg.getRoomId());
   }
@@ -66,7 +66,7 @@ public class PlayerTest extends AbstractRoleTest {
     SlotDescriptor slot2 = new SlotDescriptor("player2", true);
 
     this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, slot1, slot2, false)));
-    PrepareGameProtocolMessage prepared = admin.seekMessage(PrepareGameProtocolMessage.class);
+    GamePreparedResponse prepared = admin.seekMessage(GamePreparedResponse.class);
 
     this.lobby.onRequest(observer, new PacketCallback(
             new ObservationRequest(prepared.getRoomId())));
@@ -75,8 +75,8 @@ public class PlayerTest extends AbstractRoleTest {
     this.lobby.onRequest(player2, new PacketCallback(
             new JoinPreparedRoomRequest(prepared.getReservations().get(1))));
 
-    String roomId = player1.seekMessage(JoinGameProtocolMessage.class).getRoomId();
-    String roomId2 = player2.seekMessage(JoinGameProtocolMessage.class).getRoomId();
+    String roomId = player1.seekMessage(JoinedRoomResponse.class).getRoomId();
+    String roomId2 = player2.seekMessage(JoinedRoomResponse.class).getRoomId();
     Assert.assertEquals(roomId, roomId2);
 
     shouldInitializeCorrectly(roomId, player1, player2, observer);
@@ -89,9 +89,9 @@ public class PlayerTest extends AbstractRoleTest {
   }
 
   private void shouldInitializeCorrectly(String roomId, MockClient player1, MockClient player2, MockClient observer) {
-    MementoPacket memento1 = player1.seekRoomMessage(roomId, MementoPacket.class);
-    MementoPacket memento2 = player2.seekRoomMessage(roomId, MementoPacket.class);
-    MementoPacket mementoObserver = observer.seekRoomMessage(roomId, MementoPacket.class);
+    MementoEvent memento1 = player1.seekRoomMessage(roomId, MementoEvent.class);
+    MementoEvent memento2 = player2.seekRoomMessage(roomId, MementoEvent.class);
+    MementoEvent mementoObserver = observer.seekRoomMessage(roomId, MementoEvent.class);
 
     Assert.assertEquals(0, ((TestGameState) memento1.getState()).getState());
     Assert.assertEquals(0, ((TestGameState) memento1.getState()).getState());
@@ -110,18 +110,18 @@ public class PlayerTest extends AbstractRoleTest {
             new TestMove(this.firstState))));
 
     // Check Player 1
-    MementoPacket memento1 = player1.seekRoomMessage(roomId,
-            MementoPacket.class);
+    MementoEvent memento1 = player1.seekRoomMessage(roomId,
+            MementoEvent.class);
     Assert.assertEquals(this.firstState, ((TestGameState) memento1.getState()).getState());
 
     // Check Player 2
-    MementoPacket memento2 = player2.seekRoomMessage(roomId,
-            MementoPacket.class);
+    MementoEvent memento2 = player2.seekRoomMessage(roomId,
+            MementoEvent.class);
     Assert.assertEquals(this.firstState, ((TestGameState) memento2.getState()).getState());
 
     // Check Observer
-    MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
-            MementoPacket.class);
+    MementoEvent mementoObserver = observer.seekRoomMessage(roomId,
+            MementoEvent.class);
     Assert.assertEquals(this.firstState, ((TestGameState) mementoObserver.getState()).getState());
   }
 
@@ -141,20 +141,20 @@ public class PlayerTest extends AbstractRoleTest {
             new TestMove(this.secondState))));
 
     // Player 1
-    MementoPacket memento1 = player1.seekRoomMessage(roomId,
-            MementoPacket.class);
+    MementoEvent memento1 = player1.seekRoomMessage(roomId,
+            MementoEvent.class);
     Assert.assertEquals(this.secondState,
             ((TestGameState) memento1.getState()).getState());
 
     // Player 2
-    MementoPacket memento2 = player2.seekRoomMessage(roomId,
-            MementoPacket.class);
+    MementoEvent memento2 = player2.seekRoomMessage(roomId,
+            MementoEvent.class);
     Assert.assertEquals(this.secondState, ((TestGameState) memento2
             .getState()).getState());
 
     // Observer
-    MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
-            MementoPacket.class);
+    MementoEvent mementoObserver = observer.seekRoomMessage(roomId,
+            MementoEvent.class);
     Assert.assertEquals(this.secondState,
             ((TestGameState) mementoObserver.getState()).getState());
   }

@@ -3,7 +3,7 @@ package sc.server.client;
 import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
 import sc.networking.clients.ILobbyClientListener;
-import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.GamePreparedResponse;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.ProtocolMessage;
 import sc.shared.GameResult;
@@ -23,7 +23,7 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   public String roomId;
   public Player player;
   public GameResult result;
-  public PrepareGameProtocolMessage prepareGameResponse;
+  public GamePreparedResponse prepareGameResponse;
   public Object roomMessage;
   public ProtocolErrorMessage errorResponse;
   public Object newState;
@@ -68,7 +68,7 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePrepared(PrepareGameProtocolMessage response) {
+  public void onGamePrepared(GamePreparedResponse response) {
     gamePreparedReceived = true;
     this.prepareGameResponse = response;
   }
