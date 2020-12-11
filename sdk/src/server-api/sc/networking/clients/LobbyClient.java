@@ -17,9 +17,7 @@ import sc.shared.SlotDescriptor;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class is used to handle all communication with a server.
@@ -31,7 +29,6 @@ import java.util.List;
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private static final Logger logger = LoggerFactory.getLogger(LobbyClient.class);
-  private final List<String> rooms = new ArrayList<>();
   private final AsyncResultManager asyncManager = new AsyncResultManager();
   private final List<ILobbyClientListener> listeners = new ArrayList<>();
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
@@ -50,10 +47,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
     logger.info("Creating TCP Network for {}:{}", host, port);
     return new TcpNetwork(new Socket(host, port));
-  }
-
-  public List<String> getRooms() {
-    return Collections.unmodifiableList(this.rooms);
   }
 
   @Override
@@ -83,26 +76,21 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
         onRoomMessage(roomId, data);
       }
     } else if (o instanceof GamePreparedResponse) {
-      GamePreparedResponse preparation = (GamePreparedResponse) o;
-      onGamePrepared(preparation);
+      onGamePrepared((GamePreparedResponse) o);
     } else if (o instanceof JoinedRoomResponse) {
-      String roomId = ((JoinedRoomResponse) o).getRoomId();
-      this.rooms.add(roomId);
-      onGameJoined(roomId);
+      onGameJoined(((JoinedRoomResponse) o).getRoomId());
+    } else if (o instanceof RoomWasJoinedEvent) {
+      onGameJoined(((RoomWasJoinedEvent) o).getRoomId());
     } else if (o instanceof LeftGameEvent) {
-      String roomId = ((LeftGameEvent) o).getRoomId();
-      this.rooms.remove(roomId);
-      onGameLeft(roomId);
-    } else if (o instanceof ProtocolErrorMessage) {
-      ProtocolErrorMessage response = (ProtocolErrorMessage) o;
-
-      onError(response.getMessage(), response);
+      onGameLeft(((LeftGameEvent) o).getRoomId());
     } else if (o instanceof ObservationResponse) {
-      String roomId = ((ObservationResponse) o).getRoomId();
-      onGameObserved(roomId);
-    } else if (o instanceof TestModeResponse) { // for handling testing
+      onGameObserved(((ObservationResponse) o).getRoomId());
+    } else if (o instanceof TestModeResponse) {
       boolean testMode = (((TestModeResponse) o).getTestMode());
       logger.info("TestMode was set to {} ", testMode);
+    } else if (o instanceof ProtocolErrorMessage) {
+      ProtocolErrorMessage response = (ProtocolErrorMessage) o;
+      onError(response.getMessage(), response);
     } else {
       onCustomObject(o);
     }
@@ -259,8 +247,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   protected RequestResult blockingRequest(ProtocolMessage request,
                                           Class<? extends ProtocolMessage> response) throws InterruptedException {
     // TODO return a proper future here
-    // This is really old async code, so the variable needs to be final but still manipulatable - IDEA suggested to
-    // use an array and we'll stay with that until we reimplement it properly.
+    // This is really old async code, so the variable needs to be final but still mutable
+    // IDEA suggested to use an array and we'll stay with that until we reimplement it properly.
     final RequestResult[] requestResult = {null};
     final Object beacon = new Object();
     synchronized(beacon) {
