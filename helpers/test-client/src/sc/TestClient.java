@@ -175,8 +175,8 @@ public class TestClient extends XStreamClient {
     }
 
     logger.trace("Received {}", message);
-    if (message instanceof TestModeMessage) {
-      boolean testMode = (((TestModeMessage) message).getTestMode());
+    if (message instanceof TestModeResponse) {
+      boolean testMode = (((TestModeResponse) message).getTestMode());
       logger.debug("TestMode was set to {} - starting clients", testMode);
       prepareNewClients();
     } else if (message instanceof RoomPacket) {
@@ -198,7 +198,7 @@ public class TestClient extends XStreamClient {
 
         finishedTests++;
         for (ClientPlayer player : players)
-          send(new GetScoreForPlayerRequest(player.name));
+          send(new PlayerScoreRequest(player.name));
 
         try {
           for (ClientPlayer player : players)
@@ -224,9 +224,9 @@ public class TestClient extends XStreamClient {
           System.out.print("#");
         }
       }
-    } else if (message instanceof PlayerScorePacket) {
+    } else if (message instanceof PlayerScoreResponse) {
       playerScores++;
-      Score score = ((PlayerScorePacket) message).getScore();
+      Score score = ((PlayerScoreResponse) message).getScore();
 
       for (ClientPlayer player : players) {
         if (player.name.equals(score.getDisplayName())) {
@@ -244,10 +244,10 @@ public class TestClient extends XStreamClient {
         exit(0);
       }
 
-    } else if (message instanceof PrepareGameProtocolMessage) {
+    } else if (message instanceof GamePreparedResponse) {
       logger.debug("Received PrepareGame - starting clients");
       playerScores = 0;
-      PrepareGameProtocolMessage pgm = (PrepareGameProtocolMessage) message;
+      GamePreparedResponse pgm = (GamePreparedResponse) message;
       send(new ObservationRequest(pgm.getRoomId()));
       try {
         for (int i = 0; i < 2; i++)
@@ -279,7 +279,7 @@ public class TestClient extends XStreamClient {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    } else if (message instanceof ObservationProtocolMessage) {
+    } else if (message instanceof ObservationResponse) {
       logger.debug("Successfully joined GameRoom as Observer");
     } else {
       logger.debug("Received uninteresting " + message.getClass().getSimpleName());

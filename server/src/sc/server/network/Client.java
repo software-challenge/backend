@@ -1,6 +1,5 @@
 package sc.server.network;
 
-import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.exceptions.RescuableClientException;
@@ -11,7 +10,6 @@ import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.ProtocolMessage;
 import sc.server.Configuration;
-import sc.shared.InvalidGameStateException;
 
 import java.io.IOException;
 import java.util.ArrayList;

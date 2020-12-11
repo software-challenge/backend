@@ -6,7 +6,7 @@ import sc.protocol.requests.ILobbyRequest
 
 /** Response to TestModeRequest containing the current status of testMode. */
 @XStreamAlias(value = "testing")
-data class TestModeMessage(
+data class TestModeResponse(
         @XStreamAsAttribute
         val testMode: Boolean
 ): ILobbyRequest

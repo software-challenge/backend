@@ -8,7 +8,7 @@ import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.IControllableGame
 import sc.networking.clients.ILobbyClientListener
 import sc.networking.clients.LobbyClient
-import sc.protocol.responses.PrepareGameProtocolMessage
+import sc.protocol.responses.GamePreparedResponse
 import sc.protocol.responses.ProtocolErrorMessage
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.GameResult
@@ -64,7 +64,7 @@ abstract class AbstractClient(
         private set
     
     /** Tell this client to observe the game given by the preparation handler. */
-    fun observeGame(handle: PrepareGameProtocolMessage): IControllableGame =
+    fun observeGame(handle: GamePreparedResponse): IControllableGame =
             client.observe(handle.roomId)
     
     /** Called for any new message sent to the game room, e.g., move requests. */
@@ -118,7 +118,7 @@ abstract class AbstractClient(
     }
     
     override fun onGameJoined(roomId: String) {}
-    override fun onGamePrepared(response: PrepareGameProtocolMessage) {}
+    override fun onGamePrepared(response: GamePreparedResponse) {}
     override fun onGamePaused(roomId: String, nextPlayer: Player) {}
     override fun onGameObserved(roomId: String) {}
     

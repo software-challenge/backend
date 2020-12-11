@@ -69,8 +69,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       RoomPacket packet = (RoomPacket) o;
       String roomId = packet.getRoomId();
       ProtocolMessage data = packet.getData();
-      if (data instanceof MementoPacket) {
-        onNewState(roomId, ((MementoPacket) data).getState());
+      if (data instanceof MementoEvent) {
+        onNewState(roomId, ((MementoEvent) data).getState());
       } else if (data instanceof GameResult) {
         logger.info("Received game result");
         onGameOver(roomId, (GameResult) data);
@@ -82,11 +82,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       } else {
         onRoomMessage(roomId, data);
       }
-    } else if (o instanceof PrepareGameProtocolMessage) {
-      PrepareGameProtocolMessage preparation = (PrepareGameProtocolMessage) o;
+    } else if (o instanceof GamePreparedResponse) {
+      GamePreparedResponse preparation = (GamePreparedResponse) o;
       onGamePrepared(preparation);
-    } else if (o instanceof JoinGameProtocolMessage) {
-      String roomId = ((JoinGameProtocolMessage) o).getRoomId();
+    } else if (o instanceof JoinedRoomResponse) {
+      String roomId = ((JoinedRoomResponse) o).getRoomId();
       this.rooms.add(roomId);
       onGameJoined(roomId);
     } else if (o instanceof LeftGameEvent) {
@@ -97,11 +97,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       ProtocolErrorMessage response = (ProtocolErrorMessage) o;
 
       onError(response.getMessage(), response);
-    } else if (o instanceof ObservationProtocolMessage) {
-      String roomId = ((ObservationProtocolMessage) o).getRoomId();
+    } else if (o instanceof ObservationResponse) {
+      String roomId = ((ObservationResponse) o).getRoomId();
       onGameObserved(roomId);
-    } else if (o instanceof TestModeMessage) { // for handling testing
-      boolean testMode = (((TestModeMessage) o).getTestMode());
+    } else if (o instanceof TestModeResponse) { // for handling testing
+      boolean testMode = (((TestModeResponse) o).getTestMode());
       logger.info("TestMode was set to {} ", testMode);
     } else {
       onCustomObject(o);
@@ -153,7 +153,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     this.asyncManager.invokeHandlers(o);
   }
 
-  protected void onGamePrepared(PrepareGameProtocolMessage response) {
+  protected void onGamePrepared(GamePreparedResponse response) {
     for (ILobbyClientListener listener : this.listeners) {
       listener.onGamePrepared(response);
     }
@@ -164,14 +164,14 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   @SuppressWarnings("unchecked")
-  public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(String gameType) throws InterruptedException {
-    return blockingRequest(new PrepareGameRequest(gameType), PrepareGameProtocolMessage.class);
+  public RequestResult<GamePreparedResponse> prepareGameAndWait(String gameType) throws InterruptedException {
+    return blockingRequest(new PrepareGameRequest(gameType), GamePreparedResponse.class);
   }
 
   @SuppressWarnings("unchecked")
-  public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(
+  public RequestResult<GamePreparedResponse> prepareGameAndWait(
           PrepareGameRequest request) throws InterruptedException {
-    return blockingRequest(request, PrepareGameProtocolMessage.class);
+    return blockingRequest(request, GamePreparedResponse.class);
   }
 
   public void prepareGame(String gameType) {

@@ -7,7 +7,7 @@ import sc.shared.Score
 
 /** Response to GetScoreForPlayerRequest. */
 @XStreamAlias("playerScore")
-data class PlayerScorePacket(
+data class PlayerScoreResponse(
         @XStreamAsAttribute
         val score: Score
 ): ILobbyRequest

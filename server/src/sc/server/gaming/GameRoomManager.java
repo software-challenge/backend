@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.responses.GameRoomMessage;
-import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.RoomWasJoinedEvent;
+import sc.protocol.responses.GamePreparedResponse;
 import sc.server.Configuration;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -126,11 +126,11 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized GameRoomMessage createAndJoinGame(Client client, String gameType)
+  public synchronized RoomWasJoinedEvent createAndJoinGame(Client client, String gameType)
           throws RescuableClientException {
     GameRoom room = createGame(gameType);
     if (room.join(client)) {
-      return new GameRoomMessage(room.getId(), false);
+      return new RoomWasJoinedEvent(room.getId(), false);
     }
     return null;
   }
@@ -142,11 +142,11 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if client could not join room
    */
-  public synchronized GameRoomMessage joinOrCreateGame(Client client, String gameType)
+  public synchronized RoomWasJoinedEvent joinOrCreateGame(Client client, String gameType)
           throws RescuableClientException {
     for (GameRoom gameRoom : getGames()) {
       if (gameRoom.join(client)) {
-        return new GameRoomMessage(gameRoom.getId(), true);
+        return new RoomWasJoinedEvent(gameRoom.getId(), true);
       }
     }
 
@@ -170,7 +170,7 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized PrepareGameProtocolMessage prepareGame(String gameType, boolean paused, SlotDescriptor[] descriptors, Object loadGameInfo)
+  public synchronized GamePreparedResponse prepareGame(String gameType, boolean paused, SlotDescriptor[] descriptors, Object loadGameInfo)
           throws RescuableClientException {
     GameRoom room = createGame(gameType, true);
     room.pause(paused);
@@ -180,7 +180,7 @@ public class GameRoomManager {
       room.game.loadGameInfo(loadGameInfo);
     }
 
-    return new PrepareGameProtocolMessage(room.getId(), room.reserveAllSlots());
+    return new GamePreparedResponse(room.getId(), room.reserveAllSlots());
   }
 
   /**
@@ -190,7 +190,7 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized PrepareGameProtocolMessage prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
+  public synchronized GamePreparedResponse prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
     return prepareGame(
             prepared.getGameType(),
             prepared.getPause(),

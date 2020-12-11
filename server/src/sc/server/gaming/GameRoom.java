@@ -147,7 +147,7 @@ public class GameRoom implements IGameListener {
         if (!(element instanceof IGameState))
           continue;
         IGameState state = (IGameState) element;
-        MementoPacket data = new MementoPacket(state, null);
+        MementoEvent data = new MementoEvent(state, null);
         RoomPacket roomPacket = new RoomPacket(this.getId(), data);
         String xmlReplay = XStreamKt.getXStream().toXML(roomPacket);
         writer.write(xmlReplay + "\n");
@@ -227,7 +227,7 @@ public class GameRoom implements IGameListener {
   /** Sends the given GameState to all Players. */
   private void sendStateToPlayers(IGameState data) {
     for (PlayerRole player : getPlayers()) {
-      RoomPacket packet = createRoomPacket(new MementoPacket(data, player.getPlayer()));
+      RoomPacket packet = createRoomPacket(new MementoEvent(data, player.getPlayer()));
       player.getClient().send(packet);
     }
   }
@@ -235,7 +235,7 @@ public class GameRoom implements IGameListener {
 
   /** Sends the given GameState to all Observers. */
   private void sendStateToObservers(IGameState data) {
-    RoomPacket packet = createRoomPacket(new MementoPacket(data, null));
+    RoomPacket packet = createRoomPacket(new MementoEvent(data, null));
 
     for (ObserverRole observer : this.observers) {
       logger.debug("sending state to observer {}", observer.getClient());
@@ -323,7 +323,7 @@ public class GameRoom implements IGameListener {
     }
 
     slot.setPlayer(player); // set player in role of slot
-    slot.getClient().send(new JoinGameProtocolMessage(getId()));
+    slot.getClient().send(new JoinedRoomResponse(getId()));
   }
 
   /** Returns true if game is full of players. */
@@ -461,7 +461,7 @@ public class GameRoom implements IGameListener {
     ObserverRole role = new ObserverRole(source, this);
     source.addRole(role);
     this.observers.add(role);
-    source.send(new ObservationProtocolMessage(getId()));
+    source.send(new ObservationResponse(getId()));
   }
 
   /**

@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
  * Only useful if testMode was enabled before game ended.
  */
 @XStreamAlias("scoreForPlayer")
-data class GetScoreForPlayerRequest(
+data class PlayerScoreRequest(
         @XStreamAsAttribute
         val displayName: String
 ): AdminLobbyRequest
