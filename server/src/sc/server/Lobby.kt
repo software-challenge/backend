@@ -19,10 +19,7 @@ import sc.shared.Score
 import java.io.Closeable
 import java.io.IOException
 
-/**
- * The lobby will help clients find an open game or create new games to play with
- * another client.
- */
+/** The lobby joins clients into a game by finding open rooms or creating new ones. */
 open class Lobby: GameRoomManager(), IClientListener, Closeable {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
     
