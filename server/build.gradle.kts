@@ -58,7 +58,10 @@ tasks {
             from(project(":test-client").buildDir.resolve("libs"))
         doFirst {
             from(project(":player").tasks["shadowJar"].outputs)
-            Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "HEAD")).inputStream.copyTo(runnableDir.resolve("version").outputStream())
+            exec {
+                commandLine("git", "rev-parse", "HEAD")
+                standardOutput = runnableDir.resolve("version").outputStream()
+            }
         }
     }
     
@@ -72,11 +75,16 @@ tasks {
     val dockerImage by creating(Exec::class) {
         group = "application"
         dependsOn(makeRunnable)
-        workingDir = projectDir.resolve("configuration")
+        workingDir = buildDir
 		doFirst {
 			val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD")).inputStream.reader().readText().trim()
 			val relativeRunnable = runnableDir.relativeTo(workingDir)
 			commandLine("docker", "build", "--no-cache", "-t", "swc_game-server:latest", "-t", "swc_game-server:$tag", "--build-arg", "game_server_dir=$relativeRunnable", ".")
+            copy {
+                from(projectDir.resolve("configuration"))
+                include("?ocker*")
+                into(workingDir)
+            }
 		}
     }
     
