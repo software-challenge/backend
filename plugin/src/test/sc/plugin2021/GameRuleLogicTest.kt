@@ -33,7 +33,7 @@ class GameRuleLogicTest: WordSpec({
             val invalidMove = SetMove(Piece(Color.BLUE, PieceShape.MONO, Rotation.NONE, false, Coordinates(-1, 2)))
             "throw a InvalidMoveException" {
                 shouldThrow<InvalidMoveException> {
-                    GameRuleLogic.validateSetMove(gameState, invalidMove, true)
+                    GameRuleLogic.validateSetMove(gameState, invalidMove)
                 }
             }
         }
