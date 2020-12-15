@@ -23,7 +23,7 @@ class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID)
         if (data is TestMove) {
             data.perform(state)
             next(if (state.currentPlayer === TestTeam.RED) state.red else state.blue)
-        } else throw InvalidMoveException("The given data is not a proper move (move was $data)")
+        } else throw InvalidMoveException(TestMoveMistake.INVALID_FORMAT)
     }
 
     override fun checkWinCondition(): WinCondition? {
