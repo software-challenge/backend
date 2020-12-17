@@ -3,9 +3,11 @@ package sc.plugin2021
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import sc.plugin2021.helper.shouldSerializeTo
 import sc.plugin2021.util.align
 import sc.plugin2021.util.flip
@@ -40,11 +42,19 @@ class PieceTest: WordSpec({
             }
         }
         "converted to String" Should {
-            "provide all crucial information" {
-                Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false).toString() shouldBe "YELLOW Piece TETRO_O:1 [0,0]"
-                Piece(Color.RED, PieceShape.PENTO_Y, Rotation.LEFT, false).toString() shouldBe "RED Piece PENTO_Y:3 [0,0]"
-                Piece(Color.BLUE, PieceShape.PENTO_P, Rotation.MIRROR, true).toString() shouldBe "BLUE Piece PENTO_P:2 (flipped) [0,0]"
-                Piece(Color.GREEN, PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9)).toString() shouldBe "GREEN Piece TRIO_L:0 (flipped) [5,9]"
+            "consider all properties" {
+                val piece = Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false)
+                val pieceString = piece.toString()
+                listOf(
+                        piece.copy(color = Color.RED),
+                        piece.copy(kind = PieceShape.TETRO_L),
+                        piece.copy(rotation = Rotation.LEFT),
+                        piece.copy(isFlipped = true),
+                        Piece(Color.RED),
+                        Piece(Color.GREEN, PieceShape.TRIO_L, Rotation.NONE, true, Coordinates(5, 9))
+                ).forAll {
+                    it.toString() shouldNotBe pieceString
+                }
             }
         }
         "serialised" Should {

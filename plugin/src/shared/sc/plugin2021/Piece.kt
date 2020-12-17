@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 
 /** Ein Spielstein mit Farbe, position und entsprechend transformierter Form. */
 @XStreamAlias(value = "piece")
-class Piece(
+data class Piece(
         /** Die Farbe des Teams, zu dem der Stein gehört. */
         @XStreamAsAttribute val color: Color = Color.BLUE,
         /** Die Form des Steins
@@ -62,7 +62,7 @@ class Piece(
             Piece(color, kind, rotation, isFlipped, position)
 
     override fun toString(): String =
-            "$color Piece $kind:${rotation.value}${if (isFlipped) " (flipped)" else ""} [${position.x},${position.y}]"
+        "$kind($color${if(rotation.value > 0) ", $rotation" else "" }${if(isFlipped) ", gespiegelt" else ""})[${position.x},${position.y}]"
     
     override fun equals(other: Any?): Boolean = when(other) {
         is SetMove -> this == other.piece
