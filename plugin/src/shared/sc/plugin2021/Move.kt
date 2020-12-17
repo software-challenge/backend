@@ -26,5 +26,5 @@ class SetMove(val piece: Piece): Move() {
 /** Ein Zug, der die aktuelle Runde aussetzt. */
 @XStreamAlias(value = "skipmove")
 class SkipMove(override val color: Color): Move() {
-    override fun toString(): String = "$color skipped"
+    override fun toString(): String = "$color setzt aus"
 }

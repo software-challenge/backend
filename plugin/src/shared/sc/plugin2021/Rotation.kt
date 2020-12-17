@@ -16,5 +16,7 @@ enum class Rotation(val value: Int) {
      * (Die resultierende Rotation hat den gleichen Effekt wie die beiden Rotationen einzeln).
      */
     fun rotate(rotation: Rotation): Rotation =
-            Rotation.values()[(Rotation.values().size + value + rotation.value) % Rotation.values().size]
+            values()[(values().size + value + rotation.value) % values().size]
+    
+    override fun toString() = "gedreht um ${this.value * 90}°"
 }
