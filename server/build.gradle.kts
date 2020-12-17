@@ -83,6 +83,8 @@ tasks {
             copy {
                 from(projectDir.resolve("configuration"))
                 include("?ocker*")
+                include("logback-production.xml")
+                include("server.properties.production")
                 into(workingDir)
             }
 		}
