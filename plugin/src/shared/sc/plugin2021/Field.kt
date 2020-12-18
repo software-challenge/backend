@@ -10,17 +10,17 @@ import sc.api.plugins.IField
  */
 @XStreamAlias(value = "field")
 class Field(val coordinates: Coordinates, val content: FieldContent): IField {
-
-    constructor(coordinates: Coordinates, content: Color): this(coordinates, +content) {}
-
+    
+    constructor(coordinates: Coordinates, content: Color): this(coordinates, +content)
+    
     val isEmpty = content == FieldContent.EMPTY
-
+    
     override fun toString(): String = "'$content $coordinates'"
-
+    
     override fun equals(other: Any?): Boolean {
         return other is Field &&
-                other.coordinates == coordinates &&
-                other.content == content
+               other.coordinates == coordinates &&
+               other.content == content
     }
     
     override fun hashCode(): Int {

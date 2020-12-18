@@ -8,28 +8,30 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 data class Piece(
         /** Die Farbe des Teams, zu dem der Stein gehört. */
         @XStreamAsAttribute val color: Color = Color.BLUE,
-        /** Die Form des Steins
-         * @see PieceShape */
+        /** Die Form des Steins. */
         @XStreamAsAttribute val kind: PieceShape = PieceShape.MONO,
         /** Wie weit der Stein gedreht werden soll. */
         @XStreamAsAttribute val rotation: Rotation = Rotation.NONE,
         /** Ob der Stein entlang der y-Achse gespiegelt werden soll. */
         @XStreamAsAttribute val isFlipped: Boolean = false,
         /** Die [Coordinates] der linken oberen Ecke des kleinstmöglichen Rechtecks, das die ganze Form umschließt. */
-        @XStreamAsAttribute val position: Coordinates = Coordinates.origin) {
+        @XStreamAsAttribute val position: Coordinates = Coordinates.origin,
+) {
     
-    constructor(color: Color = Color.BLUE,
-                kind: Int,
-                rotation: Rotation = Rotation.NONE,
-                isFlipped: Boolean = false,
-                position: Coordinates = Coordinates.origin):
-            this(color, PieceShape.shapes.getValue(kind), rotation, isFlipped, position)
+    constructor(
+            color: Color = Color.BLUE,
+            kind: Int,
+            rotation: Rotation = Rotation.NONE,
+            isFlipped: Boolean = false,
+            position: Coordinates = Coordinates.origin,
+    ): this(color, PieceShape.shapes.getValue(kind), rotation, isFlipped, position)
     
-    constructor(color: Color = Color.BLUE,
-                kind: PieceShape = PieceShape.MONO,
-                shape: Set<Coordinates>,
-                position: Coordinates = Coordinates.origin):
-            this(color, kind, kind.variants.getValue(shape), position)
+    constructor(
+            color: Color = Color.BLUE,
+            kind: PieceShape = PieceShape.MONO,
+            shape: Set<Coordinates>,
+            position: Coordinates = Coordinates.origin,
+    ): this(color, kind, kind.variants.getValue(shape), position)
     
     private constructor(color: Color, kind: PieceShape, transformation: Pair<Rotation, Boolean>, position: Coordinates):
             this(color, kind, transformation.first, transformation.second, position)
@@ -60,11 +62,11 @@ data class Piece(
      */
     fun transform(rotation: Rotation, isFlipped: Boolean = false): Piece =
             Piece(color, kind, rotation, isFlipped, position)
-
-    override fun toString(): String =
-        "$kind($color${if(rotation.value > 0) ", $rotation" else "" }${if(isFlipped) ", gespiegelt" else ""})[${position.x},${position.y}]"
     
-    override fun equals(other: Any?): Boolean = when(other) {
+    override fun toString(): String =
+            "$kind($color${if (rotation.value > 0) ", $rotation" else ""}${if (isFlipped) ", gespiegelt" else ""})[${position.x},${position.y}]"
+    
+    override fun equals(other: Any?): Boolean = when (other) {
         is SetMove -> this == other.piece
         is Piece -> {
             this.color == other.color &&
@@ -72,7 +74,7 @@ data class Piece(
         }
         else -> false
     }
-
+    
     override fun hashCode(): Int {
         var result = color.hashCode()
         result = 31 * result + coordinates.hashCode()
