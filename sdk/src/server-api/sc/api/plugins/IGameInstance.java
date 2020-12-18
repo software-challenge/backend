@@ -75,10 +75,10 @@ public interface IGameInstance {
   void loadGameInfo(Object gameInfo);
 
   /**
-   * Returns the players that have won the game, empty if the game has no winners,
-   * or null if the game has not yet finished.
+   * Returns the player that has won the game.
+   * Null if not finished or no winner.
    */
-  List<Player> getWinners();
+  Player getWinner();
 
   /** Used for generating replay name. */
   String getPluginUUID();

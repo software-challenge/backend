@@ -125,7 +125,7 @@ public class GameRoom implements IGameListener {
 
       scores.add(score);
     }
-    return new GameResult(scoreDefinition, scores, this.game.getWinners());
+    return new GameResult(scoreDefinition, scores, this.game.getWinner());
   }
 
   /** Save replay from {@link #replayObserver} to a file. */
