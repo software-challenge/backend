@@ -19,16 +19,11 @@ class PlayerScoreTest: StringSpec({
         playerScoreScores shouldBe playerScoreScores
     }
     "convert XML" {
-        val playerScore = PlayerScore(ScoreCause.REGULAR, "Game ended regularly", 0, 1, 2)
-        val playerScoreXML = """
+        PlayerScore(ScoreCause.REGULAR, "Game ended regularly", 0, 1, 2) shouldSerializeTo """
             <score cause="REGULAR" reason="Game ended regularly">
               <part>0</part>
               <part>1</part>
               <part>2</part>
             </score>""".trimIndent()
-        val playerScoreToXML = xStream.toXML(playerScore)
-        playerScoreToXML shouldBe playerScoreXML
-        xStream.fromXML(playerScoreXML) shouldBe playerScore
-        xStream.fromXML(playerScoreToXML) shouldBe playerScore
     }
 })
