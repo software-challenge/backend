@@ -137,7 +137,7 @@ public class GameRoom implements IGameListener {
 
       scores.add(score);
     }
-    return new GameResult(scoreDefinition, scores, this.game.getWinners());
+    return new GameResult(scoreDefinition, scores, game.getWinner());
   }
 
   /** Send the given message to all Players and Observers in this room. */

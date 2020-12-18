@@ -42,14 +42,8 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
         return player
     }
     
-    override val winners: List<Player>
-        get() {
-            val compliant = players.filter { !it.hasViolated() && !it.hasLeft() }
-            if (compliant.size < players.size)
-                return compliant
-            return checkWinCondition().let { cond -> players.firstOrNull { it.team == cond?.winner } }
-                           ?.let { listOf(it) } ?: emptyList()
-        }
+    override val winner: Player?
+        get() = players.singleOrNull { !it.hasViolated() } ?: checkWinCondition()?.let { players.firstOrNull { p -> p.team == it.winner } }
     
     override val playerScores: MutableList<PlayerScore>
         get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
@@ -136,7 +130,6 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
-    @Throws(InvalidMoveException::class)
     override fun onRoundBasedAction(move: IMove) {
         if (move !is Move)
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
