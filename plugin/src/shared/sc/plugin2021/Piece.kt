@@ -36,24 +36,27 @@ data class Piece(
     private constructor(color: Color, kind: PieceShape, transformation: Pair<Rotation, Boolean>, position: Coordinates):
             this(color, kind, transformation.first, transformation.second, position)
     
+    // The following two fields have their lazy calculation implemented by hand
+    // because XStream doesn't call constructors...
+    
+    private lateinit var _shape: Set<Coordinates>
     /** Die normalisierte Form des Steins. */
     val shape: Set<Coordinates>
-        get() = lazyShape()
+        get() {
+            if (!::_shape.isInitialized)
+                _shape = kind.transform(rotation, isFlipped)
+            return _shape
+        }
     
+    private lateinit var _coordinates: Set<Coordinates>
     /** Die tatsächlichen Koordinaten, die der Stein am Ende haben soll. */
     val coordinates: Set<Coordinates>
-        get() = lazyCoordinates()
+        get() {
+            if (!::_coordinates.isInitialized)
+                _coordinates = shape.map { position + +it }.toSet()
+            return _coordinates
+        }
     
-    private fun lazyShape(): Set<Coordinates> {
-        val shape by lazy {kind.transform(rotation, isFlipped)}
-        return shape
-    }
-    
-    private fun lazyCoordinates(): Set<Coordinates> {
-        val coordinates by lazy {shape.map{position + +it}.toSet()}
-        return coordinates
-    }
-
     /**
      * Drehe und spiegel den Stein entsprechend den gegebenen Parametern.
      * @param rotation wie weit der Stein gedreht werden soll
