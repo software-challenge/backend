@@ -1,8 +1,9 @@
 package sc.plugin2021.helper
 
+import io.kotest.data.forAll
+import io.kotest.data.row
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
+import kotlinx.coroutines.runBlocking
 import sc.plugin2021.*
 
 
@@ -35,29 +36,32 @@ object MoveParser {
         return SetMove(Piece(color, kind, rotation, isFlipped, position))
     }
     
-    @Test
-    fun selfCheck() {
-        listOf(  // Piece Shape using Index:
-                "BLUE|3:0:0|3,18"   to SetMove(Piece(Color.BLUE, 3, Rotation.NONE, false, Coordinates(3, 18))),
-                "YELLOW|14:1:1|0,2" to SetMove(Piece(Color.YELLOW, 14, Rotation.RIGHT, true, Coordinates(0, 2))),
-                "RED|10:3:0|13,15"  to SetMove(Piece(Color.RED, 10, Rotation.LEFT, false, Coordinates(13, 15))),
-                "GREEN|skip" to SkipMove(Color.GREEN)
-        ).forEach{
-            parse(it.first).toString() shouldBe it.second.toString()
-        }
-        listOf(  // Piece Shape using enum:
-                "BLUE|TRIO_I:0:0|3,18"   to SetMove(Piece(Color.BLUE, 3, Rotation.NONE, false, Coordinates(3, 18))),
-                "YELLOW|PENTO_I:1:1|0,2" to SetMove(Piece(Color.YELLOW, 14, Rotation.RIGHT, true, Coordinates(0, 2))),
-                "RED|PENTO_T:3:0|13,15"  to SetMove(Piece(Color.RED, 10, Rotation.LEFT, false, Coordinates(13, 15))),
-                "GREEN|skip" to SkipMove(Color.GREEN)
-        ).forEach{
-            parse(it.first).toString() shouldBe it.second.toString()
+    init {
+        runBlocking {
+            selfCheck()
         }
     }
     
-    init {
-        assertDoesNotThrow {
-            selfCheck()
+    private suspend fun selfCheck() {
+        forAll(  // Piece Shape using Index:
+                row("BLUE|3:0:0|3,18", SetMove(Piece(Color.BLUE, 3, Rotation.NONE, false, Coordinates(3, 18)))),
+                row("YELLOW|14:1:1|0,2", SetMove(Piece(Color.YELLOW, 14, Rotation.RIGHT, true, Coordinates(0, 2)))),
+                row("RED|10:3:0|13,15", SetMove(Piece(Color.RED, 10, Rotation.LEFT, false, Coordinates(13, 15)))),
+                row("GREEN|skip", SkipMove(Color.GREEN))
+        ) { string, move ->
+            val parsed = parse(string)
+            parsed.toString() shouldBe move.toString()
+            parsed shouldBe move
+        }
+        forAll(  // Piece Shape using enum:
+                row("BLUE|TRIO_I:0:0|3,18", SetMove(Piece(Color.BLUE, 3, Rotation.NONE, false, Coordinates(3, 18)))),
+                row("YELLOW|PENTO_I:1:1|0,2", SetMove(Piece(Color.YELLOW, 14, Rotation.RIGHT, true, Coordinates(0, 2)))),
+                row("RED|PENTO_T:3:0|13,15", SetMove(Piece(Color.RED, 10, Rotation.LEFT, false, Coordinates(13, 15)))),
+                row("GREEN|skip", SkipMove(Color.GREEN))
+        ) { string, move ->
+            val parsed = parse(string)
+            parsed.toString() shouldBe move.toString()
+            parsed shouldBe move
         }
     }
 }

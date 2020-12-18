@@ -1,5 +1,4 @@
-import org.junit.jupiter.api.assertDoesNotThrow
-import sc.plugin2021.Color
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import sc.plugin2021.Game
 import sc.plugin2021.Move
 import sc.plugin2021.SetMove
@@ -7,12 +6,12 @@ import sc.plugin2021.helper.MoveParser
 import sc.plugin2021.util.printShapes
 import kotlin.system.exitProcess
 
-assertDoesNotThrow { MoveParser.selfCheck() }
+shouldNotThrowAny { MoveParser }
 
 loop()
 
 fun loop() {
-    Color.GREEN.team
+    //Color.GREEN.team
     while (true) {
         val game = Game()
         var current = game.onPlayerJoined()
