@@ -9,7 +9,7 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import sc.api.plugins.TestTeam
 import sc.framework.plugins.Player
-import sc.helpers.xStream
+import sc.helpers.shouldSerializeTo
 
 class GameResultTest: StringSpec({
     val definition = ScoreDefinition("winner")
@@ -68,12 +68,8 @@ class GameResultTest: StringSpec({
                 row(gameResultWinners, gameResultXMLWinner),
                 row(gameResultWinnersEmpty, gameResultXMLNoWinner),
                 row(gameResultWinnersNull, gameResultXMLNoWinner)
-        )
-        { result, xml ->
-            val toXML = xStream.toXML(result)
-            toXML shouldBe xml
-            xStream.fromXML(xml) shouldBe result
-            xStream.fromXML(toXML) shouldBe result
+        ) { result, xml ->
+            result shouldSerializeTo xml
         }
     }
 })
