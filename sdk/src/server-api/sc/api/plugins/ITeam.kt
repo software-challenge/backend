@@ -4,7 +4,7 @@ package sc.api.plugins
  *  Concrete implementations belong into the corresponding plugin. */
 interface ITeam {
     val index: Int
+    val name: String
     
     fun opponent(): ITeam
-    override fun toString(): String
 }

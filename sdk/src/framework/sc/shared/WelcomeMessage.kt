@@ -8,9 +8,8 @@ import sc.protocol.responses.ProtocolMessage
 /** Nachricht, die zu Beginn eines Spiels an einen Client geschickt wird, um ihm seine Spielerfarbe mitzuteilen.  */
 @Suppress("DataClassPrivateConstructor")
 @XStreamAlias(value = "welcomeMessage")
-data class WelcomeMessage
-private constructor(
+data class WelcomeMessage private constructor(
         @XStreamAsAttribute val color: String
 ): ProtocolMessage {
-    constructor(color: ITeam): this(color.toString().toLowerCase())
+    constructor(color: ITeam): this(color.name)
 }
