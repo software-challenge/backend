@@ -15,14 +15,14 @@ import sc.plugin2021.util.rotate
 
 class PieceTest: WordSpec({
     "Pieces" When {
-        "initialised without transformation" Should {
+        "initialised without transformation" should {
             "retain the given shape" {
                 for (pieceShape in PieceShape.shapes) {
                     Piece(Color.GREEN, pieceShape.key, Rotation.NONE, false).shape shouldBe pieceShape.value.coordinates
                 }
             }
         }
-        "constructed with a set of coordinates" Should {
+        "constructed with a set of coordinates" should {
             "be identical to a Piece constructed with the corresponding shape" {
                 PieceShape.values().forEach {
                     for (trafo in it.variants) {
@@ -32,7 +32,7 @@ class PieceTest: WordSpec({
                 }
             }
         }
-        "placed on a certain position" Should {
+        "placed on a certain position" should {
             val position = Coordinates(2, 2)
             val coordinates = setOf(Coordinates(2, 3), Coordinates(3, 3), Coordinates(3, 2))
             val piece = Piece(Color.RED, PieceShape.TRIO_L, Rotation.NONE, true, position)
@@ -57,7 +57,7 @@ class PieceTest: WordSpec({
                 }
             }
         }
-        "serialised" Should {
+        "serialised" should {
             "convert to proper xml" {
                 forAll(
                         row(Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false), """
@@ -87,7 +87,7 @@ class PieceTest: WordSpec({
         }
     }
     "PieceShapes" When {
-        "transformed" Should {
+        "transformed" should {
             "convert to new shapes analog to Rotations" {
                 for (pair in PieceShape.shapes) {
                     val shape = pair.value.coordinates
@@ -100,7 +100,7 @@ class PieceTest: WordSpec({
                 }
             }
         }
-        "asked for variants" Should {
+        "asked for variants" should {
             "always contain the identity transformation" {
                 PieceShape.values().forEach {
                     it.variants shouldContain (it.coordinates to Pair(Rotation.NONE, false))
@@ -127,18 +127,18 @@ class PieceTest: WordSpec({
         }
     }
     "Sets of coordinates" When {
-        "aligned" Should {
-            val IS = setOf(Coordinates(1, 2), Coordinates(3, 2)).align()
-            val SHOULD = setOf(Coordinates(0, 0), Coordinates(2, 0))
+        "aligned" should {
+            val actual = setOf(Coordinates(1, 2), Coordinates(3, 2)).align()
+            val expected = setOf(Coordinates(0, 0), Coordinates(2, 0))
             "align to origin" {
-                IS shouldBe SHOULD
+                actual shouldBe expected
             }
         }
-
+        
         val transformations =
                 ((Rotation.values() zip List(Rotation.values().size) { false }) +
-                (Rotation.values() zip List(Rotation.values().size) { true }))
-        "PENTO_W is transformed" Should {
+                 (Rotation.values() zip List(Rotation.values().size) { true }))
+        "PENTO_W is transformed" should {
             val shape = PieceShape.PENTO_W
             val shapes = listOf(
                     setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2)),
@@ -146,15 +146,15 @@ class PieceTest: WordSpec({
                     setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 2)),
                     setOf(Coordinates(0, 2), Coordinates(1, 2), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 0))
             )
-            val SHOULD = (shapes + shapes.asReversed())
-            val IS = transformations.map { shape.transform(it.first, it.second) }
+            val expected = (shapes + shapes.asReversed())
+            val actual = transformations.map { shape.transform(it.first, it.second) }
             "transform each coordinate linearly" {
-                IS shouldBe SHOULD
+                actual shouldBe expected
             }
         }
-        "PENTO_R is transformed" Should {
+        "PENTO_R is transformed" should {
             val shape = PieceShape.PENTO_R
-            val SHOULD = listOf(
+            val expected = listOf(
                     setOf(Coordinates(0, 1), Coordinates(1, 2), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 0)),
                     setOf(Coordinates(0, 1), Coordinates(1, 0), Coordinates(1, 1), Coordinates(1, 2), Coordinates(2, 2)),
                     setOf(Coordinates(0, 2), Coordinates(0, 1), Coordinates(1, 1), Coordinates(1, 0), Coordinates(2, 1)),
@@ -164,14 +164,14 @@ class PieceTest: WordSpec({
                     setOf(Coordinates(0, 1), Coordinates(1, 0), Coordinates(1, 1), Coordinates(2, 1), Coordinates(2, 2)),
                     setOf(Coordinates(0, 1), Coordinates(1, 2), Coordinates(1, 1), Coordinates(1, 0), Coordinates(2, 0))
             )
-            val IS = transformations.map { shape.transform(it.first, it.second) }
+            val actual = transformations.map { shape.transform(it.first, it.second) }
             "transform each coordinate linearly" {
-                IS shouldBe SHOULD
+                actual shouldBe expected
             }
         }
         "TETRO_L is transformed" Should {
             val shape = PieceShape.TETRO_L
-            val SHOULD = listOf(
+            val expected = listOf(
                     setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(0, 2), Coordinates(1, 2)),
                     setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 0), Coordinates(2, 0)),
                     setOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(1, 1), Coordinates(1, 2)),
@@ -181,9 +181,9 @@ class PieceTest: WordSpec({
                     setOf(Coordinates(1, 0), Coordinates(0, 0), Coordinates(0, 1), Coordinates(0, 2)),
                     setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(1, 1), Coordinates(2, 1))
             )
-            val IS = transformations.map { shape.transform(it.first, it.second) }
+            val actual = transformations.map { shape.transform(it.first, it.second) }
             "transform each coordinate linearly" {
-                IS shouldBe SHOULD
+                actual shouldBe expected
             }
         }
     }
