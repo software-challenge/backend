@@ -52,7 +52,7 @@ public class ConnectionTest extends RealServerTest {
   }
 
   @Ignore
-  @Test //TODO Should be tested, but fails sometimes, client is removed when sending unknown class
+  @Test //TODO should be tested, but fails sometimes, client is removed when sending unknown class
   public void protocolViolationTestWithUnknownClasses() {
     TestTcpClient client = connectClient();
     waitForConnect(1);

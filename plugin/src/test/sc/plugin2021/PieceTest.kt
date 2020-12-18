@@ -41,7 +41,7 @@ class PieceTest: WordSpec({
                 piece.coordinates shouldBe coordinates
             }
         }
-        "converted to String" Should {
+        "converted to String" should {
             "consider all properties" {
                 val piece = Piece(Color.YELLOW, PieceShape.TETRO_O, Rotation.RIGHT, false)
                 val pieceString = piece.toString()
@@ -169,7 +169,7 @@ class PieceTest: WordSpec({
                 actual shouldBe expected
             }
         }
-        "TETRO_L is transformed" Should {
+        "TETRO_L is transformed" should {
             val shape = PieceShape.TETRO_L
             val expected = listOf(
                     setOf(Coordinates(0, 0), Coordinates(0, 1), Coordinates(0, 2), Coordinates(1, 2)),

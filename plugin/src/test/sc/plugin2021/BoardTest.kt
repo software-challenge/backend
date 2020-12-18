@@ -15,15 +15,15 @@ class BoardTest : WordSpec({
             Field(Coordinates(8, 3), FieldContent.YELLOW),
             Field(Coordinates(4, 9), FieldContent.YELLOW)
     )
-    "Boards " When {
+    "Boards" When {
         val one = Board()
         val two = Board()
-        "compared" Should {
+        "compared" should {
             "equal each other" {
                 one shouldBe two
             }
         }
-        "they differ" Should {
+        "they differ" should {
             changingFields.forEach { two[it.coordinates] = it.content }
             "not equal each other" {
                 one shouldNotBe two
@@ -32,7 +32,7 @@ class BoardTest : WordSpec({
                 one.compare(two) shouldBe changingFields
             }
         }
-        "both are equally modified" Should {
+        "both are equally modified" should {
             changingFields.forEach { two[it.coordinates] = it.content }
             changingFields.forEach { one[it.coordinates] = it.content }
             "equal each other" {
@@ -42,7 +42,7 @@ class BoardTest : WordSpec({
                 one.compare(two) shouldHaveSize 0
             }
         }
-        "converted to string" Should {
+        "converted to string" should {
             one[0, 0] = FieldContent.RED
             one[1, 3] = FieldContent.GREEN
             one[5, 9] = FieldContent.BLUE

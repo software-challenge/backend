@@ -14,7 +14,7 @@ class GameStateTest: WordSpec({
     isolationMode = IsolationMode.InstancePerLeaf
     "GameStates" When {
         val state = GameState(startPiece = PieceShape.PENTO_I)
-        "constructed" Should {
+        "constructed" should {
             "have an empty board" {
                 state.board shouldBe Board()
             }
@@ -28,7 +28,7 @@ class GameStateTest: WordSpec({
                 state.getPointsForPlayer(Team.TWO) shouldBe 0
             }
         }
-        "asked for the current color" Should {
+        "asked for the current color" should {
             "return the correct color" {
                 state.orderedColors.size shouldBe Constants.COLORS
                 for (color in Color.values()) {
@@ -43,7 +43,7 @@ class GameStateTest: WordSpec({
                 state.currentColor shouldBe Color.GREEN
             }
         }
-        "a piece is placed a second time" Should {
+        "a piece is placed a second time" should {
             val move = SetMove(Piece(Color.BLUE, PieceShape.PENTO_I, Rotation.RIGHT, true))
             state.undeployedPieceShapes(Color.BLUE).size shouldBe 21
             shouldNotThrow<InvalidMoveException> {
@@ -58,7 +58,7 @@ class GameStateTest: WordSpec({
             }
             state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
         }
-        "serialised and deserialised" Should {
+        "serialised and deserialised" should {
             val transformed = loadXStream().fromXML(loadXStream().toXML(GameState(startPiece = state.startPiece))) as GameState
             "equal the original GameState" {
                 transformed.toString() shouldBe state.toString()
@@ -69,7 +69,7 @@ class GameStateTest: WordSpec({
                 transformed.board.isEmpty()
             }
         }
-        "turn number increases" Should {
+        "turn number increases" should {
             "let turn, round and currentcolor advance accordingly" {
                 GameState().run {
                     turn shouldBe 0

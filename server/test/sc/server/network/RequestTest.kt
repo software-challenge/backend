@@ -238,7 +238,7 @@ class RequestTest: RealServerTest() {
         admin.send(StepRequest(room.id))
         TestHelper.waitMillis(100)
         
-        // Should register as a new state
+        // should register as a new state
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
         listener.newStateReceived = false
         // Wait for it to register
@@ -254,7 +254,7 @@ class RequestTest: RealServerTest() {
         assertTrue(p1Listener.playerEventReceived)
         assertNotEquals(p2Listener.requests[p2Listener.requests.size - 1].javaClass, TestTurnRequest::class.java)
         
-        // Should not result in a new game state
+        // should not result in a new game state
         assertFalse(listener.newStateReceived)
         p1Listener.playerEventReceived = false
         p2Listener.playerEventReceived = false

@@ -21,7 +21,7 @@ class ConverterTest: WordSpec({
                 board shouldSerializeTo "<board/>"
             }
         }
-        "not empty" Should {
+        "not empty" should {
             fields.forEach { board[it.coordinates] = it.content }
             board.isEmpty() shouldBe false
             "serialise accordingly" {
@@ -39,7 +39,7 @@ class ConverterTest: WordSpec({
         val state = GameState(startPiece = PieceShape.PENTO_L)
         val board = state.board
         fields.forEach { board[it.coordinates] = it.content }
-        "serialised" Should {
+        "serialised" should {
             "be encoded properly" {
                 state shouldSerializeTo """
                     <state turn="0" round="1" startPiece="PENTO_L">

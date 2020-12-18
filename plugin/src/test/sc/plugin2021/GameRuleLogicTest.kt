@@ -15,7 +15,7 @@ class GameRuleLogicTest: WordSpec({
     isolationMode = IsolationMode.InstancePerLeaf
     "Moves" When {
         val gameState = GameState(startPiece = PieceShape.PENTO_U)
-        "the color is compared" Should {
+        "the color is compared" should {
             "fail if this color isn't active yet" {
                 shouldThrow<InvalidMoveException> {
                     val invalidMove = SetMove(Piece(Color.RED))
@@ -29,7 +29,7 @@ class GameRuleLogicTest: WordSpec({
                 }
             }
         }
-        "they are placed out of bounds" Should {
+        "they are placed out of bounds" should {
             val invalidMove = SetMove(Piece(Color.BLUE, PieceShape.MONO, Rotation.NONE, false, Coordinates(-1, 2)))
             "throw a InvalidMoveException" {
                 shouldThrow<InvalidMoveException> {
@@ -37,7 +37,7 @@ class GameRuleLogicTest: WordSpec({
                 }
             }
         }
-        "it's the first turn" Should {
+        "it's the first turn" should {
             "throw if they skip" {
                 shouldThrow<InvalidMoveException> {
                     GameRuleLogic.performMove(gameState, SkipMove(Color.BLUE))
@@ -75,7 +75,7 @@ class GameRuleLogicTest: WordSpec({
         }
     }
     "Score calculation" When {
-        "the player placed all pieces" Should {
+        "the player placed all pieces" should {
             "return the max score (109) if MONO was last" {
                 GameRuleLogic.getPointsFromUndeployed(emptySet(), true) shouldBe
                         GameRuleLogic.SUM_MAX_SQUARES + 15 + 5
@@ -85,13 +85,13 @@ class GameRuleLogicTest: WordSpec({
                         GameRuleLogic.SUM_MAX_SQUARES + 15
             }
         }
-        "no piece was placed" Should {
+        "no piece was placed" should {
             "return 0 points" {
                 GameRuleLogic.getPointsFromUndeployed(PieceShape.values().toSet()) shouldBe 0
                 GameRuleLogic.getPointsFromUndeployed(PieceShape.values().toSet(), true) shouldBe 0
             }
         }
-        "a few pieces were placed" Should {
+        "a few pieces were placed" should {
             val fewPieces = setOf(PieceShape.MONO, PieceShape.PENTO_W, PieceShape.TETRO_I)
             "return the sum of all placed pieces" {
                 GameRuleLogic.getPointsFromUndeployed(fewPieces) shouldBe
