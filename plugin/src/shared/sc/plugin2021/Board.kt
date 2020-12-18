@@ -66,12 +66,11 @@ class Board(
     override fun equals(other: Any?) =
             other is Board && other.gameField.contentDeepEquals(gameField)
     
-    override fun toString(): String {
-        return gameField.joinToString(separator = "") {
-            "${it.joinToString(separator = "  ") { it.letter.toString() }}\n"
-        }
-    }
-
+    override fun toString() =
+            gameField.joinToString(separator = "\n") { row ->
+                row.joinToString(separator = " ") { it.letter.toString() }
+            }
+    
     companion object {
         /** @return ob die gegebene Position innerhalb des Spielfelds liegt. */
         @JvmStatic
