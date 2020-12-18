@@ -16,7 +16,5 @@ import java.security.PrivilegedAction
 */
 val xStream = XStream(KXml2Driver()).apply {
     setMode(XStream.NO_REFERENCES)
-    classLoader =  AccessController.doPrivileged(PrivilegedAction<RuntimeJarLoader?> { RuntimeJarLoader(classLoader) })
-    
     LobbyProtocol.registerMessages(this)
 }
