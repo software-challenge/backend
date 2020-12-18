@@ -18,7 +18,7 @@ class RoomPacketTest: FunSpec({
             </room>""".trimIndent()
     }
     test(GameResult::class.java.simpleName) {
-        RoomPacket("12345", GameResult(ScoreDefinition("something"), listOf(PlayerScore(true, "Won")), listOf(Player(Team.ONE, "Best")))) shouldSerializeTo """
+        RoomPacket("12345", GameResult(ScoreDefinition("something"), listOf(PlayerScore(true, "Won")), Player(Team.ONE, "Best"))) shouldSerializeTo """
             <room roomId="12345">
               <data class="result">
                 <definition>

@@ -185,7 +185,7 @@ class LobbyGameTest: WordSpec({
                     val result = roomListener.waitForMessage(GameResult::class)
                     // TODO can be checked once moved from plugin to sdk
                     // result.isRegular shouldBe false
-                    result.winners?.singleOrNull() shouldBe room.game.players.first()
+                    result.winner shouldBe room.game.players.first()
                 }
             }
         }

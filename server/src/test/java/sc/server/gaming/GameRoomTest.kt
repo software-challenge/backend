@@ -47,9 +47,6 @@ val minimalReplay = """<protocol>
     <winner displayName="">
       <team class="sc.server.helpers.TestTeam">RED</team>
     </winner>
-    <winner displayName="">
-      <team class="sc.server.helpers.TestTeam">BLUE</team>
-    </winner>
   </data>
 </room>
 </protocol>"""

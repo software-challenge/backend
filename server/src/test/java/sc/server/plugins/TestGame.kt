@@ -15,8 +15,8 @@ data class TestGame(
     override val playerScores: List<PlayerScore>
         get() = players.map { getScoreFor(it) }
     
-    override val winners: List<Player>
-        get() = players.filter { !it.hasViolated() && !it.hasLeft() }
+    override val winner: Player?
+        get() = players.firstOrNull { !it.hasViolated() && !it.hasLeft() }
     
     override fun onRoundBasedAction(move: IMove) {
         if (move !is TestMove)

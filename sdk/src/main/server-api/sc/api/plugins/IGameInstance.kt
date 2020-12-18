@@ -35,12 +35,12 @@ interface IGameInstance {
     
     /** Advance the Game by one turn. */
     fun step()
-
+    
     /**
-     * Returns the players that have won the game, empty if the game has no winners,
-     * or null if the game has not yet finished.
+     * Returns the player that has won the game.
+     * Null if not finished or no winner.
      */
-    val winners: List<Player>
+    val winner: Player?
 
     /** Used for generating replay name.  */
     val pluginUUID: String
