@@ -1,5 +1,6 @@
 package sc.plugin2021
 
+import org.slf4j.LoggerFactory
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
@@ -16,6 +17,9 @@ import java.math.BigDecimal
 
 class GameTest: WordSpec({
     isolationMode = IsolationMode.InstancePerLeaf
+
+    val logger = LoggerFactory.getLogger(GameTest::class.java)
+
     "A Game" When {
         val game = Game()
         val state = game.gameState
@@ -72,7 +76,7 @@ class GameTest: WordSpec({
 
                 shouldNotThrowAny {
                     while (!game.checkGameOver()) {
-                        Game.logger.debug("is Game Over? ${game.isGameOver} - ${state.round} > ${Constants.ROUND_LIMIT}")
+                        logger.debug("is Game Over? ${game.isGameOver} - ${state.round} > ${Constants.ROUND_LIMIT}")
                         game.onAction(state.currentPlayer, SkipMove(state.currentColor))
                     }
                 }
