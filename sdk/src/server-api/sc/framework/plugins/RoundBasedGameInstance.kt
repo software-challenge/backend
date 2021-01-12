@@ -125,7 +125,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
         scores.forEach {
             if (it.key == player) {
                 val score = it.value
-                scores[it.key] = PlayerScore(cause, score.reason, score.parts)
+                scores[it.key] = PlayerScore(newCause, score.reason, score.parts)
             }
         }
 
