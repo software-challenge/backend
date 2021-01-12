@@ -1,9 +1,9 @@
 package sc.server.network
 
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import sc.framework.plugins.RoundBasedGameInstance
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
@@ -24,7 +24,7 @@ class RequestTest: RealServerTest() {
     private lateinit var player2: LobbyClient
     private lateinit var player3: LobbyClient
     
-    @Before
+    @BeforeEach
     fun prepare() {
         player1 = connectClient("localhost", serverPort)
         TestHelper.waitMillis(200)
@@ -266,7 +266,7 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    @Ignore
+    @Disabled
     fun cancelRequest() {
         player1.authenticate(PASSWORD)
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)

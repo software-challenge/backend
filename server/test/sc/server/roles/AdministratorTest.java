@@ -1,7 +1,7 @@
 package sc.server.roles;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.PrepareGameRequest;
@@ -19,8 +19,8 @@ public class AdministratorTest extends AbstractRoleTest {
   public void shouldBecomeAdminWithCorrectPassword() {
     Client client = connectAsAdmin();
 
-    Assert.assertEquals(1, client.getRoles().size());
-    Assert.assertEquals(true, client.isAdministrator());
+    Assertions.assertEquals(1, client.getRoles().size());
+    Assertions.assertEquals(true, client.isAdministrator());
   }
 
   @Test
@@ -31,13 +31,13 @@ public class AdministratorTest extends AbstractRoleTest {
 
     try {
       this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(WRONG_PASSWORD)));
-      Assert.fail("No exception was thrown");
+      Assertions.fail("No exception was thrown");
     } catch (RescuableClientException e) {
       // expected
     }
 
-    Assert.assertEquals(0, client.getRoles().size());
-    Assert.assertEquals(false, client.isAdministrator());
+    Assertions.assertEquals(0, client.getRoles().size());
+    Assertions.assertEquals(false, client.isAdministrator());
   }
 
   protected MockClient connectAsAdmin() {
@@ -49,7 +49,7 @@ public class AdministratorTest extends AbstractRoleTest {
     try {
       this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(CORRECT_PASSWORD)));
     } catch (RescuableClientException e) {
-      Assert.fail("Could not authenticate as admin.");
+      Assertions.fail("Could not authenticate as admin.");
     }
 
     return client;
@@ -59,7 +59,7 @@ public class AdministratorTest extends AbstractRoleTest {
   public void shouldBeAbleToPrepareGame() throws RescuableClientException {
     Client client = connectAsAdmin();
     this.lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID)));
-    Assert.assertEquals(1, this.gameMgr.getGames().size());
+    Assertions.assertEquals(1, this.gameMgr.getGames().size());
   }
 
 }

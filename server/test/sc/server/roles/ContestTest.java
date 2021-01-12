@@ -1,7 +1,7 @@
 package sc.server.roles;
 
-import junit.framework.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.PrepareGameRequest;
@@ -24,29 +24,29 @@ public class ContestTest extends AdministratorTest {
     this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
             TestPlugin.TEST_PLUGIN_UUID)));
 
-    Assert.assertEquals(1, this.gameMgr.getGames().size());
+    Assertions.assertEquals(1, this.gameMgr.getGames().size());
     GameRoom room = this.gameMgr.getGames().iterator().next();
 
     GamePreparedResponse response = admin
             .seekMessage(GamePreparedResponse.class);
 
-    Assert.assertEquals(2, room.getSlots().size());
+    Assertions.assertEquals(2, room.getSlots().size());
 
     this.lobby.onRequest(player1, new PacketCallback(new JoinPreparedRoomRequest(response
             .getReservations().get(1))));
     this.lobby.onRequest(player2, new PacketCallback(new JoinPreparedRoomRequest(response
             .getReservations().get(0))));
 
-    Assert.assertEquals(2, room.getSlots().size());
+    Assertions.assertEquals(2, room.getSlots().size());
 
     for (PlayerSlot slot : room.getSlots()) {
-      Assert.assertFalse(slot.isEmpty());
+      Assertions.assertFalse(slot.isEmpty());
     }
 
     // Ordering should match the defined ordering
-    Assert.assertEquals(player1, room.getSlots().get(1).getRole()
+    Assertions.assertEquals(player1, room.getSlots().get(1).getRole()
             .getClient());
-    Assert.assertEquals(player2, room.getSlots().get(0).getRole()
+    Assertions.assertEquals(player2, room.getSlots().get(0).getRole()
             .getClient());
   }
 

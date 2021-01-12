@@ -19,10 +19,7 @@ dependencies {
     implementation(project(":sdk"))
     runtimeOnly(project(":plugin"))
     
-    // legacy java tests
-    testImplementation("junit", "junit", "4.13.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.7.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine") // legacy java tests
 }
 
 val deployDir: File by project

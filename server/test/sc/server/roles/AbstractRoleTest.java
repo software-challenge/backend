@@ -1,8 +1,8 @@
 package sc.server.roles;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import sc.server.Configuration;
 import sc.server.Lobby;
 import sc.server.gaming.GameRoomManager;
@@ -22,7 +22,7 @@ public abstract class AbstractRoleTest {
   protected GameRoomManager gameMgr;
   protected GamePluginManager pluginMgr;
 
-  @Before
+  @BeforeEach
   public void setup() throws IOException, PluginLoaderException {
     // Random PortAllocation
     Configuration.set(Configuration.PORT_KEY, "0");
@@ -33,12 +33,12 @@ public abstract class AbstractRoleTest {
     this.pluginMgr = this.gameMgr.getPluginManager();
 
     this.pluginMgr.loadPlugin(TestPlugin.class);
-    Assert.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
+    Assertions.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
 
     this.lobby.start();
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     this.lobby.close();
   }
@@ -53,7 +53,7 @@ public abstract class AbstractRoleTest {
       }
       return client;
     } catch (IOException e) {
-      Assert.fail("Could not connect to server");
+      Assertions.fail("Could not connect to server");
       return null;
     }
   }

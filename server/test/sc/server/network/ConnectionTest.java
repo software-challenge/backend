@@ -1,7 +1,7 @@
 package sc.server.network;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import sc.networking.clients.XStreamClient.DisconnectCause;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.responses.ProtocolMessage;
@@ -26,7 +26,7 @@ public class ConnectionTest extends RealServerTest {
     TestHelper.INSTANCE.assertEqualsWithTimeout(1, () -> ConnectionTest.this.getLobby().getGames().size(), 1, TimeUnit.SECONDS);
   }
 
-  @Ignore
+  @Disabled
   @Test //TODO seems so fail sometimes
   public void protocolViolationTestWithCorruptedXml() throws IOException {
     TestTcpClient client = connectClient();
@@ -37,7 +37,7 @@ public class ConnectionTest extends RealServerTest {
             .get(0).getDisconnectCause(), 5, TimeUnit.SECONDS);
   }
 
-  @Ignore
+  @Disabled
   @Test //TODO seems so fail sometimes
   public void protocolViolationTestWithUnknownClass() throws IOException {
     TestTcpClient client = connectClient();
@@ -51,7 +51,7 @@ public class ConnectionTest extends RealServerTest {
             5, TimeUnit.SECONDS);
   }
 
-  @Ignore
+  @Disabled
   @Test //TODO should be tested, but fails sometimes, client is removed when sending unknown class
   public void protocolViolationTestWithUnknownClasses() {
     TestTcpClient client = connectClient();

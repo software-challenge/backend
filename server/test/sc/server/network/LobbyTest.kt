@@ -1,8 +1,8 @@
 package sc.server.network
 
-import org.junit.Assert
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Disabled
 import sc.server.helpers.TestHelper
 import sc.server.plugins.TestPlugin
 import sc.shared.ScoreCause
@@ -26,7 +26,7 @@ class LobbyTest: RealServerTest() {
         TestHelper.assertEqualsWithTimeout(0, { lobby.games.size }, 5000)
     }
     
-    @Ignore
+    @Disabled
     @Test // TODO seems to switch the players sometimes
     fun shouldEndGameOnIllegalMessage() {
         val player1 = connectClient("localhost", serverPort)
@@ -44,7 +44,7 @@ class LobbyTest: RealServerTest() {
         
         val theRoom = this@LobbyTest.gameMgr.games.iterator().next()
         
-        Assert.assertEquals(false, theRoom.isOver)
+        Assertions.assertEquals(false, theRoom.isOver)
         
         player1.sendCustomData("<yarr>")
         

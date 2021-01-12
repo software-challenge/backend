@@ -1,8 +1,8 @@
 package sc.server.network
 
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import sc.networking.clients.LobbyClient
 import sc.server.Configuration
 import sc.server.Lobby
@@ -29,7 +29,7 @@ abstract class RealServerTest {
         return client
     }
     
-    @Before
+    @BeforeEach
     fun setup() {
         // Random PortAllocation
         Configuration.set(Configuration.PORT_KEY, "0")
@@ -40,14 +40,14 @@ abstract class RealServerTest {
         this.pluginMgr = this.gameMgr.pluginManager
         
         this.pluginMgr.loadPlugin(TestPlugin::class.java)
-        Assert.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID))
+        Assertions.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID))
         
         NewClientListener.lastUsedPort = 0
         this.lobby.start()
         waitForServer()
     }
     
-    @After
+    @AfterEach
     fun tearDown() {
         this.lobby.close()
     }
@@ -62,20 +62,15 @@ abstract class RealServerTest {
             TestHelper.assertEqualsWithTimeout(count, { this@RealServerTest.lobby.clientManager.clients.size }, 1, TimeUnit.SECONDS)
     
     protected fun connectClient(): TestTcpClient {
-        try {
+        return try {
             if (serverPort == 0)
                 throw RuntimeException("Could not find an open port to connect to.")
-            val mySocket = Socket("localhost",
-                    NewClientListener.lastUsedPort)
-            val result = TestTcpClient(mySocket)
-            result.start()
-            return result
+            val mySocket = Socket("localhost", NewClientListener.lastUsedPort)
+            TestTcpClient(mySocket).apply { start() }
         } catch (e: IOException) {
             e.printStackTrace()
-            Assert.fail("Could not connect to server.")
-            throw Throwable("Unreachable")
+            Assertions.fail("Could not connect to server.", e)
         }
-        
     }
     
 }

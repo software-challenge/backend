@@ -1,7 +1,7 @@
 package sc.server.helpers
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import sc.framework.plugins.IPerspectiveAware
 import sc.framework.plugins.IPerspectiveProvider
 import sc.helpers.xStream
@@ -28,15 +28,15 @@ class ConverterTest {
     fun shouldSerializeSensitiveDataForAuthorizedPeople() {
         val data = HasSecrets(HasSecrets.goodFriend)
         val msg = xStream.toXML(data)
-        Assert.assertNotSame(-1, msg.indexOf(data.secret))
-        Assert.assertNotSame(-1, msg.indexOf(data.unimportant))
+        Assertions.assertNotSame(-1, msg.indexOf(data.secret))
+        Assertions.assertNotSame(-1, msg.indexOf(data.unimportant))
     }
 
     @Test
     fun shouldSerializeSensitiveDataForObservers() {
         val data = HasSecrets(null)
         val msg = xStream.toXML(data)
-        Assert.assertNotSame(-1, msg.indexOf(data.secret))
-        Assert.assertNotSame(-1, msg.indexOf(data.unimportant))
+        Assertions.assertNotSame(-1, msg.indexOf(data.secret))
+        Assertions.assertNotSame(-1, msg.indexOf(data.unimportant))
     }
 }

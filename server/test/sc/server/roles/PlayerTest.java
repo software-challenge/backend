@@ -1,7 +1,7 @@
 package sc.server.roles;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
@@ -29,8 +29,8 @@ public class PlayerTest extends AbstractRoleTest {
     this.lobby.onRequest(client, new PacketCallback(new JoinRoomRequest(
             TestPlugin.TEST_PLUGIN_UUID)));
 
-    Assert.assertEquals(1, this.gameMgr.getGames().size());
-    Assert.assertEquals(1, client.getRoles().size());
+    Assertions.assertEquals(1, this.gameMgr.getGames().size());
+    Assertions.assertEquals(1, client.getRoles().size());
   }
 
   @Test
@@ -43,15 +43,14 @@ public class PlayerTest extends AbstractRoleTest {
     this.lobby.onRequest(player2, new PacketCallback(new JoinRoomRequest(
             TestPlugin.TEST_PLUGIN_UUID)));
 
-    Assert.assertEquals(1, this.gameMgr.getGames().size());
+    Assertions.assertEquals(1, this.gameMgr.getGames().size());
 
     JoinedRoomResponse msg;
     msg = player1.seekMessage(JoinedRoomResponse.class); // did we receive it?
-    Assert.assertNotNull(msg.getRoomId());
+    Assertions.assertNotNull(msg.getRoomId());
 
     msg = player2.seekMessage(JoinedRoomResponse.class); // did we receive it?
-
-    Assert.assertNotNull(msg.getRoomId());
+    Assertions.assertNotNull(msg.getRoomId());
   }
 
   /** Checks basic sending of Moves and end of game. */
@@ -77,7 +76,7 @@ public class PlayerTest extends AbstractRoleTest {
 
     String roomId = player1.seekMessage(JoinedRoomResponse.class).getRoomId();
     String roomId2 = player2.seekMessage(JoinedRoomResponse.class).getRoomId();
-    Assert.assertEquals(roomId, roomId2);
+    Assertions.assertEquals(roomId, roomId2);
 
     shouldInitializeCorrectly(roomId, player1, player2, observer);
     shouldPropagateFirstPlayersMove(roomId, player1, player2, observer);
@@ -93,12 +92,12 @@ public class PlayerTest extends AbstractRoleTest {
     MementoEvent memento2 = player2.seekRoomMessage(roomId, MementoEvent.class);
     MementoEvent mementoObserver = observer.seekRoomMessage(roomId, MementoEvent.class);
 
-    Assert.assertEquals(0, ((TestGameState) memento1.getState()).getState());
-    Assert.assertEquals(0, ((TestGameState) memento1.getState()).getState());
-    Assert.assertEquals(0, ((TestGameState) memento2.getState()).getState());
-    Assert.assertEquals(0, ((TestGameState) memento2.getState()).getState());
-    Assert.assertEquals(0, ((TestGameState) mementoObserver.getState()).getState());
-    Assert.assertEquals(0, ((TestGameState) mementoObserver.getState()).getState());
+    Assertions.assertEquals(0, ((TestGameState) memento1.getState()).getState());
+    Assertions.assertEquals(0, ((TestGameState) memento1.getState()).getState());
+    Assertions.assertEquals(0, ((TestGameState) memento2.getState()).getState());
+    Assertions.assertEquals(0, ((TestGameState) memento2.getState()).getState());
+    Assertions.assertEquals(0, ((TestGameState) mementoObserver.getState()).getState());
+    Assertions.assertEquals(0, ((TestGameState) mementoObserver.getState()).getState());
   }
 
   private void shouldPropagateFirstPlayersMove(String roomId,
@@ -112,17 +111,17 @@ public class PlayerTest extends AbstractRoleTest {
     // Check Player 1
     MementoEvent memento1 = player1.seekRoomMessage(roomId,
             MementoEvent.class);
-    Assert.assertEquals(this.firstState, ((TestGameState) memento1.getState()).getState());
+    Assertions.assertEquals(this.firstState, ((TestGameState) memento1.getState()).getState());
 
     // Check Player 2
     MementoEvent memento2 = player2.seekRoomMessage(roomId,
             MementoEvent.class);
-    Assert.assertEquals(this.firstState, ((TestGameState) memento2.getState()).getState());
+    Assertions.assertEquals(this.firstState, ((TestGameState) memento2.getState()).getState());
 
     // Check Observer
     MementoEvent mementoObserver = observer.seekRoomMessage(roomId,
             MementoEvent.class);
-    Assert.assertEquals(this.firstState, ((TestGameState) mementoObserver.getState()).getState());
+    Assertions.assertEquals(this.firstState, ((TestGameState) mementoObserver.getState()).getState());
   }
 
   private void makeMoveAfterRequest(String roomId, MockClient player)
@@ -143,19 +142,19 @@ public class PlayerTest extends AbstractRoleTest {
     // Player 1
     MementoEvent memento1 = player1.seekRoomMessage(roomId,
             MementoEvent.class);
-    Assert.assertEquals(this.secondState,
+    Assertions.assertEquals(this.secondState,
             ((TestGameState) memento1.getState()).getState());
 
     // Player 2
     MementoEvent memento2 = player2.seekRoomMessage(roomId,
             MementoEvent.class);
-    Assert.assertEquals(this.secondState, ((TestGameState) memento2
+    Assertions.assertEquals(this.secondState, ((TestGameState) memento2
             .getState()).getState());
 
     // Observer
     MementoEvent mementoObserver = observer.seekRoomMessage(roomId,
             MementoEvent.class);
-    Assert.assertEquals(this.secondState,
+    Assertions.assertEquals(this.secondState,
             ((TestGameState) mementoObserver.getState()).getState());
   }
 

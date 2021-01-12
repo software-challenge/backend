@@ -1,6 +1,6 @@
 package sc.server.helpers
 
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
 import java.util.concurrent.TimeUnit
 
 object TestHelper {
@@ -18,7 +18,7 @@ object TestHelper {
             Thread.yield()
         }
         
-        Assert.assertTrue("Did not receive " + expected + " within " + millis + "ms", isEqual(expected, action()))
+        Assertions.assertTrue(isEqual(expected, action()), "Did not receive " + expected + " within " + millis + "ms")
         return isEqual(expected, action())
     }
     
@@ -33,7 +33,7 @@ object TestHelper {
     @JvmOverloads
     fun <T> assertEqualsWithTimeout(expected: T, action: () -> T?, maxDuration: Long = DEFAULT_DURATION, unit: TimeUnit = DEFAULT_TIME_UNIT) {
         waitUntilEqual(expected, action, maxDuration, unit)
-        Assert.assertEquals(expected, action())
+        Assertions.assertEquals(expected, action())
     }
     
     fun isEqual(o1: Any?, o2: Any?): Boolean = o1 == o2

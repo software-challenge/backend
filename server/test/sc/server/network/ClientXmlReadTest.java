@@ -1,11 +1,11 @@
 package sc.server.network;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import sc.helpers.XStreamKt;
 import sc.protocol.responses.ProtocolErrorMessage;
-import sc.server.Configuration;
 import sc.server.helpers.ExamplePacket;
 import sc.server.helpers.StringNetworkInterface;
 
@@ -35,12 +35,12 @@ public class ClientXmlReadTest {
   /** Denotes an empty ObjectStream (to be used with XStream). */
   private static final String EMPTY_OBJECT_STREAM = "<protocol></protocol>";
 
-  @Before
+  @BeforeEach
   public void setup() {
     XStreamKt.getXStream().alias("example", ExamplePacket.class);
   }
 
-  @Test//(timeout=2000)
+  @Test @Timeout(2)
   public void clientReceivePacketTest() throws IOException, InterruptedException {
     StringNetworkInterface stringInterface = new StringNetworkInterface(
             "<protocol>\n<example />");
@@ -48,9 +48,9 @@ public class ClientXmlReadTest {
     MockClient client = new MockClient(stringInterface);
     client.addClientListener(clientListener);
     client.start();
-    Assert.assertNotNull(client.receive());
-    Assert.assertNotNull(clientListener.LastPacket);
-    Assert.assertTrue(clientListener.LastPacket instanceof ExamplePacket);
+    Assertions.assertNotNull(client.receive());
+    Assertions.assertNotNull(clientListener.LastPacket);
+    Assertions.assertTrue(clientListener.LastPacket instanceof ExamplePacket);
   }
 
   @Test
@@ -60,7 +60,7 @@ public class ClientXmlReadTest {
     client.start();
     client.send(new ExamplePacket());
     String data = stringInterface.getData();
-    Assert.assertTrue(data.startsWith("<protocol>\n  <example"));
+    Assertions.assertTrue(data.startsWith("<protocol>\n  <example"));
   }
 
 }
