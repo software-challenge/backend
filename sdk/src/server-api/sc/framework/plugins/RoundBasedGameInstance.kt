@@ -31,7 +31,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
         get() = turn / 2
 
     @XStreamOmitField
-    private var paused = Optional.empty<Int>()
+    private var paused: Int? = null
 
     @XStreamOmitField
     private var requestTimeout: ActionTimeout? = null
@@ -186,7 +186,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
     protected open fun getTimeoutFor(player: P) = ActionTimeout(true)
 
     val isPaused: Boolean
-        get() = paused.map { turn > it }.orElse(false)
+        get() = paused ?: turn + 1 <= turn
 
     fun afterPause() {
         logger.info("Sending MoveRequest to player $activePlayer")
@@ -201,9 +201,9 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
      */
     fun setPauseMode(pause: Boolean) {
         paused = when {
-            !pause -> Optional.empty()
-            wasMoveRequested() -> Optional.of(turn + 1)
-            else -> Optional.of(turn)
+            !pause -> null
+            wasMoveRequested() -> turn + 1
+            else -> turn
         }
     }
 
