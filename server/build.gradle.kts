@@ -19,7 +19,10 @@ dependencies {
     implementation(project(":sdk"))
     runtimeOnly(project(":plugin"))
     
-    testImplementation("junit", "junit", "4.13.1") // legacy java tests
+    // legacy java tests
+    testImplementation("junit", "junit", "4.13.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.7.0")
 }
 
 val deployDir: File by project
@@ -103,5 +106,4 @@ tasks {
         jvmArgs = listOf("-Dlogback.configurationFile=../../configuration/logback.xml")
         args = System.getProperty("args", "").split(" ")
     }
-    
 }
