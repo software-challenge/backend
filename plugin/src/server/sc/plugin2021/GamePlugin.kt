@@ -10,14 +10,14 @@ import sc.protocol.helpers.LobbyProtocol
 import sc.shared.ScoreAggregation
 import sc.shared.ScoreDefinition
 import sc.shared.ScoreFragment
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 @PluginDescriptor(name = "Blokus", uuid = "swc_2021_blokus")
 class GamePlugin: IGamePlugin {
     
     companion object {
         val PLUGIN_UUID = "swc_2021_blokus"
-        val loaded = AtomicBoolean(false)
+        val loaded = AtomicInteger(-1)
         
         val SCORE_DEFINITION = ScoreDefinition(arrayOf(
                 ScoreFragment("Gewinner"),
@@ -31,9 +31,14 @@ class GamePlugin: IGamePlugin {
                     Color::class.java, Team::class.java)
         
         fun registerXStream() {
-            if (loaded.compareAndSet(false, true)) {
+            if (loaded.compareAndSet(-1, 0)) {
                 LobbyProtocol.registerAdditionalMessages(xStream, classesToRegister)
                 xStream.registerConverter(BoardConverter())
+                loaded.lazySet(1)
+            } else {
+                while(loaded.get() < 1) {
+                    Thread.yield()
+                }
             }
         }
     
