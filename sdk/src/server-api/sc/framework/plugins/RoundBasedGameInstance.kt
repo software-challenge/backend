@@ -133,17 +133,19 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
     }
 
     protected fun next(nextPlayer: P?, firstTurn: Boolean = false) {
-        logger.debug("next round ($round) for player $nextPlayer")
-        if (!firstTurn)
-            turn++
-
-        activePlayer = nextPlayer
-        // if paused, notify observers only (so they can update the GUI appropriately)
-        notifyOnNewState(currentState, isPaused)
-
         if (checkWinCondition() != null) {
-            notifyOnNewState(currentState, isPaused)
+            logger.debug("game over at $round")
+            notifyOnGameOver(generateScoreMap())
         } else {
+            if (!firstTurn)
+                turn++
+
+            logger.debug("next round ($round) for player $nextPlayer")
+
+            activePlayer = nextPlayer
+            // if paused, notify observers only (so they can update the GUI appropriately)
+            notifyOnNewState(currentState, isPaused)
+
             if (!isPaused) {
                 notifyActivePlayer()
             }
