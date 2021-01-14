@@ -23,7 +23,6 @@ public abstract class XStreamClient {
 
   private final INetworkInterface networkInterface;
   private final ObjectOutputStream out;
-  private ObjectInputStream in;
   private final Thread receiveThread;
   private DisconnectCause disconnectCause = DisconnectCause.NOT_DISCONNECTED;
   protected final XStream xStream = XStreamKt.getXStream();
@@ -85,9 +84,7 @@ public abstract class XStreamClient {
 
   /** Used by the receiving thread. All exceptions should be handled. */
   public void receiveThread() {
-    try {
-      in = xStream.createObjectInputStream(networkInterface.getInputStream());
-
+    try(ObjectInputStream in = xStream.createObjectInputStream(networkInterface.getInputStream())) {
       synchronized(readyLock) {
         while (!isReady()) {
           readyLock.wait();
@@ -114,10 +111,6 @@ public abstract class XStreamClient {
         }
       }
     } catch (IOException e) {
-      if(e.getCause() instanceof InterruptedException) {
-        // readObject method was interrupted
-        return;
-      }
       // The other side closed the connection. It is better when the other
       // side sends a CloseConnection message before, giving this side the
       // chance to close the connection regularly.
@@ -131,7 +124,10 @@ public abstract class XStreamClient {
       Throwable exceptionCause = e.getCause();
       if (exceptionCause != null) {
         if (exceptionCause instanceof SocketException) {
-          handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
+          // If the thread was interrupted, we have a regular disconnect.
+          // Unfortunately, OIS.readObject() doesn't react to interruptions directly.
+          if(!Thread.interrupted())
+            handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else if (exceptionCause instanceof EOFException) {
           handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else if (exceptionCause instanceof IOException
@@ -253,13 +249,6 @@ public abstract class XStreamClient {
           logger.debug("Failed to close OUT", e);
         else
           logger.warn("Failed to close OUT", e);
-      }
-
-      try {
-        if (this.in != null)
-          this.in.close();
-      } catch (Exception e) {
-        logger.warn("Failed to close IN", e);
       }
 
       try {
