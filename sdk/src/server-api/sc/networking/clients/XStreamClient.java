@@ -32,14 +32,13 @@ public abstract class XStreamClient {
   private final Object readyLock = new Object();
 
   public enum DisconnectCause {
-    // default state:
+    /** default state */
     NOT_DISCONNECTED,
-    // disconnected because CloseConnection was received (disconnected by
-    // other side):
+    /** disconnected because CloseConnection was received (disconnected by other side) */
     RECEIVED_DISCONNECT,
-    // disconnected from this side:
+    /** disconnected from this side */
     DISCONNECTED,
-    // error conditions:
+    // error conditions
     PROTOCOL_ERROR,
     LOST_CONNECTION,
     TIMEOUT,
@@ -78,7 +77,7 @@ public abstract class XStreamClient {
         logger.debug("Terminated {}", receiveThread.getName());
       }
     });
-    this.receiveThread.setName(String.format("XStreamClient ReceiveThread id:%d client:%s", receiveThread.getId(), getClass().getSimpleName()));
+    this.receiveThread.setName(String.format("XStream-Receive id:%d of %s", receiveThread.getId(), this));
     this.receiveThread.start();
   }
 
@@ -100,8 +99,9 @@ public abstract class XStreamClient {
         if (object instanceof ProtocolMessage) {
           ProtocolMessage response = (ProtocolMessage) object;
 
-          logger.debug("Client " + this + ": Received " + response + " via " + networkInterface);
-          logger.debug("Dumping {}:\n{}", response, xStream.toXML(response));
+          logger.debug("{}: Received {} via {}", this, response, networkInterface);
+          if (logger.isTraceEnabled())
+            logger.trace("Dumping {}:\n{}", response, xStream.toXML(response));
 
           if (response instanceof CloseConnection) {
             handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
@@ -168,9 +168,9 @@ public abstract class XStreamClient {
     if (isClosed())
       throw new IllegalStateException("Writing on a closed xStream!");
 
-    logger.debug("Client {}: Sending {} via {}", this, packet, networkInterface);
+    logger.debug("{}: Sending {} via {}", this, packet, networkInterface);
     if (logger.isTraceEnabled())
-      logger.trace("Dumping {}:\n{}", packet, this.xStream.toXML(packet));
+      logger.trace("Dumping {}:\n{}", packet, xStream.toXML(packet));
 
     try {
       this.out.writeObject(packet);
@@ -188,11 +188,11 @@ public abstract class XStreamClient {
 
   protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
     if (exception != null) {
-      logger.warn("Client {} disconnected (Cause: {}, Exception: {})", this, cause, exception);
+      logger.warn("{} disconnected (Cause: {}, Exception: {})", this, cause, exception);
       if (logger.isDebugEnabled())
         exception.printStackTrace();
     } else {
-      logger.info("Client {} disconnected (Cause: {})", this, cause);
+      logger.info("{} disconnected (Cause: {})", this, cause);
     }
 
     this.disconnectCause = cause;
@@ -214,12 +214,12 @@ public abstract class XStreamClient {
   }
 
   /**
-   * should be called when the client needs to be stopped and the disconnect
+   * Should be called when the client needs to be stopped and the disconnect
    * is initiated on this side. There are two situations where this should be
    * done:
    * <p>
-   * * A game has ended * An internal error happened (this situation might be
-   * redundant)
+   * - A game has ended
+   * - An internal error occurred (this situation might be redundant)
    */
   public void stop() {
     // this side caused disconnect, notify other side
