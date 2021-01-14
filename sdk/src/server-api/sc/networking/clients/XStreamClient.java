@@ -279,4 +279,9 @@ public abstract class XStreamClient {
   public boolean isClosed() {
     return this.closed;
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
+  }
 }
