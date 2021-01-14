@@ -34,7 +34,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
     private var paused: Int? = null
 
     @XStreamOmitField
-    private var requestTimeout: ActionTimeout? = null
+    private var moveRequestTimeout: ActionTimeout? = null
 
     @XStreamOmitField
     protected val listeners = mutableListOf<IGameListener>()
@@ -54,17 +54,16 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
     override fun onAction(fromPlayer: Player, data: ProtocolMessage) {
         var error = Optional.empty<String>()
         if (fromPlayer == activePlayer) {
-            if (wasMoveRequested()) {
-                requestTimeout!!.stop()
-
-                if (requestTimeout!!.didTimeout()) {
+            moveRequestTimeout?.let { timer ->
+                timer.stop()
+                if (timer.didTimeout()) {
                     logger.warn("Client hit soft-timeout.")
                     fromPlayer.softTimeout = true
                     onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT)
                 } else {
                     onRoundBasedAction(fromPlayer, data)
                 }
-            } else {
+            } ?: run {
                 error = Optional.of("We didn't request a move from you yet.")
             }
         } else {
@@ -75,8 +74,6 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
             throw GameLogicException(error.get())
         }
     }
-
-    private fun wasMoveRequested(): Boolean = requestTimeout != null
 
     @Throws(GameLogicException::class, InvalidMoveException::class)
     abstract fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage)
@@ -97,8 +94,8 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
      */
     override fun destroy() {
         logger.info("Destroying Game")
-        requestTimeout?.stop()
-        requestTimeout = null
+        moveRequestTimeout?.stop()
+        moveRequestTimeout = null
     }
 
     /** Server or an administrator requests the game to start now. */
@@ -175,7 +172,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
         // because of soft timeout.
         System.gc()
 
-        requestTimeout = timeout
+        moveRequestTimeout = timeout
         timeout.start {
             logger.warn("Player $player reached the timeout of ${timeout.hardTimeout}ms")
             player.hardTimeout = true
@@ -204,7 +201,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
     fun setPauseMode(pause: Boolean) {
         paused = when {
             !pause -> null
-            wasMoveRequested() -> turn + 1
+            moveRequestTimeout != null -> turn + 1
             else -> turn
         }
     }
