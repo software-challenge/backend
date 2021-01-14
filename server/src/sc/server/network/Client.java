@@ -69,7 +69,7 @@ public class Client extends XStreamClient implements IClient {
 
     PacketCallback callback = new PacketCallback(packet);
 
-    for (IClientListener listener : this.clientListeners) {
+    for (IClientListener listener : new ArrayList<>(clientListeners)) {
       try {
         listener.onRequest(this, callback);
       } catch (RescuableClientException e) {
@@ -104,7 +104,7 @@ public class Client extends XStreamClient implements IClient {
 
   /** Call listeners upon error. */
   private synchronized void notifyOnError(ProtocolErrorMessage packet) {
-    for (IClientListener listener : this.clientListeners) {
+    for (IClientListener listener : new ArrayList<>(clientListeners)) {
       try {
         listener.onError(this, packet);
       } catch (Exception e) {
@@ -117,9 +117,7 @@ public class Client extends XStreamClient implements IClient {
   private synchronized void notifyOnDisconnect() {
     if (!this.notifiedOnDisconnect) {
       this.notifiedOnDisconnect = true;
-      // Avoid ConcurrentModificationException
-      final List<IClientListener> listeners = new ArrayList<>(clientListeners);
-      for (IClientListener listener : listeners) {
+      for (IClientListener listener : new ArrayList<>(clientListeners)) {
         try {
           listener.onClientDisconnected(this);
         } catch (Exception e) {
