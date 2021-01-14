@@ -1,12 +1,12 @@
 package sc.networking;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TcpNetwork implements INetworkInterface {
   private static Logger logger = LoggerFactory.getLogger(TcpNetwork.class);
@@ -40,7 +40,7 @@ public class TcpNetwork implements INetworkInterface {
   // @see edu.cau.sc.server.network.interfaces.INetworkInterface#close()
   @Override
   public void close() throws IOException {
-    logger.debug("Closing TcpNetwork Interface.");
+    logger.debug("Closing {}", toString());
     this.socket.close();
   }
 

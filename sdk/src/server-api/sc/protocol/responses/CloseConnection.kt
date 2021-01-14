@@ -7,4 +7,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
  * connection and should make the receiving party also close the connection.
  */
 @XStreamAlias(value = "close")
-class CloseConnection: ProtocolMessage
+class CloseConnection: ProtocolMessage {
+    override fun toString(): String = javaClass.simpleName
+}
