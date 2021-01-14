@@ -41,7 +41,7 @@ fun loop() {
             println("$input -> $move")
             
             try {
-                game.onAction(game.gameState.getPlayer(move.color.team), move)
+                game.onAction(game.gameState.getPlayer(move.color.team)!!, move)
                 current = game.gameState.getOpponent(current)!!
             } catch (e: Exception) {
                 if (move is SetMove) {

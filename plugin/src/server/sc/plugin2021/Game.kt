@@ -18,16 +18,15 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     companion object {
         val logger = LoggerFactory.getLogger(Game::class.java)
     }
-    
+
     val gameState = GameState()
-    override fun getCurrentState(): IGameState = gameState
-    
+
     override fun start() {
         players.forEach {it.notifyListeners(WelcomeMessage(it.color)) }
         // next(players.first(), true)
         super.start()
     }
-    
+
     private val playerMap = mutableMapOf<Team, Player>()
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     override fun onPlayerJoined(): Player {
@@ -40,20 +39,35 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
         return player
     }
     
-    val isGameOver: Boolean
-        get() = gameState.validColors.isEmpty() || round > Constants.ROUND_LIMIT
-    
-    fun checkGameOver(): Boolean {
-        if (round > Constants.ROUND_LIMIT) {
-            gameState.validColors.clear()
+    override val winners: MutableList<Player>
+        get() {
+            if (players.first().hasViolated()) {
+                if (players.last().hasViolated())
+                    return mutableListOf()
+                return players.subList(1, 2)
+            }
+            if (players.last().hasViolated())
+                return players.subList(0, 1)
+
+            val first = gameState.getPointsForPlayer(players.first().color)
+            val second = gameState.getPointsForPlayer(players.last().color)
+
+            if (first > second)
+                return players.subList(0, 1)
+            if (first < second)
+                return players.subList(1, 2)
+            return players
         }
-        GameRuleLogic.removeInvalidColors(gameState)
-        return isGameOver
-    }
+
+    override val playerScores: MutableList<PlayerScore>
+            get() = players.map { getScoreFor(it) }.toMutableList()
+
+    override val players: MutableList<Player>
+        get() = super.players
     
-    override fun getPlayers(): MutableList<Player> = players
-    
-    override fun getRound(): Int = gameState.round
+
+    override val round: Int
+        get() = gameState.round
     
     /**
      * Checks whether and why the game is over.
@@ -74,39 +88,17 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
         }
     }
     
-    override fun loadGameInfo(gameInfo: Any?) {
+    override fun loadGameInfo(gameInfo: Any) {
         TODO("Not yet implemented")
     }
     
-    override fun loadFromFile(file: String?) {
+    override fun loadFromFile(file: String) {
         TODO("Not yet implemented")
     }
     
-    override fun loadFromFile(file: String?, turn: Int) {
+    override fun loadFromFile(file: String, turn: Int) {
         TODO("Not yet implemented")
     }
-    
-    override fun getWinners(): MutableList<Player> {
-        if (players.first().hasViolated()) {
-            if (players.last().hasViolated())
-                return mutableListOf()
-            return players.subList(1, 2)
-        }
-        if (players.last().hasViolated())
-            return players.subList(0, 1)
-        
-        val first = gameState.getPointsForPlayer(players.first().color)
-        val second = gameState.getPointsForPlayer(players.last().color)
-        
-        if (first > second)
-            return players.subList(0, 1)
-        if (first < second)
-            return players.subList(1, 2)
-        return players
-    }
-    
-    override fun getPlayerScores(): MutableList<PlayerScore> =
-            getPlayers().map { getScoreFor(it) }.toMutableList()
     
     override fun getScoreFor(player: Player): PlayerScore {
         val team = player.color as Team
@@ -158,7 +150,7 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
     @Throws(InvalidMoveException::class)
-    override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage?) {
+    override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
         try {
             if (data !is Move)
                 throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
@@ -171,5 +163,20 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
         } catch(e: InvalidMoveException) {
             super.catchInvalidMove(e, fromPlayer)
         }
+    }
+    
+    override val currentState: IGameState
+        get() = gameState
+
+    val isGameOver: Boolean
+        get() = gameState.validColors.isEmpty() || round > Constants.ROUND_LIMIT
+
+    fun checkGameOver(): Boolean {
+        logger.debug("Round: $round > ${Constants.ROUND_LIMIT}")
+        if (round > Constants.ROUND_LIMIT) {
+            gameState.validColors.clear()
+        }
+        GameRuleLogic.removeInvalidColors(gameState)
+        return isGameOver
     }
 }
