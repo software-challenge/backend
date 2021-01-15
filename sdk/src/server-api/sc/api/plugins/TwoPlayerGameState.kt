@@ -20,16 +20,20 @@ abstract class TwoPlayerGameState<P : Player>(
     val players: List<P>
         get() = listOf(first, second)
     
+    /** Die Namen der beiden Spieler. */
+    val playerNames: Array<String>
+        get() = arrayOf(first.displayName, second.displayName)
+    
     /** The Team active in the current turn. */
     abstract val currentTeam: ITeam
 
     /** The Player whose team's turn it is. */
     open val currentPlayer: P
-        get() = getPlayer(currentTeam)!!
+        get() = getPlayer(currentTeam)
 
     /** The player opposite to the currently active one. */
     val otherPlayer: P
-        get() = getPlayer(otherTeam)!!
+        get() = getPlayer(otherTeam)
 
     /** The Team opposite to the currently active one. */
     val otherTeam: ITeam
@@ -37,11 +41,7 @@ abstract class TwoPlayerGameState<P : Player>(
 
     /** Der Spieler, der das Spiel begonnen hat. */
     val startPlayer: P
-        get() = getPlayer(startTeam)!!
-
-    /** Die Namen der beiden Spieler. */
-    val playerNames: Array<String>
-        get() = arrayOf(first.displayName, second.displayName)
+        get() = getPlayer(startTeam)
 
     /** Letzter getaetigter Zug. */
     abstract val lastMove: IMove?
@@ -49,11 +49,7 @@ abstract class TwoPlayerGameState<P : Player>(
     fun getOpponent(player: P) =
             getPlayer(player.color.opponent())
 
-    fun getPlayer(team: ITeam): P? = when(team.index) {
-        0 -> first
-        1 -> second
-        else -> null
-    }
+    fun getPlayer(team: ITeam): P = players[team.index]
     
     /** Calculates the color of the current player from the [turn] and the [startTeam].
      * Based on the assumption that the current player switches every turn. */
