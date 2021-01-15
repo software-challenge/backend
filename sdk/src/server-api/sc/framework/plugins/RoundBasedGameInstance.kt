@@ -56,6 +56,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
         if (fromPlayer == activePlayer) {
             moveRequestTimeout?.let { timer ->
                 timer.stop()
+                logger.info("Time needed for move:" + timer.timeDiff)
                 if (timer.didTimeout()) {
                     logger.warn("Client hit soft-timeout.")
                     fromPlayer.softTimeout = true
