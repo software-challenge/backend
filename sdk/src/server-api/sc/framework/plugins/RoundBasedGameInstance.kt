@@ -1,8 +1,5 @@
 package sc.framework.plugins
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamImplicit
-import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGameState
@@ -16,32 +13,37 @@ import sc.shared.ScoreCause
 import sc.shared.WinCondition
 import java.util.*
 
-abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val pluginUUID: String) : IGameInstance {
+abstract class RoundBasedGameInstance<P : Player>(override val pluginUUID: String) : IGameInstance {
     companion object {
         val logger = LoggerFactory.getLogger(RoundBasedGameInstance::class.java)
     }
-
+    
+    override val players = mutableListOf<P>()
+    
     var activePlayer: P? = null
         protected set
-
-    @XStreamAsAttribute
-    var turn = 0
-        private set
-    open val round: Int
-        get() = turn / 2
-
-    @XStreamOmitField
-    private var paused: Int? = null
-
-    @XStreamOmitField
-    private var moveRequestTimeout: ActionTimeout? = null
-
-    @XStreamOmitField
+    
     protected val listeners = mutableListOf<IGameListener>()
-
-    @XStreamImplicit(itemFieldName = "player")
-    override val players = mutableListOf<P>()
-
+    
+    private var moveRequestTimeout: ActionTimeout? = null
+    
+    var paused = false
+        private set
+    
+    val isPaused: Boolean
+        get() = paused
+    
+    /** Pause or unpause game. */
+    fun setPauseMode(pause: Boolean) {
+        paused = pause
+    }
+    
+    fun afterPause() {
+        logger.info("Sending MoveRequest to player $activePlayer")
+        notifyOnNewState(currentState, false)
+        notifyActivePlayer()
+    }
+    
     /**
      * Called by the Server once an action was received.
      *
@@ -136,15 +138,13 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
      * - updates the [activePlayer] to [nextPlayer]
      * - sends out a state update and requests a new move
      */
-    protected fun next(nextPlayer: P?, firstTurn: Boolean = false) {
+    protected fun next(nextPlayer: P?) {
         if (checkWinCondition() != null) {
-            logger.debug("game over at $round")
+            logger.debug("game over")
             notifyOnGameOver(generateScoreMap())
         } else {
-            if (!firstTurn)
-                turn++
-
-            logger.debug("next round ($round) for player $nextPlayer")
+            logger.debug("next player: $nextPlayer")
+    
             // TODO send last state by moving this out
             activePlayer = nextPlayer
             // if paused, notify observers only (so they can update the GUI appropriately)
@@ -188,28 +188,6 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
     }
 
     protected open fun getTimeoutFor(player: P) = ActionTimeout(true)
-
-    val isPaused: Boolean
-        get() = paused?.let { it <= turn } ?: false
-
-    fun afterPause() {
-        logger.info("Sending MoveRequest to player $activePlayer")
-        notifyOnNewState(currentState, false)
-        notifyActivePlayer()
-    }
-
-    /**
-     * Pauses game after the next move, or unpauses it.
-     *
-     * @param pause whether the game should be paused
-     */
-    fun setPauseMode(pause: Boolean) {
-        paused = when {
-            !pause -> null
-            moveRequestTimeout != null -> turn + 1
-            else -> turn
-        }
-    }
 
     fun generateScoreMap(): Map<Player, PlayerScore> =
             players.map { it to getScoreFor(it) }.toMap()
