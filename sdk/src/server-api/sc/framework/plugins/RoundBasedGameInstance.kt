@@ -76,6 +76,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
         }
     }
 
+    /** Called by [onAction] to execute a move from a Player. */
     @Throws(GameLogicException::class, InvalidMoveException::class)
     abstract fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage)
 
@@ -130,6 +131,11 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
         notifyOnGameOver(scores.toMap())
     }
 
+    /** Advances the Game to [nextPlayer].
+     * - invokes [notifyOnGameOver] if the game is over
+     * - updates the [activePlayer] to [nextPlayer]
+     * - sends out a state update and requests a new move
+     */
     protected fun next(nextPlayer: P?, firstTurn: Boolean = false) {
         if (checkWinCondition() != null) {
             logger.debug("game over at $round")
@@ -139,7 +145,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
                 turn++
 
             logger.debug("next round ($round) for player $nextPlayer")
-
+            // TODO send last state by moving this out
             activePlayer = nextPlayer
             // if paused, notify observers only (so they can update the GUI appropriately)
             notifyOnNewState(currentState, isPaused)
@@ -150,7 +156,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
         }
     }
 
-    abstract fun getScoreFor(p: P): PlayerScore
+    abstract fun getScoreFor(player: P): PlayerScore
 
     /** @return the current state representation. */
     abstract val currentState: IGameState
@@ -161,11 +167,8 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
             throw IllegalStateException("Trying to notify active player, which is null")
     }
 
-    /**
-     * Sends a MoveRequest directly to the player (does not take PAUSE into account).
-     *
-     * @param player player to make a move
-     */
+    /** Sends a MoveRequest directly to the given player.
+     * Does not consider the pause state. */
     protected fun requestMove(player: P) {
         val timeout: ActionTimeout = if (player.canTimeout) getTimeoutFor(player) else ActionTimeout(false)
 
@@ -187,7 +190,7 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
     protected open fun getTimeoutFor(player: P) = ActionTimeout(true)
 
     val isPaused: Boolean
-        get() = paused ?: turn + 1 <= turn
+        get() = paused?.let { it <= turn } ?: false
 
     fun afterPause() {
         logger.info("Sending MoveRequest to player $activePlayer")
@@ -196,9 +199,9 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
     }
 
     /**
-     * Pauses game
+     * Pauses game after the next move, or unpauses it.
      *
-     * @param pause true if game should be paused
+     * @param pause whether the game should be paused
      */
     fun setPauseMode(pause: Boolean) {
         paused = when {

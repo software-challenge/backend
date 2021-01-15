@@ -51,7 +51,7 @@ class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID)
         notifyOnGameOver(result)
     }
 
-    override fun getScoreFor(p: TestPlayer): PlayerScore {
+    override fun getScoreFor(player: TestPlayer): PlayerScore {
         return PlayerScore(true, "Spieler hat gewonnen.")
     }
 
