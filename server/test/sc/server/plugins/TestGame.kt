@@ -13,13 +13,8 @@ import java.util.*
 
 class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
     private val state = TestGameState()
+    
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
-        /*
-         * NOTE: Checking if right player sent move was already done by
-         * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(Player, Object)}.
-         * There is no need to do it here again.
-         */
-
         if (data is TestMove) {
             data.perform(state)
             next(if (state.currentPlayer === TestTeam.RED) state.red else state.blue)
