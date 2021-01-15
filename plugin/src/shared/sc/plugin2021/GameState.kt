@@ -86,14 +86,20 @@ class GameState @JvmOverloads constructor(
         get() = orderedColors[turn % Constants.COLORS]
     
     /** Liste der Farben, die noch im Spiel sind. */
-    internal val validColors: MutableSet<Color> = Color.values().toMutableSet()
+    private val validColors: MutableSet<Color> = Color.values().toMutableSet()
+    
+    /** Beendet das Spiel, indem alle Farben entfernt werden. */
+    internal fun clearValidColors() = validColors.clear()
+    
+    /** @return true, wenn noch Farben im Spiel sind. */
+    fun hasValidColors() = validColors.isNotEmpty()
 
     /** Prüfe, ob die gegebene Farbe noch im Spiel ist. */
     fun isValid(color: Color = currentColor) = validColors.contains(color)
 
     /**
      * Versuche, zum nächsten Zug überzugehen.
-     * Schlage fehl, wenn das Spiel bereits zu ende ist.
+     * Schlägt fehl, wenn das Spiel bereits zu ende ist.
      * @return Ob es erfolgreich war.
      */
     fun tryAdvance(turns: Int = 1): Boolean = try {
@@ -126,7 +132,7 @@ class GameState @JvmOverloads constructor(
      *
      * Diese Funktion wird von der [GameRuleLogic] benötigt und sollte nie so aufgerufen werden.
      */
-    internal fun remove(color: Color = currentColor) {
+    internal fun removeColor(color: Color = currentColor) {
         logger.info("Removing $color from the game")
         validColors.remove(color)
         logger.debug("Remaining Colors: $validColors")

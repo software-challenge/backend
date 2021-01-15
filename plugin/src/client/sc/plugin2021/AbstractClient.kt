@@ -94,7 +94,7 @@ abstract class AbstractClient(
         val gameState = state as GameState
         logger.debug("$this got a new state $gameState")
     
-        if (team == null || gameState.validColors.isEmpty())
+        if (team == null || !gameState.hasValidColors())
             return
     
         if (gameState.currentTeam == team) {

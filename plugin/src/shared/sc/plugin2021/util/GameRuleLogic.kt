@@ -102,7 +102,7 @@ object GameRuleLogic {
 
         do {
             gameState.tryAdvance()
-        } while (!gameState.validColors.contains(gameState.currentColor))
+        } while (!gameState.isValid(gameState.currentColor))
     }
 
     /**
@@ -225,9 +225,9 @@ object GameRuleLogic {
     /** Entferne alle Farben, die keine Steine mehr auf dem Feld platzieren können. */
     @JvmStatic
     fun removeInvalidColors(gameState: GameState) {
-        if (gameState.validColors.isEmpty()) return
+        if (!gameState.hasValidColors()) return
         if (streamPossibleMoves(gameState).none { isValidSetMove(gameState, it) }) {
-            gameState.remove()
+            gameState.removeColor()
             gameState.turn++
             removeInvalidColors(gameState)
         }
