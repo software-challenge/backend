@@ -4,8 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
 import sc.framework.plugins.ActionTimeout
-import sc.framework.plugins.RoundBasedGameInstance
 import sc.framework.plugins.Player
+import sc.framework.plugins.RoundBasedGameInstance
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.MoveMistake
@@ -169,12 +169,12 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
         get() = gameState
 
     val isGameOver: Boolean
-        get() = gameState.validColors.isEmpty() || round > Constants.ROUND_LIMIT
+        get() = !gameState.hasValidColors() || round > Constants.ROUND_LIMIT
 
     fun checkGameOver(): Boolean {
         logger.debug("Round: $round > ${Constants.ROUND_LIMIT}")
         if (round > Constants.ROUND_LIMIT) {
-            gameState.validColors.clear()
+            gameState.clearValidColors()
         }
         GameRuleLogic.removeInvalidColors(gameState)
         return isGameOver
