@@ -1,14 +1,13 @@
 package sc.plugin2021
 
-import org.slf4j.LoggerFactory
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
-import sc.api.plugins.exceptions.GameLogicException
 import io.kotest.matchers.shouldNotBe
+import org.slf4j.LoggerFactory
+import sc.api.plugins.exceptions.GameLogicException
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.PlayerScore
@@ -16,8 +15,6 @@ import sc.shared.ScoreCause
 import java.math.BigDecimal
 
 class GameTest: WordSpec({
-    isolationMode = IsolationMode.InstancePerLeaf
-
     val logger = LoggerFactory.getLogger(GameTest::class.java)
 
     "A Game" When {
