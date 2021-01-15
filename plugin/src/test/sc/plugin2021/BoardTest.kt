@@ -1,14 +1,11 @@
 package sc.plugin2021
 
-import io.kotest.core.spec.IsolationMode
-import io.kotest.matchers.shouldBe
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 
 class BoardTest : WordSpec({
-    isolationMode = IsolationMode.InstancePerLeaf
     val changingFields = setOf(
             Field(Coordinates(2, 3), FieldContent.YELLOW),
             Field(Coordinates(19, 2), FieldContent.YELLOW),

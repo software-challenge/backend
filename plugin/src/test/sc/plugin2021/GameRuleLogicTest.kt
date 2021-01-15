@@ -2,17 +2,15 @@ package sc.plugin2021
 
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.shouldBe
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.filterValidMoves
 import sc.shared.InvalidMoveException
 
 class GameRuleLogicTest: WordSpec({
-    isolationMode = IsolationMode.InstancePerLeaf
     "Moves" When {
         val gameState = GameState(startPiece = PieceShape.PENTO_U)
         "the color is compared" should {

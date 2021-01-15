@@ -2,7 +2,6 @@ package sc.plugin2021
 
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -12,7 +11,6 @@ import sc.plugin2021.util.GameRuleLogic
 import sc.shared.InvalidMoveException
 
 class GameStateTest: WordSpec({
-    isolationMode = IsolationMode.InstancePerLeaf
     "GameStates" When {
         val state = GameState(startPiece = PieceShape.PENTO_I)
         "constructed" should {
@@ -66,8 +64,8 @@ class GameStateTest: WordSpec({
                 transformed shouldBe state
 
                 GameRuleLogic.isFirstMove(transformed) shouldBe true
-                transformed.getPointsForPlayer(Team.ONE)
-                transformed.board.isEmpty()
+                transformed.getPointsForPlayer(Team.ONE) shouldBe 0
+                transformed.board.isEmpty() shouldBe true
             }
         }
         "cloned" should {
