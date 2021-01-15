@@ -15,16 +15,14 @@ sealed class Move: IMove {
  * @property piece der zu platzierende Spielstein
  */
 @XStreamAlias(value = "setmove")
-class SetMove(val piece: Piece): Move() {
+data class SetMove(val piece: Piece): Move() {
     override val color: Color get() = piece.color
 
-    override fun toString(): String = piece.toString()
-    override fun equals(other: Any?): Boolean = piece == other
-    override fun hashCode(): Int = piece.hashCode()
+    override fun toString(): String = "Setze $piece"
 }
 
 /** Ein Zug, der die aktuelle Runde aussetzt. */
 @XStreamAlias(value = "skipmove")
-class SkipMove(override val color: Color): Move() {
+data class SkipMove(override val color: Color): Move() {
     override fun toString(): String = "$color setzt aus"
 }
