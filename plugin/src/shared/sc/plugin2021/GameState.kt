@@ -2,15 +2,12 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
+import sc.api.plugins.ITeam
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
-import sc.api.plugins.ITeam
-import sc.api.plugins.exceptions.GameLogicException
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
-import java.lang.Exception
 
 /**
  * Der aktuelle Spielstand.
@@ -24,19 +21,28 @@ class GameState @JvmOverloads constructor(
         override var first: Player = Player(Team.ONE),
         /** Das zweite Team, @see [Team]. */
         override var second: Player = Player(Team.TWO),
+        /** Der Spielstein, der in der ersten Runde gesetzt werden muss. */
+        @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino(),
+        /** Das aktuelle Spielfeld. */
+        @XStreamAsAttribute override val board: Board = Board(),
+        turn: Int = 0,
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
-        /** Der Spielstein, der in der ersten Runde gesetzt werden muss. */
-        @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino()
+        /** Speichert für jede Farbe, die alle Steine gelegt hat, ob das Monomino zuletzt gelegt wurde. */
+        @XStreamAsAttribute
+        val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     companion object {
         val logger = LoggerFactory.getLogger(GameState::class.java)
     }
     
-    /** Das aktuelle Spielfeld. */
-    @XStreamAsAttribute
-    override val board: Board = Board()
+    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.board.clone(), other.turn, other.lastMove, HashMap(other.lastMoveMono))
+    
+    private val blueShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+    private val yellowShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+    private val redShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+    private val greenShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
     
     /** Gib eine Liste aller nicht gesetzter Steine der [Color] zurück. */
     fun undeployedPieceShapes(color: Color = currentColor): MutableSet<PieceShape> = when (color) {
@@ -46,40 +52,9 @@ class GameState @JvmOverloads constructor(
         Color.GREEN -> greenShapes
     }
     
-    private val blueShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val yellowShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val redShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val greenShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    
-    /** Speichert für jede Farbe, die alle Steine gelegt hat, ob das Monomino zuletzt gelegt wurde. */
-    @XStreamAsAttribute
-    val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
-    
-    /** Das Team, das am Zug ist. */
-    override val currentTeam
-        get() = currentColor.team
-    
-    /** Der Spieler, der am Zug ist. */
-    override val currentPlayer
-        get() = getPlayer(currentTeam)!!
-    
-    /** Eine Liste aller Farben, die momentan im Spiel sind. */
-    val orderedColors: List<Color>
-        get() = Color.values().toList()
-
-    internal val validColors: MutableSet<Color> = Color.values().toMutableSet()
-
-    /** Prüfe, ob die gegebene Farbe noch im Spiel ist. */
-    fun isValid(color: Color = currentColor): Boolean =
-            validColors.contains(color)
-
-    /** Die Farbe, die am Zug ist. */
-    val currentColor: Color
-        get() = orderedColors[turn % Constants.COLORS]
-
     /** Die Anzahl an bereits getätigten Zügen. */
     @XStreamAsAttribute
-    override var turn: Int = 0
+    override var turn: Int = turn
         set(value) {
             if (value < 0) throw IndexOutOfBoundsException("Can't go back in value (request was $turn to $value)")
             field = value
@@ -93,6 +68,29 @@ class GameState @JvmOverloads constructor(
             field = 1 + turn / orderedColors.size
             return field
         }
+    
+    /** Das Team, das am Zug ist. */
+    override val currentTeam
+        get() = currentColor.team
+    
+    /** Der Spieler, der am Zug ist. */
+    override val currentPlayer
+        get() = getPlayer(currentTeam)!!
+    
+    /** Eine Liste aller Farben, die im Spiel sind. */
+    val orderedColors: List<Color>
+        get() = Color.values().toList()
+    
+    /** Die Farbe, die am Zug ist. */
+    val currentColor: Color
+        get() = orderedColors[turn % Constants.COLORS]
+    
+    internal val validColors: MutableSet<Color> =
+            Color.values().toMutableSet()
+
+    /** Prüfe, ob die gegebene Farbe noch im Spiel ist. */
+    fun isValid(color: Color = currentColor): Boolean =
+            validColors.contains(color)
 
     /**
      * Versuche, zum nächsten Zug überzugehen.
@@ -139,7 +137,9 @@ class GameState @JvmOverloads constructor(
             if (orderedColors.isNotEmpty())
                 "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
             else "GameState finished at $round/$turn"
-
+    
+    override fun clone() = GameState(this)
+    
     override fun equals(other: Any?): Boolean {
         return this === other ||
                (other is GameState

@@ -44,12 +44,6 @@ class ConverterTest: WordSpec({
                 state shouldSerializeTo """
                     <state turn="0" round="1" startPiece="PENTO_L">
                       <startTeam class="team">ONE</startTeam>
-                      <board>
-                        <field x="0" y="0" content="RED"/>
-                        <field x="1" y="3" content="GREEN"/>
-                        <field x="8" y="6" content="YELLOW"/>
-                        <field x="5" y="9" content="BLUE"/>
-                      </board>
                       <blueShapes class="linked-hash-set">
                         <shape>MONO</shape>
                         <shape>DOMINO</shape>
@@ -142,7 +136,6 @@ class ConverterTest: WordSpec({
                         <shape>PENTO_X</shape>
                         <shape>PENTO_Y</shape>
                       </greenShapes>
-                      <lastMoveMono class="linked-hash-map"/>
                       <validColors class="linked-hash-set">
                         <color>BLUE</color>
                         <color>YELLOW</color>
@@ -155,6 +148,13 @@ class ConverterTest: WordSpec({
                       <second displayName="">
                         <color class="team">TWO</color>
                       </second>
+                      <board>
+                        <field x="0" y="0" content="RED"/>
+                        <field x="1" y="3" content="GREEN"/>
+                        <field x="8" y="6" content="YELLOW"/>
+                        <field x="5" y="9" content="BLUE"/>
+                      </board>
+                      <lastMoveMono class="linked-hash-map"/>
                     </state>""".trimIndent()
             }
         }
