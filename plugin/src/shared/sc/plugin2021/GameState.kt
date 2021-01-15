@@ -75,7 +75,7 @@ class GameState @JvmOverloads constructor(
     
     /** Der Spieler, der am Zug ist. */
     override val currentPlayer
-        get() = getPlayer(currentTeam)!!
+        get() = getPlayer(currentTeam)
     
     /** Liste aller Farben in ihrer Zugreihenfolge. */
     val orderedColors: List<Color>

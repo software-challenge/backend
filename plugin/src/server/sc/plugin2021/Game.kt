@@ -30,8 +30,9 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     private val playerMap = mutableMapOf<Team, Player>()
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     override fun onPlayerJoined(): Player {
+        if(availableTeams.isEmpty())
+            throw IllegalStateException("Too many players joined the game!")
         val player = gameState.getPlayer(availableTeams.removeAt(0))
-                ?: throw IllegalStateException("Too many players joined the game!")
         
         players.add(player)
         playerMap[player.color as Team] = player
@@ -103,7 +104,7 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     override fun getScoreFor(player: Player): PlayerScore {
         val team = player.color as Team
         logger.debug("Get score for player $team (violated: ${if(player.hasViolated()) "yes" else "no"})")
-        val opponent = gameState.getOpponent(player)!!
+        val opponent = gameState.getOpponent(player)
         val winCondition = checkWinCondition()
         
         var cause: ScoreCause = ScoreCause.REGULAR
