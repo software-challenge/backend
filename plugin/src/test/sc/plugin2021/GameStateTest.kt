@@ -5,8 +5,9 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
-import sc.plugin2021.util.Constants
+import io.kotest.matchers.shouldNotBe
 import sc.plugin2021.GamePlugin.Companion.loadXStream
+import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.InvalidMoveException
 
@@ -51,7 +52,7 @@ class GameStateTest: WordSpec({
             }
             state.turn += 4
             state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
-            "throw a InvalidMoveException" {
+            "throw an InvalidMoveException" {
                 shouldThrow<InvalidMoveException> {
                     GameRuleLogic.performMove(state, move)
                 }
@@ -67,6 +68,16 @@ class GameStateTest: WordSpec({
                 GameRuleLogic.isFirstMove(transformed) shouldBe true
                 transformed.getPointsForPlayer(Team.ONE)
                 transformed.board.isEmpty()
+            }
+        }
+        "cloned" should {
+            "preserve equality" {
+                state.clone() shouldBe state
+            }
+            val otherState = GameState(lastMove = SetMove(Piece(Color.GREEN, 0)))
+            "preserve inequality" {
+                otherState shouldNotBe state
+                otherState.clone() shouldNotBe state
             }
         }
         "turn number increases" should {

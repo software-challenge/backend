@@ -14,6 +14,8 @@ class Board(
                 Array(Constants.BOARD_SIZE) { Array(Constants.BOARD_SIZE) { FieldContent.EMPTY } },
 ): IBoard {
     
+    constructor(other: Board) : this(Array(other.gameField.size) { other.gameField[it].clone() })
+    
     /** Prüft, ob alle Felder leer sind. */
     fun isEmpty() =
             gameField.all { row ->
@@ -60,16 +62,18 @@ class Board(
         return changedFields
     }
     
-    override fun hashCode() =
-            gameField.contentDeepHashCode()
-    
-    override fun equals(other: Any?) =
-            other is Board && other.gameField.contentDeepEquals(gameField)
-    
     override fun toString() =
             gameField.joinToString(separator = "\n") { row ->
                 row.joinToString(separator = " ") { it.letter.toString() }
             }
+    
+    override fun clone() = Board(this)
+    
+    override fun equals(other: Any?) =
+            other is Board && gameField.contentDeepEquals(other.gameField)
+    
+    override fun hashCode() =
+            gameField.contentDeepHashCode()
     
     companion object {
         /** @return ob die gegebene Position innerhalb des Spielfelds liegt. */
