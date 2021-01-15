@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import sc.framework.plugins.RoundBasedGameInstance
+import sc.framework.plugins.AbstractGame
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
 import sc.server.Configuration
@@ -363,8 +363,7 @@ class RequestTest: RealServerTest() {
         p1Listener.playerEventReceived = false
         p2Listener.playerEventReceived = false
         player1.send(PauseGameRequest(room.id, false))
-        TestHelper.waitUntilEqual(false, { (room.game as RoundBasedGameInstance<*>).isPaused }, 2000)
-        
+        TestHelper.waitUntilEqual(false, { (room.game as AbstractGame<*>).isPaused }, 2000)
         
         TestHelper.waitMillis(500)
         assertTrue(p2Listener.playerEventReceived)

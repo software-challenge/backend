@@ -2,9 +2,9 @@ package sc.plugin2021
 
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
+import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
-import sc.framework.plugins.RoundBasedGameInstance
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.MoveMistake
@@ -12,7 +12,7 @@ import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
 
-class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
+class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     companion object {
         val logger = LoggerFactory.getLogger(Game::class.java)
     }

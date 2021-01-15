@@ -8,8 +8,8 @@ import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
+import sc.framework.plugins.AbstractGame;
 import sc.framework.plugins.Player;
-import sc.framework.plugins.RoundBasedGameInstance;
 import sc.helpers.HelperMethods;
 import sc.helpers.XStreamKt;
 import sc.networking.InvalidScoreDefinitionException;
@@ -499,7 +499,7 @@ public class GameRoom implements IGameListener {
 
     logger.info("Toggling PAUSE from {} to {}.", isPauseRequested(), pause);
     this.pauseRequested = pause;
-    RoundBasedGameInstance<Player> pausableGame = (RoundBasedGameInstance<Player>) this.game;
+    AbstractGame<Player> pausableGame = (AbstractGame<Player>) this.game;
     // pause game after current turn has finished
     pausableGame.setPauseMode(pause);
 
@@ -529,7 +529,7 @@ public class GameRoom implements IGameListener {
     }
     if (isPauseRequested()) {
       logger.info("Stepping.");
-      ((RoundBasedGameInstance<Player>) this.game).afterPause();
+      ((AbstractGame<Player>) this.game).afterPause();
     } else {
       logger.warn("Can't step if the game is not paused.");
     }
@@ -562,7 +562,7 @@ public class GameRoom implements IGameListener {
 
   /**
    * Return whether or not the game is paused or will be paused in the next turn.
-   * Refer to {@link RoundBasedGameInstance#isPaused()} for the current value.
+   * Refer to {@link AbstractGame#isPaused()} for the current value.
    */
   public boolean isPauseRequested() {
     return this.pauseRequested;
