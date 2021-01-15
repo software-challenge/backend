@@ -3,6 +3,8 @@ package sc.framework.plugins;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Tracks timeouts in Milliseconds.
+ * TODO We can probably utilise an inbuilt class instead. */
 public class ActionTimeout {
   static final Logger logger = LoggerFactory.getLogger(ActionTimeout.class);
 
@@ -57,21 +59,20 @@ public class ActionTimeout {
     return this.canTimeout;
   }
 
-  public synchronized boolean didTimeout() {
+  public long getTimeDiff() {
     if (this.status == Status.NEW) {
-      throw new IllegalStateException("Timeout wasn't started.");
+      throw new IllegalStateException("Timeout was never started.");
     }
 
     if (this.status == Status.STARTED) {
-      throw new IllegalStateException("Timeout wasn't stopped.");
+      throw new IllegalStateException("Timeout was not stopped.");
     }
 
-    if (this.canTimeout()) {
-      logger.debug("Time needed: " + String.valueOf(this.stopTimestamp - this.startTimestamp));
-      return (this.stopTimestamp - this.startTimestamp) > this.softTimeoutInMilliseconds;
-    }
+    return stopTimestamp - startTimestamp;
+  }
 
-    return false;
+  public synchronized boolean didTimeout() {
+    return this.canTimeout() && this.getTimeDiff() > this.softTimeoutInMilliseconds;
   }
 
   public synchronized void stop() {
@@ -80,11 +81,11 @@ public class ActionTimeout {
     }
 
     if (this.status == Status.STOPPED) {
-      logger.warn("Timeout was already stopped.");
+      logger.warn("Redundant stop: Timeout was already stopped.");
       return;
     }
 
-    this.stopTimestamp = System.nanoTime() / 1000000; // in milliseconds
+    this.stopTimestamp = System.currentTimeMillis();
     this.status = Status.STOPPED;
 
     if (this.timeoutThread != null) {
@@ -94,27 +95,33 @@ public class ActionTimeout {
 
   public synchronized void start(final Runnable onTimeout) {
     if (this.status != Status.NEW) {
-      throw new IllegalStateException("Was already started!");
+      throw new IllegalStateException("Redundant start: was already started!");
     }
 
     if (canTimeout()) {
-      this.timeoutThread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            Thread.sleep(getHardTimeout());
-            stop();
-            onTimeout.run();
-          } catch (InterruptedException e) {
-            logger.info("HardTimout wasn't reached.");
-          }
+      this.timeoutThread = new Thread(() -> {
+        try {
+          Thread.sleep(getHardTimeout());
+          stop();
+          onTimeout.run();
+        } catch (InterruptedException e) {
+          logger.info("HardTimout wasn't reached.");
         }
       });
       this.timeoutThread.start();
     }
 
-    this.startTimestamp = System.nanoTime() / 1000000; // in milliseconds
+    this.startTimestamp = System.currentTimeMillis();
     this.status = Status.STARTED;
   }
 
+  @Override
+  public String toString() {
+    return "ActionTimeout{" +
+        "canTimeout=" + canTimeout +
+        ", status=" + status +
+        ", start=" + startTimestamp +
+        ", stop=" + stopTimestamp +
+        '}';
+  }
 }
