@@ -141,23 +141,26 @@ class GameState @JvmOverloads constructor(
             else "GameState finished at $round/$turn"
 
     override fun equals(other: Any?): Boolean {
-        return !(this === other) &&
-               other is GameState &&
-               first == other.first &&
-               second == other.second &&
-               board == other.board &&
-               turn == other.turn &&
-               currentTeam == other.currentTeam
+        return this === other ||
+               (other is GameState
+                && first == other.first
+                && second == other.second
+                && startPiece == other.startPiece
+                && board == other.board
+                && lastMove == other.lastMove
+                && lastMoveMono == other.lastMoveMono
+                && turn == other.turn)
     }
-
+    
     override fun hashCode(): Int {
         var result = first.hashCode()
         result = 31 * result + second.hashCode()
-        result = 31 * result + (lastMove?.hashCode() ?: 0)
         result = 31 * result + startPiece.hashCode()
         result = 31 * result + board.hashCode()
+        result = 31 * result + (lastMove?.hashCode() ?: 0)
         result = 31 * result + lastMoveMono.hashCode()
         result = 31 * result + turn
         return result
     }
+    
 }
