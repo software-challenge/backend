@@ -14,7 +14,7 @@ class Board(
                 Array(Constants.BOARD_SIZE) { Array(Constants.BOARD_SIZE) { FieldContent.EMPTY } },
 ): IBoard {
     
-    constructor(toClone: Board) : this(Array(toClone.gameField.size) { toClone.gameField[it].clone() })
+    constructor(other: Board) : this(Array(other.gameField.size) { other.gameField[it].clone() })
     
     /** Prüft, ob alle Felder leer sind. */
     fun isEmpty() =
