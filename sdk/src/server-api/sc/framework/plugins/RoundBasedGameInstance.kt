@@ -15,14 +15,14 @@ import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import sc.shared.WinCondition
 import java.util.*
-import kotlin.jvm.Throws
 
 abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val pluginUUID: String) : IGameInstance {
     companion object {
         val logger = LoggerFactory.getLogger(RoundBasedGameInstance::class.java)
     }
 
-    protected var activePlayer: P? = null
+    var activePlayer: P? = null
+        protected set
 
     @XStreamAsAttribute
     var turn = 0
@@ -156,7 +156,8 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
 
     /** Notifies the active player that it's their time to make a move. */
     protected fun notifyActivePlayer() {
-        requestMove(activePlayer!!)
+        activePlayer?.let { requestMove(it) } ?:
+            throw IllegalStateException("Trying to notify active player, which is null")
     }
 
     /**
@@ -208,7 +209,6 @@ abstract class RoundBasedGameInstance<P : Player>(@XStreamOmitField override val
 
     fun generateScoreMap(): Map<Player, PlayerScore> =
             players.map { it to getScoreFor(it) }.toMap()
-
 
     /**
      * Extends the set of listeners.
