@@ -1,6 +1,5 @@
 package sc.plugin2021
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
 import sc.framework.plugins.ActionTimeout
@@ -13,7 +12,6 @@ import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
 
-@XStreamAlias(value = "game")
 class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     companion object {
         val logger = LoggerFactory.getLogger(Game::class.java)
@@ -65,10 +63,6 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
 
     override val players: MutableList<Player>
         get() = super.players
-    
-
-    override val round: Int
-        get() = gameState.round
     
     /**
      * Checks whether and why the game is over.
@@ -169,15 +163,16 @@ class Game: RoundBasedGameInstance<Player>(GamePlugin.PLUGIN_UUID) {
     override val currentState: IGameState
         get() = gameState
 
-    val isGameOver: Boolean
-        get() = !gameState.hasValidColors() || round > Constants.ROUND_LIMIT
+    private val isGameOver: Boolean
+        get() = !gameState.hasValidColors() || gameState.round > Constants.ROUND_LIMIT
 
     fun checkGameOver(): Boolean {
-        logger.debug("Round: $round > ${Constants.ROUND_LIMIT}")
-        if (round > Constants.ROUND_LIMIT) {
+        logger.debug("Round: ${gameState.round} > ${Constants.ROUND_LIMIT}")
+        if (gameState.round > Constants.ROUND_LIMIT) {
             gameState.clearValidColors()
+        } else {
+            GameRuleLogic.removeInvalidColors(gameState)
         }
-        GameRuleLogic.removeInvalidColors(gameState)
         return isGameOver
     }
 }

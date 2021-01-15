@@ -9,7 +9,6 @@ import sc.framework.plugins.RoundBasedGameInstance
 import sc.protocol.responses.ProtocolMessage
 import sc.server.helpers.TestTeam
 import sc.shared.*
-import java.util.*
 
 class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
     private val state = TestGameState()
@@ -22,7 +21,7 @@ class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID)
     }
 
     override fun checkWinCondition(): WinCondition? {
-        return if (this.round > 1) {
+        return if (state.round > 1) {
             WinCondition(if (state.state % 2 == 0) TestTeam.RED else TestTeam.BLUE, TestWinReason.WIN)
         } else null
     }
@@ -60,8 +59,6 @@ class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID)
     override fun loadGameInfo(gameInfo: Any) {}
 
     override val winners: List<Player> = emptyList()
-
-    override val players: MutableList<TestPlayer> = ArrayList<TestPlayer>(super.players)
 
     /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests  */
     override fun start() {
