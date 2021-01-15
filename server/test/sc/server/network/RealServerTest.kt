@@ -23,11 +23,8 @@ abstract class RealServerTest {
     protected val serverPort: Int
         get() = NewClientListener.lastUsedPort
     
-    fun connectClient(host: String, port: Int): LobbyClient {
-        val client = LobbyClient(host, port)
-        client.start()
-        return client
-    }
+    fun connectClient(host: String, port: Int) =
+            LobbyClient(host, port).apply { start() }
     
     @BeforeEach
     fun setup() {
@@ -59,7 +56,7 @@ abstract class RealServerTest {
     }
     
     protected fun waitForConnect(count: Int) =
-            TestHelper.assertEqualsWithTimeout(count, { this@RealServerTest.lobby.clientManager.clients.size }, 1, TimeUnit.SECONDS)
+            TestHelper.assertEqualsWithTimeout(count, { lobby.clientManager.clients.size }, 1, TimeUnit.SECONDS)
     
     protected fun connectClient(): TestTcpClient {
         return try {

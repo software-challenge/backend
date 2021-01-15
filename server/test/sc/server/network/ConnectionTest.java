@@ -17,13 +17,13 @@ public class ConnectionTest extends RealServerTest {
     public int test = 25;
   }
 
-  @Test //TODO works for me
-  public void connectionTest() throws IOException, InterruptedException {
+  @Test
+  public void connectionTest() {
     TestTcpClient client = connectClient();
     waitForConnect(1);
 
     client.send(new JoinRoomRequest(TestPlugin.TEST_PLUGIN_UUID));
-    TestHelper.INSTANCE.assertEqualsWithTimeout(1, () -> ConnectionTest.this.getLobby().getGames().size(), 1, TimeUnit.SECONDS);
+    TestHelper.INSTANCE.assertEqualsWithTimeout(1, () -> getLobby().getGames().size(), 1, TimeUnit.SECONDS);
   }
 
   @Disabled
@@ -33,8 +33,9 @@ public class ConnectionTest extends RealServerTest {
     waitForConnect(1);
     client.sendCustomData("<>/I-do/>NOT<CARE".getBytes(StandardCharsets.UTF_8));
 
-    TestHelper.INSTANCE.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR, () -> ConnectionTest.this.getLobby().getClientManager().getClients()
-            .get(0).getDisconnectCause(), 5, TimeUnit.SECONDS);
+    TestHelper.INSTANCE.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
+        () -> getLobby().getClientManager().getClients().get(0).getDisconnectCause(),
+        5, TimeUnit.SECONDS);
   }
 
   @Disabled
@@ -47,8 +48,8 @@ public class ConnectionTest extends RealServerTest {
     client.sendCustomData("<NoSuchClass foo=\"aaa\"><base val=\"arr\" /></NoSuchClass>".getBytes(StandardCharsets.UTF_8));
     waitForConnect(1);
     TestHelper.INSTANCE.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
-            () -> this.getLobby().getClientManager().getClients().get(0).getDisconnectCause(),
-            5, TimeUnit.SECONDS);
+        () -> getLobby().getClientManager().getClients().get(0).getDisconnectCause(),
+        5, TimeUnit.SECONDS);
   }
 
   @Disabled
@@ -58,9 +59,9 @@ public class ConnectionTest extends RealServerTest {
     waitForConnect(1);
     client.send(new DontYouKnowJack());
     waitForConnect(1);
-    DisconnectCause disconnect = this.getLobby().getClientManager().getClients().get(0).getDisconnectCause();
     TestHelper.INSTANCE.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
-            () -> this.getLobby().getClientManager().getClients().get(0).getDisconnectCause(), 1, TimeUnit.SECONDS);
+        () -> getLobby().getClientManager().getClients().get(0).getDisconnectCause(),
+        1, TimeUnit.SECONDS);
   }
 
 }

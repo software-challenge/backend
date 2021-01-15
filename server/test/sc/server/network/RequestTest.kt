@@ -8,7 +8,10 @@ import sc.framework.plugins.RoundBasedGameInstance
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
 import sc.server.Configuration
-import sc.server.client.*
+import sc.server.client.PlayerListener
+import sc.server.client.TestLobbyClientListener
+import sc.server.client.TestObserverListener
+import sc.server.client.TestPreparedGameResponseListener
 import sc.server.gaming.GameRoom
 import sc.server.gaming.ObserverRole
 import sc.server.helpers.TestHelper
@@ -210,7 +213,7 @@ class RequestTest: RealServerTest() {
         
         assertTrue(TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000))
         p1Listener.playerEventReceived = false
-        assertEquals(p1Listener.requests.size.toLong(), 1)
+        assertEquals(p1Listener.requests.size, 1)
         assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
         
         // enabling this should result in a GameLogicException
