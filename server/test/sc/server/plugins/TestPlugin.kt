@@ -5,9 +5,7 @@ import sc.api.plugins.IGamePlugin
 import sc.helpers.xStream
 import sc.plugins.PluginDescriptor
 import sc.protocol.helpers.LobbyProtocol.registerAdditionalMessages
-import sc.server.plugins.TestPlugin
 import sc.shared.ScoreDefinition
-import java.util.*
 
 @PluginDescriptor(name = "TestPlugin", uuid = TestPlugin.TEST_PLUGIN_UUID)
 class TestPlugin : IGamePlugin {
@@ -16,7 +14,7 @@ class TestPlugin : IGamePlugin {
     override fun createGame(): IGameInstance = TestGame()
 
     override fun initialize() {
-        registerAdditionalMessages(xStream, Arrays.asList(TestTurnRequest::class.java, TestGameState::class.java, TestPlayer::class.java, TestMove::class.java))
+        registerAdditionalMessages(xStream, listOf(TestTurnRequest::class.java, TestGameState::class.java, TestPlayer::class.java, TestMove::class.java))
     }
 
     override fun unload() {}
