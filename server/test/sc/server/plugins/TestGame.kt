@@ -3,14 +3,14 @@ package sc.server.plugins
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
 import sc.api.plugins.exceptions.TooManyPlayersException
+import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
-import sc.framework.plugins.RoundBasedGameInstance
 import sc.protocol.responses.ProtocolMessage
 import sc.server.helpers.TestTeam
 import sc.shared.*
 
-class TestGame : RoundBasedGameInstance<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
+class TestGame : AbstractGame<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
     private val state = TestGameState()
     
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {

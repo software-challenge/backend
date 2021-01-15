@@ -13,9 +13,9 @@ import sc.shared.ScoreCause
 import sc.shared.WinCondition
 import java.util.*
 
-abstract class RoundBasedGameInstance<P : Player>(override val pluginUUID: String) : IGameInstance {
+abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance {
     companion object {
-        val logger = LoggerFactory.getLogger(RoundBasedGameInstance::class.java)
+        val logger = LoggerFactory.getLogger(AbstractGame::class.java)
     }
     
     override val players = mutableListOf<P>()
