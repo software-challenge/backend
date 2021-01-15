@@ -489,15 +489,15 @@ public class GameRoom implements IGameListener {
   public synchronized void pause(boolean pause) {
     if (isOver()) {
       logger.warn("Game is already over and can't be paused.");
-    }
-
-    // Unnecessary Pause event
-    if (pause == isPauseRequested()) {
-      logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.", isPauseRequested(), pause);
       return;
     }
 
-    logger.info("Switching PAUSE from {} to {}.", isPauseRequested(), pause);
+    if (pause == isPauseRequested()) {
+      logger.warn("PAUSE is already {}, dropping request.", pause);
+      return;
+    }
+
+    logger.info("Toggling PAUSE from {} to {}.", isPauseRequested(), pause);
     this.pauseRequested = pause;
     RoundBasedGameInstance<Player> pausableGame = (RoundBasedGameInstance<Player>) this.game;
     // pause game after current turn has finished
