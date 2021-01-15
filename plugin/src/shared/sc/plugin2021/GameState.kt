@@ -77,7 +77,7 @@ class GameState @JvmOverloads constructor(
     override val currentPlayer
         get() = getPlayer(currentTeam)!!
     
-    /** Eine Liste aller Farben, die im Spiel sind. */
+    /** Liste aller Farben in ihrer Zugreihenfolge. */
     val orderedColors: List<Color>
         get() = Color.values().toList()
     
@@ -85,12 +85,11 @@ class GameState @JvmOverloads constructor(
     val currentColor: Color
         get() = orderedColors[turn % Constants.COLORS]
     
-    internal val validColors: MutableSet<Color> =
-            Color.values().toMutableSet()
+    /** Liste der Farben, die noch im Spiel sind. */
+    internal val validColors: MutableSet<Color> = Color.values().toMutableSet()
 
     /** Prüfe, ob die gegebene Farbe noch im Spiel ist. */
-    fun isValid(color: Color = currentColor): Boolean =
-            validColors.contains(color)
+    fun isValid(color: Color = currentColor) = validColors.contains(color)
 
     /**
      * Versuche, zum nächsten Zug überzugehen.
@@ -134,9 +133,8 @@ class GameState @JvmOverloads constructor(
     }
 
     override fun toString(): String =
-            if (orderedColors.isNotEmpty())
-                "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
-            else "GameState finished at $round/$turn"
+            if (validColors.isEmpty()) "GameState finished at $round/$turn"
+            else "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
     
     override fun clone() = GameState(this)
     
