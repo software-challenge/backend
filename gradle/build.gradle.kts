@@ -26,7 +26,7 @@ val javaTargetVersion = JavaVersion.VERSION_1_8
 val javaVersion = JavaVersion.current()
 println("Current version: $version Game: $game (Java version: $javaVersion)")
 if (javaVersion != javaTargetVersion)
-    System.err.println("Java version $javaTargetVersion is the recommended version - expect issues with generating documentation (consider using '-x doc' if you don't care)")
+    System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider using '-x doc' if you don't care)")
 
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
