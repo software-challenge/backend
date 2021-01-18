@@ -1,5 +1,6 @@
 package sc.server.gaming;
 
+import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
@@ -11,8 +12,8 @@ import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.AbstractGame;
 import sc.framework.plugins.Player;
 import sc.helpers.HelperMethods;
-import sc.helpers.XStreamKt;
 import sc.networking.InvalidScoreDefinitionException;
+import sc.networking.XStreamProvider;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
 import sc.networking.clients.XStreamClient;
@@ -136,6 +137,7 @@ public class GameRoom implements IGameListener {
     }
     String fileName = HelperMethods.generateReplayFilename(this.game.getPluginUUID(), slotDescriptors);
     try {
+      XStream xStream = XStreamProvider.loadPluginXStream();
       File f = new File(fileName);
       f.getParentFile().mkdirs();
       f.createNewFile();
@@ -149,12 +151,12 @@ public class GameRoom implements IGameListener {
         IGameState state = (IGameState) element;
         MementoEvent data = new MementoEvent(state, null);
         RoomPacket roomPacket = new RoomPacket(getId(), data);
-        String xmlReplay = XStreamKt.getXStream().toXML(roomPacket);
+        String xmlReplay = xStream.toXML(roomPacket);
         writer.write(xmlReplay + "\n");
         writer.flush();
       }
 
-      String result = XStreamKt.getXStream().toXML(new RoomPacket(getId(), replayObserver.getResult()));
+      String result = xStream.toXML(new RoomPacket(getId(), replayObserver.getResult()));
       writer.write(result + "\n");
       writer.write("</protocol>");
       writer.flush();

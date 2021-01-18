@@ -2,8 +2,8 @@ package sc.plugin2021.xstream
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import sc.helpers.shouldSerializeTo
 import sc.plugin2021.*
-import sc.plugin2021.helper.shouldSerializeTo
 
 /** Test the [BoardConverter] and [GameState] XML. */
 class ConverterTest: WordSpec({

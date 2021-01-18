@@ -5,7 +5,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import sc.plugin2021.GamePlugin.Companion.loadXStream
+import sc.helpers.testXStream
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.InvalidMoveException
@@ -58,7 +58,8 @@ class GameStateTest: WordSpec({
             state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
         }
         "serialised and deserialised" should {
-            val transformed = loadXStream().fromXML(loadXStream().toXML(GameState(startPiece = state.startPiece))) as GameState
+            val xStream = testXStream
+            val transformed = xStream.fromXML(xStream.toXML(GameState(startPiece = state.startPiece))) as GameState
             "equal the original GameState" {
                 transformed.toString() shouldBe state.toString()
                 transformed shouldBe state
