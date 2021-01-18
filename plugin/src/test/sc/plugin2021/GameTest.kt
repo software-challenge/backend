@@ -7,7 +7,10 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import sc.api.plugins.IGameState
 import sc.api.plugins.exceptions.GameLogicException
+import sc.api.plugins.host.IGameListener
+import sc.framework.plugins.Player
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.shared.PlayerScore
@@ -26,6 +29,22 @@ class GameTest: WordSpec({
     "A Game start with two players" When {
         "played normally" should {
             val (game, state) = startGame()
+            
+            var finalState: Int? = null
+            game.addGameListener(object: IGameListener {
+                override fun onGameOver(results: Map<Player, PlayerScore>) {
+                }
+        
+                override fun onStateChanged(data: IGameState, observersOnly: Boolean) {
+                    data.hashCode() shouldNotBe finalState
+                    // hashing it to avoid cloning, since we get the original mutable object
+                    finalState = data.hashCode()
+                }
+        
+                override fun onPaused(nextPlayer: Player) {
+                }
+            })
+            
             "finish without issues" {
                 while (true) {
                     try {
@@ -42,6 +61,9 @@ class GameTest: WordSpec({
                         break
                     }
                 }
+            }
+            "send the final state to listeners" {
+                finalState shouldBe game.currentState.hashCode()
             }
             "return regular scores"  {
                 val scores = game.playerScores
