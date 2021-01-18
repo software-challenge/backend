@@ -12,6 +12,6 @@ Das Repository besteht aus Server, Client und Spiel-Plugins.
 | server | Spielserver |
 | sdk | Projektübergreifend verwendete Klassen |
 
-Mehr Informationen zu Code-Strukturen und Standards findet ihr in den [GUIDELINES.md].
+Mehr Informationen zu Code-Strukturen und Standards findet ihr in den [GUIDELINES](GUIDELINES.md).
 
-Wenn ihr mithelfen wollt, schaut in die [CONTRIBUTING.md].
+Wenn ihr mithelfen wollt, schaut in [CONTRIBUTING](CONTRIBUTING.md).
