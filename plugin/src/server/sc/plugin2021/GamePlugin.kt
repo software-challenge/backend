@@ -10,14 +10,12 @@ import sc.protocol.helpers.LobbyProtocol
 import sc.shared.ScoreAggregation
 import sc.shared.ScoreDefinition
 import sc.shared.ScoreFragment
-import java.util.concurrent.atomic.AtomicInteger
 
 @PluginDescriptor(name = "Blokus", uuid = "swc_2021_blokus")
 class GamePlugin: IGamePlugin {
     
     companion object {
         val PLUGIN_UUID = "swc_2021_blokus"
-        val loaded = AtomicInteger(-1)
         
         val SCORE_DEFINITION = ScoreDefinition(arrayOf(
                 ScoreFragment("Gewinner"),
@@ -29,19 +27,18 @@ class GamePlugin: IGamePlugin {
                     Field::class.java, GameState::class.java,
                     Move::class.java, Piece::class.java,
                     Color::class.java, Team::class.java)
-        
+    
+        private var loaded = false
+        /** Registers plugin classes in global XStream instance if not already done. */
         fun registerXStream() {
-            if (loaded.compareAndSet(-1, 0)) {
+            if (!loaded) {
+                loaded = true
                 LobbyProtocol.registerAdditionalMessages(xStream, classesToRegister)
                 xStream.registerConverter(BoardConverter())
-                loaded.lazySet(1)
-            } else {
-                while(loaded.get() < 1) {
-                    Thread.yield()
-                }
             }
         }
-    
+        
+        /** @return initialized XStream instance. */
         @JvmStatic
         fun loadXStream(): XStream {
             registerXStream()
@@ -51,9 +48,7 @@ class GamePlugin: IGamePlugin {
     
     override fun id() = PLUGIN_UUID
     
-    override fun createGame(): IGameInstance {
-        return Game()
-    }
+    override fun createGame(): IGameInstance = Game()
     
     override fun initialize() {
         registerXStream()
