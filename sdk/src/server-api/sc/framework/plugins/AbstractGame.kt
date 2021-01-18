@@ -130,17 +130,16 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
      * - sends out a state update and requests a new move
      */
     protected fun next(nextPlayer: P?) {
+        // if paused, notify observers only (so they can update the GUI appropriately)
+        notifyOnNewState(currentState, isPaused)
+        
         if (checkWinCondition() != null) {
             logger.debug("game over")
             notifyOnGameOver(generateScoreMap())
         } else {
             logger.debug("next player: $nextPlayer")
     
-            // TODO send last state by moving this out
             activePlayer = nextPlayer
-            // if paused, notify observers only (so they can update the GUI appropriately)
-            notifyOnNewState(currentState, isPaused)
-
             if (!isPaused) {
                 notifyActivePlayer()
             }
