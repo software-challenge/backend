@@ -1,11 +1,9 @@
 package sc.shared
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.data.row
-import io.kotest.matchers.shouldBe
 import io.kotest.data.forAll
+import io.kotest.data.row
 import sc.helpers.shouldSerializeTo
-import sc.helpers.xStream
 
 class SlotDescriptorTest : StringSpec({
     "convert XML" {

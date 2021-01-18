@@ -20,13 +20,13 @@ object LobbyProtocol {
     }
 
     @JvmStatic
-    fun registerAdditionalMessages(xstream: XStream, protocolClasses: Collection<Class<*>>?): XStream {
+    fun registerAdditionalMessages(xStream: XStream, protocolClasses: Collection<Class<*>>?): XStream {
         if(protocolClasses != null) {
             for(clazz in protocolClasses) {
-                xstream.processAnnotations(clazz)
+                xStream.processAnnotations(clazz)
             }
         }
-        return xstream
+        return xStream
     }
 
 }

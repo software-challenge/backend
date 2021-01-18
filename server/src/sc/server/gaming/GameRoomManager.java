@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.responses.RoomWasJoinedEvent;
 import sc.protocol.responses.GamePreparedResponse;
+import sc.protocol.responses.RoomWasJoinedEvent;
 import sc.server.Configuration;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -20,7 +20,7 @@ import java.util.*;
 
 /**
  * The GameManager is responsible to keep all games alive and kill them once
- * they are done. Additionally the GameManger has to detect and kill games,
+ * they are done. Additionally the GameManager has to detect and kill games,
  * which seem to be dead-locked or have caused a timeout.
  */
 public class GameRoomManager {

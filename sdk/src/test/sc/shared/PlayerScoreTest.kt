@@ -1,10 +1,9 @@
 package sc.shared
 
+import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.core.spec.style.StringSpec
 import sc.helpers.shouldSerializeTo
-import sc.helpers.xStream
 
 class PlayerScoreTest: StringSpec({
     "check equality" {
