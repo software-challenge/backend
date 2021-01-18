@@ -1,12 +1,19 @@
 package sc.helpers
 
 import com.thoughtworks.xstream.XStream
+import io.kotest.core.listeners.ProjectListener
+import io.kotest.core.spec.AutoScan
 import io.kotest.matchers.shouldBe
 import sc.networking.XStreamProvider
 
-val testXStream by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-    XStreamProvider.loadPluginXStream()
+@AutoScan
+object XStreamProjectListener: ProjectListener {
+    override suspend fun beforeProject() {
+        testXStream = XStreamProvider.loadPluginXStream()
+    }
 }
+
+lateinit var testXStream: XStream
 
 infix fun <T : Any> T.shouldSerializeTo(serialized: String)
     = checkSerialization(testXStream, this, serialized)
