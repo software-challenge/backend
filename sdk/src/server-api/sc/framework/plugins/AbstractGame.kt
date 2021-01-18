@@ -27,16 +27,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     
     private var moveRequestTimeout: ActionTimeout? = null
     
-    var paused = false
-        private set
-    
-    val isPaused: Boolean
-        get() = paused
-    
-    /** Pause or unpause game. */
-    fun setPauseMode(pause: Boolean) {
-        paused = pause
-    }
+    var isPaused = false
     
     fun afterPause() {
         logger.info("Sending MoveRequest to player $activePlayer")
