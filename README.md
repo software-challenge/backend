@@ -12,6 +12,8 @@ Das Repository besteht aus Server, Client und Spiel-Plugins.
 | server | Spielserver |
 | sdk | Projektübergreifend verwendete Klassen |
 
+Mehr Informationen zu Code-Strukturen und Standards findet ihr in den [GUIDELINES](GUIDELINES.md).
+
 ## Kollaboration
 
 Unsere Commit-Messages folgen dem Muster `type(scope): summary` (siehe [Karma Runner Konvention](http://karma-runner.github.io/latest/dev/git-commit-msg.html)), wobei die gängigen Scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden. 
@@ -55,14 +57,6 @@ Alternativ kann man in das Server-Verzeichnis wechseln und dort `./gradlew run` 
 Bei der Ausführung eines Unterprojekts via `run` können per `-Dargs="Argument1 Argument2"` zusätzlich Argumente mitgegeben werden. Zum Beispiel kann der TestClient mit folgendem Befehl direkt aus dem Sourcecode getestet werden:
 
     ./gradlew :test-client:run -Dargs="--player1 ../../player/build/libs/defaultplayer.jar --player2 ../../player/build/libs/defaultplayer.jar --tests 3"
-
-### Tests
-
-Unsere Unittests nutzen das [Kotest-Framework](https://kotest.io) mit [JUnit](https://junit.org) im Hintergrund.
-
-Dabei setzen wir auf die [WordSpec](https://kotest.io/styles/#word-spec), da man damit semantisch übersichtlich sowohl einfache Tests als auch Behavior Driven Development umsetzen kann.
-Bisherige Tests nutzen die StringSpec, welche jedoch schnell unübersichtlich wird da sie keine Verschachtelung erlaubt, und in manchen Fällen auch noch direkt JUnit.
-Diese sollten bei größeren Änderungen direkt zum neuen Stil migriert werden.
 
 ### Mitarbeiten
 
