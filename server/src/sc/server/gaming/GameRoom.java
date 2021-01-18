@@ -501,7 +501,7 @@ public class GameRoom implements IGameListener {
     this.pauseRequested = pause;
     AbstractGame<Player> pausableGame = (AbstractGame<Player>) this.game;
     // pause game after current turn has finished
-    pausableGame.setPauseMode(pause);
+    pausableGame.setPaused(pause);
 
     // continue execution
     if (!isPauseRequested()) {
@@ -579,7 +579,7 @@ public class GameRoom implements IGameListener {
     this.status = status;
   }
 
-  /** Remove a player by calling {@link IGameInstance#onPlayerLeft(Player) onPlayerLeft(player)}. */
+  /** Remove a player by calling {@link IGameInstance#onPlayerLeft(Player, ScoreCause) onPlayerLeft}. */
   public void removePlayer(Player player, XStreamClient.DisconnectCause cause) {
     logger.info("Removing {} from {}", player, this);
     this.game.onPlayerLeft(player, cause == XStreamClient.DisconnectCause.DISCONNECTED ? ScoreCause.REGULAR : null);

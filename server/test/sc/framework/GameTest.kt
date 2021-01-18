@@ -31,11 +31,8 @@ class GameTest: WordSpec({
             game.start()
             game.activePlayer shouldNotBe null
         }
-        "pause" {
-            game.setPauseMode(true)
-            game.isPaused shouldBe true
-        }
         "stay paused after move" {
+            game.isPaused = true
             game.onRoundBasedAction(game.activePlayer!!, TestMove(1))
             game.isPaused shouldBe true
         }
