@@ -64,23 +64,15 @@ Dabei setzen wir auf die [WordSpec](https://kotest.io/styles/#word-spec), da man
 Bisherige Tests nutzen die StringSpec, welche jedoch schnell unübersichtlich wird da sie keine Verschachtelung erlaubt, und in manchen Fällen auch noch direkt JUnit.
 Diese sollten bei größeren Änderungen direkt zum neuen Stil migriert werden.
 
-### Arbeiten mit IntelliJ IDEA
+### Mitarbeiten
 
+Projekt klonen, inklusive der submodule:
+```sh
+git clone git@github.com:CAU-Kiel-Tech-Inf/backend.git --recurse-submodules --shallow-submodules
+```
+
+#### Intellij IDEA
 Zuerst sollte sichergestellt werden, dass die neuste Version von IntelliJ IDEA verwendet wird, da es ansonsten Probleme mit Kotlin geben kann.
-
 In IntelliJ kann man das Projekt bequem von Gradle importieren, wodurch alle Module und Bibliotheken automatisch geladen werden.
-Dazu sind folgende Schritte notwendig:
-
-- Projekt klonen:
-  ```sh
-  git clone git@github.com:CAU-Kiel-Tech-Inf/backend.git --recurse-submodules --shallow-submodules
-  ```
-- In IntelliJ: "File" > "New" > "Project from existing sources" > Projektverzeichnis auswählen
-  - "Import project from external model" > "Gradle" auswählen
-  - Im folgenden Fenster:
-    - "Use auto-import" ankreuzen
-    - bei "Gradle JVM" JDK 8 auswählen, wenn sie nicht schon ausgewählt ist
-    - "Finish" drücken
-- Warten, bis das Gradle-Build fertig ist
 
 Nun können Gradle-Tasks auch direkt in IntelliJ vom Gradle-Tool-Fenster ausgeführt werden; dieses befindet sich normalerweise in der rechten Andockleiste.
