@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import sc.framework.plugins.IPerspectiveAware
 import sc.framework.plugins.IPerspectiveProvider
-import sc.helpers.xStream
+import sc.networking.XStreamProvider
 
 class ConverterTest {
     class HasSecrets(private val perspective: Any?) : IPerspectiveProvider, IPerspectiveAware {
@@ -23,6 +23,8 @@ class ConverterTest {
             val goodFriend = Any()
         }
     }
+    
+    private val xStream = XStreamProvider.getPureXStream()
 
     @Test
     fun shouldSerializeSensitiveDataForAuthorizedPeople() {

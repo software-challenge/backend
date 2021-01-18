@@ -8,7 +8,7 @@ import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import sc.plugin2021.helper.shouldSerializeTo
+import sc.helpers.shouldSerializeTo
 import sc.plugin2021.util.align
 import sc.plugin2021.util.flip
 import sc.plugin2021.util.rotate
