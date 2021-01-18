@@ -155,7 +155,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     /** Notifies the active player that it's their time to make a move. */
     protected fun notifyActivePlayer() {
         activePlayer?.let { requestMove(it) } ?:
-            throw IllegalStateException("Trying to notify active player, which is null")
+            throw IllegalStateException("Trying to notify active player but it is null")
     }
 
     /** Sends a MoveRequest directly to the given player.
@@ -223,15 +223,16 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     }
 
     /**
-     * Catch block, after an invalid move was performed
+     * For use in a catch block when an invalid move was performed.
+     * Logs and notifies listeners about the violation.
      *
      * @param e      catched Exception, rethrown at the end
-     * @param author player, that caused the exception
+     * @param author player who caused the exception
      *
      * @throws InvalidMoveException Always thrown
      */
     @Throws(InvalidMoveException::class)
-    fun catchInvalidMove(e: InvalidMoveException, author: Player) {
+    fun handleInvalidMove(e: InvalidMoveException, author: Player): Nothing {
         val error = "Ungueltiger Zug von '${author.displayName}'.\n$e"
         logger.error(error)
         author.violationReason = e.message

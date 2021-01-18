@@ -156,7 +156,7 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
             next(if (checkGameOver()) null else gameState.currentPlayer)
             logger.debug("Current Board:\n${gameState.board}")
         } catch(e: InvalidMoveException) {
-            super.catchInvalidMove(e, fromPlayer)
+            handleInvalidMove(e, fromPlayer)
         }
     }
     
