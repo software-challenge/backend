@@ -1,6 +1,6 @@
 # Overview
 
-This document captures project development standards as a point of reference.
+This document captures development standards and architecture decisions of this project as a point of reference.
 
 ## Testing
 
@@ -30,7 +30,15 @@ Small classes (such as Field) should be immutable, so they can be shared instead
 It might be interesting to consider replacing cloning with implicit sharing/copy-on-write semantics to make search algorithms more efficient:
 https://doc.qt.io/qt-5/implicit-sharing.html#implicit-sharing-in-detail
 
-## Classes
+## ServiceLoader
+
+We recently introduced the use of the [Java built-in DI facility](https://itnext.io/serviceloader-the-built-in-di-framework-youve-probably-never-heard-of-1fa68a911f9b) [ServiceLoader](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html)
+to make some year-specific implementations from the plugin accessible in the sdk and server.
+
+Currently there are two interfaces, [IGamePlugin](sdk/src/server-api/sc/api/plugins/IGamePlugin.java) and [XStreamProvider]( sdk/src/server-api/sc/networking/XStreamProvider.kt), which are implemented in the plugin and then loaded through a ServiceLoader.
+The information which implementations to use resides in [resources/META-INF/services](plugin/src/resources/META-INF/services).
+
+## Protocol Message Classes
 
 ### [sdk/server-api/sc.protocol](sdk/src/server-api/sc/protocol)
 
