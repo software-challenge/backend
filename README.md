@@ -4,24 +4,26 @@ Dies ist das offizielle Repository der [Software-Challenge](https://www.software
 Ziel hierbei ist, für ein jährlich wechselndes Spiel eine künstliche Intelligenz zu entwickeln, die den Gegenspieler besiegt.
 Das Repository besteht aus Server, Client und Spiel-Plugins.
 
-## Struktur
-
 | Ordner | Beschreibung |
 | ------ | ------------ |
 | helpers | Zusätzliche Tools (aktuell nur der TestClient) |
 | player | SimpleClient dieses Jahres |
 | plugin | Plugin dieses Jahres |
 | server | Spielserver |
-| socha-sdk | Projektübergreifend verwendete Klassen |
+| sdk | Projektübergreifend verwendete Klassen |
 
-## Collaboration
+## Kollaboration
 
-Unsere Commit-Messages folgen dem Muster `type(scope): summary` (siehe [Karma Runner Konvention](http://karma-runner.github.io/latest/dev/git-commit-msg.html)), wobei die verfügbaren Scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden. Bitte führe nach dem Klonen des Repository's einmal Folgendes im Terminal aus, damit die entsprechenden Git-Hooks aktiv werden:  
+Unsere Commit-Messages folgen dem Muster `type(scope): summary` (siehe [Karma Runner Konvention](http://karma-runner.github.io/latest/dev/git-commit-msg.html)), wobei die gängigen Scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden. 
+Nach dem Klonen mit git sollte dazu der hook aktiviert werden:
 
     git config core.hooksPath .dev/githooks
 
-Um bei den Branches die Übersicht zu behalten, sollten diese ebenfalls nach der Konvention benannt werden - z.B. könnte ein Branch mit einem Release-Fix für Gradle `fix/gradle-release` heißen und ein Branch, der ein neues Login-Feature zum Server hinzufügt, `feat/server-login`.  
-Branches werden normalerweise beim Mergen zu einem einzelnen Commit zusammengefügt (Squash-Merge), es sei denn, die einzelnen Commits des Branches haben jeweils eine alleinstehende Aussagekraft.
+Um bei den Branches die Übersicht zu behalten, sollten diese ebenfalls nach der Konvention benannt werden,
+z. B. könnte ein Branch mit einem Release-Fix für Gradle `chore/gradle/release-fix` heißen und ein Branch, der ein neues Login-Feature zum Server hinzufügt, `feat/server/login`.
+
+Wenn die einzelnen Commits eines Pull Requests eigenständig funktionierten, sollte ein rebase-merge durchgeführt werden,
+ansonsten (gerade bei experimentier-Branches) ein squash-merge, wobei der Titel des Pull Requests der Commit Message entsprechen sollte.
 
 Detaillierte Informationen zu unserem Kollaborations-Stil findet ihr in der [Kull Konvention](https://xerus2000.github.io/kull).
 
