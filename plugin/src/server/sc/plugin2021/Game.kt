@@ -1,7 +1,6 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
-import sc.api.plugins.IGameState
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
@@ -16,8 +15,8 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     companion object {
         val logger = LoggerFactory.getLogger(Game::class.java)
     }
-
-    val gameState = GameState()
+    
+    override val currentState = GameState()
 
     override fun start() {
         players.forEach {it.notifyListeners(WelcomeMessage(it.color)) }
@@ -30,11 +29,11 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     override fun onPlayerJoined(): Player {
         if(availableTeams.isEmpty())
             throw IllegalStateException("Too many players joined the game!")
-        val player = gameState.getPlayer(availableTeams.removeAt(0))
+        val player = currentState.getPlayer(availableTeams.removeAt(0))
         
         players.add(player)
         playerMap[player.color as Team] = player
-        gameState.addPlayer(player)
+        currentState.addPlayer(player)
         return player
     }
     
@@ -48,8 +47,8 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
             if (players.last().hasViolated())
                 return players.subList(0, 1)
 
-            val first = gameState.getPointsForPlayer(players.first().color)
-            val second = gameState.getPointsForPlayer(players.last().color)
+            val first = currentState.getPointsForPlayer(players.first().color)
+            val second = currentState.getPointsForPlayer(players.last().color)
 
             if (first > second)
                 return players.subList(0, 1)
@@ -61,9 +60,6 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     override val playerScores: MutableList<PlayerScore>
             get() = players.map { getScoreFor(it) }.toMutableList()
 
-    override val players: MutableList<Player>
-        get() = super.players
-    
     /**
      * Checks whether and why the game is over.
      *
@@ -73,7 +69,7 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
         if (!checkGameOver()) return null
 
         val scores: Map<Team, Int> = Team.values().map {
-            it to gameState.getPointsForPlayer(it)
+            it to currentState.getPointsForPlayer(it)
         }.toMap()
 
         return when {
@@ -98,13 +94,13 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     override fun getScoreFor(player: Player): PlayerScore {
         val team = player.color as Team
         logger.debug("Get score for player $team (violated: ${if(player.hasViolated()) "yes" else "no"})")
-        val opponent = gameState.getOpponent(player)
+        val opponent = currentState.getOpponent(player)
         val winCondition = checkWinCondition()
         
         var cause: ScoreCause = ScoreCause.REGULAR
         var reason = ""
         var score: Int = Constants.LOSE_SCORE
-        val points = gameState.getPointsForPlayer(team)
+        val points = currentState.getPointsForPlayer(team)
         
         // Is the game already finished?
         if (winCondition?.reason == WinReason.EQUAL_SCORE)
@@ -150,28 +146,25 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
             if (data !is Move)
                 throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
             
-            logger.debug("Current State: $gameState")
+            logger.debug("Current State: $currentState")
             logger.debug("Performing Move $data")
-            GameRuleLogic.performMove(gameState, data)
-            next(if (checkGameOver()) null else gameState.currentPlayer)
-            logger.debug("Current Board:\n${gameState.board}")
+            GameRuleLogic.performMove(currentState, data)
+            next(if (checkGameOver()) null else currentState.currentPlayer)
+            logger.debug("Current Board:\n${currentState.board}")
         } catch(e: InvalidMoveException) {
             handleInvalidMove(e, fromPlayer)
         }
     }
     
-    override val currentState: IGameState
-        get() = gameState
-
     private val isGameOver: Boolean
-        get() = !gameState.hasValidColors() || gameState.round > Constants.ROUND_LIMIT
+        get() = !currentState.hasValidColors() || currentState.round > Constants.ROUND_LIMIT
 
     fun checkGameOver(): Boolean {
-        logger.debug("Round: ${gameState.round} > ${Constants.ROUND_LIMIT}")
-        if (gameState.round > Constants.ROUND_LIMIT) {
-            gameState.clearValidColors()
+        logger.debug("Round: ${currentState.round} > ${Constants.ROUND_LIMIT}")
+        if (currentState.round > Constants.ROUND_LIMIT) {
+            currentState.clearValidColors()
         } else {
-            GameRuleLogic.removeInvalidColors(gameState)
+            GameRuleLogic.removeInvalidColors(currentState)
         }
         return isGameOver
     }
@@ -181,6 +174,6 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
                 isGameOver -> "OVER, "
                 isPaused -> "PAUSED, "
                 else -> ""
-            }}players=$players, gameState=$gameState)"
+            }}players=$players, gameState=$currentState)"
     
 }

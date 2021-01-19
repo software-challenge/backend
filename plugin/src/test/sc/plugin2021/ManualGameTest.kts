@@ -17,9 +17,9 @@ fun loop() {
         var current = game.onPlayerJoined()
         game.onPlayerJoined()
         game.start()
-        println("First piece is: ${game.gameState.startPiece}")
+        println("First piece is: ${game.currentState.startPiece}")
         while (true) {
-            println(game.gameState)
+            println(game.currentState)
             println("Enter a move (see helper.MoveParser) or command (`:reset` or `:stop`)")
             print("> ")
             
@@ -41,8 +41,8 @@ fun loop() {
             println("$input -> $move")
             
             try {
-                game.onAction(game.gameState.getPlayer(move.color.team), move)
-                current = game.gameState.getOpponent(current)
+                game.onAction(game.currentState.getPlayer(move.color.team), move)
+                current = game.currentState.getOpponent(current)
             } catch (e: Exception) {
                 if (move is SetMove) {
                     println("Piece was:")

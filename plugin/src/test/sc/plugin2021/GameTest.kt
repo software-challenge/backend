@@ -19,7 +19,7 @@ class GameTest: WordSpec({
 
     "A Game" When {
         val game = Game()
-        val state = game.gameState
+        val state = game.currentState
         "started with two players" should {
             val one = game.onPlayerJoined()
             one.color shouldBe Team.ONE
