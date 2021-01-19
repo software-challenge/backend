@@ -42,7 +42,7 @@ import static sc.Util.factorial;
 public class TestClient extends XStreamClient {
   private static final Logger logger = (Logger) LoggerFactory.getLogger(TestClient.class);
 
-  private static final String gameType = "swc_2020_hive";
+  private static final String gameType = "swc_2021_blokus";
   private static final ClientPlayer[] players = {new ClientPlayer(), new ClientPlayer()};
   private static final File logDir = new File("logs").getAbsoluteFile();
 
