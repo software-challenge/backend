@@ -107,7 +107,6 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                         val room = this.findRoom(packet.roomId)
                         room.cancel()
                         // TODO check whether all clients receive game over message
-                        this.games.remove(room)
                     }
                     is PlayerScoreRequest -> {
                         val displayName = packet.displayName
