@@ -5,6 +5,7 @@ import ch.qos.logback.classic.Logger;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGamePlugin;
 import sc.framework.plugins.Player;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +44,7 @@ import static sc.Util.factorial;
 public class TestClient extends XStreamClient {
   private static final Logger logger = (Logger) LoggerFactory.getLogger(TestClient.class);
 
-  private static final String gameType = "swc_2021_blokus";
+  private static final String gameType = ServiceLoader.load(IGamePlugin.class).iterator().next().id();
   private static final ClientPlayer[] players = {new ClientPlayer(), new ClientPlayer()};
   private static final File logDir = new File("logs").getAbsoluteFile();
 
