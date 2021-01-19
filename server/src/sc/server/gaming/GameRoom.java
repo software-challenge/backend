@@ -68,7 +68,7 @@ public class GameRoom implements IGameListener {
         LobbyClient lobbyClient = new LobbyClient("127.0.0.1", Configuration.getPort());
         lobbyClient.start();
         lobbyClient.authenticate(Configuration.getAdministrativePassword());
-        replayObserver = lobbyClient.observe(this.getId());
+        replayObserver = lobbyClient.observe(getId());
       } catch (IOException e) {
         logger.warn("Failed to start replay recording");
         e.printStackTrace();
@@ -80,14 +80,14 @@ public class GameRoom implements IGameListener {
   @Override
   public synchronized void onGameOver(Map<Player, PlayerScore> results) throws InvalidScoreDefinitionException {
     if (isOver()) {
-      logger.warn("Game was already over but received another GameOver-Event.");
+      logger.warn("{} received an extra GameOver-Event", game);
       return;
     }
 
     setStatus(GameStatus.OVER);
-    this.result = generateGameResult(results);
-    logger.info("The game {} is over. (regular={})", getId(), this.result.isRegular());
-    broadcast(this.result);
+    result = generateGameResult(results);
+    logger.info("{} is over (regular={})", game, result.isRegular());
+    broadcast(result);
 
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
       saveReplay();
@@ -148,13 +148,13 @@ public class GameRoom implements IGameListener {
           continue;
         IGameState state = (IGameState) element;
         MementoEvent data = new MementoEvent(state, null);
-        RoomPacket roomPacket = new RoomPacket(this.getId(), data);
+        RoomPacket roomPacket = new RoomPacket(getId(), data);
         String xmlReplay = XStreamKt.getXStream().toXML(roomPacket);
         writer.write(xmlReplay + "\n");
         writer.flush();
       }
 
-      String result = XStreamKt.getXStream().toXML(new RoomPacket(this.getId(), replayObserver.getResult()));
+      String result = XStreamKt.getXStream().toXML(new RoomPacket(getId(), replayObserver.getResult()));
       writer.write(result + "\n");
       writer.write("</protocol>");
       writer.flush();
@@ -318,7 +318,7 @@ public class GameRoom implements IGameListener {
 
     if (slot.isEmpty()) // needed for forced step, if client crashes before joining room
     {
-      logger.warn("PlayerSlot is empty! Was this  Caused by a forced STEP?");
+      logger.warn("PlayerSlot {} is empty! maybe due to a forced step?", slot);
       slot.setClient(new DummyClient());
     }
 
@@ -345,13 +345,13 @@ public class GameRoom implements IGameListener {
   private void startIfReady() throws RescuableClientException {
     logger.debug("startIfReady called");
     if (isOver()) {
-      logger.warn("Game is already over.");
+      logger.warn("Game already over: {}", game);
       return;
     }
 
     if (!isReady()) {
       // normally called, when only the first player has connected
-      logger.info("Game isn't ready yet.");
+      logger.info("Game not ready yet: {}", game);
       return;
     }
 
@@ -371,7 +371,7 @@ public class GameRoom implements IGameListener {
     setStatus(GameStatus.ACTIVE);
     this.game.start();
 
-    logger.info("Started the game.");
+    logger.info("Started {}", game);
   }
 
   /** Get the number of players allowed in the game. */
@@ -442,8 +442,7 @@ public class GameRoom implements IGameListener {
         Player resolvedPlayer = role.getPlayer();
 
         if (resolvedPlayer == null) {
-          throw new RescuableClientException(
-                  "Game isn't ready. Please wait before sending messages.");
+          throw new RescuableClientException("Game isn't ready. Please wait before sending messages.");
         }
 
         return resolvedPlayer;
@@ -488,16 +487,16 @@ public class GameRoom implements IGameListener {
    */
   public synchronized void pause(boolean pause) {
     if (isOver()) {
-      logger.warn("Game is already over and can't be paused.");
+      logger.warn("Can't paused already finished {}", game);
       return;
     }
 
     if (pause == isPauseRequested()) {
-      logger.warn("PAUSE is already {}, dropping request.", pause);
+      logger.warn("PAUSE is already {}, dropping request", pause);
       return;
     }
 
-    logger.info("Toggling PAUSE from {} to {}.", isPauseRequested(), pause);
+    logger.info("Toggling PAUSE from {} to {}", isPauseRequested(), pause);
     this.pauseRequested = pause;
     AbstractGame<Player> pausableGame = (AbstractGame<Player>) this.game;
     // pause game after current turn has finished
@@ -512,26 +511,25 @@ public class GameRoom implements IGameListener {
   /**
    * Execute one turn on a paused Game.
    *
-   * @param forced If true, game will be started even if there are not enough
-   *               players to complete the game. This should result in a
-   *               GameOver.
+   * @param forced If true, the game will be forcibly started if starting
+   *               conditions are not met. This should result in a GameOver.
    */
   public synchronized void step(boolean forced) throws RescuableClientException {
     if (this.status == GameStatus.CREATED) {
       if (forced) {
-        logger.warn("Forcing a game to start.");
+        logger.warn("Forcing game start for {}", game);
         start();
       } else {
-        logger.warn("Game isn't active yet, step was not forced.");
+        logger.info("Game isn't active yet, step was not forced.");
       }
 
       return;
     }
     if (isPauseRequested()) {
-      logger.info("Stepping.");
-      ((AbstractGame<Player>) this.game).afterPause();
+      logger.info("Stepping {}", game);
+      ((AbstractGame<Player>) game).afterPause();
     } else {
-      logger.warn("Can't step if the game is not paused.");
+      logger.warn("Can't step unpaused {}", game);
     }
   }
 

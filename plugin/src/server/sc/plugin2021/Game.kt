@@ -175,4 +175,12 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
         }
         return isGameOver
     }
+    
+    override fun toString(): String =
+            "Game(${when {
+                isGameOver -> "OVER, "
+                isPaused -> "PAUSED, "
+                else -> ""
+            }}players=$players, gameState=$gameState)"
+    
 }

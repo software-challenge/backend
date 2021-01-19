@@ -4,10 +4,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
+import sc.api.plugins.ITeam
 import sc.api.plugins.host.IPlayerListener
 import sc.framework.plugins.protocol.MoveRequest
 import sc.protocol.responses.ProtocolMessage
-import sc.api.plugins.ITeam
 import java.util.*
 
 private val logger = LoggerFactory.getLogger(Player::class.java)
@@ -74,7 +74,7 @@ open class Player @JvmOverloads constructor(
         logger.debug("Move requested from $this")
     }
 
-    override fun toString(): String = "Player %s(%s)".format(color, displayName)
+    override fun toString(): String = "%s(%s)".format(color, displayName)
     
     public override fun clone() = Player(color, displayName)
     
