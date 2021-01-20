@@ -50,7 +50,7 @@ tasks {
             from("src")
             into("src")
         }, copySpec {
-            from(configurations.default, arrayOf("sdk", "plugin").map { project(":$it").tasks.getByName("sourcesJar").outputs.files })
+            from(configurations.default, arrayOf("sdk", "plugin").map { project(":$it").getTasksByName("sourcesJar", false).single().outputs.files })
             into("lib")
         })
         if(!project.hasProperty("nodoc")) {

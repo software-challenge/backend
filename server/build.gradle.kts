@@ -50,14 +50,14 @@ tasks {
     
     val deploy by creating(Zip::class) {
         group = "distribution"
-        dependsOn(project(":test-client").tasks.jar, ":player:shadowJar", makeRunnable)
+        dependsOn(":test-client:jar", ":player:shadowJar", makeRunnable)
         destinationDirectory.set(deployDir)
         archiveBaseName.set("software-challenge-server")
         from(runnableDir)
-        if(project.property("enableTestClient") as Boolean)
-            from(project(":test-client").buildDir.resolve("libs"))
         doFirst {
-            from(project(":player").tasks["shadowJar"].outputs)
+            if(project.property("enableTestClient") as Boolean)
+                from((project(":test-client").getTasksByName("jar", false).single() as Jar).destinationDirectory)
+            from(project(":player").getTasksByName("shadowJar", false).single().outputs)
             exec {
                 commandLine("git", "rev-parse", "HEAD")
                 standardOutput = runnableDir.resolve("version").outputStream()

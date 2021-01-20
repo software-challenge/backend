@@ -126,12 +126,12 @@ tasks {
             val server =
                 ProcessBuilder(
                     "java",
-                    "-Dlogback.configurationFile=${project("server").projectDir.resolve("configuration/logback-trace.xml")}",
-                    "-jar", project("server").tasks.jar.get().archiveFile.get().asFile.absolutePath
+                    "-Dlogback.configurationFile=${project(":server").projectDir.resolve("configuration/logback-trace.xml")}",
+                    "-jar", (project(":server").getTasksByName("jar", false).single() as Jar).archiveFile.get().asFile.absolutePath
                 )
                     .redirectOutput(testLogDir.resolve("server.log"))
                     .redirectError(testLogDir.resolve("server-err.log"))
-                    .directory(project("server").buildDir.resolve("runnable"))
+                    .directory(project(":server").buildDir.resolve("runnable"))
                     .start()
             Thread.sleep(400)
             val startClient: (Int) -> Process = {
