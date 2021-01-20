@@ -1,7 +1,7 @@
+import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import sc.gradle.ScriptsTask
-import java.io.InputStream
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
@@ -35,23 +35,6 @@ val documentedProjects = listOf("sdk", "plugin")
 
 val enableTestClient by extra { versionObject.minor > 0 }
 val enableIntegrationTesting = !project.hasProperty("nointegration") && (versionObject.minor > 0 || enableTestClient)
-
-subprojects {
-    apply(plugin = "java-library")
-    apply(plugin = "kotlin")
-    apply(plugin = "com.github.ben-manes.versions")
-    apply(plugin = "se.patrikerdes.use-latest-versions")
-    
-    dependencies {
-        testImplementation(project(":sdk", "testConfig"))
-    }
-    
-    tasks {
-        test {
-            useJUnitPlatform()
-        }
-    }
-}
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 tasks {
@@ -212,7 +195,7 @@ tasks {
             testLogDir.mkdirs()
             val unzipped = tmpDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
-            Runtime.getRuntime().exec("unzip software-challenge-server.zip -d $unzipped", null, deployDir).waitFor()
+            unzipTo(unzipped, deployDir.resolve("software-challenge-server.zip"))
             
             println("Testing TestClient...")
             val testClient =
@@ -251,14 +234,31 @@ tasks {
 
 // == Cross-project configuration ==
 
-allprojects {
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = javaTargetVersion.toString()
-            freeCompilerArgs = listOf("-Xjvm-default=all")
-        }
+subprojects {
+    apply(plugin = "java-library")
+    apply(plugin = "kotlin")
+    apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "se.patrikerdes.use-latest-versions")
+    
+    dependencies {
+        testImplementation(project(":sdk", "testConfig"))
     }
     
+    tasks {
+        test {
+            useJUnitPlatform()
+        }
+        
+        withType<KotlinCompile> {
+            kotlinOptions {
+                jvmTarget = javaTargetVersion.toString()
+                freeCompilerArgs = listOf("-Xjvm-default=all")
+            }
+        }
+    }
+}
+
+allprojects {
     repositories {
         jcenter()
         maven("http://dist.wso2.org/maven2")
@@ -311,14 +311,6 @@ allprojects {
 }
 
 // == Utilities ==
-
-fun InputStream.dump(name: String? = null) {
-    if (name != null)
-        println("\n$name:")
-    while (available() > 0)
-        print(read().toChar())
-    close()
-}
 
 fun Task.dependOnSubprojects() {
     if (this.project == rootProject)
