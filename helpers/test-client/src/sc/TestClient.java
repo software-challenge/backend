@@ -9,7 +9,6 @@ import sc.framework.plugins.Player;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
-import sc.plugin2021.util.Constants;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;
@@ -263,7 +262,8 @@ public class TestClient extends XStreamClient {
                 logger.error("{} crashed, look into {}", player.name, logDir);
                 exit(2);
               }
-            if (slept > Constants.GAME_TIMEOUT) {
+            // TODO move timeout to GamePlugin and obtain it
+            if (slept > 200.000) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
             }
@@ -363,7 +363,8 @@ public class TestClient extends XStreamClient {
     players:
     for (int i = 0; i < 2; i++) {
       double binominalCD = 0.0;
-      for (int k = 0; k <= players[i].score.getScoreValues().get(0).getValue().intValue() / Constants.WIN_SCORE; k++) {
+      // TODO use global WIN_SCORE constant instead of hardcoding 2
+      for (int k = 0; k <= players[i].score.getScoreValues().get(0).getValue().intValue() / 2; k++) {
         binominalCD += binominalPD.applyAsDouble(k);
         if (binominalCD > significance)
           continue players;
