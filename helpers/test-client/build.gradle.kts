@@ -10,7 +10,7 @@ sourceSets.main {
 }
 
 application {
-    mainClassName = "sc.TestClient"
+    mainClass.set("sc.TestClient")
 }
 
 dependencies {

@@ -4,15 +4,15 @@ plugins {
     application
 }
 
+application {
+    mainClass.set("sc.server.Application")
+    applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8",
+            "-XX:+PrintGC", "-XX:+PrintGCDetails", "-XX:+PrintGCDateStamps", "-Xloggc:gc.log")
+}
+
 sourceSets {
     main.get().java.srcDir("src")
     test.get().java.srcDir("test")
-}
-
-application {
-    mainClassName = "sc.server.Application"
-    applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8",
-            "-XX:+PrintGC", "-XX:+PrintGCDetails", "-XX:+PrintGCDateStamps", "-Xloggc:gc.log")
 }
 
 dependencies {
