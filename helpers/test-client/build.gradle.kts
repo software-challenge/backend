@@ -19,10 +19,10 @@ dependencies {
 }
 
 tasks {
-    val createStartScripts by creating(ScriptsTask::class) {
-        destinationDir = file("build/libs")
-        fileName = "start-tests"
-        content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
+    val createStartScripts by creating(CreateStartScripts::class) {
+        outputDir = jar.get().destinationDirectory.asFile.get()
+        applicationName = "start-tests"
+        defaultJvmOpts = listOf("-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback-tests.xml")
     }
 
     jar {

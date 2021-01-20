@@ -1,7 +1,7 @@
-import sc.gradle.ScriptsTask
-
 plugins {
     application
+    // TODO https://github.com/CAU-Kiel-Tech-Inf/backend/issues/265
+    distribution
 }
 
 application {
@@ -27,10 +27,10 @@ val deployDir: File by project
 tasks {
     val runnableDir = buildDir.resolve("runnable")
     
-    val createStartScripts by creating(ScriptsTask::class) {
-        destinationDir = runnableDir
-        fileName = "start"
-        content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar server.jar"
+    startScripts {
+        outputDir = runnableDir
+        applicationName = "start-server"
+        defaultJvmOpts = listOf("-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml")
     }
     
     val copyConfig by creating(Copy::class) {
@@ -43,7 +43,7 @@ tasks {
     
     val makeRunnable by creating(Copy::class) {
         group = "distribution"
-        dependsOn(jar, copyConfig, createStartScripts)
+        dependsOn(jar, copyConfig, startScripts)
         from(configurations.default)
         into(runnableDir.resolve("lib"))
     }
@@ -91,9 +91,10 @@ tasks {
     }
     
     jar {
-        destinationDirectory.set(runnableDir)
+        destinationDirectory.set(runnableDir.resolve("lib"))
         doFirst {
-            manifest.attributes["Class-Path"] = configurations.default.get().joinToString(" ") { "lib/" + it.name }
+            manifest.attributes["Class-Path"] =
+                    configurations.default.get().joinToString(" ") { "lib/" + it.name }
         }
     }
     

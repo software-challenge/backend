@@ -1,14 +1,12 @@
 import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import sc.gradle.ScriptsTask
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     maven
     kotlin("jvm") version "1.4.20"
     id("org.jetbrains.dokka") version "0.10.1"
-    id("scripts-task")
     
     id("com.github.ben-manes.versions") version "0.36.0"
     id("se.patrikerdes.use-latest-versions") version "0.2.15"
@@ -198,11 +196,12 @@ tasks {
             unzipTo(unzipped, deployDir.resolve("software-challenge-server.zip"))
     
             println("Testing TestClient...")
+            val command = mutableListOf("java").apply {
+                addAll((project(":test-client").getTasksByName("createStartScripts", false).single() as CreateStartScripts).defaultJvmOpts!!)
+                addAll(arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055"))
+            }
             val testClient =
-                    ProcessBuilder(
-                            (project(":test-client").getTasksByName("createStartScripts", false).single() as ScriptsTask).content.split(' ') +
-                            arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
-                    )
+                    ProcessBuilder(command)
                             .redirectOutput(testLogDir.resolve("test-client.log"))
                             .redirectError(testLogDir.resolve("test-client-err.log"))
                             .directory(unzipped)
