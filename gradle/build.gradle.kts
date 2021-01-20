@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     maven
-    `java-library`
     kotlin("jvm") version "1.4.20"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
@@ -112,6 +111,7 @@ tasks {
         dependsOn(deploy)
     }
     
+    // TODO create a global constant which can be shared with testclient & co - maybe a resource?
     val maxGameLength = 150L
     
     val clearTestLogs by creating(Delete::class) {
@@ -196,18 +196,20 @@ tasks {
             val unzipped = tmpDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
             unzipTo(unzipped, deployDir.resolve("software-challenge-server.zip"))
-            
+    
             println("Testing TestClient...")
             val testClient =
-                ProcessBuilder(
-                    project("test-client").tasks.getByName<ScriptsTask>("createStartScripts").content.split(" ")
-                    + listOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
-                )
-                    .redirectOutput(testLogDir.resolve("test-client.log"))
-                    .redirectError(testLogDir.resolve("test-client-err.log"))
-                    .directory(unzipped).start()
+                    ProcessBuilder(
+                            (project(":test-client").getTasksByName("createStartScripts", false).single() as ScriptsTask).content.split(' ') +
+                            arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
+                    )
+                            .redirectOutput(testLogDir.resolve("test-client.log"))
+                            .redirectError(testLogDir.resolve("test-client-err.log"))
+                            .directory(unzipped)
+                            .start()
             if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
+                // TODO check whether TestClient actually played games
                 if (value == 0)
                     println("TestClient successfully tested!")
                 else
