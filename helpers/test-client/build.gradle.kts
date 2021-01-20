@@ -14,7 +14,7 @@ application {
 }
 
 dependencies {
-    implementation(project(":plugin"))
+    // TODO this dependency is only for accessing the Configuration, remove it
     implementation(project(":server"))
 }
 

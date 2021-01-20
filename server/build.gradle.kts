@@ -16,7 +16,7 @@ application {
 }
 
 dependencies {
-    implementation(project(":sdk"))
+    api(project(":sdk"))
     runtimeOnly(project(":plugin"))
     
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine") // legacy java tests
