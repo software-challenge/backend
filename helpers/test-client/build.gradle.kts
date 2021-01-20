@@ -28,12 +28,13 @@ tasks {
     jar {
         dependsOn(createStartScripts)
         doFirst {
-            val libs = arrayListOf("plugins/${project.property("game")}.jar", "software-challenge-server.jar", "server.jar")
-            libs.addAll(configurations.default.get().map  { "lib/" + it.name })
-            manifest.attributes["Class-Path"] = libs.joinToString(" ")
+            manifest.attributes["Class-Path"] =
+                configurations.default.get().map { "lib/" + it.name }
+                        .plus("server.jar")
+                        .joinToString(" ")
             copy {
                 from("src/logback-tests.xml")
-                into("build/libs")
+                into(destinationDirectory)
             }
         }
     }
