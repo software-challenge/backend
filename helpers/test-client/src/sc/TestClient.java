@@ -21,6 +21,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +31,7 @@ import static java.lang.Math.pow;
 import static sc.Util.factorial;
 
 /**
- * A simple CLI to test clients. Enables TestMode on startup.
+ * A simple command-line application to test clients. Enables TestMode on startup.
  * <p>
  * Defaults:
  * <ul>
@@ -51,6 +52,8 @@ public class TestClient extends XStreamClient {
   private static Double significance;
   private static int minTests;
 
+  private static final String classpath = System.getProperty("java.class.path");
+
   public static void main(String[] args) {
     System.setProperty("file.encoding", "UTF-8");
 
@@ -58,6 +61,7 @@ public class TestClient extends XStreamClient {
     CmdLineParser parser = new CmdLineParser();
     Option loglevelOption = parser.addStringOption("loglevel");
     Option serverOption = parser.addBooleanOption("start-server");
+    Option serverLocationOption = parser.addStringOption("server");
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
 
@@ -121,8 +125,9 @@ public class TestClient extends XStreamClient {
 
     try {
       if (startServer) {
-        logger.info("Starting server...");
-        ProcessBuilder builder = new ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-jar", "server.jar", "--port", String.valueOf(port));
+        File serverLocation = findInClasspath((File) parser.getOptionValue(serverLocationOption, new File("server.jar")));
+        logger.info("Starting server from {}", serverLocation);
+        ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getPath(), "--port", String.valueOf(port));
         logDir.mkdirs();
         builder.redirectOutput(new File(logDir, "server_port" + port + ".log"));
         builder.redirectError(new File(logDir, "server_port" + port + ".err"));
@@ -137,6 +142,19 @@ public class TestClient extends XStreamClient {
       e.printStackTrace();
       exit(2);
     }
+  }
+
+  private static File findInClasspath(File location) {
+    if(!location.exists()) {
+      final StringTokenizer strTokenizer = new StringTokenizer(classpath, File.pathSeparator);
+      while (strTokenizer.hasMoreTokens()) {
+        final File item = new File(strTokenizer.nextToken());
+        if (item.exists() && item.getName().equals(location.getName())) {
+          return item;
+        }
+      }
+    }
+    return location;
   }
 
   private final String host;
