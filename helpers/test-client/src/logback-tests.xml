@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-  <!-- This config should be released with the app as "logback.xml". -->
   <appender name="FILE"
             class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_DIRECTORY:-log}/game_server.log</file>
+    <file>${LOG_DIRECTORY:-log}/testclient.log</file>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-      <FileNamePattern>${LOG_DIRECTORY:-log}/game_server.%i.log.gz</FileNamePattern>
+      <FileNamePattern>${LOG_DIRECTORY:-log}/testclient.%i.log.gz</FileNamePattern>
       <MinIndex>1</MinIndex>
       <MaxIndex>5</MaxIndex>
     </rollingPolicy>
@@ -18,12 +17,12 @@
     </triggeringPolicy>
 
     <layout class="ch.qos.logback.classic.PatternLayout">
-      <Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
+      <Pattern>%d{HH:mm:ss.SSS} %-5level %36logger{36} - %msg%n</Pattern>
     </layout>
   </appender>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <layout>
-      <pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+      <pattern>%.-11d{HH:mm:ss.SSS} %-5level %36logger{36} - %msg%n</pattern>
     </layout>
   </appender>
 
