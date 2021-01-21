@@ -130,7 +130,7 @@ public class TestClient extends XStreamClient {
         ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getPath(), "--port", String.valueOf(port));
         logDir.mkdirs();
         builder.redirectOutput(new File(logDir, "server_port" + port + ".log"));
-        builder.redirectError(new File(logDir, "server_port" + port + ".err"));
+        builder.redirectError(new File(logDir, "server_port" + port + "-err.log"));
         Process server = builder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         Thread.sleep(1000);
@@ -319,8 +319,8 @@ public class TestClient extends XStreamClient {
     }
 
     logDir.mkdirs();
-    builder.redirectOutput(new File(logDir, players[id].name + "_Test" + finishedTests + ".log"));
-    builder.redirectError(new File(logDir, players[id].name + "_Test" + finishedTests + ".err"));
+    builder.redirectOutput(new File(logDir, players[id].name + "_game" + (finishedTests + 1) + ".log"));
+    builder.redirectError(new File(logDir, players[id].name + "_game" + (finishedTests + 1) + "-err.log"));
     players[id].proc = builder.start();
     try {
       Thread.sleep(100);

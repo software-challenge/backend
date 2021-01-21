@@ -2,7 +2,6 @@ import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import sc.gradle.ScriptsTask
-import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
@@ -30,7 +29,7 @@ if (javaVersion != javaTargetVersion)
 
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
-val testLogDir by extra { buildDir.resolve("tests") }
+val testingDir by extra { buildDir.resolve("tests") }
 val documentedProjects = listOf("sdk", "plugin")
 
 val enableTestClient by extra { versionObject.minor > 0 }
@@ -115,30 +114,28 @@ tasks {
     // TODO create a global constant which can be shared with testclient & co - maybe a resource?
     val maxGameLength = 150L
     
-    val clearTestLogs by creating(Delete::class) {
-        delete(testLogDir)
-    }
-    
     val testGame by creating {
         group = "verification"
-        dependsOn(clearTestLogs, ":server:deploy", ":player:deploy")
+        dependsOn(":server:deploy", ":player:deploy")
         doFirst {
-            testLogDir.mkdirs()
+            val testGameDir = testingDir.resolve("game")
+            testGameDir.deleteRecursively()
+            testGameDir.mkdirs()
             val server =
                 ProcessBuilder(
                     "java",
                     "-Dlogback.configurationFile=${project(":server").projectDir.resolve("configuration/logback-trace.xml")}",
                     "-jar", (project(":server").getTasksByName("jar", false).single() as Jar).archiveFile.get().asFile.absolutePath
                 )
-                    .redirectOutput(testLogDir.resolve("server.log"))
-                    .redirectError(testLogDir.resolve("server-err.log"))
+                    .redirectOutput(testGameDir.resolve("server.log"))
+                    .redirectError(testGameDir.resolve("server-err.log"))
                     .directory(project(":server").buildDir.resolve("runnable"))
                     .start()
             Thread.sleep(400)
             val startClient: (Int) -> Process = {
                 Thread.sleep(100)
                 ProcessBuilder("java", "-jar", deployDir.resolve(deployedPlayer).absolutePath)
-                    .redirectOutput(testLogDir.resolve("client$it.log")).redirectError(testLogDir.resolve("client$it-err.log")).start()
+                    .redirectOutput(testGameDir.resolve("client$it.log")).redirectError(testGameDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
             startClient(2)
@@ -158,7 +155,7 @@ tasks {
             }
             try {
                 for (i in 1..2) {
-                    val logFile = testLogDir.resolve("client$i.log")
+                    val logFile = testGameDir.resolve("client$i.log")
                     var log: String
                     println("Waiting for client $i to receive game result")
                     do {
@@ -175,7 +172,7 @@ tasks {
                         throw Exception("Client $i did not receive the game result - check $logFile")
                 }
             } catch (t: Throwable) {
-                println("Error in $this - check the logs in $testLogDir")
+                println("Error in $this - check the logs in $testGameDir")
                 throw t
             } finally {
                 server.destroy()
@@ -187,17 +184,14 @@ tasks {
     
     val testTestClient by creating {
         group = "verification"
-        dependsOn(clearTestLogs, ":server:deploy")
+        dependsOn(":server:deploy")
         shouldRunAfter(testGame)
         val testClientGames = 3
         doFirst {
-            val tmpDir = buildDir.resolve("tmp")
-            tmpDir.mkdirs()
-            testLogDir.mkdirs()
-            val unzipped = tmpDir.resolve("software-challenge-server")
-            unzipped.deleteRecursively()
-            unzipTo(unzipped, deployDir.resolve("software-challenge-server.zip"))
-            Files.createSymbolicLink(unzipped.resolve("log").toPath(), testLogDir.toPath())
+            testingDir.mkdirs()
+            val serverDir = testingDir.resolve("testclient")
+            serverDir.deleteRecursively()
+            unzipTo(serverDir, deployDir.resolve("software-challenge-server.zip"))
     
             println("Testing TestClient...")
             val testClient =
@@ -205,9 +199,7 @@ tasks {
                             (project(":test-client").getTasksByName("createStartScripts", false).single() as ScriptsTask).content.split(' ') +
                             arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
                     )
-                            .redirectOutput(testLogDir.resolve("test-client.log"))
-                            .redirectError(testLogDir.resolve("test-client-err.log"))
-                            .directory(unzipped)
+                            .directory(serverDir)
                             .start()
             if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
@@ -215,9 +207,9 @@ tasks {
                 if (value == 0)
                     println("TestClient successfully tested!")
                 else
-                    throw Exception("TestClient exited with exit code $value - check the logs in $testLogDir!")
+                    throw Exception("TestClient exited with exit code $value - check the logs under $serverDir!")
             } else {
-                throw Exception("TestClient exceeded timeout of ${maxGameLength * testClientGames} seconds - check the logs in $testLogDir!")
+                throw Exception("TestClient exceeded timeout of ${maxGameLength * testClientGames} seconds - check the logs under $serverDir!")
             }
         }
     }
