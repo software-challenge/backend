@@ -321,7 +321,8 @@ public class TestClient extends XStreamClient {
 
   private static void exit(int status) {
     if (testclient != null) {
-      testclient.send(new CloseConnection());
+      if(!testclient.isClosed())
+        testclient.send(new CloseConnection());
       testclient.waiter.shutdownNow();
     }
 
