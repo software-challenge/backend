@@ -76,7 +76,7 @@ public abstract class XStreamClient {
         logger.debug("Terminated {}", receiveThread.getName());
       }
     });
-    this.receiveThread.setName(String.format("XStream-Receive id:%d of %s", receiveThread.getId(), this));
+    this.receiveThread.setName(String.format("XStream-Receive id:%d of %s", receiveThread.getId(), shortString()));
     this.receiveThread.start();
   }
 
@@ -96,7 +96,7 @@ public abstract class XStreamClient {
         if (object instanceof ProtocolMessage) {
           ProtocolMessage response = (ProtocolMessage) object;
 
-          logger.debug("{}: Received {} via {}", this, response, networkInterface);
+          logger.debug("{}: Received {} via {}", shortString(), response, networkInterface);
           if (logger.isTraceEnabled())
             logger.trace("Dumping {}:\n{}", response, xStream.toXML(response));
 
@@ -147,12 +147,12 @@ public abstract class XStreamClient {
   }
 
   public void sendCustomData(String data) throws IOException {
-    logger.info("Sending Custom data: {}", data);
+    logger.debug("{}: Sending custom data: {}", shortString(), data);
     sendCustomData(data.getBytes(StandardCharsets.UTF_8));
   }
 
   public void sendCustomData(byte[] data) throws IOException {
-    logger.warn("Sending Custom data (size={})", data.length);
+    logger.info("{}: Sending custom data (size={})", shortString(), data.length);
     networkInterface.getOutputStream().write(data);
     networkInterface.getOutputStream().flush();
   }
@@ -164,7 +164,7 @@ public abstract class XStreamClient {
     if (isClosed())
       throw new IllegalStateException("Writing on a closed xStream!");
 
-    logger.debug("{}: Sending {} via {}", this, packet, networkInterface);
+    logger.debug("{}: Sending {} via {} from {}", shortString(), packet, networkInterface, toString());
     if (logger.isTraceEnabled())
       logger.trace("Dumping {}:\n{}", packet, xStream.toXML(packet));
 
@@ -184,11 +184,11 @@ public abstract class XStreamClient {
 
   protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
     if (exception != null) {
-      logger.warn("{} disconnected (Cause: {}, Exception: {})", this, cause, exception);
+      logger.warn("{} disconnected (Cause: {}, Exception: {})", shortString(), cause, exception);
       if (logger.isDebugEnabled())
         exception.printStackTrace();
     } else {
-      logger.info("{} disconnected (Cause: {})", this, cause);
+      logger.info("{} disconnected (Cause: {})", shortString(), cause);
     }
 
     this.disconnectCause = cause;
@@ -269,8 +269,12 @@ public abstract class XStreamClient {
     return this.closed;
   }
 
+  public String shortString() {
+    return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
+  }
+
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
+    return shortString();
   }
 }

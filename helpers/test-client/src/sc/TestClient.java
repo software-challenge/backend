@@ -380,6 +380,11 @@ public class TestClient extends XStreamClient {
   }
 
   @Override
+  public String shortString() {
+    return String.format("TestClient(%d/%d)", finishedTests, totalTests);
+  }
+
+  @Override
   public String toString() {
     return String.format("TestClient{port: %d, tests: %d/%d, players: %s}", port, finishedTests, totalTests, Arrays.toString(players));
   }
