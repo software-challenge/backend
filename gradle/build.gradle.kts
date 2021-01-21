@@ -2,6 +2,7 @@ import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import sc.gradle.ScriptsTask
+import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
@@ -196,6 +197,7 @@ tasks {
             val unzipped = tmpDir.resolve("software-challenge-server")
             unzipped.deleteRecursively()
             unzipTo(unzipped, deployDir.resolve("software-challenge-server.zip"))
+            Files.createSymbolicLink(unzipped.resolve("log").toPath(), testLogDir.toPath())
     
             println("Testing TestClient...")
             val testClient =
@@ -213,9 +215,9 @@ tasks {
                 if (value == 0)
                     println("TestClient successfully tested!")
                 else
-                    throw Exception("TestClient exited with exit code $value!")
+                    throw Exception("TestClient exited with exit code $value - check the logs in $testLogDir!")
             } else {
-                throw Exception("TestClient exceeded timeout of ${maxGameLength * testClientGames} seconds!")
+                throw Exception("TestClient exceeded timeout of ${maxGameLength * testClientGames} seconds - check the logs in $testLogDir!")
             }
         }
     }

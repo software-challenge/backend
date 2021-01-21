@@ -46,7 +46,7 @@ public class TestClient extends XStreamClient {
 
   private static final String gameType = ServiceLoader.load(IGamePlugin.class).iterator().next().id();
   private static final ClientPlayer[] players = {new ClientPlayer(), new ClientPlayer()};
-  private static final File logDir = new File("logs").getAbsoluteFile();
+  private static final File logDir = new File("log").getAbsoluteFile();
 
   private static TestClient testclient;
   private static Double significance;
