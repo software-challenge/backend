@@ -9,7 +9,7 @@ val game: String by project
 val year: String by project
 val gameName: String by project
 val deployDir: File by project
-val testLogDir: File by project
+val testingDir: File by project
 val version = rootProject.version.toString()
 
 sourceSets.main {
@@ -85,7 +85,7 @@ tasks {
         group = "verification"
         dependsOn(prepareZip)
         
-        val execDir = File(System.getProperty("java.io.tmpdir")).resolve("socha-player")
+        val execDir = testingDir.resolve("player")
         doFirst {
             execDir.deleteRecursively()
             execDir.mkdirs()
@@ -94,11 +94,13 @@ tasks {
         into(execDir)
         
         doLast {
-            val command = arrayListOf(if(OperatingSystem.current() == OperatingSystem.WINDOWS) "./gradlew.bat" else "./gradlew", "shadowJar", "--quiet", "--offline")
-            testLogDir.mkdirs()
+            // required by gradle to distinguish the test build from
+            execDir.resolve("settings.gradle").createNewFile()
+            val command = arrayListOf(if(OperatingSystem.current() == OperatingSystem.WINDOWS) "./gradlew.bat" else "./gradlew",
+                    "shadowJar", "--quiet", "--offline")
             val process = ProcessBuilder(command).directory(execDir)
-                    .redirectOutput(testLogDir.resolve("player-shadowJar-build.log"))
-                    .redirectError(testLogDir.resolve("player-shadowJar-err.log"))
+                    .redirectOutput(execDir.resolve("player-shadowJar-build.log"))
+                    .redirectError(execDir.resolve("player-shadowJar-err.log"))
                     .start()
             val timeout = 5L
             if(process.waitFor(timeout, TimeUnit.MINUTES)) {
