@@ -139,19 +139,20 @@ public class TestClient extends XStreamClient {
     }
   }
 
-  private String host;
-  private int port;
+  private final String host;
+  private final int port;
+
+  private final ExecutorService waiter = Executors.newSingleThreadExecutor();
+
+  /** total number of tests that should be executed */
+  private final int totalTests;
 
   /** number of tests that have already been run */
   private int finishedTests;
-  /** total number of tests that should be executed */
-  private int totalTests;
 
   private boolean terminateWhenPossible = false;
   private int playerScores = 0;
   private int irregularGames = 0;
-
-  private ExecutorService waiter = Executors.newSingleThreadExecutor();
 
   public TestClient(String host, int port, int totalTests) throws IOException {
     super(createTcpNetwork(host, port));
