@@ -14,13 +14,14 @@ application {
 }
 
 dependencies {
-    // TODO this dependency is only for accessing the Configuration, remove it
+    // TODO this is only here to access some default server Configuration, move that to SDK or smth
     implementation(project(":server"))
+    runtimeOnly(project(":plugin"))
 }
 
 tasks {
     val createStartScripts by creating(ScriptsTask::class) {
-        destinationDir = file("build/libs")
+        destinationDir = jar.get().destinationDirectory.get().asFile
         fileName = "start-tests"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
     }
@@ -38,8 +39,17 @@ tasks {
             }
         }
     }
-
+    
     run.configure {
-        args = System.getProperty("args", "").split(" ")
+        dependsOn(":player:shadowJar", ":server:makeRunnable")
+        doFirst {
+            setArgsString(System.getProperty("args") ?: run {
+                val playerLocation = project(":player").tasks.getByName<Jar>("shadowJar").archiveFile.get()
+                "--start-server --tests 3 --player1 $playerLocation --player2 $playerLocation"
+            })
+            @Suppress("UNNECESSARY_SAFE_CALL", "SimplifyBooleanWithConstants")
+            if (args?.isEmpty() == false)
+                println("Using command-line arguments: $args")
+        }
     }
 }
