@@ -36,7 +36,7 @@ tasks {
         group = "distribution"
         into(buildDir.resolve("zip"))
         with(copySpec {
-            from("buildscripts")
+            from("configuration")
             filter {
                 it.replace("VERSION", version).replace("GAME", game).replace("YEAR", year)
             }
