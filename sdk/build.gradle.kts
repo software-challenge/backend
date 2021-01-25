@@ -23,6 +23,7 @@ artifacts {
         builtBy(kt)
     }
 }
+configurations.archives.get().artifacts.removeIf { it.name == "testConfig" }
 
 dependencies {
     api(kotlin("stdlib"))
