@@ -2,12 +2,16 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamConverter
 import org.slf4j.LoggerFactory
 import sc.api.plugins.ITeam
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
+import sc.plugin2021.xstream.PieceMapConverter
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * Der aktuelle Spielstand.
@@ -22,35 +26,33 @@ class GameState @JvmOverloads constructor(
         /** Das zweite Team, @see [Team]. */
         override var second: Player = Player(Team.TWO),
         /** Der Spielstein, der in der ersten Runde gesetzt werden muss. */
-        @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino(),
-        /** Das aktuelle Spielfeld. */
-        @XStreamAsAttribute override val board: Board = Board(),
+        @XStreamAsAttribute
+        val startPiece: PieceShape = GameRuleLogic.getRandomPentomino(),
         turn: Int = 0,
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
         /** Speichert für jede Farbe, die alle Steine gelegt hat, ob das Monomino zuletzt gelegt wurde. */
-        @XStreamAsAttribute
-        val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
+        val lastMoveMono: HashMap<Color, Boolean> = HashMap(),
+        /** Das aktuelle Spielfeld. */
+        override val board: Board = Board(),
+        @XStreamConverter(PieceMapConverter::class)
+        private val undeployedPieceShapes: EnumMap<Color, MutableSet<PieceShape>> =
+                EnumMap(Color.values().associateWith { PieceShape.values().toMutableSet() })
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     companion object {
         val logger = LoggerFactory.getLogger(GameState::class.java)
     }
     
-    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.board.clone(), other.turn, other.lastMove, HashMap(other.lastMoveMono))
+    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.turn, other.lastMove,
+            HashMap(other.lastMoveMono), other.board.clone(), other.undeployedPieceShapes.mapValuesTo(EnumMap(Color::class.java)) { it.value.toMutableSet() })
     
-    private val blueShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val yellowShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val redShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val greenShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+    /** @return Liste der noch nicht von [Color] gesetzten Steine. */
+    fun undeployedPieceShapes(color: Color = currentColor): Collection<PieceShape> =
+            undeployedPieceShapes.getValue(color)
     
-    /** Gib eine Liste aller nicht gesetzter Steine der [Color] zurück. */
-    fun undeployedPieceShapes(color: Color = currentColor): MutableSet<PieceShape> = when (color) {
-        Color.BLUE -> blueShapes
-        Color.YELLOW -> yellowShapes
-        Color.RED -> redShapes
-        Color.GREEN -> greenShapes
-    }
+    fun removeUndeployedPiece(piece: Piece) =
+            undeployedPieceShapes.getValue(piece.color).remove(piece.kind)
     
     /** Die Anzahl an bereits getätigten Zügen. */
     @XStreamAsAttribute
@@ -86,7 +88,7 @@ class GameState @JvmOverloads constructor(
         get() = orderedColors[turn % Constants.COLORS]
     
     /** Liste der Farben, die noch im Spiel sind. */
-    private val validColors: MutableSet<Color> = Color.values().toMutableSet()
+    private val validColors = arrayListOf(*Color.values())
     
     /** Beendet das Spiel, indem alle Farben entfernt werden. */
     internal fun clearValidColors() = validColors.clear()
@@ -138,23 +140,19 @@ class GameState @JvmOverloads constructor(
         logger.debug("Remaining Colors: $validColors")
     }
 
-    override fun toString(): String =
-            if (validColors.isEmpty()) "GameState finished at $round/$turn"
-            else "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
-    
     override fun clone() = GameState(this)
     
-    override fun equals(other: Any?): Boolean {
-        return this === other ||
-               (other is GameState
-                && first == other.first
-                && second == other.second
-                && startPiece == other.startPiece
-                && board == other.board
-                && lastMove == other.lastMove
-                && lastMoveMono == other.lastMoveMono
-                && turn == other.turn)
-    }
+    override fun equals(other: Any?): Boolean =
+            this === other ||
+            (other is GameState
+            && first == other.first
+            && second == other.second
+            && startPiece == other.startPiece
+            && board == other.board
+            && lastMove == other.lastMove
+            && lastMoveMono == other.lastMoveMono
+            && turn == other.turn
+            && undeployedPieceShapes == other.undeployedPieceShapes)
     
     override fun hashCode(): Int {
         var result = first.hashCode()
@@ -164,7 +162,17 @@ class GameState @JvmOverloads constructor(
         result = 31 * result + (lastMove?.hashCode() ?: 0)
         result = 31 * result + lastMoveMono.hashCode()
         result = 31 * result + turn
+        result = 31 * result + undeployedPieceShapes.hashCode()
         return result
     }
+    
+    fun longString(): String =
+            "GameState(first=$first, second=$second, turn=$turn, validColors=$validColors, startPiece=$startPiece, lastMove=$lastMove, lastMoveMono=$lastMoveMono)\n" +
+            "undeployedPieceShapes=$undeployedPieceShapes\n" +
+            "$board"
+    
+    override fun toString(): String =
+            if (validColors.isEmpty()) "GameState finished at $round/$turn"
+            else "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
     
 }
