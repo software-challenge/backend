@@ -8,4 +8,7 @@ object KotestConfig: AbstractProjectConfig() {
     override val isolationMode = IsolationMode.InstancePerLeaf
     override val testCaseOrder = TestCaseOrder.Random
     override val parallelism = Runtime.getRuntime().availableProcessors()
+    init {
+        System.setProperty("kotest.assertions.multi-line-diff", "simple")
+    }
 }
