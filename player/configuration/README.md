@@ -1,6 +1,6 @@
 # Dein Software-Challenge Spieler
 
-In diesem Packet ist alles dabei, was du brauchst, um einen Spieler für die
+In diesem Paket ist alles dabei, was du brauchst, um einen Spieler für die
 [Software-Challenge YEAR](https://software-challenge.de) zu entwickeln!
 
 In der [Dokumentation](https://cau-kiel-tech-inf.github.io/socha-enduser-docs)
@@ -8,7 +8,7 @@ findest du eine Anleitung, wie du eine [eigene Strategie umsetzen kannst](https:
 
 ## Den Spieler einsetzen
 
-Dieses Projekt ist mit [Gradle](https://gradle.org/) vorkonfiguriert, wodurch
+Dieses Projekt ist mit [Gradle](https://gradle.org) vorkonfiguriert, wodurch
 alle Abhängigkeiten automatisch sichergestellt werden und du dich voll und ganz
 auf das konzentrieren kannst, was zählt – deine Strategie umzusetzen :)
 
