@@ -81,6 +81,7 @@ class PieceTest: WordSpec({
                                 </piece>
                                 """.trimIndent())
                 ) { piece, xml ->
+                    piece.coordinates // trigger lazy variables
                     piece shouldSerializeTo xml
                 }
             }

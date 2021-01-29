@@ -2,6 +2,7 @@ package sc.plugin2021
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamOmitField
 
 /** Ein Spielstein mit Farbe, position und entsprechend transformierter Form. */
 @XStreamAlias(value = "piece")
@@ -36,9 +37,8 @@ data class Piece(
     private constructor(color: Color, kind: PieceShape, transformation: Pair<Rotation, Boolean>, position: Coordinates):
             this(color, kind, transformation.first, transformation.second, position)
     
-    // The following two fields have their lazy calculation implemented by hand
-    // because XStream doesn't call constructors...
-    
+    // The following two fields have their lazy calculation implemented by hand because XStream doesn't initialize objects normally
+    @XStreamOmitField
     private lateinit var _shape: Set<Coordinates>
     /** Die normalisierte Form des Steins. */
     val shape: Set<Coordinates>
@@ -48,6 +48,7 @@ data class Piece(
             return _shape
         }
     
+    @XStreamOmitField
     private lateinit var _coordinates: Set<Coordinates>
     /** Die tatsächlichen Koordinaten, die der Stein am Ende haben soll. */
     val coordinates: Set<Coordinates>
