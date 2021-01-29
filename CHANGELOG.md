@@ -6,7 +6,7 @@ The `x.y.z` version is tracked in [gradle.properties](./gradle.properties) to en
 The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-Tech-Inf/gui) and have a tag in both repositories.
 
 - The major version `x` corresponds to the year of the contest and thus only changes once a year
-- `y` and `z` should follow the [semantic versioning guidelines](https://semver.org) for MAJOR and PATCH respectively
+- `y` is bumped for any major updates or backwards-incompatible changes
 
 ## [Unreleased]
 
