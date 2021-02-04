@@ -49,13 +49,18 @@ class GameState @JvmOverloads constructor(
     private val redShapes = redShapes
     private val greenShapes = greenShapes
     
-    /** Gib eine Liste aller nicht gesetzter Steine der [Color] zurück. */
-    fun undeployedPieceShapes(color: Color = currentColor): MutableSet<PieceShape> = when (color) {
+    private fun mutableUndeployedPieceShapes(color: Color = currentColor) = when (color) {
         Color.BLUE -> blueShapes
         Color.YELLOW -> yellowShapes
         Color.RED -> redShapes
         Color.GREEN -> greenShapes
     }
+    
+    /** @return Liste der noch nicht von [Color] gesetzten Steine. */
+    fun undeployedPieceShapes(color: Color = currentColor): Collection<PieceShape> = mutableUndeployedPieceShapes(color)
+    
+    fun removeUndeployedPiece(piece: Piece) =
+            mutableUndeployedPieceShapes(piece.color).remove(piece.kind)
     
     /** Die Anzahl an bereits getätigten Zügen. */
     @XStreamAsAttribute
