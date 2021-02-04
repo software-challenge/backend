@@ -10,9 +10,10 @@ The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-
 
 ## [Unreleased]
 
-## [21.4.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.4.0)
-### Changed
-- Adjust Gamestate XML ([#374](https://github.com/CAU-Kiel-Tech-Inf/backend/pull/374))
+## [21.3.1](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.1)
+- Fix GameState clone, hashCode and equals to include [undeployedPieceShapes](https://github.com/CAU-Kiel-Tech-Inf/backend/commit/010f077747d4bba0a9397b536da7f48d88bf1a74) and [validColors](https://github.com/CAU-Kiel-Tech-Inf/backend/commit/cbda82827932cd288576ba0320c03615cba9dab7)
+- Remove superfluous `class` attributes from GameState XML
+- Extend GameState XML tests
 
 ## [21.3.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.0) - 2021-01-29
 ### Fixed
