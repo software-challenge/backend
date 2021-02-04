@@ -1,5 +1,6 @@
 package sc.plugin2021.util
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sc.plugin2021.*
 import sc.shared.InvalidMoveException
@@ -12,7 +13,7 @@ import sc.shared.InvalidMoveException
  * * und die Punkte einer Farbe zu berechnen.
  */
 object GameRuleLogic {
-    val logger = LoggerFactory.getLogger(GameRuleLogic::class.java)
+    val logger: Logger = LoggerFactory.getLogger(GameRuleLogic::class.java)
     
     const val SUM_MAX_SQUARES = 89
     
@@ -24,7 +25,7 @@ object GameRuleLogic {
      * @return die erreichte Punktezahl
      */
     @JvmStatic
-    fun getPointsFromUndeployed(undeployed: Set<PieceShape>, monoLast: Boolean = false): Int {
+    fun getPointsFromUndeployed(undeployed: Collection<PieceShape>, monoLast: Boolean = false): Int {
         // If all pieces were placed:
         if (undeployed.isEmpty()) {
             // Return sum of all squares plus 15 bonus points
@@ -37,7 +38,7 @@ object GameRuleLogic {
     }
     
     /**
-     * Führe den gegebenen [Move] im gebenenen [GameState] aus.
+     * Führe [move] in [gameState] aus.
      * @param gameState der aktuelle Spielstand
      * @param move der auszuführende Zug
      */
@@ -215,7 +216,7 @@ object GameRuleLogic {
     fun isFirstMove(gameState: GameState) =
             gameState.undeployedPieceShapes().size == Constants.TOTAL_PIECE_SHAPES
     
-    /** Return a random pentomino which is not the `x` one (Used to get a valid starting piece). */
+    /** Return a random Pentomino which is not the `x` one (Used to get a valid starting piece). */
     @JvmStatic
     fun getRandomPentomino() =
             PieceShape.values()
@@ -248,7 +249,7 @@ object GameRuleLogic {
 
     /** Stream all possible moves if it's the first turn of [gameState]. */
     @JvmStatic
-    private fun streamPossibleStartMoves(gameState: GameState) = sequence<SetMove> {
+    private fun streamPossibleStartMoves(gameState: GameState) = sequence {
         val kind = gameState.startPiece
         for (variant in kind.variants) {
             for (corner in Corner.values()) {
@@ -258,7 +259,7 @@ object GameRuleLogic {
     }.filter { isValidSetMove(gameState, it) }
 
     @JvmStatic
-    fun streamAllPossibleMoves(gameState: GameState) = sequence<SetMove> {
+    fun streamAllPossibleMoves(gameState: GameState) = sequence {
         val validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
 
         for (shape in gameState.undeployedPieceShapes())
@@ -282,7 +283,7 @@ object GameRuleLogic {
                 streamPossibleStartMoves(gameState)
             else
                 sequenceOf()
-        } else sequence<SetMove> {
+        } else sequence {
             for (field in validFields) {
                 for (variant in shape.variants) {
                     val area = variant.key.area
@@ -299,10 +300,9 @@ object GameRuleLogic {
     /** @return alle [Coordinates], auf die die aktuelle [Color] Steine platzieren könnte. */
     @JvmStatic
     fun getValidFields(board: Board, color: Color): Set<Coordinates> =
-            getColoredFields(board, color).flatMap { it.corners }.filter {
-                Board.contains(it) && board[it].isEmpty && it.neighbors.none {
-                    Board.contains(it) && board[it].content == +color
-                }
+            getColoredFields(board, color).flatMap { it.corners }.filter { corner ->
+                Board.contains(corner) && board[corner].isEmpty &&
+                corner.neighbors.none { neighbor -> Board.contains(neighbor) && board[neighbor].content == +color }
             }.toSet()
 
     /** @return alle [Coordinates], deren Position auf dem [Board] die gegebene [Color] hat. */
