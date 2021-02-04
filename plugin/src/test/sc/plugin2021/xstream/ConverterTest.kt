@@ -44,7 +44,7 @@ class ConverterTest: WordSpec({
                 state shouldSerializeTo """
                     <state turn="0" round="1" startPiece="PENTO_L">
                       <startTeam class="team">ONE</startTeam>
-                      <blueShapes class="linked-hash-set">
+                      <blueShapes>
                         <shape>MONO</shape>
                         <shape>DOMINO</shape>
                         <shape>TRIO_L</shape>
@@ -67,7 +67,7 @@ class ConverterTest: WordSpec({
                         <shape>PENTO_X</shape>
                         <shape>PENTO_Y</shape>
                       </blueShapes>
-                      <yellowShapes class="linked-hash-set">
+                      <yellowShapes>
                         <shape>MONO</shape>
                         <shape>DOMINO</shape>
                         <shape>TRIO_L</shape>
@@ -90,7 +90,7 @@ class ConverterTest: WordSpec({
                         <shape>PENTO_X</shape>
                         <shape>PENTO_Y</shape>
                       </yellowShapes>
-                      <redShapes class="linked-hash-set">
+                      <redShapes>
                         <shape>MONO</shape>
                         <shape>DOMINO</shape>
                         <shape>TRIO_L</shape>
@@ -113,7 +113,7 @@ class ConverterTest: WordSpec({
                         <shape>PENTO_X</shape>
                         <shape>PENTO_Y</shape>
                       </redShapes>
-                      <greenShapes class="linked-hash-set">
+                      <greenShapes>
                         <shape>MONO</shape>
                         <shape>DOMINO</shape>
                         <shape>TRIO_L</shape>
@@ -136,7 +136,7 @@ class ConverterTest: WordSpec({
                         <shape>PENTO_X</shape>
                         <shape>PENTO_Y</shape>
                       </greenShapes>
-                      <validColors class="linked-hash-set">
+                      <validColors>
                         <color>BLUE</color>
                         <color>YELLOW</color>
                         <color>RED</color>
@@ -154,7 +154,7 @@ class ConverterTest: WordSpec({
                         <field x="8" y="6" content="YELLOW"/>
                         <field x="5" y="9" content="BLUE"/>
                       </board>
-                      <lastMoveMono class="linked-hash-map"/>
+                      <lastMoveMono/>
                     </state>""".trimIndent()
             }
         }

@@ -30,19 +30,23 @@ class GameState @JvmOverloads constructor(
         override var lastMove: Move? = null,
         /** Speichert für jede Farbe, die alle Steine gelegt hat, ob das Monomino zuletzt gelegt wurde. */
         @XStreamAsAttribute
-        val lastMoveMono: MutableMap<Color, Boolean> = mutableMapOf()
+        val lastMoveMono: HashMap<Color, Boolean> = HashMap(),
+        blueShapes: LinkedHashSet<PieceShape> = PieceShape.values().toCollection(LinkedHashSet(PieceShape.values().size)),
+        yellowShapes: LinkedHashSet<PieceShape> = PieceShape.values().toCollection(LinkedHashSet(PieceShape.values().size)),
+        redShapes: LinkedHashSet<PieceShape> = PieceShape.values().toCollection(LinkedHashSet(PieceShape.values().size)),
+        greenShapes: LinkedHashSet<PieceShape> = PieceShape.values().toCollection(LinkedHashSet(PieceShape.values().size)),
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     companion object {
         val logger = LoggerFactory.getLogger(GameState::class.java)
     }
     
-    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.board.clone(), other.turn, other.lastMove, HashMap(other.lastMoveMono))
+    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.board.clone(), other.turn, other.lastMove, HashMap(other.lastMoveMono), LinkedHashSet(other.blueShapes), LinkedHashSet(other.yellowShapes), LinkedHashSet(other.redShapes), LinkedHashSet(other.greenShapes))
     
-    private val blueShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val yellowShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val redShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
-    private val greenShapes: MutableSet<PieceShape> = PieceShape.values().toMutableSet()
+    private val blueShapes = blueShapes
+    private val yellowShapes = yellowShapes
+    private val redShapes = redShapes
+    private val greenShapes = greenShapes
     
     /** Gib eine Liste aller nicht gesetzter Steine der [Color] zurück. */
     fun undeployedPieceShapes(color: Color = currentColor): MutableSet<PieceShape> = when (color) {
@@ -86,7 +90,7 @@ class GameState @JvmOverloads constructor(
         get() = orderedColors[turn % Constants.COLORS]
     
     /** Liste der Farben, die noch im Spiel sind. */
-    private val validColors: MutableSet<Color> = Color.values().toMutableSet()
+    private val validColors = Color.values().toCollection(LinkedHashSet(Color.values().size))
     
     /** Beendet das Spiel, indem alle Farben entfernt werden. */
     internal fun clearValidColors() = validColors.clear()
@@ -153,7 +157,12 @@ class GameState @JvmOverloads constructor(
                 && board == other.board
                 && lastMove == other.lastMove
                 && lastMoveMono == other.lastMoveMono
-                && turn == other.turn)
+                && turn == other.turn
+                && blueShapes == other.blueShapes
+                && yellowShapes == other.yellowShapes
+                && redShapes == other.redShapes
+                && greenShapes == other.greenShapes
+               )
     }
     
     override fun hashCode(): Int {
@@ -164,6 +173,10 @@ class GameState @JvmOverloads constructor(
         result = 31 * result + (lastMove?.hashCode() ?: 0)
         result = 31 * result + lastMoveMono.hashCode()
         result = 31 * result + turn
+        result = 31 * result + blueShapes.hashCode()
+        result = 31 * result + yellowShapes.hashCode()
+        result = 31 * result + redShapes.hashCode()
+        result = 31 * result + greenShapes.hashCode()
         return result
     }
     
