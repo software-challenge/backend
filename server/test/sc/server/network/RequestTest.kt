@@ -12,7 +12,6 @@ import sc.protocol.responses.MementoEvent
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
-import sc.server.client.TestObserverListener
 import sc.server.client.TestPreparedGameResponseListener
 import sc.server.gaming.GameRoom
 import sc.server.gaming.ObserverRole
@@ -114,7 +113,6 @@ class RequestTest: RealServerTest() {
         TestHelper.waitMillis(200)
         
         val gameRoom = lobby.games.iterator().next()
-        player3.addListener(TestObserverListener())
         player3.authenticate(PASSWORD)
         player3.observe(gameRoom.id)
         
