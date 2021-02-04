@@ -16,8 +16,12 @@ All network communication (client-server) is done via XML, in our JVM implementa
 handles the serialization and deserialization from and to objects.
 
 To implement the protocol properly it requires annotations.
-Apart from the persistent [sdk protocol classes](sdk/src/server-api) this is particularly relevant when implementing the `Move` and `GameState` classes in the current plugin,
-including all types used in their non-volatile fields (otherwise marked with @XStreamOmitField) such as `Board` and `Field`.
+Apart from the persistent [sdk protocol classes](sdk/src/server-api) this is particularly relevant when implementing the `Move` and `GameState` classes in the current plugin, including all types used in their non-volatile fields (otherwise marked with @XStreamOmitField) such as `Board` and `Field`.
+
+Another common issue is the pollution of the XML with `class` attributes e.g. `<lastMoveMono class="linked-hash-map"/>`.  
+These are created by XStream to denote the implementation used for a Collection if the field type is an abstract type such as List, Set, etc and it thus can't deduce the concrete implementation via reflection.
+To avert these superfluous attributes without needing a separate Converter, annotate the serialized fields with a concrete type instead.
+Ideally these fields should then be private with generically typed getters to not expose the implementation details internally.
 
 ## Cloning
 
