@@ -1,16 +1,11 @@
 package sc.api.plugins
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamOmitField
-import org.slf4j.LoggerFactory
 import sc.framework.plugins.Player
 
 abstract class TwoPlayerGameState<P : Player>(
         @XStreamAsAttribute val startTeam: ITeam
 ) : IGameState {
-    
-    @XStreamOmitField
-    private val logger = LoggerFactory.getLogger(TwoPlayerGameState::class.java)
     
     abstract val first: P
     abstract val second: P
