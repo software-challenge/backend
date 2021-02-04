@@ -95,7 +95,7 @@ object GameRuleLogic {
             validateSetMove(gameState, move)
 
         performSetMove(gameState.board, move)
-        gameState.undeployedPieceShapes(move.color).remove(move.piece.kind)
+        gameState.removeUndeployedPiece(move.piece)
 
         // If it was the last piece for this color, remove it from the turn queue
         if (gameState.undeployedPieceShapes(move.color).isEmpty())

@@ -82,7 +82,7 @@ class GameStateTest: WordSpec({
             "not equal original when undeployedPieces changed" {
                 cloned shouldBe state
                 GameRuleLogic.isFirstMove(cloned) shouldBe true
-                cloned.undeployedPieceShapes().remove(cloned.undeployedPieceShapes().first())
+                cloned.removeUndeployedPiece(Piece(cloned.currentColor, cloned.undeployedPieceShapes().first()))
                 GameRuleLogic.isFirstMove(cloned) shouldBe false
                 cloned shouldNotBe state
             }
