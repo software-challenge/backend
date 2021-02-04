@@ -31,17 +31,18 @@ class GameState @JvmOverloads constructor(
         /** Speichert für jede Farbe, die alle Steine gelegt hat, ob das Monomino zuletzt gelegt wurde. */
         @XStreamAsAttribute
         val lastMoveMono: HashMap<Color, Boolean> = HashMap(),
-        blueShapes: LinkedHashSet<PieceShape> = PieceShape.values().toCollection(LinkedHashSet(PieceShape.values().size)),
-        yellowShapes: LinkedHashSet<PieceShape> = PieceShape.values().toCollection(LinkedHashSet(PieceShape.values().size)),
-        redShapes: LinkedHashSet<PieceShape> = PieceShape.values().toCollection(LinkedHashSet(PieceShape.values().size)),
-        greenShapes: LinkedHashSet<PieceShape> = PieceShape.values().toCollection(LinkedHashSet(PieceShape.values().size)),
+        blueShapes: LinkedHashSet<PieceShape> = PieceShape.values().toLinkedHashSet(),
+        yellowShapes: LinkedHashSet<PieceShape> = PieceShape.values().toLinkedHashSet(),
+        redShapes: LinkedHashSet<PieceShape> = PieceShape.values().toLinkedHashSet(),
+        greenShapes: LinkedHashSet<PieceShape> = PieceShape.values().toLinkedHashSet(),
+        validColors: LinkedHashSet<Color> = Color.values().toLinkedHashSet()
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     companion object {
         val logger = LoggerFactory.getLogger(GameState::class.java)
     }
     
-    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.board.clone(), other.turn, other.lastMove, HashMap(other.lastMoveMono), LinkedHashSet(other.blueShapes), LinkedHashSet(other.yellowShapes), LinkedHashSet(other.redShapes), LinkedHashSet(other.greenShapes))
+    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.board.clone(), other.turn, other.lastMove, HashMap(other.lastMoveMono), LinkedHashSet(other.blueShapes), LinkedHashSet(other.yellowShapes), LinkedHashSet(other.redShapes), LinkedHashSet(other.greenShapes), LinkedHashSet(other.validColors))
     
     private val blueShapes = blueShapes
     private val yellowShapes = yellowShapes
@@ -90,7 +91,7 @@ class GameState @JvmOverloads constructor(
         get() = orderedColors[turn % Constants.COLORS]
     
     /** Liste der Farben, die noch im Spiel sind. */
-    private val validColors = Color.values().toCollection(LinkedHashSet(Color.values().size))
+    private val validColors = validColors
     
     /** Beendet das Spiel, indem alle Farben entfernt werden. */
     internal fun clearValidColors() = validColors.clear()
@@ -162,6 +163,7 @@ class GameState @JvmOverloads constructor(
                 && yellowShapes == other.yellowShapes
                 && redShapes == other.redShapes
                 && greenShapes == other.greenShapes
+                && validColors == other.validColors
                )
     }
     
@@ -177,7 +179,10 @@ class GameState @JvmOverloads constructor(
         result = 31 * result + yellowShapes.hashCode()
         result = 31 * result + redShapes.hashCode()
         result = 31 * result + greenShapes.hashCode()
+        result = 31 * result + validColors.hashCode()
         return result
     }
     
 }
+
+fun <T> Array<T>.toLinkedHashSet() = toCollection(LinkedHashSet(size))

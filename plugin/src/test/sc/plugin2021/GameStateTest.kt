@@ -74,17 +74,27 @@ class GameStateTest: WordSpec({
             "preserve equality" {
                  cloned shouldBe state
             }
-            "not be equal when lastMoveMono changes" {
+            "not equal original when lastMoveMono changed" {
                 cloned shouldBe state
                 cloned.lastMoveMono[Color.RED] = true
                 cloned shouldNotBe state
             }
-            "not be equal when undeployedPieces changes" {
+            "not equal original when undeployedPieces changed" {
                 cloned shouldBe state
                 GameRuleLogic.isFirstMove(cloned) shouldBe true
                 cloned.undeployedPieceShapes().remove(cloned.undeployedPieceShapes().first())
                 GameRuleLogic.isFirstMove(cloned) shouldBe false
                 cloned shouldNotBe state
+            }
+            "respect validColors" {
+                state.removeColor(Color.BLUE)
+                val newClone = state.clone()
+                newClone shouldBe state
+                cloned shouldNotBe state
+                newClone.removeColor(Color.BLUE)
+                newClone shouldBe state
+                newClone.removeColor(Color.RED)
+                newClone shouldNotBe state
             }
             val otherState = GameState(lastMove = SetMove(Piece(Color.GREEN, 0)))
             "preserve inequality" {
