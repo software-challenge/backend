@@ -1,5 +1,7 @@
 package sc.server.network
 
+import io.kotest.assertions.until.fixed
+import io.kotest.assertions.until.until
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -35,11 +37,11 @@ class RequestTest: RealServerTest() {
     @BeforeEach
     fun prepare() {
         player1 = connectClient("localhost", serverPort)
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         player2 = connectClient("localhost", serverPort)
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         player3 = connectClient("localhost", serverPort)
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
     }
     
     @Test
@@ -53,13 +55,13 @@ class RequestTest: RealServerTest() {
     @Test
     fun authenticationRequest() {
         player1.authenticate(PASSWORD)
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         val clients = lobby.clientManager.clients
         assertTrue(clients[0].isAdministrator)
         assertEquals(3, lobby.clientManager.clients.size.toLong())
         
         player2.authenticate("PASSWORD_FAIL_TEST")
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         
         //Player2 got kicked
         assertEquals(2, lobby.clientManager.clients.size.toLong())
@@ -73,7 +75,7 @@ class RequestTest: RealServerTest() {
         val listener = TestPreparedGameResponseListener()
         player1.addListener(listener)
         
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         assertNotNull(listener.response)
         
         assertEquals(1, lobby.games.size.toLong())
@@ -88,20 +90,20 @@ class RequestTest: RealServerTest() {
         player1.addListener(listener)
         
         player1.prepareGame(TestPlugin.TEST_PLUGIN_UUID)
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         val response = listener.response
         
         val reservation = response.reservations[0]
         player1.joinPreparedGame(reservation)
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         assertEquals(1, lobby.games.iterator().next().clients.size.toLong())
         
         player2.joinPreparedGame(response.reservations[1])
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         assertEquals(2, lobby.games.iterator().next().clients.size.toLong())
         
         player3.joinPreparedGame(response.reservations[1])
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         assertEquals(2, lobby.clientManager.clients.size.toLong())
     }
     
@@ -110,13 +112,13 @@ class RequestTest: RealServerTest() {
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         
         val gameRoom = lobby.games.iterator().next()
         player3.authenticate(PASSWORD)
         player3.observe(gameRoom.id)
         
-        TestHelper.waitMillis(200)
+        Thread.sleep(200)
         
         val roles = lobby.clientManager.clients[2].roles.iterator()
         var hasRole = false
@@ -142,7 +144,7 @@ class RequestTest: RealServerTest() {
         admin.addListener(listener)
         
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        TestHelper.waitMillis(500)
+        Thread.sleep(500)
         
         // Room was created
         val room = lobby.games.iterator().next()
@@ -155,7 +157,7 @@ class RequestTest: RealServerTest() {
         TestHelper.waitUntilTrue({ listener.observedReceived }, 2000)
         
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        TestHelper.waitMillis(500)
+        Thread.sleep(500)
         room.slots[1].role.player.addPlayerListener(p2Listener)
         
         // Wait for the server to register that
@@ -168,7 +170,7 @@ class RequestTest: RealServerTest() {
         p1Listener.waitForMessage(WelcomeMessage::class)
         
         player1.sendMessageToRoom(room.id, TestMove(1))
-        TestHelper.waitMillis(100)
+        Thread.sleep(100)
         assertEquals(room.status, GameRoom.GameStatus.OVER)
     }
     
@@ -186,7 +188,7 @@ class RequestTest: RealServerTest() {
         admin.addListener(listener)
         
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        TestHelper.waitMillis(500)
+        Thread.sleep(500)
         
         // Room was created
         val room = lobby.games.iterator().next()
@@ -200,7 +202,7 @@ class RequestTest: RealServerTest() {
         
         
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        TestHelper.waitMillis(500)
+        Thread.sleep(500)
         room.slots[1].role.player.addPlayerListener(p2Listener)
         
         // Wait for the server to register that
@@ -216,7 +218,7 @@ class RequestTest: RealServerTest() {
         
         // TODO enabling this should result in a GameLogicException
         // player1.sendMessageToRoom(room.getId(), new TestMove(1));
-        // TestHelper.waitMillis(100);
+        // Thread.sleep(100);
         
         // Request a move from the first player
         admin.send(StepRequest(room.id))
@@ -231,7 +233,7 @@ class RequestTest: RealServerTest() {
 
         // Second player sends Move with value 42
         player2.sendMessageToRoom(room.id, TestMove(42));
-        TestHelper.waitMillis(100);
+        Thread.sleep(100);
         
         // Request a move
         admin.send(StepRequest(room.id))
@@ -246,7 +248,7 @@ class RequestTest: RealServerTest() {
         player2.sendMessageToRoom(room.id, TestMove(73))
         TestHelper.waitUntilFalse({ listener.newStateReceived }, 1000)
         listener.newStateReceived = false
-        TestHelper.waitMillis(500)
+        Thread.sleep(500)
         
         // There should not come another request
         p1Listener.waitForMessage(MementoEvent::class)
@@ -291,9 +293,8 @@ class RequestTest: RealServerTest() {
         TestHelper.assertEqualsWithTimeout("false", { Configuration.get(Configuration.TEST_MODE) }, 1000)
     }
     
-    @Test
+    // TODO implement @Test
     fun getScoreForPlayerRequest() {
-        //TODO implement
     }
     
     @Test
@@ -310,7 +311,7 @@ class RequestTest: RealServerTest() {
         assertTrue(room.slots[0].role.player.canTimeout)
         val req = ControlTimeoutRequest(room.id, false, 0)
         player1.send(req)
-        TestHelper.waitMillis(2000)
+        Thread.sleep(2000)
         room = gameMgr.games.iterator().next()
         assertFalse(room.slots[0].role.player.canTimeout)
     }
@@ -330,7 +331,7 @@ class RequestTest: RealServerTest() {
         room.slots[0].role.player.addPlayerListener(p1Listener)
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         TestHelper.waitUntilEqual(2, { room.slots.size }, 2000)
-        TestHelper.waitMillis(500)
+        Thread.sleep(500)
         val splayer2 = room.slots[1].role.player
         splayer2.addPlayerListener(p2Listener)
         splayer2.displayName = "player2..."
@@ -344,7 +345,7 @@ class RequestTest: RealServerTest() {
         TestHelper.waitUntilEqual(true, { room.isPauseRequested }, 2000)
         
         player1.sendMessageToRoom(room.id, TestMove(42))
-        TestHelper.waitMillis(1000)
+        Thread.sleep(1000)
         // assert that (if the game is paused) no new gameState is send to the observers after a pending Request was received
         assertFalse(listener.newStateReceived)
         
