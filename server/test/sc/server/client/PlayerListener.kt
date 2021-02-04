@@ -1,8 +1,11 @@
 package sc.server.client
 
-import io.kotest.assertions.until.fixed
-import io.kotest.assertions.until.until
+import io.kotest.assertions.timing.eventually
+import io.kotest.assertions.until.fibonacci
+import io.kotest.assertions.withClue
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.runBlocking
 import sc.api.plugins.host.IPlayerListener
 import sc.protocol.responses.ProtocolMessage
 import java.util.Queue
@@ -29,9 +32,11 @@ class PlayerListener : IPlayerListener {
     }
     
     @ExperimentalTime
-    suspend fun waitForMessage(messageType: KClass<out ProtocolMessage>, duration: Duration = 2.seconds) {
-        until(duration, 100.milliseconds.fixed()) {
-            messages.isNotEmpty()
+    fun waitForMessage(messageType: KClass<out ProtocolMessage>, duration: Duration = 2.seconds) = runBlocking {
+        eventually(duration, 40.milliseconds.fibonacci()) {
+            withClue("Expected ${messageType.simpleName} within $duration") {
+                messages.shouldNotBeEmpty()
+            }
         }
         messages.remove()::class shouldBe messageType
     }

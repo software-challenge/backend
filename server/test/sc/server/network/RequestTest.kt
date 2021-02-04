@@ -1,11 +1,8 @@
 package sc.server.network
 
-import io.kotest.assertions.until.fixed
-import io.kotest.assertions.until.until
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import sc.framework.plugins.AbstractGame
 import sc.networking.clients.LobbyClient
@@ -131,10 +128,10 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    suspend fun stepRequestException() {
+    fun stepRequestException() {
         val admin = player1
-        val player1 = this.player2
-        val player2 = this.player3
+        val player1 = player2
+        val player2 = player3
         val p1Listener = PlayerListener()
         val p2Listener = PlayerListener()
         
@@ -175,10 +172,10 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    suspend fun stepRequest() {
+    fun stepRequest() {
         val admin = player1
-        val player1 = this.player2
-        val player2 = this.player3
+        val player1 = player2
+        val player2 = player3
         val p1Listener = PlayerListener()
         val p2Listener = PlayerListener()
         
@@ -262,7 +259,6 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    @Disabled
     fun cancelRequest() {
         player1.authenticate(PASSWORD)
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
@@ -270,12 +266,14 @@ class RequestTest: RealServerTest() {
         val listener = TestLobbyClientListener()
         player1.addListener(listener)
         
-        // Wait for messages to get to server
-        assertTrue(TestHelper.waitUntilTrue({ lobby.games.isNotEmpty() }, 1000))
+        await("Lobby creates a room", 1.seconds) {
+            lobby.games.isNotEmpty() && listener.gameJoinedReceived && listener.roomId != null
+        }
         
         player1.send(CancelRequest(listener.roomId))
-        assertTrue(TestHelper.waitUntilTrue({ lobby.games.isEmpty() }, 3000))
-        assertEquals(0, lobby.games.size.toLong())
+        await("Lobby closes the room", 5.seconds) {
+            lobby.games.isEmpty()
+        }
     }
     
     @Test
@@ -317,7 +315,7 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    suspend fun pauseRequest() {
+    fun pauseRequest() {
         player1.authenticate(PASSWORD)
         val listener = TestLobbyClientListener()
         val p1Listener = PlayerListener()
