@@ -15,9 +15,8 @@ class BoardConverter: Converter {
         val logger = LoggerFactory.getLogger(BoardConverter::class.java)
     }
     
-    override fun canConvert(type: Class<*>?): Boolean {
-        return type == Board::class.java
-    }
+    override fun canConvert(type: Class<*>?): Boolean =
+            type == Board::class.java
 
     override fun marshal(source: Any, writer: HierarchicalStreamWriter, context: MarshallingContext) {
         val board = source as Board

@@ -24,7 +24,7 @@ class GameState @JvmOverloads constructor(
         /** Der Spielstein, der in der ersten Runde gesetzt werden muss. */
         @XStreamAsAttribute val startPiece: PieceShape = GameRuleLogic.getRandomPentomino(),
         /** Das aktuelle Spielfeld. */
-        @XStreamAsAttribute override val board: Board = Board(),
+        override val board: Board = Board(),
         turn: Int = 0,
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
@@ -154,23 +154,22 @@ class GameState @JvmOverloads constructor(
     
     override fun clone() = GameState(this)
     
-    override fun equals(other: Any?): Boolean {
-        return this === other ||
-               (other is GameState
-                && first == other.first
-                && second == other.second
-                && startPiece == other.startPiece
-                && board == other.board
-                && lastMove == other.lastMove
-                && lastMoveMono == other.lastMoveMono
-                && turn == other.turn
-                && blueShapes == other.blueShapes
-                && yellowShapes == other.yellowShapes
-                && redShapes == other.redShapes
-                && greenShapes == other.greenShapes
-                && validColors == other.validColors
-               )
-    }
+    override fun equals(other: Any?): Boolean =
+           this === other ||
+           (other is GameState
+            && first == other.first
+            && second == other.second
+            && startPiece == other.startPiece
+            && board == other.board
+            && lastMove == other.lastMove
+            && lastMoveMono == other.lastMoveMono
+            && turn == other.turn
+            && blueShapes == other.blueShapes
+            && yellowShapes == other.yellowShapes
+            && redShapes == other.redShapes
+            && greenShapes == other.greenShapes
+            && validColors == other.validColors
+           )
     
     override fun hashCode(): Int {
         var result = first.hashCode()
