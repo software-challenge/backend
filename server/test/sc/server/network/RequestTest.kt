@@ -1,5 +1,6 @@
 package sc.server.network
 
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test
 import sc.framework.plugins.AbstractGame
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
+import sc.protocol.responses.MementoEvent
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
@@ -19,9 +21,13 @@ import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.server.plugins.TestTurnRequest
 import sc.shared.WelcomeMessage
+import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
+import kotlin.time.seconds
 
 private const val PASSWORD = "TEST_PASSWORD"
 
+@ExperimentalTime
 class RequestTest: RealServerTest() {
     private lateinit var player1: LobbyClient
     private lateinit var player2: LobbyClient
@@ -125,7 +131,7 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    fun stepRequestException() {
+    suspend fun stepRequestException() {
         val admin = player1
         val player1 = this.player2
         val player2 = this.player3
@@ -161,10 +167,7 @@ class RequestTest: RealServerTest() {
         // no state will be send if game is paused TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000);
         listener.newStateReceived = false
         
-        TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000)
-        p1Listener.playerEventReceived = false
-        assertEquals(p1Listener.requests.size.toLong(), 1)
-        assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
+        p1Listener.waitForMessage(WelcomeMessage::class)
         
         player1.sendMessageToRoom(room.id, TestMove(1))
         TestHelper.waitMillis(100)
@@ -172,7 +175,7 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    fun stepRequest() {
+    suspend fun stepRequest() {
         val admin = player1
         val player1 = this.player2
         val player2 = this.player3
@@ -210,42 +213,36 @@ class RequestTest: RealServerTest() {
         // Wait for it to register
         // no state will be send if game is paused TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000);
         listener.newStateReceived = false
+    
+        p1Listener.waitForMessage(WelcomeMessage::class)
         
-        assertTrue(TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000))
-        p1Listener.playerEventReceived = false
-        assertEquals(p1Listener.requests.size, 1)
-        assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
-        
-        // enabling this should result in a GameLogicException
+        // TODO enabling this should result in a GameLogicException
         // player1.sendMessageToRoom(room.getId(), new TestMove(1));
         // TestHelper.waitMillis(100);
         
-        /* FIXME bugged - see Issue #124
         // Request a move from the first player
-        admin.send(new StepRequest(room.getId()));
-        TestHelper.waitUntilTrue(() -> listener.newStateReceived, 2000);
+        admin.send(StepRequest(room.id))
+        TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
         // send move
-        player1.sendMessageToRoom(room.getId(), new TestMove(1));
+        player1.sendMessageToRoom(room.id, TestMove(1));
         listener.newStateReceived = false;
 
-        admin.send(new StepRequest(room.getId()));
+        admin.send(StepRequest(room.id));
         // Wait for second players turn
-        TestHelper.waitUntilTrue(() -> p2Listener.playerEventReceived, 4000);
-        p2Listener.playerEventReceived = false;
+        p2Listener.waitForMessage(TestTurnRequest::class, 4.seconds)
 
         // Second player sends Move with value 42
-        player2.sendMessageToRoom(room.getId(), new TestMove(42));
-        TestHelper.waitMillis(100);*/
+        player2.sendMessageToRoom(room.id, TestMove(42));
+        TestHelper.waitMillis(100);
         
         // Request a move
         admin.send(StepRequest(room.id))
-        TestHelper.waitMillis(100)
         
         // should register as a new state
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
         listener.newStateReceived = false
         // Wait for it to register
-        TestHelper.waitUntilTrue({ p1Listener.playerEventReceived }, 2000)
+        p1Listener.waitForMessage(MementoEvent::class)
         
         // Second player sends Move not being his turn
         player2.sendMessageToRoom(room.id, TestMove(73))
@@ -254,18 +251,14 @@ class RequestTest: RealServerTest() {
         TestHelper.waitMillis(500)
         
         // There should not come another request
-        assertTrue(p1Listener.playerEventReceived)
-        assertNotEquals(p2Listener.requests[p2Listener.requests.size - 1].javaClass, TestTurnRequest::class.java)
+        p1Listener.waitForMessage(MementoEvent::class)
+        p1Listener.clearMessages() shouldBe 0
         
         // should not result in a new game state
         assertFalse(listener.newStateReceived)
-        p1Listener.playerEventReceived = false
-        p2Listener.playerEventReceived = false
-        listener.newStateReceived = false
         
         // Game should be deleted, because player3 send invalid move
         assertEquals(0L, lobby.games.size.toLong())
-        
     }
     
     @Test
@@ -325,7 +318,7 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    fun pauseRequest() {
+    suspend fun pauseRequest() {
         player1.authenticate(PASSWORD)
         val listener = TestLobbyClientListener()
         val p1Listener = PlayerListener()
@@ -345,10 +338,8 @@ class RequestTest: RealServerTest() {
         splayer2.displayName = "player2..."
         
         assertFalse(room.isPauseRequested)
-        TestHelper.waitUntilEqual(2, { p1Listener.requests.size }, 2000)
-        assertEquals(p1Listener.requests[0].javaClass, WelcomeMessage::class.java)
-        TestHelper.waitMillis(500)
-        assertEquals(p1Listener.requests[1].javaClass, TestTurnRequest::class.java)
+        p1Listener.waitForMessage(WelcomeMessage::class)
+        p1Listener.waitForMessage(TestTurnRequest::class, 500.milliseconds)
         listener.newStateReceived = false
         
         player1.send(PauseGameRequest(room.id, true))
@@ -359,16 +350,9 @@ class RequestTest: RealServerTest() {
         // assert that (if the game is paused) no new gameState is send to the observers after a pending Request was received
         assertFalse(listener.newStateReceived)
         
-        
-        p1Listener.playerEventReceived = false
-        p2Listener.playerEventReceived = false
         player1.send(PauseGameRequest(room.id, false))
         TestHelper.waitUntilEqual(false, { (room.game as AbstractGame<*>).isPaused }, 2000)
-        
-        TestHelper.waitMillis(500)
-        assertTrue(p2Listener.playerEventReceived)
-        assertEquals(p2Listener.requests[p2Listener.requests.size - 1].javaClass,
-            TestTurnRequest::class.java)
+        p2Listener.waitForMessage(TestTurnRequest::class, 500.milliseconds)
     }
     
 }
