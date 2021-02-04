@@ -35,14 +35,14 @@ class GameState @JvmOverloads constructor(
         yellowShapes: LinkedHashSet<PieceShape> = PieceShape.values().toLinkedHashSet(),
         redShapes: LinkedHashSet<PieceShape> = PieceShape.values().toLinkedHashSet(),
         greenShapes: LinkedHashSet<PieceShape> = PieceShape.values().toLinkedHashSet(),
-        validColors: LinkedHashSet<Color> = Color.values().toLinkedHashSet()
+        validColors: ArrayList<Color> = Color.values().toCollection(ArrayList(Color.values().size))
 ): TwoPlayerGameState<Player>(Team.ONE) {
     
     companion object {
         val logger = LoggerFactory.getLogger(GameState::class.java)
     }
     
-    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.board.clone(), other.turn, other.lastMove, HashMap(other.lastMoveMono), LinkedHashSet(other.blueShapes), LinkedHashSet(other.yellowShapes), LinkedHashSet(other.redShapes), LinkedHashSet(other.greenShapes), LinkedHashSet(other.validColors))
+    constructor(other: GameState): this(other.first, other.second, other.startPiece, other.board.clone(), other.turn, other.lastMove, HashMap(other.lastMoveMono), LinkedHashSet(other.blueShapes), LinkedHashSet(other.yellowShapes), LinkedHashSet(other.redShapes), LinkedHashSet(other.greenShapes), ArrayList(other.validColors))
     
     private val blueShapes = blueShapes
     private val yellowShapes = yellowShapes
@@ -148,10 +148,6 @@ class GameState @JvmOverloads constructor(
         logger.debug("Remaining Colors: $validColors")
     }
 
-    override fun toString(): String =
-            if (validColors.isEmpty()) "GameState finished at $round/$turn"
-            else "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
-    
     override fun clone() = GameState(this)
     
     override fun equals(other: Any?): Boolean =
@@ -186,6 +182,15 @@ class GameState @JvmOverloads constructor(
         result = 31 * result + validColors.hashCode()
         return result
     }
+    
+    fun longString(): String =
+            "GameState(first=$first, second=$second, turn=$turn, validColors=$validColors, startPiece=$startPiece, lastMove=$lastMove, lastMoveMono=$lastMoveMono)\n" +
+            "undeployedPieceShapes=${Color.values().associateWith { undeployedPieceShapes(it) }}\n" +
+            "$board"
+    
+    override fun toString(): String =
+            if (validColors.isEmpty()) "GameState finished at $round/$turn"
+            else "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
     
 }
 
