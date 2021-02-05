@@ -22,8 +22,6 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
 import kotlin.time.seconds
 
-private const val PASSWORD = "TEST_PASSWORD"
-
 @ExperimentalTime
 class RequestTest: RealServerTest() {
     private lateinit var player1: LobbyClient
@@ -38,14 +36,6 @@ class RequestTest: RealServerTest() {
         Thread.sleep(200)
         player3 = connectClient("localhost", serverPort)
         Thread.sleep(200)
-    }
-    
-    @Test
-    fun joinRoomRequest() {
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        
-        TestHelper.assertEqualsWithTimeout(1, { lobby.games.size })
-        assertEquals(1, lobby.games.iterator().next().clients.size.toLong())
     }
     
     @Test

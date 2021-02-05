@@ -11,14 +11,16 @@ import java.io.IOException
 import java.net.Socket
 import java.util.concurrent.TimeUnit
 
+internal const val PASSWORD = "TEST_PASSWORD"
+
 class TestLobby: Lobby() {
+    
     val serverPort: Int
         get() = NewClientListener.lastUsedPort
     
     init {
-        // Random PortAllocation
-        Configuration.set(Configuration.PORT_KEY, "0")
-        Configuration.set(Configuration.PASSWORD_KEY, "TEST_PASSWORD")
+        Configuration.set(Configuration.PORT_KEY, "0") // Random PortAllocation
+        Configuration.set(Configuration.PASSWORD_KEY, PASSWORD)
         
         pluginManager.loadPlugin(TestPlugin::class.java)
         this.pluginManager.supportsGame(TestPlugin.TEST_PLUGIN_UUID) shouldBe true

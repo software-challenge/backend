@@ -1,6 +1,7 @@
 package sc.server.network
 
 import io.kotest.assertions.timing.eventually
+import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -15,6 +16,7 @@ suspend fun <T> assertEqualWithTimeout(value: T, f: () -> T, duration: Duration 
 
 @ExperimentalTime
 class LobbyRequestTest: WordSpec({
+    isolationMode = IsolationMode.SingleInstance
     "A Lobby with connected clients" When {
         val lobby = autoClose(TestLobby())
         val players = Array(3) {
@@ -22,16 +24,11 @@ class LobbyRequestTest: WordSpec({
             Thread.sleep(200)
             player
         }
-        "a player tries to join" should {
+        "a player joined" should {
             players[0].joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-            var a = 0
-            "create a room" {
-                a = 1
+            "create a room for it" {
                 assertEqualWithTimeout(1, { lobby.games.size })
-                lobby.games.first().clients shouldHaveSize 1
-            }
-            "test branching" {
-                a shouldBe 0
+                lobby.games.single().clients shouldHaveSize 1
             }
         }
     }
