@@ -48,61 +48,62 @@ public class TestLobbyClientListener implements ILobbyClientListener {
 
   @Override
   public void onNewState(String roomId, IGameState state) {
-    newStateReceived = true;
     this.roomId = roomId;
     this.newState = state;
+    newStateReceived = true;
   }
 
   @Override
   public void onError(String roomId, ProtocolErrorMessage error) {
-    errorReceived = true;
     this.roomId = roomId;
     this.errorResponse = error;
+    errorReceived = true;
   }
 
   @Override
   public void onRoomMessage(String roomId, ProtocolMessage data) {
-    roomMessageReceived = true;
     this.roomId = roomId;
     this.roomMessage = data;
+    roomMessageReceived = true;
   }
 
   @Override
   public void onGamePrepared(GamePreparedResponse response) {
-    gamePreparedReceived = true;
     this.prepareGameResponse = response;
+    this.roomId = response.getRoomId();
+    gamePreparedReceived = true;
   }
 
   @Override
   public void onGameLeft(String roomId) {
-    gameLeftReceived = true;
     this.roomId = roomId;
+    gameLeftReceived = true;
   }
 
   @Override
   public void onGameJoined(String roomId) {
-    gameJoinedReceived = true;
     this.roomId = roomId;
+    gameJoinedReceived = true;
   }
 
   @Override
   public void onGameOver(String roomId, GameResult data) {
-    gameOverReceived = true;
     this.roomId = roomId;
     this.result = data;
+    gameOverReceived = true;
   }
 
   @Override
   public void onGamePaused(String roomId, Player nextPlayer) {
-    gamePausedReceived = true;
     this.roomId = roomId;
     this.player = nextPlayer;
+    gamePausedReceived = true;
   }
 
   @Override
   public void onGameObserved(String roomId) {
-    observedReceived = true;
     this.roomId = roomId;
+    observedReceived = true;
   }
 
   @Override
