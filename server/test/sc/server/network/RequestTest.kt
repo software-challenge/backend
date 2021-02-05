@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import sc.framework.plugins.AbstractGame
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
-import sc.protocol.responses.MementoEvent
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
@@ -189,28 +188,22 @@ class RequestTest: RealServerTest() {
         
         // Room was created
         val room = lobby.games.iterator().next()
-        val sp1 = room.slots[0].role.player
-        sp1.addPlayerListener(p1Listener)
+        room.slots[0].role.player.addPlayerListener(p1Listener)
         admin.send(PauseGameRequest(room.id, true))
         admin.observe(room.id)
-        
-        // Wait for admin
-        TestHelper.waitUntilTrue({ listener.observedReceived }, 2000)
-        
+        await("Game paused") { room.isPauseRequested }
+        await("Admin observing") { listener.observedReceived }
         
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        Thread.sleep(500)
+        await("Second player joins and game starts", 1.seconds) { room.status == GameRoom.GameStatus.ACTIVE }
         room.slots[1].role.player.addPlayerListener(p2Listener)
-        
-        // Wait for the server to register that
-        TestHelper.waitUntilTrue({ room.isPauseRequested }, 2000)
         
         // TODO the section above duplicates the one of the previous test, clean that up
         
         // Wait for it to register
         // no state will be send if game is paused TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000);
         listener.newStateReceived = false
-    
+        
         p1Listener.waitForMessage(WelcomeMessage::class)
         
         // TODO enabling this should result in a GameLogicException
@@ -220,14 +213,16 @@ class RequestTest: RealServerTest() {
         // Request a move from the first player
         admin.send(StepRequest(room.id))
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
+        p1Listener.waitForMessage(TestTurnRequest::class)
         // send move
-        player1.sendMessageToRoom(room.id, TestMove(1));
         listener.newStateReceived = false;
-
-        admin.send(StepRequest(room.id));
+        player1.sendMessageToRoom(room.id, TestMove(1));
+        TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
+        
+        admin.send(StepRequest(room.id))
         // Wait for second players turn
         p2Listener.waitForMessage(TestTurnRequest::class, 4.seconds)
-
+        
         // Second player sends Move with value 42
         player2.sendMessageToRoom(room.id, TestMove(42));
         Thread.sleep(100);
@@ -239,22 +234,21 @@ class RequestTest: RealServerTest() {
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
         listener.newStateReceived = false
         // Wait for it to register
-        p1Listener.waitForMessage(MementoEvent::class)
+        p1Listener.waitForMessage(TestTurnRequest::class)
         
+        p1Listener.clearMessages() shouldBe 0
         // Second player sends Move not being his turn
         player2.sendMessageToRoom(room.id, TestMove(73))
-        TestHelper.waitUntilFalse({ listener.newStateReceived }, 1000)
+        TestHelper.waitUntilTrue({ listener.newStateReceived }, 1000)
         listener.newStateReceived = false
-        Thread.sleep(500)
         
         // There should not come another request
-        p1Listener.waitForMessage(MementoEvent::class)
+        Thread.sleep(500)
         p1Listener.clearMessages() shouldBe 0
-        
         // should not result in a new game state
         assertFalse(listener.newStateReceived)
         
-        // Game should be deleted, because player3 send invalid move
+        // Game should be deleted, because player3 sent invalid move
         assertEquals(0L, lobby.games.size.toLong())
     }
     
