@@ -32,8 +32,8 @@ class PlayerListener : IPlayerListener {
     }
     
     @ExperimentalTime
-    fun waitForMessage(messageType: KClass<out ProtocolMessage>, duration: Duration = 2.seconds) = runBlocking {
-        eventually(duration, 40.milliseconds.fibonacci()) {
+    fun waitForMessage(messageType: KClass<out ProtocolMessage>, duration: Duration = 200.milliseconds) = runBlocking {
+        eventually(duration, 20.milliseconds.fibonacci()) {
             withClue("Expected ${messageType.simpleName} within $duration") {
                 messages.shouldNotBeEmpty()
             }

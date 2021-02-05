@@ -250,12 +250,12 @@ class RequestTest: RealServerTest() {
         val listener = TestLobbyClientListener()
         player1.addListener(listener)
         
-        await("Lobby creates a room", 1.seconds) {
+        await("Lobby creates a room") {
             lobby.games.isNotEmpty() && listener.gameJoinedReceived && listener.roomId != null
         }
         
         player1.send(CancelRequest(listener.roomId))
-        await("Lobby closes the room", 5.seconds) {
+        await("Lobby closes the room") {
             lobby.games.isEmpty()
         }
     }

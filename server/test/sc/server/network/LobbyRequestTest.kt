@@ -1,6 +1,8 @@
 package sc.server.network
 
 import io.kotest.assertions.timing.eventually
+import io.kotest.assertions.until.Interval
+import io.kotest.assertions.until.fibonacci
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
@@ -14,26 +16,26 @@ import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.server.plugins.TestTurnRequest
+import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
+
+@ExperimentalTime
+suspend fun await(clue: String? = null, duration: Duration = 200.milliseconds, interval: Interval = 20.milliseconds.fibonacci(), f: suspend () -> Unit) =
+        withClue(clue) { eventually(duration, interval, f) }
 
 @ExperimentalTime
 class LobbyRequestTest: WordSpec({
     isolationMode = IsolationMode.SingleInstance
     "A Lobby with connected clients" When {
         val lobby = autoClose(TestLobby())
-        val players = Array(3) { pos ->
-            val player = lobby.connectClient("localhost", lobby.serverPort)
-            withClue("Client connected") {
-                eventually(200.milliseconds) { lobby.clientManager.clients.size shouldBe pos + 1 }
-            }
-            player
-        }
+        val players = Array(3) { lobby.connectClient("localhost", lobby.serverPort) }
+        await("Clients connected") { lobby.clientManager.clients.size shouldBe players.size }
         "a player joined" should {
             players[0].joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
             "create a room for it" {
                 withClue("Room opened") {
-                    eventually(100.milliseconds) { lobby.games.size shouldBe 1 }
+                    await { lobby.games.size shouldBe 1 }
                 }
                 lobby.games.single().clients shouldHaveSize 1
             }
@@ -46,7 +48,7 @@ class LobbyRequestTest: WordSpec({
             
             "prepare the GameRoom" {
                 admin.prepareGame(TestPlugin.TEST_PLUGIN_UUID, true)
-                eventually(100.milliseconds) { listener.gamePreparedReceived shouldBe true }
+                await { listener.gamePreparedReceived shouldBe true }
                 lobby.games shouldHaveSize 2
             }
             
@@ -58,13 +60,13 @@ class LobbyRequestTest: WordSpec({
             }
             
             val observer = admin.observeAndControl(roomId, true)
-            eventually(100.milliseconds) { listener.observedReceived shouldBe true }
+            await { listener.observedReceived shouldBe true }
             
             "let players join by reservation" {
                 val reservations = listener.prepareGameResponse.reservations
                 players[1].joinPreparedGame(reservations[0])
                 players[2].joinPreparedGame(reservations[1])
-                eventually(100.milliseconds) { room.status shouldBe GameRoom.GameStatus.ACTIVE }
+                await { room.status shouldBe GameRoom.GameStatus.ACTIVE }
             }
             
             val playerListeners = room.slots.map { slot ->
@@ -72,20 +74,20 @@ class LobbyRequestTest: WordSpec({
             }
             "start game on unpause" {
                 observer.unpause()
-                eventually(100.milliseconds) { room.isPauseRequested shouldBe false }
+                await { room.isPauseRequested shouldBe false }
             }
             val game = room.game as TestGame
             "accept moves" {
                 playerListeners[0].waitForMessage(TestTurnRequest::class)
                 players[1].sendMessageToRoom(roomId, TestMove(32))
-                eventually(100.milliseconds) { game.state.state shouldBe 32 }
+                await { game.state.state shouldBe 32 }
                 playerListeners[1].waitForMessage(TestTurnRequest::class)
                 players[2].sendMessageToRoom(roomId, TestMove(54))
-                eventually(100.milliseconds) { game.state.state shouldBe 54 }
+                await { game.state.state shouldBe 54 }
             }
             "terminate when wrong player sends a move" {
                 players[2].sendMessageToRoom(roomId, TestMove(0))
-                eventually(100.milliseconds) { room.status shouldBe GameRoom.GameStatus.OVER }
+                await { room.status shouldBe GameRoom.GameStatus.OVER }
             }
         }
     }
