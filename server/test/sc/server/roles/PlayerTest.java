@@ -3,6 +3,7 @@ package sc.server.roles;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sc.api.plugins.exceptions.RescuableClientException;
+import sc.framework.plugins.protocol.MoveRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.requests.ObservationRequest;
@@ -14,7 +15,6 @@ import sc.server.network.PacketCallback;
 import sc.server.plugins.TestGameState;
 import sc.server.plugins.TestMove;
 import sc.server.plugins.TestPlugin;
-import sc.server.plugins.TestTurnRequest;
 import sc.shared.InvalidGameStateException;
 import sc.shared.SlotDescriptor;
 
@@ -104,7 +104,7 @@ public class PlayerTest extends AbstractRoleTest {
                                                MockClient player1, MockClient player2, MockClient observer)
           throws RescuableClientException, InvalidGameStateException {
     // Do the move
-    player1.seekRoomMessage(roomId, TestTurnRequest.class);
+    player1.seekRoomMessage(roomId, MoveRequest.class);
     this.lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
             new TestMove(this.firstState))));
 
@@ -126,7 +126,7 @@ public class PlayerTest extends AbstractRoleTest {
 
   private void makeMoveAfterRequest(String roomId, MockClient player)
           throws RescuableClientException, InvalidGameStateException {
-    player.seekRoomMessage(roomId, TestTurnRequest.class);
+    player.seekRoomMessage(roomId, MoveRequest.class);
     this.lobby.onRequest(player, new PacketCallback(new RoomPacket(roomId,
             new TestMove(123456))));
   }
@@ -135,7 +135,7 @@ public class PlayerTest extends AbstractRoleTest {
                                                 MockClient player1, MockClient player2, MockClient observer)
           throws RescuableClientException, InvalidGameStateException {
     // Do the move
-    player2.seekRoomMessage(roomId, TestTurnRequest.class);
+    player2.seekRoomMessage(roomId, MoveRequest.class);
     this.lobby.onRequest(player2, new PacketCallback(new RoomPacket(roomId,
             new TestMove(this.secondState))));
 

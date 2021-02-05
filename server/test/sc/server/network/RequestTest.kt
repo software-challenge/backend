@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import sc.framework.plugins.AbstractGame
+import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
 import sc.server.Configuration
@@ -16,7 +17,6 @@ import sc.server.gaming.ObserverRole
 import sc.server.helpers.TestHelper
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
-import sc.server.plugins.TestTurnRequest
 import sc.shared.WelcomeMessage
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
@@ -203,7 +203,7 @@ class RequestTest: RealServerTest() {
         // Request a move from the first player
         admin.send(StepRequest(room.id))
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
-        p1Listener.waitForMessage(TestTurnRequest::class)
+        p1Listener.waitForMessage(MoveRequest::class)
         // send move
         listener.newStateReceived = false;
         player1.sendMessageToRoom(room.id, TestMove(1));
@@ -211,7 +211,7 @@ class RequestTest: RealServerTest() {
         
         admin.send(StepRequest(room.id))
         // Wait for second players turn
-        p2Listener.waitForMessage(TestTurnRequest::class, 4.seconds)
+        p2Listener.waitForMessage(MoveRequest::class, 4.seconds)
         
         // Second player sends Move with value 42
         player2.sendMessageToRoom(room.id, TestMove(42));
@@ -224,7 +224,7 @@ class RequestTest: RealServerTest() {
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
         listener.newStateReceived = false
         // Wait for it to register
-        p1Listener.waitForMessage(TestTurnRequest::class)
+        p1Listener.waitForMessage(MoveRequest::class)
         
         p1Listener.clearMessages() shouldBe 0
         // Second player sends Move not being his turn
@@ -320,7 +320,7 @@ class RequestTest: RealServerTest() {
         
         assertFalse(room.isPauseRequested)
         p1Listener.waitForMessage(WelcomeMessage::class)
-        p1Listener.waitForMessage(TestTurnRequest::class, 500.milliseconds)
+        p1Listener.waitForMessage(MoveRequest::class, 500.milliseconds)
         listener.newStateReceived = false
         
         player1.send(PauseGameRequest(room.id, true))
@@ -333,7 +333,7 @@ class RequestTest: RealServerTest() {
         
         player1.send(PauseGameRequest(room.id, false))
         TestHelper.waitUntilEqual(false, { (room.game as AbstractGame<*>).isPaused }, 2000)
-        p2Listener.waitForMessage(TestTurnRequest::class, 500.milliseconds)
+        p2Listener.waitForMessage(MoveRequest::class, 500.milliseconds)
     }
     
 }

@@ -9,13 +9,13 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import sc.framework.plugins.protocol.MoveRequest
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
 import sc.server.gaming.GameRoom
 import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
-import sc.server.plugins.TestTurnRequest
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
@@ -78,10 +78,10 @@ class LobbyRequestTest: WordSpec({
             }
             val game = room.game as TestGame
             "accept moves" {
-                playerListeners[0].waitForMessage(TestTurnRequest::class)
+                playerListeners[0].waitForMessage(MoveRequest::class)
                 players[1].sendMessageToRoom(roomId, TestMove(32))
                 await { game.state.state shouldBe 32 }
-                playerListeners[1].waitForMessage(TestTurnRequest::class)
+                playerListeners[1].waitForMessage(MoveRequest::class)
                 players[2].sendMessageToRoom(roomId, TestMove(54))
                 await { game.state.state shouldBe 54 }
             }

@@ -10,7 +10,7 @@ import sc.protocol.responses.ProtocolMessage
 import sc.server.helpers.TestTeam
 import sc.shared.*
 
-class TestGame : AbstractGame<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
+class TestGame : AbstractGame<Player>(TestPlugin.TEST_PLUGIN_UUID) {
     val state = TestGameState()
     
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
@@ -50,7 +50,7 @@ class TestGame : AbstractGame<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
         notifyOnGameOver(result)
     }
 
-    override fun getScoreFor(player: TestPlayer): PlayerScore {
+    override fun getScoreFor(player: Player): PlayerScore {
         return PlayerScore(true, "Spieler hat gewonnen.")
     }
 
@@ -60,7 +60,7 @@ class TestGame : AbstractGame<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
 
     override val winners: List<Player> = emptyList()
 
-    override fun getTimeoutFor(player: TestPlayer): ActionTimeout {
+    override fun getTimeoutFor(player: Player): ActionTimeout {
         return ActionTimeout(false, 100000000L, 20000000L)
     }
 
