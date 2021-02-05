@@ -11,7 +11,7 @@ import sc.server.helpers.TestTeam
 import sc.shared.*
 
 class TestGame : AbstractGame<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
-    private val state = TestGameState()
+    val state = TestGameState()
     
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
         if (data is TestMove) {
