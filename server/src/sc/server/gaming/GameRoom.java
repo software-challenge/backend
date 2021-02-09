@@ -361,7 +361,7 @@ public class GameRoom implements IGameListener {
   }
 
   /** If the Game is prepared, sync all slots. */
-  private void start() throws RescuableClientException {
+  private synchronized void start() throws RescuableClientException {
     if (this.prepared) // sync slots for prepared game. This was already called for PlayerSlots in a game created by a join
     {
       for (PlayerSlot slot : this.playerSlots) {
@@ -505,7 +505,7 @@ public class GameRoom implements IGameListener {
     pausableGame.setPaused(pause);
 
     // continue execution
-    if (!isPauseRequested()) {
+    if (!isPauseRequested() && status == GameStatus.ACTIVE) {
       pausableGame.afterPause();
     }
   }
