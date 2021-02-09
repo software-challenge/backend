@@ -32,19 +32,15 @@ public class GameRoomManager {
 
   private List<Score> scores = new ArrayList<>();
 
-  /** Default constructor, initializes rooms, loads available plugins */
+  /** Default constructor, initializes rooms, loads available plugins. */
   public GameRoomManager() {
     this.rooms = new HashMap<>();
     this.gamePluginManager.reload();
     this.gamePluginManager.activateAllPlugins();
   }
 
-  /**
-   * Adds an active game to the <code>GameManager</code>
-   *
-   * @param room Room to be added
-   */
-  private void add(GameRoom room) {
+  /** Adds an active GameRoom to this <code>GameManager</code> */
+  private synchronized void add(GameRoom room) {
     logger.debug("Adding room with id {}", room.getId());
     this.rooms.put(room.getId(), room);
   }
@@ -63,16 +59,17 @@ public class GameRoomManager {
   }
 
   /**
-   * make new PluginManager, generate roomId, create Game and GameRoom. If gameFile is set, load gameState from file
+   * Create a new GameRoom from the matching plugin.
+   * If gameFile is set, load gameState from file.
    *
-   * @param gameType String of current Game
+   * @param gameType id of the game plugin to use
    * @param prepared signals whether the game was prepared by gui or ..., false if player has to send JoinRoomRequest
    *
    * @return newly created GameRoom
    *
-   * @throws RescuableClientException if Plugin could not be loaded
+   * @throws UnknownGameTypeException if no matching GamePlugin was found
    */
-  public synchronized GameRoom createGame(String gameType, boolean prepared) throws RescuableClientException {
+  public GameRoom createGame(String gameType, boolean prepared) throws RescuableClientException {
     GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
 
     if (plugin == null) {
@@ -80,7 +77,7 @@ public class GameRoomManager {
       throw new UnknownGameTypeException(gameType, this.gamePluginManager.getPluginUUIDs());
     }
 
-    logger.info("Created new game of type " + gameType);
+    logger.info("Creating new game of type " + gameType);
 
     String roomId = generateRoomId();
     GameRoom room = new GameRoom(roomId, this, plugin.getPlugin().getScoreDefinition(), plugin.createGame(), prepared);
@@ -190,7 +187,7 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized GamePreparedResponse prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
+  public GamePreparedResponse prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
     return prepareGame(
             prepared.getGameType(),
             prepared.getPause(),
@@ -217,7 +214,7 @@ public class GameRoomManager {
   }
 
   /** Remove specified room from this manager. */
-  public void remove(GameRoom gameRoom) {
+  public synchronized void remove(GameRoom gameRoom) {
     this.rooms.remove(gameRoom.getId());
   }
 
