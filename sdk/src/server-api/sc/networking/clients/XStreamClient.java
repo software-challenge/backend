@@ -157,12 +157,17 @@ public abstract class XStreamClient {
     networkInterface.getOutputStream().flush();
   }
 
-  public void send(ProtocolMessage packet) {
+  public synchronized void send(ProtocolMessage packet) {
     if (!isReady())
-      throw new IllegalStateException("Please call start() before sending any packets!");
+      throw new IllegalStateException(
+          String.format("Trying to write packet on %s which wasn't started: %s", shortString(), packet));
 
-    if (isClosed())
-      throw new IllegalStateException("Writing on a closed xStream!");
+    if (isClosed()) {
+      logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {}) Thread: {}",
+          packet.getClass().getSimpleName(),
+          Thread.currentThread().getName());
+      return;
+    }
 
     logger.debug("{}: Sending {} via {} from {}", shortString(), packet, networkInterface, toString());
     if (logger.isTraceEnabled())
