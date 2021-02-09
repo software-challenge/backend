@@ -60,14 +60,6 @@ class TestGame : AbstractGame<TestPlayer>(TestPlugin.TEST_PLUGIN_UUID) {
 
     override val winners: List<Player> = emptyList()
 
-    /** Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests  */
-    override fun start() {
-        players.forEach {
-            it.notifyListeners(WelcomeMessage(it.color))
-        }
-        super.start()
-    }
-
     override fun getTimeoutFor(player: TestPlayer): ActionTimeout {
         return ActionTimeout(false, 100000000L, 20000000L)
     }

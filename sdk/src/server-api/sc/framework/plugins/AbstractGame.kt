@@ -7,10 +7,7 @@ import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.host.IGameListener
 import sc.protocol.responses.ProtocolErrorMessage
 import sc.protocol.responses.ProtocolMessage
-import sc.shared.InvalidMoveException
-import sc.shared.PlayerScore
-import sc.shared.ScoreCause
-import sc.shared.WinCondition
+import sc.shared.*
 
 abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance {
     companion object {
@@ -91,9 +88,10 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
         moveRequestTimeout?.stop()
         moveRequestTimeout = null
     }
-
-    /** Server or an administrator requests the game to start now. */
+    
+    /** Starts the game by sending a [WelcomeMessage] to all players and calling [next]. */
     override fun start() {
+        players.forEach { it.notifyListeners(WelcomeMessage(it.color)) }
         next(players.first())
     }
 
@@ -120,9 +118,10 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     }
 
     /** Advances the Game to [nextPlayer].
+     * - sends out a state update
      * - invokes [notifyOnGameOver] if the game is over
-     * - updates the [activePlayer] to [nextPlayer]
-     * - sends out a state update and requests a new move
+     * - updates [activePlayer] to [nextPlayer]
+     * - requests a new move if [isPaused] is false
      */
     protected fun next(nextPlayer: P?) {
         // if paused, notify observers only (e.g. to update the GUI)
