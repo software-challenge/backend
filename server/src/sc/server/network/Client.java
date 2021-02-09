@@ -45,18 +45,6 @@ public class Client extends XStreamClient implements IClient {
     this.roles.add(role);
   }
 
-  /** Send a package to the server. */
-  @Override
-  public synchronized void send(ProtocolMessage packet) {
-    if (!isClosed()) {
-      super.send(packet);
-    } else {
-      logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {}) Thread: {}",
-              packet.getClass().getSimpleName(),
-              Thread.currentThread().getName());
-    }
-  }
-
   /** Call listener that handle new Packages. */
   private void notifyOnPacket(Object packet) throws UnprocessedPacketException {
     /*
@@ -103,18 +91,18 @@ public class Client extends XStreamClient implements IClient {
   }
 
   /** Call listeners upon error. */
-  private synchronized void notifyOnError(ProtocolErrorMessage packet) {
+  private void notifyOnError(ProtocolErrorMessage packet) {
     for (IClientListener listener : new ArrayList<>(clientListeners)) {
       try {
         listener.onError(this, packet);
       } catch (Exception e) {
-        logger.error("OnError Notification caused an exception.", e);
+        logger.error("OnError Notification caused an exception, error: " + packet, e);
       }
     }
   }
 
   /** Call listeners upon disconnect. */
-  private synchronized void notifyOnDisconnect() {
+  private void notifyOnDisconnect() {
     if (!this.notifiedOnDisconnect) {
       this.notifiedOnDisconnect = true;
       for (IClientListener listener : new ArrayList<>(clientListeners)) {
@@ -142,9 +130,11 @@ public class Client extends XStreamClient implements IClient {
    * @return true iff this client has an AdministratorRole
    */
   public boolean isAdministrator() {
-    for (IClientRole role : this.roles) {
-      if (role instanceof AdministratorRole) {
-        return true;
+    synchronized(roles) {
+      for (IClientRole role : this.roles) {
+        if (role instanceof AdministratorRole) {
+          return true;
+        }
       }
     }
     return false;
@@ -179,12 +169,13 @@ public class Client extends XStreamClient implements IClient {
    */
   @Override
   protected void onDisconnect(DisconnectCause cause) {
-    super.onDisconnect(cause);
-    for (IClientRole role : this.roles) {
-      try {
-        role.disconnect(cause);
-      } catch (Exception e) {
-        logger.warn("Couldn't close role.", e);
+    synchronized(roles) {
+      for (IClientRole role : this.roles) {
+        try {
+          role.disconnect(cause);
+        } catch (Exception e) {
+          logger.warn("Couldn't close role.", e);
+        }
       }
     }
 
