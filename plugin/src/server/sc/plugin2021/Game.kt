@@ -18,13 +18,6 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     
     override val currentState = GameState()
 
-    override fun start() {
-        players.forEach {it.notifyListeners(WelcomeMessage(it.color)) }
-        // next(players.first(), true)
-        super.start()
-    }
-
-    private val playerMap = mutableMapOf<Team, Player>()
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     override fun onPlayerJoined(): Player {
         if(availableTeams.isEmpty())
@@ -32,7 +25,6 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
         val player = currentState.getPlayer(availableTeams.removeAt(0))
         
         players.add(player)
-        playerMap[player.color as Team] = player
         currentState.addPlayer(player)
         return player
     }
@@ -58,7 +50,7 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
         }
 
     override val playerScores: MutableList<PlayerScore>
-            get() = players.map { getScoreFor(it) }.toMutableList()
+            get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
 
     /**
      * Checks whether and why the game is over.
