@@ -21,7 +21,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
 
 @ExperimentalTime
-suspend fun await(clue: String? = null, duration: Duration = 200.milliseconds, interval: Interval = 20.milliseconds.fibonacci(), f: suspend () -> Unit) =
+suspend fun await(clue: String? = null, duration: Duration = 500.milliseconds, interval: Interval = 20.milliseconds.fibonacci(), f: suspend () -> Unit) =
         withClue(clue) { eventually(duration, interval, f) }
 
 @ExperimentalTime

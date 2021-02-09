@@ -1,16 +1,17 @@
 package sc.server.network
 
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import sc.server.client.TestLobbyClientListener
+import sc.server.gaming.GameRoom
 import sc.server.helpers.TestHelper
 import sc.server.plugins.TestPlugin
 import sc.shared.ScoreCause
 import java.util.concurrent.TimeUnit
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class LobbyTest: RealServerTest() {
     
     @Test
@@ -21,12 +22,11 @@ class LobbyTest: RealServerTest() {
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         
-        // Wait for game to be created
-        TestHelper.assertEqualsWithTimeout(1, { lobby.games.size }, 2000)
+        await("Game created") { lobby.games.size == 1 }
+        await("Game started") { lobby.games.single().status == GameRoom.GameStatus.ACTIVE }
         
-        // Game should be stopped when one player dies
         player1.stop()
-        TestHelper.assertEqualsWithTimeout(0, { lobby.games.size }, 5000)
+        await("GameRoom closes after one player died") { lobby.games.isEmpty() }
     }
     
     @Disabled

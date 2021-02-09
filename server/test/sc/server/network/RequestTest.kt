@@ -49,7 +49,7 @@ class RequestTest: RealServerTest() {
         player2.authenticate("PASSWORD_FAIL_TEST")
         Thread.sleep(200)
         
-        //Player2 got kicked
+        // Player2 got kicked
         assertEquals(2, lobby.clientManager.clients.size.toLong())
         assertFalse(clients[1].isAdministrator)
     }
