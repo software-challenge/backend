@@ -259,7 +259,7 @@ public abstract class XStreamClient {
       try {
         this.networkInterface.close();
       } catch (Exception e) {
-        logger.warn("Failed to close NetworkInterface", e);
+        logger.warn("Failed to close " + networkInterface, e);
       }
     } else {
       logger.warn("Attempted to close an already closed stream");
