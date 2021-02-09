@@ -11,7 +11,6 @@ import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import sc.shared.WinCondition
-import java.util.*
 
 abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance {
     companion object {
@@ -45,7 +44,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
      */
     @Throws(GameLogicException::class)
     override fun onAction(fromPlayer: Player, data: ProtocolMessage) {
-        var error = Optional.empty<String>()
+        var error: String? = null
         if (fromPlayer == activePlayer) {
             moveRequestTimeout?.let { timer ->
                 timer.stop()
@@ -58,14 +57,14 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
                     onRoundBasedAction(fromPlayer, data)
                 }
             } ?: run {
-                error = Optional.of("We didn't request a move from you yet.")
+                error = "We didn't request a move from you yet."
             }
         } else {
-            error = Optional.of("It's not your turn yet; expected: $activePlayer, got $fromPlayer (msg was $data).")
+            error = "It's not your turn yet; expected: $activePlayer, got $fromPlayer (msg was $data)."
         }
-        if (error.isPresent) {
-            fromPlayer.notifyListeners(ProtocolErrorMessage(data, error.get()))
-            throw GameLogicException(error.get())
+        error?.let {
+            fromPlayer.notifyListeners(ProtocolErrorMessage(data, it))
+            throw GameLogicException(it)
         }
     }
 
@@ -113,15 +112,11 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
             } else {
                 ScoreCause.RULE_VIOLATION
             }
-        val scores = generateScoreMap().toMutableMap()
-        scores.forEach {
-            if (it.key == player) {
-                val score = it.value
-                scores[it.key] = PlayerScore(newCause, score.reason, score.parts)
-            }
+        val scores = HashMap(generateScoreMap())
+        scores[player]?.let { score ->
+            scores[player] = PlayerScore(newCause, score.reason, score.parts)
         }
-
-        notifyOnGameOver(scores.toMap())
+        notifyOnGameOver(scores)
     }
 
     /** Advances the Game to [nextPlayer].
@@ -130,14 +125,14 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
      * - sends out a state update and requests a new move
      */
     protected fun next(nextPlayer: P?) {
-        // if paused, notify observers only (so they can update the GUI appropriately)
+        // if paused, notify observers only (e.g. to update the GUI)
         notifyOnNewState(currentState, isPaused)
         
         if (checkWinCondition() != null) {
-            logger.debug("game over")
+            logger.debug("Game over")
             notifyOnGameOver(generateScoreMap())
         } else {
-            logger.debug("next player: $nextPlayer")
+            logger.debug("Next player: $nextPlayer")
     
             activePlayer = nextPlayer
             if (!isPaused) {
@@ -180,7 +175,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     protected open fun getTimeoutFor(player: P) = ActionTimeout(true)
 
     fun generateScoreMap(): Map<Player, PlayerScore> =
-            players.map { it to getScoreFor(it) }.toMap()
+            players.associate { it to getScoreFor(it) }
 
     /**
      * Extends the set of listeners.
@@ -205,18 +200,18 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
             try {
                 it.onGameOver(map)
             } catch (e: Exception) {
-                logger.error("GameOver Notification caused an exception.", e)
+                logger.error("GameOver notification caused an exception, scores: $map", e)
             }
         }
     }
 
     protected fun notifyOnNewState(mementoState: IGameState, observersOnly: Boolean) {
         listeners.forEach {
-            logger.debug("notifying $it about new game state", it)
+            logger.debug("Notifying $it about new game state")
             try {
                 it.onStateChanged(mementoState, observersOnly)
             } catch (e: Exception) {
-                logger.error("NewState Notification caused an exception.", e)
+                logger.error("NewState Notification caused an exception", e)
             }
         }
     }
