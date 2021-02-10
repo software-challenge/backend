@@ -25,6 +25,10 @@ dependencies {
 val deployDir: File by project
 
 tasks {
+    test {
+        systemProperty("junit.jupiter.execution.timeout.default", "10 s") // legacy junit tests
+    }
+    
     val runnableDir = buildDir.resolve("runnable")
     
     val createStartScripts by creating(ScriptsTask::class) {
