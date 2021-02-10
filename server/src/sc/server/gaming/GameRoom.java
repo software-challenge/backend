@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameState;
-import sc.api.plugins.exceptions.GameLogicException;
-import sc.api.plugins.exceptions.RescuableClientException;
-import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.api.plugins.exceptions.*;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.AbstractGame;
 import sc.framework.plugins.Player;
@@ -263,7 +261,7 @@ public class GameRoom implements IGameListener {
    *
    * @return true if successfully joined
    */
-  public synchronized boolean join(Client client) throws RescuableClientException {
+  public synchronized boolean join(Client client) throws GameRoomException {
     PlayerSlot openSlot = null;
 
     for (PlayerSlot slot : this.playerSlots) {
@@ -295,7 +293,7 @@ public class GameRoom implements IGameListener {
    * @param openSlot PlayerSlot to fill
    * @param client   Client to fill PlayerSlot
    */
-  synchronized void fillSlot(PlayerSlot openSlot, Client client) throws RescuableClientException {
+  synchronized void fillSlot(PlayerSlot openSlot, Client client) throws GameRoomException {
     openSlot.setClient(client); // set role of Slot as PlayerRole
 
     if (!this.prepared) // is set when game is game is created or prepared
@@ -313,7 +311,7 @@ public class GameRoom implements IGameListener {
    * Registers player to role in given slot.
    * Sends JoinGameProtocolMessage when successful.
    */
-  private void syncSlot(PlayerSlot slot) throws RescuableClientException {
+  private void syncSlot(PlayerSlot slot) throws GameRoomException {
     // create new player in gameState of game
     Player player = game.onPlayerJoined();
     // set attributes for player
@@ -347,7 +345,7 @@ public class GameRoom implements IGameListener {
   }
 
   /** Starts game if ready and not over. */
-  private void startIfReady() throws RescuableClientException {
+  private void startIfReady() throws GameRoomException {
     logger.debug("startIfReady called");
     if (isOver()) {
       logger.warn("Game already over: {}", game);
@@ -364,7 +362,7 @@ public class GameRoom implements IGameListener {
   }
 
   /** If the Game is prepared, sync all slots. */
-  private synchronized void start() throws RescuableClientException {
+  private synchronized void start() throws GameRoomException {
     if (this.prepared) // sync slots for prepared game. This was already called for PlayerSlots in a game created by a join
     {
       for (PlayerSlot slot : this.playerSlots) {
@@ -427,34 +425,43 @@ public class GameRoom implements IGameListener {
    * @param source Client which caused the event
    * @param data   ProtocolMessage containing the action
    */
-  public synchronized void onEvent(Client source, ProtocolMessage data) throws RescuableClientException, InvalidGameStateException {
+  public synchronized void onEvent(Client source, ProtocolMessage data) throws GameRoomException {
     if (isOver())
-      throw new RescuableClientException("Game is already over, but got message: " + data.getClass());
+      throw new GameException("Game is already over, but got " + data);
 
+    Player player = resolvePlayer(source);
     try {
-      this.game.onAction(resolvePlayer(source), data);
+      game.onAction(player, data);
     } catch (InvalidMoveException e) {
-      this.observerBroadcast(new RoomPacket(this.id, new ProtocolErrorMessage(e.move, e.getMessage())));
-      this.game.onPlayerLeft(resolvePlayer(source), ScoreCause.RULE_VIOLATION);
-      throw new GameLogicException(e.toString());
+      final String error = String.format("Ungueltiger Zug von '%s'.\n%s", player.getDisplayName(), e);
+      logger.error(error);
+      player.setViolationReason(e.getMessage());
+      ProtocolErrorMessage errorMessage = new ProtocolErrorMessage(e.move, error);
+      player.notifyListeners(errorMessage);
+      observerBroadcast(new RoomPacket(id, errorMessage));
+      game.onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
+      throw new GameLogicException(e.toString(), e);
+    } catch (GameLogicException e) {
+      player.notifyListeners(new ProtocolErrorMessage(data, e.getMessage()));
+      throw e;
     }
   }
 
   /** Finds player matching the given client. */
-  private Player resolvePlayer(Client client) throws RescuableClientException {
+  private Player resolvePlayer(Client client) throws GameRoomException {
     for (PlayerRole role : getPlayers()) {
       if (role.getClient().equals(client)) {
         Player resolvedPlayer = role.getPlayer();
 
         if (resolvedPlayer == null) {
-          throw new RescuableClientException("Game isn't ready. Please wait before sending messages.");
+          throw new GameException("Game isn't ready. Please wait before sending messages.");
         }
 
         return resolvedPlayer;
       }
     }
 
-    throw new RescuableClientException("Client is not a member of game " + this.id);
+    throw new GameRoomException("Client is not a member of game " + this.id);
   }
 
   /** Get {@link PlayerRole Players} that occupy a slot. */
@@ -519,7 +526,7 @@ public class GameRoom implements IGameListener {
    * @param forced If true, the game will be forcibly started if starting
    *               conditions are not met. This should result in a GameOver.
    */
-  public synchronized void step(boolean forced) throws RescuableClientException {
+  public synchronized void step(boolean forced) throws GameRoomException {
     if (this.status == GameStatus.CREATED) {
       if (forced) {
         logger.warn("Forcing game start for {}", game);
