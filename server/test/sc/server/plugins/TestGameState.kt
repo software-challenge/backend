@@ -2,6 +2,7 @@ package sc.server.plugins
 
 import sc.api.plugins.IGameState
 import sc.api.plugins.ITeam
+import sc.framework.plugins.Player
 import sc.server.helpers.TestTeam
 
 class TestGameState: IGameState {
@@ -11,8 +12,8 @@ class TestGameState: IGameState {
     var lastPlayerIndex = 0
     var currentPlayer = TestTeam.RED
     val startPlayer = TestTeam.RED
-    val red = TestPlayer(TestTeam.RED)
-    val blue = TestPlayer(TestTeam.BLUE)
+    val red = Player(TestTeam.RED)
+    val blue = Player(TestTeam.BLUE)
     
     /** wechselt den Spieler, der aktuell an der Reihe ist anhand von `turn`  */
     fun switchCurrentPlayer() {

@@ -42,7 +42,9 @@ public class Client extends XStreamClient implements IClient {
   /** Add another role to the client. */
   @Override
   public void addRole(IClientRole role) {
-    this.roles.add(role);
+    synchronized(roles) {
+      this.roles.add(role);
+    }
   }
 
   /** Call listener that handle new Packages. */

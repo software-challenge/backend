@@ -86,9 +86,13 @@ public class GameRoom implements IGameListener {
     }
 
     setStatus(GameStatus.OVER);
-    result = generateGameResult(results);
-    logger.info("{} is over (regular={})", game, result.isRegular());
-    broadcast(result);
+    try {
+      result = generateGameResult(results);
+      logger.info("{} is over (regular={})", game, result.isRegular());
+      broadcast(result);
+    } catch(Throwable t) {
+      logger.error("Failed to generate GameResult from " + results, t);
+    }
 
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
       saveReplay();
