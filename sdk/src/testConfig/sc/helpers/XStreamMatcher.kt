@@ -15,12 +15,14 @@ object XStreamProjectListener: ProjectListener {
 
 lateinit var testXStream: XStream
 
-infix fun <T : Any> T.shouldSerializeTo(serialized: String)
+inline infix fun <reified T : Any> T.shouldSerializeTo(serialized: String)
     = checkSerialization(testXStream, this, serialized)
 
-fun <T: Any> checkSerialization(xStream: XStream, obj: T, serialized: String) {
+inline fun <reified T: Any> checkSerialization(
+        xStream: XStream, obj: T, serialized: String,
+        matcher: (obj: T, deserialized: T) -> Unit = { original, deserialized -> deserialized shouldBe original }) {
     xStream.toXML(obj) shouldBe serialized
     val deserialized = xStream.fromXML(serialized)
     deserialized.javaClass shouldBe obj.javaClass
-    deserialized shouldBe obj
+    matcher(obj, deserialized as T)
 }
