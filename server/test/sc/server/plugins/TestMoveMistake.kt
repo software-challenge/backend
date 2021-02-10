@@ -2,8 +2,6 @@ package sc.server.plugins
 
 import sc.shared.IMoveMistake
 
-enum class TestMoveMistake: IMoveMistake {
-    INVALID_FORMAT {
-        override fun toString(): String = "Received message wasn't recognised as move"
-    };
+enum class TestMoveMistake(override val message: String): IMoveMistake {
+    INVALID_FORMAT("Received message wasn't recognised as move");
 }

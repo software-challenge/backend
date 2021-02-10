@@ -12,4 +12,4 @@ import kotlin.RuntimeException
 class InvalidMoveException @JvmOverloads constructor(
         @JvmField val mistake: IMoveMistake,
         @JvmField val move: IMove? = null):
-        RuntimeException("$mistake${move?.let { " bei Zug '$it'"}.orEmpty()}")
+        RuntimeException("${mistake.message}${move?.let { " bei Zug '$it'"}.orEmpty()}")
