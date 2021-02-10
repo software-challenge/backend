@@ -1,17 +1,16 @@
 package sc.server.plugins
 
 import sc.api.plugins.IGameState
-import sc.api.plugins.ITeam
 import sc.framework.plugins.Player
 import sc.server.helpers.TestTeam
 
-class TestGameState: IGameState {
-    override var turn = 0
+data class TestGameState(
+        override var turn: Int = 0,
+        var state: Int = 0,
+        var currentPlayer: TestTeam = TestTeam.RED,
+        val startPlayer: TestTeam = TestTeam.RED
+): IGameState {
     override val round get() = turn / 2
-    var state = 0
-    var lastPlayerIndex = 0
-    var currentPlayer = TestTeam.RED
-    val startPlayer = TestTeam.RED
     val red = Player(TestTeam.RED)
     val blue = Player(TestTeam.BLUE)
     

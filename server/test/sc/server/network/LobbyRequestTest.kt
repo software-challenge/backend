@@ -80,10 +80,10 @@ class LobbyRequestTest: WordSpec({
             "accept moves" {
                 playerListeners[0].waitForMessage(MoveRequest::class)
                 players[1].sendMessageToRoom(roomId, TestMove(32))
-                await { game.state.state shouldBe 32 }
+                await { game.currentState.state shouldBe 32 }
                 playerListeners[1].waitForMessage(MoveRequest::class)
                 players[2].sendMessageToRoom(roomId, TestMove(54))
-                await { game.state.state shouldBe 54 }
+                await { game.currentState.state shouldBe 54 }
             }
             "terminate when wrong player sends a move" {
                 players[2].sendMessageToRoom(roomId, TestMove(0))

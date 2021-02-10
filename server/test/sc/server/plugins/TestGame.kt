@@ -1,7 +1,6 @@
 package sc.server.plugins
 
 import org.slf4j.LoggerFactory
-import sc.api.plugins.IGameState
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
@@ -10,37 +9,36 @@ import sc.protocol.responses.ProtocolMessage
 import sc.server.helpers.TestTeam
 import sc.shared.*
 
-class TestGame : AbstractGame<Player>(TestPlugin.TEST_PLUGIN_UUID) {
-    val state = TestGameState()
+data class TestGame(
+        override val currentState: TestGameState = TestGameState(),
+): AbstractGame<Player>(TestPlugin.TEST_PLUGIN_UUID) {
+    
+    override val playerScores: List<PlayerScore> = emptyList()
+    override val winners: List<Player> = emptyList()
     
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
         if (data is TestMove) {
-            data.perform(state)
-            next(if (state.currentPlayer === TestTeam.RED) state.red else state.blue)
+            data.perform(currentState)
+            next(if (currentState.currentPlayer === TestTeam.RED) currentState.red else currentState.blue)
         } else throw InvalidMoveException(TestMoveMistake.INVALID_FORMAT)
     }
 
     override fun checkWinCondition(): WinCondition? {
-        return if (state.round > 1) {
-            WinCondition(if (state.state % 2 == 0) TestTeam.RED else TestTeam.BLUE, TestWinReason.WIN)
+        return if (currentState.round > 1) {
+            WinCondition(if (currentState.state % 2 == 0) TestTeam.RED else TestTeam.BLUE, TestWinReason.WIN)
         } else null
     }
 
     override fun onPlayerJoined(): Player {
         if (players.size < 2) {
             return if (players.isEmpty()) {
-                state.red
+                currentState.red
             } else {
-                state.blue
+                currentState.blue
             }.also { players.add(it) }
         }
         throw TooManyPlayersException()
     }
-
-    override val playerScores: List<PlayerScore> = emptyList()
-
-    override val currentState: IGameState
-        get() = state
 
     override fun onPlayerLeft(player: Player, cause: ScoreCause?) {
         // this.players.remove(player);
@@ -57,12 +55,9 @@ class TestGame : AbstractGame<Player>(TestPlugin.TEST_PLUGIN_UUID) {
     override fun loadFromFile(file: String) {}
     override fun loadFromFile(file: String, turn: Int) {}
     override fun loadGameInfo(gameInfo: Any) {}
-
-    override val winners: List<Player> = emptyList()
-
-    override fun getTimeoutFor(player: Player): ActionTimeout {
-        return ActionTimeout(false, 100000000L, 20000000L)
-    }
+    
+    override fun getTimeoutFor(player: Player): ActionTimeout =
+            ActionTimeout(false, 100000000L, 20000000L)
 
     companion object {
         private val logger = LoggerFactory.getLogger(TestGame::class.java)
