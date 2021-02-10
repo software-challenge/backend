@@ -4,11 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.helpers.CollectionHelper;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 /** Load & provide information about plugins. */
 public class GamePluginManager extends PluginManager<IGamePlugin, GamePluginInstance> {
@@ -80,7 +80,7 @@ public class GamePluginManager extends PluginManager<IGamePlugin, GamePluginInst
   }
 
   public Iterable<String> getPluginUUIDs() {
-    return CollectionHelper.map(this.getAvailablePlugins(), val -> val.getDescription().uuid());
+    return getAvailablePlugins().stream().map(val -> val.getDescription().uuid()).collect(Collectors.toList());
   }
 
   @Override

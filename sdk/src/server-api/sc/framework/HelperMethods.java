@@ -1,4 +1,4 @@
-package sc.helpers;
+package sc.framework;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

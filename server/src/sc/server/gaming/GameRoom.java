@@ -11,7 +11,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.AbstractGame;
 import sc.framework.plugins.Player;
-import sc.helpers.HelperMethods;
+import sc.framework.HelperMethods;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.XStreamProvider;
 import sc.networking.clients.LobbyClient;

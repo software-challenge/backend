@@ -1,8 +1,10 @@
 package sc.api.plugins.host;
 
-import sc.helpers.IAsyncResult;
 import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 
-public interface IRequestResult extends IAsyncResult {
+import java.util.function.Consumer;
+
+public interface IRequestResult extends Consumer<ProtocolMessage> {
 	void handleError(ProtocolErrorMessage e);
 }
