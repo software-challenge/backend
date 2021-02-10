@@ -4,8 +4,8 @@ import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGameState
 import sc.api.plugins.exceptions.GameLogicException
+import sc.api.plugins.exceptions.NotYourTurnException
 import sc.api.plugins.host.IGameListener
-import sc.protocol.responses.ProtocolErrorMessage
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
 
@@ -39,34 +39,25 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
      *
      * @throws GameLogicException if any invalid action is done, i.e. game rule violation
      */
-    @Throws(GameLogicException::class)
+    @Throws(GameLogicException::class, InvalidMoveException::class)
     override fun onAction(fromPlayer: Player, data: ProtocolMessage) {
-        var error: String? = null
-        if (fromPlayer == activePlayer) {
-            moveRequestTimeout?.let { timer ->
-                timer.stop()
-                logger.info("Time needed for move:" + timer.timeDiff)
-                if (timer.didTimeout()) {
-                    logger.warn("Client hit soft-timeout.")
-                    fromPlayer.softTimeout = true
-                    onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT)
-                } else {
-                    onRoundBasedAction(fromPlayer, data)
-                }
-            } ?: run {
-                error = "We didn't request a move from you yet."
+        if (fromPlayer != activePlayer)
+            throw NotYourTurnException(activePlayer, fromPlayer, data)
+        moveRequestTimeout?.let { timer ->
+            timer.stop()
+            logger.info("Time needed for move: " + timer.timeDiff)
+            if (timer.didTimeout()) {
+                logger.warn("Client hit soft-timeout.")
+                fromPlayer.softTimeout = true
+                onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT)
+            } else {
+                onRoundBasedAction(fromPlayer, data)
             }
-        } else {
-            error = "It's not your turn yet; expected: $activePlayer, got $fromPlayer (msg was $data)."
-        }
-        error?.let {
-            fromPlayer.notifyListeners(ProtocolErrorMessage(data, it))
-            throw GameLogicException(it)
-        }
+        } ?: throw GameLogicException("We didn't request a move from you yet.")
     }
 
-    /** Called by [onAction] to execute a move from a Player. */
-    @Throws(GameLogicException::class, InvalidMoveException::class)
+    /** Called by [onAction] to execute a move of a Player. */
+    @Throws(InvalidMoveException::class)
     abstract fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage)
 
     /**
@@ -213,23 +204,5 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
                 logger.error("NewState Notification caused an exception", e)
             }
         }
-    }
-
-    /**
-     * For use in a catch block when an invalid move was performed.
-     * Logs and notifies listeners about the violation.
-     *
-     * @param e      catched Exception, rethrown at the end
-     * @param author player who caused the exception
-     *
-     * @throws InvalidMoveException Always thrown
-     */
-    @Throws(InvalidMoveException::class)
-    fun handleInvalidMove(e: InvalidMoveException, author: Player): Nothing {
-        val error = "Ungueltiger Zug von '${author.displayName}'.\n$e"
-        logger.error(error)
-        author.violationReason = e.message
-        author.notifyListeners(ProtocolErrorMessage(e.move, error))
-        throw e
     }
 }

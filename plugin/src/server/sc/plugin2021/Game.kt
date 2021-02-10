@@ -137,19 +137,15 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     
     @Throws(InvalidMoveException::class)
     override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
-        try {
-            if (data !is Move)
-                throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
-            
-            logger.debug("Current State: $currentState")
-            logger.debug("Performing Move $data")
-            GameRuleLogic.performMove(currentState, data)
-            GameRuleLogic.removeInvalidColors(currentState)
-            next(if (isGameOver) null else currentState.currentPlayer)
-            logger.debug("Current Board:\n${currentState.board}")
-        } catch(e: InvalidMoveException) {
-            handleInvalidMove(e, fromPlayer)
-        }
+        if (data !is Move)
+            throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
+        
+        logger.debug("Current State: $currentState")
+        logger.debug("Performing Move $data")
+        GameRuleLogic.performMove(currentState, data)
+        GameRuleLogic.removeInvalidColors(currentState)
+        next(if (isGameOver) null else currentState.currentPlayer)
+        logger.debug("Current Board:\n${currentState.board}")
     }
     
     override fun toString(): String =
