@@ -436,7 +436,7 @@ public class GameRoom implements IGameListener {
       final String error = String.format("Ungueltiger Zug von '%s'.\n%s", player.getDisplayName(), e);
       logger.error(error);
       player.setViolationReason(e.getMessage());
-      ProtocolErrorMessage errorMessage = new ProtocolErrorMessage(e.move, error);
+      ProtocolErrorMessage errorMessage = new ProtocolErrorMessage(e.getMove(), error);
       player.notifyListeners(errorMessage);
       observerBroadcast(new RoomPacket(id, errorMessage));
       game.onPlayerLeft(player, ScoreCause.RULE_VIOLATION);

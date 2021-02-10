@@ -2,6 +2,7 @@ package sc.server.gaming;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.exceptions.GameRoomException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.protocol.requests.PrepareGameRequest;
@@ -207,7 +208,7 @@ public class GameRoomManager {
     GameRoom room = this.rooms.get(roomId);
 
     if (room == null) {
-      throw new RescuableClientException("Couldn't find a room with id " + roomId);
+      throw new GameRoomException("Couldn't find a room with id " + roomId);
     }
 
     return room;

@@ -9,7 +9,7 @@ import kotlin.RuntimeException
  * @param mistake ist die Art der Regelverletzung.
  * @param move ist der Zug, der den Fehler verursacht hat.
  */
-class InvalidMoveException @JvmOverloads constructor(
-        @JvmField val mistake: IMoveMistake,
-        @JvmField val move: IMove? = null):
+data class InvalidMoveException @JvmOverloads constructor(
+        val mistake: IMoveMistake,
+        val move: IMove? = null):
         RuntimeException("${mistake.message}${move?.let { " bei Zug '$it'"}.orEmpty()}")
