@@ -55,7 +55,8 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
         val packet = callback.packet
         if (packet is ILobbyRequest) {
             when (packet) {
-                is JoinPreparedRoomRequest -> ReservationManager.redeemReservationCode(source, packet.reservationCode)
+                is JoinPreparedRoomRequest ->
+                    ReservationManager.redeemReservationCode(source, packet.reservationCode)
                 is JoinRoomRequest -> {
                     val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
                     // null is returned if join was unsuccessful

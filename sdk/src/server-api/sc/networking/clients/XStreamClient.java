@@ -80,7 +80,7 @@ public abstract class XStreamClient {
     this.receiveThread.start();
   }
 
-  protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException;
+  protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException;
 
   /** Used by the receiving thread. All exceptions should be handled. */
   public void receiveThread() {

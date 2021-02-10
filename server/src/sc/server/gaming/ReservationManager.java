@@ -29,8 +29,8 @@ public final class ReservationManager {
    *
    * @throws RescuableClientException will be thrown if slot cannot be filled or reservation is unknown
    */
-  public static synchronized PlayerSlot redeemReservationCode(Client client,
-                                                              String reservation) throws RescuableClientException {
+  public static synchronized PlayerSlot redeemReservationCode(Client client, String reservation)
+      throws RescuableClientException {
     PlayerSlot result = reservations.remove(reservation);
 
     if (result == null) {

@@ -2,6 +2,8 @@ package sc.server.network;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.exceptions.GameLogicException;
+import sc.api.plugins.exceptions.NotYourTurnException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
@@ -75,19 +77,17 @@ public class Client extends XStreamClient implements IClient {
 
     for (RescuableClientException error : errors) {
       logger.warn("An error occured: ", error);
-      if (!error.getMessage().equals("It's not your turn yet.")) {
+      if (error instanceof GameLogicException && !(error instanceof NotYourTurnException)) {
         logger.warn("Game closed because of GameLogicException: " + error.getMessage());
       }
     }
     if (!errors.isEmpty()) {
-      logger.debug("Stopping client because of error. Thread: {}",
-              Thread.currentThread().getName());
+      logger.debug("Stopping {} because of error", this);
       stop();
     }
 
     if (packet instanceof LeftGameEvent) {
-      logger.debug("Stopping client because of LeftGameEvent received. Thread: {}",
-              Thread.currentThread().getName());
+      logger.debug("Stopping {} because of received LeftGameEvent", this);
       stop();
     }
   }
