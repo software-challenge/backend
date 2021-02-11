@@ -62,6 +62,12 @@ class LobbyRequestTest: WordSpec({
             val reservations = listener.prepareGameResponse.reservations
             players[1].joinPreparedGame(reservations[0])
             await("First player joined") { room.clients shouldHaveSize 1 }
+            "not accept a reservation twice" {
+                admin.joinPreparedGame(reservations[0])
+                await("Receive error when reusing a reservation") { listener.errorReceived shouldBe true }
+                room.clients shouldHaveSize 1
+                lobby.games shouldHaveSize 1
+            }
             players[2].joinPreparedGame(reservations[1])
             await("Players join, Game start") { room.status shouldBe GameRoom.GameStatus.ACTIVE }
             
