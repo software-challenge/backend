@@ -4,7 +4,6 @@ import io.kotest.assertions.timing.eventually
 import io.kotest.assertions.until.Interval
 import io.kotest.assertions.until.fibonacci
 import io.kotest.assertions.withClue
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -27,7 +26,6 @@ suspend fun await(clue: String? = null, duration: Duration = 1.seconds, interval
 
 @ExperimentalTime
 class LobbyRequestTest: WordSpec({
-    isolationMode = IsolationMode.SingleInstance
     "A Lobby with connected clients" When {
         val lobby = autoClose(TestLobby())
         val players = Array(3) { lobby.connectClient("localhost", lobby.serverPort) }
@@ -42,53 +40,54 @@ class LobbyRequestTest: WordSpec({
             }
         }
         val admin = players[0]
-        "preparing a paused game" should {
+        "a game is prepared paused" should {
             val listener = TestLobbyClientListener()
             admin.addListener(listener)
             admin.authenticate(PASSWORD)
             
-            "prepare the GameRoom" {
-                admin.prepareGame(TestPlugin.TEST_PLUGIN_UUID, true)
-                await { listener.gamePreparedReceived shouldBe true }
-                lobby.games shouldHaveSize 2
-            }
+            admin.prepareGame(TestPlugin.TEST_PLUGIN_UUID, true)
+            await("GameRoom prepared") { listener.gamePreparedReceived shouldBe true }
+            lobby.games shouldHaveSize 1
             
             val roomId = listener.prepareGameResponse.roomId
             val room = lobby.findRoom(roomId)
-            "create an empty paused game" {
+            withClue("GameRoom is empty and paused") {
                 room.clients.shouldBeEmpty()
                 room.isPauseRequested shouldBe true
             }
             
             val observer = admin.observeAndControl(roomId, true)
-            await { listener.observedReceived shouldBe true }
+            await("Game observed") { println(listener); listener.observedReceived shouldBe true }
             
-            "let players join by reservation" {
-                val reservations = listener.prepareGameResponse.reservations
-                players[1].joinPreparedGame(reservations[0])
-                players[2].joinPreparedGame(reservations[1])
-                await { room.status shouldBe GameRoom.GameStatus.ACTIVE }
-            }
+            val reservations = listener.prepareGameResponse.reservations
+            players[1].joinPreparedGame(reservations[0])
+            await("First player joined") { room.clients shouldHaveSize 1 }
+            players[2].joinPreparedGame(reservations[1])
+            await("Players join, Game start") { room.status shouldBe GameRoom.GameStatus.ACTIVE }
             
             val playerListeners = room.slots.map { slot ->
                 PlayerListener().also { listener -> slot.role.player.addPlayerListener(listener) }
             }
-            "start game on unpause" {
+            "terminate when a Move is received while still paused" {
+                players[1].sendMessageToRoom(roomId, TestMove(0))
+                await("Terminates") { room.status shouldBe GameRoom.GameStatus.OVER }
+            }
+            "play game on unpause" {
                 observer.unpause()
                 await { room.isPauseRequested shouldBe false }
-            }
-            val game = room.game as TestGame
-            "accept moves" {
-                playerListeners[0].waitForMessage(MoveRequest::class)
-                players[1].sendMessageToRoom(roomId, TestMove(32))
-                await { game.currentState.state shouldBe 32 }
-                playerListeners[1].waitForMessage(MoveRequest::class)
-                players[2].sendMessageToRoom(roomId, TestMove(54))
-                await { game.currentState.state shouldBe 54 }
-            }
-            "terminate when wrong player sends a move" {
+                val game = room.game as TestGame
+                withClue("Processes moves") {
+                    playerListeners[0].waitForMessage(MoveRequest::class)
+                    players[1].sendMessageToRoom(roomId, TestMove(32))
+                    await { game.currentState.state shouldBe 32 }
+                    playerListeners[1].waitForMessage(MoveRequest::class)
+                    players[2].sendMessageToRoom(roomId, TestMove(54))
+                    await { game.currentState.state shouldBe 54 }
+                }
                 players[2].sendMessageToRoom(roomId, TestMove(0))
-                await { room.status shouldBe GameRoom.GameStatus.OVER }
+                await("Terminate after wrong player sent a turn") {
+                    room.status shouldBe GameRoom.GameStatus.OVER
+                }
             }
         }
     }
