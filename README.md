@@ -1,4 +1,4 @@
-# Software-Challenge [![Build Status](https://travis-ci.com/CAU-Kiel-Tech-Inf/backend.svg?branch=master)](https://travis-ci.com/CAU-Kiel-Tech-Inf/backend)
+# Software-Challenge ![.github/workflows/gradle.yml](https://github.com/CAU-Kiel-Tech-Inf/backend/workflows/.github/workflows/gradle.yml/badge.svg)
 
 Dies ist das offizielle Repository der [Software-Challenge](https://www.software-challenge.de), ein Programmierwettbewerb für Schüler.
 Ziel hierbei ist, für ein jährlich wechselndes Spiel eine künstliche Intelligenz zu entwickeln, die den Gegenspieler besiegt.
