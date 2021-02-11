@@ -8,5 +8,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 data class ProtocolErrorMessage(
         val originalRequest: ProtocolMessage?,
         @XStreamAsAttribute
-        val message: String
-): ProtocolMessage
+        val message: String,
+): ProtocolMessage {
+    val logMessage
+        get() = (originalRequest?.let { "$it caused an error:" } ?: "An error occurred:") + message
+}

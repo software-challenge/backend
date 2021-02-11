@@ -65,12 +65,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       if (data instanceof MementoEvent) {
         onNewState(roomId, ((MementoEvent) data).getState());
       } else if (data instanceof GameResult) {
-        logger.info("Received game result");
         onGameOver(roomId, (GameResult) data);
       } else if (data instanceof GamePausedEvent) {
         onGamePaused(roomId, ((GamePausedEvent) data).getNextPlayer());
       } else if (data instanceof ProtocolErrorMessage) {
-        logger.debug("Received error packet");
         onError(roomId, ((ProtocolErrorMessage) data));
       } else {
         onRoomMessage(roomId, data);
@@ -90,7 +88,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       logger.info("TestMode was set to {} ", testMode);
     } else if (o instanceof ProtocolErrorMessage) {
       ProtocolErrorMessage response = (ProtocolErrorMessage) o;
-      onError(response.getMessage(), response);
+      onError(null, response);
     } else {
       onCustomObject(o);
     }
@@ -107,6 +105,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   private void onGameOver(String roomId, GameResult data) {
+    logger.info("Received game result: {}", data);
     for (IHistoryListener listener : this.historyListeners) {
       listener.onGameOver(roomId, data);
     }
@@ -195,12 +194,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   protected void onError(String roomId, ProtocolErrorMessage error) {
-    if (error.getOriginalRequest() != null) {
-      logger.warn("The request {} caused the following error: {}",
-              error.getOriginalRequest().getClass(), error.getMessage());
-    } else {
-      logger.warn("An error occured: {}", error.getMessage());
-    }
+    logger.warn("{} (room: {})", error.getLogMessage(), roomId);
     for (ILobbyClientListener listener : this.listeners) {
       listener.onError(roomId, error);
     }

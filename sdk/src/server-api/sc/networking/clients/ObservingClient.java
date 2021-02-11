@@ -36,7 +36,8 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
     boolean firstObservation = this.history.isEmpty();
 
     this.history.add(observation);
-    logger.debug("{} saved observation {}", this, observation.getClass());
+    if(logger.isDebugEnabled())
+      logger.debug("{} saved observation {}", this, observation);
 
     if (canAutoStep() || firstObservation) {
       setPosition(this.history.size() - 1);
@@ -49,7 +50,8 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
 
   @Override
   public void onNewState(String roomId, IGameState state) {
-    logger.debug("{} got new state", this);
+    if(logger.isDebugEnabled())
+      logger.debug("{} got new state {}", this, state);
     if (isAffected(roomId)) {
       addObservation(state);
       notifyOnUpdate();
@@ -62,7 +64,6 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
 
   protected void notifyOnUpdate() {
     for (IUpdateListener listener : this.listeners) {
-      logger.debug("calling onUpdate on {}", listener);
       listener.onUpdate(this);
     }
   }
@@ -198,7 +199,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
     logger.info("Saving GameResult");
 
     if (this.result != null) {
-      logger.warn("Received two GameResults");
+      logger.warn("Received extra GameResult");
     }
 
     this.gameOver = true;
@@ -239,7 +240,8 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
 
   @Override
   public void onGameError(String roomId, ProtocolErrorMessage error) {
-    logger.debug("got error {}", error.getMessage());
+    if(logger.isDebugEnabled())
+      logger.debug("{} (room: {})", error.getLogMessage(), roomId);
     if (isAffected(roomId)) {
       addObservation(error);
       notifyOnError(error.getMessage());

@@ -7,6 +7,8 @@ import sc.protocol.responses.ProtocolErrorMessage
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.GameResult
 
+// FIXME this is bound to a room anyways, can remove roomId from all signatures
+/** Receives updates within a GameRoom on the client-side. */
 interface ILobbyClientListener {
     fun onNewState(roomId: String, state: IGameState)
     fun onRoomMessage(roomId: String, data: ProtocolMessage)
