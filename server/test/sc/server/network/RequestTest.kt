@@ -1,5 +1,6 @@
 package sc.server.network
 
+import io.kotest.matchers.ints.shouldBeLessThanOrEqual
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -52,21 +53,6 @@ class RequestTest: RealServerTest() {
         // Player2 got kicked
         assertEquals(2, lobby.clientManager.clients.size.toLong())
         assertFalse(clients[1].isAdministrator)
-    }
-    
-    @Test
-    fun prepareRoomRequest() {
-        player1.authenticate(PASSWORD)
-        player1.prepareGame(TestPlugin.TEST_PLUGIN_UUID, true)
-        val listener = TestPreparedGameResponseListener()
-        player1.addListener(listener)
-        
-        Thread.sleep(200)
-        assertNotNull(listener.response)
-        
-        assertEquals(1, lobby.games.size.toLong())
-        assertEquals(0, lobby.games.iterator().next().clients.size.toLong())
-        assertTrue(lobby.games.iterator().next().isPauseRequested)
     }
     
     @Test
@@ -185,7 +171,7 @@ class RequestTest: RealServerTest() {
         await("Admin observing") { listener.observedReceived }
         
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        await("Second player joins and game starts", 1.seconds) { room.status == GameRoom.GameStatus.ACTIVE }
+        await("Second player joins and game starts") { room.status == GameRoom.GameStatus.ACTIVE }
         room.slots[1].role.player.addPlayerListener(p2Listener)
         
         // TODO the section above duplicates the one of the previous test, clean that up
@@ -196,10 +182,6 @@ class RequestTest: RealServerTest() {
         
         p1Listener.waitForMessage(WelcomeMessage::class)
         
-        // TODO enabling this should result in a GameLogicException
-        // player1.sendMessageToRoom(room.getId(), new TestMove(1));
-        // Thread.sleep(100);
-        
         // Request a move from the first player
         admin.send(StepRequest(room.id))
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
@@ -208,6 +190,9 @@ class RequestTest: RealServerTest() {
         listener.newStateReceived = false;
         player1.sendMessageToRoom(room.id, TestMove(1));
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
+        
+        // might have received a WelcomeMessage
+        p2Listener.clearMessages() shouldBeLessThanOrEqual 1
         
         admin.send(StepRequest(room.id))
         // Wait for second players turn
