@@ -229,6 +229,7 @@ class RequestTest: RealServerTest() {
         p1Listener.clearMessages() shouldBe 0
         // Second player sends Move not being his turn
         player2.sendMessageToRoom(room.id, TestMove(73))
+        // TODO this still fails sporadically
         TestHelper.waitUntilTrue({ listener.newStateReceived }, 1000)
         listener.newStateReceived = false
         

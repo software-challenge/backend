@@ -41,7 +41,6 @@ jobs:
     - name: Release ${{ github.ref }}
       uses: softprops/action-gh-release@v1
       with:
-        draft: true
         files: artifacts/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
