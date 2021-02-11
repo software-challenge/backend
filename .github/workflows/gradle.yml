@@ -1,20 +1,15 @@
 on: [push, pull_request, create]
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        jdk: [8]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: 'recursive'
-    - name: Set up JDK ${{ matrix.jdk }}
+    - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: ${{ matrix.jdk }}
+        java-version: 8
     - name: Cache Gradle packages
       uses: actions/cache@v2
       with:
