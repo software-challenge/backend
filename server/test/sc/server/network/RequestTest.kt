@@ -56,30 +56,6 @@ class RequestTest: RealServerTest() {
     }
     
     @Test
-    fun joinPreparedRoomRequest() {
-        player1.authenticate(PASSWORD)
-        val listener = TestPreparedGameResponseListener()
-        player1.addListener(listener)
-        
-        player1.prepareGame(TestPlugin.TEST_PLUGIN_UUID)
-        Thread.sleep(200)
-        val response = listener.response
-        
-        val reservation = response.reservations[0]
-        player1.joinPreparedGame(reservation)
-        Thread.sleep(200)
-        assertEquals(1, lobby.games.iterator().next().clients.size.toLong())
-        
-        player2.joinPreparedGame(response.reservations[1])
-        Thread.sleep(200)
-        assertEquals(2, lobby.games.iterator().next().clients.size.toLong())
-        
-        player3.joinPreparedGame(response.reservations[1])
-        Thread.sleep(200)
-        assertEquals(2, lobby.clientManager.clients.size.toLong())
-    }
-    
-    @Test
     fun observationRequest() {
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
