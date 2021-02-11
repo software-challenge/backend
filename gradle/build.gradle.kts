@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     maven
-    kotlin("jvm") version "1.4.20"
+    kotlin("jvm") version "1.4.30"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
