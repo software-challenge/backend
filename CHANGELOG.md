@@ -10,6 +10,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 indicates the beta of the current year.
   
 ## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-09
+- Removed PlayerScoreRequest - add up the GameResults instead ([#385](https://github.com/software-challenge/backend/pull/385))
 
 ## [22.0.2](https://github.com/software-challenge/backend/commits/22.0.2) - 2021-07
 - Factor out parts of JVM XML protocol implementation

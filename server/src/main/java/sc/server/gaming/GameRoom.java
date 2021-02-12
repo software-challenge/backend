@@ -73,11 +73,6 @@ public class GameRoom implements IGameListener {
       result = generateGameResult(results);
       logger.info("{} is over (regular={})", game, result.isRegular());
       saveReplayMessage(result);
-      // save playerScore if test mode enabled
-      if (Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE))) {
-        List<Player> players = game.getPlayers();
-        gameRoomManager.addResultToScore(this.getResult(), players.get(0).getDisplayName(), players.get(1).getDisplayName());
-      }
       broadcast(result);
     } catch (Throwable t) {
       logger.error("Failed to generate GameResult from " + results, t);

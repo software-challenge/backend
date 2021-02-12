@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGamePlugin;
 import sc.framework.plugins.Player;
+import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.ProtocolPacket;
 import sc.protocol.room.RoomPacket;
@@ -18,8 +19,11 @@ import sc.shared.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -119,8 +123,7 @@ public class TestClient extends XStreamClient {
       players[0].name = players[0].name + "-1";
       players[1].name = players[1].name + "-2";
     }
-    logger.info("Player1: " + players[0]);
-    logger.info("Player2: " + players[1]);
+    logger.info("Players: " + Arrays.toString(players));
 
     try {
       if (startServer) {
@@ -178,27 +181,18 @@ public class TestClient extends XStreamClient {
     this.port = port;
     this.totalTests = totalTests;
     start();
-    logger.debug("Authenticating as administrator, enabling TestMode");
+    logger.debug("Authenticating as administrator");
     send(new AuthenticateRequest(Configuration.getAdministrativePassword()));
-    send(new TestModeRequest(true));
-    logger.info("Waiting for server...");
+    logger.info("Starting clients");
+    prepareNewClients();
   }
 
   private boolean gameProgressing = false;
 
   @Override
   protected void onObject(@NotNull ProtocolPacket message) {
-    if (message == null) {
-      logger.warn("Received null message");
-      return;
-    }
-
     logger.trace("Received {}", message);
-    if (message instanceof TestModeResponse) {
-      boolean testMode = (((TestModeResponse) message).getTestMode());
-      logger.debug("TestMode was set to {} - starting clients", testMode);
-      prepareNewClients();
-    } else if (message instanceof RoomPacket) {
+    if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       if (packet.getData() instanceof GameResult) {
         if (gameProgressing) {
@@ -216,8 +210,31 @@ public class TestClient extends XStreamClient {
         logger.warn(log.substring(0, log.length() - 2), finishedTests);
 
         finishedTests++;
-        for (ClientPlayer player : players)
-          send(new PlayerScoreRequest(player.name));
+        ScoreDefinition scoreDefinition = result.getDefinition();
+        StringBuilder scoreUpdate = new StringBuilder(String.format("New scores after %s of %s games:", finishedTests, totalTests));
+        for (int player = 0; player < players.length; player++) {
+          PlayerScore score = result.getScores().get(player);
+          ScoreValue[] scoreValues = players[player].score;
+          for (int scoreIndex = 0; scoreIndex < scoreDefinition.getSize(); scoreIndex++) {
+            ScoreValue value = scoreValues[scoreIndex];
+            if (!result.getDefinition().get(scoreIndex).equals(value.getFragment())) {
+              logger.error("Could not add current game result to scores. Score definition of player and result do not match.");
+              throw new InvalidScoreDefinitionException("ScoreDefinition of player does not match expected score definition");
+            }
+            if(value.getFragment().getAggregation() == ScoreAggregation.AVERAGE)
+              value.setValue(updateAverage(value.getValue(), finishedTests, score.getValues().get(scoreIndex)));
+            else
+              value.setValue(value.getValue().add(score.getValues().get(scoreIndex)));
+          }
+          scoreUpdate.append(String.format("%s: Siegpunkte %s, \u2205Wert 1 %5.2f",
+              players[player].name, scoreValues[0].getValue(), scoreValues[1].getValue()));
+        }
+        logger.info(scoreUpdate.toString());
+
+        if (isSignificant() || terminateWhenPossible) {
+          printScores();
+          exit(0);
+        }
 
         try {
           for (ClientPlayer player : players)
@@ -243,26 +260,6 @@ public class TestClient extends XStreamClient {
           System.out.print("#");
         }
       }
-    } else if (message instanceof PlayerScoreResponse) {
-      playerScores++;
-      Score score = ((PlayerScoreResponse) message).getScore();
-
-      for (ClientPlayer player : players) {
-        if (player.name.equals(score.getDisplayName())) {
-          player.score = score;
-          break;
-        }
-      }
-
-      List<ScoreValue> values = score.getScoreValues();
-      logger.info(String.format("New score for %s: Siegpunkte %s, \u2205Wert 1 %5.2f after %s of %s tests",
-          score.getDisplayName(), values.get(0).getValue(), values.get(1).getValue(), finishedTests, totalTests));
-
-      if (playerScores == 2 && (isSignificant() || terminateWhenPossible)) {
-        printScores();
-        exit(0);
-      }
-
     } else if (message instanceof GamePreparedResponse) {
       logger.debug("Received PrepareGame - starting clients");
       playerScores = 0;
@@ -303,6 +300,15 @@ public class TestClient extends XStreamClient {
     } else {
       logger.debug("Received uninteresting " + message.getClass().getSimpleName());
     }
+  }
+
+  private final int BIG_DECIMAL_SCALE = 6;
+  /** Calculates a new average value: average = oldAverage * ((#amount - 1)/ #amount) + newValue / #amount */
+  private BigDecimal updateAverage(BigDecimal oldAverage, int amount, BigDecimal newValue) {
+    BigDecimal decAmount = new BigDecimal(amount);
+    return oldAverage.multiply(decAmount.subtract(BigDecimal.ONE).divide(decAmount, BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+        .add(newValue.divide(decAmount, BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+        .round(new MathContext(BIG_DECIMAL_SCALE + 2));
   }
 
   private void startPlayer(int id, String reservation) throws IOException {
@@ -361,8 +367,8 @@ public class TestClient extends XStreamClient {
               "%s: %.0f\n" +
               "=======================================\n" +
               "{} of {} games ended abnormally!",
-          players[0].name, players[0].score.getScoreValues().get(0).getValue(),
-          players[1].name, players[1].score.getScoreValues().get(0).getValue()),
+          players[0].name, players[0].score[0].getValue(),
+          players[1].name, players[1].score[0].getValue()),
           irregularGames, finishedTests);
       scoresPrinted = true;
     } catch (Exception ignored) {
@@ -378,7 +384,7 @@ public class TestClient extends XStreamClient {
     for (int i = 0; i < 2; i++) {
       double binominalCD = 0.0;
       // TODO use global WIN_SCORE constant instead of hardcoding 2
-      for (int k = 0; k <= players[i].score.getScoreValues().get(0).getValue().intValue() / 2; k++) {
+      for (int k = 0; k <= players[i].score[0].getValue().intValue() / 2; k++) {
         binominalCD += binominalPD.applyAsDouble(k);
         if (binominalCD > significance)
           continue players;
@@ -413,7 +419,7 @@ class ClientPlayer {
   }
 
   Process proc;
-  Score score;
+  ScoreValue[] score;
 }
 
 class Util {
