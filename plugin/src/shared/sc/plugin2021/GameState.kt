@@ -182,14 +182,14 @@ class GameState @JvmOverloads constructor(
         return result
     }
     
+    override fun toString(): String =
+            if (validColors.isEmpty()) "GameState finished at $round/$turn"
+            else "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
+    
     fun longString(): String =
             "GameState(first=$first, second=$second, turn=$turn, validColors=$validColors, startPiece=$startPiece, lastMove=$lastMove, lastMoveMono=$lastMoveMono)\n" +
             "undeployedPieceShapes=${Color.values().associateWith { undeployedPieceShapes(it) }}\n" +
             "$board"
-    
-    override fun toString(): String =
-            if (validColors.isEmpty()) "GameState finished at $round/$turn"
-            else "GameState $round/$turn -> $currentColor ${if (GameRuleLogic.isFirstMove(this)) "(Start Piece: $startPiece)" else ""}"
     
 }
 
