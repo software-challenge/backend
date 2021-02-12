@@ -27,8 +27,6 @@ public class Configuration {
   public static final String TURN_TO_LOAD = "turnToLoad";
   public static final String PLUGIN_PATH_DEFAULT_KEY = "./plugins";
   public static final String SAVE_REPLAY = "saveReplay";
-  public static final String TEST_MODE = "testMode";
-  public static final int BIG_DECIMAL_SCALE = 6;
   public static final String PAUSED = "paused";
   public static final String TIMEOUT = "timeout";
   public static final String LISTEN_LOCAL_KEY = "local";

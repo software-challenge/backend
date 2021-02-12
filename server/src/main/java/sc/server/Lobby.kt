@@ -6,13 +6,11 @@ import sc.api.plugins.exceptions.GameRoomException
 import sc.api.plugins.exceptions.RescuableClientException
 import sc.protocol.ProtocolPacket
 import sc.protocol.requests.*
-import sc.protocol.responses.PlayerScoreResponse
 import sc.protocol.responses.TestModeResponse
 import sc.protocol.room.RoomPacket
 import sc.server.gaming.GameRoomManager
 import sc.server.gaming.ReservationManager
 import sc.server.network.*
-import sc.shared.Score
 import java.io.Closeable
 import java.io.IOException
 
@@ -82,28 +80,12 @@ class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
                         val room = this.findRoom(packet.roomId)
                         room.cancel()
                     }
-                    is PlayerScoreRequest -> {
-                        val displayName = packet.displayName
-                        val score = getScoreOfPlayer(displayName)
-                                    ?: throw IllegalArgumentException("Score for \"$displayName\" could not be found!")
-                        logger.debug("Sending score of player \"{}\"", displayName)
-                        source.send(PlayerScoreResponse(score))
-                    }
-                    is TestModeRequest -> {
-                        val testMode = packet.testMode
-                        logger.info("Setting Test mode to {}", testMode)
-                        Configuration.set(Configuration.TEST_MODE, testMode.toString())
-                        source.send(TestModeResponse(testMode))
-                    }
                 }
             }
             else -> throw RescuableClientException("Unhandled Packet of type: " + packet.javaClass)
         }
         callback.setProcessed()
     }
-    
-    private fun getScoreOfPlayer(displayName: String): Score? =
-            scores.find { it.displayName == displayName }
     
     override fun close() = clientManager.close()
 }

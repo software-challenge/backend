@@ -20,10 +20,8 @@ object LobbyProtocol {
                 JoinRoomRequest::class.java,
                 ObservationRequest::class.java,
                 PauseGameRequest::class.java,
-                PlayerScoreRequest::class.java,
                 PrepareGameRequest::class.java,
                 StepRequest::class.java,
-                TestModeRequest::class.java,
         ))
     
         // Responses
@@ -32,9 +30,7 @@ object LobbyProtocol {
                 GamePreparedResponse::class.java,
                 JoinedRoomResponse::class.java,
                 ObservationResponse::class.java,
-                PlayerScoreResponse::class.java,
                 RoomWasJoinedEvent::class.java,
-                TestModeResponse::class.java,
         ))
         
         // Messages
@@ -58,8 +54,6 @@ object LobbyProtocol {
                 ScoreDefinition::class.java,
                 ScoreFragment::class.java,
                 SlotDescriptor::class.java,
-                Score::class.java,
-                ScoreValue::class.java,
         ))
         
         return xStream

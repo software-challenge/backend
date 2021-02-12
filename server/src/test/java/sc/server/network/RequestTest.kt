@@ -10,10 +10,8 @@ import sc.networking.clients.LobbyClient
 import sc.protocol.requests.CancelRequest
 import sc.protocol.requests.PauseGameRequest
 import sc.protocol.requests.StepRequest
-import sc.protocol.requests.TestModeRequest
 import sc.protocol.room.ErrorMessage
 import sc.protocol.room.MoveRequest
-import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
 import sc.server.gaming.GameRoom
@@ -21,7 +19,6 @@ import sc.server.helpers.TestHelper
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.protocol.room.WelcomeMessage
-import kotlin.time.ExperimentalTime
 
 class RequestTest: RealServerTest() {
     private lateinit var player1: LobbyClient
@@ -216,21 +213,6 @@ class RequestTest: RealServerTest() {
         await("Lobby closes the room") {
             lobby.games.isEmpty()
         }
-    }
-    
-    @Test
-    fun testModeRequest() {
-        player1.authenticate(PASSWORD)
-        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
-        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
-        val listener = TestLobbyClientListener()
-        player1.addListener(listener)
-        
-        player1.send(TestModeRequest(true))
-        TestHelper.assertEqualsWithTimeout("true", { Configuration.get(Configuration.TEST_MODE) }, 1000)
-        
-        player1.send(TestModeRequest(false))
-        TestHelper.assertEqualsWithTimeout("false", { Configuration.get(Configuration.TEST_MODE) }, 1000)
     }
     
     @Test

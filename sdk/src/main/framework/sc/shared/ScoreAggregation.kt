@@ -1,6 +1,8 @@
 package sc.shared
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import java.math.BigDecimal
+import java.math.MathContext
 
 @XStreamAlias(value = "scoreAggregation")
 enum class ScoreAggregation {
@@ -8,5 +10,5 @@ enum class ScoreAggregation {
     SUM,
     
     /** All values from all games should be averaged.  */
-    AVERAGE
+    AVERAGE;
 }

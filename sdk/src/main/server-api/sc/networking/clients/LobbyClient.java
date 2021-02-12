@@ -111,9 +111,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       onGameLeft(((RemovedFromGame) message).getRoomId());
     } else if (message instanceof ObservationResponse) {
       onGameObserved(((ObservationResponse) message).getRoomId());
-    } else if (message instanceof TestModeResponse) {
-      boolean testMode = (((TestModeResponse) message).getTestMode());
-      logger.info("TestMode was set to {} ", testMode);
     } else if (message instanceof ErrorPacket) {
       ErrorPacket error = (ErrorPacket) message;
       for (ILobbyClientListener listener : this.listeners) {
