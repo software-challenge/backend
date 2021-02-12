@@ -19,9 +19,10 @@ import sc.server.plugins.TestPlugin
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
+import kotlin.time.seconds
 
 @ExperimentalTime
-suspend fun await(clue: String? = null, duration: Duration = 500.milliseconds, interval: Interval = 20.milliseconds.fibonacci(), f: suspend () -> Unit) =
+suspend fun await(clue: String? = null, duration: Duration = 1.seconds, interval: Interval = 20.milliseconds.fibonacci(), f: suspend () -> Unit) =
         withClue(clue) { eventually(duration, interval, f) }
 
 @ExperimentalTime

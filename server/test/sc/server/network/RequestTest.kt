@@ -211,7 +211,7 @@ class RequestTest: RealServerTest() {
         
         admin.send(StepRequest(room.id))
         // Wait for second players turn
-        p2Listener.waitForMessage(MoveRequest::class, 4.seconds)
+        p2Listener.waitForMessage(MoveRequest::class)
         
         // Second player sends Move with value 42
         player2.sendMessageToRoom(room.id, TestMove(42));
@@ -321,7 +321,7 @@ class RequestTest: RealServerTest() {
         
         assertFalse(room.isPauseRequested)
         p1Listener.waitForMessage(WelcomeMessage::class)
-        p1Listener.waitForMessage(MoveRequest::class, 500.milliseconds)
+        p1Listener.waitForMessage(MoveRequest::class)
         listener.newStateReceived = false
         
         player1.send(PauseGameRequest(room.id, true))
@@ -334,7 +334,7 @@ class RequestTest: RealServerTest() {
         
         player1.send(PauseGameRequest(room.id, false))
         TestHelper.waitUntilEqual(false, { (room.game as AbstractGame<*>).isPaused }, 2000)
-        p2Listener.waitForMessage(MoveRequest::class, 500.milliseconds)
+        p2Listener.waitForMessage(MoveRequest::class)
     }
     
 }
