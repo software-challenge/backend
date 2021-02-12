@@ -10,6 +10,11 @@ The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-
 
 ## [21.4.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.4.0)
 
+## [21.3.2](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.2) - 2021-02-12
+### Fixed
+- GameState: Round number is now always aligned with turn number (49676b64c)
+- TestClient: prevent a race-condition that could occur when getting the results of the first game (4f33fc01f)
+
 ## [21.3.1](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.1) - 2021-02-11
 ### Fixed
 - Fix GameState clone, hashCode and equals to include [undeployedPieceShapes](https://github.com/CAU-Kiel-Tech-Inf/backend/commit/010f077747d4bba0a9397b536da7f48d88bf1a74) and [validColors](https://github.com/CAU-Kiel-Tech-Inf/backend/commit/cbda82827932cd288576ba0320c03615cba9dab7)
