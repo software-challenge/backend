@@ -16,6 +16,12 @@ class Board(
     
     constructor(other: Board) : this(Array(other.gameField.size) { other.gameField[it].clone() })
     
+    constructor(vararg fields: Field) : this() {
+        fields.forEach {
+            set(it.coordinates, it.content)
+        }
+    }
+    
     /** Prüft, ob alle Felder leer sind. */
     fun isEmpty() =
             gameField.all { row ->
