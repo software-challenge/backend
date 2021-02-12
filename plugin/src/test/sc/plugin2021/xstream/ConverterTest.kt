@@ -2,8 +2,10 @@ package sc.plugin2021.xstream
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import sc.framework.plugins.Player
 import sc.helpers.shouldSerializeTo
+import sc.helpers.testXStream
 import sc.plugin2021.*
 import java.util.EnumMap
 
@@ -208,6 +210,12 @@ class ConverterTest: WordSpec({
                         </entry>
                       </lastMoveMono>
                     </state>""".trimIndent()
+        }
+        "contain correct turn and round" {
+            val state = GameState(turn = 10)
+            testXStream.toXML(state) shouldContain "round=\"3\""
+            state.turn = 70
+            testXStream.toXML(state) shouldContain  "round=\"18\""
         }
     }
 })

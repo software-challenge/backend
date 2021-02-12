@@ -62,22 +62,21 @@ class GameState @JvmOverloads constructor(
     fun removeUndeployedPiece(piece: Piece) =
             mutableUndeployedPieceShapes(piece.color).remove(piece.kind)
     
+    fun roundFromTurn(turn: Int) = 1 + turn / orderedColors.size
+    
     /** Die Anzahl an bereits getätigten Zügen. */
     @XStreamAsAttribute
     override var turn: Int = turn
         set(value) {
-            if (value < 0) throw IndexOutOfBoundsException("Can't go back in value (request was $turn to $value)")
+            if (value < 0) throw IndexOutOfBoundsException("Can't go back in turns (request was $turn to $value)")
             field = value
+            round = roundFromTurn(value)
         }
     
     /** Die Rundenzahl. */
     @XStreamAsAttribute
-    override var round: Int = 1
+    override var round: Int = roundFromTurn(turn)
         private set
-        get() {
-            field = 1 + turn / orderedColors.size
-            return field
-        }
     
     /** Das Team, das am Zug ist. */
     override val currentTeam
