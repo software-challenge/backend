@@ -40,7 +40,9 @@ enum class PieceShape(coordinates: Set<Coordinates>) {
     val dimension: Vector = coordinates.area
     
     /** Die Form als Sammlung aus Vektoren. */
-    val asVectors: Set<Vector> by lazy {coordinates.map {it - Coordinates.origin}.toSet()}
+    val asVectors: Set<Vector> by lazy {
+        coordinates.mapTo(HashSet()) {it - Coordinates.origin}
+    }
     
     /** Die Größe Der Form, als Anzahl an Feldern, die es belegt. */
     @XStreamOmitField

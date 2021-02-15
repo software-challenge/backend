@@ -29,11 +29,11 @@ data class Coordinates(
 
     /** Gibt ein Set der vier Ecken dieser Koordinaten zurück. */
     val corners: Set<Coordinates>
-        get() = Vector.diagonals.map { this + it }.toSet()
+        get() = Vector.diagonals.mapTo(HashSet()) { this + it }
 
     /** Gibt ein Set der vier benachbarten Felder dieser Koordinaten zurück. */
     val neighbors: Set<Coordinates>
-        get() = Vector.cardinals.map { this + it }.toSet()
+        get() = Vector.cardinals.mapTo(HashSet()) { this + it }
 
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
@@ -46,9 +46,7 @@ data class Coordinates(
  * @property dx die Differenz in x-Richtung
  * @property dy die Differenz in y-Richtung
  */
-data class Vector(
-        @XStreamAsAttribute val dx: Int,
-        @XStreamAsAttribute val dy: Int) {
+data class Vector(val dx: Int, val dy: Int) {
     /** Die Fläche des Rechtecks, dessen Diagonale der Vector ist. */
     val area: Int = dx * dy
 

@@ -7,7 +7,6 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
-import sc.plugin2021.util.filterValidMoves
 import sc.shared.InvalidMoveException
 
 class GameRuleLogicTest: WordSpec({
@@ -103,7 +102,7 @@ class GameRuleLogicTest: WordSpec({
         val piece = PieceShape.PENTO_W
         var state = GameState(startPiece = piece)
         "return all possible moves that can be placed in a free corner" {
-            var SHOULD = setOf(
+            var SHOULD: Collection<Move> = listOf(
                     Piece(Color.BLUE, piece, Rotation.NONE, false, Coordinates(0, 0)),
                     Piece(Color.BLUE, piece, Rotation.MIRROR, false, Coordinates(0, 0)),
                     Piece(Color.BLUE, piece, Rotation.RIGHT, false, Coordinates(17, 0)),
@@ -112,47 +111,47 @@ class GameRuleLogicTest: WordSpec({
                     Piece(Color.BLUE, piece, Rotation.MIRROR, false, Coordinates(17, 17)),
                     Piece(Color.BLUE, piece, Rotation.RIGHT, false, Coordinates(0, 17)),
                     Piece(Color.BLUE, piece, Rotation.LEFT, false, Coordinates(0, 17))
-            ).map { SetMove(it) }.toSet()
+            ).map { SetMove(it) }
             var IS = GameRuleLogic.getPossibleMoves(state)
-
+    
             IS shouldContainExactlyInAnyOrder SHOULD
             GameRuleLogic.performMove(state, SHOULD.first())
-
-            SHOULD = setOf(
+    
+            SHOULD = listOf(
                     Piece(Color.YELLOW, piece, Rotation.RIGHT, false, Coordinates(17, 0)),
                     Piece(Color.YELLOW, piece, Rotation.LEFT, false, Coordinates(17, 0)),
                     Piece(Color.YELLOW, piece, Rotation.NONE, false, Coordinates(17, 17)),
                     Piece(Color.YELLOW, piece, Rotation.MIRROR, false, Coordinates(17, 17)),
                     Piece(Color.YELLOW, piece, Rotation.RIGHT, false, Coordinates(0, 17)),
                     Piece(Color.YELLOW, piece, Rotation.LEFT, false, Coordinates(0, 17))
-            ).map { SetMove(it) }.toSet()
+            ).map { SetMove(it) }
             IS = GameRuleLogic.getPossibleMoves(state)
-
+    
             IS shouldContainExactlyInAnyOrder SHOULD
             GameRuleLogic.performMove(state, SHOULD.first())
-
+    
             SHOULD = setOf(
                     Piece(Color.RED, piece, Rotation.NONE, false, Coordinates(17, 17)),
                     Piece(Color.RED, piece, Rotation.MIRROR, false, Coordinates(17, 17)),
                     Piece(Color.RED, piece, Rotation.RIGHT, false, Coordinates(0, 17)),
                     Piece(Color.RED, piece, Rotation.LEFT, false, Coordinates(0, 17))
-            ).map { SetMove(it) }.toSet()
+            ).map { SetMove(it) }
             IS = GameRuleLogic.getPossibleMoves(state)
-
+    
             IS shouldContainExactlyInAnyOrder SHOULD
             GameRuleLogic.performMove(state, SHOULD.first())
-
-            SHOULD = setOf(
+    
+            SHOULD = listOf(
                     Piece(Color.GREEN, piece, Rotation.RIGHT, false, Coordinates(0, 17)),
                     Piece(Color.GREEN, piece, Rotation.LEFT, false, Coordinates(0, 17))
-            ).map { SetMove(it) }.toSet()
+            ).map { SetMove(it) }
             IS = GameRuleLogic.getPossibleMoves(state)
-
+    
             IS shouldContainExactlyInAnyOrder SHOULD
-
+    
             state = GameState()
             GameRuleLogic.getPossibleMoves(state) shouldContainExactlyInAnyOrder
-                    GameRuleLogic.getPossibleMoves(state).filterValidMoves(state)
+                    GameRuleLogic.getPossibleMoves(state).filter { GameRuleLogic.isValidSetMove(state, it) }
         }
     }
 })

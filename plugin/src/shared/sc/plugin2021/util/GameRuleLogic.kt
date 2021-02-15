@@ -34,7 +34,7 @@ object GameRuleLogic {
             if (monoLast) 5 else 0
         }
         // One point per block per piece placed
-        return SUM_MAX_SQUARES - undeployed.map{ it.coordinates.size }.sum()
+        return SUM_MAX_SQUARES - undeployed.sumBy { it.coordinates.size }
     }
     
     /**
@@ -89,8 +89,6 @@ object GameRuleLogic {
     /** Perform the given [SetMove]. */
     @JvmStatic
     private fun performSetMove(gameState: GameState, move: SetMove) {
-        validateSetMove(gameState, move)
-
         if (Constants.VALIDATE_MOVE)
             validateSetMove(gameState, move)
 
@@ -236,7 +234,7 @@ object GameRuleLogic {
 
     /** Gib eine Sammlung an möglichen [SetMove]s zurück. */
     @JvmStatic
-    fun getPossibleMoves(gameState: GameState) =
+    fun getPossibleMoves(gameState: GameState): Collection<SetMove> =
             streamPossibleMoves(gameState).toSet()
 
     /** Gib eine Sequenz an möglichen [SetMove]s zurück. */
@@ -276,26 +274,25 @@ object GameRuleLogic {
     fun streamPossibleMovesForShape(
             gameState: GameState,
             shape: PieceShape,
-            validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
-    ): Sequence<SetMove> {
-        return if (isFirstMove(gameState)) {
-            if (shape == gameState.startPiece)
-                streamPossibleStartMoves(gameState)
-            else
-                sequenceOf()
-        } else sequence {
-            for (field in validFields) {
-                for (variant in shape.variants) {
-                    val area = variant.key.area
-                    for (x in field.x - area.dx..field.x) {
-                        for (y in field.y - area.dy..field.y) {
-                            yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
+            validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor),
+    ): Sequence<SetMove> =
+            if (isFirstMove(gameState)) {
+                if (shape == gameState.startPiece)
+                    streamPossibleStartMoves(gameState)
+                else
+                    sequenceOf()
+            } else sequence {
+                for (field in validFields) {
+                    for (variant in shape.variants) {
+                        val area = variant.key.area
+                        for (x in field.x - area.dx..field.x) {
+                            for (y in field.y - area.dy..field.y) {
+                                yield(SetMove(Piece(gameState.currentColor, shape, variant.value.first, variant.value.second, Coordinates(x, y))))
+                            }
                         }
                     }
                 }
-            }
-        }.filter { isValidSetMove(gameState, it) }
-    }
+            }.filter { isValidSetMove(gameState, it) }
 
     /** @return alle [Coordinates], auf die die aktuelle [Color] Steine platzieren könnte. */
     @JvmStatic

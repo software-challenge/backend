@@ -54,7 +54,7 @@ data class Piece(
     val coordinates: Set<Coordinates>
         get() {
             if (!::_coordinates.isInitialized)
-                _coordinates = shape.map { position + +it }.toSet()
+                _coordinates = shape.mapTo(HashSet()) { position + +it }
             return _coordinates
         }
     
