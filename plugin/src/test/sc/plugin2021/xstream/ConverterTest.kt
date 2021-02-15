@@ -219,7 +219,7 @@ class ConverterTest: FunSpec({
         states.forEach { (state, xml) ->
             test(state.toString()) {
                 checkSerialization(testXStream, state, xml) { obj, deserialized ->
-                    if(obj != deserialized)
+                    if (obj != deserialized)
                         throw failure(Expected(Printed(obj.longString())), Actual(Printed(deserialized.longString())))
                 }
                 reader.readObject() shouldBe state
@@ -228,12 +228,13 @@ class ConverterTest: FunSpec({
         shouldThrow<EOFException> {
             reader.readObject()
         }
-   
+        
         test("update round from turn") {
             val state = GameState(turn = 10)
             testXStream.toXML(state) shouldContain "round=\"3\""
-            state.turn = 70
-            testXStream.toXML(state) shouldContain  "round=\"18\""
+            state.advance(60)
+            state.turn shouldBe 70
+            testXStream.toXML(state) shouldContain "round=\"18\""
             state.round shouldBe 18
         }
     }

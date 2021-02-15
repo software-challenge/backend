@@ -51,6 +51,9 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
 
     override val playerScores: MutableList<PlayerScore>
             get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
+    
+    val isGameOver: Boolean
+        get() = !currentState.hasValidColors() || currentState.round > Constants.ROUND_LIMIT
 
     /**
      * Checks whether and why the game is over.
@@ -58,7 +61,7 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
      * @return null if any player can still move, otherwise a WinCondition with the winner and reason.
      */
     override fun checkWinCondition(): WinCondition? {
-        if (!checkGameOver()) return null
+        if (!isGameOver) return null
 
         val scores: Map<Team, Int> = Team.values().map {
             it to currentState.getPointsForPlayer(it)
@@ -141,24 +144,12 @@ class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
             logger.debug("Current State: $currentState")
             logger.debug("Performing Move $data")
             GameRuleLogic.performMove(currentState, data)
-            next(if (checkGameOver()) null else currentState.currentPlayer)
+            GameRuleLogic.removeInvalidColors(currentState)
+            next(if (isGameOver) null else currentState.currentPlayer)
             logger.debug("Current Board:\n${currentState.board}")
         } catch(e: InvalidMoveException) {
             handleInvalidMove(e, fromPlayer)
         }
-    }
-    
-    private val isGameOver: Boolean
-        get() = !currentState.hasValidColors() || currentState.round > Constants.ROUND_LIMIT
-
-    fun checkGameOver(): Boolean {
-        logger.debug("Round: ${currentState.round} > ${Constants.ROUND_LIMIT}")
-        if (currentState.round > Constants.ROUND_LIMIT) {
-            currentState.clearValidColors()
-        } else {
-            GameRuleLogic.removeInvalidColors(currentState)
-        }
-        return isGameOver
     }
     
     override fun toString(): String =
