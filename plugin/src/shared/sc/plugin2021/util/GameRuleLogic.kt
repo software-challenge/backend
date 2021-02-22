@@ -51,6 +51,7 @@ object GameRuleLogic {
             is SkipMove -> performSkipMove(gameState)
             is SetMove -> performSetMove(gameState, move)
         }
+        gameState.advance()
         gameState.lastMove = move
     }
     
@@ -98,10 +99,6 @@ object GameRuleLogic {
         // If it was the last piece for this color, remove it from the turn queue
         if (gameState.undeployedPieceShapes(move.color).isEmpty())
             gameState.lastMoveMono += move.color to (move.piece.kind == PieceShape.MONO)
-
-        do {
-            gameState.tryAdvance()
-        } while (!gameState.isValid(gameState.currentColor))
     }
 
     /**
@@ -184,8 +181,6 @@ object GameRuleLogic {
     @JvmStatic
     private fun performSkipMove(gameState: GameState) {
         validateSkipMove(gameState)
-        if (!gameState.tryAdvance())
-            logger.error("Couldn't proceed to next turn!")
     }
 
     /** Prüfe, ob das gegebene [Field] bereits an eins mit gleicher Farbe angrenzt. */
@@ -214,7 +209,7 @@ object GameRuleLogic {
     fun isFirstMove(gameState: GameState) =
             gameState.undeployedPieceShapes().size == Constants.TOTAL_PIECE_SHAPES
     
-    /** Return a random Pentomino which is not the `x` one (Used to get a valid starting piece). */
+    /** @return a random Pentomino which is not the `x` one (Used to get a valid starting piece). */
     @JvmStatic
     fun getRandomPentomino() =
             PieceShape.values()
@@ -226,8 +221,7 @@ object GameRuleLogic {
     fun removeInvalidColors(gameState: GameState) {
         if (!gameState.hasValidColors()) return
         if (streamPossibleMoves(gameState).none { isValidSetMove(gameState, it) }) {
-            gameState.removeColor()
-            gameState.turn++
+            gameState.removeActiveColor()
             removeInvalidColors(gameState)
         }
     }

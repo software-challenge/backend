@@ -57,17 +57,18 @@ class GameState @JvmOverloads constructor(
     }
     
     /** @return Liste der noch nicht von [Color] gesetzten Steine. */
-    fun undeployedPieceShapes(color: Color = currentColor): Collection<PieceShape> = mutableUndeployedPieceShapes(color)
+    fun undeployedPieceShapes(color: Color = currentColor): Collection<PieceShape> =
+            mutableUndeployedPieceShapes(color)
     
     fun removeUndeployedPiece(piece: Piece) =
             mutableUndeployedPieceShapes(piece.color).remove(piece.kind)
     
-    fun roundFromTurn(turn: Int) = 1 + turn / orderedColors.size
+    fun roundFromTurn(turn: Int) = 1 + turn / Constants.COLORS
     
     /** Die Anzahl an bereits getätigten Zügen. */
     @XStreamAsAttribute
     override var turn: Int = turn
-        set(value) {
+        private set(value) {
             if (value < 0) throw IndexOutOfBoundsException("Can't go back in turns (request was $turn to $value)")
             field = value
             round = roundFromTurn(value)
@@ -97,25 +98,27 @@ class GameState @JvmOverloads constructor(
     /** Liste der Farben, die noch im Spiel sind. */
     private val validColors = validColors
     
-    /** Beendet das Spiel, indem alle Farben entfernt werden. */
-    internal fun clearValidColors() = validColors.clear()
-    
     /** @return true, wenn noch Farben im Spiel sind. */
-    fun hasValidColors() = validColors.isNotEmpty()
+    fun hasValidColors() =
+            validColors.isNotEmpty()
 
-    /** Prüfe, ob die gegebene Farbe noch im Spiel ist. */
-    fun isValid(color: Color = currentColor) = validColors.contains(color)
+    /** @param color zu prüfende Farbe, standardmäßig die Farbe am Zug
+     * @return ob die gegebene Farbe noch im Spiel ist. */
+    @JvmOverloads
+    fun isValidColor(color: Color = currentColor) =
+            validColors.contains(color)
 
-    /**
-     * Versuche, zum nächsten Zug überzugehen.
-     * Schlägt fehl, wenn das Spiel bereits zu ende ist.
-     * @return Ob es erfolgreich war.
-     */
-    fun tryAdvance(turns: Int = 1): Boolean = try {
+    /** Geht zum Zug der nächsten noch im Spiel befindlichen Farbe über.
+     * @param turns wie viele Züge mindestens weiter gerückt werden soll
+     * @return ob das Spiel vorgerückt oder bereits zu Ende ist. */
+    @JvmOverloads
+    fun advance(turns: Int = 1): Boolean {
+        if(!hasValidColors())
+            return false
         turn += turns
-        true
-    } catch (e: Exception) {
-        false
+        while(!isValidColor())
+            turn++
+        return true
     }
 
     fun addPlayer(player: Player) {
@@ -135,16 +138,12 @@ class GameState @JvmOverloads constructor(
         return GameRuleLogic.getPointsFromUndeployed(pieces, lastMono)
     }
 
-    /**
-     * Entferne die Farbe, die momentan am Zug ist.
-     * Die resultierende aktive Farbe wird dann die des letzten Zuges sein.
-     *
-     * Diese Funktion wird von der [GameRuleLogic] benötigt und sollte nie so aufgerufen werden.
-     */
-    internal fun removeColor(color: Color = currentColor) {
-        logger.info("Removing $color from the game")
-        validColors.remove(color)
-        logger.debug("Remaining Colors: $validColors")
+    /** Entferne die Farbe, die momentan am Zug ist.
+     * @return ob noch Farben im Spiel sind */
+    internal fun removeActiveColor(): Boolean {
+        validColors.remove(currentColor)
+        logger.info("Removed ${currentColor.name} from the game - remaining: [${validColors.joinToString { it.name }}]")
+        return advance()
     }
 
     override fun clone() = GameState(this)

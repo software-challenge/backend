@@ -96,7 +96,7 @@ class GameTest: WordSpec({
                 game.onAction(state.currentPlayer, GameRuleLogic.streamPossibleMoves(state).first())
             
             shouldNotThrowAny {
-                while (!game.checkGameOver()) {
+                while (!game.isGameOver) {
                     game.onAction(state.currentPlayer, SkipMove(state.currentColor))
                 }
             }

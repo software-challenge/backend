@@ -27,19 +27,51 @@ class GameStateTest: WordSpec({
                 state.getPointsForPlayer(Team.TWO) shouldBe 0
             }
         }
-        "asked for the current color" should {
-            "return the correct color" {
-                state.orderedColors.size shouldBe Constants.COLORS
-                for (color in Color.values()) {
-                    state.currentColor shouldBe color
-                    state.turn++
+        "turn number increases" should {
+            "advance turn, round and currentcolor accordingly" {
+                GameState().run {
+                    orderedColors.size shouldBe Constants.COLORS
+    
+                    for (color in Color.values()) {
+                        turn shouldBe color.ordinal
+                        round shouldBe 1
+                        currentColor shouldBe color
+                        advance()
+                    }
+                    
+                    turn shouldBe 4
+                    round shouldBe 2
+                    currentColor shouldBe Color.BLUE
+    
+                    advance(7)
+                    turn shouldBe 11
+                    round shouldBe 3
+                    currentColor shouldBe Color.GREEN
+    
+                    removeActiveColor()
+                    turn shouldBe 12
+                    round shouldBe 4
+                    currentColor shouldBe Color.BLUE
+    
+                    Color.values().filterNot { it == Color.RED }.forEach { color ->
+                        (undeployedPieceShapes(color) as MutableCollection).clear()
+                    }
+                    
+                    GameRuleLogic.removeInvalidColors(this)
+                    turn shouldBe 14
+                    currentColor shouldBe Color.RED
+    
+                    advance()
+                    turn shouldBe 18
+                    round shouldBe 5
+                    currentColor shouldBe Color.RED
+    
+                    advance()
+                    GameRuleLogic.removeInvalidColors(this)
+                    turn shouldBe 22
+                    round shouldBe 6
+                    currentColor shouldBe Color.RED
                 }
-
-                state.currentColor shouldBe Color.BLUE
-                state.turn++
-                state.currentColor shouldBe Color.YELLOW
-                state.turn += 2
-                state.currentColor shouldBe Color.GREEN
             }
         }
         "a piece is placed a second time" should {
@@ -48,7 +80,7 @@ class GameStateTest: WordSpec({
             shouldNotThrow<InvalidMoveException> {
                 GameRuleLogic.performMove(state, move)
             }
-            state.turn += 4
+            state.advance(4)
             state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
             "throw an InvalidMoveException" {
                 shouldThrow<InvalidMoveException> {
@@ -87,43 +119,19 @@ class GameStateTest: WordSpec({
                 cloned shouldNotBe state
             }
             "respect validColors" {
-                state.removeColor(Color.BLUE)
+                state.removeActiveColor() shouldBe true
+                state.currentColor shouldBe Color.YELLOW
                 val newClone = state.clone()
                 newClone shouldBe state
                 cloned shouldNotBe state
-                newClone.removeColor(Color.BLUE)
-                newClone shouldBe state
-                newClone.removeColor(Color.RED)
+                newClone.removeActiveColor() shouldBe true
+                newClone.currentColor shouldBe Color.RED
                 newClone shouldNotBe state
             }
             val otherState = GameState(lastMove = SetMove(Piece(Color.GREEN, 0)))
             "preserve inequality" {
                 otherState shouldNotBe state
                 otherState.clone() shouldNotBe state
-            }
-        }
-        "turn number increases" should {
-            "let turn, round and currentcolor advance accordingly" {
-                GameState().run {
-                    turn shouldBe 0
-                    round shouldBe 1
-                    currentColor shouldBe Color.BLUE
-
-                    turn += 10
-                    turn shouldBe 10
-                    round shouldBe 3
-                    currentColor shouldBe Color.RED
-
-                    turn++
-                    turn shouldBe 11
-                    round shouldBe 3
-                    currentColor shouldBe Color.GREEN
-
-                    turn++
-                    turn shouldBe 12
-                    round shouldBe 4
-                    currentColor shouldBe Color.BLUE
-                }
             }
         }
     }
