@@ -10,33 +10,33 @@ abstract class TwoPlayerGameState<P : Player>(
     abstract val first: P
     abstract val second: P
     abstract val board: IBoard
-
-    /** List of all teams. */
-    val players: List<P>
-        get() = listOf(first, second)
     
-    /** Die Namen der beiden Spieler. */
-    val playerNames: Array<String>
-        get() = arrayOf(first.displayName, second.displayName)
-    
-    /** The Team active in the current turn. */
-    abstract val currentTeam: ITeam
-
-    /** The Player whose team's turn it is. */
-    open val currentPlayer: P
-        get() = getPlayer(currentTeam)
-
-    /** The player opposite to the currently active one. */
-    val otherPlayer: P
-        get() = getPlayer(otherTeam)
-
-    /** The Team opposite to the currently active one. */
-    val otherTeam: ITeam
-        get() = currentTeam.opponent()
-
     /** Der Spieler, der das Spiel begonnen hat. */
     val startPlayer: P
         get() = getPlayer(startTeam)
+    
+    /** Liste aller Spieler in Reihenfolge. */
+    val players: List<P>
+        get() = listOf(first, second)
+    
+    /** @returns die Namen aller Spieler in Reihenfolge. */
+    val playerNames: Array<String>
+        get() = arrayOf(first.displayName, second.displayName)
+    
+    /** @return das Team, das dran ist. */
+    abstract val currentTeam: ITeam
+    
+    /** @return das Team, das nicht dran ist. */
+    val otherTeam: ITeam
+        get() = currentTeam.opponent()
+    
+    /** Der Spieler, der am Zug ist. */
+    open val currentPlayer: P
+        get() = getPlayer(currentTeam)
+
+    /** Der Spieler, der nicht am Zug ist. */
+    val otherPlayer: P
+        get() = getPlayer(otherTeam)
 
     /** Letzter getaetigter Zug. */
     abstract val lastMove: IMove?

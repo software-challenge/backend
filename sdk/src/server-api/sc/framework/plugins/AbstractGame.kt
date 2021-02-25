@@ -37,7 +37,8 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
      * @param fromPlayer The player who invoked this action.
      * @param data       The plugin-specific data.
      *
-     * @throws GameLogicException if any invalid action is done, i.e. game rule violation
+     * @throws GameLogicException if no move has been requested from the given [Player]
+     * @throws InvalidMoveException when the given Move is not possible
      */
     @Throws(GameLogicException::class, InvalidMoveException::class)
     override fun onAction(fromPlayer: Player, data: ProtocolMessage) {
@@ -61,11 +62,13 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     abstract fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage)
 
     /**
-     * Checks if a win condition in the current game state is met.
-     * Checks round limit and end of round (and playerStats).
-     * Checks if goal is reached.
+     * Returns a WinCondition if the Game is over.
+     * Checks:
+     * - if a win condition in the current game state is met
+     * - round limit and end of round (and playerStats)
+     * - whether goal is reached
      *
-     * @return WinCondition with winner and reason or null, if no win condition is yet met.
+     * @return WinCondition, or null if no win condition is met yet.
      */
     abstract fun checkWinCondition(): WinCondition?
 
