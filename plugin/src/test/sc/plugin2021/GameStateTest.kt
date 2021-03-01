@@ -3,11 +3,15 @@ package sc.plugin2021
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.types.beInstanceOf
 import sc.helpers.testXStream
 import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
+import sc.plugin2021.util.MoveMistake
 import sc.shared.InvalidMoveException
 
 class GameStateTest: WordSpec({
@@ -80,14 +84,21 @@ class GameStateTest: WordSpec({
             shouldNotThrow<InvalidMoveException> {
                 GameRuleLogic.performMove(state, move)
             }
-            state.advance(4)
+            state.advance(3)
+            state.currentColor shouldBe Color.BLUE
             state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
             "throw an InvalidMoveException" {
-                shouldThrow<InvalidMoveException> {
+                val ex = shouldThrow<InvalidMoveException> {
                     GameRuleLogic.performMove(state, move)
                 }
+                ex.mistake shouldBe MoveMistake.DUPLICATE_SHAPE
+                state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
             }
-            state.undeployedPieceShapes(Color.BLUE).size shouldBe 20
+            "allow a SkipMove" {
+                GameRuleLogic.performMove(state, SkipMove(Color.BLUE))
+                state.lastMove should beInstanceOf<SkipMove>()
+                testXStream.toXML(state) shouldContain Regex("lastMove.*SkipMove")
+            }
         }
         "serialised and deserialised" should {
             val xStream = testXStream

@@ -5,8 +5,10 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.beInstanceOf
 import sc.api.plugins.IGameState
 import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.host.IGameListener
@@ -103,7 +105,9 @@ class GameTest: WordSpec({
             shouldThrow<GameLogicException> {
                 game.onAction(state.currentPlayer, SkipMove(state.currentColor))
             }
-    
+            "end with a SkipMove" {
+                state.lastMove should beInstanceOf<SkipMove>()
+            }
             "end in a draw" {
                 game.playerScores shouldContainExactly List(2) {
                     PlayerScore(ScoreCause.REGULAR, "", Constants.DRAW_SCORE, 10)
