@@ -9,6 +9,11 @@ The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-
 - `y` is bumped for any major updates or backwards-incompatible changes
 
 ## [21.4.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.4.0)
+- Removed PlayerScoreRequest - add up the GameResults instead
+
+## [21.3.3](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.3) - 2021-03-01
+- Game: Refactor turn advancing logic ([#391](https://github.com/CAU-Kiel-Tech-Inf/backend/pull/391))
+- Networking: Improve Exception handling within games and rooms ([#383](https://github.com/CAU-Kiel-Tech-Inf/backend/pull/383))
 
 ## [21.3.2](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.2) - 2021-02-12
 ### Fixed
