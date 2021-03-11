@@ -1,4 +1,4 @@
-FROM openjdk:8-jre
+FROM openjdk:11-jre
 
 # Where to get the game server files from. Needs to be below or in directory
 # where this Dockerfile resides. Is the standard build result when executing
@@ -16,10 +16,12 @@ RUN rm /app/server.properties && \
       ln -s /run/secrets/gameserver_properties /app/server.properties
 
 ENTRYPOINT ["java"]
+
 CMD ["-Dfile.encoding=UTF-8", \
      "-Dlogback.configurationFile=logback-production.xml", \
      "-Djava.security.egd=file:/dev/./urandom", \
      "-server", \
+     "-Xmx16g", \
      "-XX:MaxGCPauseMillis=100", \
      "-XX:GCPauseIntervalMillis=2050", \
      "-XX:+UseConcMarkSweepGC", \
@@ -28,5 +30,7 @@ CMD ["-Dfile.encoding=UTF-8", \
      "-XX:CMSInitiatingOccupancyFraction=70", \
      "-XX:+ScavengeBeforeFullGC", \
      "-XX:+CMSScavengeBeforeRemark", \
+     "-verbose:gc", \
+     "-Xlog:gc*=trace:file=\"/app/gc.log\":tags,time,uptime,level", \
      "-jar", \
      "./server.jar"]
