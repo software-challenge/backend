@@ -24,12 +24,6 @@ CMD ["-Dfile.encoding=UTF-8", \
      "-Xmx16g", \
      "-XX:MaxGCPauseMillis=100", \
      "-XX:GCPauseIntervalMillis=2050", \
-     "-XX:+UseConcMarkSweepGC", \
-     "-XX:+CMSParallelRemarkEnabled", \
-     "-XX:+UseCMSInitiatingOccupancyOnly", \
-     "-XX:CMSInitiatingOccupancyFraction=70", \
-     "-XX:+ScavengeBeforeFullGC", \
-     "-XX:+CMSScavengeBeforeRemark", \
      "-verbose:gc", \
      "-Xlog:gc*=trace:file=\"/app/gc.log\":tags,time,uptime,level", \
      "-jar", \
