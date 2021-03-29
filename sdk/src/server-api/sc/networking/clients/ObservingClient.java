@@ -28,7 +28,6 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
   private boolean gameOver = false;
 
   private final List<ProtocolMessage> history = new ArrayList<>();
-  private final List<IUpdateListener> listeners = new ArrayList<>();
 
   private GameResult result = null;
 
@@ -54,35 +53,11 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
       logger.debug("{} got new state {}", this, state);
     if (isAffected(roomId)) {
       addObservation(state);
-      notifyOnUpdate();
     }
   }
 
   protected boolean isAffected(String roomId) {
     return this.replay || this.roomId.equals(roomId);
-  }
-
-  protected void notifyOnUpdate() {
-    for (IUpdateListener listener : this.listeners) {
-      listener.onUpdate(this);
-    }
-  }
-
-  protected void notifyOnError(String errorMessage) {
-    for (IUpdateListener listener : this.listeners) {
-      listener.onError(errorMessage);
-    }
-  }
-
-  @Override
-  public void removeListener(IUpdateListener u) {
-    this.listeners.remove(u);
-  }
-
-  @Override
-  public void addListener(IUpdateListener u) {
-    this.listeners.add(u);
-    u.onUpdate(this);
   }
 
   @Override
@@ -93,7 +68,6 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
   @Override
   public void pause() {
     paused = true;
-    notifyOnUpdate();
   }
 
   @Override
@@ -129,7 +103,6 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
     logger.debug("Setting Position to {} (requested {})", newPosition, i);
     if (newPosition != this.position) {
       this.position = newPosition;
-      notifyOnUpdate();
     }
   }
 
@@ -204,8 +177,6 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
 
     this.gameOver = true;
     this.result = result;
-
-    notifyOnUpdate();
   }
 
   @Override
@@ -244,7 +215,6 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
       logger.debug("{} (room: {})", error.getLogMessage(), roomId);
     if (isAffected(roomId)) {
       addObservation(error);
-      notifyOnError(error.getMessage());
     }
   }
 

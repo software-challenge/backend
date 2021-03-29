@@ -2,7 +2,6 @@ package sc.networking.clients;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sc.framework.plugins.Player;
 import sc.protocol.requests.CancelRequest;
 import sc.protocol.requests.PauseGameRequest;
@@ -99,7 +98,6 @@ public class ControllingClient extends ObservingClient implements IAdministrativ
   public void onGamePaused(String roomId, Player nextPlayer) {
     logger.info("A PAUSE HIT was detected.");
     this.pauseHitReceived = true;
-    this.notifyOnUpdate();
   }
 
   @Override
