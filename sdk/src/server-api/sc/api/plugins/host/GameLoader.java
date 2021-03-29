@@ -1,6 +1,5 @@
 package sc.api.plugins.host;
 
-import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
@@ -73,18 +72,18 @@ public class GameLoader implements IHistoryListener {
   }
 
   @Override
-  public void onGameOver(String roomId, GameResult o) {
+  public void onGameOver(String roomId, GameResult result) {
     this.finished = true;
   }
 
   @Override
-  public void onNewState(String roomId, IGameState o) {
+  public void onNewState(String roomId, IGameState state) {
     logger.debug("Received new state");
     if (!this.finished) {
       for (Class<?> clazz : this.clazzes) {
-        if (clazz.isInstance(o)) {
+        if (clazz.isInstance(state)) {
           logger.debug("Received game info of type {}", clazz.getName());
-          this.obj = clazz.cast(o);
+          this.obj = clazz.cast(state);
           this.finished = true;
           this.client.stop();
         }

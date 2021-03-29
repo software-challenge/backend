@@ -1,7 +1,5 @@
 package sc.framework;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sc.shared.SlotDescriptor;
 
 import java.text.DateFormat;
@@ -11,10 +9,8 @@ import java.util.List;
 
 public class HelperMethods {
 
-  private static final Logger logger = LoggerFactory.getLogger(HelperMethods.class);
-
-  private static final DateFormat dateTimeFormat = new SimpleDateFormat(
-          "yyyy.MM.dd HH_mm_ss");
+  private static final DateFormat dateTimeFormat =
+      new SimpleDateFormat("yyyy.MM.dd HH_mm_ss");
 
   /**
    * Returns the current date and time as string formatted as yyyy.MM.dd
@@ -45,7 +41,6 @@ public class HelperMethods {
     replayFileName.append("_");
     replayFileName.append(HelperMethods.getCurrentDateTime().replace(' ', '_'));
     replayFileName.append(".xml");
-    logger.debug("Generated file name {}", replayFileName.toString());
     return replayFileName.toString();
   }
 
