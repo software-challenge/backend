@@ -1,27 +1,22 @@
 package sc.server;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.KXml2Driver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.helpers.RuntimeJarLoader;
-import sc.protocol.helpers.LobbyProtocol;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Properties;
 
 /**
  * Server configuration.
+ *
  * TODO load values at startup from a properties file
  */
 public class Configuration {
+  private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
   public static final char DEBUG_SHORT_OPTION = 'd';
   public static final String DEBUG_OPTION = "debug";
@@ -38,39 +33,11 @@ public class Configuration {
   public static final String TIMEOUT = "timeout";
   public static final String LISTEN_LOCAL_KEY = "local";
 
-  private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
-
-  private static final XStream xStream;
-  private static final RuntimeJarLoader xStreamClassLoader;
-  private static final Properties properties = new Properties();
-
   public static final String PASSWORD_KEY = "password";
   public static final String PORT_KEY = "port";
   public static final String PLUGIN_PATH_KEY = "plugins";
 
-  static {
-    /*
-     * using the KXml2 parser because the default (Xpp3) and StAX can't parse some special characters in attribute values:
-     * <protocol><authenticate passphrase="examplepassword"/>
-     * <prepare gameType="swc_2018_hase_und_igel">
-     *   <slot displayName="HÃ¤schenschule" canTimeout="true" shouldBePaused="true"/>
-     *   <slot displayName="Testhase" canTimeout="true" shouldBePaused="true"/>
-     * </prepare>
-     */
-    xStream = new XStream(new KXml2Driver());
-
-    xStream.setMode(XStream.NO_REFERENCES);
-    xStreamClassLoader = AccessController
-            .doPrivileged(new PrivilegedAction<RuntimeJarLoader>() {
-              @Override
-              public RuntimeJarLoader run() {
-                return new RuntimeJarLoader(xStream.getClassLoader());
-              }
-            });
-    xStream.setClassLoader(xStreamClassLoader);
-    //xStream.registerConverter(new PerspectiveAwareConverter(xStream.getMapper(), xStream.getReflectionProvider()));
-    LobbyProtocol.registerMessages(xStream);
-  }
+  private static final Properties properties = new Properties();
 
   public static void loadServerProperties() {
     File file = new File("server.properties").getAbsoluteFile();
@@ -99,14 +66,6 @@ public class Configuration {
 
   public static boolean getListenLocal() {
     return get(LISTEN_LOCAL_KEY, Boolean.class, true);
-  }
-
-  public static XStream getXStream() {
-    return xStream;
-  }
-
-  public static void addXStreamClassloaderURL(URL url) {
-    xStreamClassLoader.addURL(url);
   }
 
   public static String getPluginPath() {

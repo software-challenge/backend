@@ -1,46 +1,55 @@
 package sc.server.network
 
-import org.junit.Assert
-import org.junit.Ignore
-import org.junit.Test
-import sc.server.helpers.TestHelper
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
+import sc.server.client.TestLobbyClientListener
+import sc.server.gaming.GameRoom
 import sc.server.plugins.TestPlugin
 import sc.shared.ScoreCause
-import java.util.concurrent.TimeUnit
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class LobbyTest: RealServerTest() {
     
-    @Ignore
-    @Test // TODO seems to switch the players sometimes
-    fun shouldEndGameOnIllegalMessage() {
+    @Test
+    fun shouldEndGameOnDisconnect() {
         val player1 = connectClient("localhost", serverPort)
-        waitForConnect(1)
         val player2 = connectClient("localhost", serverPort)
-        waitForConnect(2)
         
         player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
         
-        TestHelper.assertEqualsWithTimeout(1, { player1.rooms.size })
-        TestHelper.assertEqualsWithTimeout(1, { player2.rooms.size })
-        TestHelper.assertEqualsWithTimeout(1, { this@LobbyTest.gameMgr.games.size })
+        await("Game created") { lobby.games.size == 1 }
+        await("Game started") { lobby.games.single().status == GameRoom.GameStatus.ACTIVE }
         
-        Assert.assertEquals(1, this.gameMgr.games.size)
-        Assert.assertEquals(player1.rooms[0], player2.rooms[0])
+        player1.stop()
+        await("GameRoom closes after one player died") { lobby.games.isEmpty() }
+    }
+    
+    @Test
+    fun shouldEndGameOnIllegalMessage() {
+        val player1 = connectClient("localhost", serverPort)
+        val player2 = connectClient("localhost", serverPort)
+    
+        val listener = TestLobbyClientListener()
+        player1.addListener(listener)
         
-        val theRoom = this@LobbyTest.gameMgr.games.iterator().next()
+        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        await { listener.gameJoinedReceived }
+        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+    
+        await("Game started") { lobby.games.single().status == GameRoom.GameStatus.ACTIVE }
         
-        Assert.assertEquals(false, theRoom.isOver)
+        val room = gameMgr.games.single()
+        room.isOver shouldBe false
         
         player1.sendCustomData("<yarr>")
         
-        TestHelper.assertEqualsWithTimeout(true, { theRoom.isOver })
-        TestHelper.assertEqualsWithTimeout(true, { theRoom.result.scores != null })
+        await("Game is over") { room.isOver }
+        await("GameResult") { room.result != null }
+        room.result.scores.first().cause shouldBe ScoreCause.LEFT
         
-        TestHelper.assertEqualsWithTimeout(ScoreCause.LEFT, { theRoom.result.scores[0].cause }, 2, TimeUnit.SECONDS)
-        
-        // should cleanup gamelist
-        TestHelper.assertEqualsWithTimeout(0, { this@LobbyTest.gameMgr.games.size })
+        await("GameRoom closes") { gameMgr.games.isEmpty() }
     }
     
 }

@@ -3,70 +3,55 @@ package sc.server.plugins;
 import sc.plugins.IPlugin;
 import sc.plugins.PluginDescriptor;
 
-public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
-{
-	private final Class<?>			definition;
-	private PluginType				instance;
-	private final PluginDescriptor	description;
+public class PluginInstance<PluginType extends IPlugin> {
+  private final Class<? extends PluginType> definition;
+  private final PluginDescriptor description;
 
-	public PluginInstance(Class<?> definition)
-	{
-		this.definition = definition;
-		this.description = definition.getAnnotation(PluginDescriptor.class);
-	}
+  private PluginType instance;
 
-	@SuppressWarnings("unchecked")
-	private Class<? extends PluginType> uncheckedDefinitionCast(
-			Class<?> definition) throws ClassCastException
-	{
-		return (Class<? extends PluginType>) definition;
-	}
+  public PluginInstance(Class<? extends PluginType> definition) {
+    this.definition = definition;
+    this.description = definition.getAnnotation(PluginDescriptor.class);
+  }
 
-	public PluginType getPlugin()
-	{
-		return this.instance;
-	}
+  @SuppressWarnings("unchecked")
+  public PluginInstance(PluginType instance) {
+    this((Class<? extends PluginType>) instance.getClass());
+    this.instance = instance;
+  }
 
-	public PluginDescriptor getDescription()
-	{
-		return this.description;
-	}
+  public PluginType getPlugin() {
+    return this.instance;
+  }
 
-	public void load(HostType host) throws PluginLoaderException
-	{
-		this.instantiate();
-		this.instance.initialize(host);
-	}
+  public PluginDescriptor getDescription() {
+    return this.description;
+  }
 
-	public void unload()
-	{
-		this.instance.unload();
-	}
+  public void load() throws PluginLoaderException {
+    if (instance == null) {
+      if(definition == null)
+        throw new IllegalStateException("Plugin instance and definition are null!");
+      this.instantiate();
+    }
+    this.instance.initialize();
+  }
 
-	private void instantiate() throws PluginLoaderException
-	{
-		try
-		{
-			Class<? extends PluginType> castedDefintion = uncheckedDefinitionCast(this.definition);
-			this.instance = castedDefintion.newInstance();
-		}
-		catch (IllegalAccessException e)
-		{
-			throw new PluginLoaderException(e);
-		}
-		catch (InstantiationException e)
-		{
-			throw new PluginLoaderException(
-					"Could not instanciate the plugin ("
-							+ this.definition.getCanonicalName()
-							+ "). "
-							+ "Plugin must be a class with a public parameterless constructor and must not be nested.",
-					e);
-		}
-		catch (ClassCastException e)
-		{
-			throw new PluginLoaderException(e);
-		}
-	}
+  public void unload() {
+    this.instance.unload();
+  }
+
+  private void instantiate() throws PluginLoaderException {
+    try {
+      this.instance = definition.newInstance();
+    } catch (IllegalAccessException | ClassCastException e) {
+      throw new PluginLoaderException(e);
+    } catch (InstantiationException e) {
+      throw new PluginLoaderException(
+              "Could not instantiate the plugin (" + this.definition.getCanonicalName() + "). "
+                      + "Plugin must be a class with a public parameterless constructor and must not be nested.",
+              e);
+    }
+  }
 
 }

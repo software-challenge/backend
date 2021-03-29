@@ -1,8 +1,9 @@
 package sc.server.network;
 
-import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.exceptions.GameLogicException;
+import sc.api.plugins.exceptions.NotYourTurnException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
@@ -11,7 +12,6 @@ import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.ProtocolMessage;
 import sc.server.Configuration;
-import sc.shared.InvalidGameStateException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,9 +20,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A generic client. This represents a client in the server. Clients which
- * connect to the server (as separate programs or running as threads started by
- * the server) are represented by {@link sc.networking.clients.LobbyClient}.
+ * A generic client. This represents a client in the server.
+ *
+ * Clients which connect to the server (as separate programs or running as threads started by the server)
+ * are represented by {@link sc.networking.clients.LobbyClient}.
  */
 public class Client extends XStreamClient implements IClient {
   private static final Logger logger = LoggerFactory.getLogger(Client.class);
@@ -31,53 +32,25 @@ public class Client extends XStreamClient implements IClient {
   private final List<IClientListener> clientListeners = new ArrayList<>();
   private final Collection<IClientRole> roles = new ArrayList<>();
 
-  public Client(INetworkInterface networkInterface, XStream configuredXStream) throws IOException {
-    super(configuredXStream, networkInterface);
+  public Client(INetworkInterface networkInterface) throws IOException {
+    super(networkInterface);
   }
 
-  /**
-   * Getter for the roles. Roles can be {@link sc.server.gaming.PlayerRole PlayerRole},
-   * {@link sc.server.gaming.ObserverRole ObserverRole} or {@link AdministratorRole AdministratorRole}
-   *
-   * @return Collection of roles
-   */
+  /** @return roles of this client. */
   public Collection<IClientRole> getRoles() {
     return Collections.unmodifiableCollection(this.roles);
   }
 
-  /**
-   * Add another role to the client.Roles can be {@link sc.server.gaming.PlayerRole PlayerRole},
-   * {@link sc.server.gaming.ObserverRole ObserverRole} or {@link AdministratorRole AdministratorRole}
-   *
-   * @param role to be added
-   */
+  /** Add another role to the client. */
   @Override
   public void addRole(IClientRole role) {
-    this.roles.add(role);
-  }
-
-  /**
-   * Send a package to the server
-   *
-   * @param packet message to be send
-   */
-  @Override
-  public synchronized void send(ProtocolMessage packet) {
-    if (!isClosed()) {
-      super.send(packet);
-    } else {
-      logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {}) Thread: {}",
-          packet.getClass().getSimpleName(),
-          Thread.currentThread().getName());
+    synchronized(roles) {
+      this.roles.add(role);
     }
   }
 
-  /**
-   * Call listener that handle new Packages
-   *
-   * @param packet which just arrived
-   */
-  private void notifyOnPacket(Object packet) throws UnprocessedPacketException, InvalidGameStateException {
+  /** Call listener that handle new Packages. */
+  private void notifyOnPacket(Object packet) throws UnprocessedPacketException {
     /*
      * NOTE that method is called in the receiver thread. Messages should
      * only be passed to listeners. No callbacks should be invoked directly
@@ -88,7 +61,7 @@ public class Client extends XStreamClient implements IClient {
 
     PacketCallback callback = new PacketCallback(packet);
 
-    for (IClientListener listener : this.clientListeners) {
+    for (IClientListener listener : new ArrayList<>(clientListeners)) {
       try {
         listener.onRequest(this, callback);
       } catch (RescuableClientException e) {
@@ -104,45 +77,37 @@ public class Client extends XStreamClient implements IClient {
 
     for (RescuableClientException error : errors) {
       logger.warn("An error occured: ", error);
-      if (!error.getMessage().equals("It's not your turn yet.")) {
+      if (error instanceof GameLogicException && !(error instanceof NotYourTurnException)) {
         logger.warn("Game closed because of GameLogicException: " + error.getMessage());
       }
     }
     if (!errors.isEmpty()) {
-      logger.debug("Stopping client because of error. Thread: {}",
-          Thread.currentThread().getName());
+      logger.debug("Stopping {} because of error", this);
       stop();
     }
 
     if (packet instanceof LeftGameEvent) {
-      logger.debug("Stopping client because of LeftGameEvent received. Thread: {}",
-          Thread.currentThread().getName());
+      logger.debug("Stopping {} because of received LeftGameEvent", this);
       stop();
     }
   }
 
-  /**
-   * Call listeners upon error
-   *
-   * @param packet which rose the error
-   */
-  private synchronized void notifyOnError(ProtocolErrorMessage packet) {
-    for (IClientListener listener : this.clientListeners) {
+  /** Call listeners upon error. */
+  private void notifyOnError(ProtocolErrorMessage packet) {
+    for (IClientListener listener : new ArrayList<>(clientListeners)) {
       try {
         listener.onError(this, packet);
       } catch (Exception e) {
-        logger.error("OnError Notification caused an exception.", e);
+        logger.error("OnError Notification caused an exception, error: " + packet, e);
       }
     }
   }
 
-  /** Call listeners upon disconnect */
-  private synchronized void notifyOnDisconnect() {
+  /** Call listeners upon disconnect. */
+  private void notifyOnDisconnect() {
     if (!this.notifiedOnDisconnect) {
       this.notifiedOnDisconnect = true;
-      // Avoid ConcurrentModificationException
-      final List<IClientListener> listeners = new ArrayList<>(clientListeners);
-      for (IClientListener listener : listeners) {
+      for (IClientListener listener : new ArrayList<>(clientListeners)) {
         try {
           listener.onClientDisconnected(this);
         } catch (Exception e) {
@@ -152,7 +117,7 @@ public class Client extends XStreamClient implements IClient {
     }
   }
 
-  /** Add a {@link IClientListener listener} to the client */
+  /** Add a {@link IClientListener listener} to the client. */
   public void addClientListener(IClientListener listener) {
     this.clientListeners.add(listener);
   }
@@ -162,14 +127,16 @@ public class Client extends XStreamClient implements IClient {
   }
 
   /**
-   * Test if this client is a administrator
+   * Test if this client is an administrator.
    *
    * @return true iff this client has an AdministratorRole
    */
   public boolean isAdministrator() {
-    for (IClientRole role : this.roles) {
-      if (role instanceof AdministratorRole) {
-        return true;
+    synchronized(roles) {
+      for (IClientRole role : this.roles) {
+        if (role instanceof AdministratorRole) {
+          return true;
+        }
       }
     }
     return false;
@@ -177,6 +144,7 @@ public class Client extends XStreamClient implements IClient {
 
   /**
    * Authenticates a Client as Administrator
+   *
    * @param password The secret that is required to gain administrative rights.
    */
   public void authenticate(String password) throws AuthenticationFailedException {
@@ -203,25 +171,22 @@ public class Client extends XStreamClient implements IClient {
    */
   @Override
   protected void onDisconnect(DisconnectCause cause) {
-    super.onDisconnect(cause);
-    for (IClientRole role : this.roles) {
-      try {
-        role.disconnect(cause);
-      } catch (Exception e) {
-        logger.warn("Couldn't close role.", e);
+    synchronized(roles) {
+      for (IClientRole role : this.roles) {
+        try {
+          role.disconnect(cause);
+        } catch (Exception e) {
+          logger.warn("Couldn't close role.", e);
+        }
       }
     }
 
     notifyOnDisconnect();
   }
 
-  /**
-   * Received new package, which is send to all listener
-   *
-   * @param o received package
-   */
+  /** Forward received package to listeners. */
   @Override
-  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException {
+  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException {
     /*
      * NOTE that this method is called in the receiver thread. Messages
      * should only be passed to listeners. No callbacks should be invoked

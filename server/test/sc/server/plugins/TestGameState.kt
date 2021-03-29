@@ -1,32 +1,22 @@
 package sc.server.plugins
 
 import sc.api.plugins.IGameState
-import sc.shared.PlayerColor
+import sc.framework.plugins.Player
+import sc.server.helpers.TestTeam
 
-class TestGameState: IGameState {
-    override var turn = 0
-    var state = 0
-    var lastPlayerIndex = 0
-    var currentPlayer: PlayerColor
-    var startPlayer: PlayerColor
-    
-    var red: TestPlayer
-    var blue: TestPlayer
-    
-    init {
-        this.currentPlayer = PlayerColor.RED
-        this.startPlayer = PlayerColor.RED
-        this.red = TestPlayer(PlayerColor.RED)
-        this.blue = TestPlayer(PlayerColor.BLUE)
-    }
+data class TestGameState(
+        override var turn: Int = 0,
+        var state: Int = 0,
+        var currentPlayer: TestTeam = TestTeam.RED,
+        val startPlayer: TestTeam = TestTeam.RED
+): IGameState {
+    override val round get() = turn / 2
+    val red = Player(TestTeam.RED)
+    val blue = Player(TestTeam.BLUE)
     
     /** wechselt den Spieler, der aktuell an der Reihe ist anhand von `turn`  */
     fun switchCurrentPlayer() {
-        currentPlayer = if (turn % 2 == 0) {
-            PlayerColor.RED
-        } else {
-            PlayerColor.BLUE
-        }
+        currentPlayer = TestTeam.values()[(turn + startPlayer.index) % 2]
     }
     
 }

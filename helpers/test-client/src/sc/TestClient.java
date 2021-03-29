@@ -2,16 +2,14 @@ package sc;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.thoughtworks.xstream.XStream;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGamePlugin;
 import sc.framework.plugins.Player;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
-import sc.plugin2020.util.Constants;
-import sc.protocol.helpers.LobbyProtocol;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;
@@ -21,8 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.ServiceLoader;
+import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +31,7 @@ import static java.lang.Math.pow;
 import static sc.Util.factorial;
 
 /**
- * A simple CLI to test clients. Enables TestMode on startup.
+ * A simple command-line application to test clients. Enables TestMode on startup.
  * <p>
  * Defaults:
  * <ul>
@@ -45,13 +44,15 @@ import static sc.Util.factorial;
 public class TestClient extends XStreamClient {
   private static final Logger logger = (Logger) LoggerFactory.getLogger(TestClient.class);
 
-  private static final String gameType = "swc_2020_hive";
+  private static final String gameType = ServiceLoader.load(IGamePlugin.class).iterator().next().id();
   private static final ClientPlayer[] players = {new ClientPlayer(), new ClientPlayer()};
-  private static final File logDir = new File("logs").getAbsoluteFile();
+  private static final File logDir = new File("log").getAbsoluteFile();
 
   private static TestClient testclient;
   private static Double significance;
   private static int minTests;
+
+  private static final String classpath = System.getProperty("java.class.path");
 
   public static void main(String[] args) {
     System.setProperty("file.encoding", "UTF-8");
@@ -60,6 +61,7 @@ public class TestClient extends XStreamClient {
     CmdLineParser parser = new CmdLineParser();
     Option loglevelOption = parser.addStringOption("loglevel");
     Option serverOption = parser.addBooleanOption("start-server");
+    Option serverLocationOption = parser.addStringOption("server");
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
 
@@ -123,16 +125,17 @@ public class TestClient extends XStreamClient {
 
     try {
       if (startServer) {
-        logger.info("Starting server...");
-        ProcessBuilder builder = new ProcessBuilder("java", "-Dfile.encoding=UTF-8", "-jar", "server.jar", "--port", String.valueOf(port));
+        File serverLocation = findInClasspath((File) parser.getOptionValue(serverLocationOption, new File("server.jar")));
+        logger.info("Starting server from {}", serverLocation);
+        ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getPath(), "--port", String.valueOf(port));
         logDir.mkdirs();
         builder.redirectOutput(new File(logDir, "server_port" + port + ".log"));
-        builder.redirectError(new File(logDir, "server_port" + port + ".err"));
+        builder.redirectError(new File(logDir, "server_port" + port + "-err.log"));
         Process server = builder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         Thread.sleep(1000);
       }
-      testclient = new TestClient(Configuration.getXStream(), sc.plugin2020.util.Configuration.getClassesToRegister(), host, port, numberOfTests);
+      testclient = new TestClient(host, port, numberOfTests);
       Runtime.getRuntime().addShutdownHook(new Thread(testclient::printScores));
     } catch (Exception e) {
       logger.error("Error while initializing: " + e.toString());
@@ -141,25 +144,37 @@ public class TestClient extends XStreamClient {
     }
   }
 
-  private String host;
-  private int port;
+  private static File findInClasspath(File location) {
+    if(!location.exists()) {
+      final StringTokenizer strTokenizer = new StringTokenizer(classpath, File.pathSeparator);
+      while (strTokenizer.hasMoreTokens()) {
+        final File item = new File(strTokenizer.nextToken());
+        if (item.exists() && item.getName().equals(location.getName())) {
+          return item;
+        }
+      }
+    }
+    return location;
+  }
+
+  private final String host;
+  private final int port;
+
+  private final ExecutorService waiter = Executors.newSingleThreadExecutor();
+
+  /** total number of tests that should be executed */
+  private final int totalTests;
 
   /** number of tests that have already been run */
   private int finishedTests;
-  /** total number of tests that should be executed */
-  private int totalTests;
 
   private boolean terminateWhenPossible = false;
   private int playerScores = 0;
   private int irregularGames = 0;
 
-  private ExecutorService waiter = Executors.newSingleThreadExecutor();
+  public TestClient(String host, int port, int totalTests) throws IOException {
+    super(createTcpNetwork(host, port));
 
-  public TestClient(XStream xstream, Collection<Class<?>> protocolClasses,
-                    String host, int port, int totalTests) throws IOException {
-    super(xstream, createTcpNetwork(host, port));
-    LobbyProtocol.registerMessages(xstream);
-    LobbyProtocol.registerAdditionalMessages(xstream, protocolClasses);
     this.host = host;
     this.port = port;
     this.totalTests = totalTests;
@@ -180,8 +195,8 @@ public class TestClient extends XStreamClient {
     }
 
     logger.trace("Received {}", message);
-    if (message instanceof TestModeMessage) {
-      boolean testMode = (((TestModeMessage) message).getTestMode());
+    if (message instanceof TestModeResponse) {
+      boolean testMode = (((TestModeResponse) message).getTestMode());
       logger.debug("TestMode was set to {} - starting clients", testMode);
       prepareNewClients();
     } else if (message instanceof RoomPacket) {
@@ -196,13 +211,14 @@ public class TestClient extends XStreamClient {
           irregularGames++;
         StringBuilder log = new StringBuilder("Game {} ended " +
                 (result.isRegular() ? "regularly -" : "abnormally!") + " Winner: ");
-        for (Player winner : result.getWinners())
-          log.append(winner.getDisplayName()).append(", ");
+        if (result.getWinners() != null)
+          for (Player winner : result.getWinners())
+            log.append(winner.getDisplayName()).append(", ");
         logger.warn(log.substring(0, log.length() - 2), finishedTests);
 
         finishedTests++;
         for (ClientPlayer player : players)
-          send(new GetScoreForPlayerRequest(player.name));
+          send(new PlayerScoreRequest(player.name));
 
         try {
           for (ClientPlayer player : players)
@@ -228,9 +244,9 @@ public class TestClient extends XStreamClient {
           System.out.print("#");
         }
       }
-    } else if (message instanceof PlayerScorePacket) {
+    } else if (message instanceof PlayerScoreResponse) {
       playerScores++;
-      Score score = ((PlayerScorePacket) message).getScore();
+      Score score = ((PlayerScoreResponse) message).getScore();
 
       for (ClientPlayer player : players) {
         if (player.name.equals(score.getDisplayName())) {
@@ -248,10 +264,10 @@ public class TestClient extends XStreamClient {
         exit(0);
       }
 
-    } else if (message instanceof PrepareGameProtocolMessage) {
+    } else if (message instanceof GamePreparedResponse) {
       logger.debug("Received PrepareGame - starting clients");
       playerScores = 0;
-      PrepareGameProtocolMessage pgm = (PrepareGameProtocolMessage) message;
+      GamePreparedResponse pgm = (GamePreparedResponse) message;
       send(new ObservationRequest(pgm.getRoomId()));
       try {
         for (int i = 0; i < 2; i++)
@@ -267,8 +283,8 @@ public class TestClient extends XStreamClient {
                 logger.error("{} crashed, look into {}", player.name, logDir);
                 exit(2);
               }
-            // Max game length: Roundlimit * 2 * 2 seconds, one second buffer per round
-            if (slept > Constants.ROUND_LIMIT * 5) {
+            // TODO move timeout to GamePlugin and obtain it
+            if (slept > 200.000) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
             }
@@ -284,7 +300,7 @@ public class TestClient extends XStreamClient {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    } else if (message instanceof ObservationProtocolMessage) {
+    } else if (message instanceof ObservationResponse) {
       logger.debug("Successfully joined GameRoom as Observer");
     } else {
       logger.debug("Received uninteresting " + message.getClass().getSimpleName());
@@ -303,8 +319,8 @@ public class TestClient extends XStreamClient {
     }
 
     logDir.mkdirs();
-    builder.redirectOutput(new File(logDir, players[id].name + "_Test" + finishedTests + ".log"));
-    builder.redirectError(new File(logDir, players[id].name + "_Test" + finishedTests + ".err"));
+    builder.redirectOutput(new File(logDir, players[id].name + "_game" + (finishedTests + 1) + ".log"));
+    builder.redirectError(new File(logDir, players[id].name + "_game" + (finishedTests + 1) + "-err.log"));
     players[id].proc = builder.start();
     try {
       Thread.sleep(100);
@@ -316,14 +332,15 @@ public class TestClient extends XStreamClient {
   private void prepareNewClients() {
     SlotDescriptor[] slots = new SlotDescriptor[2];
     for (int i = 0; i < 2; i++)
-      slots[(finishedTests + i) % 2] = new SlotDescriptor(players[i].name, players[i].canTimeout, false);
+      slots[(finishedTests + i) % 2] = new SlotDescriptor(players[i].name, players[i].canTimeout);
     logger.debug("Prepared client slots: " + Arrays.toString(slots));
-    send(new PrepareGameRequest(gameType, slots[0], slots[1]));
+    send(new PrepareGameRequest(gameType, slots[0], slots[1], false));
   }
 
   private static void exit(int status) {
     if (testclient != null) {
-      testclient.send(new CloseConnection());
+      if(!testclient.isClosed())
+        testclient.send(new CloseConnection());
       testclient.waiter.shutdownNow();
     }
 
@@ -368,7 +385,8 @@ public class TestClient extends XStreamClient {
     players:
     for (int i = 0; i < 2; i++) {
       double binominalCD = 0.0;
-      for (int k = 0; k <= players[i].score.getScoreValues().get(0).getValue().intValue() / Constants.WIN_SCORE; k++) {
+      // TODO use global WIN_SCORE constant instead of hardcoding 2
+      for (int k = 0; k <= players[i].score.getScoreValues().get(0).getValue().intValue() / 2; k++) {
         binominalCD += binominalPD.applyAsDouble(k);
         if (binominalCD > significance)
           continue players;
@@ -377,6 +395,11 @@ public class TestClient extends XStreamClient {
       return true;
     }
     return false;
+  }
+
+  @Override
+  public String shortString() {
+    return String.format("TestClient(%d/%d)", finishedTests, totalTests);
   }
 
   @Override

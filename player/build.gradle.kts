@@ -1,38 +1,42 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     application
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 val game: String by project
 val year: String by project
 val gameName: String by project
 val deployDir: File by project
-val testLogDir: File by project
+val testingDir: File by project
 val version = rootProject.version.toString()
 
 sourceSets.main {
-    java.srcDir("src")
-    resources.srcDir("src")
+    java.srcDir("src/main")
+    resources.srcDir("src/resources")
 }
 
 application {
-    mainClassName = "sc.player2020.Starter"
+    mainClassName = "sc.player2021.Starter"
 }
 
 dependencies {
     implementation(project(":plugin"))
+    implementation(kotlin("script-runtime"))
 }
 
 tasks {
     shadowJar {
+        group = "distribution"
         archiveFileName.set("defaultplayer.jar")
     }
     
     val prepareZip by creating(Copy::class) {
-        dependsOn(":sdk:doc", ":plugin:doc")
+        group = "distribution"
         into(buildDir.resolve("zip"))
         with(copySpec {
-            from("buildscripts")
+            from("configuration")
             filter {
                 it.replace("VERSION", version).replace("GAME", game).replace("YEAR", year)
             }
@@ -46,29 +50,30 @@ tasks {
             from("src")
             into("src")
         }, copySpec {
-            from(configurations.default, arrayOf("sdk", "plugin").map { project(":$it").tasks.getByName("sourcesJar").outputs.files })
+            from(configurations.default, arrayOf("sdk", "plugin").map { project(":$it").getTasksByName("sourcesJar", false).single().outputs.files })
             into("lib")
-        }, copySpec {
-            from(project(":plugin").buildDir.resolve("doc"))
-            into("doc/plugin-$gameName")
-        }, copySpec {
-            from(project(":sdk").buildDir.resolve("doc"))
-            into("doc/sdk")
         })
-        
+        if(!project.hasProperty("nodoc")) {
+            dependsOn(":sdk:doc", ":plugin:doc")
+            with(copySpec {
+                from(project(":plugin").buildDir.resolve("doc"))
+                into("doc/plugin-$gameName")
+            }, copySpec {
+                from(project(":sdk").buildDir.resolve("doc"))
+                into("doc/sdk")
+            })
+        }
     }
     
     val deploy by creating(Zip::class) {
-        dependsOn(shadowJar.get(), prepareZip)
+        group = "distribution"
+        dependsOn(shadowJar, prepareZip)
         destinationDirectory.set(deployDir)
         archiveFileName.set("simpleclient-$gameName-src.zip")
         from(prepareZip.destinationDir)
         doFirst {
-            copy {
-                from("build/libs")
-                into(deployDir)
-                rename("defaultplayer.jar", project.property("deployedPlayer") as String)
-            }
+            shadowJar.get().outputs.files.singleFile.copyTo(
+                    deployDir.resolve(project.property("deployedPlayer") as String), true)
         }
     }
     
@@ -76,22 +81,26 @@ tasks {
         args = System.getProperty("args", "").split(" ")
     }
     
-    val playerTest by creating {
+    val playerTest by creating(Copy::class) {
+        group = "verification"
         dependsOn(prepareZip)
-        val execDir = File(System.getProperty("java.io.tmpdir")).resolve("socha-player")
+        
+        val execDir = testingDir.resolve("player")
         doFirst {
             execDir.deleteRecursively()
             execDir.mkdirs()
-            
-            copy {
-                from(prepareZip.destinationDir)
-                into(execDir)
-            }
-            val command = arrayListOf("./gradlew", "shadowJar", "--quiet", "--offline")
-            testLogDir.mkdirs()
+        }
+        from(prepareZip.destinationDir)
+        into(execDir)
+        
+        doLast {
+            // required by gradle to distinguish the test build from
+            execDir.resolve("settings.gradle").createNewFile()
+            val command = arrayListOf(if(OperatingSystem.current() == OperatingSystem.WINDOWS) "./gradlew.bat" else "./gradlew",
+                    "shadowJar", "--quiet", "--offline")
             val process = ProcessBuilder(command).directory(execDir)
-                    .redirectOutput(testLogDir.resolve("player-shadowJar-build.log"))
-                    .redirectError(testLogDir.resolve("player-shadowJar-err.log"))
+                    .redirectOutput(execDir.resolve("player-shadowJar-build.log"))
+                    .redirectError(execDir.resolve("player-shadowJar-err.log"))
                     .start()
             val timeout = 5L
             if(process.waitFor(timeout, TimeUnit.MINUTES)) {
@@ -103,10 +112,6 @@ tasks {
             }
             println("Successfully generated client jar from shipped source")
         }
-    }
-    
-    test {
-        dependsOn(playerTest)
     }
     
 }

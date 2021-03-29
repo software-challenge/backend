@@ -14,11 +14,12 @@ public final class Application {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
   private static final Object SYNCOBJ = new Object();
+
   static {
     String config = System.getProperty("logback.configurationFile");
-    logger.debug("Loading logback config from {}", config != null ? config : System.getProperty("user.dir")+File.separator+"logback.xml");
-    if(config == null)
-      System.setProperty("logback.configurationFile", System.getProperty("user.dir")+File.separator+"logback.xml");
+    logger.debug("Loading logback config from {}", config != null ? config : System.getProperty("user.dir") + File.separator + "logback.xml");
+    if (config == null)
+      System.setProperty("logback.configurationFile", System.getProperty("user.dir") + File.separator + "logback.xml");
     System.setProperty("file.encoding", "UTF-8");
   }
 
@@ -54,7 +55,7 @@ public final class Application {
     long end = System.currentTimeMillis();
     logger.debug("Server has been initialized in {} ms.", end - start);
 
-    synchronized (SYNCOBJ) {
+    synchronized(SYNCOBJ) {
       try {
         SYNCOBJ.wait();
       } catch (InterruptedException e) {
@@ -107,7 +108,7 @@ public final class Application {
       Thread shutdown = new Thread(() -> {
         ServiceManager.killAll();
         // continues the main-method of this class
-        synchronized (SYNCOBJ) {
+        synchronized(SYNCOBJ) {
           SYNCOBJ.notifyAll();
           logger.info("Exiting application...");
         }

@@ -1,6 +1,8 @@
 package sc.server.helpers
 
-import org.junit.Assert
+import io.kotest.assertions.withClue
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Assertions
 import java.util.concurrent.TimeUnit
 
 object TestHelper {
@@ -13,13 +15,16 @@ object TestHelper {
         val timeout = System.currentTimeMillis() + millis
         
         while (System.currentTimeMillis() <= timeout) {
-            if (isEqual(expected, action()))
+            if (expected == action())
                 return true
             Thread.yield()
         }
         
-        Assert.assertTrue("Did not receive " + expected + " within " + millis + "ms", isEqual(expected, action()))
-        return isEqual(expected, action())
+        val value = action()
+        withClue("Expected " + expected + " within " + millis + "ms") {
+            value shouldBe expected
+        }
+        return expected == value
     }
     
     @JvmOverloads
@@ -33,26 +38,7 @@ object TestHelper {
     @JvmOverloads
     fun <T> assertEqualsWithTimeout(expected: T, action: () -> T?, maxDuration: Long = DEFAULT_DURATION, unit: TimeUnit = DEFAULT_TIME_UNIT) {
         waitUntilEqual(expected, action, maxDuration, unit)
-        Assert.assertEquals(expected, action())
-    }
-    
-    fun isEqual(o1: Any?, o2: Any?): Boolean = o1 == o2
-    
-    fun waitMillis(millis: Long) {
-        try {
-            Thread.sleep(millis)
-        } catch (e: Exception) {
-        }
-    }
-    
-    @JvmOverloads
-    fun waitForObject(@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") o: Object, millis: Long = 0) {
-        try {
-            synchronized(o) {
-                o.wait(millis)
-            }
-        } catch (e: Exception) {
-        }
+        Assertions.assertEquals(expected, action())
     }
     
 }

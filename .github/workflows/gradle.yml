@@ -1,0 +1,46 @@
+on: [push, pull_request, create]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+    - name: Cache Gradle packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        restore-keys: ${{ runner.os }}-gradle
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Execute tests
+      run: ./gradlew check || (exitcode=$?; find build/tests -name '*.log' -type f | while read f; do echo -e "\033[4m$f\033[0m"; cat $f; done && return $exitcode)
+    - name: Build deployment artifacts
+      run: ./gradlew deploy
+    - name: Upload jars as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: software-challenge-backend-${{ github.sha }}
+        path: |
+          build/deploy/*.zip
+          build/deploy/*.jar
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: software-challenge-backend-${{ github.sha }}
+        path: artifacts
+    - name: Release ${{ github.ref }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: artifacts/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

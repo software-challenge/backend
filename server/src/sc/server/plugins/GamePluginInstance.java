@@ -2,18 +2,20 @@ package sc.server.plugins;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.host.IGamePluginHost;
 
-public class GamePluginInstance extends PluginInstance<IGamePluginHost, IGamePlugin>
-{
-	public GamePluginInstance(Class<?> definition)
-	{
-		super(definition);
-	}
+/** Wrapper for a {@link IGamePlugin} instance. */
+public class GamePluginInstance extends PluginInstance<IGamePlugin> {
 
-	public IGameInstance createGame()
-	{
-		return this.getPlugin().createGame();
-	}
+  public GamePluginInstance(Class<? extends IGamePlugin> definition) {
+    super(definition);
+  }
+
+  public GamePluginInstance(IGamePlugin instance) {
+    super(instance);
+  }
+
+  public IGameInstance createGame() {
+    return this.getPlugin().createGame();
+  }
 
 }

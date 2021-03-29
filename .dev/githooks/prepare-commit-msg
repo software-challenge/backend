@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# This hook adds a comment for guidance about the commit message
+# format on top of the default commit message.
+#
+# Called by "git commit" with the name of the file that has the
+# commit message, followed by the description of the commit
+# message's source.  The hook's purpose is to edit the commit
+# message file.  If the hook fails with a non-zero status,
+# the commit is aborted.
+#
+# To enable this hook, set the hooksPath in git:
+# git config core.hooksPath .dev/githooks
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
+
+original=$(cat "$COMMIT_MSG_FILE")
+if beginswith $'\n#' "$original"; then
+    {
+        printf "\n\n# Please enter the message in the format\n"
+        echo "# <type>(<scope>): <description>"
+        echo "# Possible types: fix, feat, docs, style, refactor, test, chore, rework, release"
+        printf "# For details see https://www.notion.so/softwarechallenge/Git-217333329ea64db5b2cc8bbbaf79db87" >> "$COMMIT_MSG_FILE"
+        echo "$original"
+    } > "$COMMIT_MSG_FILE"
+fi

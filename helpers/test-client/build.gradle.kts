@@ -1,3 +1,5 @@
+import sc.gradle.ScriptsTask
+
 plugins {
     java
     application
@@ -8,35 +10,46 @@ sourceSets.main {
 }
 
 application {
-    mainClassName = "sc.TestClient"
+    mainClass.set("sc.TestClient")
 }
 
 dependencies {
-    implementation(project(":plugin"))
+    // TODO this is only here to access some default server Configuration, move that to SDK or smth
     implementation(project(":server"))
+    runtimeOnly(project(":plugin"))
 }
 
 tasks {
-    val createScripts by creating(ScriptsTask::class) {
-        destinationDir = file("build/libs")
+    val createStartScripts by creating(ScriptsTask::class) {
+        destinationDir = jar.get().destinationDirectory.get().asFile
         fileName = "start-tests"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
     }
 
     jar {
-        dependsOn(createScripts)
+        dependsOn(createStartScripts)
         doFirst {
+            manifest.attributes["Class-Path"] =
+                configurations.default.get().map { "lib/" + it.name }
+                        .plus("server.jar")
+                        .joinToString(" ")
             copy {
                 from("src/logback-tests.xml")
-                into("build/libs")
+                into(destinationDirectory)
             }
         }
-        val libs = arrayListOf("plugins/${project.property("game")}.jar", "software-challenge-server.jar", "server.jar")
-        libs.addAll(configurations.default.get().map  { "lib/" + it.name })
-        manifest.attributes["Class-Path"] = libs.joinToString(" ")
     }
-
+    
     run.configure {
-        args = System.getProperty("args", "").split(" ")
+        dependsOn(":player:shadowJar", ":server:makeRunnable")
+        doFirst {
+            setArgsString(System.getProperty("args") ?: run {
+                val playerLocation = project(":player").tasks.getByName<Jar>("shadowJar").archiveFile.get()
+                "--start-server --tests 3 --player1 $playerLocation --player2 $playerLocation"
+            })
+            @Suppress("UNNECESSARY_SAFE_CALL", "SimplifyBooleanWithConstants")
+            if (args?.isEmpty() == false)
+                println("Using command-line arguments: $args")
+        }
     }
 }

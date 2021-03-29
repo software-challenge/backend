@@ -2,11 +2,15 @@ readme
 git
 gradle
 travis
+
+# Modules
+testclient
 player
+server
+
 plugin
 gamerules
-server
+
 sdk
 framework
 protocol
-testclient
