@@ -41,8 +41,7 @@ public class AdministratorTest extends AbstractRoleTest {
   }
 
   protected MockClient connectAsAdmin() {
-    MockClient client = null;
-    client = connectClient();
+    final MockClient client = connectClient();
 
     Configuration.set(Configuration.PASSWORD_KEY, CORRECT_PASSWORD);
 

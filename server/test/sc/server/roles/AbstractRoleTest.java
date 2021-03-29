@@ -53,8 +53,7 @@ public abstract class AbstractRoleTest {
       }
       return client;
     } catch (IOException e) {
-      Assertions.fail("Could not connect to server");
-      return null;
+      return Assertions.fail("Could not connect to server");
     }
   }
 

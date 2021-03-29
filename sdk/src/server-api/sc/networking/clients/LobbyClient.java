@@ -1,5 +1,7 @@
 package sc.networking.clients;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
@@ -50,16 +52,16 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   @Override
-  protected final void onObject(ProtocolMessage o) {
-    if (o == null) {
+  protected final void onObject(ProtocolMessage message) {
+    if (message == null) {
       logger.warn("Received null message.");
       return;
     }
 
-    invokeHandlers(o);
+    invokeHandlers(message);
 
-    if (o instanceof RoomPacket) {
-      RoomPacket packet = (RoomPacket) o;
+    if (message instanceof RoomPacket) {
+      RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();
       ProtocolMessage data = packet.getData();
       if (data instanceof MementoEvent) {
@@ -73,24 +75,24 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       } else {
         onRoomMessage(roomId, data);
       }
-    } else if (o instanceof GamePreparedResponse) {
-      onGamePrepared((GamePreparedResponse) o);
-    } else if (o instanceof JoinedRoomResponse) {
-      onGameJoined(((JoinedRoomResponse) o).getRoomId());
-    } else if (o instanceof RoomWasJoinedEvent) {
-      onGameJoined(((RoomWasJoinedEvent) o).getRoomId());
-    } else if (o instanceof LeftGameEvent) {
-      onGameLeft(((LeftGameEvent) o).getRoomId());
-    } else if (o instanceof ObservationResponse) {
-      onGameObserved(((ObservationResponse) o).getRoomId());
-    } else if (o instanceof TestModeResponse) {
-      boolean testMode = (((TestModeResponse) o).getTestMode());
+    } else if (message instanceof GamePreparedResponse) {
+      onGamePrepared((GamePreparedResponse) message);
+    } else if (message instanceof JoinedRoomResponse) {
+      onGameJoined(((JoinedRoomResponse) message).getRoomId());
+    } else if (message instanceof RoomWasJoinedEvent) {
+      onGameJoined(((RoomWasJoinedEvent) message).getRoomId());
+    } else if (message instanceof LeftGameEvent) {
+      onGameLeft(((LeftGameEvent) message).getRoomId());
+    } else if (message instanceof ObservationResponse) {
+      onGameObserved(((ObservationResponse) message).getRoomId());
+    } else if (message instanceof TestModeResponse) {
+      boolean testMode = (((TestModeResponse) message).getTestMode());
       logger.info("TestMode was set to {} ", testMode);
-    } else if (o instanceof ProtocolErrorMessage) {
-      ProtocolErrorMessage response = (ProtocolErrorMessage) o;
+    } else if (message instanceof ProtocolErrorMessage) {
+      ProtocolErrorMessage response = (ProtocolErrorMessage) message;
       onError(null, response);
     } else {
-      onCustomObject(o);
+      onCustomObject(message);
     }
   }
 
@@ -135,11 +137,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     }
   }
 
-  private void invokeHandlers(ProtocolMessage o) {
-    if (o == null) {
-      throw new IllegalArgumentException("o was null");
-    }
-    this.asyncManager.invokeHandlers(o);
+  private void invokeHandlers(@NotNull ProtocolMessage message) {
+    this.asyncManager.invokeHandlers(message);
   }
 
   protected void onGamePrepared(GamePreparedResponse response) {
@@ -195,7 +194,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     }
   }
 
-  protected void onError(String roomId, ProtocolErrorMessage error) {
+  protected void onError(@Nullable String roomId, @NotNull ProtocolErrorMessage error) {
     logger.warn("{} (room: {})", error.getLogMessage(), roomId);
     for (ILobbyClientListener listener : this.listeners) {
       listener.onError(roomId, error);
