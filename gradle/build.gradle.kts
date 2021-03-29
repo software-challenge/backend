@@ -10,14 +10,14 @@ plugins {
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
-    id("com.github.ben-manes.versions") version "0.36.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
     id("se.patrikerdes.use-latest-versions") version "0.2.15"
 }
 
 val gameName by extra { property("socha.gameName") as String }
 val versions = arrayOf("year", "minor", "patch").map { property("socha.version.$it").toString().toInt() }
 val versionObject = KotlinVersion(versions[0], versions[1], versions[2])
-version = versions.joinToString(".") { it.toString() }
+version = versionObject.toString()
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
 
@@ -283,7 +283,9 @@ allprojects {
                 archiveClassifier.set("sources")
                 from(sourceSets.main.get().allSource)
             }
-            install.get().dependsOn(docJar, sourcesJar)
+            install {
+                dependsOn(docJar, sourcesJar)
+            }
             artifacts {
                 archives(sourcesJar.archiveFile) { classifier = "sources" }
                 archives(docJar.archiveFile) { classifier = "javadoc" }
@@ -300,7 +302,7 @@ allprojects {
             }
             withType<Jar> {
                 if (plugins.hasPlugin(ApplicationPlugin::class))
-                    manifest.attributes["Main-Class"] = project.extensions.getByType<JavaApplication>().mainClassName
+                    manifest.attributes["Main-Class"] = project.extensions.getByType<JavaApplication>().mainClass.get()
             }
         }
     }
