@@ -10,7 +10,7 @@ import sc.shared.GameResult
 abstract class AbstractLobbyClientListener: ILobbyClientListener {
     override fun onNewState(roomId: String, state: IGameState) {}
     override fun onRoomMessage(roomId: String, data: ProtocolMessage) {}
-    override fun onError(roomId: String, error: ProtocolErrorMessage) {}
+    override fun onError(roomId: String?, error: ProtocolErrorMessage) {}
     override fun onGamePrepared(response: GamePreparedResponse) {}
     override fun onGameLeft(roomId: String) {}
     override fun onGameJoined(roomId: String) {}

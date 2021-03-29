@@ -12,7 +12,7 @@ import sc.shared.GameResult
 interface ILobbyClientListener {
     fun onNewState(roomId: String, state: IGameState)
     fun onRoomMessage(roomId: String, data: ProtocolMessage)
-    fun onError(roomId: String, error: ProtocolErrorMessage)
+    fun onError(roomId: String?, error: ProtocolErrorMessage)
     fun onGamePrepared(response: GamePreparedResponse)
     fun onGameLeft(roomId: String)
     fun onGameJoined(roomId: String)

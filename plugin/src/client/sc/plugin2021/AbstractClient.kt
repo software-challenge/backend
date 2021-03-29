@@ -69,8 +69,8 @@ abstract class AbstractClient(
             client.sendMessageToRoom(roomId, move)
     
     /** Called when an erroneous message is sent to the room. */
-    override fun onError(roomId: String, error: ProtocolErrorMessage) {
-        logger.debug("onError: Client $this received error ${error.message}")
+    override fun onError(roomId: String?, error: ProtocolErrorMessage) {
+        logger.debug("onError: Client $this received error ${error.message} in $roomId")
         this.error = error.message
     }
     
