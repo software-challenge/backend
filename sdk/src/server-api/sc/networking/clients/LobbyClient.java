@@ -116,9 +116,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   private void onGameLeft(String roomId) {
+    logger.info("Received LeftGameEvent");
     for (ILobbyClientListener listener : this.listeners) {
       listener.onGameLeft(roomId);
     }
+    logger.info("Left {}", roomId);
   }
 
   private void onGameJoined(String roomId) {

@@ -58,13 +58,13 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                 is JoinPreparedRoomRequest ->
                     try {
                         ReservationManager.redeemReservationCode(source, packet.reservationCode)
-                    } catch(e: RescuableClientException) {
+                    } catch (e: RescuableClientException) {
                         source.send(ProtocolErrorMessage(packet, e.message))
                     }
                 is JoinRoomRequest -> {
                     val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
                     // null is returned if join was unsuccessful
-                    if(gameRoomMessage != null) {
+                    if (gameRoomMessage != null) {
                         clientManager.clients
                                 .filter { it.isAdministrator }
                                 .forEach { it.send(gameRoomMessage) }
@@ -109,14 +109,14 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                         room.step(packet.forced)
                     }
                     is CancelRequest -> {
+                        requireNotNull(packet.roomId) { "Can't cancel a game with roomId null!" }
                         val room = this.findRoom(packet.roomId)
                         room.cancel()
-                        // TODO check whether all clients receive game over message
                     }
                     is PlayerScoreRequest -> {
                         val displayName = packet.displayName
                         val score = getScoreOfPlayer(displayName)
-                                ?: throw IllegalArgumentException("Score for \"$displayName\" could not be found!")
+                                    ?: throw IllegalArgumentException("Score for \"$displayName\" could not be found!")
                         logger.debug("Sending score of player \"{}\"", displayName)
                         source.send(PlayerScoreResponse(score))
                     }
