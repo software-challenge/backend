@@ -2,7 +2,7 @@ package sc.networking
 
 import com.thoughtworks.xstream.XStream
 import com.thoughtworks.xstream.io.xml.KXml2Driver
-import sc.protocol.helpers.LobbyProtocol
+import sc.protocol.LobbyProtocol
 import java.util.*
 
 interface XStreamProvider {
