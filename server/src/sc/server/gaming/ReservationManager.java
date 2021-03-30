@@ -14,7 +14,7 @@ public final class ReservationManager {
   private static Logger logger = LoggerFactory.getLogger(ReservationManager.class);
   private static Map<String, PlayerSlot> reservations = new HashMap<String, PlayerSlot>();
 
-  /** create Object as singleton */
+  /** Create Object as singleton. */
   private ReservationManager() {
     // singleton
   }
@@ -32,14 +32,12 @@ public final class ReservationManager {
   public static synchronized PlayerSlot redeemReservationCode(Client client, String reservation)
       throws RescuableClientException {
     PlayerSlot result = reservations.remove(reservation);
-
-    if (result == null) {
+    if (result == null)
       throw new UnknownReservationException();
-    } else {
-      logger.info("Reservation {} was redeemed.", reservation);
-      result.getRoom().fillSlot(result, client);
-      return result;
-    }
+
+    logger.info("Reservation {} was redeemed.", reservation);
+    result.getRoom().fillSlot(result, client);
+    return result;
   }
 
   /**
@@ -52,9 +50,8 @@ public final class ReservationManager {
    * @throws RuntimeException if the slot is already reserved
    */
   public synchronized static String reserve(PlayerSlot playerSlot) {
-    if (reservations.containsValue(playerSlot)) {
+    if (reservations.containsValue(playerSlot))
       throw new RuntimeException("This slot is already reserved.");
-    }
 
     String key = generateUniqueId();
     reservations.put(key, playerSlot);
@@ -62,22 +59,20 @@ public final class ReservationManager {
   }
 
   /**
-   * Generate a uniqe String ID
+   * Generate a unique String ID.
    *
    * @return the unique ID
    */
   private synchronized static String generateUniqueId() {
-    String key = UUID.randomUUID().toString();
-
-    while (reservations.containsKey(key)) {
+    String key;
+    do {
       key = UUID.randomUUID().toString();
-    }
-
+    } while (reservations.containsKey(key));
     return key;
   }
 
   /**
-   * Remove reservation with given redeem code and free that slot
+   * Remove reservation with given redeem code and free that slot.
    *
    * @param reservation the redeem code
    */
