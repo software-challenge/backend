@@ -2,8 +2,8 @@ package sc.plugin2021
 
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
-import sc.framework.plugins.Player
 import sc.framework.plugins.protocol.MoveRequest
+import sc.networking.clients.AbstractLobbyClientListener
 import sc.networking.clients.IControllableGame
 import sc.networking.clients.ILobbyClientListener
 import sc.networking.clients.LobbyClient
@@ -22,7 +22,7 @@ import kotlin.system.exitProcess
 abstract class AbstractClient(
         host: String,
         port: Int
-): ILobbyClientListener {
+): AbstractLobbyClientListener() {
     companion object {
         private val logger = LoggerFactory.getLogger(AbstractClient::class.java)
     }
@@ -104,11 +104,6 @@ abstract class AbstractClient(
         start()
         client.joinRoomRequest(GamePlugin.PLUGIN_UUID)
     }
-    
-    override fun onGameJoined(roomId: String) {}
-    override fun onGamePrepared(response: GamePreparedResponse) {}
-    override fun onGamePaused(roomId: String, nextPlayer: Player) {}
-    override fun onGameObserved(roomId: String) {}
     
     override fun onGameLeft(roomId: String) {
         logger.info("$this: Got game left in room $roomId")

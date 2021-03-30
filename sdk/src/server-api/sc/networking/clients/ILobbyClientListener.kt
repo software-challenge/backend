@@ -11,12 +11,13 @@ import sc.shared.GameResult
 /** Receives updates within a GameRoom on the client-side. */
 interface ILobbyClientListener {
     fun onNewState(roomId: String, state: IGameState)
+    fun onGameOver(roomId: String, data: GameResult)
+    fun onGamePaused(roomId: String, nextPlayer: Player)
     fun onRoomMessage(roomId: String, data: ProtocolMessage)
     fun onError(roomId: String?, error: ProtocolErrorMessage)
+    
     fun onGamePrepared(response: GamePreparedResponse)
     fun onGameLeft(roomId: String)
     fun onGameJoined(roomId: String)
-    fun onGameOver(roomId: String, data: GameResult)
-    fun onGamePaused(roomId: String, nextPlayer: Player)
     fun onGameObserved(roomId: String)
 }
