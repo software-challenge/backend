@@ -2,30 +2,38 @@ package sc.networking.clients;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.networking.INetworkInterface;
+import sc.networking.TcpNetwork;
 import sc.networking.UnprocessedPacketException;
 import sc.networking.XStreamProvider;
 import sc.protocol.responses.CloseConnection;
 import sc.protocol.responses.ProtocolMessage;
-import sc.shared.InvalidGameStateException;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 public abstract class XStreamClient {
   private static Logger logger = LoggerFactory.getLogger(XStreamClient.class);
 
+  public static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
+    logger.info("Creating TCP Network for {}:{}", host, port);
+    return new TcpNetwork(new Socket(host, port));
+  }
+
   private final INetworkInterface networkInterface;
   private final ObjectOutputStream out;
   private final Thread receiveThread;
-  private DisconnectCause disconnectCause = DisconnectCause.NOT_DISCONNECTED;
   protected final XStream xStream = XStreamProvider.loadPluginXStream();
+
+  private DisconnectCause disconnectCause = DisconnectCause.NOT_DISCONNECTED;
   private boolean closed = false;
   private boolean ready = false;
   private final Object readyLock = new Object();
@@ -42,7 +50,6 @@ public abstract class XStreamClient {
     LOST_CONNECTION,
     TIMEOUT,
     UNKNOWN
-
   }
 
   public boolean isReady() {
@@ -80,7 +87,7 @@ public abstract class XStreamClient {
     this.receiveThread.start();
   }
 
-  protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException;
+  protected abstract void onObject(@NotNull ProtocolMessage message) throws UnprocessedPacketException;
 
   /** Used by the receiving thread. All exceptions should be handled. */
   public void receiveThread() {

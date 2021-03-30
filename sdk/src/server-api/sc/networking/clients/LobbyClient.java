@@ -35,18 +35,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     super(createTcpNetwork(host, port));
   }
 
-  private static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
-    logger.info("Creating TCP Network for {}:{}", host, port);
-    return new TcpNetwork(new Socket(host, port));
-  }
-
   @Override
   protected final void onObject(ProtocolMessage message) {
-    if (message == null) {
-      logger.warn("Received null message.");
-      return;
-    }
-
     if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();

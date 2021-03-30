@@ -1,5 +1,6 @@
 package sc.server.network;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.exceptions.GameLogicException;
@@ -186,13 +187,13 @@ public class Client extends XStreamClient implements IClient {
 
   /** Forward received package to listeners. */
   @Override
-  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException {
+  protected void onObject(@NotNull ProtocolMessage message) throws UnprocessedPacketException {
     /*
      * NOTE that this method is called in the receiver thread. Messages
      * should only be passed to listeners. No callbacks should be invoked
      * directly in the receiver thread.
      */
-    notifyOnPacket(o);
+    notifyOnPacket(message);
   }
 
 }
