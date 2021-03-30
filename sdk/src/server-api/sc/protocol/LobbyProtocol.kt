@@ -1,4 +1,4 @@
-package sc.protocol.helpers
+package sc.protocol
 
 import com.thoughtworks.xstream.XStream
 import sc.api.plugins.ITeam

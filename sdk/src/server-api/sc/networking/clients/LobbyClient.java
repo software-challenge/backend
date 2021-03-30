@@ -5,16 +5,12 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.api.plugins.host.IRequestResult;
 import sc.framework.plugins.Player;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
-import sc.protocol.helpers.AsyncResultManager;
-import sc.protocol.helpers.RequestResult;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.shared.GameResult;
-import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
 
 import java.io.IOException;
@@ -31,16 +27,9 @@ import java.util.*;
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private static final Logger logger = LoggerFactory.getLogger(LobbyClient.class);
-  private final AsyncResultManager asyncManager = new AsyncResultManager();
   private final List<ILobbyClientListener> listeners = new ArrayList<>();
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
   private final List<IAdministrativeListener> administrativeListeners = new ArrayList<>();
-
-  public static final String DEFAULT_HOST = "127.0.0.1";
-
-  public LobbyClient() throws IOException {
-    this(DEFAULT_HOST, SharedConfiguration.DEFAULT_PORT);
-  }
 
   public LobbyClient(String host, int port) throws IOException {
     super(createTcpNetwork(host, port));
@@ -57,8 +46,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       logger.warn("Received null message.");
       return;
     }
-
-    invokeHandlers(message);
 
     if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
@@ -137,9 +124,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     }
   }
 
-  private void invokeHandlers(@NotNull ProtocolMessage message) {
-    this.asyncManager.invokeHandlers(message);
-  }
 
   protected void onGamePrepared(GamePreparedResponse response) {
     for (ILobbyClientListener listener : this.listeners) {
@@ -149,17 +133,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   public void authenticate(String password) {
     send(new AuthenticateRequest(password));
-  }
-
-  @SuppressWarnings("unchecked")
-  public RequestResult<GamePreparedResponse> prepareGameAndWait(String gameType) throws InterruptedException {
-    return blockingRequest(new PrepareGameRequest(gameType), GamePreparedResponse.class);
-  }
-
-  @SuppressWarnings("unchecked")
-  public RequestResult<GamePreparedResponse> prepareGameAndWait(
-          PrepareGameRequest request) throws InterruptedException {
-    return blockingRequest(request, GamePreparedResponse.class);
   }
 
   public void prepareGame(String gameType) {
@@ -208,69 +181,12 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(new RoomPacket(roomId, o));
   }
 
-  /**
-   * used in server
-   *
-   * @param reservation reservation ID
-   */
   public void joinPreparedGame(String reservation) {
     send(new JoinPreparedRoomRequest(reservation));
   }
 
-  /**
-   * currently not used in server
-   *
-   * @param gameType GameID
-   */
   public void joinRoomRequest(String gameType) {
     send(new JoinRoomRequest(gameType));
-  }
-
-  /**
-   * used in server
-   *
-   * @param request  ProtocolMessage which contains the request
-   * @param response Response class to be created
-   * @param handler  Handler for the requests
-   */
-  protected void request(ProtocolMessage request, Class<? extends ProtocolMessage> response,
-                         IRequestResult handler) {
-    this.asyncManager.addHandler(response, handler);
-    send(request);
-  }
-
-  protected RequestResult blockingRequest(ProtocolMessage request,
-                                          Class<? extends ProtocolMessage> response) throws InterruptedException {
-    // TODO return a proper future here
-    // This is really old async code, so the variable needs to be final but still mutable
-    // IDEA suggested to use an array and we'll stay with that until we reimplement it properly.
-    final RequestResult[] requestResult = {null};
-    final Object beacon = new Object();
-    synchronized(beacon) {
-      IRequestResult blockingHandler = new IRequestResult() {
-        @Override
-        public void handleError(ProtocolErrorMessage e) {
-          requestResult[0] = new RequestResult.Error(e);
-          notifySemaphore();
-        }
-
-        @Override
-        public void accept(ProtocolMessage result) {
-          requestResult[0] = new RequestResult.Success<>(result);
-          notifySemaphore();
-        }
-
-        private void notifySemaphore() {
-          synchronized(beacon) {
-            beacon.notify();
-          }
-        }
-      };
-      request(request, response, blockingHandler);
-      beacon.wait();
-    }
-
-    return requestResult[0];
   }
 
   public void addListener(ILobbyClientListener listener) {
