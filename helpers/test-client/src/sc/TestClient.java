@@ -4,11 +4,10 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.Option;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGamePlugin;
 import sc.framework.plugins.Player;
-import sc.networking.INetworkInterface;
-import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
@@ -17,7 +16,6 @@ import sc.shared.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -145,7 +143,7 @@ public class TestClient extends XStreamClient {
   }
 
   private static File findInClasspath(File location) {
-    if(!location.exists()) {
+    if (!location.exists()) {
       final StringTokenizer strTokenizer = new StringTokenizer(classpath, File.pathSeparator);
       while (strTokenizer.hasMoreTokens()) {
         final File item = new File(strTokenizer.nextToken());
@@ -188,7 +186,7 @@ public class TestClient extends XStreamClient {
   private boolean gameProgressing = false;
 
   @Override
-  protected void onObject(ProtocolMessage message) {
+  protected void onObject(@NotNull ProtocolMessage message) {
     if (message == null) {
       logger.warn("Received null message");
       return;
@@ -210,7 +208,7 @@ public class TestClient extends XStreamClient {
         if (!result.isRegular())
           irregularGames++;
         StringBuilder log = new StringBuilder("Game {} ended " +
-                (result.isRegular() ? "regularly -" : "abnormally!") + " Winner: ");
+            (result.isRegular() ? "regularly -" : "abnormally!") + " Winner: ");
         if (result.getWinners() != null)
           for (Player winner : result.getWinners())
             log.append(winner.getDisplayName()).append(", ");
@@ -257,7 +255,7 @@ public class TestClient extends XStreamClient {
 
       List<ScoreValue> values = score.getScoreValues();
       logger.info(String.format("New score for %s: Siegpunkte %s, \u2205Wert 1 %5.2f after %s of %s tests",
-              score.getDisplayName(), values.get(0).getValue(), values.get(1).getValue(), finishedTests, totalTests));
+          score.getDisplayName(), values.get(0).getValue(), values.get(1).getValue(), finishedTests, totalTests));
 
       if (playerScores == 2 && (isSignificant() || terminateWhenPossible)) {
         printScores();
@@ -339,7 +337,7 @@ public class TestClient extends XStreamClient {
 
   private static void exit(int status) {
     if (testclient != null) {
-      if(!testclient.isClosed())
+      if (!testclient.isClosed())
         testclient.send(new CloseConnection());
       testclient.waiter.shutdownNow();
     }
@@ -353,25 +351,20 @@ public class TestClient extends XStreamClient {
     System.exit(status);
   }
 
-  private static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
-    logger.info("Creating TCP Network for {}:{}", host, port);
-    return new TcpNetwork(new Socket(host, port));
-  }
-
   private boolean scoresPrinted = false;
 
   private void printScores() {
     if (scoresPrinted) return;
     try {
       logger.warn(String.format("\n" +
-                      "=============== SCORES ================\n" +
-                      "%s: %.0f\n" +
-                      "%s: %.0f\n" +
-                      "=======================================\n" +
-                      "{} of {} games ended abnormally!",
-              players[0].name, players[0].score.getScoreValues().get(0).getValue(),
-              players[1].name, players[1].score.getScoreValues().get(0).getValue()),
-              irregularGames, finishedTests);
+              "=============== SCORES ================\n" +
+              "%s: %.0f\n" +
+              "%s: %.0f\n" +
+              "=======================================\n" +
+              "{} of {} games ended abnormally!",
+          players[0].name, players[0].score.getScoreValues().get(0).getValue(),
+          players[1].name, players[1].score.getScoreValues().get(0).getValue()),
+          irregularGames, finishedTests);
       scoresPrinted = true;
     } catch (Exception ignored) {
     }

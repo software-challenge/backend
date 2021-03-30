@@ -1,5 +1,6 @@
 package sc.networking.clients;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
@@ -27,9 +28,9 @@ public final class GameLoaderClient extends XStreamClient implements IPollsHisto
   }
 
   @Override
-  protected void onObject(ProtocolMessage o) {
+  protected void onObject(@NotNull ProtocolMessage message) {
     for (IHistoryListener listener : this.listeners) {
-      listener.onNewState(null, (IGameState) o);
+      listener.onNewState(null, (IGameState) message);
     }
   }
 

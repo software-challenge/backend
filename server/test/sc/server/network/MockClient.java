@@ -1,5 +1,6 @@
 package sc.server.network;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.networking.UnprocessedPacketException;
@@ -82,9 +83,9 @@ public class MockClient extends Client {
   }
 
   @Override
-  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException {
-    super.onObject(o);
-    this.objects.add(o);
+  protected void onObject(@NotNull ProtocolMessage message) throws UnprocessedPacketException, InvalidGameStateException {
+    super.onObject(message);
+    this.objects.add(message);
   }
 
   public Object receive() throws InterruptedException {

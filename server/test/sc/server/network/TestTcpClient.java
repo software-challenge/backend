@@ -1,5 +1,6 @@
 package sc.server.network;
 
+import org.jetbrains.annotations.NotNull;
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.ProtocolMessage;
@@ -13,7 +14,7 @@ public class TestTcpClient extends XStreamClient {
   }
 
   @Override
-  protected void onObject(ProtocolMessage o) {
+  protected void onObject(@NotNull ProtocolMessage message) {
     // ignore it
     // LoggerFactory.getLogger(this.getClass()).debug("Received: {}", o);
   }
