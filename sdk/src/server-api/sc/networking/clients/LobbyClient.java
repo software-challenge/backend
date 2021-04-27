@@ -103,7 +103,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   private void onGameJoined(String roomId) {
-    for (ILobbyClientListener listener : this.listeners) {
+    for (ILobbyClientListener listener : new ArrayList<>(this.listeners)) {
       listener.onGameJoined(roomId);
     }
   }
@@ -116,7 +116,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
 
   protected void onGamePrepared(GamePreparedResponse response) {
-    for (ILobbyClientListener listener : this.listeners) {
+    for (ILobbyClientListener listener : new ArrayList<>(this.listeners)) {
       listener.onGamePrepared(response);
     }
   }
