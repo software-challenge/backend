@@ -6,9 +6,8 @@ import sc.api.plugins.ITeam
 
 /**
  * Das Interface der Logik.
- * Der GameHandler kommuniziert mit dem Server, d.h.
- * Er bekommt Events (Updates, Anfragen, Spielende) und
- * beantwortet Zuganfragen mit einem entsprechenden Zug.
+ * Der GameHandler definiert Reaktionen auf Ereignisse vom Server,
+ * insbesondere die Reaktion mit einem Zug auf eine Zuganfrage.
  */
 interface IGameHandler {
     
@@ -24,19 +23,9 @@ interface IGameHandler {
     fun onUpdate(gamestate: GameState)
     
     /**
-     * Wird aufgerufen, wenn der Spieler zum Zug aufgefordert wurde.
-     *
-     * @see sendAction
+     * Wird aufgerufen, um die Zuganfrage des Servers zu beantworten
      */
-    fun onRequestAction()
-    
-    /**
-     * Sendet dem Spielserver den gegebenen Zug.
-     * Diese Funktion sollte auf eine Zuganfrage vom Server folgen.
-     *
-     * @param move zu tätigender Zug
-     */
-    fun sendAction(move: Move)
+    fun calculateMove(): Move
     
     /**
      * Wird aufgerufen, wenn das Spiel beendet ist.
