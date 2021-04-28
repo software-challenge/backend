@@ -1,8 +1,9 @@
-package sc.plugin2021
+package sc.player
 
+import sc.api.plugins.IMove
+import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.Player
 import sc.shared.GameResult
-import sc.api.plugins.ITeam
 
 /**
  * Das Interface der Logik.
@@ -20,20 +21,19 @@ interface IGameHandler {
     fun onUpdate(player: Player, otherPlayer: Player)
     
     /** Wird aufgerufen, wenn sich das Spielbrett ändert. */
-    fun onUpdate(gamestate: GameState)
+    fun onUpdate(gamestate: TwoPlayerGameState<*>)
     
     /**
      * Wird aufgerufen, um die Zuganfrage des Servers zu beantworten
      */
-    fun calculateMove(): Move
+    fun calculateMove(): IMove
     
     /**
      * Wird aufgerufen, wenn das Spiel beendet ist.
      *
      * @param data         Das Spielergebnis
-     * @param team         Team des Spielers
      * @param errorMessage Optionale Fehlernachricht
      */
-    fun gameEnded(data: GameResult, team: Team?, errorMessage: String?)
+    fun gameEnded(data: GameResult, errorMessage: String?)
     
 }

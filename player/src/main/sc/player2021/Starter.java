@@ -4,8 +4,8 @@ import jargs.gnu.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.player2021.logic.Logic;
-import sc.plugin2021.PlayerClient;
-import sc.plugin2021.IGameHandler;
+import sc.player.PlayerClient;
+import sc.player.IGameHandler;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;
@@ -20,9 +20,9 @@ public class Starter {
   public Starter(String host, int port, String reservation) {
     // Strategie zuweisen
     IGameHandler logic = new Logic();
+    PlayerClient client = new PlayerClient(host, port, logic);
 
     // einem Spiel beitreten
-    PlayerClient client = new PlayerClient(host, port, logic);
     if (reservation == null || reservation.isEmpty()) {
       client.joinAnyGame();
     } else {
@@ -33,22 +33,22 @@ public class Starter {
   public static void main(String[] args) {
     System.setProperty("file.encoding", "UTF-8");
 
-    // parameter definieren
+    // Parameter definieren
     CmdLineParser parser = new CmdLineParser();
     CmdLineParser.Option hostOption = parser.addStringOption('h', "host");
     CmdLineParser.Option portOption = parser.addIntegerOption('p', "port");
     CmdLineParser.Option reservationOption = parser.addStringOption('r', "reservation");
 
     try {
-      // parameter auslesen
+      // Parameter auslesen
       parser.parse(args);
     } catch (CmdLineParser.OptionException e) {
-      // bei Fehler die Hilfe anzeigen
+      // bei einem Fehler die Hilfe anzeigen
       showHelp(e.getMessage());
       System.exit(2);
     }
 
-    // parameter laden
+    // Parameter laden
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (Integer) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT);
     String reservation = (String) parser.getOptionValue(reservationOption, "");

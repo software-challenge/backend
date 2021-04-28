@@ -2,7 +2,9 @@ package sc.player2021.logic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.TwoPlayerGameState;
 import sc.framework.plugins.Player;
+import sc.player.IGameHandler;
 import sc.plugin2021.*;
 import sc.plugin2021.util.GameRuleLogic;
 import sc.shared.GameResult;
@@ -25,8 +27,8 @@ public class Logic implements IGameHandler {
   /** Aktueller eigener Spieler. */
   private Player currentPlayer;
 
-  public void gameEnded(GameResult data, Team color, String errorMessage) {
-    log.info("Das Spiel ist beendet.");
+  public void gameEnded(GameResult data, String errorMessage) {
+    log.info("Das Spiel ist beendet, Ergebnis: {}", data);
   }
 
   @Override
@@ -43,8 +45,8 @@ public class Logic implements IGameHandler {
   }
 
   @Override
-  public void onUpdate(GameState gameState) {
-    this.gameState = gameState;
+  public void onUpdate(TwoPlayerGameState<?> gameState) {
+    this.gameState = (GameState) gameState;
     log.info("Zug: {} Dran: {}", gameState.getTurn(), gameState.getCurrentPlayer().getColor());
   }
 
