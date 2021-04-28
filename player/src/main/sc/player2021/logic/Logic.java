@@ -20,49 +20,32 @@ import java.util.ArrayList;
 public class Logic implements IGameHandler {
   private static final Logger log = LoggerFactory.getLogger(Logic.class);
 
-  /** Internet Client, der mit dem Spielserver kommuniziert. */
-  private final AbstractClient client;
   /** Aktueller Spielstatus. */
   private GameState gameState;
   /** Aktueller eigener Spieler. */
   private Player currentPlayer;
 
-  /** Erzeugt eine neue Instanz dieser Strategie, die über den mitgegebenen Client Züge absendet. */
-  public Logic(AbstractClient client) {
-    this.client = client;
-  }
-
-  /** {@inheritDoc} */
   public void gameEnded(GameResult data, Team color, String errorMessage) {
     log.info("Das Spiel ist beendet.");
   }
 
-  /** {@inheritDoc} */
   @Override
-  public void onRequestAction() {
+  public Move calculateMove() {
     long startTime = System.currentTimeMillis();
     log.info("Es wurde ein Zug angefordert.");
     List<Move> possibleMoves = new ArrayList<>(GameRuleLogic.getPossibleMoves(gameState));
-    sendAction(possibleMoves.get((int) (Math.random() * possibleMoves.size())));
+    return possibleMoves.get((int) (Math.random() * possibleMoves.size()));
   }
 
-  /** {@inheritDoc} */
   @Override
   public void onUpdate(Player player, Player otherPlayer) {
     currentPlayer = player;
   }
 
-  /** {@inheritDoc} */
   @Override
   public void onUpdate(GameState gameState) {
     this.gameState = gameState;
     log.info("Zug: {} Dran: {}", gameState.getTurn(), gameState.getCurrentPlayer().getColor());
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public void sendAction(Move move) {
-    client.sendMove(move);
   }
 
 }

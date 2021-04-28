@@ -4,7 +4,7 @@ import jargs.gnu.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.player2021.logic.Logic;
-import sc.plugin2021.AbstractClient;
+import sc.plugin2021.PlayerClient;
 import sc.plugin2021.IGameHandler;
 import sc.shared.SharedConfiguration;
 
@@ -14,22 +14,19 @@ import java.io.File;
  * Hauptklasse des Clients, die über Konsolenargumente gesteuert werden kann.
  * Sie veranlasst eine Verbindung zum Spielserver.
  */
-public class Starter extends AbstractClient {
+public class Starter {
   private static final Logger logger = LoggerFactory.getLogger(Starter.class);
 
   public Starter(String host, int port, String reservation) {
-    // client starten
-    super(host, port);
-
     // Strategie zuweisen
-    IGameHandler logic = new Logic(this);
-    setHandler(logic);
+    IGameHandler logic = new Logic();
 
     // einem Spiel beitreten
+    PlayerClient client = new PlayerClient(host, port, logic);
     if (reservation == null || reservation.isEmpty()) {
-      joinAnyGame();
+      client.joinAnyGame();
     } else {
-      joinPreparedGame(reservation);
+      client.joinPreparedGame(reservation);
     }
   }
 

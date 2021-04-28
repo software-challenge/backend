@@ -1,7 +1,6 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
-import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.AbstractLobbyClientListener
@@ -20,18 +19,16 @@ import kotlin.system.exitProcess
  * Eine abstrakte Implementation des [ILobbyClientListener].
  * Hier sind alle Methoden implementiert, die unabhängig von der Logik der Clients der Spieler sind.
  */
-abstract class AbstractClient(
+class PlayerClient(
         host: String,
-        port: Int
+        port: Int,
+        private val handler: IGameHandler
 ): AbstractLobbyClientListener() {
     companion object {
-        private val logger = LoggerFactory.getLogger(AbstractClient::class.java)
+        private val logger = LoggerFactory.getLogger(PlayerClient::class.java)
     }
     
     var isGameOver = false
-    
-    /** The handler reacts to messages from the server received by the lobby client. */
-    protected var handler: IGameHandler? = null
     
     /** The lobby client that connects to the room. Stops on connection failure. */
     private val client: LobbyClient = try {
@@ -58,11 +55,11 @@ abstract class AbstractClient(
     
     /** Called for any new message sent to the game room, e.g., move requests. */
     override fun onRoomMessage(roomId: String, data: ProtocolMessage) {
+        this.roomId = roomId
         when(data) {
-            is MoveRequest -> handler?.onRequestAction()
+            is MoveRequest -> sendMove(handler.calculateMove())
             is WelcomeMessage -> team = Team.valueOf(data.color.toUpperCase())
         }
-        this.roomId = roomId
     }
     
     /** Sends the selected move to the server. */
@@ -87,11 +84,11 @@ abstract class AbstractClient(
             return
     
         if (gameState.currentTeam == team) {
-            handler?.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
+            handler.onUpdate(gameState.currentPlayer, gameState.otherPlayer)
         } else {
-            handler?.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
+            handler.onUpdate(gameState.otherPlayer, gameState.currentPlayer)
         }
-        handler?.onUpdate(gameState)
+        handler.onUpdate(gameState)
     }
     
     /** Start the LobbyClient [client] and listen to it. */
@@ -114,7 +111,7 @@ abstract class AbstractClient(
     override fun onGameOver(roomId: String, data: GameResult) {
         logger.info("$this: Game over with result $data")
         isGameOver = true
-        handler?.gameEnded(data, team, error)
+        handler.gameEnded(data, team, error)
     }
     
     fun joinPreparedGame(reservation: String) {
