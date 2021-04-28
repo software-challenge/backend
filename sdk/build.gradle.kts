@@ -1,5 +1,5 @@
 sourceSets {
-    main.get().java.setSrcDirs(listOf("src/framework", "src/server-api"))
+    main.get().java.setSrcDirs(listOf("src/framework", "src/server-api", "src/player"))
     test.get().java.setSrcDirs(listOf("src/test"))
     create("testConfig") {
         java.setSrcDirs(listOf("src/testConfig"))
