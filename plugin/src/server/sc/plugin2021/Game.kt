@@ -11,13 +11,11 @@ import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
 import sc.shared.*
 
-class Game: AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
+class Game(override val currentState: GameState = GameState()): AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     companion object {
         val logger = LoggerFactory.getLogger(Game::class.java)
     }
     
-    override val currentState = GameState()
-
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     override fun onPlayerJoined(): Player {
         if(availableTeams.isEmpty())
