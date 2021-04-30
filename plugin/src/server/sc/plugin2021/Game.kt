@@ -9,7 +9,10 @@ import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.MoveMistake
 import sc.plugin2021.util.WinReason
 import sc.protocol.responses.ProtocolMessage
-import sc.shared.*
+import sc.shared.InvalidMoveException
+import sc.shared.PlayerScore
+import sc.shared.ScoreCause
+import sc.shared.WinCondition
 
 class Game(override val currentState: GameState = GameState()): AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
     companion object {
@@ -18,7 +21,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     override fun onPlayerJoined(): Player {
-        if(availableTeams.isEmpty())
+        if (availableTeams.isEmpty())
             throw IllegalStateException("Too many players joined the game!")
         val player = currentState.getPlayer(availableTeams.removeAt(0))
         
@@ -36,23 +39,23 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
             }
             if (players.last().hasViolated())
                 return players.subList(0, 1)
-
+            
             val first = currentState.getPointsForPlayer(players.first().color)
             val second = currentState.getPointsForPlayer(players.last().color)
-
+            
             if (first > second)
                 return players.subList(0, 1)
             if (first < second)
                 return players.subList(1, 2)
             return players
         }
-
+    
     override val playerScores: MutableList<PlayerScore>
-            get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
+        get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
     
     val isGameOver: Boolean
         get() = !currentState.hasValidColors() || currentState.round > Constants.ROUND_LIMIT
-
+    
     /**
      * Checks whether and why the game is over.
      *
@@ -60,11 +63,11 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
      */
     override fun checkWinCondition(): WinCondition? {
         if (!isGameOver) return null
-
+        
         val scores: Map<Team, Int> = Team.values().map {
             it to currentState.getPointsForPlayer(it)
         }.toMap()
-
+        
         return when {
             scores.getValue(Team.ONE) > scores.getValue(Team.TWO) -> WinCondition(Team.ONE, WinReason.DIFFERING_SCORES)
             scores.getValue(Team.ONE) < scores.getValue(Team.TWO) -> WinCondition(Team.TWO, WinReason.DIFFERING_SCORES)
@@ -86,7 +89,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     
     override fun getScoreFor(player: Player): PlayerScore {
         val team = player.color as Team
-        logger.debug("Get score for player $team (violated: ${if(player.hasViolated()) "yes" else "no"})")
+        logger.debug("Get score for player $team (violated: ${if (player.hasViolated()) "yes" else "no"})")
         val opponent = currentState.getOpponent(player)
         val winCondition = checkWinCondition()
         
@@ -104,9 +107,9 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         
         // Opponent did something wrong
         if (opponent.hasViolated() && !player.hasViolated() ||
-                opponent.hasLeft() && !player.hasLeft() ||
-                opponent.hasSoftTimeout() ||
-                opponent.hasHardTimeout())
+            opponent.hasLeft() && !player.hasLeft() ||
+            opponent.hasSoftTimeout() ||
+            opponent.hasHardTimeout())
             score = Constants.WIN_SCORE
         else
             when {
@@ -147,10 +150,12 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     }
     
     override fun toString(): String =
-            "Game(${when {
-                isGameOver -> "OVER, "
-                isPaused -> "PAUSED, "
-                else -> ""
-            }}players=$players, gameState=$currentState)"
+            "Game(${
+                when {
+                    isGameOver -> "OVER, "
+                    isPaused -> "PAUSED, "
+                    else -> ""
+                }
+            }players=$players, gameState=$currentState)"
     
 }
