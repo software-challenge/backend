@@ -76,18 +76,6 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         }
     }
     
-    override fun loadGameInfo(gameInfo: Any) {
-        TODO("Not yet implemented")
-    }
-    
-    override fun loadFromFile(file: String) {
-        TODO("Not yet implemented")
-    }
-    
-    override fun loadFromFile(file: String, turn: Int) {
-        TODO("Not yet implemented")
-    }
-    
     override fun getScoreFor(player: Player): PlayerScore {
         val team = player.color as Team
         logger.debug("Get score for player $team (violated: ${if (player.hasViolated()) "yes" else "no"})")

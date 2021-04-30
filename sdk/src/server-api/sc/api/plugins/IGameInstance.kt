@@ -39,30 +39,6 @@ interface IGameInstance {
     fun destroy()
 
     /**
-     * The game is requested to load itself from a file.
-     * Similar to a replay but with actual clients.
-     *
-     * @param file File the game should be loaded from
-     */
-    fun loadFromFile(file: String)
-
-    /**
-     * The game is requested to load itself from a file.
-     * Similar to a replay but with actual clients.
-     *
-     * @param file File where the game should be loaded from
-     * @param turn The turn to load from the replay
-     */
-    fun loadFromFile(file: String, turn: Int)
-
-    /**
-     * The game is requested to load itself from a given game information object.
-     *
-     * @param gameInfo the stored gameInformation
-     */
-    fun loadGameInfo(gameInfo: Any)
-
-    /**
      * Returns the players that have won the game, empty if the game has no winners,
      * or null if the game has not yet finished.
      */

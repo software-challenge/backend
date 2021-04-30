@@ -2,8 +2,12 @@ package sc.server.gaming;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.api.plugins.IGameInstance;
+import sc.api.plugins.IGamePlugin;
+import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameRoomException;
 import sc.api.plugins.exceptions.RescuableClientException;
+import sc.api.plugins.host.GameLoader;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.GamePreparedResponse;
@@ -15,14 +19,16 @@ import sc.server.plugins.GamePluginManager;
 import sc.server.plugins.UnknownGameTypeException;
 import sc.shared.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.*;
 
 /**
  * The GameManager is responsible to keep all games alive and kill them once
- * they are done. Additionally the GameManager has to detect and kill games,
- * which seem to be dead-locked or have caused a timeout.
+ * they are done. Additionally the GameManager has to detect and kill games
+ * which seem dead-locked or have caused a timeout.
  */
 public class GameRoomManager {
   private Map<String, GameRoom> rooms;
@@ -46,31 +52,7 @@ public class GameRoomManager {
     this.rooms.put(room.getId(), room);
   }
 
-  /**
-   * Create a not prepared {@link GameRoom GameRoom} of given type
-   *
-   * @param gameType String of current Game
-   *
-   * @return Newly created GameRoom
-   *
-   * @throws RescuableClientException if creation of game failed
-   */
-  public synchronized GameRoom createGame(String gameType) throws RescuableClientException {
-    return createGame(gameType, false);
-  }
-
-  /**
-   * Create a new GameRoom from the matching plugin.
-   * If gameFile is set, load gameState from file.
-   *
-   * @param gameType id of the game plugin to use
-   * @param prepared signals whether the game was prepared by gui or ..., false if player has to send JoinRoomRequest
-   *
-   * @return newly created GameRoom
-   *
-   * @throws UnknownGameTypeException if no matching GamePlugin was found
-   */
-  public GameRoom createGame(String gameType, boolean prepared) throws RescuableClientException {
+  public IGamePlugin findPlugin(String gameType) throws RescuableClientException {
     GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
 
     if (plugin == null) {
@@ -78,34 +60,59 @@ public class GameRoomManager {
       throw new UnknownGameTypeException(gameType, this.gamePluginManager.getPluginUUIDs());
     }
 
-    logger.info("Creating new game of type " + gameType);
+    return plugin.getPlugin();
+  }
 
-    String roomId = generateRoomId();
-    GameRoom room = new GameRoom(roomId, this, plugin.getPlugin().getScoreDefinition(), plugin.createGame(), prepared);
+  /**
+   * Create a not prepared {@link GameRoom GameRoom} of given type.
+   *
+   * @return Newly created GameRoom
+   *
+   * @throws RescuableClientException if creation of game failed
+   */
+  public synchronized GameRoom createGameRoom(String gameType) throws RescuableClientException {
+    IGamePlugin plugin = findPlugin(gameType);
+    IGameInstance game;
+
+    String gameFileLocation = Configuration.get(Configuration.GAMELOADFILE);
+    if (gameFileLocation != null && !gameFileLocation.equals("")) {
+      File gameFile = new File(gameFileLocation);
+      Integer turn = null;
+      try {
+        turn = Integer.parseInt(Configuration.get(Configuration.TURN_TO_LOAD));
+      } catch(NumberFormatException ignored) {
+      }
+
+      // TODO skip to turn
+      // TODO implement tests
+      logger.info("Loading game from file '{}' at turn {}", gameFile, turn);
+      try {
+        game = plugin.createGameFromState((IGameState) new GameLoader(IGameState.class).loadGame(gameFile));
+      } catch(IOException e) {
+        logger.error("Failed to load game from file", e);
+        game = plugin.createGame();
+      }
+    } else {
+      game = plugin.createGame();
+    }
+
+    return createGameRoom(plugin.getScoreDefinition(), game, false);
+  }
+
+  /**
+   * Create a new GameRoom with the given Game.
+   *
+   * @param prepared signals whether the game was prepared by an administrative client,
+   *                 false if from a JoinRoomRequest
+   *
+   * @return newly created GameRoom
+   */
+  public GameRoom createGameRoom(ScoreDefinition scoreDefinition, IGameInstance game, boolean prepared) {
+    GameRoom room = new GameRoom(generateRoomId(), this, scoreDefinition, game, prepared);
     // pause room if specified in server.properties on joinRoomRequest
     if (!prepared) {
       boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
       room.pause(paused);
-      logger.info("Pause is set to {}", paused);
-    }
-
-    String gameFile = Configuration.get(Configuration.GAMELOADFILE);
-    if (gameFile != null && !gameFile.equals("")) {
-      logger.info("Request plugin to load game from file: " + gameFile);
-      int turn;
-      if (Configuration.get(Configuration.TURN_TO_LOAD) != null) {
-        turn = Integer.parseInt(Configuration.get(Configuration.TURN_TO_LOAD));
-      } else {
-        turn = 0;
-      }
-      logger.debug("Turns is to load is: " + turn);
-      if (turn > 0) {
-        logger.debug("Loading from non default turn");
-        room.game.loadFromFile(gameFile, turn);
-      } else {
-        logger.debug("Loading first gameState found");
-        room.game.loadFromFile(gameFile);
-      }
     }
 
     this.add(room);
@@ -126,7 +133,7 @@ public class GameRoomManager {
    */
   public synchronized RoomWasJoinedEvent createAndJoinGame(Client client, String gameType)
           throws RescuableClientException {
-    GameRoom room = createGame(gameType);
+    GameRoom room = createGameRoom(gameType);
     if (room.join(client)) {
       return roomJoined(room);
     }
@@ -164,22 +171,21 @@ public class GameRoomManager {
   }
 
   /**
-   * Creates a new GameRoom through {@link #createGame(String) createGame} with reserved PlayerSlots according to the
+   * Creates a new GameRoom with reserved PlayerSlots according to the
    * descriptors and loads a game state from a file if provided.
    *
    * @return new PrepareGameProtocolMessage with roomId and slot reservations
    *
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized GamePreparedResponse prepareGame(String gameType, boolean paused, SlotDescriptor[] descriptors, Object loadGameInfo)
+  public synchronized GamePreparedResponse prepareGame(String gameType, boolean paused, SlotDescriptor[] descriptors, IGameState loadGameInfo)
           throws RescuableClientException {
-    GameRoom room = createGame(gameType, true);
+    IGamePlugin plugin = findPlugin(gameType);
+    IGameInstance game = loadGameInfo != null ? plugin.createGameFromState(loadGameInfo) : plugin.createGame();
+
+    GameRoom room = createGameRoom(plugin.getScoreDefinition(), game, true);
     room.pause(paused);
     room.openSlots(descriptors);
-
-    if (loadGameInfo != null) {
-      room.game.loadGameInfo(loadGameInfo);
-    }
 
     return new GamePreparedResponse(room.getId(), room.reserveAllSlots());
   }
