@@ -52,10 +52,6 @@ data class TestGame(
         return PlayerScore(true, "Spieler hat gewonnen.")
     }
 
-    override fun loadFromFile(file: String) {}
-    override fun loadFromFile(file: String, turn: Int) {}
-    override fun loadGameInfo(gameInfo: Any) {}
-    
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(false)
 
