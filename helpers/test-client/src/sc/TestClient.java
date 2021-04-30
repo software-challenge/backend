@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +41,7 @@ import static sc.Util.factorial;
 public class TestClient extends XStreamClient {
   private static final Logger logger = (Logger) LoggerFactory.getLogger(TestClient.class);
 
-  private static final String gameType = IGamePlugin.loadPluginId();
+  private static final IGamePlugin plugin = IGamePlugin.loadPlugin();
   private static final ClientPlayer[] players = {new ClientPlayer(), new ClientPlayer()};
   private static final File logDir = new File("log").getAbsoluteFile();
 
@@ -281,8 +280,7 @@ public class TestClient extends XStreamClient {
                 logger.error("{} crashed, look into {}", player.name, logDir);
                 exit(2);
               }
-            // TODO move timeout to GamePlugin and obtain it
-            if (slept > 200.000) {
+            if (slept > plugin.getGameTimeout()) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
             }
@@ -332,7 +330,7 @@ public class TestClient extends XStreamClient {
     for (int i = 0; i < 2; i++)
       slots[(finishedTests + i) % 2] = new SlotDescriptor(players[i].name, players[i].canTimeout);
     logger.debug("Prepared client slots: " + Arrays.toString(slots));
-    send(new PrepareGameRequest(gameType, slots[0], slots[1], false));
+    send(new PrepareGameRequest(plugin.getId(), slots[0], slots[1], false));
   }
 
   private static void exit(int status) {

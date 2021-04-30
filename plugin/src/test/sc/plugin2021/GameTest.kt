@@ -18,7 +18,10 @@ import sc.plugin2021.util.GameRuleLogic
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import java.math.BigDecimal
+import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
+@OptIn(ExperimentalTime::class)
 class GameTest: WordSpec({
     isolationMode = IsolationMode.SingleInstance
     val startGame = {
@@ -28,7 +31,7 @@ class GameTest: WordSpec({
         game.start()
         Pair(game, game.currentState)
     }
-    "A Game start with two players" When {
+    "A Game started with two players" When {
         "played normally" should {
             val (game, state) = startGame()
             
@@ -47,7 +50,7 @@ class GameTest: WordSpec({
                 }
             })
             
-            "finish without issues" {
+            "finish without issues".config(invocationTimeout = Constants.GAME_TIMEOUT.milliseconds) {
                 while (true) {
                     try {
                         val condition = game.checkWinCondition()

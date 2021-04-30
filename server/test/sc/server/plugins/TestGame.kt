@@ -57,7 +57,7 @@ data class TestGame(
     override fun loadGameInfo(gameInfo: Any) {}
     
     override fun getTimeoutFor(player: Player): ActionTimeout =
-            ActionTimeout(false, 100000000L, 20000000L)
+            ActionTimeout(false)
 
     companion object {
         private val logger = LoggerFactory.getLogger(TestGame::class.java)

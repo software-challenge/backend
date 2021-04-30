@@ -5,12 +5,13 @@ import sc.shared.ScoreDefinition
 import java.util.ServiceLoader
 
 interface IGamePlugin: IPlugin {
-    fun id(): String
+    val id: String
+    val scoreDefinition: ScoreDefinition
+    val gameTimeout: Int
+    
     /** @return eine neues Spiel dieses Typs. */
     fun createGame(): IGameInstance
     fun createGameFromState(state: IGameState): IGameInstance
-    
-    val scoreDefinition: ScoreDefinition
     
     companion object {
         @JvmStatic
@@ -23,6 +24,6 @@ interface IGamePlugin: IPlugin {
         
         @JvmStatic
         fun loadPluginId(): String =
-                loadPlugin().id()
+                loadPlugin().id
     }
 }

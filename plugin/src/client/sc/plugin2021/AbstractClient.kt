@@ -1,6 +1,7 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.AbstractLobbyClientListener
@@ -102,7 +103,7 @@ abstract class AbstractClient(
     /** [start] and join any game with the appropriate [gameType]. */
     fun joinAnyGame() {
         start()
-        client.joinRoomRequest(GamePlugin.PLUGIN_UUID)
+        client.joinRoomRequest(GamePlugin.PLUGIN_ID)
     }
     
     override fun onGameLeft(roomId: String) {

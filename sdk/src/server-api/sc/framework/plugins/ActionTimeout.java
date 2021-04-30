@@ -21,8 +21,8 @@ public class ActionTimeout {
   private long startTimestamp = 0;
   private long stopTimestamp = 0;
 
-  private static final long DEFAULT_HARD_TIMEOUT = 10000;
-  private static final long DEFAULT_SOFT_TIMEOUT = 5000;
+  private static final int DEFAULT_HARD_TIMEOUT = 10000;
+  private static final int DEFAULT_SOFT_TIMEOUT = 5000;
 
   private enum Status {
     NEW, STARTED, STOPPED
@@ -32,11 +32,11 @@ public class ActionTimeout {
     this(canTimeout, DEFAULT_HARD_TIMEOUT, DEFAULT_SOFT_TIMEOUT);
   }
 
-  public ActionTimeout(boolean canTimeout, long hardTimeoutInMilliseconds) {
+  public ActionTimeout(boolean canTimeout, int hardTimeoutInMilliseconds) {
     this(canTimeout, hardTimeoutInMilliseconds, hardTimeoutInMilliseconds);
   }
 
-  public ActionTimeout(boolean canTimeout, long hardTimeoutInMilliseconds, long softTimeoutInMilliseconds) {
+  public ActionTimeout(boolean canTimeout, int hardTimeoutInMilliseconds, int softTimeoutInMilliseconds) {
     if (hardTimeoutInMilliseconds < softTimeoutInMilliseconds) {
       throw new IllegalArgumentException(
               "HardTimeout must be greater or equal the SoftTimeout");

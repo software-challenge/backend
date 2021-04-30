@@ -5,9 +5,16 @@ This document captures development standards and architecture decisions of this 
 ## Testing
 
 Unsere Unittests nutzen das [Kotest-Framework](https://kotest.io) mit [JUnit](https://junit.org) im Hintergrund.
-Dabei setzen wir auf die [WordSpec](https://kotest.io/styles/#word-spec), da man damit semantisch übersichtlich sowohl einfache Tests als auch Behavior Driven Development umsetzen kann.
+Dabei setzen wir auf [WordSpec](https://kotest.io/styles/#word-spec),
+da man damit semantisch übersichtlich
+sowohl einfache Tests als auch Behavior Driven Development umsetzen kann.
+Für Tests von Algorithmen ohne Logik/Verhalten
+kann auch [FunSpec](https://kotest.io/styles/#fun-spec) nützlich sein
 
-Bisherige Tests nutzen die StringSpec, welche jedoch schnell unübersichtlich wird da sie keine Verschachtelung erlaubt, und im server-modul gibt es noch einige JUnit5-Tests.
+Viele Tests nutzen noch die StringSpec,
+welche jedoch schnell unübersichtlich wird,
+da sie keine Verschachtelung erlaubt.
+Im Server gibt es außerdem noch einige JUnit5-Tests.
 Diese sollten bei größeren Änderungen direkt zum neuen Stil migriert werden.
 
 ## XStream

@@ -13,7 +13,12 @@ class TestPlugin: IGamePlugin {
         const val TEST_PLUGIN_UUID = "012345-norris"
     }
     
-    override fun id(): String = TEST_PLUGIN_UUID
+    override val id: String = TEST_PLUGIN_UUID
+    
+    override val scoreDefinition: ScoreDefinition =
+            ScoreDefinition("winner")
+    
+    override val gameTimeout = 1000
     
     override fun createGame(): IGameInstance =
             TestGame()
@@ -21,6 +26,4 @@ class TestPlugin: IGamePlugin {
     override fun createGameFromState(state: IGameState): IGameInstance =
             TestGame(state as TestGameState)
     
-    override val scoreDefinition: ScoreDefinition =
-        ScoreDefinition("winner")
 }

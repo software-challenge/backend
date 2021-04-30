@@ -23,11 +23,11 @@ object Constants {
     const val ROUND_LIMIT = 25
     
     /** Zeit (in ms), die für einen Zug zur Verfügung steht. */
-    const val SOFT_TIMEOUT = 2000L
+    const val SOFT_TIMEOUT = 2_000
     /** Zeit (in ms), ab dem eine Zuganfrage abgebrochen wird. */
-    const val HARD_TIMEOUT = 10000L
+    const val HARD_TIMEOUT = 10_000
 
-    // Max game length: turns(ROUND_LIMIT * 2) * SOFT_TIMEOUT, one second buffer per round
+    // Max game length: turns(=ROUND_LIMIT*2) * SOFT_TIMEOUT, one second buffer per round
     /** Zeit (in ms), die ein Spiel höchstens dauern sollte. */
     @JvmField
     val GAME_TIMEOUT = TOTAL_PIECE_SHAPES * COLORS * SOFT_TIMEOUT

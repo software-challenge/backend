@@ -14,7 +14,7 @@ import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import sc.shared.WinCondition
 
-class Game(override val currentState: GameState = GameState()): AbstractGame<Player>(GamePlugin.PLUGIN_UUID) {
+class Game(override val currentState: GameState = GameState()): AbstractGame<Player>(GamePlugin.PLUGIN_ID) {
     companion object {
         val logger = LoggerFactory.getLogger(Game::class.java)
     }
