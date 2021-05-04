@@ -2,9 +2,9 @@ package sc.protocol.responses
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.api.plugins.ITeam
 
 import sc.framework.plugins.Player
+import sc.protocol.RoomMessage
 
 /**
  * Indicates that the game has been paused.
@@ -15,4 +15,4 @@ import sc.framework.plugins.Player
 data class GamePausedEvent(
         @XStreamAsAttribute
         val nextPlayer: Player
-): ProtocolMessage
+): RoomMessage

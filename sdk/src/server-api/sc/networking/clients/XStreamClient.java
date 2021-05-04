@@ -9,8 +9,8 @@ import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.networking.UnprocessedPacketException;
 import sc.networking.XStreamProvider;
-import sc.protocol.responses.CloseConnection;
-import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.CloseConnection;
+import sc.protocol.ProtocolPacket;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -87,7 +87,7 @@ public abstract class XStreamClient {
     this.receiveThread.start();
   }
 
-  protected abstract void onObject(@NotNull ProtocolMessage message) throws UnprocessedPacketException;
+  protected abstract void onObject(@NotNull ProtocolPacket message) throws UnprocessedPacketException;
 
   /** Used by the receiving thread. All exceptions should be handled. */
   public void receiveThread() {
@@ -100,8 +100,8 @@ public abstract class XStreamClient {
 
       while (!Thread.interrupted()) {
         Object object = in.readObject();
-        if (object instanceof ProtocolMessage) {
-          ProtocolMessage response = (ProtocolMessage) object;
+        if (object instanceof ProtocolPacket) {
+          ProtocolPacket response = (ProtocolPacket) object;
 
           logger.debug("{}: Received {} via {}", shortString(), response, networkInterface);
           if (logger.isTraceEnabled())
@@ -164,7 +164,7 @@ public abstract class XStreamClient {
     networkInterface.getOutputStream().flush();
   }
 
-  public synchronized void send(ProtocolMessage packet) {
+  public synchronized void send(ProtocolPacket packet) {
     if (!isReady())
       throw new IllegalStateException(
           String.format("Trying to write packet on %s which wasn't started: %s", shortString(), packet));

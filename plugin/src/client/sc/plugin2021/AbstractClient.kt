@@ -1,16 +1,15 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
-import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.AbstractLobbyClientListener
 import sc.networking.clients.IControllableGame
 import sc.networking.clients.ILobbyClientListener
 import sc.networking.clients.LobbyClient
+import sc.protocol.RoomMessage
 import sc.protocol.responses.GamePreparedResponse
-import sc.protocol.responses.ProtocolErrorMessage
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.responses.ErrorMessage
 import sc.shared.GameResult
 import sc.shared.WelcomeMessage
 import java.net.ConnectException
@@ -57,10 +56,14 @@ abstract class AbstractClient(
             client.observe(handle.roomId)
     
     /** Called for any new message sent to the game room, e.g., move requests. */
-    override fun onRoomMessage(roomId: String, data: ProtocolMessage) {
+    override fun onRoomMessage(roomId: String, data: RoomMessage) {
         when(data) {
             is MoveRequest -> handler?.onRequestAction()
             is WelcomeMessage -> team = Team.valueOf(data.color.toUpperCase())
+            is ErrorMessage -> {
+                logger.debug("onError: Client $this received error ${data.message} in $roomId")
+                this.error = data.message
+            }
         }
         this.roomId = roomId
     }
@@ -68,12 +71,6 @@ abstract class AbstractClient(
     /** Sends the selected move to the server. */
     fun sendMove(move: Move) =
             client.sendMessageToRoom(roomId, move)
-    
-    /** Called when an erroneous message is sent to the room. */
-    override fun onError(roomId: String?, error: ProtocolErrorMessage) {
-        logger.debug("onError: Client $this received error ${error.message} in $roomId")
-        this.error = error.message
-    }
     
     /**
      * Called when game state has been received.

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.networking.clients.GameLoaderClient;
 import sc.networking.clients.IHistoryListener;
-import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ErrorMessage;
 import sc.shared.GameResult;
 
 import java.io.File;
@@ -68,7 +68,7 @@ public class GameLoader implements IHistoryListener {
   }
 
   @Override
-  public void onGameError(String roomId, ProtocolErrorMessage error) {
+  public void onGameError(String roomId, ErrorMessage error) {
   }
 
   @Override

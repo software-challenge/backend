@@ -1,4 +1,4 @@
-package sc.protocol.responses
+package sc.protocol
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 
@@ -7,6 +7,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
  * connection and should make the receiving party also close the connection.
  */
 @XStreamAlias(value = "close")
-class CloseConnection: ProtocolMessage {
+class CloseConnection: ProtocolPacket {
     override fun toString(): String = javaClass.simpleName
 }

@@ -5,7 +5,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.RoomMessage
 import sc.server.helpers.TestTeam
 import sc.shared.*
 
@@ -16,7 +16,7 @@ data class TestGame(
     override val playerScores: List<PlayerScore> = emptyList()
     override val winners: List<Player> = emptyList()
     
-    override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
+    override fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage) {
         if (data is TestMove) {
             data.perform(currentState)
             next(if (currentState.currentPlayer === TestTeam.RED) currentState.red else currentState.blue)

@@ -2,11 +2,9 @@ package sc.server
 
 import org.slf4j.LoggerFactory
 import sc.api.plugins.exceptions.RescuableClientException
+import sc.protocol.RoomPacket
 import sc.protocol.requests.*
-import sc.protocol.responses.PlayerScoreResponse
-import sc.protocol.responses.ProtocolErrorMessage
-import sc.protocol.responses.RoomPacket
-import sc.protocol.responses.TestModeResponse
+import sc.protocol.responses.*
 import sc.server.gaming.GameRoomManager
 import sc.server.gaming.PlayerRole
 import sc.server.gaming.ReservationManager
@@ -59,7 +57,7 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                     try {
                         ReservationManager.redeemReservationCode(source, packet.reservationCode)
                     } catch (e: RescuableClientException) {
-                        source.send(ProtocolErrorMessage(packet, e.message))
+                        source.send(ErrorPacket(packet, e.message))
                     }
                 is JoinRoomRequest -> {
                     val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
@@ -146,7 +144,7 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
         clientManager.close()
     }
     
-    override fun onError(source: Client, errorPacket: ProtocolErrorMessage) {
+    override fun onError(source: Client, errorPacket: ErrorMessage) {
         for (role in source.roles) {
             if (role.javaClass == PlayerRole::class.java) {
                 (role as PlayerRole).playerSlot.room.onClientError(errorPacket)

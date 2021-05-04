@@ -1,8 +1,8 @@
 package sc.api.plugins.host;
 
 
-import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.RoomMessage;
 
 public interface IPlayerListener {
-  void onPlayerEvent(ProtocolMessage request);
+  void onPlayerEvent(RoomMessage request);
 }

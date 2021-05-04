@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import sc.api.plugins.ITeam
 import sc.api.plugins.host.IPlayerListener
 import sc.framework.plugins.protocol.MoveRequest
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.RoomMessage
 import java.util.*
 
 private val logger = LoggerFactory.getLogger(Player::class.java)
@@ -62,7 +62,7 @@ open class Player @JvmOverloads constructor(
         this.listeners.remove(listener)
     }
 
-    fun notifyListeners(o: ProtocolMessage) {
+    fun notifyListeners(o: RoomMessage) {
         for (listener in this.listeners) {
             listener.onPlayerEvent(o)
         }

@@ -1,20 +1,18 @@
 package sc.networking.clients;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
-import sc.networking.INetworkInterface;
-import sc.networking.TcpNetwork;
+import sc.protocol.ProtocolPacket;
+import sc.protocol.RoomMessage;
+import sc.protocol.RoomPacket;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.*;
 
 /**
@@ -36,19 +34,23 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   @Override
-  protected final void onObject(ProtocolMessage message) {
+  protected final void onObject(ProtocolPacket message) {
     if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();
-      ProtocolMessage data = packet.getData();
+      RoomMessage data = packet.getData();
       if (data instanceof MementoEvent) {
         onNewState(roomId, ((MementoEvent) data).getState());
       } else if (data instanceof GameResult) {
         onGameOver(roomId, (GameResult) data);
       } else if (data instanceof GamePausedEvent) {
         onGamePaused(roomId, ((GamePausedEvent) data).getNextPlayer());
-      } else if (data instanceof ProtocolErrorMessage) {
-        onError(roomId, ((ProtocolErrorMessage) data));
+      } else if (data instanceof ErrorMessage) {
+        ErrorMessage error = (ErrorMessage) data;
+        logger.warn("{} (room: {})", error.getLogMessage(), roomId);
+        for (IHistoryListener listener : this.historyListeners) {
+          listener.onGameError(roomId, error);
+        }
       } else {
         onRoomMessage(roomId, data);
       }
@@ -65,9 +67,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     } else if (message instanceof TestModeResponse) {
       boolean testMode = (((TestModeResponse) message).getTestMode());
       logger.info("TestMode was set to {} ", testMode);
-    } else if (message instanceof ProtocolErrorMessage) {
-      ProtocolErrorMessage response = (ProtocolErrorMessage) message;
-      onError(null, response);
+    } else if (message instanceof ErrorPacket) {
+      ErrorPacket error = (ErrorPacket) message;
+      for (ILobbyClientListener listener : this.listeners) {
+        listener.onError(error);
+      }
     } else {
       onCustomObject(message);
     }
@@ -151,23 +155,13 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     }
   }
 
-  protected void onRoomMessage(String roomId, ProtocolMessage data) {
+  protected void onRoomMessage(String roomId, RoomMessage data) {
     for (ILobbyClientListener listener : this.listeners) {
       listener.onRoomMessage(roomId, data);
     }
   }
 
-  protected void onError(@Nullable String roomId, @NotNull ProtocolErrorMessage error) {
-    logger.warn("{} (room: {})", error.getLogMessage(), roomId);
-    for (ILobbyClientListener listener : this.listeners) {
-      listener.onError(roomId, error);
-    }
-    for (IHistoryListener listener : this.historyListeners) {
-      listener.onGameError(roomId, error);
-    }
-  }
-
-  public void sendMessageToRoom(String roomId, ProtocolMessage o) {
+  public void sendMessageToRoom(String roomId, RoomMessage o) {
     send(new RoomPacket(roomId, o));
   }
 
