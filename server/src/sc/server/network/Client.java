@@ -10,8 +10,8 @@ import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.LeftGameEvent;
-import sc.protocol.responses.ProtocolErrorMessage;
-import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.responses.ErrorMessage;
+import sc.protocol.ProtocolPacket;
 import sc.server.Configuration;
 
 import java.io.IOException;
@@ -94,7 +94,7 @@ public class Client extends XStreamClient implements IClient {
   }
 
   /** Call listeners upon error. */
-  private void notifyOnError(ProtocolErrorMessage packet) {
+  private void notifyOnError(ErrorMessage packet) {
     for (IClientListener listener : new ArrayList<>(clientListeners)) {
       try {
         listener.onError(this, packet);
@@ -187,7 +187,7 @@ public class Client extends XStreamClient implements IClient {
 
   /** Forward received package to listeners. */
   @Override
-  protected void onObject(@NotNull ProtocolMessage message) throws UnprocessedPacketException {
+  protected void onObject(@NotNull ProtocolPacket message) throws UnprocessedPacketException {
     /*
      * NOTE that this method is called in the receiver thread. Messages
      * should only be passed to listeners. No callbacks should be invoked

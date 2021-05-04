@@ -4,7 +4,7 @@ import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.Player
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
@@ -30,7 +30,7 @@ interface IGameInstance {
      * @throws InvalidMoveException if the received move violates the rules
      */
     @Throws(GameLogicException::class, InvalidMoveException::class)
-    fun onAction(fromPlayer: Player, data: ProtocolMessage)
+    fun onAction(fromPlayer: Player, data: RoomMessage)
     fun addGameListener(listener: IGameListener)
     fun removeGameListener(listener: IGameListener)
 

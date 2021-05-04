@@ -8,7 +8,7 @@ import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.MoveMistake
 import sc.plugin2021.util.WinReason
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
@@ -137,7 +137,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
     @Throws(InvalidMoveException::class)
-    override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
+    override fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage) {
         if (data !is Move)
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
         

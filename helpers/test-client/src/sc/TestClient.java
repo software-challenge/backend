@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGamePlugin;
 import sc.framework.plugins.Player;
 import sc.networking.clients.XStreamClient;
+import sc.protocol.CloseConnection;
+import sc.protocol.ProtocolPacket;
+import sc.protocol.RoomPacket;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;
@@ -185,7 +188,7 @@ public class TestClient extends XStreamClient {
   private boolean gameProgressing = false;
 
   @Override
-  protected void onObject(@NotNull ProtocolMessage message) {
+  protected void onObject(@NotNull ProtocolPacket message) {
     if (message == null) {
       logger.warn("Received null message");
       return;

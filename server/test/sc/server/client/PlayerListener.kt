@@ -4,7 +4,7 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import sc.api.plugins.host.IPlayerListener
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.RoomMessage
 import sc.server.network.await
 import java.util.Queue
 import java.util.ArrayDeque
@@ -12,9 +12,9 @@ import kotlin.reflect.KClass
 import kotlin.time.ExperimentalTime
 
 class PlayerListener : IPlayerListener {
-    private val messages: Queue<ProtocolMessage> = ArrayDeque()
+    private val messages: Queue<RoomMessage> = ArrayDeque()
 
-    override fun onPlayerEvent(request: ProtocolMessage) {
+    override fun onPlayerEvent(request: RoomMessage) {
         messages.add(request)
     }
     
@@ -27,7 +27,7 @@ class PlayerListener : IPlayerListener {
     }
     
     @ExperimentalTime
-    fun waitForMessage(messageType: KClass<out ProtocolMessage>) = runBlocking {
+    fun waitForMessage(messageType: KClass<out RoomMessage>) = runBlocking {
         await("Expected to receive ${messageType.simpleName}") {
             messages.shouldNotBeEmpty()
         }

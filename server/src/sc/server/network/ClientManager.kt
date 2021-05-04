@@ -1,7 +1,7 @@
 package sc.server.network
 
 import org.slf4j.LoggerFactory
-import sc.protocol.responses.ProtocolErrorMessage
+import sc.protocol.responses.ErrorMessage
 import sc.server.ServiceManager
 import java.io.Closeable
 import java.io.IOException
@@ -97,7 +97,7 @@ class ClientManager : Runnable, IClientListener, Closeable {
     }
 
     /** Do nothing on error. */
-    override fun onError(source: Client, packet: ProtocolErrorMessage) {
+    override fun onError(source: Client, packet: ErrorMessage) {
         // TODO Error handling needs to happen
     }
 

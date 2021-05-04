@@ -3,6 +3,7 @@ package sc.protocol.responses
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
+import sc.protocol.ProtocolPacket
 
 /** Response to [sc.protocol.requests.PrepareGameRequest].
  * @param reservations the reservations for the reserved slots */
@@ -12,4 +13,4 @@ data class GamePreparedResponse(
         val roomId: String,
         @XStreamImplicit(itemFieldName = "reservation")
         val reservations: List<String>
-): ProtocolMessage
+): ProtocolPacket

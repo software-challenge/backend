@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sc.networking.clients.XStreamClient.DisconnectCause;
 import sc.protocol.requests.JoinRoomRequest;
-import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.ProtocolPacket;
 import sc.server.helpers.TestHelper;
 import sc.server.plugins.TestPlugin;
 
@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 public class ConnectionTest extends RealServerTest {
-  private static class DontYouKnowJack implements ProtocolMessage {
+  private static class DontYouKnowJack implements ProtocolPacket {
     public int test = 25;
   }
 

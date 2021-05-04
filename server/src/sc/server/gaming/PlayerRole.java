@@ -3,8 +3,8 @@ package sc.server.gaming;
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.Player;
 import sc.networking.clients.XStreamClient;
-import sc.protocol.responses.ProtocolMessage;
-import sc.protocol.responses.RoomPacket;
+import sc.protocol.RoomMessage;
+import sc.protocol.RoomPacket;
 import sc.server.network.IClient;
 import sc.server.network.IClientRole;
 
@@ -40,7 +40,7 @@ public class PlayerRole implements IClientRole, IPlayerListener {
 
   /** Called when a move is requested. It will send a {@link RoomPacket roompacket} to the server. */
   @Override
-  public void onPlayerEvent(ProtocolMessage o) {
+  public void onPlayerEvent(RoomMessage o) {
     this.client.send(new RoomPacket(getPlayerSlot().getRoom().getId(), o));
   }
 
