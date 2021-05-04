@@ -11,11 +11,11 @@ import sc.protocol.requests.StepRequest;
 public class ControllingClient extends ObservingClient implements IAdministrativeListener {
   private static final Logger logger = LoggerFactory.getLogger(ControllingClient.class);
 
-  final LobbyClient client;
+  private final XStreamClient client;
   private boolean allowOneStep = false;
   private boolean pauseHitReceived;
 
-  public ControllingClient(LobbyClient client, String roomId, boolean isPaused) {
+  public ControllingClient(XStreamClient client, String roomId, boolean isPaused) {
     super(roomId, isPaused);
     this.client = client;
   }
