@@ -130,19 +130,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(new AuthenticateRequest(password));
   }
 
-  public void prepareGame(String gameType) {
-    send(new PrepareGameRequest(gameType));
-  }
-
-  public void prepareGame(String gameType, boolean startPaused) {
-    send(new PrepareGameRequest(
-        gameType,
-        new SlotDescriptor("player1", false),
-        new SlotDescriptor("player2", false),
-        startPaused)
-    );
-  }
-
   protected void onCustomObject(Object o) {
     logger.warn("Couldn't process message {}.", o);
   }
@@ -232,10 +219,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   public void removeListener(IAdministrativeListener listener) {
     this.administrativeListeners.remove(listener);
-  }
-
-  public void freeReservation(String reservation) {
-    send(new FreeReservationRequest(reservation));
   }
 
 }
