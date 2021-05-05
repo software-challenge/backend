@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGamePlugin;
 import sc.framework.plugins.Player;
 import sc.networking.clients.XStreamClient;
-import sc.protocol.CloseConnection;
 import sc.protocol.ProtocolPacket;
 import sc.protocol.room.RoomPacket;
 import sc.protocol.requests.*;
@@ -338,8 +337,7 @@ public class TestClient extends XStreamClient {
 
   private static void exit(int status) {
     if (testclient != null) {
-      if (!testclient.isClosed())
-        testclient.send(new CloseConnection());
+      testclient.stop();
       testclient.waiter.shutdownNow();
     }
 

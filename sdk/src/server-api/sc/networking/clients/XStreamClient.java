@@ -91,7 +91,7 @@ public abstract class XStreamClient {
 
   /** Used by the receiving thread. All exceptions should be handled. */
   public void receiveThread() {
-    try(ObjectInputStream in = xStream.createObjectInputStream(networkInterface.getInputStream())) {
+    try (ObjectInputStream in = xStream.createObjectInputStream(networkInterface.getInputStream())) {
       synchronized(readyLock) {
         while (!isReady()) {
           readyLock.wait();
@@ -109,7 +109,7 @@ public abstract class XStreamClient {
 
           if (response instanceof CloseConnection) {
             handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
-            // handleDisconnect takes care of stopping the thread
+            break;
           } else {
             onObject(response);
           }
@@ -133,13 +133,13 @@ public abstract class XStreamClient {
         if (exceptionCause instanceof SocketException) {
           // If the thread was interrupted, we have a regular disconnect.
           // Unfortunately, OIS.readObject() doesn't react to interruptions directly.
-          if(!Thread.interrupted())
+          if (!Thread.interrupted())
             handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else if (exceptionCause instanceof EOFException) {
           handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else if (exceptionCause instanceof IOException
-                && exceptionCause.getCause() != null && exceptionCause
-                .getCause() instanceof InterruptedException) {
+            && exceptionCause.getCause() != null && exceptionCause
+            .getCause() instanceof InterruptedException) {
           handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else {
           handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
@@ -164,7 +164,11 @@ public abstract class XStreamClient {
     networkInterface.getOutputStream().flush();
   }
 
-  public synchronized void send(ProtocolPacket packet) {
+  public void send(ProtocolPacket packet) {
+    sendObject(packet);
+  }
+
+  protected synchronized void sendObject(Object packet) {
     if (!isReady())
       throw new IllegalStateException(
           String.format("Trying to write packet on %s which wasn't started: %s", shortString(), packet));
@@ -176,7 +180,7 @@ public abstract class XStreamClient {
       return;
     }
 
-    logger.debug("{}: Sending {} via {} from {}", shortString(), packet, networkInterface, toString());
+    logger.debug("{}: Sending {} via {} from {}", shortString(), packet, networkInterface, this);
     if (logger.isTraceEnabled())
       logger.trace("Dumping {}:\n{}", packet, xStream.toXML(packet));
 
@@ -231,7 +235,8 @@ public abstract class XStreamClient {
    */
   public void stop() {
     // this side caused disconnect, notify other side
-    send(new CloseConnection());
+    if (!isClosed())
+      send(new CloseConnection());
     handleDisconnect(DisconnectCause.DISCONNECTED);
   }
 
