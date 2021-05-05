@@ -10,13 +10,13 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import sc.framework.plugins.protocol.MoveRequest
-import sc.networking.clients.AdminClient
-import sc.protocol.ProtocolPacket
+import sc.networking.clients.LobbyClient
+import sc.protocol.ResponsePacket
 import sc.protocol.requests.JoinPreparedRoomRequest
-import sc.protocol.responses.ErrorMessage
 import sc.protocol.responses.ErrorPacket
 import sc.protocol.responses.GamePreparedResponse
 import sc.protocol.responses.ObservationResponse
+import sc.protocol.room.ErrorMessage
 import sc.server.client.MessageListener
 import sc.server.client.PlayerListener
 import sc.server.gaming.GameRoom
@@ -37,8 +37,9 @@ class LobbyRequestTest: WordSpec({
     "A Lobby with connected clients" When {
         val lobby = autoClose(TestLobby())
     
-        val adminListener = MessageListener<ProtocolPacket>()
-        val admin = AdminClient("localhost", lobby.serverPort, PASSWORD, adminListener::addMessage)
+        val adminListener = MessageListener<ResponsePacket>()
+        val lobbyClient = LobbyClient("localhost", lobby.serverPort)
+        val admin = lobbyClient.authenticate(PASSWORD, adminListener::addMessage)
         
         val players = Array(2) { lobby.connectClient() }
         await("Clients connected") { lobby.clientManager.clients.size shouldBe 3 }
@@ -68,7 +69,7 @@ class LobbyRequestTest: WordSpec({
             players[0].joinPreparedGame(reservations[0])
             await("First player joined") { room.clients shouldHaveSize 1 }
             "not accept a reservation twice" {
-                admin.send(JoinPreparedRoomRequest(reservations[0]))
+                lobbyClient.send(JoinPreparedRoomRequest(reservations[0]))
                 adminListener.waitForMessage(ErrorPacket::class)
                 room.clients shouldHaveSize 1
                 lobby.games shouldHaveSize 1
