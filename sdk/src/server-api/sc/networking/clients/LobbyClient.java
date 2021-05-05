@@ -4,14 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
-import sc.protocol.RemovedFromGame;
 import sc.protocol.ProtocolPacket;
+import sc.protocol.RemovedFromGame;
 import sc.protocol.ResponsePacket;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.protocol.room.*;
 import sc.shared.GameResult;
-import sc.shared.SlotDescriptor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private static final Logger logger = LoggerFactory.getLogger(LobbyClient.class);
   private final List<ILobbyClientListener> listeners = new ArrayList<>();
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
-  private final List<IAdministrativeListener> administrativeListeners = new ArrayList<>();
 
   private Consumer<ResponsePacket> administrativeListener = null;
 
@@ -85,10 +83,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   private void onGamePaused(String roomId, Player nextPlayer) {
-    for (IAdministrativeListener listener : this.administrativeListeners) {
-      listener.onGamePaused(roomId, nextPlayer);
-    }
-
     for (ILobbyClientListener listener : this.listeners) {
       listener.onGamePaused(roomId, nextPlayer);
     }
@@ -181,23 +175,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     this.listeners.remove(listener);
   }
 
-  /** Takes control of the game in the given room and pauses it. */
-  public IControllableGame observeAndControl(String roomId) {
-    final IControllableGame controller = observeAndControl(roomId, true);
-    controller.pause();
-    return controller;
-  }
-
-  /** Takes control of the game in the given room.
-   * @param isPaused whether the game to observe is already paused. */
-  public IControllableGame observeAndControl(String roomId, boolean isPaused) {
-    ControllingClient controller = new ControllingClient(this, roomId, isPaused);
-    addListener((IAdministrativeListener) controller);
-    addListener((IHistoryListener) controller);
-    requestObservation(roomId);
-    return controller;
-  }
-
   public ObservingClient observe(String roomId) {
     return observe(roomId, false);
   }
@@ -223,14 +200,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   @Override
   public void removeListener(IHistoryListener listener) {
     this.historyListeners.remove(listener);
-  }
-
-  public void addListener(IAdministrativeListener listener) {
-    this.administrativeListeners.add(listener);
-  }
-
-  public void removeListener(IAdministrativeListener listener) {
-    this.administrativeListeners.remove(listener);
   }
 
 }
