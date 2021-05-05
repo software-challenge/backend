@@ -51,10 +51,6 @@ abstract class AbstractClient(
     var team: Team? = null
         private set
     
-    /** Tell this client to observe the game given by the preparation handler. */
-    fun observeGame(handle: GamePreparedResponse): IControllableGame =
-            client.observe(handle.roomId)
-    
     /** Called for any new message sent to the game room, e.g., move requests. */
     override fun onRoomMessage(roomId: String, data: RoomMessage) {
         when(data) {

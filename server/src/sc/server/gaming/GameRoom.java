@@ -12,6 +12,7 @@ import sc.framework.plugins.Player;
 import sc.framework.HelperMethods;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.XStreamProvider;
+import sc.networking.clients.AdminClient;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
 import sc.networking.clients.XStreamClient;
@@ -70,8 +71,8 @@ public class GameRoom implements IGameListener {
         logger.debug("Save replay is active and try to save it to file");
         LobbyClient lobbyClient = new LobbyClient("127.0.0.1", Configuration.getPort());
         lobbyClient.start();
-        lobbyClient.authenticate(Configuration.getAdministrativePassword());
-        replayObserver = lobbyClient.observe(getId());
+        AdminClient admin = lobbyClient.authenticate(Configuration.getAdministrativePassword(), null);
+        replayObserver = admin.observe(getId());
       } catch (IOException e) {
         logger.warn("Failed to start replay recording");
         e.printStackTrace();
