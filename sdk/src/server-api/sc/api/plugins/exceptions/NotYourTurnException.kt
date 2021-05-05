@@ -1,7 +1,7 @@
 package sc.api.plugins.exceptions
 
 import sc.framework.plugins.Player
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 
 data class NotYourTurnException(
         val expected: Player?,

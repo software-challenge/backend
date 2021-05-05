@@ -52,10 +52,7 @@ The information which implementations to use resides in [resources/META-INF/serv
 ## Networking Protocol Classes
 
 [ProtocolPacket](sdk/src/server-api/sc/protocol/ProtocolPacket.kt) is the common interface
-for everything that is to be sent via the XML Protocol.
-
-Data sent to a specific room has to implement [RoomMessage](sdk/src/server-api/sc/protocol/RoomMessage.kt)
-and is then wrapped in a [RoomPacket](sdk/src/server-api/sc/protocol/RoomPacket.kt).
+for objects sent via the XML Protocol.
 
 ### [Requests](sdk/src/server-api/sc/protocol/requests)
 - are all suffixed with `Request`
@@ -67,3 +64,12 @@ and is then wrapped in a [RoomPacket](sdk/src/server-api/sc/protocol/RoomPacket.
 
 (*Response) Response to a request  
 (*Event) Update to all observers
+
+#### [Room Messages](sdk/src/server-api/sc/protocol/room)
+
+Data sent to a specific room has to implement [RoomMessage](sdk/src/server-api/sc/protocol/room/RoomMessage.kt)
+and is then wrapped in a [RoomPacket](sdk/src/server-api/sc/protocol/room/RoomPacket.kt).
+
+The package contains a few standard messages,
+but most will be implemented in the corresponding plugin.
+

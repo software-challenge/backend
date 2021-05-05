@@ -8,7 +8,7 @@ import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.MoveMistake
 import sc.plugin2021.util.WinReason
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause

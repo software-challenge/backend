@@ -1,7 +1,7 @@
 package sc.server.network
 
 import org.slf4j.LoggerFactory
-import sc.protocol.responses.ErrorMessage
+import sc.protocol.room.ErrorMessage
 import sc.server.ServiceManager
 import java.io.Closeable
 import java.io.IOException

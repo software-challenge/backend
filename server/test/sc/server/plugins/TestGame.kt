@@ -5,7 +5,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 import sc.server.helpers.TestTeam
 import sc.shared.*
 

@@ -1,8 +1,7 @@
-package sc.protocol.responses
+package sc.protocol.room
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.protocol.RoomMessage
 
 /** Response to an erroneous message, including an error [message]. */
 @XStreamAlias("error")

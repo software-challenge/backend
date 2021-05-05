@@ -4,7 +4,7 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import sc.api.plugins.host.IPlayerListener
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 import sc.server.network.await
 import java.util.Queue
 import java.util.ArrayDeque

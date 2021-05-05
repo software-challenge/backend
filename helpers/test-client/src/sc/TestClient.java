@@ -11,7 +11,7 @@ import sc.framework.plugins.Player;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.CloseConnection;
 import sc.protocol.ProtocolPacket;
-import sc.protocol.RoomPacket;
+import sc.protocol.room.RoomPacket;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;

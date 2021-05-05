@@ -4,7 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.protocol.ProtocolPacket
 
-/** Sent to all administrative clients after a playerClient joined a game via a JoinRoomRequest. */
+/** Sent to all administrative clients when a player joined a game via a JoinRoomRequest.
+ * @param existing whether the joined room has existed beforehand or was newly created. */
 @XStreamAlias(value = "joinedGameRoom")
 data class RoomWasJoinedEvent(
         @XStreamAsAttribute

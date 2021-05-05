@@ -7,9 +7,9 @@ import sc.networking.clients.AbstractLobbyClientListener
 import sc.networking.clients.IControllableGame
 import sc.networking.clients.ILobbyClientListener
 import sc.networking.clients.LobbyClient
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 import sc.protocol.responses.GamePreparedResponse
-import sc.protocol.responses.ErrorMessage
+import sc.protocol.room.ErrorMessage
 import sc.shared.GameResult
 import sc.shared.WelcomeMessage
 import java.net.ConnectException

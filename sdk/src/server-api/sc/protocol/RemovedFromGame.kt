@@ -1,12 +1,11 @@
-package sc.protocol.responses
+package sc.protocol
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.protocol.ProtocolPacket
 
 /** Indicates that the receiving Player left or was kicked from the game. */
 @XStreamAlias(value = "left")
-data class LeftGameEvent(
+data class RemovedFromGame(
         @XStreamAsAttribute
         val roomId: String
 ): ProtocolPacket

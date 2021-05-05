@@ -4,7 +4,7 @@ import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.Player
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause

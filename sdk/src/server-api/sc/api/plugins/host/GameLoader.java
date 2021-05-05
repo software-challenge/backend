@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.networking.clients.GameLoaderClient;
 import sc.networking.clients.IHistoryListener;
-import sc.protocol.responses.ErrorMessage;
+import sc.protocol.room.ErrorMessage;
 import sc.shared.GameResult;
 
 import java.io.File;

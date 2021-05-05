@@ -3,8 +3,8 @@ package sc.server.gaming;
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.Player;
 import sc.networking.clients.XStreamClient;
-import sc.protocol.RoomMessage;
-import sc.protocol.RoomPacket;
+import sc.protocol.room.RoomMessage;
+import sc.protocol.room.RoomPacket;
 import sc.server.network.IClient;
 import sc.server.network.IClientRole;
 
