@@ -6,6 +6,7 @@ import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
 import sc.protocol.RemovedFromGame;
 import sc.protocol.ProtocolPacket;
+import sc.protocol.ResponsePacket;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.protocol.room.*;
@@ -15,6 +16,7 @@ import sc.shared.SlotDescriptor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * This class is used to handle all communication with a server.
@@ -30,12 +32,16 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
   private final List<IAdministrativeListener> administrativeListeners = new ArrayList<>();
 
+  private Consumer<ResponsePacket> administrativeListener = null;
+
   public LobbyClient(String host, int port) throws IOException {
     super(createTcpNetwork(host, port));
   }
 
   @Override
   protected final void onObject(ProtocolPacket message) {
+    if(message instanceof ResponsePacket && administrativeListener != null)
+      administrativeListener.accept((ResponsePacket) message);
     if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();
@@ -119,7 +125,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     }
   }
 
-
   protected void onGamePrepared(GamePreparedResponse response) {
     for (ILobbyClientListener listener : new ArrayList<>(this.listeners)) {
       listener.onGamePrepared(response);
@@ -128,6 +133,13 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   public void authenticate(String password) {
     send(new AuthenticateRequest(password));
+  }
+
+  public AdminClient authenticate(String password, Consumer<ResponsePacket> consumer) {
+    start();
+    administrativeListener = consumer;
+    send(new AuthenticateRequest(password));
+    return new AdminClient(this);
   }
 
   protected void onCustomObject(Object o) {
