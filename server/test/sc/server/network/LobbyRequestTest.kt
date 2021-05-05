@@ -7,10 +7,8 @@ import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.collections.shouldNotBeEmpty
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.beInstanceOf
+import io.kotest.matchers.string.shouldContain
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.AdminClient
 import sc.protocol.ProtocolPacket
@@ -19,13 +17,12 @@ import sc.protocol.responses.ErrorMessage
 import sc.protocol.responses.ErrorPacket
 import sc.protocol.responses.GamePreparedResponse
 import sc.protocol.responses.ObservationResponse
+import sc.server.client.MessageListener
 import sc.server.client.PlayerListener
 import sc.server.gaming.GameRoom
 import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
-import kotlin.reflect.KClass
-import kotlin.reflect.cast
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
@@ -40,15 +37,9 @@ class LobbyRequestTest: WordSpec({
     "A Lobby with connected clients" When {
         val lobby = autoClose(TestLobby())
     
-        val messages = ArrayDeque<ProtocolPacket>()
-        suspend fun <T : ProtocolPacket> awaitMessage(clue: String? = null, clazz: KClass<T>): T {
-            await(clue) { messages.shouldNotBeEmpty() }
-            val msg = messages.removeFirst()
-            msg should beInstanceOf(clazz)
-            return clazz.cast(msg)
-        }
+        val adminListener = MessageListener<ProtocolPacket>()
+        val admin = AdminClient("localhost", lobby.serverPort, PASSWORD, adminListener::addMessage)
         
-        val admin = AdminClient("localhost", lobby.serverPort, PASSWORD, messages::add)
         val players = Array(2) { lobby.connectClient() }
         await("Clients connected") { lobby.clientManager.clients.size shouldBe 3 }
         "a player joined" should {
@@ -60,7 +51,7 @@ class LobbyRequestTest: WordSpec({
         }
         "a game is prepared paused" should {
             admin.prepareGame(TestPlugin.TEST_PLUGIN_UUID, true)
-            val prepared = awaitMessage("GameRoom prepared", GamePreparedResponse::class)
+            val prepared = adminListener.waitForMessage(GamePreparedResponse::class)
             lobby.games shouldHaveSize 1
             
             val roomId = prepared.roomId
@@ -71,14 +62,14 @@ class LobbyRequestTest: WordSpec({
             }
             
             val observer = admin.observeAndControl(roomId, true)
-            awaitMessage("Game observed", ObservationResponse::class)
+            adminListener.waitForMessage(ObservationResponse::class)
             
             val reservations = prepared.reservations
             players[0].joinPreparedGame(reservations[0])
             await("First player joined") { room.clients shouldHaveSize 1 }
             "not accept a reservation twice" {
                 admin.send(JoinPreparedRoomRequest(reservations[0]))
-                awaitMessage("Receive error when reusing a reservation", ErrorPacket::class)
+                adminListener.waitForMessage(ErrorPacket::class)
                 room.clients shouldHaveSize 1
                 lobby.games shouldHaveSize 1
             }
@@ -105,7 +96,12 @@ class LobbyRequestTest: WordSpec({
                     players[1].sendMessageToRoom(roomId, TestMove(54))
                     await { game.currentState.state shouldBe 54 }
                 }
-                players[1].sendMessageToRoom(roomId, TestMove(0))
+                
+                val move = TestMove(0)
+                players[1].sendMessageToRoom(roomId, move)
+                val msg = playerListeners[1].waitForMessage(ErrorMessage::class)
+                msg.message shouldContain "not your turn"
+                msg.originalMessage shouldBe move
                 await("Terminate after wrong player sent a turn") {
                     room.status shouldBe GameRoom.GameStatus.OVER
                 }
