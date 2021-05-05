@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import sc.framework.plugins.Player;
 import sc.protocol.requests.CancelRequest;
 import sc.protocol.requests.PauseGameRequest;
-import sc.protocol.RoomMessage;
+import sc.protocol.room.RoomMessage;
 import sc.protocol.requests.StepRequest;
 
 public class ControllingClient extends ObservingClient implements IAdministrativeListener {

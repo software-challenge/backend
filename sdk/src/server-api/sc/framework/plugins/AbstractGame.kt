@@ -6,7 +6,7 @@ import sc.api.plugins.IGameState
 import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.exceptions.NotYourTurnException
 import sc.api.plugins.host.IGameListener
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 import sc.shared.*
 
 abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance {

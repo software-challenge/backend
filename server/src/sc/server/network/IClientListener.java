@@ -1,7 +1,7 @@
 package sc.server.network;
 
 import sc.api.plugins.exceptions.RescuableClientException;
-import sc.protocol.responses.ErrorMessage;
+import sc.protocol.room.ErrorMessage;
 import sc.shared.InvalidGameStateException;
 
 public interface IClientListener {

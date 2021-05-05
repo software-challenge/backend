@@ -2,7 +2,7 @@ package sc.networking.clients
 
 import sc.api.plugins.IGameState
 import sc.framework.plugins.Player
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 import sc.protocol.responses.GamePreparedResponse
 import sc.protocol.responses.ErrorPacket
 import sc.shared.GameResult

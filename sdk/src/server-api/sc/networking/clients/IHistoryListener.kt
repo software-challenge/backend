@@ -1,7 +1,7 @@
 package sc.networking.clients
 
 import sc.api.plugins.IGameState
-import sc.protocol.responses.ErrorMessage
+import sc.protocol.room.ErrorMessage
 import sc.shared.GameResult
 
 interface IHistoryListener {

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import sc.api.plugins.ITeam
 import sc.api.plugins.host.IPlayerListener
 import sc.framework.plugins.protocol.MoveRequest
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 import java.util.*
 
 private val logger = LoggerFactory.getLogger(Player::class.java)

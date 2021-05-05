@@ -1,6 +1,6 @@
 package sc.api.plugins
 
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 
 /**
  * Ein `GameState` beinhaltet alle Informationen, die den Spielstand zu

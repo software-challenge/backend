@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.networking.UnprocessedPacketException;
 import sc.protocol.ProtocolPacket;
-import sc.protocol.RoomPacket;
+import sc.protocol.room.RoomPacket;
 import sc.server.helpers.StringNetworkInterface;
 import sc.shared.InvalidGameStateException;
 

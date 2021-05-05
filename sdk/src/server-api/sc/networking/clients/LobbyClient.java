@@ -4,16 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
+import sc.protocol.RemovedFromGame;
 import sc.protocol.ProtocolPacket;
-import sc.protocol.RoomMessage;
-import sc.protocol.RoomPacket;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
+import sc.protocol.room.*;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is used to handle all communication with a server.
@@ -39,15 +40,15 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();
       RoomMessage data = packet.getData();
-      if (data instanceof MementoEvent) {
-        onNewState(roomId, ((MementoEvent) data).getState());
+      if (data instanceof MementoMessage) {
+        onNewState(roomId, ((MementoMessage) data).getState());
       } else if (data instanceof GameResult) {
         onGameOver(roomId, (GameResult) data);
-      } else if (data instanceof GamePausedEvent) {
-        onGamePaused(roomId, ((GamePausedEvent) data).getNextPlayer());
+      } else if (data instanceof GamePaused) {
+        onGamePaused(roomId, ((GamePaused) data).getNextPlayer());
       } else if (data instanceof ErrorMessage) {
         ErrorMessage error = (ErrorMessage) data;
-        logger.warn("{} (room: {})", error.getLogMessage(), roomId);
+        logger.warn("{} in room {}", error.getLogMessage(), roomId);
         for (IHistoryListener listener : this.historyListeners) {
           listener.onGameError(roomId, error);
         }
@@ -60,8 +61,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       onGameJoined(((JoinedRoomResponse) message).getRoomId());
     } else if (message instanceof RoomWasJoinedEvent) {
       onGameJoined(((RoomWasJoinedEvent) message).getRoomId());
-    } else if (message instanceof LeftGameEvent) {
-      onGameLeft(((LeftGameEvent) message).getRoomId());
+    } else if (message instanceof RemovedFromGame) {
+      onGameLeft(((RemovedFromGame) message).getRoomId());
     } else if (message instanceof ObservationResponse) {
       onGameObserved(((ObservationResponse) message).getRoomId());
     } else if (message instanceof TestModeResponse) {
@@ -99,7 +100,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   private void onGameLeft(String roomId) {
-    logger.info("Received LeftGameEvent");
+    logger.info("Received RemovedFromGame");
     for (ILobbyClientListener listener : this.listeners) {
       listener.onGameLeft(roomId);
     }

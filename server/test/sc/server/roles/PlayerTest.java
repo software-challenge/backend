@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.framework.plugins.protocol.MoveRequest;
-import sc.protocol.RoomPacket;
+import sc.protocol.room.MementoMessage;
+import sc.protocol.room.RoomPacket;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
+import sc.protocol.RemovedFromGame;
 import sc.server.network.Client;
 import sc.server.network.MockClient;
 import sc.server.network.PacketCallback;
@@ -81,14 +83,14 @@ public class PlayerTest extends AbstractRoleTest {
     shouldPropagateSecondPlayersMove(roomId, player1, player2, observer);
     makeMoveAfterRequest(roomId, player1);
     makeMoveAfterRequest(roomId, player2);
-    player1.seekMessage(LeftGameEvent.class);
-    player2.seekMessage(LeftGameEvent.class);
+    player1.seekMessage(RemovedFromGame.class);
+    player2.seekMessage(RemovedFromGame.class);
   }
 
   private void shouldInitializeCorrectly(String roomId, MockClient player1, MockClient player2, MockClient observer) {
-    MementoEvent memento1 = player1.seekRoomMessage(roomId, MementoEvent.class);
-    MementoEvent memento2 = player2.seekRoomMessage(roomId, MementoEvent.class);
-    MementoEvent mementoObserver = observer.seekRoomMessage(roomId, MementoEvent.class);
+    MementoMessage memento1 = player1.seekRoomMessage(roomId, MementoMessage.class);
+    MementoMessage memento2 = player2.seekRoomMessage(roomId, MementoMessage.class);
+    MementoMessage mementoObserver = observer.seekRoomMessage(roomId, MementoMessage.class);
 
     Assertions.assertEquals(0, ((TestGameState) memento1.getState()).getState());
     Assertions.assertEquals(0, ((TestGameState) memento1.getState()).getState());
@@ -103,22 +105,19 @@ public class PlayerTest extends AbstractRoleTest {
           throws RescuableClientException, InvalidGameStateException {
     // Do the move
     player1.seekRoomMessage(roomId, MoveRequest.class);
-    this.lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
-            new TestMove(this.firstState))));
+    this.lobby.onRequest(player1,
+        new PacketCallback(new RoomPacket(roomId, new TestMove(this.firstState))));
 
     // Check Player 1
-    MementoEvent memento1 = player1.seekRoomMessage(roomId,
-            MementoEvent.class);
+    MementoMessage memento1 = player1.seekRoomMessage(roomId, MementoMessage.class);
     Assertions.assertEquals(this.firstState, ((TestGameState) memento1.getState()).getState());
 
     // Check Player 2
-    MementoEvent memento2 = player2.seekRoomMessage(roomId,
-            MementoEvent.class);
+    MementoMessage memento2 = player2.seekRoomMessage(roomId, MementoMessage.class);
     Assertions.assertEquals(this.firstState, ((TestGameState) memento2.getState()).getState());
 
     // Check Observer
-    MementoEvent mementoObserver = observer.seekRoomMessage(roomId,
-            MementoEvent.class);
+    MementoMessage mementoObserver = observer.seekRoomMessage(roomId, MementoMessage.class);
     Assertions.assertEquals(this.firstState, ((TestGameState) mementoObserver.getState()).getState());
   }
 
@@ -138,20 +137,20 @@ public class PlayerTest extends AbstractRoleTest {
             new TestMove(this.secondState))));
 
     // Player 1
-    MementoEvent memento1 = player1.seekRoomMessage(roomId,
-            MementoEvent.class);
+    MementoMessage memento1 = player1.seekRoomMessage(roomId,
+            MementoMessage.class);
     Assertions.assertEquals(this.secondState,
             ((TestGameState) memento1.getState()).getState());
 
     // Player 2
-    MementoEvent memento2 = player2.seekRoomMessage(roomId,
-            MementoEvent.class);
+    MementoMessage memento2 = player2.seekRoomMessage(roomId,
+            MementoMessage.class);
     Assertions.assertEquals(this.secondState, ((TestGameState) memento2
             .getState()).getState());
 
     // Observer
-    MementoEvent mementoObserver = observer.seekRoomMessage(roomId,
-            MementoEvent.class);
+    MementoMessage mementoObserver = observer.seekRoomMessage(roomId,
+            MementoMessage.class);
     Assertions.assertEquals(this.secondState,
             ((TestGameState) mementoObserver.getState()).getState());
   }

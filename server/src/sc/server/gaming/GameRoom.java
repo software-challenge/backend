@@ -15,9 +15,9 @@ import sc.networking.XStreamProvider;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
 import sc.networking.clients.XStreamClient;
+import sc.protocol.RemovedFromGame;
 import sc.protocol.ProtocolPacket;
-import sc.protocol.RoomMessage;
-import sc.protocol.RoomPacket;
+import sc.protocol.room.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;
 import sc.server.network.Client;
@@ -153,7 +153,7 @@ public class GameRoom implements IGameListener {
         if (!(element instanceof IGameState))
           continue;
         IGameState state = (IGameState) element;
-        MementoEvent data = new MementoEvent(state, null);
+        MementoMessage data = new MementoMessage(state, null);
         RoomPacket roomPacket = new RoomPacket(getId(), data);
         String xmlReplay = xStream.toXML(roomPacket);
         writer.write(xmlReplay + "\n");
@@ -199,10 +199,10 @@ public class GameRoom implements IGameListener {
     }
   }
 
-  /** Send {@link GameRoom#broadcast(ProtocolPacket) broadcast} message with {@link LeftGameEvent LeftGameEvent}. */
+  /** Send {@link GameRoom#broadcast(ProtocolPacket) broadcast} message with {@link RemovedFromGame RemovedFromGame}. */
   private void kickAllClients() {
     logger.debug("Kicking clients and observers");
-    broadcast(new LeftGameEvent(getId()));
+    broadcast(new RemovedFromGame(getId()));
   }
 
   /** Send updated GameState to all players and observers. */
@@ -226,7 +226,7 @@ public class GameRoom implements IGameListener {
   /** Sends the given GameState to all Players. */
   private void sendStateToPlayers(IGameState data) {
     for (PlayerRole player : getPlayers()) {
-      RoomPacket packet = createRoomPacket(new MementoEvent(data, player.getPlayer()));
+      RoomPacket packet = createRoomPacket(new MementoMessage(data, player.getPlayer()));
       player.getClient().send(packet);
     }
   }
@@ -234,7 +234,7 @@ public class GameRoom implements IGameListener {
 
   /** Sends the given GameState to all Observers. */
   private void sendStateToObservers(IGameState data) {
-    RoomPacket packet = createRoomPacket(new MementoEvent(data, null));
+    RoomPacket packet = createRoomPacket(new MementoMessage(data, null));
 
     for (ObserverRole observer : this.observers) {
       logger.debug("sending state to observer {}", observer.getClient());
@@ -558,7 +558,7 @@ public class GameRoom implements IGameListener {
    */
   @Override
   public void onPaused(Player nextPlayer) {
-    observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(nextPlayer)));
+    observerBroadcast(new RoomPacket(getId(), new GamePaused(nextPlayer)));
   }
 
   /** Return true if GameStatus is OVER. */

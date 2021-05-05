@@ -3,8 +3,8 @@ package sc.networking.clients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.protocol.RoomMessage;
-import sc.protocol.responses.ErrorMessage;
+import sc.protocol.room.RoomMessage;
+import sc.protocol.room.ErrorMessage;
 import sc.shared.GameResult;
 
 import java.util.ArrayList;
@@ -212,7 +212,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
   @Override
   public void onGameError(String roomId, ErrorMessage error) {
     if(logger.isDebugEnabled())
-      logger.debug("{} (room: {})", error.getLogMessage(), roomId);
+      logger.debug("{} in room {}", error.getLogMessage(), roomId);
     if (isAffected(roomId)) {
       addObservation(error);
     }

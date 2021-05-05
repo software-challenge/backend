@@ -3,7 +3,7 @@ package sc.shared
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.framework.plugins.Player
-import sc.protocol.RoomMessage
+import sc.protocol.room.RoomMessage
 
 /**
  * Das Endergebnis eines Spiels.
