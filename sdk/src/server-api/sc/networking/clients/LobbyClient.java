@@ -14,7 +14,9 @@ import sc.shared.GameResult;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -30,6 +32,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private final List<ILobbyClientListener> listeners = new ArrayList<>();
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
 
+  private final Map<String, Consumer<RoomMessage>> roomObservers = new HashMap<>();
   private Consumer<ResponsePacket> administrativeListener = null;
 
   public LobbyClient(String host, int port) throws IOException {
@@ -182,14 +185,12 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   public ObservingClient observe(String roomId, boolean isPaused) {
     ObservingClient observer = new ObservingClient(roomId, isPaused);
     addListener(observer);
-    requestObservation(roomId);
+    send(new ObservationRequest(roomId));
     return observer;
   }
 
-  private void requestObservation(String roomId) {
-    start();
-    logger.debug("Sending observation request for roomId: {}", roomId);
-    send(new ObservationRequest(roomId));
+  public void observeRoom(String roomId, Consumer<RoomMessage> observer) {
+    roomObservers.put(roomId, observer);
   }
 
   @Override

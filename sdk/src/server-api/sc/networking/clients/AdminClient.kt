@@ -3,9 +3,10 @@ package sc.networking.clients
 import sc.protocol.requests.FreeReservationRequest
 import sc.protocol.requests.ObservationRequest
 import sc.protocol.requests.PrepareGameRequest
+import sc.protocol.room.RoomMessage
 import sc.shared.SlotDescriptor
 
-class AdminClient(private val client: XStreamClient) {
+class AdminClient(private val client: LobbyClient) {
     
     fun prepareGame(gameType: String) {
         client.send(PrepareGameRequest(gameType))
@@ -20,33 +21,17 @@ class AdminClient(private val client: XStreamClient) {
         )
     }
     
-    /** Takes control of the game in the given room and pauses it.  */
-    fun observeAndControl(roomId: String): IControllableGame {
-        val controller = observeAndControl(roomId, true)
-        controller.pause()
-        return controller
-    }
-    
     /** Takes control of the game in the given room.
      * @param isPaused whether the game to observe is already paused.
      */
     fun observeAndControl(roomId: String, isPaused: Boolean): IControllableGame {
         val controller = ControllingClient(client, roomId, isPaused)
-        requestObservation(roomId)
+        observe(roomId) {}
         return controller
     }
     
-    fun observe(roomId: String): ObservingClient {
-        return observe(roomId, false)
-    }
-    
-    fun observe(roomId: String, isPaused: Boolean): ObservingClient {
-        val observer = ObservingClient(roomId, isPaused)
-        requestObservation(roomId)
-        return observer
-    }
-    
-    private fun requestObservation(roomId: String) {
+    fun observe(roomId: String, listener: (RoomMessage) -> Unit) {
+        client.observeRoom(roomId, listener)
         client.send(ObservationRequest(roomId))
     }
     
