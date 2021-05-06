@@ -96,7 +96,8 @@ tasks {
         doLast {
             // required by gradle to distinguish the test build from
             execDir.resolve("settings.gradle").createNewFile()
-            val command = arrayListOf(if(OperatingSystem.current() == OperatingSystem.WINDOWS) "./gradlew.bat" else "./gradlew",
+            val command = arrayListOf(
+                    "./gradlew${if(OperatingSystem.current().isWindows) ".bat" else ""}",
                     "shadowJar", "--quiet", "--offline")
             val process = ProcessBuilder(command).directory(execDir)
                     .redirectOutput(execDir.resolve("player-shadowJar-build.log"))

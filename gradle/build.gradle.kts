@@ -11,7 +11,7 @@ plugins {
     id("scripts-task")
     
     id("com.github.ben-manes.versions") version "0.38.0"
-    id("se.patrikerdes.use-latest-versions") version "0.2.15"
+    id("se.patrikerdes.use-latest-versions") version "0.2.16"
 }
 
 val gameName by extra { property("socha.gameName") as String }
@@ -251,13 +251,17 @@ subprojects {
                 freeCompilerArgs = listOf("-Xjvm-default=all")
             }
         }
+        
+        compileTestKotlin.get().kotlinOptions {
+            freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn")
+        }
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
-        maven("http://dist.wso2.org/maven2")
+        mavenCentral()
+        maven("https://dist.wso2.org/maven2")
     }
     
     if (this.name in documentedProjects) {

@@ -27,7 +27,7 @@ configurations.archives.get().artifacts.removeIf { it.name == "testConfig" }
 
 dependencies {
     api(kotlin("stdlib"))
-    api("com.thoughtworks.xstream", "xstream", "1.4.15")
+    api("com.thoughtworks.xstream", "xstream", "1.4.16")
     api("jargs", "jargs", "1.0")
     api("ch.qos.logback", "logback-classic", "1.2.3")
     
