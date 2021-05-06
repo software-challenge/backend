@@ -5,10 +5,10 @@ import sc.gradle.ScriptsTask
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
-    maven
     kotlin("jvm") version "1.4.30"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
+    `maven-publish`
     
     id("com.github.ben-manes.versions") version "0.38.0"
     id("se.patrikerdes.use-latest-versions") version "0.2.15"
@@ -261,8 +261,21 @@ allprojects {
     }
     
     if (this.name in documentedProjects) {
-        apply(plugin = "maven")
+        apply(plugin = "maven-publish")
         apply(plugin = "org.jetbrains.dokka")
+        publishing {
+            publications {
+                create<MavenPublication>(name) {
+                    println(components.joinToString())
+                    from(components["java"])
+                    version = rootProject.version.toString()
+                }
+            }
+        }
+        java {
+            withSourcesJar()
+            withJavadocJar()
+        }
         tasks {
             val doc by creating(DokkaTask::class) {
                 group = "documentation"
@@ -277,17 +290,14 @@ allprojects {
                 archiveClassifier.set("javadoc")
                 from(doc.outputDirectory)
             }
-            val sourcesJar by creating(Jar::class) {
-                group = "build"
-                archiveBaseName.set(jar.get().archiveBaseName)
-                archiveClassifier.set("sources")
-                from(sourceSets.main.get().allSource)
-            }
-            install {
-                dependsOn(docJar, sourcesJar)
-            }
+            //val sourcesJar by creating(Jar::class) {
+            //    group = "build"
+            //    archiveBaseName.set(jar.get().archiveBaseName)
+            //    archiveClassifier.set("sources")
+            //    from(sourceSets.main.get().allSource)
+            //}
             artifacts {
-                archives(sourcesJar.archiveFile) { classifier = "sources" }
+                //archives(sourcesJar.archiveFile) { classifier = "sources" }
                 archives(docJar.archiveFile) { classifier = "javadoc" }
             }
         }
