@@ -7,11 +7,11 @@ import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
-    maven
     kotlin("jvm") version "1.6.21"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     id("idea")
+    `maven-publish`
     
     id("com.github.ben-manes.versions") version "0.42.0" // only upgrade with Gradle 7: https://github.com/ben-manes/gradle-versions-plugin/issues/778
     id("se.patrikerdes.use-latest-versions") version "0.2.18"
@@ -285,8 +285,21 @@ allprojects {
     }
     
     if (this.name in documentedProjects) {
-        apply(plugin = "maven")
+        apply(plugin = "maven-publish")
         apply(plugin = "org.jetbrains.dokka")
+        publishing {
+            publications {
+                create<MavenPublication>(name) {
+                    println(components.joinToString())
+                    from(components["java"])
+                    version = rootProject.version.toString()
+                }
+            }
+        }
+        java {
+            withSourcesJar()
+            withJavadocJar()
+        }
         tasks {
             val doc by creating(DokkaTask::class) {
                 group = "documentation"
@@ -300,17 +313,14 @@ allprojects {
                 archiveBaseName.set(jar.get().archiveBaseName)
                 archiveClassifier.set("javadoc")
             }
-            val sourcesJar by creating(Jar::class) {
-                group = "build"
-                archiveBaseName.set(jar.get().archiveBaseName)
-                archiveClassifier.set("sources")
-                from(sourceSets.main.get().allSource)
-            }
-            install {
-                dependsOn(docJar, sourcesJar)
-            }
+            //val sourcesJar by creating(Jar::class) {
+            //    group = "build"
+            //    archiveBaseName.set(jar.get().archiveBaseName)
+            //    archiveClassifier.set("sources")
+            //    from(sourceSets.main.get().allSource)
+            //}
             artifacts {
-                archives(sourcesJar.archiveFile) { classifier = "sources" }
+                //archives(sourcesJar.archiveFile) { classifier = "sources" }
                 archives(docJar.archiveFile) { classifier = "javadoc" }
             }
         }
