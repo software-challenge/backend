@@ -189,6 +189,9 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     return observer;
   }
 
+  /** Sets observer to observe messages in the given room.
+   * Whether administrative messages are received depends on authentication,
+   * which has to be done separately. */
   public void observeRoom(String roomId, Consumer<RoomMessage> observer) {
     roomObservers.put(roomId, observer);
   }

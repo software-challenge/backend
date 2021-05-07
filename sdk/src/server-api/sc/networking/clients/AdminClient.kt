@@ -12,29 +12,26 @@ class AdminClient(private val client: LobbyClient) {
         client.send(PrepareGameRequest(gameType))
     }
     
-    fun prepareGame(gameType: String, startPaused: Boolean) {
+    fun prepareGame(gameType: String, pause: Boolean) {
         client.send(PrepareGameRequest(
                 gameType,
                 SlotDescriptor("player1", false),
                 SlotDescriptor("player2", false),
-                startPaused)
+                pause)
         )
     }
     
-    /** Takes control of the game in the given room.
-     * @param isPaused whether the game to observe is already paused.
-     */
-    fun observeAndControl(roomId: String, isPaused: Boolean): IControllableGame {
-        val controller = ControllingClient(client, roomId, isPaused)
-        observe(roomId) {}
-        return controller
-    }
+    /** Returns an [IGameController] to control the given room. */
+    fun control(roomId: String): IGameController =
+            GameController(roomId, client)
     
+    /** Registers [listener] onto the given room. */
     fun observe(roomId: String, listener: (RoomMessage) -> Unit) {
         client.observeRoom(roomId, listener)
         client.send(ObservationRequest(roomId))
     }
     
+    /** Opens up a previously reserved slot. */
     fun freeReservation(reservation: String) {
         client.send(FreeReservationRequest(reservation))
     }
