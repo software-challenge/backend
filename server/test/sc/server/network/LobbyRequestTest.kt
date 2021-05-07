@@ -62,9 +62,6 @@ class LobbyRequestTest: WordSpec({
                 room.isPauseRequested shouldBe true
             }
             
-            val observer = admin.observeAndControl(roomId, true)
-            adminListener.waitForMessage(ObservationResponse::class)
-            
             val reservations = prepared.reservations
             players[0].joinPreparedGame(reservations[0])
             await("First player joined") { room.clients shouldHaveSize 1 }
@@ -85,7 +82,7 @@ class LobbyRequestTest: WordSpec({
                 await("Terminates") { room.status shouldBe GameRoom.GameStatus.OVER }
             }
             "play game on unpause" {
-                observer.unpause()
+                admin.control(roomId).unpause()
                 await { room.isPauseRequested shouldBe false }
                 val game = room.game as TestGame
                 game.isPaused shouldBe false
