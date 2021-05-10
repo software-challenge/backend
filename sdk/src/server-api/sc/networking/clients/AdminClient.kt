@@ -4,21 +4,11 @@ import sc.protocol.requests.FreeReservationRequest
 import sc.protocol.requests.ObservationRequest
 import sc.protocol.requests.PrepareGameRequest
 import sc.protocol.room.RoomMessage
-import sc.shared.SlotDescriptor
 
 class AdminClient(private val client: LobbyClient) {
     
-    fun prepareGame(gameType: String) {
-        client.send(PrepareGameRequest(gameType))
-    }
-    
-    fun prepareGame(gameType: String, pause: Boolean) {
-        client.send(PrepareGameRequest(
-                gameType,
-                SlotDescriptor("player1", false),
-                SlotDescriptor("player2", false),
-                pause)
-        )
+    fun prepareGame(request: PrepareGameRequest) {
+        client.send(request)
     }
     
     /** Returns an [IGameController] to control the given room. */
