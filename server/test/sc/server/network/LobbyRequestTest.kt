@@ -13,6 +13,7 @@ import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.LobbyClient
 import sc.protocol.ResponsePacket
 import sc.protocol.requests.JoinPreparedRoomRequest
+import sc.protocol.requests.PrepareGameRequest
 import sc.protocol.responses.ErrorPacket
 import sc.protocol.responses.GamePreparedResponse
 import sc.protocol.responses.ObservationResponse
@@ -51,7 +52,7 @@ class LobbyRequestTest: WordSpec({
             }
         }
         "a game is prepared paused" should {
-            admin.prepareGame(TestPlugin.TEST_PLUGIN_UUID, true)
+            admin.prepareGame(PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, pause = true))
             val prepared = adminListener.waitForMessage(GamePreparedResponse::class)
             lobby.games shouldHaveSize 1
             
