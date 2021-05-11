@@ -1,6 +1,7 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
@@ -22,7 +23,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     override fun onPlayerJoined(): Player {
         if (availableTeams.isEmpty())
-            throw IllegalStateException("Too many players joined the game!")
+            throw TooManyPlayersException()
         val player = currentState.getPlayer(availableTeams.removeAt(0))
         
         players.add(player)

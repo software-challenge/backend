@@ -1,7 +1,6 @@
 package sc.api.plugins
 
 import sc.api.plugins.exceptions.GameLogicException
-import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.Player
 import sc.protocol.room.RoomMessage
@@ -11,12 +10,7 @@ import sc.shared.ScoreCause
 import kotlin.jvm.Throws
 
 interface IGameInstance {
-    /**
-     * @return the player that joined
-     *
-     * @throws TooManyPlayersException when game is already full
-     */
-    @Throws(TooManyPlayersException::class)
+    /** @return the player that joined. */
     fun onPlayerJoined(): Player
     fun onPlayerLeft(player: Player, cause: ScoreCause? = null)
 
