@@ -128,7 +128,7 @@ public class GameRoomManager {
           throws RescuableClientException {
     GameRoom room = createGame(gameType);
     if (room.join(client)) {
-      return new RoomWasJoinedEvent(room.getId(), false);
+      return roomJoined(room);
     }
     return null;
   }
@@ -144,11 +144,14 @@ public class GameRoomManager {
           throws RescuableClientException {
     for (GameRoom gameRoom : getGames()) {
       if (gameRoom.join(client)) {
-        return new RoomWasJoinedEvent(gameRoom.getId(), true);
+        return roomJoined(gameRoom);
       }
     }
-
     return createAndJoinGame(client, gameType);
+  }
+
+  private RoomWasJoinedEvent roomJoined(GameRoom room) {
+    return new RoomWasJoinedEvent(room.getId(), room.getPlayers().size());
   }
 
   /** Create an unmodifiable Collection of the {@link GameRoom GameRooms}. */

@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A wrapper for an actual <code>GameInstance</code>. GameInstances are provided
@@ -48,7 +49,7 @@ public class GameRoom implements IGameListener {
   private boolean pauseRequested = false;
   private ObservingClient replayObserver;
 
-  public final IGameInstance game;
+  public final IGameInstance game; // TODO make inaccessible
   public final List<ObserverRole> observers = new ArrayList<>();
 
   public enum GameStatus {
@@ -461,23 +462,19 @@ public class GameRoom implements IGameListener {
   }
 
   /** Get {@link PlayerRole Players} that occupy a slot. */
-  private Collection<PlayerRole> getPlayers() {
-    ArrayList<PlayerRole> clients = new ArrayList<>();
-    for (PlayerSlot slot : this.playerSlots) {
-      if (!slot.isEmpty()) {
-        clients.add(slot.getRole());
-      }
-    }
-    return clients;
+  public Collection<PlayerRole> getPlayers() {
+    return playerSlots.stream()
+        .filter(p -> !p.isEmpty())
+        .map(PlayerSlot::getRole)
+        .collect(Collectors.toList());
   }
 
   /** Get Server {@link IClient Clients} of all {@link PlayerRole Players}. */
   public Collection<IClient> getClients() {
-    ArrayList<IClient> clients = new ArrayList<>();
-    for (PlayerRole slot : getPlayers()) {
-      clients.add(slot.getClient());
-    }
-    return clients;
+    return playerSlots.stream()
+        .filter(p -> !p.isEmpty())
+        .map(PlayerSlot::getClient)
+        .collect(Collectors.toList());
   }
 
   /** Add a Server {@link Client Client} in the role of an Observer. */
