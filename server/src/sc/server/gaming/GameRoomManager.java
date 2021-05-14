@@ -87,7 +87,7 @@ public class GameRoomManager {
       // TODO implement tests
       logger.info("Loading game from file '{}' at turn {}", gameFile, turn);
       try {
-        game = plugin.createGameFromState((IGameState) new GameLoader(IGameState.class).loadGame(gameFile));
+        game = plugin.createGameFromState(new GameLoader<IGameState>(IGameState.class).loadGame(gameFile));
       } catch(IOException e) {
         logger.error("Failed to load game from file", e);
         game = plugin.createGame();

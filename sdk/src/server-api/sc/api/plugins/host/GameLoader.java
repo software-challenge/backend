@@ -16,23 +16,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-public class GameLoader implements IHistoryListener {
+public class GameLoader<T> implements IHistoryListener {
   private static final Logger logger = LoggerFactory.getLogger(GameLoader.class);
   private volatile boolean finished;
-  private Object obj = null;
-  private List<Class<?>> clazzes;
+  private T obj = null;
+  private List<Class<T>> clazzes;
   private GameLoaderClient client;
 
-  public GameLoader(List<Class<?>> clazzes) {
+  public GameLoader(List<Class<T>> clazzes) {
     this.finished = false;
     this.clazzes = clazzes;
   }
 
-  public GameLoader(Class<?>... clazz) {
+  public GameLoader(Class<T>... clazz) {
     this(Arrays.asList(clazz));
   }
 
-  public Object loadGame(String filename) {
+  public T loadGame(String filename) {
     try {
       return loadGame(new File(filename));
     } catch (IOException e) {
@@ -41,11 +41,11 @@ public class GameLoader implements IHistoryListener {
     }
   }
 
-  public Object loadGame(File file) throws IOException {
+  public T loadGame(File file) throws IOException {
     return loadGame(new FileInputStream(file), file.getName().endsWith(".gz"));
   }
 
-  public Object loadGame(FileInputStream stream, boolean gzip) throws IOException {
+  public T loadGame(FileInputStream stream, boolean gzip) throws IOException {
     if (gzip) {
       return loadGame(new GZIPInputStream(stream));
     } else {
@@ -53,7 +53,7 @@ public class GameLoader implements IHistoryListener {
     }
   }
 
-  public Object loadGame(InputStream file) throws IOException {
+  public T loadGame(InputStream file) throws IOException {
     client = new GameLoaderClient(file);
     client.addListener(this);
     client.start();
@@ -80,7 +80,7 @@ public class GameLoader implements IHistoryListener {
   public void onNewState(String roomId, IGameState state) {
     logger.debug("Received new state");
     if (!this.finished) {
-      for (Class<?> clazz : this.clazzes) {
+      for (Class<T> clazz : this.clazzes) {
         if (clazz.isInstance(state)) {
           logger.debug("Received game info of type {}", clazz.getName());
           this.obj = clazz.cast(state);
