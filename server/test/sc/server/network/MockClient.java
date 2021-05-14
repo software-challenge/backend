@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.networking.UnprocessedPacketException;
-import sc.protocol.responses.ProtocolMessage;
-import sc.protocol.responses.RoomPacket;
+import sc.protocol.ProtocolPacket;
+import sc.protocol.room.RoomPacket;
 import sc.server.helpers.StringNetworkInterface;
 import sc.shared.InvalidGameStateException;
 
@@ -29,7 +29,7 @@ public class MockClient extends Client {
   }
 
   @Override
-  public synchronized void send(ProtocolMessage packet) {
+  public synchronized void send(ProtocolPacket packet) {
     super.send(packet);
 
     Object parsedPacket = this.xStream.fromXML(this.xStream.toXML(packet));
@@ -83,7 +83,7 @@ public class MockClient extends Client {
   }
 
   @Override
-  protected void onObject(@NotNull ProtocolMessage message) throws UnprocessedPacketException, InvalidGameStateException {
+  protected void onObject(@NotNull ProtocolPacket message) throws UnprocessedPacketException, InvalidGameStateException {
     super.onObject(message);
     this.objects.add(message);
   }

@@ -1,6 +1,7 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
@@ -8,7 +9,7 @@ import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.MoveMistake
 import sc.plugin2021.util.WinReason
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.room.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
@@ -22,7 +23,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     override fun onPlayerJoined(): Player {
         if (availableTeams.isEmpty())
-            throw IllegalStateException("Too many players joined the game!")
+            throw TooManyPlayersException()
         val player = currentState.getPlayer(availableTeams.removeAt(0))
         
         players.add(player)
@@ -75,18 +76,6 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         }
     }
     
-    override fun loadGameInfo(gameInfo: Any) {
-        TODO("Not yet implemented")
-    }
-    
-    override fun loadFromFile(file: String) {
-        TODO("Not yet implemented")
-    }
-    
-    override fun loadFromFile(file: String, turn: Int) {
-        TODO("Not yet implemented")
-    }
-    
     override fun getScoreFor(player: Player): PlayerScore {
         val team = player.color as Team
         logger.debug("Get score for player $team (violated: ${if (player.hasViolated()) "yes" else "no"})")
@@ -137,7 +126,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
     @Throws(InvalidMoveException::class)
-    override fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage) {
+    override fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage) {
         if (data !is Move)
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
         

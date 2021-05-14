@@ -2,18 +2,14 @@ package sc.server
 
 import org.slf4j.LoggerFactory
 import sc.api.plugins.exceptions.RescuableClientException
+import sc.protocol.room.RoomPacket
 import sc.protocol.requests.*
-import sc.protocol.responses.PlayerScoreResponse
-import sc.protocol.responses.ProtocolErrorMessage
-import sc.protocol.responses.RoomPacket
-import sc.protocol.responses.TestModeResponse
+import sc.protocol.responses.*
+import sc.protocol.room.ErrorMessage
 import sc.server.gaming.GameRoomManager
 import sc.server.gaming.PlayerRole
 import sc.server.gaming.ReservationManager
-import sc.server.network.Client
-import sc.server.network.ClientManager
-import sc.server.network.IClientListener
-import sc.server.network.PacketCallback
+import sc.server.network.*
 import sc.shared.InvalidGameStateException
 import sc.shared.Score
 import java.io.Closeable
@@ -52,32 +48,32 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
     /** Handle requests or moves of clients. */
     @Throws(RescuableClientException::class, InvalidGameStateException::class)
     override fun onRequest(source: Client, callback: PacketCallback) {
-        val packet = callback.packet
-        if (packet is ILobbyRequest) {
-            when (packet) {
-                is JoinPreparedRoomRequest ->
-                    try {
-                        ReservationManager.redeemReservationCode(source, packet.reservationCode)
-                    } catch (e: RescuableClientException) {
-                        source.send(ProtocolErrorMessage(packet, e.message))
-                    }
-                is JoinRoomRequest -> {
-                    val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
-                    // null is returned if join was unsuccessful
-                    if (gameRoomMessage != null) {
-                        clientManager.clients
-                                .filter { it.isAdministrator }
-                                .forEach { it.send(gameRoomMessage) }
-                    }
+        when (val packet = callback.packet) {
+            is RoomPacket -> {
+                // i.e. new move
+                val room = this.findRoom(packet.roomId)
+                room.onEvent(source, packet.data)
+            }
+            is JoinPreparedRoomRequest ->
+                try {
+                    ReservationManager.redeemReservationCode(source, packet.reservationCode)
+                } catch (e: RescuableClientException) {
+                    source.send(ErrorPacket(packet, e.message))
                 }
-                is RoomPacket -> {
-                    // i.e. new move
-                    val room = this.findRoom(packet.roomId)
-                    room.onEvent(source, packet.data)
+            is JoinRoomRequest -> {
+                val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
+                // null is returned if join was unsuccessful
+                if (gameRoomMessage != null) {
+                    clientManager.clients
+                            .filter { it.isAdministrator }
+                            .forEach { it.send(gameRoomMessage) }
                 }
-                is AuthenticateRequest -> source.authenticate(packet.password)
-                
-                is AdminLobbyRequest -> if (source.isAdministrator) when (packet) {
+            }
+            is AuthenticateRequest -> source.authenticate(packet.password)
+            is AdminLobbyRequest -> {
+                if (!source.isAdministrator)
+                    throw UnauthenticatedException(packet)
+                when (packet) {
                     is PrepareGameRequest -> {
                         source.send(this.prepareGame(packet))
                     }
@@ -127,10 +123,10 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                         source.send(TestModeResponse(testMode))
                     }
                 }
-                else -> throw RescuableClientException("Unhandled Packet of type: " + packet.javaClass)
             }
-            callback.setProcessed()
+            else -> throw RescuableClientException("Unhandled Packet of type: " + packet.javaClass)
         }
+        callback.setProcessed()
     }
     
     private fun getScoreOfPlayer(displayName: String): Score? {
@@ -146,7 +142,7 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
         clientManager.close()
     }
     
-    override fun onError(source: Client, errorPacket: ProtocolErrorMessage) {
+    override fun onError(source: Client, errorPacket: ErrorMessage) {
         for (role in source.roles) {
             if (role.javaClass == PlayerRole::class.java) {
                 (role as PlayerRole).playerSlot.room.onClientError(errorPacket)

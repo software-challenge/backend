@@ -6,7 +6,7 @@ import sc.api.plugins.IGameState
 import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.exceptions.NotYourTurnException
 import sc.api.plugins.host.IGameListener
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.room.RoomMessage
 import sc.shared.*
 
 abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance {
@@ -41,7 +41,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
      * @throws InvalidMoveException when the given Move is not possible
      */
     @Throws(GameLogicException::class, InvalidMoveException::class)
-    override fun onAction(fromPlayer: Player, data: ProtocolMessage) {
+    override fun onAction(fromPlayer: Player, data: RoomMessage) {
         if (fromPlayer != activePlayer)
             throw NotYourTurnException(activePlayer, fromPlayer, data)
         moveRequestTimeout?.let { timer ->
@@ -59,7 +59,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
 
     /** Called by [onAction] to execute a move of a Player. */
     @Throws(InvalidMoveException::class)
-    abstract fun onRoundBasedAction(fromPlayer: Player, data: ProtocolMessage)
+    abstract fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage)
 
     /**
      * Returns a WinCondition if the Game is over.

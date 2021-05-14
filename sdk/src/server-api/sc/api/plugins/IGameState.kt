@@ -1,6 +1,6 @@
 package sc.api.plugins
 
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.room.RoomMessage
 
 /**
  * Ein `GameState` beinhaltet alle Informationen, die den Spielstand zu
@@ -25,7 +25,7 @@ import sc.protocol.responses.ProtocolMessage
  *
  * @author Niklas, Sören, Janek
  */
-interface IGameState : ProtocolMessage, Cloneable {
+interface IGameState : RoomMessage, Cloneable {
     /** Aktuelle Zugzahl  */
     val turn: Int
 

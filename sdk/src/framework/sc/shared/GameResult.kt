@@ -3,7 +3,7 @@ package sc.shared
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.framework.plugins.Player
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.room.RoomMessage
 
 /**
  * Das Endergebnis eines Spiels.
@@ -17,7 +17,7 @@ data class GameResult(
         val scores: List<PlayerScore>,
         @XStreamImplicit(itemFieldName = "winner")
         val winners: List<Player>?
-): ProtocolMessage {
+): RoomMessage {
     
     val isRegular: Boolean
         get() = scores.all { it.cause == ScoreCause.REGULAR }

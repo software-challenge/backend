@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import sc.framework.plugins.Player;
 import sc.protocol.requests.CancelRequest;
 import sc.protocol.requests.PauseGameRequest;
+import sc.protocol.room.RoomMessage;
 import sc.protocol.requests.StepRequest;
-import sc.protocol.responses.ProtocolMessage;
 
 public class ControllingClient extends ObservingClient implements IAdministrativeListener {
   private static final Logger logger = LoggerFactory.getLogger(ControllingClient.class);
@@ -21,7 +21,7 @@ public class ControllingClient extends ObservingClient implements IAdministrativ
   }
 
   @Override
-  protected void addObservation(ProtocolMessage observation) {
+  protected void addObservation(RoomMessage observation) {
     super.addObservation(observation);
 
     if (this.allowOneStep) {

@@ -1,4 +1,4 @@
-package sc.protocol.responses
+package sc.protocol.room
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamOmitField
@@ -7,9 +7,9 @@ import sc.framework.plugins.IPerspectiveProvider
 
 /** Sent to update the current state and potentially also a new perspective. */
 @XStreamAlias("memento")
-data class MementoEvent(
+data class MementoMessage(
         val state: IGameState,
         @XStreamOmitField private val perspective: Any?
-): ProtocolMessage, IPerspectiveProvider {
+): RoomMessage, IPerspectiveProvider {
     override fun getPerspective() = perspective
 }

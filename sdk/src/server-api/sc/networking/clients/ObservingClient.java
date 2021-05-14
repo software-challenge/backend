@@ -3,8 +3,8 @@ package sc.networking.clients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.protocol.responses.ProtocolErrorMessage;
-import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.room.RoomMessage;
+import sc.protocol.room.ErrorMessage;
 import sc.shared.GameResult;
 
 import java.util.ArrayList;
@@ -27,11 +27,11 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
   protected boolean paused;
   private boolean gameOver = false;
 
-  private final List<ProtocolMessage> history = new ArrayList<>();
+  private final List<RoomMessage> history = new ArrayList<>();
 
   private GameResult result = null;
 
-  protected void addObservation(ProtocolMessage observation) {
+  protected void addObservation(RoomMessage observation) {
     boolean firstObservation = this.history.isEmpty();
 
     this.history.add(observation);
@@ -113,7 +113,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
     }
 
     int pos = this.position;
-    while (this.history.get(pos) instanceof ProtocolErrorMessage) {
+    while (this.history.get(pos) instanceof ErrorMessage) {
       pos--;
     }
     return this.history.get(pos);
@@ -126,7 +126,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
     }
 
     Object state = this.history.get(this.position);
-    return (state instanceof ProtocolErrorMessage ? state : null);
+    return (state instanceof ErrorMessage ? state : null);
   }
 
   @Override
@@ -139,7 +139,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
     return this.getPosition() >= this.history.size() - 1;
   }
 
-  public List<ProtocolMessage> getHistory() {
+  public List<RoomMessage> getHistory() {
     return Collections.unmodifiableList(this.history);
   }
 
@@ -210,9 +210,9 @@ public class ObservingClient implements IControllableGame, IHistoryListener {
   }
 
   @Override
-  public void onGameError(String roomId, ProtocolErrorMessage error) {
+  public void onGameError(String roomId, ErrorMessage error) {
     if(logger.isDebugEnabled())
-      logger.debug("{} (room: {})", error.getLogMessage(), roomId);
+      logger.debug("{} in room {}", error.getLogMessage(), roomId);
     if (isAffected(roomId)) {
       addObservation(error);
     }

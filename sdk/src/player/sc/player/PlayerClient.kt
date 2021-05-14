@@ -5,8 +5,8 @@ import sc.api.plugins.*
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.AbstractLobbyClientListener
 import sc.networking.clients.LobbyClient
-import sc.protocol.responses.ProtocolErrorMessage
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.room.ErrorMessage
+import sc.protocol.room.RoomMessage
 import sc.shared.GameResult
 import java.net.ConnectException
 import kotlin.system.exitProcess
@@ -42,22 +42,20 @@ class PlayerClient(
     private lateinit var roomId: String
     
     /** Called for any new message sent to the game room, e.g., move requests. */
-    override fun onRoomMessage(roomId: String, data: ProtocolMessage) {
+    override fun onRoomMessage(roomId: String, data: RoomMessage) {
         this.roomId = roomId
         when (data) {
             is MoveRequest -> sendMove(handler.calculateMove())
+            is ErrorMessage -> {
+                logger.debug("onError: Client $this received error ${data.message} in $roomId")
+                this.error = data.message
+            }
         }
     }
     
     /** Sends the selected move to the server. */
     fun sendMove(move: IMove) =
             client.sendMessageToRoom(roomId, move)
-    
-    /** Called when an erroneous message is sent to the room. */
-    override fun onError(roomId: String?, error: ProtocolErrorMessage) {
-        logger.debug("onError: Client $this received error ${error.message} in $roomId")
-        this.error = error.message
-    }
     
     /**
      * Called when game state has been received.

@@ -1,15 +1,15 @@
-package sc.protocol.responses
+package sc.protocol.room
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 
 /** Response to an erroneous message, including an error [message]. */
 @XStreamAlias("error")
-data class ProtocolErrorMessage(
-        val originalRequest: ProtocolMessage?,
+data class ErrorMessage(
+        val originalMessage: RoomMessage,
         @XStreamAsAttribute
         val message: String,
-): ProtocolMessage {
+): RoomMessage {
     val logMessage
-        get() = (originalRequest?.let { "$it caused an error:" } ?: "An error occurred:") + message
+        get() = "$originalMessage caused an error: $message"
 }

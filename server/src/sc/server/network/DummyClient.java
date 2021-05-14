@@ -1,6 +1,6 @@
 package sc.server.network;
 
-import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.ProtocolPacket;
 
 /** A fake client to fill empty player slots. */
 public class DummyClient implements IClient {
@@ -10,7 +10,7 @@ public class DummyClient implements IClient {
   }
 
   @Override
-  public void send(ProtocolMessage toSend) {
+  public void send(ProtocolPacket toSend) {
     // ignore
   }
 

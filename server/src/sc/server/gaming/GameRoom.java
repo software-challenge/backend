@@ -15,6 +15,9 @@ import sc.networking.XStreamProvider;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
 import sc.networking.clients.XStreamClient;
+import sc.protocol.RemovedFromGame;
+import sc.protocol.ProtocolPacket;
+import sc.protocol.room.*;
 import sc.protocol.responses.*;
 import sc.server.Configuration;
 import sc.server.network.Client;
@@ -27,6 +30,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A wrapper for an actual <code>GameInstance</code>. GameInstances are provided
@@ -45,7 +49,7 @@ public class GameRoom implements IGameListener {
   private boolean pauseRequested = false;
   private ObservingClient replayObserver;
 
-  public final IGameInstance game;
+  public final IGameInstance game; // TODO make inaccessible
   public final List<ObserverRole> observers = new ArrayList<>();
 
   public enum GameStatus {
@@ -143,14 +147,14 @@ public class GameRoom implements IGameListener {
       f.getParentFile().mkdirs();
       f.createNewFile();
 
-      List<ProtocolMessage> replayHistory = replayObserver.getHistory();
+      List<RoomMessage> replayHistory = replayObserver.getHistory();
       BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
       writer.write("<protocol>\n");
-      for (ProtocolMessage element : replayHistory) {
+      for (RoomMessage element : replayHistory) {
         if (!(element instanceof IGameState))
           continue;
         IGameState state = (IGameState) element;
-        MementoEvent data = new MementoEvent(state, null);
+        MementoMessage data = new MementoMessage(state, null);
         RoomPacket roomPacket = new RoomPacket(getId(), data);
         String xmlReplay = xStream.toXML(roomPacket);
         writer.write(xmlReplay + "\n");
@@ -168,8 +172,8 @@ public class GameRoom implements IGameListener {
   }
 
   /** Send the given message to all Players and Observers in this room. */
-  private void broadcast(ProtocolMessage message) {
-    broadcast(message, true);
+  private void broadcast(RoomMessage message) {
+    broadcast(createRoomPacket(message));
   }
 
   /**
@@ -177,36 +181,29 @@ public class GameRoom implements IGameListener {
    *
    * @param roomSpecific whether the message is specifically about this room
    */
-  private void broadcast(ProtocolMessage message, boolean roomSpecific) {
-    ProtocolMessage toSend = message;
-
-    // If message is specific to room, wrap the message in a RoomPacket
-    if (roomSpecific) {
-      toSend = createRoomPacket(toSend);
-    }
-
+  private void broadcast(ProtocolPacket message) {
     // Send to all Players
     for (PlayerRole player : getPlayers()) {
       logger.debug("Sending {} to {}", message, player);
-      player.getClient().send(toSend);
+      player.getClient().send(message);
     }
 
-    // Send to all Observer
-    observerBroadcast(toSend);
+    // Send to all Observers
+    observerBroadcast(message);
   }
 
   /** Send Message to all registered Observers. */
-  private void observerBroadcast(ProtocolMessage toSend) {
+  private void observerBroadcast(ProtocolPacket toSend) {
     for (ObserverRole observer : Collections.unmodifiableCollection(this.observers)) {
       logger.debug("Sending {} to observer {}", toSend, observer.getClient().getClass().getSimpleName());
       observer.getClient().send(toSend);
     }
   }
 
-  /** Send {@link GameRoom#broadcast(ProtocolMessage, boolean) broadcast} message with {@link LeftGameEvent LeftGameEvent}. */
+  /** Send {@link GameRoom#broadcast(ProtocolPacket) broadcast} message with {@link RemovedFromGame RemovedFromGame}. */
   private void kickAllClients() {
     logger.debug("Kicking clients and observers");
-    broadcast(new LeftGameEvent(getId()), false);
+    broadcast(new RemovedFromGame(getId()));
   }
 
   /** Send updated GameState to all players and observers. */
@@ -219,18 +216,18 @@ public class GameRoom implements IGameListener {
 
 
   /**
-   * {@link GameRoom#broadcast(ProtocolMessage, boolean) Broadcast} the error package to this room.
+   * {@link GameRoom#broadcast(ProtocolPacket) Broadcast} the error package to this room.
    *
    * @param errorPacket ProtocolErrorMessage
    */
-  public void onClientError(ProtocolErrorMessage errorPacket) {
-    broadcast(errorPacket, true);
+  public void onClientError(ErrorMessage errorPacket) {
+    broadcast(errorPacket);
   }
 
   /** Sends the given GameState to all Players. */
   private void sendStateToPlayers(IGameState data) {
     for (PlayerRole player : getPlayers()) {
-      RoomPacket packet = createRoomPacket(new MementoEvent(data, player.getPlayer()));
+      RoomPacket packet = createRoomPacket(new MementoMessage(data, player.getPlayer()));
       player.getClient().send(packet);
     }
   }
@@ -238,7 +235,7 @@ public class GameRoom implements IGameListener {
 
   /** Sends the given GameState to all Observers. */
   private void sendStateToObservers(IGameState data) {
-    RoomPacket packet = createRoomPacket(new MementoEvent(data, null));
+    RoomPacket packet = createRoomPacket(new MementoMessage(data, null));
 
     for (ObserverRole observer : this.observers) {
       logger.debug("sending state to observer {}", observer.getClient());
@@ -247,7 +244,7 @@ public class GameRoom implements IGameListener {
   }
 
   /** Create {@link RoomPacket RoomPacket} from id and data Object. */
-  public RoomPacket createRoomPacket(ProtocolMessage data) {
+  public RoomPacket createRoomPacket(RoomMessage data) {
     return new RoomPacket(getId(), data);
   }
 
@@ -425,7 +422,7 @@ public class GameRoom implements IGameListener {
    * @param source Client which caused the event
    * @param data   ProtocolMessage containing the action
    */
-  public synchronized void onEvent(Client source, ProtocolMessage data) throws GameRoomException {
+  public synchronized void onEvent(Client source, RoomMessage data) throws GameRoomException {
     if (isOver())
       throw new GameException("Game is already over, but got " + data);
 
@@ -436,13 +433,13 @@ public class GameRoom implements IGameListener {
       final String error = String.format("Ungueltiger Zug von '%s'.\n%s", player.getDisplayName(), e);
       logger.error(error);
       player.setViolationReason(e.getMessage());
-      ProtocolErrorMessage errorMessage = new ProtocolErrorMessage(e.getMove(), error);
+      ErrorMessage errorMessage = new ErrorMessage(e.getMove(), error);
       player.notifyListeners(errorMessage);
       observerBroadcast(new RoomPacket(id, errorMessage));
       game.onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
       throw new GameLogicException(e.toString(), e);
     } catch (GameLogicException e) {
-      player.notifyListeners(new ProtocolErrorMessage(data, e.getMessage()));
+      player.notifyListeners(new ErrorMessage(data, e.getMessage()));
       throw e;
     }
   }
@@ -465,23 +462,19 @@ public class GameRoom implements IGameListener {
   }
 
   /** Get {@link PlayerRole Players} that occupy a slot. */
-  private Collection<PlayerRole> getPlayers() {
-    ArrayList<PlayerRole> clients = new ArrayList<>();
-    for (PlayerSlot slot : this.playerSlots) {
-      if (!slot.isEmpty()) {
-        clients.add(slot.getRole());
-      }
-    }
-    return clients;
+  public Collection<PlayerRole> getPlayers() {
+    return playerSlots.stream()
+        .filter(p -> !p.isEmpty())
+        .map(PlayerSlot::getRole)
+        .collect(Collectors.toList());
   }
 
   /** Get Server {@link IClient Clients} of all {@link PlayerRole Players}. */
   public Collection<IClient> getClients() {
-    ArrayList<IClient> clients = new ArrayList<>();
-    for (PlayerRole slot : getPlayers()) {
-      clients.add(slot.getClient());
-    }
-    return clients;
+    return playerSlots.stream()
+        .filter(p -> !p.isEmpty())
+        .map(PlayerSlot::getClient)
+        .collect(Collectors.toList());
   }
 
   /** Add a Server {@link Client Client} in the role of an Observer. */
@@ -562,7 +555,7 @@ public class GameRoom implements IGameListener {
    */
   @Override
   public void onPaused(Player nextPlayer) {
-    observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(nextPlayer)));
+    observerBroadcast(new RoomPacket(getId(), new GamePaused(nextPlayer)));
   }
 
   /** Return true if GameStatus is OVER. */

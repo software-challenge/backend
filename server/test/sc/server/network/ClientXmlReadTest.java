@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import sc.networking.clients.XStreamClient;
-import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.room.ErrorMessage;
 import sc.server.helpers.ExamplePacket;
 import sc.server.helpers.StringNetworkInterface;
 
@@ -26,7 +26,7 @@ public class ClientXmlReadTest {
     }
 
     @Override
-    public void onError(Client source, ProtocolErrorMessage packet) {
+    public void onError(Client source, ErrorMessage packet) {
       // ignore
     }
   }

@@ -1,5 +1,5 @@
 package sc.api.plugins
 
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.room.RoomMessage
 
-interface IMove: ProtocolMessage
+interface IMove: RoomMessage

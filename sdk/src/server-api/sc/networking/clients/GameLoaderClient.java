@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.networking.FileSystemInterface;
-import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.ProtocolPacket;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +28,7 @@ public final class GameLoaderClient extends XStreamClient implements IPollsHisto
   }
 
   @Override
-  protected void onObject(@NotNull ProtocolMessage message) {
+  protected void onObject(@NotNull ProtocolPacket message) {
     for (IHistoryListener listener : this.listeners) {
       listener.onNewState(null, (IGameState) message);
     }

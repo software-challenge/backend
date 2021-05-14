@@ -22,16 +22,14 @@ class GameRoomTest: WordSpec({
         // TODO Replay observing
         // Configuration.set(Configuration.SAVE_REPLAY, "true")
         "create a game when a player joins" {
-            manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).existing shouldBe false
+            manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).playerCount shouldBe 1
             manager.games shouldHaveSize 1
-            manager.games.single().game.players shouldHaveSize 1
         }
+        val room = manager.games.single()
         "add a second player to the existing game" {
-            manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).existing shouldBe true
-            manager.games.single().game.players shouldHaveSize 2
+            manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).playerCount shouldBe 2
         }
         "return correct scores on game over" {
-            val room = manager.games.single()
             val playersScores = room.game.players.associateWith { PlayerScore(ScoreCause.REGULAR, "Game terminated", 0) }
             room.onGameOver(playersScores)
             room.result.isRegular shouldBe true
@@ -64,11 +62,9 @@ class GameRoomTest: WordSpec({
             }
             room.clients shouldHaveSize 1
         }
-        room.game.players shouldHaveSize 0
         "accept a second client and create Players" {
             ReservationManager.redeemReservationCode(client, reservations[1])
             room.clients shouldHaveSize 2
-            room.game.players shouldHaveSize 2
         }
         "reject a third client" {
             room.join(client) shouldBe false

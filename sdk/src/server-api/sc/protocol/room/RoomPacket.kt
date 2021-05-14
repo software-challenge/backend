@@ -1,14 +1,13 @@
-package sc.protocol.responses
+package sc.protocol.room
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import sc.protocol.ProtocolPacket
 
-import sc.protocol.requests.ILobbyRequest
-
-/** Used to send a [ProtocolMessage] in a room as an [ILobbyRequest]. */
+/** Used to send a [RoomMessage] to a room. */
 @XStreamAlias("room")
 data class RoomPacket(
         @XStreamAsAttribute
         val roomId: String,
-        val data: ProtocolMessage?
-): ILobbyRequest
+        val data: RoomMessage,
+): ProtocolPacket

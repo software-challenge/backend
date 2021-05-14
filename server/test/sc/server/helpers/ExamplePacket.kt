@@ -1,7 +1,5 @@
 package sc.server.helpers
 
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.ProtocolPacket
 
-class ExamplePacket : ProtocolMessage {
-    val message = "hello"
-}
+class ExamplePacket : ProtocolPacket

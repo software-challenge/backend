@@ -1,22 +1,16 @@
 package sc.api.plugins
 
 import sc.api.plugins.exceptions.GameLogicException
-import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.Player
-import sc.protocol.responses.ProtocolMessage
+import sc.protocol.room.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import kotlin.jvm.Throws
 
 interface IGameInstance {
-    /**
-     * @return the player that joined
-     *
-     * @throws TooManyPlayersException when game is already full
-     */
-    @Throws(TooManyPlayersException::class)
+    /** @return the player that joined. */
     fun onPlayerJoined(): Player
     fun onPlayerLeft(player: Player, cause: ScoreCause? = null)
 
@@ -30,7 +24,7 @@ interface IGameInstance {
      * @throws InvalidMoveException if the received move violates the rules
      */
     @Throws(GameLogicException::class, InvalidMoveException::class)
-    fun onAction(fromPlayer: Player, data: ProtocolMessage)
+    fun onAction(fromPlayer: Player, data: RoomMessage)
     fun addGameListener(listener: IGameListener)
     fun removeGameListener(listener: IGameListener)
 
@@ -43,30 +37,6 @@ interface IGameInstance {
      * No events (GameOver etc) should be sent out after this method has been called.
      */
     fun destroy()
-
-    /**
-     * The game is requested to load itself from a file.
-     * Similar to a replay but with actual clients.
-     *
-     * @param file File the game should be loaded from
-     */
-    fun loadFromFile(file: String)
-
-    /**
-     * The game is requested to load itself from a file.
-     * Similar to a replay but with actual clients.
-     *
-     * @param file File where the game should be loaded from
-     * @param turn The turn to load from the replay
-     */
-    fun loadFromFile(file: String, turn: Int)
-
-    /**
-     * The game is requested to load itself from a given game information object.
-     *
-     * @param gameInfo the stored gameInformation
-     */
-    fun loadGameInfo(gameInfo: Any)
 
     /**
      * Returns the players that have won the game, empty if the game has no winners,
