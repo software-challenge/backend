@@ -15,7 +15,7 @@ import java.io.Closeable
 import java.io.IOException
 
 /** The lobby joins clients into a game by finding open rooms or creating new ones. */
-open class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
+class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
     
     val clientManager = ClientManager(this)
