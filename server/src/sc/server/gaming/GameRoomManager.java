@@ -77,17 +77,16 @@ public class GameRoomManager {
     String gameFileLocation = Configuration.get(Configuration.GAMELOADFILE);
     if (gameFileLocation != null && !gameFileLocation.equals("")) {
       File gameFile = new File(gameFileLocation);
-      Integer turn = null;
+      int turn = 0;
       try {
         turn = Integer.parseInt(Configuration.get(Configuration.TURN_TO_LOAD));
       } catch(NumberFormatException ignored) {
       }
 
-      // TODO skip to turn
-      // TODO implement tests
+      // TODO test this
       logger.info("Loading game from file '{}' at turn {}", gameFile, turn);
       try {
-        game = plugin.createGameFromState(new GameLoader<IGameState>(IGameState.class).loadGame(gameFile));
+        game = plugin.createGameFromState(new GameLoader().loadGame(gameFile, turn));
       } catch(IOException e) {
         logger.error("Failed to load game from file", e);
         game = plugin.createGame();
