@@ -21,6 +21,7 @@ import sc.protocol.room.ErrorMessage
 import sc.server.client.MessageListener
 import sc.server.client.PlayerListener
 import sc.server.gaming.GameRoom
+import sc.server.helpers.TestTeam
 import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
@@ -77,7 +78,7 @@ class LobbyRequestTest: WordSpec({
             await("Players join, Game start") { room.status shouldBe GameRoom.GameStatus.ACTIVE }
             
             val playerListeners = room.slots.map { slot ->
-                PlayerListener().also { listener -> slot.role.player.addPlayerListener(listener) }
+                PlayerListener().also { listener -> slot.player.addPlayerListener(listener) }
             }
             "terminate when a Move is received while still paused" {
                 players[0].sendMessageToRoom(roomId, TestMove(0))
@@ -89,15 +90,17 @@ class LobbyRequestTest: WordSpec({
                 val game = room.game as TestGame
                 game.isPaused shouldBe false
                 withClue("Processes moves") {
+                    game.activePlayer?.color shouldBe TestTeam.RED
                     playerListeners[0].waitForMessage(MoveRequest::class)
-                    players[0].sendMessageToRoom(roomId, TestMove(32))
-                    await { game.currentState.state shouldBe 32 }
+                    players[0].sendMessageToRoom(roomId, TestMove(1))
+                    await { game.currentState.state shouldBe 1 }
+                    game.activePlayer?.color shouldBe TestTeam.BLUE
                     playerListeners[1].waitForMessage(MoveRequest::class)
-                    players[1].sendMessageToRoom(roomId, TestMove(54))
-                    await { game.currentState.state shouldBe 54 }
+                    players[1].sendMessageToRoom(roomId, TestMove(2))
+                    await { game.currentState.state shouldBe 2 }
                 }
                 
-                val move = TestMove(0)
+                val move = TestMove(-1)
                 players[1].sendMessageToRoom(roomId, move)
                 val msg = playerListeners[1].waitForMessage(ErrorMessage::class)
                 msg.message shouldContain "not your turn"

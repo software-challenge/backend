@@ -87,7 +87,7 @@ class ClientManager(private val requestHandler: IClientRequestListener) : Runnab
     }
 
     /** Remove disconnected client. */
-    override fun onClientDisconnected(source: Client) {
+    override fun onClientDisconnected(source: Client, cause: XStreamClient.DisconnectCause) {
         logger.info("Removing client $source from client manager")
         clients.remove(source)
     }

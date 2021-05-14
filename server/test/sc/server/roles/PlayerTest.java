@@ -26,11 +26,10 @@ public class PlayerTest extends AbstractRoleTest {
   public void shouldBeAbleToJoinNonExistingGame() throws RescuableClientException, InvalidGameStateException {
     Client client = connectClient();
 
-    this.lobby.onRequest(client, new PacketCallback(new JoinRoomRequest(
-            TestPlugin.TEST_PLUGIN_UUID)));
+    this.lobby.onRequest(client,
+        new PacketCallback(new JoinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)));
 
     Assertions.assertEquals(1, this.gameMgr.getGames().size());
-    Assertions.assertEquals(1, client.getRoles().size());
   }
 
   @Test

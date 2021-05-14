@@ -98,17 +98,10 @@ public class GameRoomManager {
     return createGameRoom(plugin.getScoreDefinition(), game, false);
   }
 
-  /**
-   * Create a new GameRoom with the given Game.
-   *
-   * @param prepared signals whether the game was prepared by an administrative client,
-   *                 false if from a JoinRoomRequest
-   *
-   * @return newly created GameRoom
-   */
+  /** Create a new GameRoom with the given definitions. */
   public GameRoom createGameRoom(ScoreDefinition scoreDefinition, IGameInstance game, boolean prepared) {
-    GameRoom room = new GameRoom(generateRoomId(), this, scoreDefinition, game, prepared);
-    // pause room if specified in server.properties on joinRoomRequest
+    GameRoom room = new GameRoom(generateRoomId(), this, scoreDefinition, game);
+    // pause room on JoinRoomRequest if specified in server.properties
     if (!prepared) {
       boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
       room.pause(paused);
@@ -157,7 +150,7 @@ public class GameRoomManager {
   }
 
   private RoomWasJoinedEvent roomJoined(GameRoom room) {
-    return new RoomWasJoinedEvent(room.getId(), room.getPlayers().size());
+    return new RoomWasJoinedEvent(room.getId(), room.getClients().size());
   }
 
   /** Create an unmodifiable Collection of the {@link GameRoom GameRooms}. */
@@ -184,9 +177,8 @@ public class GameRoomManager {
 
     GameRoom room = createGameRoom(plugin.getScoreDefinition(), game, true);
     room.pause(paused);
-    room.openSlots(descriptors);
 
-    return new GamePreparedResponse(room.getId(), room.reserveAllSlots());
+    return new GamePreparedResponse(room.getId(), room.reserveSlots(descriptors));
   }
 
   /**
