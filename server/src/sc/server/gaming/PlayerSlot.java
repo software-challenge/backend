@@ -17,7 +17,7 @@ public class PlayerSlot {
       throw new IllegalStateException("Room must not be null.");
 
     this.room = room;
-    descriptor = new SlotDescriptor();
+    descriptor = new SlotDescriptor("Unknown");
   }
 
   public PlayerRole getRole() {
@@ -84,7 +84,7 @@ public class PlayerSlot {
   }
 
   public void setDescriptor(SlotDescriptor descriptor) {
-    this.descriptor = descriptor != null ? descriptor : new SlotDescriptor();
+    this.descriptor = descriptor != null ? descriptor : new SlotDescriptor("Unknown");
   }
 
   public IClient getClient() {
