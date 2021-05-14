@@ -6,7 +6,7 @@ import sc.shared.InvalidGameStateException
 
 interface IClientListener {
     /** Invoked when this client disconnected.  */
-    fun onClientDisconnected(source: Client)
+    fun onClientDisconnected(source: Client, cause: DisconnectCause)
 }
 
 interface IClientRequestListener {

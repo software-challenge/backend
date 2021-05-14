@@ -44,10 +44,8 @@ public class ContestTest extends AdministratorTest {
     }
 
     // Ordering should match the defined ordering
-    Assertions.assertEquals(player1, room.getSlots().get(1).getRole()
-            .getClient());
-    Assertions.assertEquals(player2, room.getSlots().get(0).getRole()
-            .getClient());
+    Assertions.assertEquals(player1, room.getSlots().get(1).getClient());
+    Assertions.assertEquals(player2, room.getSlots().get(0).getClient());
   }
 
 }

@@ -43,10 +43,10 @@ class GameRoomTest: WordSpec({
                 <room roomId="${room.id}">
                   <data class="memento">
                     <state class="sc.server.plugins.TestGameState">
-                      <red displayName="Unknown">
+                      <red displayName="">
                         <color class="sc.server.helpers.TestTeam">RED</color>
                       </red>
-                      <blue displayName="Unknown">
+                      <blue displayName="">
                         <color class="sc.server.helpers.TestTeam">BLUE</color>
                       </blue>
                       <turn>0</turn>

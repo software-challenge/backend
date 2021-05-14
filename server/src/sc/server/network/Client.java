@@ -8,16 +8,16 @@ import sc.api.plugins.exceptions.NotYourTurnException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
+import sc.networking.clients.IClient;
 import sc.networking.clients.XStreamClient;
-import sc.protocol.ProtocolPacket;
 import sc.protocol.RemovedFromGame;
 import sc.protocol.responses.ErrorPacket;
+import sc.protocol.ProtocolPacket;
 import sc.server.Configuration;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,10 +29,10 @@ import java.util.List;
 public class Client extends XStreamClient implements IClient {
   private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
+  protected boolean isAdministrator = false;
   private boolean notifiedOnDisconnect = false;
   private IClientRequestListener requestHandler = null;
   private final List<IClientListener> clientListeners = new ArrayList<>();
-  private final Collection<IClientRole> roles = new ArrayList<>();
 
   public Client(INetworkInterface networkInterface) throws IOException {
     super(networkInterface);
@@ -40,33 +40,6 @@ public class Client extends XStreamClient implements IClient {
 
   public void setRequestHandler(IClientRequestListener handler) {
     requestHandler = handler;
-  }
-
-  /** @return roles of this client. */
-  public Collection<IClientRole> getRoles() {
-    return Collections.unmodifiableCollection(this.roles);
-  }
-
-  /** Add another role to the client. */
-  @Override
-  public void addRole(IClientRole role) {
-    synchronized(roles) {
-      this.roles.add(role);
-    }
-  }
-
-  /** Call listeners upon disconnect. */
-  private void notifyOnDisconnect() {
-    if (!this.notifiedOnDisconnect) {
-      this.notifiedOnDisconnect = true;
-      for (IClientListener listener : new ArrayList<>(clientListeners)) {
-        try {
-          listener.onClientDisconnected(this);
-        } catch (Exception e) {
-          logger.error("OnDisconnect Notification caused an exception.", e);
-        }
-      }
-    }
   }
 
   /** Add a {@link IClientListener listener} to the client. */
@@ -84,14 +57,7 @@ public class Client extends XStreamClient implements IClient {
    * @return true iff this client has an AdministratorRole
    */
   public boolean isAdministrator() {
-    synchronized(roles) {
-      for (IClientRole role : this.roles) {
-        if (role instanceof AdministratorRole) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return isAdministrator;
   }
 
   /**
@@ -104,7 +70,7 @@ public class Client extends XStreamClient implements IClient {
 
     if (correctPassword != null && correctPassword.equals(password)) {
       if (!isAdministrator()) {
-        addRole(new AdministratorRole(this));
+        isAdministrator = true;
         logger.info("Client authenticated as administrator");
       } else {
         logger.warn("Client tried to authenticate as administrator twice.");
@@ -123,19 +89,19 @@ public class Client extends XStreamClient implements IClient {
    */
   @Override
   protected void onDisconnect(DisconnectCause cause) {
-    synchronized(roles) {
-      for (IClientRole role : this.roles) {
+    if (!this.notifiedOnDisconnect) {
+      this.notifiedOnDisconnect = true;
+      for (IClientListener listener : new ArrayList<>(clientListeners)) {
         try {
-          role.disconnect(cause);
+          listener.onClientDisconnected(this, cause);
         } catch (Exception e) {
-          logger.warn("Couldn't close role.", e);
+          logger.error("OnDisconnect Notification caused an exception.", e);
         }
       }
     }
-
-    notifyOnDisconnect();
   }
 
+  /** Forward received package to listeners. */
   @Override
   protected void onObject(@NotNull ProtocolPacket message) throws UnprocessedPacketException {
     /*

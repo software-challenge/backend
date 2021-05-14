@@ -26,7 +26,6 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     var isPaused = false
     
     fun afterPause() {
-        logger.info("Sending MoveRequest to player $activePlayer")
         notifyOnNewState(currentState, false)
         notifyActivePlayer()
     }
@@ -161,7 +160,8 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
             player.hardTimeout = true
             onPlayerLeft(player, ScoreCause.HARD_TIMEOUT)
         }
-
+    
+        logger.info("Sending MoveRequest to player $activePlayer")
         player.requestMove()
     }
 
