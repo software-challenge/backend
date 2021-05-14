@@ -11,8 +11,6 @@ import sc.framework.plugins.AbstractGame;
 import sc.framework.plugins.Player;
 import sc.framework.HelperMethods;
 import sc.networking.XStreamProvider;
-import sc.networking.clients.LobbyClient;
-import sc.networking.clients.ObservingClient;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.RemovedFromGame;
 import sc.protocol.ProtocolPacket;
@@ -46,7 +44,7 @@ public class GameRoom implements IGameListener {
   private GameStatus status = GameStatus.CREATED;
   private GameResult result = null;
   private boolean pauseRequested = false;
-  private ObservingClient replayObserver;
+  private List<RoomMessage> history = new ArrayList<>();
 
   public final IGameInstance game; // TODO make inaccessible
   public final List<ObserverRole> observers = new ArrayList<>();
@@ -63,22 +61,9 @@ public class GameRoom implements IGameListener {
     this.game = game;
     this.prepared = prepared;
     game.addGameListener(this);
-
-    if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
-      try {
-        logger.debug("Save replay is active and try to save it to file");
-        LobbyClient lobbyClient = new LobbyClient("127.0.0.1", Configuration.getPort());
-        lobbyClient.start();
-        lobbyClient.authenticate(Configuration.getAdministrativePassword());
-        replayObserver = lobbyClient.observe(getId());
-      } catch (IOException e) {
-        logger.warn("Failed to start replay recording");
-        e.printStackTrace();
-      }
-    }
   }
 
-  /** Generate Game Result, set status to OVER and remove from manager. */
+  /** Generate GameResult, set status to OVER and close the room. */
   @Override
   public synchronized void onGameOver(Map<Player, PlayerScore> results) {
     if (isOver()) {
@@ -133,7 +118,7 @@ public class GameRoom implements IGameListener {
     return new GameResult(scoreDefinition, scores, this.game.getWinners());
   }
 
-  /** Save replay from {@link #replayObserver} to a file. */
+  /** Write replay of game to a file. */
   private void saveReplay() {
     List<SlotDescriptor> slotDescriptors = new ArrayList<>();
     for (PlayerSlot slot : this.getSlots()) {
@@ -146,10 +131,9 @@ public class GameRoom implements IGameListener {
       f.getParentFile().mkdirs();
       f.createNewFile();
 
-      List<RoomMessage> replayHistory = replayObserver.getHistory();
       BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
       writer.write("<protocol>\n");
-      for (RoomMessage element : replayHistory) {
+      for (RoomMessage element : history) {
         if (!(element instanceof IGameState))
           continue;
         IGameState state = (IGameState) element;
@@ -160,7 +144,7 @@ public class GameRoom implements IGameListener {
         writer.flush();
       }
 
-      String result = xStream.toXML(new RoomPacket(getId(), replayObserver.getResult()));
+      String result = xStream.toXML(new RoomPacket(getId(), this.result));
       writer.write(result + "\n");
       writer.write("</protocol>");
       writer.flush();
@@ -208,6 +192,7 @@ public class GameRoom implements IGameListener {
   /** Send updated GameState to all players and observers. */
   @Override
   public void onStateChanged(IGameState data, boolean observersOnly) {
+    history.add(data);
     sendStateToObservers(data);
     if (!observersOnly)
       sendStateToPlayers(data);
@@ -435,6 +420,7 @@ public class GameRoom implements IGameListener {
       ErrorMessage errorMessage = new ErrorMessage(e.getMove(), error);
       player.notifyListeners(errorMessage);
       observerBroadcast(new RoomPacket(id, errorMessage));
+      history.add(errorMessage);
       game.onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
       throw new GameLogicException(e.toString(), e);
     } catch (GameLogicException e) {
