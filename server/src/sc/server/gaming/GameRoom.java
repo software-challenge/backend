@@ -10,7 +10,6 @@ import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.AbstractGame;
 import sc.framework.plugins.Player;
 import sc.framework.HelperMethods;
-import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.XStreamProvider;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
@@ -81,7 +80,7 @@ public class GameRoom implements IGameListener {
 
   /** Generate Game Result, set status to OVER and remove from manager. */
   @Override
-  public synchronized void onGameOver(Map<Player, PlayerScore> results) throws InvalidScoreDefinitionException {
+  public synchronized void onGameOver(Map<Player, PlayerScore> results) {
     if (isOver()) {
       logger.warn("{} received an extra GameOver-Event", game);
       return;

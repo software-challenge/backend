@@ -41,7 +41,6 @@ data class TestGame(
     }
 
     override fun onPlayerLeft(player: Player, cause: ScoreCause?) {
-        // this.players.remove(player);
         logger.debug("Player left $player")
         val result = generateScoreMap().toMutableMap()
         result[player] = PlayerScore(cause ?: ScoreCause.LEFT, "Spieler hat das Spiel verlassen.", 0)
@@ -54,7 +53,10 @@ data class TestGame(
 
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(false)
-
+    
+    override fun toString(): String =
+            "TestGame(currentState=$currentState, paused=$isPaused, players=$players)"
+    
     companion object {
         private val logger = LoggerFactory.getLogger(TestGame::class.java)
     }

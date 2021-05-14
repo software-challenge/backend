@@ -143,10 +143,8 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
     }
     
     override fun onError(source: Client, errorPacket: ErrorMessage) {
-        for (role in source.roles) {
-            if (role.javaClass == PlayerRole::class.java) {
-                (role as PlayerRole).playerSlot.room.onClientError(errorPacket)
-            }
+        source.roles.filterIsInstance<PlayerRole>().forEach {
+            it.playerSlot.room.onClientError(errorPacket)
         }
     }
 }
