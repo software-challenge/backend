@@ -36,13 +36,14 @@ suspend fun await(clue: String? = null, duration: Duration = 1.seconds, interval
 @ExperimentalTime
 class LobbyRequestTest: WordSpec({
     "A Lobby with connected clients" When {
-        val lobby = autoClose(TestLobby())
+        val testLobby = autoClose(TestLobby())
+        val lobby = testLobby.lobby
     
         val adminListener = MessageListener<ResponsePacket>()
-        val lobbyClient = LobbyClient("localhost", lobby.serverPort)
+        val lobbyClient = LobbyClient("localhost", testLobby.serverPort)
         val admin = lobbyClient.authenticate(PASSWORD, adminListener::addMessage)
         
-        val players = Array(2) { lobby.connectClient() }
+        val players = Array(2) { testLobby.connectClient() }
         await("Clients connected") { lobby.clientManager.clients.size shouldBe 3 }
         "a player joined" should {
             players[0].joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
