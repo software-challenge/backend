@@ -2,12 +2,11 @@ package sc.server
 
 import org.slf4j.LoggerFactory
 import sc.api.plugins.exceptions.RescuableClientException
-import sc.protocol.room.RoomPacket
 import sc.protocol.requests.*
-import sc.protocol.responses.*
-import sc.protocol.room.ErrorMessage
+import sc.protocol.responses.PlayerScoreResponse
+import sc.protocol.responses.TestModeResponse
+import sc.protocol.room.RoomPacket
 import sc.server.gaming.GameRoomManager
-import sc.server.gaming.PlayerRole
 import sc.server.gaming.ReservationManager
 import sc.server.network.*
 import sc.shared.InvalidGameStateException
@@ -16,33 +15,15 @@ import java.io.Closeable
 import java.io.IOException
 
 /** The lobby joins clients into a game by finding open rooms or creating new ones. */
-open class Lobby: GameRoomManager(), IClientListener, Closeable {
+open class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
     
-    val clientManager = ClientManager().also {
-        it.setOnClientConnected(this::onClientConnected)
-    }
+    val clientManager = ClientManager(this)
     
     /** @see ClientManager.start */
     @Throws(IOException::class)
     fun start() {
         clientManager.start()
-    }
-    
-    /**
-     * Add lobby as listener to client.
-     * Prepare client for send and receive.
-     *
-     * @param client connected XStreamClient
-     */
-    fun onClientConnected(client: Client) {
-        client.addClientListener(this)
-        client.start()
-    }
-    
-    override fun onClientDisconnected(source: Client) {
-        logger.info("{} disconnected.", source)
-        source.removeClientListener(this)
     }
     
     /** Handle requests or moves of clients. */
@@ -55,11 +36,7 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                 room.onEvent(source, packet.data)
             }
             is JoinPreparedRoomRequest ->
-                try {
-                    ReservationManager.redeemReservationCode(source, packet.reservationCode)
-                } catch (e: RescuableClientException) {
-                    source.send(ErrorPacket(packet, e.message))
-                }
+                ReservationManager.redeemReservationCode(source, packet.reservationCode)
             is JoinRoomRequest -> {
                 val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
                 // null is returned if join was unsuccessful
@@ -92,12 +69,8 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                         room.addObserver(source)
                     }
                     is PauseGameRequest -> {
-                        try {
-                            val room = this.findRoom(packet.roomId)
-                            room.pause(packet.pause)
-                        } catch (e: RescuableClientException) {
-                            this.logger.error("Got exception on pause: {}", e)
-                        }
+                        val room = this.findRoom(packet.roomId)
+                        room.pause(packet.pause)
                     }
                     is StepRequest -> {
                         // TODO check for a prior pending StepRequest
@@ -129,22 +102,8 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
         callback.setProcessed()
     }
     
-    private fun getScoreOfPlayer(displayName: String): Score? {
-        for (score in this.scores) {
-            if (score.displayName == displayName) {
-                return score
-            }
-        }
-        return null
-    }
+    private fun getScoreOfPlayer(displayName: String): Score? =
+            scores.find { it.displayName == displayName }
     
-    override fun close() {
-        clientManager.close()
-    }
-    
-    override fun onError(source: Client, errorPacket: ErrorMessage) {
-        source.roles.filterIsInstance<PlayerRole>().forEach {
-            it.playerSlot.room.onClientError(errorPacket)
-        }
-    }
+    override fun close() = clientManager.close()
 }

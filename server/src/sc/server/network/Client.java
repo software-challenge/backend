@@ -9,10 +9,9 @@ import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
 import sc.networking.clients.XStreamClient;
+import sc.protocol.ProtocolPacket;
 import sc.protocol.RemovedFromGame;
 import sc.protocol.responses.ErrorPacket;
-import sc.protocol.room.ErrorMessage;
-import sc.protocol.ProtocolPacket;
 import sc.server.Configuration;
 
 import java.io.IOException;
@@ -31,11 +30,16 @@ public class Client extends XStreamClient implements IClient {
   private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
   private boolean notifiedOnDisconnect = false;
+  private IClientRequestListener requestHandler = null;
   private final List<IClientListener> clientListeners = new ArrayList<>();
   private final Collection<IClientRole> roles = new ArrayList<>();
 
   public Client(INetworkInterface networkInterface) throws IOException {
     super(networkInterface);
+  }
+
+  public void setRequestHandler(IClientRequestListener handler) {
+    requestHandler = handler;
   }
 
   /** @return roles of this client. */
@@ -48,61 +52,6 @@ public class Client extends XStreamClient implements IClient {
   public void addRole(IClientRole role) {
     synchronized(roles) {
       this.roles.add(role);
-    }
-  }
-
-  /** Call listener that handle new Packages. */
-  private void notifyOnPacket(ProtocolPacket packet) throws UnprocessedPacketException {
-    /*
-     * NOTE that method is called in the receiver thread. Messages should
-     * only be passed to listeners. No callbacks should be invoked directly
-     * in the receiver thread.
-     */
-
-    Collection<RescuableClientException> errors = new ArrayList<>();
-
-    PacketCallback callback = new PacketCallback(packet);
-
-    for (IClientListener listener : new ArrayList<>(clientListeners)) {
-      try {
-        listener.onRequest(this, callback);
-      } catch (RescuableClientException e) {
-        errors.add(e);
-      }
-    }
-
-    if (errors.isEmpty() && !callback.isProcessed()) {
-      String msg = String.format("Packet %s wasn't processed.", packet);
-      logger.warn(msg);
-      throw new UnprocessedPacketException(msg);
-    }
-
-    for (RescuableClientException error : errors) {
-      logger.warn("An error occured: ", error);
-      send(new ErrorPacket(packet, error.toString()));
-      if (error instanceof GameLogicException && !(error instanceof NotYourTurnException)) {
-        logger.warn("Game closed because of GameLogicException: " + error.getMessage());
-      }
-    }
-    if (!errors.isEmpty()) {
-      logger.debug("Stopping {} because of error", this);
-      stop();
-    }
-
-    if (packet instanceof RemovedFromGame) {
-      logger.debug("Stopping {} because of received RemovedFromGame message", this);
-      stop();
-    }
-  }
-
-  /** Call listeners upon error. */
-  private void notifyOnError(ErrorMessage packet) {
-    for (IClientListener listener : new ArrayList<>(clientListeners)) {
-      try {
-        listener.onError(this, packet);
-      } catch (Exception e) {
-        logger.error("OnError Notification caused an exception, error: " + packet, e);
-      }
     }
   }
 
@@ -187,7 +136,6 @@ public class Client extends XStreamClient implements IClient {
     notifyOnDisconnect();
   }
 
-  /** Forward received package to listeners. */
   @Override
   protected void onObject(@NotNull ProtocolPacket message) throws UnprocessedPacketException {
     /*
@@ -195,7 +143,38 @@ public class Client extends XStreamClient implements IClient {
      * should only be passed to listeners. No callbacks should be invoked
      * directly in the receiver thread.
      */
-    notifyOnPacket(message);
+    Collection<RescuableClientException> errors = new ArrayList<>();
+
+    PacketCallback callback = new PacketCallback(message);
+
+    try {
+      requestHandler.onRequest(this, callback);
+    } catch (RescuableClientException e) {
+      errors.add(e);
+    }
+
+    if (errors.isEmpty() && !callback.isProcessed()) {
+      String msg = String.format("Packet %s wasn't processed.", message);
+      logger.warn(msg);
+      throw new UnprocessedPacketException(msg);
+    }
+
+    for (RescuableClientException error : errors) {
+      logger.warn("An error occured: ", error);
+      send(new ErrorPacket(message, error.toString()));
+      if (error instanceof GameLogicException && !(error instanceof NotYourTurnException)) {
+        logger.warn("Game closed because of GameLogicException: " + error.getMessage());
+      }
+    }
+    if (!errors.isEmpty()) {
+      logger.debug("Stopping {} because of error", this);
+      stop();
+    }
+
+    if (message instanceof RemovedFromGame) {
+      logger.debug("Stopping {} because of received RemovedFromGame message", this);
+      stop();
+    }
   }
 
 }

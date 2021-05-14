@@ -4,30 +4,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import sc.networking.clients.XStreamClient;
-import sc.protocol.room.ErrorMessage;
 import sc.server.helpers.ExamplePacket;
 import sc.server.helpers.StringNetworkInterface;
 
 import java.io.IOException;
 
 public class ClientXmlReadTest {
-  private static class StupidClientListener implements IClientListener {
-    public Object LastPacket = null;
-
+  private static class StupidClientListener implements IClientRequestListener {
+    public Object lastPacket = null;
     @Override
     public void onRequest(Client source, PacketCallback callback) {
       callback.setProcessed();
-      this.LastPacket = callback.getPacket();
-    }
-
-    @Override
-    public void onClientDisconnected(Client source) {
-      // ignore
-    }
-
-    @Override
-    public void onError(Client source, ErrorMessage packet) {
-      // ignore
+      this.lastPacket = callback.getPacket();
     }
   }
 
@@ -42,12 +30,12 @@ public class ClientXmlReadTest {
     MockClient client = new MockClient(stringInterface);
     aliasExamplePacket(client);
 
-    client.addClientListener(clientListener);
+    client.setRequestHandler(clientListener);
     client.start();
 
     Assertions.assertNotNull(client.receive());
-    Assertions.assertNotNull(clientListener.LastPacket);
-    Assertions.assertTrue(clientListener.LastPacket instanceof ExamplePacket);
+    Assertions.assertNotNull(clientListener.lastPacket);
+    Assertions.assertTrue(clientListener.lastPacket instanceof ExamplePacket);
   }
 
   @Test
