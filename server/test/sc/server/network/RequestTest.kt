@@ -237,29 +237,6 @@ class RequestTest: RealServerTest() {
         TestHelper.assertEqualsWithTimeout("false", { Configuration.get(Configuration.TEST_MODE) }, 1000)
     }
     
-    // TODO implement @Test
-    fun getScoreForPlayerRequest() {
-    }
-    
-    @Test
-    fun timeoutRequest() {
-        player1.authenticate(PASSWORD)
-        val listener = TestLobbyClientListener()
-        
-        player1.addListener(listener)
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        
-        TestHelper.waitUntilEqual(1, { lobby.games.size }, 2000)
-        var room = gameMgr.games.iterator().next()
-        assertTrue(room.slots[0].role.player.canTimeout)
-        val req = ControlTimeoutRequest(room.id, false, 0)
-        player1.send(req)
-        Thread.sleep(2000)
-        room = gameMgr.games.iterator().next()
-        assertFalse(room.slots[0].role.player.canTimeout)
-    }
-    
     @Test
     fun pauseRequest() {
         player1.authenticate(PASSWORD)
