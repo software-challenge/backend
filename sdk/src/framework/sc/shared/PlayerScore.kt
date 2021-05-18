@@ -16,8 +16,11 @@ data class PlayerScore(
         val parts: Array<BigDecimal>
 ) {
     
-    constructor(winner: Boolean, reason: String): this(ScoreCause.REGULAR, reason, if (winner) 2 else 0)
-    constructor(cause: ScoreCause?, reason: String, vararg scores: Int): this(cause, reason, scores.map { BigDecimal(it) }.toTypedArray())
+    // TODO use constants for WIN and LOSE score
+    constructor(winner: Boolean, reason: String):
+            this(ScoreCause.REGULAR, reason, if (winner) 2 else 0)
+    constructor(cause: ScoreCause?, reason: String, vararg scores: Int):
+            this(cause, reason, scores.map { BigDecimal(it) }.toTypedArray())
     
     fun size(): Int = parts.size
     

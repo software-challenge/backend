@@ -1,14 +1,15 @@
-package sc.plugin2021
+package sc.plugin2022
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.ITeam
+import sc.api.plugins.Team
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
-import sc.plugin2021.util.Constants
-import sc.plugin2021.util.GameRuleLogic
-import sc.plugin2021.util.MoveMistake
-import sc.plugin2021.util.WinReason
+import sc.plugin2022.util.Constants
+import sc.plugin2022.util.MoveMistake
+import sc.plugin2022.util.WinReason
 import sc.protocol.room.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
@@ -20,14 +21,13 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         val logger = LoggerFactory.getLogger(Game::class.java)
     }
     
-    private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
+    private val availableTeams = ArrayDeque<ITeam>().also { it.addAll(Team.values()) }
     override fun onPlayerJoined(): Player {
         if (availableTeams.isEmpty())
             throw TooManyPlayersException()
-        val player = currentState.getPlayer(availableTeams.removeAt(0))
         
+        val player = Player(availableTeams.removeFirst())
         players.add(player)
-        currentState.addPlayer(player)
         return player
     }
     
@@ -41,8 +41,8 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
             if (players.last().hasViolated())
                 return players.subList(0, 1)
             
-            val first = currentState.getPointsForPlayer(players.first().color)
-            val second = currentState.getPointsForPlayer(players.last().color)
+            val first = currentState.getPointsForTeam(players.first().team)
+            val second = currentState.getPointsForTeam(players.last().team)
             
             if (first > second)
                 return players.subList(0, 1)
@@ -55,7 +55,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
     
     val isGameOver: Boolean
-        get() = !currentState.hasValidColors() || currentState.round > Constants.ROUND_LIMIT
+        get() = currentState.isOver
     
     /**
      * Checks whether and why the game is over.
@@ -65,10 +65,10 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     override fun checkWinCondition(): WinCondition? {
         if (!isGameOver) return null
         
-        val scores: Map<Team, Int> = Team.values().map {
-            it to currentState.getPointsForPlayer(it)
-        }.toMap()
-        
+        val scores: Map<Team, Int> = Team.values().associate {
+            it to currentState.getPointsForTeam(it)
+        }
+    
         return when {
             scores.getValue(Team.ONE) > scores.getValue(Team.TWO) -> WinCondition(Team.ONE, WinReason.DIFFERING_SCORES)
             scores.getValue(Team.ONE) < scores.getValue(Team.TWO) -> WinCondition(Team.TWO, WinReason.DIFFERING_SCORES)
@@ -77,15 +77,15 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     }
     
     override fun getScoreFor(player: Player): PlayerScore {
-        val team = player.color as Team
+        val team = player.team as Team
         logger.debug("Get score for player $team (violated: ${if (player.hasViolated()) "yes" else "no"})")
-        val opponent = currentState.getOpponent(player)
+        val opponent = players[team.opponent().index]
         val winCondition = checkWinCondition()
         
         var cause: ScoreCause = ScoreCause.REGULAR
         var reason = ""
         var score: Int = Constants.LOSE_SCORE
-        val points = currentState.getPointsForPlayer(team)
+        val points = currentState.getPointsForTeam(team)
         
         // Is the game already finished?
         if (winCondition?.reason == WinReason.EQUAL_SCORE)
@@ -126,16 +126,14 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
     @Throws(InvalidMoveException::class)
-    override fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage) {
+    override fun onRoundBasedAction(data: RoomMessage) {
         if (data !is Move)
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
         
-        logger.debug("Current State: $currentState")
-        logger.debug("Performing Move $data")
-        GameRuleLogic.performMove(currentState, data)
-        GameRuleLogic.removeInvalidColors(currentState)
-        next(if (isGameOver) null else currentState.currentPlayer)
-        logger.debug("Current Board:\n${currentState.board}")
+        logger.debug("Performing $data")
+        currentState.performMove(data)
+        next()
+        logger.debug("Current State: ${currentState.longString()}")
     }
     
     override fun toString(): String =

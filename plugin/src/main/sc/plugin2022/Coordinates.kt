@@ -1,7 +1,8 @@
-package sc.plugin2021
+package sc.plugin2022
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import sc.plugin2022.util.Constants
 import kotlin.math.min
 
 /** Eine 2D Koordinate der Form (x, y). */
@@ -27,14 +28,15 @@ data class Coordinates(
     /** Wandelt die [Coordinates] in einen entsprechenden [Vector]. */
     operator fun unaryPlus(): Vector = Vector(x, y)
 
-    /** Gibt ein Set der vier Ecken dieser Koordinaten zurück. */
-    val corners: Set<Coordinates>
-        get() = Vector.diagonals.mapTo(HashSet()) { this + it }
-
     /** Gibt ein Set der vier benachbarten Felder dieser Koordinaten zurück. */
     val neighbors: Set<Coordinates>
         get() = Vector.cardinals.mapTo(HashSet()) { this + it }
-
+    
+    /** Whether these coordinates mark a field on the board. */
+    val isValid =
+            x >= 0 && x < Constants.BOARD_SIZE &&
+            y >= 0 && y < Constants.BOARD_SIZE
+    
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
         val origin = Coordinates(0, 0)
@@ -64,19 +66,19 @@ data class Vector(val dx: Int, val dy: Int) {
     operator fun compareTo(other: Vector): Int =
             min(other.dx - dx, other.dy - dy)
 
-    /** Konvertiert den Vektor zu entsprechendn [Coordinates]. */
+    /** Konvertiert den Vektor zu entsprechenden [Coordinates]. */
     operator fun unaryPlus(): Coordinates = Coordinates(dx, dy)
 
     companion object {
         /** Die vier Vektoren in diagonaler Richtung. */
-        val diagonals: Set<Vector> = setOf(
+        val diagonals: Array<Vector> = arrayOf(
                 Vector(-1, -1),
                 Vector(-1, 1),
                 Vector(1, -1),
                 Vector(1, 1)
         )
         /** Die vier Vektoren in kardinaler Richtung. */
-        val cardinals: Set<Vector> = setOf(
+        val cardinals: Array<Vector> = arrayOf(
                 Vector(-1, 0),
                 Vector(0, -1),
                 Vector(1, 0),

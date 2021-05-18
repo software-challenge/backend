@@ -62,7 +62,7 @@ class PlayerClient(
      * Happens after a client made a move.
      */
     override fun onNewState(roomId: String, state: IGameState) {
-        val gameState = state as TwoPlayerGameState<*>
+        val gameState = state as TwoPlayerGameState
         logger.debug("$this got a new state $gameState")
         handler.onUpdate(gameState)
     }

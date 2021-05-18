@@ -16,10 +16,10 @@ data class TestGame(
     override val playerScores: List<PlayerScore> = emptyList()
     override val winners: List<Player> = emptyList()
     
-    override fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage) {
+    override fun onRoundBasedAction(data: RoomMessage) {
         if (data is TestMove) {
             data.perform(currentState)
-            next(if (currentState.currentPlayer === TestTeam.RED) currentState.red else currentState.blue)
+            next()
         } else throw InvalidMoveException(TestMoveMistake.INVALID_FORMAT)
     }
 

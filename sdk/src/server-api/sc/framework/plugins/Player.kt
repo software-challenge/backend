@@ -19,12 +19,12 @@ private val logger = LoggerFactory.getLogger(Player::class.java)
  * - game result info: left & timeouts, to determine the winner and potential violation information
  * - listeners: subscribers that get notified about new messages concerning this player, notably Welcome and Errors
  *
- * Note: the toString/equals/hashCode/clone methods only take [color] and [displayName] into account!
+ * Note: the toString/equals/hashCode/clone methods only take [team] and [displayName] into account!
  */
 // TODO split this beast up!
 @XStreamAlias(value = "player")
 open class Player @JvmOverloads constructor(
-        @XStreamAsAttribute var color: ITeam,
+        @XStreamAsAttribute var team: ITeam,
         @XStreamAsAttribute var displayName: String = ""
 ): Cloneable {
     
@@ -74,14 +74,14 @@ open class Player @JvmOverloads constructor(
         logger.debug("Move requested from $this")
     }
 
-    override fun toString(): String = "%s(%s)".format(color, displayName)
+    override fun toString(): String = "%s(%s)".format(team, displayName)
     
-    public override fun clone() = Player(color, displayName)
+    public override fun clone() = Player(team, displayName)
     
-    override fun equals(other: Any?) = other is Player && other.color == color && other.displayName == displayName
+    override fun equals(other: Any?) = other is Player && other.team == team && other.displayName == displayName
     
     override fun hashCode(): Int {
-        var result = color.hashCode()
+        var result = team.hashCode()
         result = 31 * result + displayName.hashCode()
         return result
     }

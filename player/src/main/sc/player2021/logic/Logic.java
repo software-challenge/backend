@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.TwoPlayerGameState;
 import sc.framework.plugins.Player;
 import sc.player.IGameHandler;
-import sc.plugin2021.GameState;
-import sc.plugin2021.Move;
-import sc.plugin2021.util.GameRuleLogic;
+import sc.plugin2022.GameState;
+import sc.plugin2022.Move;
 import sc.shared.GameResult;
 
 import java.util.ArrayList;
@@ -33,10 +32,9 @@ public class Logic implements IGameHandler {
   @Override
   public Move calculateMove() {
     long startTime = System.currentTimeMillis();
-    Player player = gameState.getCurrentPlayer();
-    log.info("Es wurde ein Zug von {} angefordert.", player);
+    log.info("Es wurde ein Zug von {} angefordert.", gameState.getCurrentTeam());
 
-    List<Move> possibleMoves = new ArrayList<>(GameRuleLogic.getPossibleMoves(gameState));
+    List<Move> possibleMoves = gameState.getPossibleMoves();
     Move move = possibleMoves.get((int) (Math.random() * possibleMoves.size()));
 
     log.info("Sende {} nach {}ms.", move, System.currentTimeMillis() - startTime);
@@ -44,9 +42,9 @@ public class Logic implements IGameHandler {
   }
 
   @Override
-  public void onUpdate(TwoPlayerGameState<?> gameState) {
+  public void onUpdate(TwoPlayerGameState gameState) {
     this.gameState = (GameState) gameState;
-    log.info("Zug: {} Dran: {}", gameState.getTurn(), gameState.getCurrentPlayer().getColor());
+    log.info("Zug: {} Dran: {}", gameState.getTurn(), gameState.getCurrentTeam());
   }
 
 }

@@ -1,9 +1,9 @@
-package sc.plugin2021
+package sc.plugin2022
 
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
-import sc.plugin2021.util.Constants
+import sc.plugin2022.util.Constants
 import sc.plugins.PluginDescriptor
 import sc.shared.ScoreAggregation
 import sc.shared.ScoreDefinition
@@ -16,7 +16,8 @@ class GamePlugin: IGamePlugin {
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Gewinner"),
-                        ScoreFragment("\u2205 Punkte", ScoreAggregation.AVERAGE)
+                        ScoreFragment("Bernsteine", ScoreAggregation.AVERAGE),
+                        ScoreFragment("Figur vorne", ScoreAggregation.AVERAGE)
                 ))
     }
     

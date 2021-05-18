@@ -2,7 +2,7 @@ val game: String by project
 
 sourceSets {
     main {
-        java.setSrcDirs(listOf("src/shared", "src/client", "src/server"))
+        java.setSrcDirs(listOf("src/main"))
         resources.setSrcDirs(listOf("src/resources"))
     }
     test {

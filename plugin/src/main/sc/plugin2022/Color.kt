@@ -1,6 +1,7 @@
-package sc.plugin2021
+package sc.plugin2022
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import sc.api.plugins.Team
 
 /** Die vier verschiedenen Farben im Spiel. */
 @XStreamAlias(value = "color")
@@ -25,14 +26,6 @@ enum class Color {
             BLUE, RED -> Team.ONE
             YELLOW, GREEN -> Team.TWO
         }
-    
-    /** @return [FieldContent], der dieser Farbe entspricht. */
-    operator fun unaryPlus(): FieldContent = when (this) {
-        BLUE -> FieldContent.BLUE
-        YELLOW -> FieldContent.YELLOW
-        RED -> FieldContent.RED
-        GREEN -> FieldContent.GREEN
-    }
     
     override fun toString() = "Farbe $german"
     

@@ -13,7 +13,7 @@ import sc.shared.GameResult
 interface IGameHandler {
     
     /** Wird aufgerufen, wenn sich das Spielbrett ändert. */
-    fun onUpdate(gamestate: TwoPlayerGameState<*>)
+    fun onUpdate(gameState: TwoPlayerGameState)
     
     /** Wird aufgerufen, um die Zuganfrage des Servers zu beantworten. */
     fun calculateMove(): IMove

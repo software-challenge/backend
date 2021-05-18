@@ -31,4 +31,7 @@ interface IGameState : RoomMessage, Cloneable {
 
     /** Aktuelle Rundenzahl */
     val round: Int
+    
+    /** Das Team am Zug. */
+    val currentTeam: ITeam
 }

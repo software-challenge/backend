@@ -1,4 +1,4 @@
-package sc.plugin2021.util
+package sc.plugin2022.util
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.shared.IWinReason

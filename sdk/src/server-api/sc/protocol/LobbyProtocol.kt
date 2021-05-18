@@ -1,7 +1,7 @@
 package sc.protocol
 
 import com.thoughtworks.xstream.XStream
-import sc.api.plugins.ITeam
+import sc.api.plugins.Team
 import sc.protocol.requests.*
 import sc.protocol.responses.*
 import sc.protocol.room.ErrorMessage
@@ -18,7 +18,7 @@ object LobbyProtocol {
     
         registerAdditionalMessages(xStream, listOf(AuthenticateRequest::class.java, CancelRequest::class.java, FreeReservationRequest::class.java, JoinPreparedRoomRequest::class.java, JoinRoomRequest::class.java, ObservationRequest::class.java, PauseGameRequest::class.java, ControlTimeoutRequest::class.java, PrepareGameRequest::class.java, StepRequest::class.java, PlayerScoreRequest::class.java, TestModeRequest::class.java, PlayerScoreResponse::class.java, TestModeResponse::class.java, RoomWasJoinedEvent::class.java))
     
-        registerAdditionalMessages(xStream, listOf(GameResult::class.java, PlayerScore::class.java, ScoreAggregation::class.java, ITeam::class.java, ScoreCause::class.java, ScoreDefinition::class.java, ScoreFragment::class.java, WinCondition::class.java, SlotDescriptor::class.java, Score::class.java, ScoreValue::class.java))
+        registerAdditionalMessages(xStream, listOf(GameResult::class.java, PlayerScore::class.java, ScoreAggregation::class.java, Team::class.java, ScoreCause::class.java, ScoreDefinition::class.java, ScoreFragment::class.java, WinCondition::class.java, SlotDescriptor::class.java, Score::class.java, ScoreValue::class.java))
 
         return xStream
     }

@@ -16,8 +16,8 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     
     override val players = mutableListOf<P>()
     
-    var activePlayer: P? = null
-        protected set
+    val activePlayer
+        get() = players[currentState.currentTeam.index]
     
     protected val listeners = mutableListOf<IGameListener>()
     
@@ -52,14 +52,14 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
                 fromPlayer.softTimeout = true
                 onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT)
             } else {
-                onRoundBasedAction(fromPlayer, data)
+                onRoundBasedAction(data)
             }
         } ?: throw GameLogicException("We didn't request a move from you yet.")
     }
 
     /** Called by [onAction] to execute a move of a Player. */
     @Throws(InvalidMoveException::class)
-    abstract fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage)
+    abstract fun onRoundBasedAction(data: RoomMessage)
 
     /**
      * Returns a WinCondition if the Game is over.
@@ -85,15 +85,17 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     
     /** Starts the game by sending a [WelcomeMessage] to all players and calling [next]. */
     override fun start() {
-        players.forEach { it.notifyListeners(WelcomeMessage(it.color)) }
-        next(players.first())
+        players.forEach { it.notifyListeners(WelcomeMessage(it.team)) }
+        next()
     }
 
     /**
      * Handle leave of a player.
      *
      * @param player the player that left.
-     * @param cause  the cause for the leave. If none is provided, then it will either be {@link ScoreCause#RULE_VIOLATION} or {$link ScoreCause#LEFT}, depending on whether the player has {@link Player#hasViolated()}.
+     * @param cause  the cause for the leave.
+     *   If none is provided, then it will either be [ScoreCause.RULE_VIOLATION] or [ScoreCause.LEFT],
+     *   depending on whether the player has violated.
      */
     override fun onPlayerLeft(player: Player, cause: ScoreCause?) {
         if (cause == ScoreCause.REGULAR) return
@@ -111,26 +113,20 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
         notifyOnGameOver(scores)
     }
 
-    /** Advances the Game to [nextPlayer].
+    /** Advances the Game.
      * - sends out a state update
      * - invokes [notifyOnGameOver] if the game is over
-     * - updates [activePlayer] to [nextPlayer]
      * - requests a new move if [isPaused] is false
      */
-    protected fun next(nextPlayer: P?) {
+    protected fun next() {
         // if paused, notify observers only (e.g. to update the GUI)
         notifyOnNewState(currentState, isPaused)
         
         if (checkWinCondition() != null) {
             logger.debug("Game over")
             notifyOnGameOver(generateScoreMap())
-        } else {
-            logger.debug("Next player: $nextPlayer")
-    
-            activePlayer = nextPlayer
-            if (!isPaused) {
-                notifyActivePlayer()
-            }
+        } else if (!isPaused) {
+            notifyActivePlayer()
         }
     }
 
@@ -141,8 +137,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
 
     /** Notifies the active player that it's their time to make a move. */
     protected fun notifyActivePlayer() {
-        activePlayer?.let { requestMove(it) } ?:
-            throw IllegalStateException("Trying to notify active player but it is null")
+        requestMove(activePlayer)
     }
 
     /** Sends a MoveRequest directly to the given player.
@@ -166,7 +161,8 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     }
 
     protected open fun getTimeoutFor(player: P) = ActionTimeout(true)
-
+    
+    @Suppress("ReplaceAssociateFunction")
     fun generateScoreMap(): Map<Player, PlayerScore> =
             players.associate { it to getScoreFor(it) }
 
