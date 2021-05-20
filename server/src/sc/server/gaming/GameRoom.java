@@ -22,10 +22,7 @@ import sc.server.network.DummyClient;
 import sc.server.network.IClient;
 import sc.shared.*;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -86,13 +83,27 @@ public class GameRoom implements IGameListener {
     }
 
     if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
-      saveReplay();
+      try {
+        saveReplay(new BufferedWriter(new FileWriter(createReplayFile())));
+      } catch (IOException e) {
+        logger.error("Failed to save replay", e);
+      }
     }
 
     kickAllClients();
     cancel();
   }
 
+  public File createReplayFile() throws IOException {
+    String fileName = HelperMethods.generateReplayFilename(this.game.getPluginUUID(),
+        playerSlots.stream().map(PlayerSlot::getDescriptor).collect(Collectors.toList()));
+
+    File file = new File(fileName);
+    if(file.getParentFile().mkdirs())
+      if(file.createNewFile())
+        return file;
+    throw new IOException("Couldn't create replay file " + file);
+  }
 
   /**
    * Generate scores from results parameter and return GameResult.
@@ -118,40 +129,24 @@ public class GameRoom implements IGameListener {
     return new GameResult(scoreDefinition, scores, this.game.getWinners());
   }
 
-  /** Write replay of game to a file. */
-  private void saveReplay() {
-    List<SlotDescriptor> slotDescriptors = new ArrayList<>();
-    for (PlayerSlot slot : this.getSlots()) {
-      slotDescriptors.add(slot.getDescriptor());
-    }
-    String fileName = HelperMethods.generateReplayFilename(this.game.getPluginUUID(), slotDescriptors);
-    try {
-      XStream xStream = XStreamProvider.loadPluginXStream();
-      File f = new File(fileName);
-      f.getParentFile().mkdirs();
-      f.createNewFile();
+  /** Write replay of game to a writer. */
+  public void saveReplay(Writer writer) throws IOException {
+    XStream xStream = XStreamProvider.loadPluginXStream();
 
-      BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-      writer.write("<protocol>\n");
-      for (RoomMessage element : history) {
-        if (!(element instanceof IGameState))
-          continue;
-        IGameState state = (IGameState) element;
-        MementoMessage data = new MementoMessage(state, null);
-        RoomPacket roomPacket = new RoomPacket(getId(), data);
-        String xmlReplay = xStream.toXML(roomPacket);
-        writer.write(xmlReplay + "\n");
-        writer.flush();
-      }
-
-      String result = xStream.toXML(new RoomPacket(getId(), this.result));
-      writer.write(result + "\n");
-      writer.write("</protocol>");
+    writer.write("<protocol>\n");
+    for (RoomMessage element : history) {
+      if (!(element instanceof IGameState))
+        continue;
+      IGameState state = (IGameState) element;
+      // TODO do we need to save RoomPackets?
+      RoomPacket roomPacket = createRoomPacket(new MementoMessage(state, null));
+      writer.write(xStream.toXML(roomPacket) + "\n");
       writer.flush();
-      writer.close();
-    } catch (IOException e) {
-      e.printStackTrace();
     }
+
+    writer.write(xStream.toXML(createRoomPacket(this.result)) + "\n");
+    writer.write("</protocol>");
+    writer.close();
   }
 
   /** Send the given message to all Players and Observers in this room. */
