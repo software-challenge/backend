@@ -162,12 +162,16 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(new RoomPacket(roomId, o));
   }
 
-  public void joinPreparedGame(String reservation) {
+  public void joinGameWithReservation(String reservation) {
     send(new JoinPreparedRoomRequest(reservation));
   }
 
-  public void joinRoomRequest(String gameType) {
-    send(new JoinRoomRequest(gameType));
+  public void joinGameRoom(String roomId) {
+    send(new JoinRoomRequest(roomId));
+  }
+
+  public void joinGame(String gameType) {
+    send(new JoinGameRequest(gameType));
   }
 
   public void addListener(ILobbyClientListener listener) {

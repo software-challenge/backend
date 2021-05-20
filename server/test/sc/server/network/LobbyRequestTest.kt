@@ -16,7 +16,6 @@ import sc.protocol.requests.JoinPreparedRoomRequest
 import sc.protocol.requests.PrepareGameRequest
 import sc.protocol.responses.ErrorPacket
 import sc.protocol.responses.GamePreparedResponse
-import sc.protocol.responses.ObservationResponse
 import sc.protocol.room.ErrorMessage
 import sc.server.client.MessageListener
 import sc.server.client.PlayerListener
@@ -25,6 +24,7 @@ import sc.server.helpers.TestTeam
 import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
+import sc.shared.SlotDescriptor
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
@@ -43,21 +43,24 @@ class LobbyRequestTest: WordSpec({
         val adminListener = MessageListener<ResponsePacket>()
         val lobbyClient = LobbyClient("localhost", testLobby.serverPort)
         val admin = lobbyClient.authenticate(PASSWORD, adminListener::addMessage)
+        fun prepareGame(request: PrepareGameRequest): GamePreparedResponse {
+            admin.prepareGame(request)
+            val prepared = adminListener.waitForMessage(GamePreparedResponse::class)
+            lobby.games shouldHaveSize 1
+            return prepared
+        }
         
         val players = Array(2) { testLobby.connectClient() }
         await("Clients connected") { lobby.clientManager.clients.size shouldBe 3 }
         "a player joined" should {
-            players[0].joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+            players[0].joinGame(TestPlugin.TEST_PLUGIN_UUID)
             "create a room for it" {
                 await("Room opened") { lobby.games.size shouldBe 1 }
                 lobby.games.single().clients shouldHaveSize 1
             }
         }
         "a game is prepared paused" should {
-            admin.prepareGame(PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, pause = true))
-            val prepared = adminListener.waitForMessage(GamePreparedResponse::class)
-            lobby.games shouldHaveSize 1
-            
+            val prepared = prepareGame(PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, pause = true))
             val roomId = prepared.roomId
             val room = lobby.findRoom(roomId)
             withClue("GameRoom is empty and paused") {
@@ -66,7 +69,7 @@ class LobbyRequestTest: WordSpec({
             }
             
             val reservations = prepared.reservations
-            players[0].joinPreparedGame(reservations[0])
+            players[0].joinGameWithReservation(reservations[0])
             await("First player joined") { room.clients shouldHaveSize 1 }
             "not accept a reservation twice" {
                 lobbyClient.send(JoinPreparedRoomRequest(reservations[0]))
@@ -74,7 +77,7 @@ class LobbyRequestTest: WordSpec({
                 room.clients shouldHaveSize 1
                 lobby.games shouldHaveSize 1
             }
-            players[1].joinPreparedGame(reservations[1])
+            players[1].joinGameWithReservation(reservations[1])
             await("Players join, Game start") { room.status shouldBe GameRoom.GameStatus.ACTIVE }
             
             val playerListeners = room.slots.map { slot ->
@@ -108,6 +111,37 @@ class LobbyRequestTest: WordSpec({
                 await("Terminate after wrong player sent a turn") {
                     room.status shouldBe GameRoom.GameStatus.OVER
                 }
+            }
+        }
+        "a game is prepared with descriptors" should {
+            val descriptors = arrayOf(
+                    SlotDescriptor("supreme", reserved = true),
+                    SlotDescriptor("human", canTimeout = false, reserved = false),
+            )
+            val prepared = prepareGame(PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, descriptors, pause = false))
+            val room = lobby.findRoom(prepared.roomId)
+            "return a single reservation" {
+                prepared.reservations shouldHaveSize 1
+            }
+            "create appropriate slots" {
+                room.slots shouldHaveSize 2
+                room.slots.forEachIndexed { index, slot ->
+                    val descriptor = descriptors[index]
+                    slot.player.displayName shouldBe descriptor.displayName
+                    slot.player.canTimeout shouldBe descriptor.canTimeout
+                    slot.isReserved shouldBe descriptor.reserved
+                }
+            }
+            players[0].joinGameRoom(prepared.roomId)
+            "join player into nonreserved slot" {
+                await { room.clients shouldHaveSize 1 }
+                room.slots[0].isEmpty shouldBe true
+                room.slots[0].isFree shouldBe false
+                room.slots[1].isEmpty shouldBe false
+            }
+            players[1].joinGameWithReservation(prepared.reservations.single())
+            await("start game when two players joined") {
+                room.status shouldBe GameRoom.GameStatus.ACTIVE
             }
         }
     }

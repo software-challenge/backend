@@ -1,6 +1,7 @@
 package sc.server
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.exceptions.GameRoomException
 import sc.api.plugins.exceptions.RescuableClientException
 import sc.protocol.requests.*
 import sc.protocol.responses.PlayerScoreResponse
@@ -9,7 +10,6 @@ import sc.protocol.room.RoomPacket
 import sc.server.gaming.GameRoomManager
 import sc.server.gaming.ReservationManager
 import sc.server.network.*
-import sc.shared.InvalidGameStateException
 import sc.shared.Score
 import java.io.Closeable
 import java.io.IOException
@@ -26,8 +26,10 @@ class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
         clientManager.start()
     }
     
-    /** Handle requests or moves of clients. */
-    @Throws(RescuableClientException::class, InvalidGameStateException::class)
+    /** Handle requests or moves of clients.
+     * @throws RescuableClientException if something goes wrong.
+     *         Usually results in termination of the connection to the offending client. */
+    @Throws(RescuableClientException::class)
     override fun onRequest(source: Client, callback: PacketCallback) {
         when (val packet = callback.packet) {
             is RoomPacket -> {
@@ -37,7 +39,10 @@ class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
             }
             is JoinPreparedRoomRequest ->
                 ReservationManager.redeemReservationCode(source, packet.reservationCode)
-            is JoinRoomRequest -> {
+            is JoinRoomRequest ->
+                if(!this.findRoom(packet.roomId).join(source))
+                    throw GameRoomException("Room ${packet.roomId} is already full!")
+            is JoinGameRequest -> {
                 val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
                 // null is returned if join was unsuccessful
                 if (gameRoomMessage != null) {

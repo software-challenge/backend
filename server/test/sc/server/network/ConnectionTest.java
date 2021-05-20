@@ -3,7 +3,7 @@ package sc.server.network;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sc.networking.clients.XStreamClient.DisconnectCause;
-import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.requests.JoinGameRequest;
 import sc.protocol.ProtocolPacket;
 import sc.server.helpers.TestHelper;
 import sc.server.plugins.TestPlugin;
@@ -22,7 +22,7 @@ public class ConnectionTest extends RealServerTest {
     TestTcpClient client = connectClient();
     waitForConnect(1);
 
-    client.send(new JoinRoomRequest(TestPlugin.TEST_PLUGIN_UUID));
+    client.send(new JoinGameRequest(TestPlugin.TEST_PLUGIN_UUID));
     TestHelper.INSTANCE.assertEqualsWithTimeout(1, () -> getLobby().getGames().size(), 1, TimeUnit.SECONDS);
   }
 
