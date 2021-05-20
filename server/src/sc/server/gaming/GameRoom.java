@@ -286,7 +286,7 @@ public class GameRoom implements IGameListener {
 
   private PlayerSlot openSlot() {
     if (playerSlots.size() >= getMaximumPlayerCount())
-      throw new TooManyPlayersException();
+      throw new TooManyPlayersException(this);
     PlayerSlot slot = new PlayerSlot(this);
     Player player = game.onPlayerJoined();
     slot.setPlayer(player);
