@@ -213,23 +213,17 @@ public class GameRoom implements IGameListener {
    * Join a client into this room.
    * Starts the game if full.
    *
-   * @return true if successfully joined
+   * @return true if successfully joined,
+   * false if there was no free slot
    */
-  public synchronized boolean join(Client client) throws GameRoomException {
-    for (PlayerSlot slot : this.playerSlots) {
-      // find PlayerSlot that it not in use for the new Client
-      if (slot.isEmpty() && !slot.isReserved()) {
-        fillSlot(slot, client);
-        return true;
-      }
-    }
-
-    if (this.playerSlots.size() < getMaximumPlayerCount()) {
-      fillSlot(openSlot(), client);
-      return true;
-    }
-
-    return false;
+  public synchronized boolean join(Client client) {
+    PlayerSlot slot = playerSlots.stream()
+        .filter(PlayerSlot::isFree).findFirst()
+        .orElseGet(() -> playerSlots.size() < getMaximumPlayerCount() ? openSlot() : null);
+    if(slot == null)
+      return false;
+    fillSlot(slot, client);
+    return true;
   }
 
   /**
@@ -238,7 +232,7 @@ public class GameRoom implements IGameListener {
    * @param openSlot PlayerSlot to fill
    * @param client   Client to fill PlayerSlot
    */
-  synchronized void fillSlot(PlayerSlot openSlot, Client client) throws GameRoomException {
+  synchronized void fillSlot(PlayerSlot openSlot, Client client) {
     openSlot.setClient(client); // sets role of Slot as PlayerRole
     client.send(new JoinedRoomResponse(getId()));
     startIfReady();
@@ -250,7 +244,7 @@ public class GameRoom implements IGameListener {
   }
 
   /** Starts game if ready and not over. */
-  private void startIfReady() throws GameRoomException {
+  private void startIfReady() {
     logger.debug("startIfReady called");
     if (isOver()) {
       logger.warn("Game already over: {}", game);

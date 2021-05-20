@@ -26,6 +26,10 @@ public class PlayerSlot implements IPlayerListener, IClientListener {
     return this.room;
   }
 
+  public boolean isFree() {
+    return isEmpty() && !isReserved();
+  }
+
   public boolean isEmpty() {
     return this.client == null;
   }
