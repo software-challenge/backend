@@ -142,6 +142,7 @@ public class GameRoomManager {
   public synchronized RoomWasJoinedEvent joinOrCreateGame(Client client, String gameType)
           throws RescuableClientException {
     for (GameRoom gameRoom : getGames()) {
+      // TODO gameType isn't checked
       if (gameRoom.join(client)) {
         return roomJoined(gameRoom);
       }
@@ -149,7 +150,7 @@ public class GameRoomManager {
     return createAndJoinGame(client, gameType);
   }
 
-  private RoomWasJoinedEvent roomJoined(GameRoom room) {
+  protected RoomWasJoinedEvent roomJoined(GameRoom room) {
     return new RoomWasJoinedEvent(room.getId(), room.getClients().size());
   }
 
