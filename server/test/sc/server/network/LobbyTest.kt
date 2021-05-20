@@ -6,6 +6,7 @@ import sc.server.client.TestLobbyClientListener
 import sc.server.gaming.GameRoom
 import sc.server.plugins.TestPlugin
 import sc.shared.ScoreCause
+import java.net.SocketException
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -43,7 +44,10 @@ class LobbyTest: RealServerTest() {
         val room = gameMgr.games.single()
         room.isOver shouldBe false
         
-        player1.sendCustomData("<yarr>")
+        try {
+            player1.sendCustomData("<yarr>")
+        } catch(_: SocketException) {
+        }
         
         await("Game is over") { room.isOver }
         await("GameResult") { room.result != null }

@@ -138,8 +138,8 @@ public abstract class XStreamClient implements IClient {
         } else if (exceptionCause instanceof EOFException) {
           handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else if (exceptionCause instanceof IOException
-            && exceptionCause.getCause() != null && exceptionCause
-            .getCause() instanceof InterruptedException) {
+            && exceptionCause.getCause() != null
+            && exceptionCause.getCause() instanceof InterruptedException) {
           handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else {
           handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
@@ -201,8 +201,6 @@ public abstract class XStreamClient implements IClient {
   protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
     if (exception != null) {
       logger.warn("{} disconnected (Cause: {}, Exception: {})", this, cause, exception);
-      if (logger.isDebugEnabled())
-        exception.printStackTrace();
     } else {
       logger.info("{} disconnected (Cause: {})", this, cause);
     }
@@ -263,7 +261,7 @@ public abstract class XStreamClient implements IClient {
           this.out.close();
       } catch (Exception e) {
         if (e.getCause() instanceof SocketException)
-          logger.debug("Failed to close OUT", e);
+          logger.debug("Can't close OUT, Socket already closed: {}", e.toString());
         else
           logger.warn("Failed to close OUT", e);
       }
