@@ -54,9 +54,6 @@ class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
                     is PrepareGameRequest -> {
                         source.send(this.prepareGame(packet))
                     }
-                    is FreeReservationRequest -> {
-                        ReservationManager.freeReservation(packet.reservation)
-                    }
                     is ObservationRequest -> {
                         val room = this.findRoom(packet.roomId)
                         room.addObserver(source)
