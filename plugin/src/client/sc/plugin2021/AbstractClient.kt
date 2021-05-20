@@ -4,11 +4,9 @@ import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.AbstractLobbyClientListener
-import sc.networking.clients.IControllableGame
 import sc.networking.clients.ILobbyClientListener
 import sc.networking.clients.LobbyClient
 import sc.protocol.room.RoomMessage
-import sc.protocol.responses.GamePreparedResponse
 import sc.protocol.room.ErrorMessage
 import sc.shared.GameResult
 import sc.shared.WelcomeMessage
@@ -96,7 +94,7 @@ abstract class AbstractClient(
     /** [start] and join any game with the appropriate [gameType]. */
     fun joinAnyGame() {
         start()
-        client.joinRoomRequest(GamePlugin.PLUGIN_ID)
+        client.joinGame(GamePlugin.PLUGIN_ID)
     }
     
     override fun onGameLeft(roomId: String) {
@@ -112,6 +110,6 @@ abstract class AbstractClient(
     
     fun joinPreparedGame(reservation: String) {
         start()
-        client.joinPreparedGame(reservation)
+        client.joinGameWithReservation(reservation)
     }
 }
