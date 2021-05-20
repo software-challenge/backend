@@ -23,7 +23,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     private val availableTeams = mutableListOf(Team.ONE, Team.TWO)
     override fun onPlayerJoined(): Player {
         if (availableTeams.isEmpty())
-            throw TooManyPlayersException()
+            throw TooManyPlayersException(this)
         val player = currentState.getPlayer(availableTeams.removeAt(0))
         
         players.add(player)
