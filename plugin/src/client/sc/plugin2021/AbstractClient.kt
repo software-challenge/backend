@@ -97,6 +97,16 @@ abstract class AbstractClient(
         client.joinGame(GamePlugin.PLUGIN_ID)
     }
     
+    fun joinPreparedGame(reservation: String) {
+        start()
+        client.joinGameWithReservation(reservation)
+    }
+    
+    fun joinGameRoom(roomId: String) {
+        start()
+        client.joinGameRoom(roomId)
+    }
+    
     override fun onGameLeft(roomId: String) {
         logger.info("$this: Got game left in room $roomId")
         client.stop()
@@ -106,10 +116,5 @@ abstract class AbstractClient(
         logger.info("$this: Game over with result $data")
         isGameOver = true
         handler?.gameEnded(data, team, error)
-    }
-    
-    fun joinPreparedGame(reservation: String) {
-        start()
-        client.joinGameWithReservation(reservation)
     }
 }
