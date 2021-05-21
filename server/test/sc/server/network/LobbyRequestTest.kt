@@ -94,6 +94,7 @@ class LobbyRequestTest: WordSpec({
                 game.isPaused shouldBe false
                 withClue("Processes moves") {
                     game.activePlayer?.color shouldBe TestTeam.RED
+                    // TODO occasional failure
                     playerListeners[0].waitForMessage(MoveRequest::class)
                     players[0].sendMessageToRoom(roomId, TestMove(1))
                     await { game.currentState.state shouldBe 1 }
