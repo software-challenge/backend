@@ -1,6 +1,5 @@
 package sc.server.plugins
 
-import org.slf4j.LoggerFactory
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
@@ -41,7 +40,6 @@ data class TestGame(
     }
 
     override fun onPlayerLeft(player: Player, cause: ScoreCause?) {
-        logger.debug("Player left $player")
         val result = generateScoreMap().toMutableMap()
         result[player] = PlayerScore(cause ?: ScoreCause.LEFT, "Spieler hat das Spiel verlassen.", 0)
         notifyOnGameOver(result)
@@ -56,8 +54,4 @@ data class TestGame(
     
     override fun toString(): String =
             "TestGame(currentState=$currentState, paused=$isPaused, players=$players)"
-    
-    companion object {
-        private val logger = LoggerFactory.getLogger(TestGame::class.java)
-    }
 }
