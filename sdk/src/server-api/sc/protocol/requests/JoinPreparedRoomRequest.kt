@@ -4,8 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 
 /**
- * Used by client to join a room by reservation code.
- * The code can be received from the administrative client who requested game creation via PrepareGameRequest.
+ * Join a prepared game by reservation.
+ * The code is handed out by the administrative client
+ * that created the game via a PrepareGameRequest.
  */
 @XStreamAlias("joinPrepared")
 data class JoinPreparedRoomRequest(
