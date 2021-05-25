@@ -31,4 +31,6 @@ interface IGameState : RoomMessage, Cloneable {
 
     /** Aktuelle Rundenzahl */
     val round: Int
+    
+    public override fun clone(): IGameState
 }

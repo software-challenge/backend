@@ -57,6 +57,4 @@ abstract class TwoPlayerGameState<P : Player>(
     override fun toString() =
             "GameState(turn=$turn,currentPlayer=${currentPlayer.color})"
     
-    public abstract override fun clone(): IGameState
-    
 }
