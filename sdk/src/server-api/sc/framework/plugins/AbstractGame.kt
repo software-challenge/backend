@@ -3,10 +3,10 @@ package sc.framework.plugins
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGameState
+import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.exceptions.NotYourTurnException
 import sc.api.plugins.host.IGameListener
-import sc.protocol.room.RoomMessage
 import sc.shared.*
 
 abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance {
@@ -31,18 +31,15 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     }
     
     /**
-     * Called by the Server once an action was received.
-     *
-     * @param fromPlayer The player who invoked this action.
-     * @param data       The plugin-specific data.
+     * Called by the Server upon receiving a Move.
      *
      * @throws GameLogicException if no move has been requested from the given [Player]
      * @throws InvalidMoveException when the given Move is not possible
      */
     @Throws(GameLogicException::class, InvalidMoveException::class)
-    override fun onAction(fromPlayer: Player, data: RoomMessage) {
+    override fun onAction(fromPlayer: Player, move: IMove) {
         if (fromPlayer != activePlayer)
-            throw NotYourTurnException(activePlayer, fromPlayer, data)
+            throw NotYourTurnException(activePlayer, fromPlayer, move)
         moveRequestTimeout?.let { timer ->
             timer.stop()
             logger.info("Time needed for move: " + timer.timeDiff)
@@ -51,14 +48,14 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
                 fromPlayer.softTimeout = true
                 onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT)
             } else {
-                onRoundBasedAction(fromPlayer, data)
+                onRoundBasedAction(fromPlayer, move)
             }
-        } ?: throw GameLogicException("We didn't request a move from you yet.")
+        } ?: throw GameLogicException("Move from $fromPlayer has not been requested.")
     }
 
     /** Called by [onAction] to execute a move of a Player. */
     @Throws(InvalidMoveException::class)
-    abstract fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage)
+    abstract fun onRoundBasedAction(fromPlayer: Player, move: IMove)
 
     /**
      * Returns a WinCondition if the Game is over.

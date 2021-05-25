@@ -1,6 +1,7 @@
 package sc.plugin2021
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
@@ -9,7 +10,6 @@ import sc.plugin2021.util.Constants
 import sc.plugin2021.util.GameRuleLogic
 import sc.plugin2021.util.MoveMistake
 import sc.plugin2021.util.WinReason
-import sc.protocol.room.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
@@ -126,13 +126,13 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
     @Throws(InvalidMoveException::class)
-    override fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage) {
-        if (data !is Move)
+    override fun onRoundBasedAction(fromPlayer: Player, move: IMove) {
+        if (move !is Move)
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
         
         logger.debug("Current State: $currentState")
-        logger.debug("Performing Move $data")
-        GameRuleLogic.performMove(currentState, data)
+        logger.debug("Performing Move $move")
+        GameRuleLogic.performMove(currentState, move)
         GameRuleLogic.removeInvalidColors(currentState)
         next(if (isGameOver) null else currentState.currentPlayer)
         logger.debug("Current Board:\n${currentState.board}")
