@@ -19,4 +19,5 @@ data class TestGameState(
         currentPlayer = TestTeam.values()[(turn + startPlayer.index) % 2]
     }
     
+    override fun clone() = throw NotImplementedError()
 }
