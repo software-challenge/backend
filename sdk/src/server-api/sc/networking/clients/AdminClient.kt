@@ -2,7 +2,7 @@ package sc.networking.clients
 
 import sc.protocol.requests.ObservationRequest
 import sc.protocol.requests.PrepareGameRequest
-import sc.protocol.room.RoomMessage
+import sc.protocol.room.ObservableRoomMessage
 
 class AdminClient(private val client: LobbyClient) {
     
@@ -15,7 +15,7 @@ class AdminClient(private val client: LobbyClient) {
             GameController(roomId, client)
     
     /** Registers [listener] onto the given room. */
-    fun observe(roomId: String, listener: (RoomMessage) -> Unit) {
+    fun observe(roomId: String, listener: (ObservableRoomMessage) -> Unit) {
         client.observeRoom(roomId, listener)
         client.send(ObservationRequest(roomId))
     }
