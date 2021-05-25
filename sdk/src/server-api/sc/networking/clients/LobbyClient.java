@@ -47,6 +47,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();
       RoomMessage data = packet.getData();
+      roomObservers.getOrDefault(roomId, (m) -> {}).accept(data);
       if (data instanceof MementoMessage) {
         onNewState(roomId, ((MementoMessage) data).getState());
       } else if (data instanceof GameResult) {
