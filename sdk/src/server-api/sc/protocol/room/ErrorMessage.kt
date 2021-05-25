@@ -9,7 +9,7 @@ data class ErrorMessage(
         val originalMessage: RoomMessage,
         @XStreamAsAttribute
         val message: String,
-): RoomOrchestrationMessage {
+): RoomOrchestrationMessage, ObservableRoomMessage {
     val logMessage
         get() = "$originalMessage caused an error: $message"
 }

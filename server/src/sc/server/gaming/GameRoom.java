@@ -154,7 +154,7 @@ public class GameRoom implements IGameListener {
   }
 
   /** Send the given message to all Players and Observers in this room. */
-  private void broadcast(RoomMessage message) {
+  private void broadcast(ObservableRoomMessage message) {
     broadcast(createRoomPacket(message));
   }
 
@@ -165,7 +165,7 @@ public class GameRoom implements IGameListener {
   }
 
   /** Send Message to all registered Observers. */
-  private void observerBroadcast(RoomMessage message) {
+  private void observerBroadcast(ObservableRoomMessage message) {
     observers.forEach(observer -> observer.send(createRoomPacket(message)));
   }
 

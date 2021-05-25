@@ -14,4 +14,4 @@ import sc.framework.plugins.Player
 data class GamePaused(
         @XStreamAsAttribute
         val nextPlayer: Player
-): RoomOrchestrationMessage
+): ObservableRoomMessage

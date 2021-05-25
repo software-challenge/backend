@@ -3,6 +3,7 @@ package sc.shared
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.framework.plugins.Player
+import sc.protocol.room.ObservableRoomMessage
 import sc.protocol.room.RoomOrchestrationMessage
 
 /**
@@ -17,7 +18,7 @@ data class GameResult(
         val scores: List<PlayerScore>,
         @XStreamImplicit(itemFieldName = "winner")
         val winners: List<Player>?
-): RoomOrchestrationMessage {
+): RoomOrchestrationMessage, ObservableRoomMessage {
     
     val isRegular: Boolean
         get() = scores.all { it.cause == ScoreCause.REGULAR }

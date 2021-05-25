@@ -10,6 +10,6 @@ import sc.framework.plugins.IPerspectiveProvider
 data class MementoMessage(
         val state: IGameState,
         @XStreamOmitField private val perspective: Any?
-): RoomMessage, IPerspectiveProvider {
+): ObservableRoomMessage, IPerspectiveProvider {
     override fun getPerspective() = perspective
 }

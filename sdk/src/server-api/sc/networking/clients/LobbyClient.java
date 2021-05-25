@@ -32,7 +32,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private final List<ILobbyClientListener> listeners = new ArrayList<>();
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
 
-  private final Map<String, Consumer<RoomMessage>> roomObservers = new HashMap<>();
+  private final Map<String, Consumer<ObservableRoomMessage>> roomObservers = new HashMap<>();
   private Consumer<ResponsePacket> administrativeListener = null;
 
   public LobbyClient(String host, int port) throws IOException {
@@ -47,18 +47,20 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();
       RoomMessage data = packet.getData();
-      roomObservers.getOrDefault(roomId, (m) -> {}).accept(data);
-      if (data instanceof MementoMessage) {
-        onNewState(roomId, ((MementoMessage) data).getState());
-      } else if (data instanceof GameResult) {
-        onGameOver(roomId, (GameResult) data);
-      } else if (data instanceof GamePaused) {
-        onGamePaused(roomId, ((GamePaused) data).getNextPlayer());
-      } else if (data instanceof ErrorMessage) {
-        ErrorMessage error = (ErrorMessage) data;
-        logger.warn("{} in room {}", error.getLogMessage(), roomId);
-        for (IHistoryListener listener : this.historyListeners) {
-          listener.onGameError(roomId, error);
+      if(data instanceof ObservableRoomMessage) {
+        roomObservers.getOrDefault(roomId, (m) -> {}).accept((ObservableRoomMessage) data);
+        if (data instanceof MementoMessage) {
+          onNewState(roomId, ((MementoMessage) data).getState());
+        } else if (data instanceof GameResult) {
+          onGameOver(roomId, (GameResult) data);
+        } else if (data instanceof GamePaused) {
+          onGamePaused(roomId, ((GamePaused) data).getNextPlayer());
+        } else if (data instanceof ErrorMessage) {
+          ErrorMessage error = (ErrorMessage) data;
+          logger.warn("{} in room {}", error.getLogMessage(), roomId);
+          for (IHistoryListener listener : this.historyListeners) {
+            listener.onGameError(roomId, error);
+          }
         }
       } else {
         onRoomMessage(roomId, data);
@@ -197,7 +199,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   /** Sets observer to observe messages in the given room.
    * Whether administrative messages are received depends on authentication,
    * which has to be done separately. */
-  public void observeRoom(String roomId, Consumer<RoomMessage> observer) {
+  public void observeRoom(String roomId, Consumer<ObservableRoomMessage> observer) {
     roomObservers.put(roomId, observer);
   }
 

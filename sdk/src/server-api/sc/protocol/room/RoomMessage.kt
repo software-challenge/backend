@@ -1,8 +1,10 @@
 package sc.protocol.room
 
-/** Implemented by any message sent within a GameRoom. */
+/** A sent within a GameRoom. */
 interface RoomMessage
 
-/** Implemented by any message within a room
- * that does not concern the progress of the game. */
+/** Marks a [RoomMessage] that does not concern the progress of the game. */
 interface RoomOrchestrationMessage: RoomMessage
+
+/** Marks a [RoomMessage] that can be received by observers. */
+interface ObservableRoomMessage: RoomMessage
