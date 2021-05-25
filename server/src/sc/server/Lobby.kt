@@ -1,6 +1,7 @@
 package sc.server
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.GameRoomException
 import sc.api.plugins.exceptions.RescuableClientException
 import sc.protocol.requests.*
@@ -35,7 +36,10 @@ class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
             is RoomPacket -> {
                 // i.e. new move
                 val room = this.findRoom(packet.roomId)
-                room.onEvent(source, packet.data)
+                val move = packet.data
+                if(move !is IMove)
+                    throw GameRoomException("Received non-move packet: $packet")
+                room.onEvent(source, move)
             }
             is JoinPreparedRoomRequest ->
                 ReservationManager.redeemReservationCode(source, packet.reservationCode)

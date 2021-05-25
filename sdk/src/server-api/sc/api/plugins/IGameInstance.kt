@@ -3,7 +3,6 @@ package sc.api.plugins
 import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.Player
-import sc.protocol.room.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
@@ -15,16 +14,15 @@ interface IGameInstance {
     fun onPlayerLeft(player: Player, cause: ScoreCause? = null)
 
     /**
-     * Called by the Server once an action was received.
+     * Called by the Server upon receiving a Move.
      *
      * @param fromPlayer The player who invoked this action.
-     * @param data       ProtocolMessage with the action
      *
      * @throws GameLogicException   if any invalid action is done
      * @throws InvalidMoveException if the received move violates the rules
      */
     @Throws(GameLogicException::class, InvalidMoveException::class)
-    fun onAction(fromPlayer: Player, data: RoomMessage)
+    fun onAction(fromPlayer: Player, move: IMove)
     fun addGameListener(listener: IGameListener)
     fun removeGameListener(listener: IGameListener)
 

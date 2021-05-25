@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameState;
+import sc.api.plugins.IMove;
 import sc.api.plugins.exceptions.GameException;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.GameRoomException;
@@ -310,27 +311,27 @@ public class GameRoom implements IGameListener {
    * Execute received action.
    *
    * @param source Client which caused the event
-   * @param data   ProtocolMessage containing the action
+   * @param move   ProtocolMessage containing the action
    */
-  public synchronized void onEvent(Client source, RoomMessage data) throws GameRoomException {
+  public synchronized void onEvent(Client source, IMove move) throws GameRoomException {
     if (isOver())
-      throw new GameException("Game is already over, but got " + data);
+      throw new GameException("Game is already over, but got " + move);
 
     Player player = resolvePlayer(source);
     try {
-      game.onAction(player, data);
+      game.onAction(player, move);
     } catch (InvalidMoveException e) {
       final String error = String.format("Ungueltiger Zug von '%s'.\n%s", player.getDisplayName(), e);
       logger.error(error);
       player.setViolationReason(e.getMessage());
-      ErrorMessage errorMessage = new ErrorMessage(data, error);
+      ErrorMessage errorMessage = new ErrorMessage(move, error);
       player.notifyListeners(errorMessage);
       observerBroadcast(errorMessage);
       history.add(errorMessage);
       game.onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
       throw new GameLogicException(e.toString(), e);
     } catch (GameLogicException e) {
-      player.notifyListeners(new ErrorMessage(data, e.getMessage()));
+      player.notifyListeners(new ErrorMessage(move, e.getMessage()));
       throw e;
     }
   }

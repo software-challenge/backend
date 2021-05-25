@@ -1,10 +1,10 @@
 package sc.server.plugins
 
+import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
-import sc.protocol.room.RoomMessage
 import sc.server.helpers.TestTeam
 import sc.shared.*
 
@@ -15,11 +15,13 @@ data class TestGame(
     override val playerScores: List<PlayerScore> = emptyList()
     override val winners: List<Player> = emptyList()
     
-    override fun onRoundBasedAction(fromPlayer: Player, data: RoomMessage) {
-        if (data is TestMove) {
-            data.perform(currentState)
-            next(if (currentState.currentPlayer === TestTeam.RED) currentState.red else currentState.blue)
-        } else throw InvalidMoveException(TestMoveMistake.INVALID_FORMAT)
+    override fun onRoundBasedAction(fromPlayer: Player, move: IMove) {
+        if (move !is TestMove)
+            throw InvalidMoveException(object: IMoveMistake {
+                override val message = "TestGame only processes TestMove"
+            })
+        move.perform(currentState)
+        next(if (currentState.currentPlayer === TestTeam.RED) currentState.red else currentState.blue)
     }
 
     override fun checkWinCondition(): WinCondition? {
