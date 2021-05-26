@@ -46,7 +46,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
             if (timer.didTimeout()) {
                 logger.warn("Client hit soft-timeout.")
                 fromPlayer.softTimeout = true
-                onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT)
+                stop()
             } else {
                 onRoundBasedAction(fromPlayer, move)
             }
@@ -68,43 +68,18 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
      */
     abstract fun checkWinCondition(): WinCondition?
 
-    /**
-     * At any time this method might be invoked by the server.
-     * Any open handles should be removed.
-     * No events should be sent out (GameOver etc) after this method has been called.
-     */
-    override fun destroy() {
-        logger.info("Destroying Game")
+    /** Stops pending MoveRequests and invokes [notifyOnGameOver]. */
+    override fun stop() {
+        logger.info("Stopping {}", this)
         moveRequestTimeout?.stop()
         moveRequestTimeout = null
+        notifyOnGameOver(generateScoreMap())
     }
     
     /** Starts the game by sending a [WelcomeMessage] to all players and calling [next]. */
     override fun start() {
         players.forEach { it.notifyListeners(WelcomeMessage(it.color)) }
         next(players.first())
-    }
-
-    /**
-     * Handle leave of a player.
-     *
-     * @param player the player that left.
-     * @param cause  the cause for the leave. If none is provided, then it will either be {@link ScoreCause#RULE_VIOLATION} or {$link ScoreCause#LEFT}, depending on whether the player has {@link Player#hasViolated()}.
-     */
-    override fun onPlayerLeft(player: Player, cause: ScoreCause?) {
-        if (cause == ScoreCause.REGULAR) return
-        val newCause = cause ?:
-            if (!player.hasViolated()) {
-                player.left = true
-                ScoreCause.LEFT
-            } else {
-                ScoreCause.RULE_VIOLATION
-            }
-        val scores = HashMap(generateScoreMap())
-        scores[player]?.let { score ->
-            scores[player] = PlayerScore(newCause, score.reason, score.parts)
-        }
-        notifyOnGameOver(scores)
     }
 
     /** Advances the Game to [nextPlayer].
@@ -119,7 +94,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
         
         if (checkWinCondition() != null) {
             logger.debug("Game over")
-            notifyOnGameOver(generateScoreMap())
+            stop()
         } else {
             logger.debug("Next player: $nextPlayer")
     
@@ -155,7 +130,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
         timeout.start {
             logger.warn("Player $player reached the timeout of ${timeout.hardTimeout}ms")
             player.hardTimeout = true
-            onPlayerLeft(player, ScoreCause.HARD_TIMEOUT)
+            stop()
         }
     
         logger.info("Sending MoveRequest to player $activePlayer")

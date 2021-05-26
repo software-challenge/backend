@@ -14,11 +14,8 @@ import sc.api.plugins.host.IGameListener;
 import sc.framework.HelperMethods;
 import sc.framework.plugins.AbstractGame;
 import sc.framework.plugins.Player;
-import sc.framework.HelperMethods;
 import sc.networking.XStreamProvider;
 import sc.networking.clients.IClient;
-import sc.networking.clients.LobbyClient;
-import sc.networking.clients.ObservingClient;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.ProtocolPacket;
 import sc.protocol.RemovedFromGame;
@@ -95,8 +92,7 @@ public class GameRoom implements IGameListener {
       }
     }
 
-    kickAllClients();
-    cancel();
+    destroy();
   }
 
   public File createReplayFile() throws IOException {
@@ -262,8 +258,8 @@ public class GameRoom implements IGameListener {
   }
 
   private synchronized void start() {
-    setStatus(GameStatus.ACTIVE);
     this.game.start();
+    setStatus(GameStatus.ACTIVE);
     logger.info("Started {}", game);
   }
 
@@ -326,7 +322,7 @@ public class GameRoom implements IGameListener {
       player.notifyListeners(errorMessage);
       observerBroadcast(errorMessage);
       history.add(errorMessage);
-      game.onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
+      cancel();
       throw new GameLogicException(e.toString(), e);
     } catch (GameLogicException e) {
       player.notifyListeners(new ErrorMessage(move, e.getMessage()));
@@ -416,11 +412,12 @@ public class GameRoom implements IGameListener {
 
   /** Kick all players, destroy the game and remove it from the manager. */
   public void cancel() {
-    if (!isOver()) {
-      kickAllClients();
-      setStatus(GameStatus.OVER);
-    }
-    this.game.destroy();
+    // this will invoked onGameOver and thus stop everything else
+    this.game.stop();
+  }
+
+  private void destroy() {
+    kickAllClients();
     this.gameRoomManager.remove(this);
   }
 
@@ -455,10 +452,12 @@ public class GameRoom implements IGameListener {
     this.status = status;
   }
 
-  /** Remove a player by calling {@link IGameInstance#onPlayerLeft(Player, ScoreCause) onPlayerLeft}. */
+  /** Remove a player and stop the game. */
   public void removePlayer(Player player, XStreamClient.DisconnectCause cause) {
     logger.info("Removing {} from {}", player, this);
-    this.game.onPlayerLeft(player, cause == XStreamClient.DisconnectCause.DISCONNECTED ? ScoreCause.REGULAR : null);
+    player.setLeft(true);
+    if (!isOver())
+      cancel();
   }
 
   /** Get the saved {@link GameResult result}. */

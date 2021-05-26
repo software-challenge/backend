@@ -5,13 +5,12 @@ import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.Player
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
-import sc.shared.ScoreCause
+
 import kotlin.jvm.Throws
 
 interface IGameInstance {
     /** @return the player that joined. */
     fun onPlayerJoined(): Player
-    fun onPlayerLeft(player: Player, cause: ScoreCause? = null)
 
     /**
      * Called by the Server upon receiving a Move.
@@ -28,13 +27,13 @@ interface IGameInstance {
 
     /** Server or an administrator requests the game to start now.  */
     fun start()
-
+    
     /**
-     * Destroys the Game.
-     * Might be invoked by the server at any time. Any open handles should be removed.
+     * Stops the Game, removing any open handles.
+     *
      * No events (GameOver etc) should be sent out after this method has been called.
      */
-    fun destroy()
+    fun stop()
 
     /**
      * Returns the players that have won the game, empty if the game has no winners,

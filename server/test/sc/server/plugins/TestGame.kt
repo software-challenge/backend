@@ -44,15 +44,11 @@ data class TestGame(
         throw TooManyPlayersException()
     }
 
-    override fun onPlayerLeft(player: Player, cause: ScoreCause?) {
-        val result = generateScoreMap().toMutableMap()
-        result[player] = PlayerScore(cause ?: ScoreCause.LEFT, "Spieler hat das Spiel verlassen.", 0)
-        notifyOnGameOver(result)
-    }
-
-    override fun getScoreFor(player: Player): PlayerScore {
-        return PlayerScore(true, "Spieler hat gewonnen.")
-    }
+    override fun getScoreFor(player: Player) =
+            if(player.hasLeft())
+                PlayerScore(ScoreCause.LEFT, "Spieler ist rausgeflogen.", 0)
+            else
+                PlayerScore(true, "Spieler hat gewonnen.")
 
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(false)
