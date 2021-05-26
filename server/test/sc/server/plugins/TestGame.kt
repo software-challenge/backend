@@ -12,8 +12,11 @@ data class TestGame(
         override val currentState: TestGameState = TestGameState(),
 ): AbstractGame<Player>(TestPlugin.TEST_PLUGIN_UUID) {
     
-    override val playerScores: List<PlayerScore> = emptyList()
-    override val winners: List<Player> = emptyList()
+    override val playerScores: List<PlayerScore>
+        get() = players.map { getScoreFor(it) }
+    
+    override val winners: List<Player>
+        get() = players.filter { !it.hasViolated() && !it.hasLeft() }
     
     override fun onRoundBasedAction(fromPlayer: Player, move: IMove) {
         if (move !is TestMove)
