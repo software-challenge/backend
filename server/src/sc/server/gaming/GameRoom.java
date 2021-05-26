@@ -408,7 +408,7 @@ public class GameRoom implements IGameListener {
     }
     if (isPauseRequested()) {
       logger.info("Stepping {}", game);
-      ((AbstractGame<Player>) game).afterPause();
+      ((AbstractGame<?>) game).afterPause();
     } else {
       logger.warn("Can't step unpaused {}", game);
     }

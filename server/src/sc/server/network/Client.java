@@ -136,11 +136,6 @@ public class Client extends XStreamClient implements IClient {
       logger.debug("Stopping {} because of error", this);
       stop();
     }
-
-    if (message instanceof RemovedFromGame) {
-      logger.debug("Stopping {} because of received RemovedFromGame message", this);
-      stop();
-    }
   }
 
 }
