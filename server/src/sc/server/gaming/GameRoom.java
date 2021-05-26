@@ -261,11 +261,9 @@ public class GameRoom implements IGameListener {
     start();
   }
 
-  /** If the Game is prepared, sync all slots. */
   private synchronized void start() {
     setStatus(GameStatus.ACTIVE);
     this.game.start();
-
     logger.info("Started {}", game);
   }
 
@@ -441,10 +439,7 @@ public class GameRoom implements IGameListener {
     return getStatus() == GameStatus.OVER;
   }
 
-  /**
-   * Return whether or not the game is paused or will be paused in the next turn.
-   * Refer to {@link AbstractGame#isPaused()} for the current value.
-   */
+  /** Return whether or not the game is paused or will be paused in the next turn. */
   public boolean isPauseRequested() {
     return this.pauseRequested;
   }

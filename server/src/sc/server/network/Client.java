@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A generic client. This represents a client in the server.
+ * Represents a client in the server.
  *
  * Clients which connect to the server (as separate programs or running as threads started by the server)
  * are represented by {@link sc.networking.clients.LobbyClient}.
