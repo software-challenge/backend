@@ -137,6 +137,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   public AdminClient authenticate(String password, Consumer<ResponsePacket> consumer) {
     start();
+    if(administrativeListener != null)
+      logger.warn("Re-authentication replaces {}", administrativeListener);
     administrativeListener = consumer;
     send(new AuthenticateRequest(password));
     return new AdminClient(this);
