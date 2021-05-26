@@ -70,6 +70,12 @@ class GameRoomTest: WordSpec({
                     <score cause="REGULAR" reason="Game terminated">
                       <part>0</part>
                     </score>
+                    <winner displayName="">
+                      <color class="sc.server.helpers.TestTeam">RED</color>
+                    </winner>
+                    <winner displayName="">
+                      <color class="sc.server.helpers.TestTeam">BLUE</color>
+                    </winner>
                   </data>
                 </room>
                 </protocol>

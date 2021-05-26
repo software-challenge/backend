@@ -31,15 +31,11 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         return player
     }
     
-    override val winners: MutableList<Player>
+    override val winners: List<Player>
         get() {
-            if (players.first().hasViolated()) {
-                if (players.last().hasViolated())
-                    return mutableListOf()
-                return players.subList(1, 2)
-            }
-            if (players.last().hasViolated())
-                return players.subList(0, 1)
+            val compliant = players.filter { !it.hasViolated() && !it.hasLeft() }
+            if (compliant.size < players.size)
+                return compliant
             
             val first = currentState.getPointsForPlayer(players.first().color)
             val second = currentState.getPointsForPlayer(players.last().color)
