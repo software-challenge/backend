@@ -16,7 +16,11 @@ import sc.protocol.requests.JoinPreparedRoomRequest
 import sc.protocol.requests.PrepareGameRequest
 import sc.protocol.responses.ErrorPacket
 import sc.protocol.responses.GamePreparedResponse
+import sc.protocol.responses.ObservationResponse
 import sc.protocol.room.ErrorMessage
+import sc.protocol.room.GamePaused
+import sc.protocol.room.MementoMessage
+import sc.protocol.room.ObservableRoomMessage
 import sc.server.client.MessageListener
 import sc.server.client.PlayerListener
 import sc.server.gaming.GameRoom
@@ -24,6 +28,7 @@ import sc.server.helpers.TestTeam
 import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
+import sc.shared.GameResult
 import sc.shared.SlotDescriptor
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -92,15 +97,15 @@ class LobbyRequestTest: WordSpec({
                 await { room.isPauseRequested shouldBe false }
                 val game = room.game as TestGame
                 game.isPaused shouldBe false
+                await("game started") { game.activePlayer?.color shouldBe TestTeam.RED }
                 withClue("Processes moves") {
-                    game.activePlayer?.color shouldBe TestTeam.RED
-                    // TODO occasional failure
                     playerListeners[0].waitForMessage(MoveRequest::class)
                     players[0].sendMessageToRoom(roomId, TestMove(1))
-                    await { game.currentState.state shouldBe 1 }
-                    game.activePlayer?.color shouldBe TestTeam.BLUE
+                    await { game.activePlayer?.color shouldBe TestTeam.BLUE }
+                    game.currentState.state shouldBe 1
                     playerListeners[1].waitForMessage(MoveRequest::class)
                     players[1].sendMessageToRoom(roomId, TestMove(2))
+                    await { game.activePlayer?.color shouldBe TestTeam.RED }
                     await { game.currentState.state shouldBe 2 }
                 }
                 
@@ -116,8 +121,8 @@ class LobbyRequestTest: WordSpec({
         }
         "a game is prepared with descriptors" should {
             val descriptors = arrayOf(
-                    SlotDescriptor("supreme", reserved = true),
-                    SlotDescriptor("human", canTimeout = false, reserved = false),
+                    SlotDescriptor("supreme", canTimeout = false, reserved = true),
+                    SlotDescriptor("human", reserved = false),
             )
             val prepared = prepareGame(PrepareGameRequest(TestPlugin.TEST_PLUGIN_UUID, descriptors, pause = false))
             val room = lobby.findRoom(prepared.roomId)
@@ -133,16 +138,39 @@ class LobbyRequestTest: WordSpec({
                     slot.isReserved shouldBe descriptor.reserved
                 }
             }
-            players[0].joinGameRoom(prepared.roomId)
+            players[1].joinGameRoom(prepared.roomId)
             "join player into nonreserved slot" {
                 await { room.clients shouldHaveSize 1 }
                 room.slots[0].isEmpty shouldBe true
                 room.slots[0].isFree shouldBe false
                 room.slots[1].isEmpty shouldBe false
             }
-            players[1].joinGameWithReservation(prepared.reservations.single())
-            await("start game when two players joined") {
-                room.status shouldBe GameRoom.GameStatus.ACTIVE
+    
+            val roomListener = MessageListener<ObservableRoomMessage>()
+            withClue("accept observation") {
+                admin.observe(prepared.roomId, roomListener::addMessage)
+                adminListener.waitForMessage(ObservationResponse::class)
+            }
+            
+            players[0].joinGameWithReservation(prepared.reservations.single())
+            "react to controller" {
+                await("game start") {
+                    room.isPauseRequested shouldBe false
+                    room.status shouldBe GameRoom.GameStatus.ACTIVE
+                }
+                roomListener.waitForMessage(MementoMessage::class)
+    
+                val controller = admin.control(prepared.roomId)
+                controller.pause()
+                // TODO pausing is currently not acknowledged
+                // roomListener.waitForMessage(GamePaused::class)
+                withClue("appropriate result for aborted game") {
+                    players[1].sendMessageToRoom(prepared.roomId, TestMove(0))
+                    val result = roomListener.waitForMessage(GameResult::class)
+                    // TODO can be checked once moved from plugin to sdk
+                    // result.isRegular shouldBe false
+                    result.winners?.singleOrNull() shouldBe room.game.players.first()
+                }
             }
         }
     }
