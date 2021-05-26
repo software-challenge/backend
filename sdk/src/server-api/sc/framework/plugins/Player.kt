@@ -86,4 +86,7 @@ open class Player @JvmOverloads constructor(
         return result
     }
     
+    fun longString() =
+            "Player(color=$color, displayName='$displayName', listeners=$listeners, canTimeout=$canTimeout, left=$left, softTimeout=$softTimeout, hardTimeout=$hardTimeout, violationReason=$violationReason)"
+    
 }

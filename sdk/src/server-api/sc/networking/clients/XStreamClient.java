@@ -171,12 +171,11 @@ public abstract class XStreamClient implements IClient {
   protected synchronized void sendObject(Object packet) {
     if (!isReady())
       throw new IllegalStateException(
-          String.format("Trying to write packet %s on non-started client {}", packet, this));
+          String.format("Trying to write packet %s on non-started client %s", packet, this));
 
     if (isClosed()) {
-      logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {}) Thread: {}",
-          packet.getClass().getSimpleName(),
-          Thread.currentThread().getName());
+      logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {})",
+          packet.getClass().getSimpleName());
       return;
     }
 
@@ -200,7 +199,7 @@ public abstract class XStreamClient implements IClient {
 
   protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
     if (exception != null) {
-      logger.warn("{} disconnected (Cause: {}, Exception: {})", this, cause, exception);
+      logger.warn("{} disconnected (Cause: {}, Exception: {})", this, cause, exception, exception);
     } else {
       logger.info("{} disconnected (Cause: {})", this, cause);
     }
