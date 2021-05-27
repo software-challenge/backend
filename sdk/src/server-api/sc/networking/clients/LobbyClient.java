@@ -53,8 +53,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
           onNewState(roomId, ((MementoMessage) data).getState());
         } else if (data instanceof GameResult) {
           onGameOver(roomId, (GameResult) data);
-        } else if (data instanceof GamePaused) {
-          onGamePaused(roomId, ((GamePaused) data).getNextPlayer());
         } else if (data instanceof ErrorMessage) {
           ErrorMessage error = (ErrorMessage) data;
           logger.warn("{} in room {}", error.getLogMessage(), roomId);
@@ -85,12 +83,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       }
     } else {
       onCustomObject(message);
-    }
-  }
-
-  private void onGamePaused(String roomId, Player nextPlayer) {
-    for (ILobbyClientListener listener : this.listeners) {
-      listener.onGamePaused(roomId, nextPlayer);
     }
   }
 

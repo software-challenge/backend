@@ -359,8 +359,8 @@ public class GameRoom implements IGameListener {
 
   /**
    * Pause or un-pause a game.
-   *
    * @param pause true if game is to be paused
+   * @return a RoomPacket with a GamePaused message or null if unsuccessful
    */
   public synchronized void pause(boolean pause) {
     if (isOver()) {
@@ -379,10 +379,11 @@ public class GameRoom implements IGameListener {
     // pause game after current turn has finished
     pausableGame.setPaused(pause);
 
-    // continue execution
     if (!pause && status == GameStatus.ACTIVE) {
+      // continue execution
       pausableGame.afterPause();
     }
+    observerBroadcast(new GamePaused(pause));
   }
 
   /**
@@ -419,16 +420,6 @@ public class GameRoom implements IGameListener {
   private void destroy() {
     kickAllClients();
     this.gameRoomManager.remove(this);
-  }
-
-  /**
-   * Broadcast to all observers that the game is paused.
-   *
-   * @param nextPlayer Player who comes next after the pause
-   */
-  @Override
-  public void onPaused(Player nextPlayer) {
-    observerBroadcast(new GamePaused(nextPlayer));
   }
 
   /** Return true if GameStatus is OVER. */

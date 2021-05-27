@@ -7,5 +7,4 @@ import sc.shared.PlayerScore
 interface IGameListener {
     fun onGameOver(results: Map<Player, PlayerScore>)
     fun onStateChanged(data: IGameState, observersOnly: Boolean)
-    fun onPaused(nextPlayer: Player)
 }
