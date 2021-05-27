@@ -3,7 +3,6 @@ package sc.server.client
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.should
 import io.kotest.matchers.types.beInstanceOf
-import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.runBlocking
 import sc.server.network.await
 import java.util.ArrayDeque
@@ -13,7 +12,7 @@ import kotlin.reflect.cast
 import kotlin.time.ExperimentalTime
 
 open class MessageListener<T: Any> {
-    private val messages: Queue<T> = ArrayDeque()
+    protected val messages: Queue<T> = ArrayDeque()
     
     fun addMessage(message: T) =
             messages.add(message)
