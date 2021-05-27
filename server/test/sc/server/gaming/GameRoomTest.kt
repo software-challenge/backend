@@ -16,6 +16,47 @@ import sc.shared.ScoreCause
 import sc.shared.SlotDescriptor
 import java.io.StringWriter
 
+val minimalReplay = """<protocol>
+<room roomId="some-id">
+  <data class="memento">
+    <state class="sc.server.plugins.TestGameState">
+      <turn>0</turn>
+      <state>0</state>
+      <currentPlayer>RED</currentPlayer>
+      <startPlayer>RED</startPlayer>
+      <red displayName="">
+        <color class="sc.server.helpers.TestTeam">RED</color>
+      </red>
+      <blue displayName="">
+        <color class="sc.server.helpers.TestTeam">BLUE</color>
+      </blue>
+    </state>
+  </data>
+</room>
+<room roomId="some-id">
+  <data class="result">
+    <definition>
+      <fragment name="winner">
+        <aggregation>SUM</aggregation>
+        <relevantForRanking>true</relevantForRanking>
+      </fragment>
+    </definition>
+    <score cause="REGULAR" reason="Game terminated">
+      <part>0</part>
+    </score>
+    <score cause="REGULAR" reason="Game terminated">
+      <part>0</part>
+    </score>
+    <winner displayName="">
+      <color class="sc.server.helpers.TestTeam">RED</color>
+    </winner>
+    <winner displayName="">
+      <color class="sc.server.helpers.TestTeam">BLUE</color>
+    </winner>
+  </data>
+</room>
+</protocol>"""
+
 class GameRoomTest: WordSpec({
     isolationMode = IsolationMode.SingleInstance
     val client = Client(StringNetworkInterface("")).apply { start() }
@@ -40,48 +81,7 @@ class GameRoomTest: WordSpec({
         "save a correct replay" {
             val replayWriter = StringWriter()
             room.saveReplay(replayWriter)
-            replayWriter.toString() shouldBe """
-                <protocol>
-                <room roomId="${room.id}">
-                  <data class="memento">
-                    <state class="sc.server.plugins.TestGameState">
-                      <turn>0</turn>
-                      <state>0</state>
-                      <currentPlayer>RED</currentPlayer>
-                      <startPlayer>RED</startPlayer>
-                      <red displayName="">
-                        <color class="sc.server.helpers.TestTeam">RED</color>
-                      </red>
-                      <blue displayName="">
-                        <color class="sc.server.helpers.TestTeam">BLUE</color>
-                      </blue>
-                    </state>
-                  </data>
-                </room>
-                <room roomId="${room.id}">
-                  <data class="result">
-                    <definition>
-                      <fragment name="winner">
-                        <aggregation>SUM</aggregation>
-                        <relevantForRanking>true</relevantForRanking>
-                      </fragment>
-                    </definition>
-                    <score cause="REGULAR" reason="Game terminated">
-                      <part>0</part>
-                    </score>
-                    <score cause="REGULAR" reason="Game terminated">
-                      <part>0</part>
-                    </score>
-                    <winner displayName="">
-                      <color class="sc.server.helpers.TestTeam">RED</color>
-                    </winner>
-                    <winner displayName="">
-                      <color class="sc.server.helpers.TestTeam">BLUE</color>
-                    </winner>
-                  </data>
-                </room>
-                </protocol>
-            """.trimIndent()
+            replayWriter.toString() shouldBe minimalReplay.replace("some-id", room.id)
         }
     }
     "A GameRoom with prepared reservations" should {
