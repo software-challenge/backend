@@ -1,6 +1,5 @@
 package sc.server.gaming;
 
-import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
@@ -12,9 +11,9 @@ import sc.api.plugins.exceptions.GameRoomException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.HelperMethods;
+import sc.framework.ReplayListener;
 import sc.framework.plugins.AbstractGame;
 import sc.framework.plugins.Player;
-import sc.networking.XStreamProvider;
 import sc.networking.clients.IClient;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.ProtocolPacket;
@@ -42,9 +41,9 @@ public class GameRoom implements IGameListener {
   private final ScoreDefinition scoreDefinition;
   private final List<PlayerSlot> playerSlots = new ArrayList<>(getMaximumPlayerCount());
   private GameStatus status = GameStatus.CREATED;
-  private GameResult result = null;
+  private GameResult result;
   private boolean pauseRequested = false;
-  private List<RoomMessage> history = new ArrayList<>();
+  private final ReplayListener<RoomPacket> replayListener = Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY)) ? new ReplayListener<>() : null;
 
   public final IGameInstance game; // TODO make inaccessible
   public final List<IClient> observers = new ArrayList<>();
@@ -74,6 +73,7 @@ public class GameRoom implements IGameListener {
     try {
       result = generateGameResult(results);
       logger.info("{} is over (regular={})", game, result.isRegular());
+      saveReplayMessage(result);
       // save playerScore if test mode enabled
       if (Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE))) {
         List<Player> players = game.getPlayers();
@@ -84,22 +84,38 @@ public class GameRoom implements IGameListener {
       logger.error("Failed to generate GameResult from " + results, t);
     }
 
-    if (Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY))) {
+    saveReplay();
+    destroy();
+  }
+
+  private void saveReplayMessage(ObservableRoomMessage message) {
+    if (replayListener != null)
+      replayListener.addMessage(createRoomPacket(message instanceof MementoMessage ? ((MementoMessage) message).clone() : message));
+  }
+
+  /** If enabled, save the recorded replay to the default file. */
+  public void saveReplay() {
+    if (replayListener != null) {
       try {
-        saveReplay(new BufferedWriter(new FileWriter(createReplayFile())));
+        File file = createReplayFile();
+        logger.debug("Saving replay to {}", file);
+        saveReplay(new BufferedWriter(new FileWriter(file)));
       } catch (IOException e) {
         logger.error("Failed to save replay", e);
       }
     }
+  }
 
-    destroy();
+  /** Saves a replay to the writer, assuming replays have been enabled. */
+  public void saveReplay(Writer writer) throws IOException, NullPointerException {
+    replayListener.saveReplay(writer);
   }
 
   public File createReplayFile() throws IOException {
     String fileName = HelperMethods.getReplayFilename(this.game.getPluginUUID(),
         playerSlots.stream().map(it -> it.getPlayer().getDisplayName()).collect(Collectors.toList()));
 
-    File file = new File(fileName);
+    File file = new File(fileName).getAbsoluteFile();
     if(file.getParentFile().mkdirs())
       if(file.createNewFile())
         return file;
@@ -130,26 +146,6 @@ public class GameRoom implements IGameListener {
     return new GameResult(scoreDefinition, scores, this.game.getWinners());
   }
 
-  /** Write replay of game to a writer. */
-  public void saveReplay(Writer writer) throws IOException {
-    XStream xStream = XStreamProvider.loadPluginXStream();
-
-    writer.write("<protocol>\n");
-    for (RoomMessage element : history) {
-      if (!(element instanceof IGameState))
-        continue;
-      IGameState state = (IGameState) element;
-      // TODO do we need to save RoomPackets?
-      RoomPacket roomPacket = createRoomPacket(new MementoMessage(state, null));
-      writer.write(xStream.toXML(roomPacket) + "\n");
-      writer.flush();
-    }
-
-    writer.write(xStream.toXML(createRoomPacket(this.result)) + "\n");
-    writer.write("</protocol>");
-    writer.close();
-  }
-
   /** Send the given message to all Players and Observers in this room. */
   private void broadcast(ObservableRoomMessage message) {
     broadcast(createRoomPacket(message));
@@ -175,10 +171,12 @@ public class GameRoom implements IGameListener {
   /** Send updated GameState to all players and observers. */
   @Override
   public void onStateChanged(IGameState data, boolean observersOnly) {
-    history.add(data);
-    observerBroadcast(new MementoMessage(data, null));
-    if (!observersOnly)
+    MementoMessage memento = new MementoMessage(data, null);
+    observerBroadcast(memento);
+    if (!observersOnly) {
       sendStateToPlayers(data);
+      saveReplayMessage(memento);
+    }
   }
 
   /**
@@ -321,7 +319,7 @@ public class GameRoom implements IGameListener {
       ErrorMessage errorMessage = new ErrorMessage(move, error);
       player.notifyListeners(errorMessage);
       observerBroadcast(errorMessage);
-      history.add(errorMessage);
+      saveReplayMessage(errorMessage);
       cancel();
       throw new GameLogicException(e.toString(), e);
     } catch (GameLogicException e) {
