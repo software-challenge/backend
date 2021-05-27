@@ -1,6 +1,5 @@
 package sc.server.network;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import sc.networking.clients.XStreamClient;
@@ -8,6 +7,8 @@ import sc.server.helpers.ExamplePacket;
 import sc.server.helpers.StringNetworkInterface;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClientXmlReadTest {
   private static class StupidClientListener implements IClientRequestListener {
@@ -33,9 +34,9 @@ public class ClientXmlReadTest {
     client.setRequestHandler(clientListener);
     client.start();
 
-    Assertions.assertNotNull(client.receive());
-    Assertions.assertNotNull(clientListener.lastPacket);
-    Assertions.assertTrue(clientListener.lastPacket instanceof ExamplePacket);
+    assertNotNull(client.receive());
+    assertNotNull(clientListener.lastPacket);
+    assertTrue(clientListener.lastPacket instanceof ExamplePacket);
   }
 
   @Test
@@ -47,7 +48,7 @@ public class ClientXmlReadTest {
     client.start();
     client.send(new ExamplePacket());
     String data = stringInterface.getData();
-    Assertions.assertTrue(data.startsWith("<protocol>\n  <example"));
+    assertEquals(data, "<protocol>\n  <example/>");
   }
 
   private void aliasExamplePacket(XStreamClient client) {
