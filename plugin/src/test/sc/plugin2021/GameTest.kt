@@ -45,9 +45,6 @@ class GameTest: WordSpec({
                     // hashing it to avoid cloning, since we get the original mutable object
                     finalState = data.hashCode()
                 }
-        
-                override fun onPaused(nextPlayer: Player) {
-                }
             })
             
             "finish without issues".config(invocationTimeout = Constants.GAME_TIMEOUT.milliseconds) {

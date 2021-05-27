@@ -162,8 +162,7 @@ class LobbyRequestTest: WordSpec({
     
                 val controller = admin.control(prepared.roomId)
                 controller.pause()
-                // TODO pausing is currently not acknowledged
-                // roomListener.waitForMessage(GamePaused::class)
+                roomListener.waitForMessage(GamePaused::class)
                 withClue("appropriate result for aborted game") {
                     players[1].sendMessageToRoom(prepared.roomId, TestMove(0))
                     val result = roomListener.waitForMessage(GameResult::class)

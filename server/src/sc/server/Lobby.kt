@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.GameRoomException
 import sc.api.plugins.exceptions.RescuableClientException
+import sc.protocol.ProtocolPacket
 import sc.protocol.requests.*
 import sc.protocol.responses.PlayerScoreResponse
 import sc.protocol.responses.TestModeResponse
@@ -27,6 +28,11 @@ class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
         clientManager.start()
     }
     
+    private fun notifyObservers(packet: ProtocolPacket) =
+            clientManager.clients
+                    .filter { it.isAdministrator }
+                    .forEach { it.send(packet) }
+    
     /** Handle requests or moves of clients.
      * @throws RescuableClientException if something goes wrong.
      *         Usually results in termination of the connection to the offending client. */
@@ -47,13 +53,8 @@ class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
                 if(!this.findRoom(packet.roomId).join(source))
                     throw GameRoomException("Room ${packet.roomId} is already full!")
             is JoinGameRequest -> {
-                val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
-                // null is returned if join was unsuccessful
-                if (gameRoomMessage != null) {
-                    clientManager.clients
-                            .filter { it.isAdministrator }
-                            .forEach { it.send(gameRoomMessage) }
-                }
+                joinOrCreateGame(source, packet.gameType)
+                        ?.let { notifyObservers(it) }
             }
             is AuthenticateRequest -> source.authenticate(packet.password)
             is AdminLobbyRequest -> {

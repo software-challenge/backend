@@ -93,13 +93,6 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePaused(String roomId, Player nextPlayer) {
-    this.roomId = roomId;
-    this.player = nextPlayer;
-    gamePausedReceived = true;
-  }
-
-  @Override
   public void onGameObserved(String roomId) {
     this.roomId = roomId;
     observedReceived = true;
