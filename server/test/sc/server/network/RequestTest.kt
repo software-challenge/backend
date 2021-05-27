@@ -9,6 +9,7 @@ import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
+import sc.protocol.room.ErrorMessage
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
@@ -166,6 +167,8 @@ class RequestTest: RealServerTest() {
         // Second player sends Move with value 42
         player2.sendMessageToRoom(room.id, TestMove(42));
         Thread.sleep(100);
+        TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
+        listener.newStateReceived = false
         
         // Request a move
         admin.send(StepRequest(room.id))
@@ -177,15 +180,15 @@ class RequestTest: RealServerTest() {
         p1Listener.waitForMessage(MoveRequest::class)
         
         p1Listener.clearMessages() shouldBe 0
+        p2Listener.clearMessages() shouldBe 0
         // Second player sends Move not being his turn
         player2.sendMessageToRoom(room.id, TestMove(73))
-        // TODO this still fails sporadically
-        TestHelper.waitUntilTrue({ listener.newStateReceived }, 1000)
-        listener.newStateReceived = false
+        p2Listener.waitForMessage(ErrorMessage::class)
         
         // There should not come another request
         Thread.sleep(500)
         p1Listener.clearMessages() shouldBe 0
+        p2Listener.clearMessages() shouldBe 0
         // should not result in a new game state
         assertFalse(listener.newStateReceived)
         
@@ -201,8 +204,8 @@ class RequestTest: RealServerTest() {
         val listener = TestLobbyClientListener()
         player1.addListener(listener)
         
-        await("Lobby creates a room") {
-            lobby.games.isNotEmpty() && listener.gameJoinedReceived && listener.roomId != null
+        await("Lobby creates a room and Game starts") {
+            lobby.games.isNotEmpty() && lobby.games.single().status == GameRoom.GameStatus.ACTIVE
         }
         
         player1.send(CancelRequest(listener.roomId))
