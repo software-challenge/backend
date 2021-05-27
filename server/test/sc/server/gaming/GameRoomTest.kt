@@ -7,6 +7,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertThrows
 import sc.protocol.requests.PrepareGameRequest
+import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
 import sc.server.network.Client
 import sc.server.plugins.TestPlugin
@@ -20,6 +21,7 @@ class GameRoomTest: WordSpec({
     val client = Client(StringNetworkInterface("")).apply { start() }
     "A GameRoomManager" should {
         val manager = GameRoomManager().apply { pluginManager.loadPlugin(TestPlugin::class.java) }
+        Configuration.set(Configuration.SAVE_REPLAY, true)
         "create a game when a player joins" {
             manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).playerCount shouldBe 1
             manager.games shouldHaveSize 1
@@ -43,16 +45,16 @@ class GameRoomTest: WordSpec({
                 <room roomId="${room.id}">
                   <data class="memento">
                     <state class="sc.server.plugins.TestGameState">
+                      <turn>0</turn>
+                      <state>0</state>
+                      <currentPlayer>RED</currentPlayer>
+                      <startPlayer>RED</startPlayer>
                       <red displayName="">
                         <color class="sc.server.helpers.TestTeam">RED</color>
                       </red>
                       <blue displayName="">
                         <color class="sc.server.helpers.TestTeam">BLUE</color>
                       </blue>
-                      <turn>0</turn>
-                      <state>0</state>
-                      <currentPlayer>RED</currentPlayer>
-                      <startPlayer>RED</startPlayer>
                     </state>
                   </data>
                 </room>

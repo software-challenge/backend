@@ -81,6 +81,10 @@ public class Configuration {
     properties.setProperty(key, value);
   }
 
+  public static void set(final String key, final boolean value) {
+    properties.setProperty(key, String.valueOf(value));
+  }
+
   public static void setIfNotNull(final String key, final String value) {
     if (value != null) {
       set(key, value);
