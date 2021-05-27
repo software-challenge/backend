@@ -7,8 +7,8 @@ import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameRoomException;
 import sc.api.plugins.exceptions.RescuableClientException;
-import sc.api.plugins.host.GameLoader;
 import sc.networking.InvalidScoreDefinitionException;
+import sc.networking.clients.GameLoaderClient;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.GamePreparedResponse;
 import sc.protocol.responses.RoomWasJoinedEvent;
@@ -83,14 +83,8 @@ public class GameRoomManager {
       } catch(NumberFormatException ignored) {
       }
 
-      // TODO test this
       logger.info("Loading game from file '{}' at turn {}", gameFile, turn);
-      try {
-        game = plugin.createGameFromState(new GameLoader().loadGame(gameFile, turn));
-      } catch(IOException e) {
-        logger.error("Failed to load game from file", e);
-        game = plugin.createGame();
-      }
+      game = plugin.createGameFromState(new GameLoaderClient(gameFile).getTurn(turn));
     } else {
       game = plugin.createGame();
     }
