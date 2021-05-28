@@ -25,6 +25,6 @@ object HelperMethods {
      */
     @JvmStatic
     fun getReplayFilename(gameId: String, names: List<String>): String =
-            "./replays/replay_${gameId}_${currentDateTime}_" +
+            "replays/replay_${gameId}_${currentDateTime}_" +
             "${names.joinToString("_") { it.replace(' ', '_') }}.xml"
 }
