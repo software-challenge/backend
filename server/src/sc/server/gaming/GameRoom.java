@@ -116,7 +116,7 @@ public class GameRoom implements IGameListener {
         playerSlots.stream().map(it -> it.getPlayer().getDisplayName()).collect(Collectors.toList()));
 
     File file = new File(fileName).getAbsoluteFile();
-    if(file.getParentFile().mkdirs())
+    if(file.getParentFile().mkdirs() || file.getParentFile().exists())
       if(file.createNewFile())
         return file;
     throw new IOException("Couldn't create replay file " + file);

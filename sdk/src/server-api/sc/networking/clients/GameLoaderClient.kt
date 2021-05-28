@@ -10,6 +10,7 @@ import sc.shared.GameResult
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.util.zip.GZIPInputStream
 
 /**
  * This client serves the purpose to load a game state from
@@ -17,7 +18,7 @@ import java.io.InputStream
  * It is used to load a given board to play on.
  */
 class GameLoaderClient(inputStream: InputStream): XStreamClient(FileSystemInterface(inputStream)) {
-    constructor(file: File): this(file.inputStream())
+    constructor(file: File): this(if(file.extension == "gz") GZIPInputStream(file.inputStream()) else file.inputStream())
     
     private val history: MutableList<IGameState> = ArrayList(50)
     var result: GameResult? = null
@@ -30,7 +31,7 @@ class GameLoaderClient(inputStream: InputStream): XStreamClient(FileSystemInterf
         when (val msg = message.data) {
             is MementoMessage -> history.add(msg.state)
             is GameResult -> result = msg
-            else -> logger.debug("Unknown message in replay: {}", msg)
+            else -> logger.warn("Unknown message in replay: {}", msg)
         }
     }
     
