@@ -8,13 +8,13 @@ import sc.plugin2022.util.Constants.boardrange
 import sc.plugin2022.util.MoveMistake
 import sc.shared.InvalidMoveException
 
-/** Das Spielbrett besteht aus 8x8 Feldern. */
+/** Das Spielbrett besteht aus 8x8 Feldern mit anfänglich 8 Figuren pro Spieler. */
 @XStreamAlias(value = "board")
 data class Board(
-        private val board: MutableMap<Coordinates, Piece>,
-): IBoard, Map<Coordinates, Piece> by board {
+        private val piecePositions: MutableMap<Coordinates, Piece>,
+): IBoard, Map<Coordinates, Piece> by piecePositions {
     
-    constructor(): this(generateBoard())
+    constructor(): this(generatePiecePositions())
     
     /** Gibt das Feld an den gegebenen Koordinaten zurück. */
     operator fun get(x: Int, y: Int) =
@@ -25,19 +25,19 @@ data class Board(
      * @return the moved [Piece], null if it turned into an amber. */
     @Throws(InvalidMoveException::class)
     fun movePiece(move: Move): Piece? =
-            board[move.start]?.let { piece ->
+            (piecePositions[move.start] ?: throw InvalidMoveException(MoveMistake.START_EMPTY, move)).let { piece ->
                 if (move.delta !in piece.possibleMoves)
                     throw InvalidMoveException(MoveMistake.INVALID_MOVEMENT, move)
-                board[move.destination]?.let { piece.capture(it) }
-                board.remove(move.start)
+                piecePositions[move.destination]?.let { piece.capture(it) }
+                piecePositions.remove(move.start)
                 if (piece.isAmber || (piece.type.isLight && move.destination.y == piece.team.opponent().startLine)) {
-                    board.remove(move.destination)
+                    piecePositions.remove(move.destination)
                     null
                 } else {
-                    board[move.destination] = piece
+                    piecePositions[move.destination] = piece
                     piece
                 }
-            } ?: throw InvalidMoveException(MoveMistake.START_EMPTY, move)
+            }
     
     override fun toString() =
             boardrange.joinToString("\n") { y ->
@@ -46,11 +46,14 @@ data class Board(
                 }
             }
     
-    override fun clone() = Board(HashMap(board))
+    override fun clone() = Board(HashMap(piecePositions))
     
     companion object {
+        /** Generates a random new board with two pieces per type
+         * for each player arranged randomly on their starting line
+         * in rotational symmetry.  */
         @JvmStatic
-        fun generateBoard() =
+        fun generatePiecePositions() =
                 (PieceType.values() + PieceType.values()).let { pieces ->
                     pieces.shuffle()
                     pieces.withIndex().flatMap { (index, type) ->

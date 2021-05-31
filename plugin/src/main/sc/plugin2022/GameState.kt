@@ -15,7 +15,7 @@ import java.util.EnumMap
  * mit deren Hilfe der nächste Zug berechnet werden kann.
  */
 @XStreamAlias(value = "state")
-class GameState @JvmOverloads constructor(
+data class GameState @JvmOverloads constructor(
         /** Das aktuelle Spielfeld. */
         override val board: Board = Board(),
         /** Die Anzahl an bereits getätigten Zügen. */
@@ -48,7 +48,7 @@ class GameState @JvmOverloads constructor(
     
     /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForTeam(team: ITeam): Int =
-            ambers[team]!!
+            ambers[team] ?: 0
     
     override fun clone() = GameState(this)
     
