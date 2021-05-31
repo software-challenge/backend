@@ -16,6 +16,8 @@ import java.math.BigDecimal
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
 
+/** This test verifies that the Game implementation works correctly.
+ * It is the only test that should stay between seasons. */
 @OptIn(ExperimentalTime::class)
 class GameTest: WordSpec({
     isolationMode = IsolationMode.SingleInstance

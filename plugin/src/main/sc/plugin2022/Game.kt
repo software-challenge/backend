@@ -73,8 +73,8 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     }
     
     override fun getScoreFor(player: Player): PlayerScore {
+        logger.debug("Calculating score for $player")
         val team = player.team as Team
-        logger.debug("Get score for player $team (violated: ${if (player.hasViolated()) "yes" else "no"})")
         val opponent = players[team.opponent().index]
         val winCondition = checkWinCondition()
         
@@ -85,6 +85,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         
         // Is the game already finished?
         if (winCondition?.reason == WinReason.EQUAL_SCORE)
+            // TODO something is going wrong on draw scores
             score = Constants.DRAW_SCORE
         if (winCondition?.reason == WinReason.DIFFERING_SCORES)
             if (winCondition.winner == team)

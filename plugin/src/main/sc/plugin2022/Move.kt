@@ -3,7 +3,7 @@ package sc.plugin2022
 import sc.api.plugins.IMove
 
 /** Ein Spielzug. */
-class Move(
+data class Move(
         /** Ursprungsposition des Zugs. */
         val start: Coordinates,
         /** Zielposition des Zugs. */
