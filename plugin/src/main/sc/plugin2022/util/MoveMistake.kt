@@ -11,7 +11,9 @@ import sc.shared.IMoveMistake
 enum class MoveMistake(override val message: String): IMoveMistake {
     WRONG_COLOR("Die Farbe des Zuges ist nicht an der Reihe"),
     START_EMPTY("Das Startfeld des Zuges ist leer"),
-    INVALID_MOVEMENT("%s kann sich nicht um %s bewegen"),
+    DESTINATION_BLOCKED("Kann nicht auf ein Feld der eigenen Farbe ziehen"),
+    OUT_OF_BOUNDS("Das Zielfeld liegt außerhalb des Spielfelds"),
+    INVALID_MOVEMENT("%s kann sich nicht um %s bewegen"), // TODO useful message formatting
     INVALID_MOVE("Dieser Zug ist nicht möglich"),
     INVALID_FORMAT("Der Zug konnte nicht erkannt werden");
     override fun toString() = message

@@ -38,8 +38,8 @@ data class GameState @JvmOverloads constructor(
     
     val possibleMoves
         get() = currentPieces.flatMap { (pos, piece) ->
-            piece.possibleMoves.mapNotNull {
-                Move.create(pos, it)
+            piece.possibleMoves.mapNotNull { delta ->
+                Move.create(pos, delta)?.takeIf { board[it.destination]?.team != piece.team }
             }
         }
     

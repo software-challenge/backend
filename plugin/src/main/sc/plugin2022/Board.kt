@@ -20,17 +20,24 @@ data class Board(
     operator fun get(x: Int, y: Int) =
             get(Coordinates(x, y))
     
-    /** Moves a piece according to [Move].
+    /** Moves a piece according to [Move] after verification.
      * @throws InvalidMoveException if something is wrong with the Move.
      * @return the moved [Piece], null if it turned into an amber. */
     @Throws(InvalidMoveException::class)
     fun movePiece(move: Move): Piece? =
             (piecePositions[move.start] ?: throw InvalidMoveException(MoveMistake.START_EMPTY, move)).let { piece ->
+                if(!move.destination.isValid)
+                    throw InvalidMoveException(MoveMistake.OUT_OF_BOUNDS, move)
                 if (move.delta !in piece.possibleMoves)
                     throw InvalidMoveException(MoveMistake.INVALID_MOVEMENT, move)
-                piecePositions[move.destination]?.let { piece.capture(it) }
+                piecePositions[move.destination]?.let {
+                    if(it.team == piece.team)
+                        throw InvalidMoveException(MoveMistake.DESTINATION_BLOCKED, move)
+                    piece.capture(it)
+                }
                 piecePositions.remove(move.start)
                 if (piece.isAmber || (piece.type.isLight && move.destination.y == piece.team.opponent().startLine)) {
+                    // TODO how to indicate double amber?
                     piecePositions.remove(move.destination)
                     null
                 } else {
@@ -54,7 +61,8 @@ data class Board(
          * in rotational symmetry.  */
         @JvmStatic
         fun generatePiecePositions() =
-                (PieceType.values() + PieceType.values()).let { pieces ->
+                PieceType.values().let { types ->
+                    val pieces = types + types
                     pieces.shuffle()
                     pieces.withIndex().flatMap { (index, type) ->
                         Team.values().map { team ->
