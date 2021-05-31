@@ -7,8 +7,8 @@ import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameRoomException;
 import sc.api.plugins.exceptions.RescuableClientException;
-import sc.api.plugins.host.GameLoader;
 import sc.networking.InvalidScoreDefinitionException;
+import sc.networking.clients.GameLoaderClient;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.GamePreparedResponse;
 import sc.protocol.responses.RoomWasJoinedEvent;
@@ -83,14 +83,8 @@ public class GameRoomManager {
       } catch(NumberFormatException ignored) {
       }
 
-      // TODO test this
       logger.info("Loading game from file '{}' at turn {}", gameFile, turn);
-      try {
-        game = plugin.createGameFromState(new GameLoader().loadGame(gameFile, turn));
-      } catch(IOException e) {
-        logger.error("Failed to load game from file", e);
-        game = plugin.createGame();
-      }
+      game = plugin.createGameFromState(new GameLoaderClient(gameFile).getTurn(turn));
     } else {
       game = plugin.createGame();
     }
@@ -98,17 +92,10 @@ public class GameRoomManager {
     return createGameRoom(plugin.getScoreDefinition(), game, false);
   }
 
-  /**
-   * Create a new GameRoom with the given Game.
-   *
-   * @param prepared signals whether the game was prepared by an administrative client,
-   *                 false if from a JoinRoomRequest
-   *
-   * @return newly created GameRoom
-   */
+  /** Create a new GameRoom with the given definitions. */
   public GameRoom createGameRoom(ScoreDefinition scoreDefinition, IGameInstance game, boolean prepared) {
-    GameRoom room = new GameRoom(generateRoomId(), this, scoreDefinition, game, prepared);
-    // pause room if specified in server.properties on joinRoomRequest
+    GameRoom room = new GameRoom(generateRoomId(), this, scoreDefinition, game);
+    // pause room on JoinRoomRequest if specified in server.properties
     if (!prepared) {
       boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
       room.pause(paused);
@@ -149,6 +136,7 @@ public class GameRoomManager {
   public synchronized RoomWasJoinedEvent joinOrCreateGame(Client client, String gameType)
           throws RescuableClientException {
     for (GameRoom gameRoom : getGames()) {
+      // TODO gameType isn't checked
       if (gameRoom.join(client)) {
         return roomJoined(gameRoom);
       }
@@ -156,8 +144,8 @@ public class GameRoomManager {
     return createAndJoinGame(client, gameType);
   }
 
-  private RoomWasJoinedEvent roomJoined(GameRoom room) {
-    return new RoomWasJoinedEvent(room.getId(), room.getPlayers().size());
+  protected RoomWasJoinedEvent roomJoined(GameRoom room) {
+    return new RoomWasJoinedEvent(room.getId(), room.getClients().size());
   }
 
   /** Create an unmodifiable Collection of the {@link GameRoom GameRooms}. */
@@ -184,9 +172,8 @@ public class GameRoomManager {
 
     GameRoom room = createGameRoom(plugin.getScoreDefinition(), game, true);
     room.pause(paused);
-    room.openSlots(descriptors);
 
-    return new GamePreparedResponse(room.getId(), room.reserveAllSlots());
+    return new GamePreparedResponse(room.getId(), room.reserveSlots(descriptors));
   }
 
   /**

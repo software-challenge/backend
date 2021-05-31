@@ -1,27 +1,26 @@
 package sc.server
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.IMove
+import sc.api.plugins.exceptions.GameRoomException
 import sc.api.plugins.exceptions.RescuableClientException
-import sc.protocol.room.RoomPacket
+import sc.protocol.ProtocolPacket
 import sc.protocol.requests.*
-import sc.protocol.responses.*
-import sc.protocol.room.ErrorMessage
+import sc.protocol.responses.PlayerScoreResponse
+import sc.protocol.responses.TestModeResponse
+import sc.protocol.room.RoomPacket
 import sc.server.gaming.GameRoomManager
-import sc.server.gaming.PlayerRole
 import sc.server.gaming.ReservationManager
 import sc.server.network.*
-import sc.shared.InvalidGameStateException
 import sc.shared.Score
 import java.io.Closeable
 import java.io.IOException
 
 /** The lobby joins clients into a game by finding open rooms or creating new ones. */
-open class Lobby: GameRoomManager(), IClientListener, Closeable {
+class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
     private val logger = LoggerFactory.getLogger(Lobby::class.java)
     
-    val clientManager = ClientManager().also {
-        it.setOnClientConnected(this::onClientConnected)
-    }
+    val clientManager = ClientManager(this)
     
     /** @see ClientManager.start */
     @Throws(IOException::class)
@@ -29,45 +28,33 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
         clientManager.start()
     }
     
-    /**
-     * Add lobby as listener to client.
-     * Prepare client for send and receive.
-     *
-     * @param client connected XStreamClient
-     */
-    fun onClientConnected(client: Client) {
-        client.addClientListener(this)
-        client.start()
-    }
+    private fun notifyObservers(packet: ProtocolPacket) =
+            clientManager.clients
+                    .filter { it.isAdministrator }
+                    .forEach { it.send(packet) }
     
-    override fun onClientDisconnected(source: Client) {
-        logger.info("{} disconnected.", source)
-        source.removeClientListener(this)
-    }
-    
-    /** Handle requests or moves of clients. */
-    @Throws(RescuableClientException::class, InvalidGameStateException::class)
+    /** Handle requests or moves of clients.
+     * @throws RescuableClientException if something goes wrong.
+     *         Usually results in termination of the connection to the offending client. */
+    @Throws(RescuableClientException::class)
     override fun onRequest(source: Client, callback: PacketCallback) {
         when (val packet = callback.packet) {
             is RoomPacket -> {
                 // i.e. new move
                 val room = this.findRoom(packet.roomId)
-                room.onEvent(source, packet.data)
+                val move = packet.data
+                if(move !is IMove)
+                    throw GameRoomException("Received non-move packet: $packet")
+                room.onEvent(source, move)
             }
             is JoinPreparedRoomRequest ->
-                try {
-                    ReservationManager.redeemReservationCode(source, packet.reservationCode)
-                } catch (e: RescuableClientException) {
-                    source.send(ErrorPacket(packet, e.message))
-                }
-            is JoinRoomRequest -> {
-                val gameRoomMessage = this.joinOrCreateGame(source, packet.gameType)
-                // null is returned if join was unsuccessful
-                if (gameRoomMessage != null) {
-                    clientManager.clients
-                            .filter { it.isAdministrator }
-                            .forEach { it.send(gameRoomMessage) }
-                }
+                ReservationManager.redeemReservationCode(source, packet.reservationCode)
+            is JoinRoomRequest ->
+                if(!this.findRoom(packet.roomId).join(source))
+                    throw GameRoomException("Room ${packet.roomId} is already full!")
+            is JoinGameRequest -> {
+                joinOrCreateGame(source, packet.gameType)
+                        ?.let { notifyObservers(it) }
             }
             is AuthenticateRequest -> source.authenticate(packet.password)
             is AdminLobbyRequest -> {
@@ -77,27 +64,13 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
                     is PrepareGameRequest -> {
                         source.send(this.prepareGame(packet))
                     }
-                    is FreeReservationRequest -> {
-                        ReservationManager.freeReservation(packet.reservation)
-                    }
-                    is ControlTimeoutRequest -> {
-                        val room = this.findRoom(packet.roomId)
-                        room.ensureOpenSlots(packet.slot + 1)
-                        val slot = room.slots[packet.slot]
-                        slot.descriptor = slot.descriptor.copy(canTimeout = packet.activate)
-                        slot.role?.player?.canTimeout = packet.activate
-                    }
                     is ObservationRequest -> {
                         val room = this.findRoom(packet.roomId)
                         room.addObserver(source)
                     }
                     is PauseGameRequest -> {
-                        try {
-                            val room = this.findRoom(packet.roomId)
-                            room.pause(packet.pause)
-                        } catch (e: RescuableClientException) {
-                            this.logger.error("Got exception on pause: {}", e)
-                        }
+                        val room = this.findRoom(packet.roomId)
+                        room.pause(packet.pause)
                     }
                     is StepRequest -> {
                         // TODO check for a prior pending StepRequest
@@ -129,24 +102,8 @@ open class Lobby: GameRoomManager(), IClientListener, Closeable {
         callback.setProcessed()
     }
     
-    private fun getScoreOfPlayer(displayName: String): Score? {
-        for (score in this.scores) {
-            if (score.displayName == displayName) {
-                return score
-            }
-        }
-        return null
-    }
+    private fun getScoreOfPlayer(displayName: String): Score? =
+            scores.find { it.displayName == displayName }
     
-    override fun close() {
-        clientManager.close()
-    }
-    
-    override fun onError(source: Client, errorPacket: ErrorMessage) {
-        for (role in source.roles) {
-            if (role.javaClass == PlayerRole::class.java) {
-                (role as PlayerRole).playerSlot.room.onClientError(errorPacket)
-            }
-        }
-    }
+    override fun close() = clientManager.close()
 }

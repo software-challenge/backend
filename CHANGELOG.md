@@ -8,8 +8,15 @@ The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-
 - The major version `x` corresponds to the year of the contest and thus only changes once a year
 - `y` is bumped for any major updates or backwards-incompatible changes
 
-## [21.4.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.4.0)
+## [22.0.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/22.0.0)
 - Removed PlayerScoreRequest - add up the GameResults instead
+
+## [21.4.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.4.0) - 2021-05-28
+- Enable preparing games without reservations
+- Implement generic replay saving & loading
+- Create an AdminClient to interface more conveniently with the server
+- Distinguish RoomMessages from ProtocolPackets
+- The GamePaused message is now actually sent after a Game has been paused
 
 ## [21.3.3](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.3) - 2021-03-01
 - Game: Refactor turn advancing logic ([#391](https://github.com/CAU-Kiel-Tech-Inf/backend/pull/391))
@@ -18,7 +25,7 @@ The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-
 ## [21.3.2](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.2) - 2021-02-12
 ### Fixed
 - GameState: Round number is now always aligned with turn number (49676b64c)
-- TestClient: prevent a race-condition that could occur when getting the results of the first game (4f33fc01f)
+- TestClient: Prevent a race-condition that could occur when getting the results of the first game (4f33fc01f)
 
 ## [21.3.1](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.3.1) - 2021-02-11
 ### Fixed

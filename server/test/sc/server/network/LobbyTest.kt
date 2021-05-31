@@ -6,6 +6,7 @@ import sc.server.client.TestLobbyClientListener
 import sc.server.gaming.GameRoom
 import sc.server.plugins.TestPlugin
 import sc.shared.ScoreCause
+import java.net.SocketException
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -16,8 +17,8 @@ class LobbyTest: RealServerTest() {
         val player1 = connectClient("localhost", serverPort)
         val player2 = connectClient("localhost", serverPort)
         
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
+        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         
         await("Game created") { lobby.games.size == 1 }
         await("Game started") { lobby.games.single().status == GameRoom.GameStatus.ACTIVE }
@@ -34,16 +35,19 @@ class LobbyTest: RealServerTest() {
         val listener = TestLobbyClientListener()
         player1.addListener(listener)
         
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         await { listener.gameJoinedReceived }
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
     
         await("Game started") { lobby.games.single().status == GameRoom.GameStatus.ACTIVE }
         
         val room = gameMgr.games.single()
         room.isOver shouldBe false
         
-        player1.sendCustomData("<yarr>")
+        try {
+            player1.sendCustomData("<yarr>")
+        } catch(_: SocketException) {
+        }
         
         await("Game is over") { room.isOver }
         await("GameResult") { room.result != null }

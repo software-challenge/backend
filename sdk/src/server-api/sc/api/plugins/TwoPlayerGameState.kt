@@ -36,6 +36,4 @@ abstract class TwoPlayerGameState(
     open fun longString() =
             "$this\nLast Move: $lastMove\n$board"
     
-    public abstract override fun clone(): IGameState
-    
 }

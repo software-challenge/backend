@@ -18,9 +18,7 @@ public class AdministratorTest extends AbstractRoleTest {
   @Test
   public void shouldBecomeAdminWithCorrectPassword() {
     Client client = connectAsAdmin();
-
-    Assertions.assertEquals(1, client.getRoles().size());
-    Assertions.assertEquals(true, client.isAdministrator());
+    Assertions.assertTrue(client.isAdministrator());
   }
 
   @Test
@@ -36,8 +34,7 @@ public class AdministratorTest extends AbstractRoleTest {
       // expected
     }
 
-    Assertions.assertEquals(0, client.getRoles().size());
-    Assertions.assertEquals(false, client.isAdministrator());
+    Assertions.assertFalse(client.isAdministrator());
   }
 
   protected MockClient connectAsAdmin() {

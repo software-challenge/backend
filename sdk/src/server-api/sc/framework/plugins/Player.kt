@@ -8,7 +8,6 @@ import sc.api.plugins.ITeam
 import sc.api.plugins.host.IPlayerListener
 import sc.framework.plugins.protocol.MoveRequest
 import sc.protocol.room.RoomMessage
-import java.util.*
 
 private val logger = LoggerFactory.getLogger(Player::class.java)
 
@@ -63,7 +62,7 @@ open class Player @JvmOverloads constructor(
     }
 
     fun notifyListeners(o: RoomMessage) {
-        for (listener in this.listeners) {
+        for (listener in ArrayList(listeners)) {
             listener.onPlayerEvent(o)
         }
     }
@@ -85,5 +84,8 @@ open class Player @JvmOverloads constructor(
         result = 31 * result + displayName.hashCode()
         return result
     }
+    
+    fun longString() =
+            "Player(team=$team, displayName='$displayName', listeners=$listeners, canTimeout=$canTimeout, left=$left, softTimeout=$softTimeout, hardTimeout=$hardTimeout, violationReason=$violationReason)"
     
 }

@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.shared.SlotDescriptor
 
-/** Request to prepare a game of [gameType] with two reserved slots according to [slotDescriptors]. */
+/** Prepare a game of [gameType] with slots according to [slotDescriptors]. */
 @XStreamAlias("prepare")
 data class PrepareGameRequest(
     @XStreamAsAttribute

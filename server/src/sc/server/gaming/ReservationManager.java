@@ -12,9 +12,8 @@ import java.util.UUID;
 public final class ReservationManager {
 
   private static Logger logger = LoggerFactory.getLogger(ReservationManager.class);
-  private static Map<String, PlayerSlot> reservations = new HashMap<String, PlayerSlot>();
+  private static Map<String, PlayerSlot> reservations = new HashMap<>();
 
-  /** Create Object as singleton. */
   private ReservationManager() {
     // singleton
   }

@@ -36,5 +36,5 @@ dependencies {
     implementation("xmlpull", "xmlpull", "1.1.3.1")
     
     "testConfigApi"("io.kotest", "kotest-assertions-core")
-    "testConfigApi"("io.kotest", "kotest-runner-junit5-jvm", "4.4.1")
+    "testConfigApi"("io.kotest", "kotest-runner-junit5-jvm", "4.4.3")
 }

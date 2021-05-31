@@ -20,7 +20,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
-public abstract class XStreamClient {
+public abstract class XStreamClient implements IClient {
   private static Logger logger = LoggerFactory.getLogger(XStreamClient.class);
 
   public static INetworkInterface createTcpNetwork(String host, int port) throws IOException {
@@ -103,7 +103,7 @@ public abstract class XStreamClient {
         if (object instanceof ProtocolPacket) {
           ProtocolPacket response = (ProtocolPacket) object;
 
-          logger.debug("{}: Received {} via {}", shortString(), response, networkInterface);
+          logger.debug("Received {} via {}", response, networkInterface);
           if (logger.isTraceEnabled())
             logger.trace("Dumping {}:\n{}", response, xStream.toXML(response));
 
@@ -138,8 +138,8 @@ public abstract class XStreamClient {
         } else if (exceptionCause instanceof EOFException) {
           handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else if (exceptionCause instanceof IOException
-            && exceptionCause.getCause() != null && exceptionCause
-            .getCause() instanceof InterruptedException) {
+            && exceptionCause.getCause() != null
+            && exceptionCause.getCause() instanceof InterruptedException) {
           handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
         } else {
           handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
@@ -154,12 +154,12 @@ public abstract class XStreamClient {
   }
 
   public void sendCustomData(String data) throws IOException {
-    logger.debug("{}: Sending custom data: {}", shortString(), data);
+    logger.debug("Sending custom data: {}", data);
     sendCustomData(data.getBytes(StandardCharsets.UTF_8));
   }
 
   public void sendCustomData(byte[] data) throws IOException {
-    logger.info("{}: Sending custom data (size={})", shortString(), data.length);
+    logger.info("Sending custom data (size={})", data.length);
     networkInterface.getOutputStream().write(data);
     networkInterface.getOutputStream().flush();
   }
@@ -171,16 +171,15 @@ public abstract class XStreamClient {
   protected synchronized void sendObject(Object packet) {
     if (!isReady())
       throw new IllegalStateException(
-          String.format("Trying to write packet on %s which wasn't started: %s", shortString(), packet));
+          String.format("Trying to write packet %s on non-started client %s", packet, this));
 
     if (isClosed()) {
-      logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {}) Thread: {}",
-          packet.getClass().getSimpleName(),
-          Thread.currentThread().getName());
+      logger.warn("Writing on a closed Stream -> dropped the packet (tried to send package of type {})",
+          packet.getClass().getSimpleName());
       return;
     }
 
-    logger.debug("{}: Sending {} via {} from {}", shortString(), packet, networkInterface, this);
+    logger.debug("Sending {} via {} from {}", packet, networkInterface, this);
     if (logger.isTraceEnabled())
       logger.trace("Dumping {}:\n{}", packet, xStream.toXML(packet));
 
@@ -200,11 +199,9 @@ public abstract class XStreamClient {
 
   protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
     if (exception != null) {
-      logger.warn("{} disconnected (Cause: {}, Exception: {})", shortString(), cause, exception);
-      if (logger.isDebugEnabled())
-        exception.printStackTrace();
+      logger.warn("{} disconnected (Cause: {}, Exception: {})", this, cause, exception, exception);
     } else {
-      logger.info("{} disconnected (Cause: {})", shortString(), cause);
+      logger.info("{} disconnected (Cause: {})", this, cause);
     }
 
     this.disconnectCause = cause;
@@ -226,12 +223,12 @@ public abstract class XStreamClient {
   }
 
   /**
-   * Should be called when the client needs to be stopped and the disconnect
-   * is initiated on this side. There are two situations where this should be
-   * done:
+   * Should be called when the client needs to be stopped
+   * and the disconnect is initiated on this side.
+   * There are two situations where this should be done:
    * <p>
    * - A game has ended
-   * - An internal error occurred (this situation might be redundant)
+   * - An error occurred
    */
   public void stop() {
     // this side caused disconnect, notify other side
@@ -263,7 +260,7 @@ public abstract class XStreamClient {
           this.out.close();
       } catch (Exception e) {
         if (e.getCause() instanceof SocketException)
-          logger.debug("Failed to close OUT", e);
+          logger.debug("Can't close OUT, Socket already closed: {}", e.toString());
         else
           logger.warn("Failed to close OUT", e);
       }

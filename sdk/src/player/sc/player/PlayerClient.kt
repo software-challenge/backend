@@ -76,7 +76,17 @@ class PlayerClient(
     /** [start] and join any game with the appropriate [gameType]. */
     fun joinAnyGame() {
         start()
-        client.joinRoomRequest(IGamePlugin.loadPluginId())
+        client.joinGame(IGamePlugin.loadPluginId())
+    }
+    
+    fun joinPreparedGame(reservation: String) {
+        start()
+        client.joinGameWithReservation(reservation)
+    }
+    
+    fun joinGameRoom(roomId: String) {
+        start()
+        client.joinGameRoom(roomId)
     }
     
     override fun onGameLeft(roomId: String) {
@@ -88,10 +98,5 @@ class PlayerClient(
         logger.info("$this: Game over with result $data")
         isGameOver = true
         handler.onGameOver(data, error)
-    }
-    
-    fun joinPreparedGame(reservation: String) {
-        start()
-        client.joinPreparedGame(reservation)
     }
 }

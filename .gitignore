@@ -8,5 +8,7 @@ out/
 !.idea/codeStyles/
 *.iml
 
+# Artifacts from test runs
 logs/
 log/
+replays/

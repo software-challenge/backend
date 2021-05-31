@@ -1,35 +1,37 @@
 package sc.server.gaming;
 
+import org.jetbrains.annotations.NotNull;
+import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.Player;
+import sc.networking.clients.IClient;
 import sc.networking.clients.XStreamClient;
-import sc.server.network.IClient;
-import sc.shared.SlotDescriptor;
+import sc.protocol.room.RoomMessage;
+import sc.server.network.Client;
+import sc.server.network.IClientListener;
 
-public class PlayerSlot {
-  private PlayerRole role;
+/** Links Client and Player into a GameRoom. */
+public class PlayerSlot implements IPlayerListener, IClientListener {
+  /** Actual Server-client to send Packages. */
+  private IClient client;
+  /** Extensive Player information. */
+  private Player player;
   private final GameRoom room;
   private boolean reserved;
-  private String displayName;
-  private SlotDescriptor descriptor;
 
-  public PlayerSlot(GameRoom room) {
-    if (room == null)
-      throw new IllegalStateException("Room must not be null.");
-
+  public PlayerSlot(@NotNull GameRoom room) {
     this.room = room;
-    descriptor = new SlotDescriptor();
-  }
-
-  public PlayerRole getRole() {
-    return this.role;
   }
 
   public GameRoom getRoom() {
     return this.room;
   }
 
+  public boolean isFree() {
+    return isEmpty() && !isReserved();
+  }
+
   public boolean isEmpty() {
-    return this.role == null;
+    return this.client == null;
   }
 
   public boolean isReserved() {
@@ -46,19 +48,18 @@ public class PlayerSlot {
     return ReservationManager.reserve(this);
   }
 
-  public void setClient(IClient client) {
+  public void setClient(Client client) {
     if (!isEmpty())
       throw new IllegalStateException("This slot is already occupied.");
 
-    this.role = new PlayerRole(client, this);
-    client.addRole(this.role);
+    this.client = client;
+    client.addClientListener(this);
   }
 
+  /** Sets the player and starts listening to its events. */
   public void setPlayer(Player player) {
-    if (this.role == null)
-      throw new IllegalStateException("Slot isn't linked to a Client yet.");
-
-    this.role.setPlayer(player);
+    this.player = player;
+    player.addPlayerListener(this);
   }
 
   public synchronized void free() {
@@ -68,34 +69,21 @@ public class PlayerSlot {
     this.reserved = false;
   }
 
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
-
-  public String getDisplayName() {
-    if (this.displayName == null)
-      return "Unknown";
-
-    return this.displayName;
-  }
-
-  public SlotDescriptor getDescriptor() {
-    return this.descriptor;
-  }
-
-  public void setDescriptor(SlotDescriptor descriptor) {
-    this.descriptor = descriptor != null ? descriptor : new SlotDescriptor();
-  }
-
   public IClient getClient() {
-    if (this.role == null)
-      return null;
-
-    return this.role.getClient();
+    return this.client;
   }
 
-  public void close(XStreamClient.DisconnectCause cause) {
-    this.getRoom().removePlayer(this.getRole().getPlayer(), cause);
+  public Player getPlayer() {
+    return player;
   }
 
+  @Override
+  public void onPlayerEvent(RoomMessage message) {
+    client.send(getRoom().createRoomPacket(message));
+  }
+
+  @Override
+  public void onClientDisconnected(Client source, XStreamClient.DisconnectCause cause) {
+    getRoom().removePlayer(getPlayer(), cause);
+  }
 }

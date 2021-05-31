@@ -9,19 +9,16 @@ import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.*
+import sc.protocol.room.ErrorMessage
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
-import sc.server.client.TestPreparedGameResponseListener
 import sc.server.gaming.GameRoom
-import sc.server.gaming.ObserverRole
 import sc.server.helpers.TestHelper
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.shared.WelcomeMessage
 import kotlin.time.ExperimentalTime
-import kotlin.time.milliseconds
-import kotlin.time.seconds
 
 @ExperimentalTime
 class RequestTest: RealServerTest() {
@@ -57,8 +54,8 @@ class RequestTest: RealServerTest() {
     
     @Test
     fun observationRequest() {
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
+        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         
         Thread.sleep(200)
         
@@ -68,14 +65,7 @@ class RequestTest: RealServerTest() {
         
         Thread.sleep(200)
         
-        val roles = lobby.clientManager.clients[2].roles.iterator()
-        var hasRole = false
-        while (roles.hasNext()) {
-            if (roles.next() is ObserverRole) {
-                hasRole = true
-            }
-        }
-        assertTrue(hasRole)
+        gameRoom.observers.size shouldBe 1
     }
     
     @Test
@@ -91,12 +81,12 @@ class RequestTest: RealServerTest() {
         val listener = TestLobbyClientListener()
         admin.addListener(listener)
         
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         Thread.sleep(500)
         
         // Room was created
         val room = lobby.games.iterator().next()
-        val sp1 = room.slots[0].role.player
+        val sp1 = room.slots[0].player
         sp1.addPlayerListener(p1Listener)
         admin.send(PauseGameRequest(room.id, true))
         admin.observe(room.id, false)
@@ -104,9 +94,9 @@ class RequestTest: RealServerTest() {
         // Wait for admin
         TestHelper.waitUntilTrue({ listener.observedReceived }, 2000)
         
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         Thread.sleep(500)
-        room.slots[1].role.player.addPlayerListener(p2Listener)
+        room.slots[1].player.addPlayerListener(p2Listener)
         
         // Wait for the server to register that
         TestHelper.waitUntilTrue({ room.isPauseRequested }, 2000)
@@ -135,20 +125,20 @@ class RequestTest: RealServerTest() {
         val listener = TestLobbyClientListener()
         admin.addListener(listener)
         
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         Thread.sleep(500)
         
         // Room was created
         val room = lobby.games.iterator().next()
-        room.slots[0].role.player.addPlayerListener(p1Listener)
+        room.slots[0].player.addPlayerListener(p1Listener)
         admin.send(PauseGameRequest(room.id, true))
         admin.observe(room.id)
         await("Game paused") { room.isPauseRequested }
         await("Admin observing") { listener.observedReceived }
         
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         await("Second player joins and game starts") { room.status == GameRoom.GameStatus.ACTIVE }
-        room.slots[1].role.player.addPlayerListener(p2Listener)
+        room.slots[1].player.addPlayerListener(p2Listener)
         
         // TODO the section above duplicates the one of the previous test, clean that up
         
@@ -177,6 +167,8 @@ class RequestTest: RealServerTest() {
         // Second player sends Move with value 42
         player2.sendMessageToRoom(room.id, TestMove(42));
         Thread.sleep(100);
+        TestHelper.waitUntilTrue({ listener.newStateReceived }, 2000)
+        listener.newStateReceived = false
         
         // Request a move
         admin.send(StepRequest(room.id))
@@ -188,15 +180,15 @@ class RequestTest: RealServerTest() {
         p1Listener.waitForMessage(MoveRequest::class)
         
         p1Listener.clearMessages() shouldBe 0
+        p2Listener.clearMessages() shouldBe 0
         // Second player sends Move not being his turn
         player2.sendMessageToRoom(room.id, TestMove(73))
-        // TODO this still fails sporadically
-        TestHelper.waitUntilTrue({ listener.newStateReceived }, 1000)
-        listener.newStateReceived = false
+        p2Listener.waitForMessage(ErrorMessage::class)
         
         // There should not come another request
         Thread.sleep(500)
         p1Listener.clearMessages() shouldBe 0
+        p2Listener.clearMessages() shouldBe 0
         // should not result in a new game state
         assertFalse(listener.newStateReceived)
         
@@ -207,13 +199,13 @@ class RequestTest: RealServerTest() {
     @Test
     fun cancelRequest() {
         player1.authenticate(PASSWORD)
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
+        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         val listener = TestLobbyClientListener()
         player1.addListener(listener)
         
-        await("Lobby creates a room") {
-            lobby.games.isNotEmpty() && listener.gameJoinedReceived && listener.roomId != null
+        await("Lobby creates a room and Game starts") {
+            lobby.games.isNotEmpty() && lobby.games.single().status == GameRoom.GameStatus.ACTIVE
         }
         
         player1.send(CancelRequest(listener.roomId))
@@ -225,8 +217,8 @@ class RequestTest: RealServerTest() {
     @Test
     fun testModeRequest() {
         player1.authenticate(PASSWORD)
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
+        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         val listener = TestLobbyClientListener()
         player1.addListener(listener)
         
@@ -235,29 +227,6 @@ class RequestTest: RealServerTest() {
         
         player1.send(TestModeRequest(false))
         TestHelper.assertEqualsWithTimeout("false", { Configuration.get(Configuration.TEST_MODE) }, 1000)
-    }
-    
-    // TODO implement @Test
-    fun getScoreForPlayerRequest() {
-    }
-    
-    @Test
-    fun timeoutRequest() {
-        player1.authenticate(PASSWORD)
-        val listener = TestLobbyClientListener()
-        
-        player1.addListener(listener)
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
-        
-        TestHelper.waitUntilEqual(1, { lobby.games.size }, 2000)
-        var room = gameMgr.games.iterator().next()
-        assertTrue(room.slots[0].role.player.canTimeout)
-        val req = ControlTimeoutRequest(room.id, false, 0)
-        player1.send(req)
-        Thread.sleep(2000)
-        room = gameMgr.games.iterator().next()
-        assertFalse(room.slots[0].role.player.canTimeout)
     }
     
     @Test
@@ -269,14 +238,14 @@ class RequestTest: RealServerTest() {
         
         player1.addListener(listener)
         
-        player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         TestHelper.waitUntilEqual(1, { lobby.games.size }, 2000)
         val room = gameMgr.games.iterator().next()
-        room.slots[0].role.player.addPlayerListener(p1Listener)
-        player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID)
+        room.slots[0].player.addPlayerListener(p1Listener)
+        player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         TestHelper.waitUntilEqual(2, { room.slots.size }, 2000)
         Thread.sleep(500)
-        val splayer2 = room.slots[1].role.player
+        val splayer2 = room.slots[1].player
         splayer2.addPlayerListener(p2Listener)
         splayer2.displayName = "player2..."
         

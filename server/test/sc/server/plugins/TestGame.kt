@@ -1,11 +1,10 @@
 package sc.server.plugins
 
-import org.slf4j.LoggerFactory
+import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
-import sc.protocol.room.RoomMessage
 import sc.server.helpers.TestTeam
 import sc.shared.*
 
@@ -13,14 +12,19 @@ data class TestGame(
         override val currentState: TestGameState = TestGameState(),
 ): AbstractGame<Player>(TestPlugin.TEST_PLUGIN_UUID) {
     
-    override val playerScores: List<PlayerScore> = emptyList()
-    override val winners: List<Player> = emptyList()
+    override val playerScores: List<PlayerScore>
+        get() = players.map { getScoreFor(it) }
     
-    override fun onRoundBasedAction(data: RoomMessage) {
-        if (data is TestMove) {
-            data.perform(currentState)
-            next()
-        } else throw InvalidMoveException(TestMoveMistake.INVALID_FORMAT)
+    override val winners: List<Player>
+        get() = players.filter { !it.hasViolated() && !it.hasLeft() }
+    
+    override fun onRoundBasedAction(move: IMove) {
+        if (move !is TestMove)
+            throw InvalidMoveException(object: IMoveMistake {
+                override val message = "TestGame only processes TestMove"
+            })
+        move.perform(currentState)
+        next()
     }
 
     override fun checkWinCondition(): WinCondition? {
@@ -40,22 +44,15 @@ data class TestGame(
         throw TooManyPlayersException()
     }
 
-    override fun onPlayerLeft(player: Player, cause: ScoreCause?) {
-        // this.players.remove(player);
-        logger.debug("Player left $player")
-        val result = generateScoreMap().toMutableMap()
-        result[player] = PlayerScore(cause ?: ScoreCause.LEFT, "Spieler hat das Spiel verlassen.", 0)
-        notifyOnGameOver(result)
-    }
-
-    override fun getScoreFor(player: Player): PlayerScore {
-        return PlayerScore(true, "Spieler hat gewonnen.")
-    }
+    override fun getScoreFor(player: Player) =
+            if(player.hasLeft())
+                PlayerScore(ScoreCause.LEFT, "Spieler ist rausgeflogen.", 0)
+            else
+                PlayerScore(true, "Spieler hat gewonnen.")
 
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(false)
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(TestGame::class.java)
-    }
+    
+    override fun toString(): String =
+            "TestGame(currentState=$currentState, paused=$isPaused, players=$players)"
 }

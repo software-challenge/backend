@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import sc.server.Configuration;
 import sc.server.Lobby;
 import sc.server.gaming.GameRoomManager;
-import sc.server.network.AdministratorRole;
+import sc.server.network.AuthenticationFailedException;
 import sc.server.network.ClientManager;
 import sc.server.network.MockClient;
 import sc.server.plugins.GamePluginManager;
@@ -49,10 +49,10 @@ public abstract class AbstractRoleTest {
       client = new MockClient();
       this.clientMgr.add(client);
       if (administrator) {
-        client.addRole(new AdministratorRole(client));
+        client.authenticate(Configuration.getAdministrativePassword());
       }
       return client;
-    } catch (IOException e) {
+    } catch (IOException | AuthenticationFailedException e) {
       return Assertions.fail("Could not connect to server");
     }
   }

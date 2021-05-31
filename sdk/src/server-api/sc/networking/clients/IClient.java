@@ -1,12 +1,9 @@
-package sc.server.network;
+package sc.networking.clients;
 
 import sc.protocol.ProtocolPacket;
 
 /** Client interface to send packages to the server. */
 public interface IClient {
-  /** Add role to the client. */
-  void addRole(IClientRole role);
-
   /** Send a package. */
   void send(ProtocolPacket packet);
 }

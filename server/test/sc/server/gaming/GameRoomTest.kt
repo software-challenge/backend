@@ -7,20 +7,60 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertThrows
 import sc.protocol.requests.PrepareGameRequest
+import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
 import sc.server.network.Client
 import sc.server.plugins.TestPlugin
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import sc.shared.SlotDescriptor
+import java.io.StringWriter
+
+val minimalReplay = """<protocol>
+<room roomId="some-id">
+  <data class="memento">
+    <state class="sc.server.plugins.TestGameState">
+      <red displayName="">
+        <team class="sc.server.helpers.TestTeam">RED</team>
+      </red>
+      <blue displayName="">
+        <team class="sc.server.helpers.TestTeam">BLUE</team>
+      </blue>
+      <turn>0</turn>
+      <state>0</state>
+    </state>
+  </data>
+</room>
+<room roomId="some-id">
+  <data class="result">
+    <definition>
+      <fragment name="winner">
+        <aggregation>SUM</aggregation>
+        <relevantForRanking>true</relevantForRanking>
+      </fragment>
+    </definition>
+    <score cause="REGULAR" reason="Game terminated">
+      <part>0</part>
+    </score>
+    <score cause="REGULAR" reason="Game terminated">
+      <part>0</part>
+    </score>
+    <winner displayName="">
+      <team class="sc.server.helpers.TestTeam">RED</team>
+    </winner>
+    <winner displayName="">
+      <team class="sc.server.helpers.TestTeam">BLUE</team>
+    </winner>
+  </data>
+</room>
+</protocol>"""
 
 class GameRoomTest: WordSpec({
     isolationMode = IsolationMode.SingleInstance
     val client = Client(StringNetworkInterface("")).apply { start() }
     "A GameRoomManager" should {
         val manager = GameRoomManager().apply { pluginManager.loadPlugin(TestPlugin::class.java) }
-        // TODO Replay observing
-        // Configuration.set(Configuration.SAVE_REPLAY, "true")
+        Configuration.set(Configuration.SAVE_REPLAY, true)
         "create a game when a player joins" {
             manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).playerCount shouldBe 1
             manager.games shouldHaveSize 1
@@ -35,6 +75,11 @@ class GameRoomTest: WordSpec({
             room.result.isRegular shouldBe true
             room.result.scores shouldContainExactly playersScores.values
             room.isOver shouldBe true
+        }
+        "save a correct replay" {
+            val replayWriter = StringWriter()
+            room.saveReplay(replayWriter)
+            replayWriter.toString() shouldBe minimalReplay.replace("some-id", room.id)
         }
     }
     "A GameRoom with prepared reservations" should {

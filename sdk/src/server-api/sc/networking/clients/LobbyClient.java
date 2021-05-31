@@ -4,17 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.framework.plugins.Player;
-import sc.protocol.RemovedFromGame;
 import sc.protocol.ProtocolPacket;
+import sc.protocol.RemovedFromGame;
+import sc.protocol.ResponsePacket;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.protocol.room.*;
 import sc.shared.GameResult;
-import sc.shared.SlotDescriptor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * This class is used to handle all communication with a server.
@@ -28,7 +31,9 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private static final Logger logger = LoggerFactory.getLogger(LobbyClient.class);
   private final List<ILobbyClientListener> listeners = new ArrayList<>();
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
-  private final List<IAdministrativeListener> administrativeListeners = new ArrayList<>();
+
+  private final Map<String, Consumer<ObservableRoomMessage>> roomObservers = new HashMap<>();
+  private Consumer<ResponsePacket> administrativeListener = null;
 
   public LobbyClient(String host, int port) throws IOException {
     super(createTcpNetwork(host, port));
@@ -36,21 +41,24 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   @Override
   protected final void onObject(ProtocolPacket message) {
+    if(message instanceof ResponsePacket && administrativeListener != null)
+      administrativeListener.accept((ResponsePacket) message);
     if (message instanceof RoomPacket) {
       RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();
       RoomMessage data = packet.getData();
-      if (data instanceof MementoMessage) {
-        onNewState(roomId, ((MementoMessage) data).getState());
-      } else if (data instanceof GameResult) {
-        onGameOver(roomId, (GameResult) data);
-      } else if (data instanceof GamePaused) {
-        onGamePaused(roomId, ((GamePaused) data).getNextPlayer());
-      } else if (data instanceof ErrorMessage) {
-        ErrorMessage error = (ErrorMessage) data;
-        logger.warn("{} in room {}", error.getLogMessage(), roomId);
-        for (IHistoryListener listener : this.historyListeners) {
-          listener.onGameError(roomId, error);
+      if(data instanceof ObservableRoomMessage) {
+        roomObservers.getOrDefault(roomId, (m) -> {}).accept((ObservableRoomMessage) data);
+        if (data instanceof MementoMessage) {
+          onNewState(roomId, ((MementoMessage) data).getState());
+        } else if (data instanceof GameResult) {
+          onGameOver(roomId, (GameResult) data);
+        } else if (data instanceof ErrorMessage) {
+          ErrorMessage error = (ErrorMessage) data;
+          logger.warn("{} in room {}", error.getLogMessage(), roomId);
+          for (IHistoryListener listener : this.historyListeners) {
+            listener.onGameError(roomId, error);
+          }
         }
       } else {
         onRoomMessage(roomId, data);
@@ -75,16 +83,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       }
     } else {
       onCustomObject(message);
-    }
-  }
-
-  private void onGamePaused(String roomId, Player nextPlayer) {
-    for (IAdministrativeListener listener : this.administrativeListeners) {
-      listener.onGamePaused(roomId, nextPlayer);
-    }
-
-    for (ILobbyClientListener listener : this.listeners) {
-      listener.onGamePaused(roomId, nextPlayer);
     }
   }
 
@@ -119,7 +117,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     }
   }
 
-
   protected void onGamePrepared(GamePreparedResponse response) {
     for (ILobbyClientListener listener : new ArrayList<>(this.listeners)) {
       listener.onGamePrepared(response);
@@ -130,17 +127,13 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(new AuthenticateRequest(password));
   }
 
-  public void prepareGame(String gameType) {
-    send(new PrepareGameRequest(gameType));
-  }
-
-  public void prepareGame(String gameType, boolean startPaused) {
-    send(new PrepareGameRequest(
-        gameType,
-        new SlotDescriptor("player1", false),
-        new SlotDescriptor("player2", false),
-        startPaused)
-    );
+  public AdminClient authenticate(String password, Consumer<ResponsePacket> consumer) {
+    start();
+    if(administrativeListener != null)
+      logger.warn("Re-authentication replaces {}", administrativeListener);
+    administrativeListener = consumer;
+    send(new AuthenticateRequest(password));
+    return new AdminClient(this);
   }
 
   protected void onCustomObject(Object o) {
@@ -166,12 +159,16 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(new RoomPacket(roomId, o));
   }
 
-  public void joinPreparedGame(String reservation) {
+  public void joinGameWithReservation(String reservation) {
     send(new JoinPreparedRoomRequest(reservation));
   }
 
-  public void joinRoomRequest(String gameType) {
-    send(new JoinRoomRequest(gameType));
+  public void joinGameRoom(String roomId) {
+    send(new JoinRoomRequest(roomId));
+  }
+
+  public void joinGame(String gameType) {
+    send(new JoinGameRequest(gameType));
   }
 
   public void addListener(ILobbyClientListener listener) {
@@ -182,23 +179,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     this.listeners.remove(listener);
   }
 
-  /** Takes control of the game in the given room and pauses it. */
-  public IControllableGame observeAndControl(String roomId) {
-    final IControllableGame controller = observeAndControl(roomId, true);
-    controller.pause();
-    return controller;
-  }
-
-  /** Takes control of the game in the given room.
-   * @param isPaused whether the game to observe is already paused. */
-  public IControllableGame observeAndControl(String roomId, boolean isPaused) {
-    ControllingClient controller = new ControllingClient(this, roomId, isPaused);
-    addListener((IAdministrativeListener) controller);
-    addListener((IHistoryListener) controller);
-    requestObservation(roomId);
-    return controller;
-  }
-
   public ObservingClient observe(String roomId) {
     return observe(roomId, false);
   }
@@ -206,14 +186,15 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   public ObservingClient observe(String roomId, boolean isPaused) {
     ObservingClient observer = new ObservingClient(roomId, isPaused);
     addListener(observer);
-    requestObservation(roomId);
+    send(new ObservationRequest(roomId));
     return observer;
   }
 
-  private void requestObservation(String roomId) {
-    start();
-    logger.debug("Sending observation request for roomId: {}", roomId);
-    send(new ObservationRequest(roomId));
+  /** Sets observer to observe messages in the given room.
+   * Whether administrative messages are received depends on authentication,
+   * which has to be done separately. */
+  public void observeRoom(String roomId, Consumer<ObservableRoomMessage> observer) {
+    roomObservers.put(roomId, observer);
   }
 
   @Override
@@ -224,18 +205,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   @Override
   public void removeListener(IHistoryListener listener) {
     this.historyListeners.remove(listener);
-  }
-
-  public void addListener(IAdministrativeListener listener) {
-    this.administrativeListeners.add(listener);
-  }
-
-  public void removeListener(IAdministrativeListener listener) {
-    this.administrativeListeners.remove(listener);
-  }
-
-  public void freeReservation(String reservation) {
-    send(new FreeReservationRequest(reservation));
   }
 
 }

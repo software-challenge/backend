@@ -3,7 +3,7 @@ package sc.protocol.requests
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 
-/** Used to cancel game and delete a GameRoom. */
+/** Deletes the GameRoom and cancels the Game within. */
 @XStreamAlias("cancel")
 data class CancelRequest(
         @XStreamAsAttribute

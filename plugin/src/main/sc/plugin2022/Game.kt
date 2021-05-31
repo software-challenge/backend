@@ -3,6 +3,7 @@ package sc.plugin2022
 import org.slf4j.LoggerFactory
 import sc.api.plugins.ITeam
 import sc.api.plugins.Team
+import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
@@ -10,7 +11,6 @@ import sc.framework.plugins.Player
 import sc.plugin2022.util.Constants
 import sc.plugin2022.util.MoveMistake
 import sc.plugin2022.util.WinReason
-import sc.protocol.room.RoomMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
@@ -24,22 +24,18 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     private val availableTeams = ArrayDeque<ITeam>().also { it.addAll(Team.values()) }
     override fun onPlayerJoined(): Player {
         if (availableTeams.isEmpty())
-            throw TooManyPlayersException()
+            throw TooManyPlayersException(this)
         
         val player = Player(availableTeams.removeFirst())
         players.add(player)
         return player
     }
     
-    override val winners: MutableList<Player>
+    override val winners: List<Player>
         get() {
-            if (players.first().hasViolated()) {
-                if (players.last().hasViolated())
-                    return mutableListOf()
-                return players.subList(1, 2)
-            }
-            if (players.last().hasViolated())
-                return players.subList(0, 1)
+            val compliant = players.filter { !it.hasViolated() && !it.hasLeft() }
+            if (compliant.size < players.size)
+                return compliant
             
             val first = currentState.getPointsForTeam(players.first().team)
             val second = currentState.getPointsForTeam(players.last().team)
@@ -126,12 +122,12 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
     
     @Throws(InvalidMoveException::class)
-    override fun onRoundBasedAction(data: RoomMessage) {
-        if (data !is Move)
+    override fun onRoundBasedAction(move: IMove) {
+        if (move !is Move)
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
         
-        logger.debug("Performing $data")
-        currentState.performMove(data)
+        logger.debug("Performing $move")
+        currentState.performMove(move)
         next()
         logger.debug("Current State: ${currentState.longString()}")
     }

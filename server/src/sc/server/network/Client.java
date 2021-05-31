@@ -8,21 +8,20 @@ import sc.api.plugins.exceptions.NotYourTurnException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
+import sc.networking.clients.IClient;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.RemovedFromGame;
 import sc.protocol.responses.ErrorPacket;
-import sc.protocol.room.ErrorMessage;
 import sc.protocol.ProtocolPacket;
 import sc.server.Configuration;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * A generic client. This represents a client in the server.
+ * Represents a client in the server.
  *
  * Clients which connect to the server (as separate programs or running as threads started by the server)
  * are represented by {@link sc.networking.clients.LobbyClient}.
@@ -30,94 +29,17 @@ import java.util.List;
 public class Client extends XStreamClient implements IClient {
   private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
+  protected boolean isAdministrator = false;
   private boolean notifiedOnDisconnect = false;
+  private IClientRequestListener requestHandler = null;
   private final List<IClientListener> clientListeners = new ArrayList<>();
-  private final Collection<IClientRole> roles = new ArrayList<>();
 
   public Client(INetworkInterface networkInterface) throws IOException {
     super(networkInterface);
   }
 
-  /** @return roles of this client. */
-  public Collection<IClientRole> getRoles() {
-    return Collections.unmodifiableCollection(this.roles);
-  }
-
-  /** Add another role to the client. */
-  @Override
-  public void addRole(IClientRole role) {
-    synchronized(roles) {
-      this.roles.add(role);
-    }
-  }
-
-  /** Call listener that handle new Packages. */
-  private void notifyOnPacket(ProtocolPacket packet) throws UnprocessedPacketException {
-    /*
-     * NOTE that method is called in the receiver thread. Messages should
-     * only be passed to listeners. No callbacks should be invoked directly
-     * in the receiver thread.
-     */
-
-    Collection<RescuableClientException> errors = new ArrayList<>();
-
-    PacketCallback callback = new PacketCallback(packet);
-
-    for (IClientListener listener : new ArrayList<>(clientListeners)) {
-      try {
-        listener.onRequest(this, callback);
-      } catch (RescuableClientException e) {
-        errors.add(e);
-      }
-    }
-
-    if (errors.isEmpty() && !callback.isProcessed()) {
-      String msg = String.format("Packet %s wasn't processed.", packet);
-      logger.warn(msg);
-      throw new UnprocessedPacketException(msg);
-    }
-
-    for (RescuableClientException error : errors) {
-      logger.warn("An error occured: ", error);
-      send(new ErrorPacket(packet, error.toString()));
-      if (error instanceof GameLogicException && !(error instanceof NotYourTurnException)) {
-        logger.warn("Game closed because of GameLogicException: " + error.getMessage());
-      }
-    }
-    if (!errors.isEmpty()) {
-      logger.debug("Stopping {} because of error", this);
-      stop();
-    }
-
-    if (packet instanceof RemovedFromGame) {
-      logger.debug("Stopping {} because of received RemovedFromGame message", this);
-      stop();
-    }
-  }
-
-  /** Call listeners upon error. */
-  private void notifyOnError(ErrorMessage packet) {
-    for (IClientListener listener : new ArrayList<>(clientListeners)) {
-      try {
-        listener.onError(this, packet);
-      } catch (Exception e) {
-        logger.error("OnError Notification caused an exception, error: " + packet, e);
-      }
-    }
-  }
-
-  /** Call listeners upon disconnect. */
-  private void notifyOnDisconnect() {
-    if (!this.notifiedOnDisconnect) {
-      this.notifiedOnDisconnect = true;
-      for (IClientListener listener : new ArrayList<>(clientListeners)) {
-        try {
-          listener.onClientDisconnected(this);
-        } catch (Exception e) {
-          logger.error("OnDisconnect Notification caused an exception.", e);
-        }
-      }
-    }
+  public void setRequestHandler(IClientRequestListener handler) {
+    requestHandler = handler;
   }
 
   /** Add a {@link IClientListener listener} to the client. */
@@ -135,14 +57,7 @@ public class Client extends XStreamClient implements IClient {
    * @return true iff this client has an AdministratorRole
    */
   public boolean isAdministrator() {
-    synchronized(roles) {
-      for (IClientRole role : this.roles) {
-        if (role instanceof AdministratorRole) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return isAdministrator;
   }
 
   /**
@@ -155,7 +70,7 @@ public class Client extends XStreamClient implements IClient {
 
     if (correctPassword != null && correctPassword.equals(password)) {
       if (!isAdministrator()) {
-        addRole(new AdministratorRole(this));
+        isAdministrator = true;
         logger.info("Client authenticated as administrator");
       } else {
         logger.warn("Client tried to authenticate as administrator twice.");
@@ -174,17 +89,16 @@ public class Client extends XStreamClient implements IClient {
    */
   @Override
   protected void onDisconnect(DisconnectCause cause) {
-    synchronized(roles) {
-      for (IClientRole role : this.roles) {
+    if (!this.notifiedOnDisconnect) {
+      this.notifiedOnDisconnect = true;
+      for (IClientListener listener : new ArrayList<>(clientListeners)) {
         try {
-          role.disconnect(cause);
+          listener.onClientDisconnected(this, cause);
         } catch (Exception e) {
-          logger.warn("Couldn't close role.", e);
+          logger.error("OnDisconnect Notification caused an exception.", e);
         }
       }
     }
-
-    notifyOnDisconnect();
   }
 
   /** Forward received package to listeners. */
@@ -195,7 +109,33 @@ public class Client extends XStreamClient implements IClient {
      * should only be passed to listeners. No callbacks should be invoked
      * directly in the receiver thread.
      */
-    notifyOnPacket(message);
+    Collection<RescuableClientException> errors = new ArrayList<>();
+
+    PacketCallback callback = new PacketCallback(message);
+
+    try {
+      requestHandler.onRequest(this, callback);
+    } catch (RescuableClientException e) {
+      errors.add(e);
+    }
+
+    if (errors.isEmpty() && !callback.isProcessed()) {
+      String msg = String.format("Packet %s wasn't processed.", message);
+      logger.warn(msg);
+      throw new UnprocessedPacketException(msg);
+    }
+
+    for (RescuableClientException error : errors) {
+      logger.warn("An error occured: ", error);
+      send(new ErrorPacket(message, error.toString()));
+      if (error instanceof GameLogicException && !(error instanceof NotYourTurnException)) {
+        logger.warn("Game closed because of GameLogicException: " + error.getMessage());
+      }
+    }
+    if (!errors.isEmpty()) {
+      logger.debug("Stopping {} because of error", this);
+      stop();
+    }
   }
 
 }

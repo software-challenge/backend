@@ -1,6 +1,7 @@
 package sc.server.network
 
 import org.slf4j.LoggerFactory
+import sc.networking.clients.XStreamClient
 import sc.protocol.room.ErrorMessage
 import sc.server.ServiceManager
 import java.io.Closeable
@@ -8,7 +9,7 @@ import java.io.IOException
 import java.util.*
 
 /** The ClientManager serves as a lookup table for all active connections.  */
-class ClientManager : Runnable, IClientListener, Closeable {
+class ClientManager(private val requestHandler: IClientRequestListener) : Runnable, IClientListener, Closeable {
 
     /** List of all XStreamClients. */
     val clients = ArrayList<Client>()
@@ -18,8 +19,6 @@ class ClientManager : Runnable, IClientListener, Closeable {
 
     private var running: Boolean = false
     private var serviceThread: Thread? = null
-
-    private var onClientConnected: ((Client) -> Unit)? = null
 
     init {
         running = false
@@ -34,11 +33,8 @@ class ClientManager : Runnable, IClientListener, Closeable {
     fun add(newClient: Client) {
         clients.add(newClient)
         newClient.addClientListener(this)
-        onClientConnected?.invoke(newClient)
-    }
-
-    fun setOnClientConnected(consumer: (Client) -> Unit) {
-        onClientConnected = consumer
+        newClient.setRequestHandler(requestHandler)
+        newClient.start()
     }
 
     /** Fetch new clients. */
@@ -91,19 +87,9 @@ class ClientManager : Runnable, IClientListener, Closeable {
     }
 
     /** Remove disconnected client. */
-    override fun onClientDisconnected(source: Client) {
+    override fun onClientDisconnected(source: Client, cause: XStreamClient.DisconnectCause) {
         logger.info("Removing client $source from client manager")
         clients.remove(source)
-    }
-
-    /** Do nothing on error. */
-    override fun onError(source: Client, packet: ErrorMessage) {
-        // TODO Error handling needs to happen
-    }
-
-    /** Ignore any request. */
-    override fun onRequest(source: Client, packet: PacketCallback) {
-        // TODO Handle Request?
     }
 
     companion object {
