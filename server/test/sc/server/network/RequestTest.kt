@@ -208,7 +208,9 @@ class RequestTest: RealServerTest() {
         player1.addListener(listener)
         
         await("Lobby creates a room and Game starts") {
-            lobby.games.isNotEmpty() && lobby.games.single().status == GameRoom.GameStatus.ACTIVE
+            lobby.games.isNotEmpty() &&
+            lobby.games.single().status == GameRoom.GameStatus.ACTIVE &&
+            listener.roomId != null
         }
         
         player1.send(CancelRequest(listener.roomId))
