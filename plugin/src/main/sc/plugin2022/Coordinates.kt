@@ -11,7 +11,7 @@ data class Coordinates(
         @XStreamAsAttribute val x: Int,
         @XStreamAsAttribute val y: Int) {
     
-    override fun toString(): String = "[$x, $y]"
+    override fun toString(): String = "[$x|$y]"
 
     /** Addiere den [Vector] auf die [Coordinates] auf. */
     operator fun plus(vector: Vector): Coordinates {

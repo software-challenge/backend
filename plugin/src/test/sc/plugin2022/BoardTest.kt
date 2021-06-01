@@ -8,6 +8,7 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.maps.shouldNotBeEmpty
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldHaveLineCount
 import io.kotest.matchers.string.shouldNotContain
@@ -72,7 +73,7 @@ class BoardTest: FunSpec({
             test("from position")  {
                 val moewe = Piece(Moewe, Team.ONE)
                 val board = Board(mutableMapOf(coords to moewe))
-                board.movePiece(Move(coords, coords.copy(y = 7))) shouldBe null
+                board.movePiece(Move(coords, coords.copy(y = 7))).shouldBeNull()
                 board.shouldBeEmpty()
             }
             test("not from Robbe in position") {
@@ -81,9 +82,20 @@ class BoardTest: FunSpec({
                 board.movePiece(Move(coords, Coordinates(2, 7))) shouldBe robbe
                 board.shouldNotBeEmpty()
             }
-            test("from tower") {
-                val tower = Piece(Herzmuschel, Team.ONE, 2)
-                val board = Board(mutableMapOf())
+            context("from tower") {
+                val board = makeBoard(0 y 1 to "M", 0 y 0 to "S2", 1 y 0 to "m", 1 y 1 to "r")
+                test("not onto own") {
+                    shouldThrow<InvalidMoveException> {
+                        board.movePiece(Move(0 y 0, 0 y 1))
+                    }.mistake shouldBe MoveMistake.DESTINATION_BLOCKED
+                }
+                test("move tower") {
+                    board.movePiece(Move(0 y 0, 1 y 1)).shouldBeNull()
+                }
+                test("move onto tower") {
+                    // TODO that should be a double amber
+                    board.movePiece(Move(1 y 0, 0 y 0)).shouldBeNull()
+                }
             }
         }
     }

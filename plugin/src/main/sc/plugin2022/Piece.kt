@@ -35,7 +35,7 @@ data class Piece(
         get() = type.possibleMoves.map { it.copy(dy = it.dy * team.direction) }
     
     val isAmber
-        get() = count > 3
+        get() = count >= 3
     
     fun capture(other: Piece) {
         count += other.count
@@ -50,9 +50,9 @@ data class Piece(
         @OptIn(ExperimentalStdlibApi::class)
         fun fromString(string: String): Piece {
             val type = string.first()
-            return Piece(PieceType.values().first { it.char == type },
+            return Piece(PieceType.values().first { it.char.equals(type, true) },
                     if(type.isLowerCase()) Team.TWO else Team.ONE,
-                    string.last().digitToIntOrNull() ?: 0)
+                    string.last().digitToIntOrNull() ?: 1)
         }
     }
 }
