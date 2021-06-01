@@ -116,7 +116,7 @@ tasks {
     
     val testGame by creating {
         group = "verification"
-        dependsOn(":server:deploy", ":player:deploy")
+        dependsOn(":server:deploy", ":player:deployJar")
         doFirst {
             val testGameDir = testingDir.resolve("game")
             testGameDir.deleteRecursively()
@@ -300,10 +300,8 @@ allprojects {
     afterEvaluate {
         doAfterEvaluate.forEach { action -> action(this) }
         tasks {
-            forEach { if (it.name != clean.name) it.mustRunAfter(clean.get()) }
-            test {
-                testLogging { showStandardStreams = project.properties["verbose"] != null }
-            }
+            forEach { if (!it.name.endsWith("clean", true)) it.mustRunAfter(clean.get()) }
+            test { testLogging { showStandardStreams = project.properties["verbose"] != null } }
             withType<Jar> {
                 if (plugins.hasPlugin(ApplicationPlugin::class))
                     manifest.attributes["Main-Class"] = project.extensions.getByType<JavaApplication>().mainClass.get()
@@ -311,8 +309,6 @@ allprojects {
         }
     }
 }
-
-// == Utilities ==
 
 fun Task.dependOnSubprojects() {
     if (this.project == rootProject)

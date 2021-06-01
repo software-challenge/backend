@@ -32,6 +32,18 @@ tasks {
         archiveFileName.set("defaultplayer.jar")
     }
     
+    val copyDocs by creating(Copy::class) {
+        dependsOn(":sdk:doc", ":plugin:doc")
+        into(buildDir.resolve("zip"))
+        with(copySpec {
+            from(project(":plugin").buildDir.resolve("doc"))
+            into("doc/plugin-$gameName")
+        }, copySpec {
+            from(project(":sdk").buildDir.resolve("doc"))
+            into("doc/sdk")
+        })
+    }
+    
     val prepareZip by creating(Copy::class) {
         group = "distribution"
         into(buildDir.resolve("zip"))
@@ -53,28 +65,20 @@ tasks {
             from(configurations.default, arrayOf("sdk", "plugin").map { project(":$it").getTasksByName("sourcesJar", false).single().outputs.files })
             into("lib")
         })
-        if(!project.hasProperty("nodoc")) {
-            dependsOn(":sdk:doc", ":plugin:doc")
-            with(copySpec {
-                from(project(":plugin").buildDir.resolve("doc"))
-                into("doc/plugin-$gameName")
-            }, copySpec {
-                from(project(":sdk").buildDir.resolve("doc"))
-                into("doc/sdk")
-            })
-        }
+    }
+    
+    val deployJar by creating(Copy::class) {
+        from(shadowJar)
+        into(deployDir)
+        rename { project.property("deployedPlayer") as String }
     }
     
     val deploy by creating(Zip::class) {
         group = "distribution"
-        dependsOn(shadowJar, prepareZip)
+        dependsOn(deployJar)
+        from(prepareZip, copyDocs)
         destinationDirectory.set(deployDir)
         archiveFileName.set("simpleclient-$gameName-src.zip")
-        from(prepareZip.destinationDir)
-        doFirst {
-            shadowJar.get().outputs.files.singleFile.copyTo(
-                    deployDir.resolve(project.property("deployedPlayer") as String), true)
-        }
     }
     
     run.configure {
