@@ -31,8 +31,8 @@ abstract class RealServerTest {
     protected val serverPort: Int
         get() = NewClientListener.lastUsedPort
     
-    fun connectClient(host: String, port: Int) =
-            LobbyClient(host, port).apply { start() }
+    fun connectPlayer() =
+            LobbyClient("localhost", serverPort).apply { start() }
     
     @ExperimentalTime
     fun await(clue: String? = null, time: Duration = 1.seconds, f: () -> Boolean) = runBlocking {

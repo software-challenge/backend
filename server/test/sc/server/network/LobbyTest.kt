@@ -14,8 +14,8 @@ class LobbyTest: RealServerTest() {
     
     @Test
     fun shouldEndGameOnDisconnect() {
-        val player1 = connectClient("localhost", serverPort)
-        val player2 = connectClient("localhost", serverPort)
+        val player1 = connectPlayer()
+        val player2 = connectPlayer()
         
         player1.joinGame(TestPlugin.TEST_PLUGIN_UUID)
         player2.joinGame(TestPlugin.TEST_PLUGIN_UUID)
@@ -29,8 +29,8 @@ class LobbyTest: RealServerTest() {
     
     @Test
     fun shouldEndGameOnIllegalMessage() {
-        val player1 = connectClient("localhost", serverPort)
-        val player2 = connectClient("localhost", serverPort)
+        val player1 = connectPlayer()
+        val player2 = connectPlayer()
     
         val listener = TestLobbyClientListener()
         player1.addListener(listener)

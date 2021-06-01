@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Test
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.LobbyClient
-import sc.protocol.requests.*
+import sc.protocol.requests.CancelRequest
+import sc.protocol.requests.PauseGameRequest
+import sc.protocol.requests.StepRequest
+import sc.protocol.requests.TestModeRequest
 import sc.protocol.room.ErrorMessage
 import sc.server.Configuration
 import sc.server.client.PlayerListener
@@ -28,11 +31,11 @@ class RequestTest: RealServerTest() {
     
     @BeforeEach
     fun prepare() {
-        player1 = connectClient("localhost", serverPort)
+        player1 = connectPlayer()
         Thread.sleep(200)
-        player2 = connectClient("localhost", serverPort)
+        player2 = connectPlayer()
         Thread.sleep(200)
-        player3 = connectClient("localhost", serverPort)
+        player3 = connectPlayer()
         Thread.sleep(200)
     }
     

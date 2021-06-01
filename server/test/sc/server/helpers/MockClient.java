@@ -1,4 +1,4 @@
-package sc.server.network;
+package sc.server.helpers;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import sc.networking.UnprocessedPacketException;
 import sc.protocol.ProtocolPacket;
 import sc.protocol.room.RoomPacket;
-import sc.server.helpers.StringNetworkInterface;
+import sc.server.network.Client;
 import sc.shared.InvalidGameStateException;
 
 import java.io.IOException;

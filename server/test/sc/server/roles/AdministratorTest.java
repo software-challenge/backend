@@ -6,8 +6,8 @@ import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.server.Configuration;
+import sc.server.helpers.MockClient;
 import sc.server.network.Client;
-import sc.server.network.MockClient;
 import sc.server.network.PacketCallback;
 import sc.server.plugins.TestPlugin;
 

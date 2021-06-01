@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import sc.networking.clients.XStreamClient;
 import sc.server.helpers.ExamplePacket;
+import sc.server.helpers.MockClient;
 import sc.server.helpers.StringNetworkInterface;
 
 import java.io.IOException;
