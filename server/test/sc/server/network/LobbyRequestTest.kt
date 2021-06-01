@@ -7,10 +7,9 @@ import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import sc.framework.plugins.protocol.MoveRequest
-import sc.networking.clients.LobbyClient
 import sc.protocol.ResponsePacket
 import sc.protocol.requests.JoinPreparedRoomRequest
 import sc.protocol.requests.PrepareGameRequest
@@ -24,6 +23,7 @@ import sc.protocol.room.ObservableRoomMessage
 import sc.server.client.MessageListener
 import sc.server.client.PlayerListener
 import sc.server.gaming.GameRoom
+import sc.server.helpers.TestGameHandler
 import sc.server.helpers.TestTeam
 import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
@@ -44,9 +44,9 @@ class LobbyRequestTest: WordSpec({
     "A Lobby with connected clients" When {
         val testLobby = autoClose(TestLobby())
         val lobby = testLobby.lobby
-    
+        
         val adminListener = MessageListener<ResponsePacket>()
-        val lobbyClient = LobbyClient("localhost", testLobby.serverPort)
+        val lobbyClient = testLobby.connectClient()
         val admin = lobbyClient.authenticate(PASSWORD, adminListener::addMessage)
         fun prepareGame(request: PrepareGameRequest): GamePreparedResponse {
             admin.prepareGame(request)
@@ -55,7 +55,9 @@ class LobbyRequestTest: WordSpec({
             return prepared
         }
         
-        val players = Array(2) { testLobby.connectClient() }
+        val playerClients = Array(2) { testLobby.connectClient() }
+        val playerHandlers = Array(2) { TestGameHandler() }
+        val players = Array(2) { playerClients[it].asPlayer(playerHandlers[it]) }
         await("Clients connected") { lobby.clientManager.clients.size shouldBe 3 }
         "a player joined" should {
             players[0].joinGame(TestPlugin.TEST_PLUGIN_UUID)
@@ -85,13 +87,11 @@ class LobbyRequestTest: WordSpec({
             players[1].joinGameWithReservation(reservations[1])
             await("Players join, Game start") { room.status shouldBe GameRoom.GameStatus.ACTIVE }
             
-            val playerListeners = room.slots.map { slot ->
-                PlayerListener().also { listener -> slot.player.addPlayerListener(listener) }
-            }
             "terminate when a Move is received while still paused" {
-                players[0].sendMessageToRoom(roomId, TestMove(0))
+                playerClients[0].sendMessageToRoom(roomId, TestMove(0))
                 await("Terminates") { room.status shouldBe GameRoom.GameStatus.OVER }
             }
+            
             "play game on unpause" {
                 admin.control(roomId).unpause()
                 await { room.isPauseRequested shouldBe false }
@@ -99,24 +99,31 @@ class LobbyRequestTest: WordSpec({
                 game.isPaused shouldBe false
                 await("game started") { game.activePlayer.team shouldBe TestTeam.RED }
                 withClue("Processes moves") {
-                    playerListeners[0].waitForMessage(MoveRequest::class)
-                    players[0].sendMessageToRoom(roomId, TestMove(1))
+                    await("Move requested from player 1") {
+                        playerHandlers[0].moveRequest.shouldNotBeNull()
+                    }
+                    playerHandlers[0].moveRequest!!.complete(TestMove(1))
                     await { game.activePlayer.team shouldBe TestTeam.BLUE }
                     game.currentState.state shouldBe 1
-                    playerListeners[1].waitForMessage(MoveRequest::class)
-                    players[1].sendMessageToRoom(roomId, TestMove(2))
+                    await("Move requested from player 1") {
+                        playerHandlers[1].moveRequest.shouldNotBeNull()
+                    }
+                    playerHandlers[1].moveRequest!!.complete(TestMove(2))
                     await { game.activePlayer.team shouldBe TestTeam.RED }
                     await { game.currentState.state shouldBe 2 }
                 }
+            }
+            
+            "terminate after wrong player sent a turn" {
+                val listener = PlayerListener()
+                room.slots[1].player.addPlayerListener(listener)
                 
                 val move = TestMove(-1)
-                players[1].sendMessageToRoom(roomId, move)
-                val msg = playerListeners[1].waitForMessage(ErrorMessage::class)
+                playerClients[1].sendMessageToRoom(roomId, move)
+                val msg = listener.waitForMessage(ErrorMessage::class)
                 msg.message shouldContain "not your turn"
                 msg.originalMessage shouldBe move
-                await("Terminate after wrong player sent a turn") {
-                    room.status shouldBe GameRoom.GameStatus.OVER
-                }
+                room.status shouldBe GameRoom.GameStatus.OVER
             }
         }
         "a game is prepared with descriptors" should {
@@ -145,7 +152,7 @@ class LobbyRequestTest: WordSpec({
                 room.slots[0].isFree shouldBe false
                 room.slots[1].isEmpty shouldBe false
             }
-    
+            
             val roomListener = MessageListener<ObservableRoomMessage>()
             withClue("accept observation") {
                 admin.observe(prepared.roomId, roomListener::addMessage)
@@ -159,12 +166,12 @@ class LobbyRequestTest: WordSpec({
                     room.status shouldBe GameRoom.GameStatus.ACTIVE
                 }
                 roomListener.waitForMessage(MementoMessage::class)
-    
+                
                 val controller = admin.control(prepared.roomId)
                 controller.pause()
                 roomListener.waitForMessage(GamePaused::class)
                 withClue("appropriate result for aborted game") {
-                    players[1].sendMessageToRoom(prepared.roomId, TestMove(0))
+                    playerClients[1].sendMessageToRoom(prepared.roomId, TestMove(0))
                     val result = roomListener.waitForMessage(GameResult::class)
                     // TODO can be checked once moved from plugin to sdk
                     // result.isRegular shouldBe false

@@ -1,8 +1,7 @@
 package sc.player
 
+import sc.api.plugins.IGameState
 import sc.api.plugins.IMove
-import sc.api.plugins.TwoPlayerGameState
-import sc.framework.plugins.Player
 import sc.shared.GameResult
 
 /**
@@ -13,17 +12,15 @@ import sc.shared.GameResult
 interface IGameHandler {
     
     /** Wird aufgerufen, wenn sich das Spielbrett ändert. */
-    fun onUpdate(gameState: TwoPlayerGameState)
+    fun onUpdate(gameState: IGameState)
     
     /** Wird aufgerufen, um die Zuganfrage des Servers zu beantworten. */
     fun calculateMove(): IMove
     
-    /**
-     * Wird aufgerufen, wenn das Spiel beendet ist.
-     *
-     * @param data         Das Spielergebnis
-     * @param errorMessage Eventuelle Fehlernachricht
-     */
-    fun onGameOver(data: GameResult, errorMessage: String?)
+    /** Wird aufgerufen, wenn das Spiel beendet ist. */
+    fun onGameOver(data: GameResult)
+    
+    /** Wird aufgerufen, wenn der Server einen Fehler meldet*/
+    fun onError(error: String)
     
 }

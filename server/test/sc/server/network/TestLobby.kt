@@ -34,11 +34,8 @@ class TestLobby: Closeable {
         }
     }
     
-    fun connectClient(): LobbyClient {
-        val client = LobbyClient("localhost", serverPort)
-        client.start()
-        return client
-    }
+    fun connectClient() =
+        LobbyClient("localhost", serverPort)
     
     override fun close() {
         lobby.close()

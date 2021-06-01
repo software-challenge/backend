@@ -1,102 +1,51 @@
 package sc.player
 
-import org.slf4j.LoggerFactory
-import sc.api.plugins.*
 import sc.framework.plugins.protocol.MoveRequest
-import sc.networking.clients.AbstractLobbyClientListener
-import sc.networking.clients.LobbyClient
+import sc.networking.clients.IClient
+import sc.protocol.requests.JoinGameRequest
+import sc.protocol.requests.JoinPreparedRoomRequest
+import sc.protocol.requests.JoinRoomRequest
 import sc.protocol.room.ErrorMessage
+import sc.protocol.room.MementoMessage
 import sc.protocol.room.RoomMessage
 import sc.shared.GameResult
-import java.net.ConnectException
-import kotlin.system.exitProcess
+import java.util.function.Function
+
+interface IPlayerClient {
+    fun joinGameWithReservation(reservation: String)
+    fun joinGameRoom(roomId: String)
+    /** Join any game with the appropriate [gameType]. */
+    fun joinGame(gameType: String)
+}
 
 /**
- * Eine Implementation des [AbstractLobbyClientListener],
- * um die Server-Kommunikation mit der Logik der Spieler zu verbinden.
+ * Verbindet die Server-Kommunikation mit der Logik der Spieler.
  */
 class PlayerClient(
-        host: String,
-        port: Int,
+        private val client: IClient,
         private val handler: IGameHandler,
-): AbstractLobbyClientListener() {
-    companion object {
-        private val logger = LoggerFactory.getLogger(PlayerClient::class.java)
-    }
+): Function<RoomMessage, RoomMessage?>, IPlayerClient {
     
-    var isGameOver = false
-    
-    /** The lobby client that connects to the room. Stops on connection failure. */
-    private val client: LobbyClient = try {
-        LobbyClient(host, port)
-    } catch (e: ConnectException) {
-        logger.error("Could not connect to Server: ${e.message}")
-        exitProcess(1)
-    }
-    
-    /** Storage for the reason of a rule violation, if any occurs. */
-    var error: String? = null
-        private set
-    
-    /** Current room of the player. */
-    private lateinit var roomId: String
-    
-    /** Called for any new message sent to the game room, e.g., move requests. */
-    override fun onRoomMessage(roomId: String, data: RoomMessage) {
-        this.roomId = roomId
-        when (data) {
-            is MoveRequest -> sendMove(handler.calculateMove())
-            is ErrorMessage -> {
-                logger.debug("onError: Client $this received error ${data.message} in $roomId")
-                this.error = data.message
-            }
+    override fun apply(msg: RoomMessage): RoomMessage? {
+        when (msg) {
+            is MoveRequest -> return handler.calculateMove()
+            is MementoMessage -> handler.onUpdate(msg.state)
+            is GameResult -> handler.onGameOver(msg)
+            is ErrorMessage -> handler.onError(msg.logMessage)
         }
+        return null
     }
     
-    /** Sends the selected move to the server. */
-    fun sendMove(move: IMove) =
-            client.sendMessageToRoom(roomId, move)
-    
-    /**
-     * Called when game state has been received.
-     * Happens after a client made a move.
-     */
-    override fun onNewState(roomId: String, state: IGameState) {
-        val gameState = state as TwoPlayerGameState
-        logger.debug("$this got a new state $gameState")
-        handler.onUpdate(gameState)
+    override fun joinGameWithReservation(reservation: String) {
+        client.send(JoinPreparedRoomRequest(reservation))
     }
     
-    /** Start the LobbyClient [client] and listen to it. */
-    private fun start() {
-        client.start()
-        client.addListener(this)
+    override fun joinGameRoom(roomId: String) {
+        client.send(JoinRoomRequest(roomId))
     }
     
-    /** [start] and join any game with the appropriate [gameType]. */
-    fun joinAnyGame() {
-        start()
-        client.joinGame(IGamePlugin.loadPluginId())
-    }
-    
-    fun joinPreparedGame(reservation: String) {
-        start()
-        client.joinGameWithReservation(reservation)
-    }
-    
-    fun joinGameRoom(roomId: String) {
-        start()
-        client.joinGameRoom(roomId)
-    }
-    
-    override fun onGameLeft(roomId: String) {
-        logger.info("$this: Got game left in room $roomId")
-        client.stop()
-    }
-    
-    override fun onGameOver(roomId: String, data: GameResult) {
-        logger.info("$this: Game over with result $data")
-        isGameOver = true
-        handler.onGameOver(data, error)
+    /** Join any game with the appropriate [gameType]. */
+    override fun joinGame(gameType: String) {
+        client.send(JoinGameRequest(gameType))
     }
 }

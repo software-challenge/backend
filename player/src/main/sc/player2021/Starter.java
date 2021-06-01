@@ -3,12 +3,15 @@ package sc.player2021;
 import jargs.gnu.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.player2021.logic.Logic;
-import sc.player.PlayerClient;
+import sc.api.plugins.IGamePlugin;
+import sc.networking.clients.LobbyClient;
 import sc.player.IGameHandler;
+import sc.player.IPlayerClient;
+import sc.player2021.logic.Logic;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Hauptklasse des Clients, die über Konsolenargumente gesteuert werden kann.
@@ -17,18 +20,18 @@ import java.io.File;
 public class Starter {
   private static final Logger logger = LoggerFactory.getLogger(Starter.class);
 
-  public Starter(String host, int port, String reservation, String roomId) {
+  public Starter(String host, int port, String reservation, String roomId) throws IOException {
     // Strategie zuweisen
     IGameHandler logic = new Logic();
-    PlayerClient client = new PlayerClient(host, port, logic);
+    IPlayerClient client = new LobbyClient(host, port).asPlayer(logic);
 
     // einem Spiel beitreten
     if (reservation != null && !reservation.isEmpty()) {
-      client.joinPreparedGame(reservation);
+      client.joinGameWithReservation(reservation);
     } else if (roomId != null) {
       client.joinGameRoom(roomId);
     } else {
-      client.joinAnyGame();
+      client.joinGame(IGamePlugin.loadPluginId());
     }
   }
 

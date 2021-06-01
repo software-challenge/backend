@@ -3,7 +3,9 @@ package sc.networking.clients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
-import sc.framework.plugins.Player;
+import sc.player.IGameHandler;
+import sc.player.IPlayerClient;
+import sc.player.PlayerClient;
 import sc.protocol.ProtocolPacket;
 import sc.protocol.RemovedFromGame;
 import sc.protocol.ResponsePacket;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * This class is used to handle all communication with a server.
@@ -32,11 +35,40 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private final List<ILobbyClientListener> listeners = new ArrayList<>();
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
 
-  private final Map<String, Consumer<ObservableRoomMessage>> roomObservers = new HashMap<>();
+  private Function<RoomMessage, RoomMessage> player = null;
   private Consumer<ResponsePacket> administrativeListener = null;
+  private final Map<String, Consumer<ObservableRoomMessage>> roomObservers = new HashMap<>();
 
   public LobbyClient(String host, int port) throws IOException {
     super(createTcpNetwork(host, port));
+  }
+
+  /** Request authentication on server with a listener.
+   * @return an AdminClient to send authorised requests */
+  public AdminClient authenticate(String password, Consumer<ResponsePacket> consumer) {
+    start();
+    if(administrativeListener != null)
+      logger.warn("Re-authentication replaces {}", administrativeListener);
+    administrativeListener = consumer;
+    send(new AuthenticateRequest(password));
+    return new AdminClient(this);
+  }
+
+
+  /** Sets observer to observe messages in the given room.
+   * Whether administrative messages are received depends on authentication,
+   * which has to be done separately. */
+  public void observeRoom(String roomId, Consumer<ObservableRoomMessage> observer) {
+    roomObservers.put(roomId, observer);
+  }
+
+  /** Sets this client up to play a game utilizing the handler.
+   * @return a PlayerClient to join a room as Player. */
+  public IPlayerClient asPlayer(IGameHandler handler) {
+    start();
+    PlayerClient client = new PlayerClient(this, handler);
+    player = client;
+    return client;
   }
 
   @Override
@@ -47,6 +79,12 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       RoomPacket packet = (RoomPacket) message;
       String roomId = packet.getRoomId();
       RoomMessage data = packet.getData();
+     if(player != null) {
+        // TODO run this in a background thread
+        RoomMessage response = player.apply(data);
+        if(response != null)
+          sendMessageToRoom(roomId, response);
+      }
       if(data instanceof ObservableRoomMessage) {
         roomObservers.getOrDefault(roomId, (m) -> {}).accept((ObservableRoomMessage) data);
         if (data instanceof MementoMessage) {
@@ -85,6 +123,13 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       onCustomObject(message);
     }
   }
+
+  public void sendMessageToRoom(String roomId, RoomMessage o) {
+    send(new RoomPacket(roomId, o));
+  }
+
+  // TODO The following functions are obsolete
+  //  and will be removed once all tests are migrated to the new style
 
   private void onGameOver(String roomId, GameResult data) {
     logger.info("Received game result: {}", data);
@@ -127,15 +172,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     send(new AuthenticateRequest(password));
   }
 
-  public AdminClient authenticate(String password, Consumer<ResponsePacket> consumer) {
-    start();
-    if(administrativeListener != null)
-      logger.warn("Re-authentication replaces {}", administrativeListener);
-    administrativeListener = consumer;
-    send(new AuthenticateRequest(password));
-    return new AdminClient(this);
-  }
-
   protected void onCustomObject(Object o) {
     logger.warn("Couldn't process message {}.", o);
   }
@@ -153,10 +189,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     for (ILobbyClientListener listener : this.listeners) {
       listener.onRoomMessage(roomId, data);
     }
-  }
-
-  public void sendMessageToRoom(String roomId, RoomMessage o) {
-    send(new RoomPacket(roomId, o));
   }
 
   public void joinGameWithReservation(String reservation) {
@@ -188,13 +220,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     addListener(observer);
     send(new ObservationRequest(roomId));
     return observer;
-  }
-
-  /** Sets observer to observe messages in the given room.
-   * Whether administrative messages are received depends on authentication,
-   * which has to be done separately. */
-  public void observeRoom(String roomId, Consumer<ObservableRoomMessage> observer) {
-    roomObservers.put(roomId, observer);
   }
 
   @Override
