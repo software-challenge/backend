@@ -249,7 +249,9 @@ public abstract class XStreamClient implements IClient {
     this.receiveThread.interrupt();
   }
 
-  protected synchronized void close() {
+  /** Closes the client without notifying any listeners.
+   * Prefer {@link #stop()} to end communication properly. */
+  public synchronized void close() {
     if (!isClosed()) {
       this.closed = true;
 
