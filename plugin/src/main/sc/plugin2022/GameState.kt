@@ -28,8 +28,8 @@ data class GameState @JvmOverloads constructor(
     constructor(other: GameState): this(other.board.clone(), other.turn, other.lastMove, other.ambers.clone())
     
     fun performMove(move: Move) {
-        if (board.movePiece(move) == null)
-            ambers[currentTeam as Team] = (ambers[currentTeam] ?: 0) + 1
+        ambers[currentTeam as Team] = (ambers[currentTeam] ?: 0) +
+                                      board.movePiece(move)
         turn++
     }
     

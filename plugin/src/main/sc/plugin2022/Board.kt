@@ -22,29 +22,33 @@ data class Board(
     
     /** Moves a piece according to [Move] after verification.
      * @throws InvalidMoveException if something is wrong with the Move.
-     * @return the moved [Piece], null if it turned into an amber. */
+     * @return number of ambers if any */
     @Throws(InvalidMoveException::class)
-    fun movePiece(move: Move): Piece? =
+    fun movePiece(move: Move): Int =
             (piecePositions[move.start] ?: throw InvalidMoveException(MoveMistake.START_EMPTY, move)).let { piece ->
-                if(!move.destination.isValid)
+                if (!move.destination.isValid)
                     throw InvalidMoveException(MoveMistake.OUT_OF_BOUNDS, move)
                 if (move.delta !in piece.possibleMoves)
                     throw InvalidMoveException(MoveMistake.INVALID_MOVEMENT, move)
                 piecePositions[move.destination]?.let {
-                    if(it.team == piece.team)
+                    if (it.team == piece.team)
                         throw InvalidMoveException(MoveMistake.DESTINATION_BLOCKED, move)
                     piece.capture(it)
                 }
                 piecePositions.remove(move.start)
-                if (piece.isAmber || (piece.type.isLight && move.destination.y == piece.team.opponent().startLine)) {
-                    // TODO how to indicate double amber?
-                    piecePositions.remove(move.destination)
-                    null
-                } else {
-                    piecePositions[move.destination] = piece
-                    piece
-                }
+                piecePositions[move.destination] = piece
+                checkAmber(move.destination)
             }
+    
+    /** Checks whether the piece at [position] should be turned into an amber
+     * and if yes, removes it.
+     * @return number of ambers */
+    fun checkAmber(position: Coordinates): Int =
+        piecePositions[position]?.let { piece ->
+            arrayOf(piece.isAmber, piece.type.isLight && position.y == piece.team.opponent().startLine)
+                    .sumBy { if(it) 1 else 0 }
+                    .also { if(it > 0) piecePositions.remove(position) }
+        } ?: 0
     
     override fun toString() =
             boardrange.joinToString("\n") { y ->

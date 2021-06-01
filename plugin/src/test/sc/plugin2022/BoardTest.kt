@@ -7,8 +7,6 @@ import io.kotest.matchers.collections.shouldBeOneOf
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldHaveSize
-import io.kotest.matchers.maps.shouldNotBeEmpty
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldHaveLineCount
 import io.kotest.matchers.string.shouldNotContain
@@ -67,20 +65,20 @@ class BoardTest: FunSpec({
             test("not for other team") {
                 val moewe = Piece(Moewe, Team.TWO)
                 val board = Board(mutableMapOf(coords to moewe))
-                board.movePiece(Move(coords, coords.copy(y = 7))) shouldBe moewe
-                board.shouldNotBeEmpty()
+                board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 0
+                board shouldHaveSize 1
             }
             test("from position")  {
                 val moewe = Piece(Moewe, Team.ONE)
                 val board = Board(mutableMapOf(coords to moewe))
-                board.movePiece(Move(coords, coords.copy(y = 7))).shouldBeNull()
+                board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 1
                 board.shouldBeEmpty()
             }
             test("not from Robbe in position") {
                 val robbe = Piece(Robbe, Team.ONE)
                 val board = Board(mutableMapOf(coords to robbe))
-                board.movePiece(Move(coords, Coordinates(2, 7))) shouldBe robbe
-                board.shouldNotBeEmpty()
+                board.movePiece(Move(0 y 6, 2 y 7)) shouldBe 0
+                board shouldHaveSize 1
             }
             context("from tower") {
                 val board = makeBoard(0 y 1 to "M", 0 y 0 to "S2", 1 y 0 to "m", 1 y 1 to "r")
@@ -90,11 +88,10 @@ class BoardTest: FunSpec({
                     }.mistake shouldBe MoveMistake.DESTINATION_BLOCKED
                 }
                 test("move tower") {
-                    board.movePiece(Move(0 y 0, 1 y 1)).shouldBeNull()
+                    board.movePiece(Move(0 y 0, 1 y 1)) shouldBe 1
                 }
                 test("move onto tower") {
-                    // TODO that should be a double amber
-                    board.movePiece(Move(1 y 0, 0 y 0)).shouldBeNull()
+                    board.movePiece(Move(1 y 0, 0 y 0)) shouldBe 2
                 }
             }
         }
