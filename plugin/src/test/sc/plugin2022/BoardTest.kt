@@ -3,8 +3,8 @@ package sc.plugin2022
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.forAll
-import io.kotest.matchers.collections.shouldBeOneOf
-import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.collections.*
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -46,10 +46,11 @@ class BoardTest: FunSpec({
     context("Board performs Moves") {
         context("refuses invalid moves") {
             test("can't move backwards or off the fields") {
-                val board = Board(arrayOf(Seestern, Herzmuschel).flatMap { it.teamPieces() }.mapIndexed { index, piece -> Coordinates(index, 4) to piece }.toMap(HashMap()))
+                val board = Board(arrayOf(Seestern, Herzmuschel).flatMap { it.teamPieces() }
+                        .mapIndexed { index, piece -> Coordinates(index, 4) to piece }.toMap(HashMap()))
                 board.entries.forAll {
                     shouldThrow<InvalidMoveException> {
-                        board.movePiece(Move(it.key, it.key.copy(y = if(it.value.team == Team.ONE) 3 else 5)))
+                        board.movePiece(Move(it.key, it.key.copy(y = if (it.value.team == Team.ONE) 3 else 5)))
                     }.mistake shouldBe MoveMistake.INVALID_MOVEMENT
                 }
             }
@@ -61,22 +62,18 @@ class BoardTest: FunSpec({
             }
         }
         context("amber") {
-            val coords = Coordinates(0, 6)
             test("not for other team") {
-                val moewe = Piece(Moewe, Team.TWO)
-                val board = Board(mutableMapOf(coords to moewe))
+                val board = makeBoard(0 y 6 to "m")
                 board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 0
                 board shouldHaveSize 1
             }
-            test("from position")  {
-                val moewe = Piece(Moewe, Team.ONE)
-                val board = Board(mutableMapOf(coords to moewe))
+            test("from position") {
+                val board = makeBoard(0 y 6 to "M")
                 board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 1
                 board.shouldBeEmpty()
             }
             test("not from Robbe in position") {
-                val robbe = Piece(Robbe, Team.ONE)
-                val board = Board(mutableMapOf(coords to robbe))
+                val board = makeBoard(0 y 6 to "R")
                 board.movePiece(Move(0 y 6, 2 y 7)) shouldBe 0
                 board shouldHaveSize 1
             }
@@ -94,6 +91,30 @@ class BoardTest: FunSpec({
                     board.movePiece(Move(1 y 0, 0 y 0)) shouldBe 2
                 }
             }
+        }
+    }
+    context("Board calculates diffs") {
+        val board = makeBoard(0 y 0 to "r", 2 y 0 to "r")
+        test("empty for itself") {
+            board.diff(board).shouldBeEmpty()
+            board.diff(board.clone()).shouldBeEmpty()
+            board.clone().diff(board).shouldBeEmpty()
+        }
+        test("one moved and one unmoved piece") {
+            val move = Move(0 y 0, 2 y 1)
+            val newBoard = board.clone()
+            newBoard.movePiece(move)
+            board.diff(newBoard) shouldContainExactly listOf(move)
+        }
+        test("both pieces moved") {
+            val newBoard = makeBoard(2 y 1 to "r", 1 y 2 to "r")
+            board.diff(newBoard) shouldHaveSize 2
+        }
+        test("one piece vanished") {
+            val newBoard = makeBoard(2 y 0 to "r")
+            val move = board.diff(newBoard).single()
+            move.start shouldBe (0 y 0)
+            move.destination.isValid.shouldBeFalse()
         }
     }
 })

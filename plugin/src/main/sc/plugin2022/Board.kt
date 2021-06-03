@@ -44,11 +44,51 @@ data class Board(
      * and if yes, removes it.
      * @return number of ambers */
     fun checkAmber(position: Coordinates): Int =
-        piecePositions[position]?.let { piece ->
-            arrayOf(piece.isAmber, piece.type.isLight && position.y == piece.team.opponent().startLine)
-                    .sumBy { if(it) 1 else 0 }
-                    .also { if(it > 0) piecePositions.remove(position) }
-        } ?: 0
+            piecePositions[position]?.let { piece ->
+                arrayOf(piece.isAmber, piece.type.isLight && position.y == piece.team.opponent().startLine)
+                        .sumBy { if (it) 1 else 0 }
+                        .also { if (it > 0) piecePositions.remove(position) }
+            } ?: 0
+    
+    /** Berechnet die Züge, die die beiden Spielbretter unterscheiden.
+     *
+     * - Berücksichtigt nicht die Turmhöhen, kann daher in Ausnahmefällen inkorrekt sein.
+     * - Die Züge müssen nicht valide Züge der entsprechenden Figuren sein.
+     * - Wenn ein Stein verschwindet (z.B. weil er zu einem Bernstein wird),
+     *   ist der Zielpunkt des Zuges eine invalide Koordinate.
+     * - Extra Steine in [other] werden nicht berücksichtigt.
+     *
+     * @return List an Zügen, die nötig wären, damit dieses Board äquivalent zu [other] wird.*/
+    fun diff(other: Board): Collection<Move> {
+        val both = arrayOf(this, other)
+        val teams = both.flatMapTo(HashSet()) { b -> b.values.map { it.team } }
+        val moves = teams.flatMapTo(ArrayList()) { team ->
+            PieceType.values().flatMap { type ->
+                both.map { it.filterValues { it.team == team && it.type == type }.keys }
+                        .zipWithNext { b1, b2 ->
+                            val combinations = b1.flatMapTo(ArrayDeque()) { e1 ->
+                                b2.map { e2 -> Move(e1, e2) }
+                            }
+                            val moves = mutableListOf<Move>()
+                            while (combinations.isNotEmpty()) {
+                                val move = combinations.minOrNull() ?: break
+                                moves.add(move)
+                                combinations.removeIf {
+                                    it.start == move.start ||
+                                    it.destination == move.destination
+                                }
+                            }
+                            moves
+                        }.single()
+            }
+        }
+        val startPoints = moves.map { it.start }
+        moves.addAll(keys.filter {
+            it !in startPoints
+        }.map { Move(it, Coordinates(-1, -1)) })
+        moves.removeIf { it.start == it.destination }
+        return moves
+    }
     
     override fun toString() =
             boardrange.joinToString("\n") { y ->
