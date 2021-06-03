@@ -3,16 +3,18 @@ package sc.plugin2022
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.plugin2022.util.Constants
-import kotlin.math.min
+import kotlin.math.abs
+import kotlin.math.sqrt
 
 /** Eine 2D Koordinate der Form (x, y). */
 @XStreamAlias(value = "coordinates")
 data class Coordinates(
         @XStreamAsAttribute val x: Int,
-        @XStreamAsAttribute val y: Int) {
+        @XStreamAsAttribute val y: Int,
+) {
     
     override fun toString(): String = "[$x|$y]"
-
+    
     /** Addiere den [Vector] auf die [Coordinates] auf. */
     operator fun plus(vector: Vector): Coordinates {
         return Coordinates(x + vector.dx, y + vector.dy)
@@ -27,7 +29,7 @@ data class Coordinates(
     }
     /** Wandelt die [Coordinates] in einen entsprechenden [Vector]. */
     operator fun unaryPlus(): Vector = Vector(x, y)
-
+    
     /** Gibt ein Set der vier benachbarten Felder dieser Koordinaten zurück. */
     val neighbors: Set<Coordinates>
         get() = Vector.cardinals.mapTo(HashSet()) { this + it }
@@ -48,27 +50,31 @@ data class Coordinates(
  * @property dx die Differenz in x-Richtung
  * @property dy die Differenz in y-Richtung
  */
-data class Vector(val dx: Int, val dy: Int) {
+data class Vector(val dx: Int, val dy: Int): Comparable<Vector> {
     /** Die Fläche des Rechtecks, dessen Diagonale der Vector ist. */
-    val area: Int = dx * dy
-
-    /** Verändert die Länge des Vectors um den gegebenen Faktor, ohne seine Richtung zu ändern. */
-    operator fun times(scalar: Int): Vector {
-        return Vector(scalar * dx, scalar * dy)
-    }
-
+    val area: Int
+        get() = abs(dx * dy)
+    
+    private val comparableLength: Int
+        get() = dx * dx + dy * dy
+    
+    val length: Double
+        get() = sqrt(comparableLength.toDouble())
+    
+    /** Verändert die Länge des Vektors um den gegebenen Faktor, ohne seine Richtung zu ändern. */
+    operator fun times(scalar: Int): Vector =
+            Vector(scalar * dx, scalar * dy)
+    
     /**
-     * Vergleicht die beiden Vektoren. Der Rückgabewert ist
-     * - positiv, wenn beide Größen dieses Vektors kleiner sind als die des anderen.
-     * - null, wenn beide Vektoren gleich groß sind.
-     * - negativ, wenn mindestens eine Größe dieses Vektors größer als die des anderen ist.
+     * Vergleicht die Länge dieses Vektors mit einem anderen.
+     * @return groesser Null, wenn dieser laenger ist
      */
-    operator fun compareTo(other: Vector): Int =
-            min(other.dx - dx, other.dy - dy)
-
+    override operator fun compareTo(other: Vector): Int =
+            comparableLength - other.comparableLength
+    
     /** Konvertiert den Vektor zu entsprechenden [Coordinates]. */
     operator fun unaryPlus(): Coordinates = Coordinates(dx, dy)
-
+    
     companion object {
         /** Die vier Vektoren in diagonaler Richtung. */
         val diagonals: Array<Vector> = arrayOf(
