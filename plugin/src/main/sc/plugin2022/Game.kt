@@ -1,9 +1,9 @@
 package sc.plugin2022
 
 import org.slf4j.LoggerFactory
+import sc.api.plugins.IMove
 import sc.api.plugins.ITeam
 import sc.api.plugins.Team
-import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
@@ -81,8 +81,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         var cause: ScoreCause = ScoreCause.REGULAR
         var reason = ""
         var score: Int = Constants.LOSE_SCORE
-        val points = currentState.getPointsForTeam(team)
-        
+    
         // Is the game already finished?
         if (winCondition?.reason == WinReason.EQUAL_SCORE)
             // TODO something is going wrong on draw scores
@@ -116,7 +115,12 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
                     reason = "Der Spieler hat das Spiel verlassen"
                 }
             }
-        return PlayerScore(cause, reason, score, points)
+        return PlayerScore(cause,
+                reason,
+                score,
+                currentState.getPointsForTeam(team),
+                currentState.board.filterValues { it.team == team && it.type.isLight }.maxOf { it.key.y }
+        )
     }
     
     override fun getTimeoutFor(player: Player): ActionTimeout =

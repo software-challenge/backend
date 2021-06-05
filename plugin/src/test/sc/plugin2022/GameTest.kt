@@ -2,6 +2,7 @@ package sc.plugin2022
 
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.collections.shouldStartWith
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import sc.api.plugins.IGameState
@@ -75,16 +76,16 @@ class GameTest: WordSpec({
                 val points2 = BigDecimal(state.getPointsForTeam(Team.TWO))
                 when {
                     points1 < points2 -> {
-                        score1.parts shouldBe listOf(BigDecimal(Constants.LOSE_SCORE), points1)
-                        score2.parts shouldBe listOf(BigDecimal(Constants.WIN_SCORE), points2)
+                        score1.parts shouldStartWith listOf(BigDecimal(Constants.LOSE_SCORE), points1)
+                        score2.parts shouldStartWith listOf(BigDecimal(Constants.WIN_SCORE), points2)
                     }
                     points1 > points2 -> {
-                        score1.parts shouldBe listOf(BigDecimal(Constants.WIN_SCORE), points1)
-                        score2.parts shouldBe listOf(BigDecimal(Constants.LOSE_SCORE), points2)
+                        score1.parts shouldStartWith listOf(BigDecimal(Constants.WIN_SCORE), points1)
+                        score2.parts shouldStartWith listOf(BigDecimal(Constants.LOSE_SCORE), points2)
                     }
                     points1 == points2 -> {
-                        score1.parts shouldBe listOf(BigDecimal(Constants.DRAW_SCORE), points1)
-                        score2.parts shouldBe listOf(BigDecimal(Constants.DRAW_SCORE), points2)
+                        score1.parts shouldStartWith listOf(BigDecimal(Constants.DRAW_SCORE), points1)
+                        score2.parts shouldStartWith listOf(BigDecimal(Constants.DRAW_SCORE), points2)
                     }
                 }
             }
