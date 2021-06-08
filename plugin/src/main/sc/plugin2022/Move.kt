@@ -12,6 +12,8 @@ data class Move(
     val delta: Vector
         get() = destination - start
     
+    fun reverse() = Move(destination, start)
+    
     override fun toString(): String = "Zug von $start zu $destination"
     
     /** Compares the Moves based on their length ([delta]). */

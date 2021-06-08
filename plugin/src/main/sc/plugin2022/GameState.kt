@@ -30,6 +30,7 @@ data class GameState @JvmOverloads constructor(
     fun performMove(move: Move) {
         ambers[currentTeam as Team] = (ambers[currentTeam] ?: 0) +
                                       board.movePiece(move)
+        lastMove = move
         turn++
     }
     
