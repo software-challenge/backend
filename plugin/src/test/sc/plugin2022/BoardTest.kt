@@ -18,21 +18,20 @@ import sc.shared.InvalidMoveException
 
 class BoardTest: FunSpec({
     context("Board generation") {
-        val board = Board()
+        val generatedBoard = Board()
         test("does not misplace pieces") {
-            board shouldHaveSize Constants.BOARD_SIZE * 2
-            board.keys.forAll {
+            generatedBoard shouldHaveSize Constants.BOARD_SIZE * 2
+            generatedBoard.keys.forAll {
                 it.y shouldBeOneOf listOf(0, Constants.BOARD_SIZE - 1)
             }
-            board.values shouldContainExactlyInAnyOrder values().flatMap { type ->
+            generatedBoard.values shouldContainExactlyInAnyOrder values().flatMap { type ->
                 Team.values().map { team ->
                     Piece(type, team)
                 }
             }.let { it + it }
         }
         test("is stringified apropriately") {
-            val string = board.toString()
-            println(string)
+            val string = generatedBoard.toString()
             string shouldHaveLineCount 8
             val lines = string.lines()
             lines.first() shouldNotContain "-"
@@ -41,6 +40,15 @@ class BoardTest: FunSpec({
             lines.subList(1, 7).forAll {
                 it shouldBe "----------------"
             }
+        }
+        test("clones well") {
+            val board = makeBoard(0 y 0 to "R", 1 y 2 to "m")
+            board shouldHaveSize 2
+            val clone = board.clone()
+            board.movePiece(Move(0 y 0, 1 y 2))
+            board shouldHaveSize 1
+            clone shouldHaveSize 2
+            clone shouldBe makeBoard(0 y 0 to "R", 1 y 2 to "m")
         }
     }
     context("Board performs Moves") {
@@ -62,20 +70,22 @@ class BoardTest: FunSpec({
             }
         }
         context("amber") {
-            test("not for other team") {
-                val board = makeBoard(0 y 6 to "m")
-                board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 0
-                board shouldHaveSize 1
-            }
-            test("from position") {
-                val board = makeBoard(0 y 6 to "M")
-                board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 1
-                board.shouldBeEmpty()
-            }
-            test("not from Robbe in position") {
-                val board = makeBoard(0 y 6 to "R")
-                board.movePiece(Move(0 y 6, 2 y 7)) shouldBe 0
-                board shouldHaveSize 1
+            context("from position") {
+                test("not when reaching target line of opponent") {
+                    val board = makeBoard(0 y 6 to "m")
+                    board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 0
+                    board shouldHaveSize 1
+                }
+                test("moewe") {
+                    val board = makeBoard(0 y 6 to "M")
+                    board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 1
+                    board.shouldBeEmpty()
+                }
+                test("not for Robbe") {
+                    val board = makeBoard(0 y 6 to "R")
+                    board.movePiece(Move(0 y 6, 2 y 7)) shouldBe 0
+                    board shouldHaveSize 1
+                }
             }
             context("from tower") {
                 val board = makeBoard(0 y 1 to "M", 0 y 0 to "S2", 1 y 0 to "m", 1 y 1 to "r")
@@ -118,8 +128,6 @@ class BoardTest: FunSpec({
         }
     }
 })
-
-infix fun String.at(pos: Coordinates) = Pair(pos, Piece.fromString(this))
 
 infix fun Int.y(other: Int) = Coordinates(this, other)
 

@@ -30,13 +30,13 @@ data class Board(
                     throw InvalidMoveException(MoveMistake.OUT_OF_BOUNDS, move)
                 if (move.delta !in piece.possibleMoves)
                     throw InvalidMoveException(MoveMistake.INVALID_MOVEMENT, move)
-                piecePositions[move.destination]?.let {
+                val newPiece = piecePositions[move.destination]?.let {
                     if (it.team == piece.team)
                         throw InvalidMoveException(MoveMistake.DESTINATION_BLOCKED, move)
                     piece.capture(it)
-                }
+                } ?: piece
                 piecePositions.remove(move.start)
-                piecePositions[move.destination] = piece
+                piecePositions[move.destination] = newPiece
                 checkAmber(move.destination)
             }
     

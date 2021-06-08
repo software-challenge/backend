@@ -29,7 +29,7 @@ data class Piece(
         /** Welchem Team dieser Stein/Turm gehört. */
         @XStreamAsAttribute val team: ITeam,
         /** Anzahl der Steine in diesem Turm. */
-        @XStreamAsAttribute var count: Int = 1,
+        @XStreamAsAttribute val count: Int = 1,
 ) {
     val possibleMoves
         get() = type.possibleMoves.map { it.copy(dy = it.dy * team.direction) }
@@ -37,9 +37,8 @@ data class Piece(
     val isAmber
         get() = count >= 3
     
-    fun capture(other: Piece) {
-        count += other.count
-    }
+    /** @return ein neuer Spielstein, dem [other] unterliegt. */
+    fun capture(other: Piece) = copy(count = count + other.count)
     
     fun shortString(): String {
         val char = type.char.run { if(team.index > 0) toLowerCase() else this }.toString()
