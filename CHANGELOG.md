@@ -6,10 +6,17 @@ The `x.y.z` version is tracked in [gradle.properties](./gradle.properties) to en
 The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-Tech-Inf/gui) and have a tag in both repositories.
 
 - The major version `x` corresponds to the year of the contest and thus only changes once a year
-- `y` is bumped for any major updates or backwards-incompatible changes
+- `y` is bumped for any major updates or backwards-incompatible changes.  
+  A `y` version of 0 indicates the beta of the current year.
+
+## [22.0.1](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/22.0.1)
+- Removed PlayerScoreRequest - add up the GameResults instead
 
 ## [22.0.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/22.0.0)
-- Removed PlayerScoreRequest - add up the GameResults instead
+- Restructure folders to follow JVM standards
+- Simplified interface for player development
+
+## 2022 Game Ostseeschach - 2021-06-11
 
 ## [21.4.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/21.4.0) - 2021-05-28
 - Enable preparing games without reservations
@@ -63,6 +70,6 @@ The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-
 - internal Protocol updates & game flow adjustments
 - updated many tests
 
-## 21 - Game Blokus
+## 2021 Game Blokus
 
-## 20 - Game Hive
+## 2020 Game Hive
