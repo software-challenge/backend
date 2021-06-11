@@ -1,8 +1,7 @@
 sourceSets {
-    main.get().java.setSrcDirs(listOf("src/framework", "src/server-api", "src/player"))
-    test.get().java.setSrcDirs(listOf("src/test"))
+    main.get().java.setSrcDirs(listOf("framework", "server-api", "player").map { "src/main/$it" })
     create("testConfig") {
-        java.setSrcDirs(listOf("src/testConfig"))
+        java.setSrcDirs(listOf("src/test/config"))
         compileClasspath += main.get().output
         runtimeClasspath += main.get().output
     }

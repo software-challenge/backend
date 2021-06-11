@@ -10,11 +10,6 @@ application {
             "-XX:+PrintGC", "-XX:+PrintGCDetails", "-XX:+PrintGCDateStamps", "-Xloggc:gc.log")
 }
 
-sourceSets {
-    main.get().java.srcDir("src")
-    test.get().java.srcDir("test")
-}
-
 dependencies {
     api(project(":sdk"))
     runtimeOnly(project(":plugin"))
