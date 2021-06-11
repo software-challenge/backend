@@ -23,7 +23,7 @@ class PieceTest: FunSpec({
         }
     }
     test("can't move backwards") {
-        Piece(Herzmuschel, Team.ONE).possibleMoves shouldContainExactlyInAnyOrder listOf(Vector(1, 1), Vector(-1, 1))
-        Piece(Seestern, Team.ONE).possibleMoves shouldContainExactlyInAnyOrder listOf(*Vector.diagonals, Vector(0, 1))
+        Piece(Herzmuschel, Team.ONE).possibleMoves shouldContainExactlyInAnyOrder listOf(Vector(1, -1), Vector(1, 1))
+        Piece(Seestern, Team.ONE).possibleMoves shouldContainExactlyInAnyOrder listOf(*Vector.diagonals, Vector(1, 0))
     }
 })

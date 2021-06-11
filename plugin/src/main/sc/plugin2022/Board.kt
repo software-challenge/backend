@@ -45,7 +45,7 @@ data class Board(
      * @return number of ambers */
     fun checkAmber(position: Coordinates): Int =
             piecePositions[position]?.let { piece ->
-                arrayOf(piece.isAmber, piece.type.isLight && position.y == piece.team.opponent().startLine)
+                arrayOf(piece.isAmber, piece.type.isLight && position.x == piece.team.opponent().startLine)
                         .sumBy { if (it) 1 else 0 }
                         .also { if (it > 0) piecePositions.remove(position) }
             } ?: 0
@@ -116,8 +116,8 @@ data class Board(
                 }
         
         @JvmStatic
-        fun createField(team: ITeam, x: Int, type: PieceType) =
-                Coordinates(if (team.index == 0) x else boardrange.last - x, team.startLine) to Piece(type, team)
+        fun createField(team: ITeam, y: Int, type: PieceType) =
+                Coordinates(team.startLine, if (team.index == 0) y else boardrange.last - y) to Piece(type, team)
     }
 }
 

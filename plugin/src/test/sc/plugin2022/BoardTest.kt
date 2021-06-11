@@ -9,7 +9,7 @@ import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldHaveLineCount
-import io.kotest.matchers.string.shouldNotContain
+import io.kotest.matchers.string.shouldMatch
 import sc.api.plugins.Team
 import sc.plugin2022.PieceType.*
 import sc.plugin2022.util.Constants
@@ -22,7 +22,7 @@ class BoardTest: FunSpec({
         test("does not misplace pieces") {
             generatedBoard shouldHaveSize Constants.BOARD_SIZE * 2
             generatedBoard.keys.forAll {
-                it.y shouldBeOneOf listOf(0, Constants.BOARD_SIZE - 1)
+                it.x shouldBeOneOf listOf(0, Constants.BOARD_SIZE - 1)
             }
             generatedBoard.values shouldContainExactlyInAnyOrder values().flatMap { type ->
                 Team.values().map { team ->
@@ -33,13 +33,10 @@ class BoardTest: FunSpec({
         test("is stringified apropriately") {
             val string = generatedBoard.toString()
             string shouldHaveLineCount 8
+            val lineRegex = Regex("\\w\\w------------\\w\\w")
             val lines = string.lines()
-            lines.first() shouldNotContain "-"
-            lines.last() shouldNotContain "-"
-            lines.first().reversed().toLowerCase() shouldBe lines.last()
-            lines.subList(1, 7).forAll {
-                it shouldBe "----------------"
-            }
+            lines.forAll { it shouldMatch lineRegex }
+            lines.joinToString("") { it.substring(0, 2).toLowerCase() }.reversed() shouldBe lines.joinToString("") { it.takeLast(2) }
         }
         test("clones well") {
             val board = makeBoard(0 y 0 to "R", 1 y 2 to "m")
@@ -72,33 +69,33 @@ class BoardTest: FunSpec({
         context("amber") {
             context("from position") {
                 test("not when reaching target line of opponent") {
-                    val board = makeBoard(0 y 6 to "m")
-                    board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 0
+                    val board = makeBoard(6 y 0 to "m")
+                    board.movePiece(Move(6 y 0, 7 y 0)) shouldBe 0
                     board shouldHaveSize 1
                 }
                 test("moewe") {
-                    val board = makeBoard(0 y 6 to "M")
-                    board.movePiece(Move(0 y 6, 0 y 7)) shouldBe 1
+                    val board = makeBoard(6 y 0 to "M")
+                    board.movePiece(Move(6 y 0, 7 y 0)) shouldBe 1
                     board.shouldBeEmpty()
                 }
                 test("not for Robbe") {
-                    val board = makeBoard(0 y 6 to "R")
-                    board.movePiece(Move(0 y 6, 2 y 7)) shouldBe 0
+                    val board = makeBoard(6 y 0 to "R")
+                    board.movePiece(Move(6 y 0, 7 y 2)) shouldBe 0
                     board shouldHaveSize 1
                 }
             }
             context("from tower") {
-                val board = makeBoard(0 y 1 to "M", 0 y 0 to "S2", 1 y 0 to "m", 1 y 1 to "r")
+                val board = makeBoard(1 y 0 to "M", 0 y 0 to "S2", 0 y 1 to "m", 1 y 1 to "r")
                 test("not onto own") {
                     shouldThrow<InvalidMoveException> {
-                        board.movePiece(Move(0 y 0, 0 y 1))
+                        board.movePiece(Move(0 y 0, 1 y 0))
                     }.mistake shouldBe MoveMistake.DESTINATION_BLOCKED
                 }
                 test("move tower") {
                     board.movePiece(Move(0 y 0, 1 y 1)) shouldBe 1
                 }
                 test("move onto tower") {
-                    board.movePiece(Move(1 y 0, 0 y 0)) shouldBe 2
+                    board.movePiece(Move(0 y 1, 0 y 0)) shouldBe 2
                 }
             }
         }

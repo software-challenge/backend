@@ -7,11 +7,11 @@ import sc.api.plugins.Team
 
 enum class PieceType(val char: Char, vararg val possibleMoves: Vector) {
     /** Bewegt sich nur diagonal vorwärts. */
-    Herzmuschel('H', Vector(1, 1), Vector(-1, 1)),
+    Herzmuschel('H', Vector(1, 1), Vector(1, -1)),
     /** Bewegt sich nur auf Nachbarfelder. */
     Moewe('M', *Vector.cardinals),
     /** Bewegt sich diagonal oder vorwärts. */
-    Seestern('S', *Vector.diagonals, Vector(0, 1)),
+    Seestern('S', *Vector.diagonals, Vector(1, 0)),
     /** Wie ein Springer im Schach. Einzige nicht-Leichtfigur */
     Robbe('R', *Vector.diagonals.flatMap { listOf(it.copy(dx = it.dx * 2), it.copy(dy = it.dy * 2)) }.toTypedArray());
     
@@ -32,7 +32,7 @@ data class Piece(
         @XStreamAsAttribute val count: Int = 1,
 ) {
     val possibleMoves
-        get() = type.possibleMoves.map { it.copy(dy = it.dy * team.direction) }
+        get() = type.possibleMoves.map { it.copy(dx = it.dx * team.direction) }
     
     val isAmber
         get() = count >= 3
