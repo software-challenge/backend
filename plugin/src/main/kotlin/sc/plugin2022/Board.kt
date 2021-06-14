@@ -50,6 +50,18 @@ data class Board(
                         .also { if (it > 0) piecePositions.remove(position) }
             } ?: 0
     
+    /** Checks whether the given [piece] could jump to [destination],
+     * not accounting for whether the move itself is valid. */
+    fun canMoveTo(destination: Coordinates, piece: Piece) =
+            destination.isValid && piecePositions[destination]?.team != piece.team
+    
+    fun possibleMovesFrom(position: Coordinates): List<Vector> =
+            get(position)?.let { piece ->
+                piece.possibleMoves.filter {
+                    canMoveTo(position + it, piece)
+                }
+            } ?: emptyList()
+    
     /** Berechnet die Züge, die die beiden Spielbretter unterscheiden.
      *
      * - Berücksichtigt nicht die Turmhöhen, kann daher in Ausnahmefällen inkorrekt sein.
