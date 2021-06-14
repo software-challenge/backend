@@ -9,7 +9,7 @@ import sc.shared.IMoveMistake
  * es aber bei dem jeweiligen Spielstand nicht sind.
  */
 enum class MoveMistake(override val message: String): IMoveMistake {
-    WRONG_COLOR("Die Farbe des Zuges ist nicht an der Reihe"),
+    WRONG_COLOR("Nur eigene Spielfiguren können gezogen werden"),
     START_EMPTY("Das Startfeld des Zuges ist leer"),
     DESTINATION_BLOCKED("Kann nicht auf ein Feld der eigenen Farbe ziehen"),
     OUT_OF_BOUNDS("Das Zielfeld liegt außerhalb des Spielfelds"),

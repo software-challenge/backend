@@ -6,6 +6,8 @@ import sc.api.plugins.ITeam
 import sc.api.plugins.Team
 import sc.api.plugins.TwoPlayerGameState
 import sc.plugin2022.util.Constants
+import sc.plugin2022.util.MoveMistake
+import sc.shared.InvalidMoveException
 import java.util.EnumMap
 
 /**
@@ -28,6 +30,8 @@ data class GameState @JvmOverloads constructor(
     constructor(other: GameState): this(other.board.clone(), other.turn, other.lastMove, other.ambers.clone())
     
     fun performMove(move: Move) {
+        if(board[move.start]?.team != currentTeam)
+            throw InvalidMoveException(MoveMistake.WRONG_COLOR, move)
         ambers[currentTeam as Team] = (ambers[currentTeam] ?: 0) +
                                       board.movePiece(move)
         lastMove = move
