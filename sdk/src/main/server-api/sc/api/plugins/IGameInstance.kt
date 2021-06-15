@@ -32,6 +32,9 @@ interface IGameInstance {
      * No events (GameOver etc) should be sent out after this method has been called.
      */
     fun stop()
+    
+    /** Advance the Game by one turn. */
+    fun step()
 
     /**
      * Returns the players that have won the game, empty if the game has no winners,

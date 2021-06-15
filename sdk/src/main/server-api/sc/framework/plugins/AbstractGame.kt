@@ -12,7 +12,7 @@ import sc.shared.PlayerScore
 import sc.shared.WelcomeMessage
 import sc.shared.WinCondition
 
-abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance {
+abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance, Pausable {
     companion object {
         val logger = LoggerFactory.getLogger(AbstractGame::class.java)
     }
@@ -26,9 +26,20 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
     
     private var moveRequestTimeout: ActionTimeout? = null
     
-    var isPaused = false
+    /** Pause the game after current turn has finished or continue playing. */
+    override var isPaused = false
+        set(value) {
+            if(!value)
+                step()
+            field = value
+        }
     
-    fun afterPause() {
+    override fun step() {
+        if(!isPaused) {
+            logger.warn("Cannot step while unpaused")
+            return
+        }
+        logger.debug("Stepping {}", this)
         notifyOnNewState(currentState, false)
         notifyActivePlayer()
     }

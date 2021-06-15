@@ -1,11 +1,12 @@
 package sc.server.network
 
-import io.kotest.matchers.ints.shouldBeLessThanOrEqual
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.*
+import io.kotest.matchers.ints.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import sc.framework.plugins.AbstractGame
+import sc.framework.plugins.Pausable
 import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.CancelRequest
@@ -273,3 +274,6 @@ class RequestTest: RealServerTest() {
     }
     
 }
+
+val GameRoom.isPauseRequested: Boolean
+    get() = (game as Pausable).isPaused

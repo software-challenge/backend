@@ -12,7 +12,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.HelperMethods;
 import sc.framework.ReplayListener;
-import sc.framework.plugins.AbstractGame;
+import sc.framework.plugins.Pausable;
 import sc.framework.plugins.Player;
 import sc.networking.clients.IClient;
 import sc.networking.clients.XStreamClient;
@@ -42,7 +42,6 @@ public class GameRoom implements IGameListener {
   private final List<PlayerSlot> playerSlots = new ArrayList<>(getMaximumPlayerCount());
   private GameStatus status = GameStatus.CREATED;
   private GameResult result;
-  private boolean pauseRequested = false;
   private final ReplayListener<RoomPacket> replayListener = Boolean.parseBoolean(Configuration.get(Configuration.SAVE_REPLAY)) ? new ReplayListener<>() : null;
 
   public final IGameInstance game; // TODO make inaccessible
@@ -116,8 +115,8 @@ public class GameRoom implements IGameListener {
         playerSlots.stream().map(it -> it.getPlayer().getDisplayName()).collect(Collectors.toList()));
 
     File file = new File(fileName).getAbsoluteFile();
-    if(file.getParentFile().mkdirs() || file.getParentFile().exists())
-      if(file.createNewFile())
+    if (file.getParentFile().mkdirs() || file.getParentFile().exists())
+      if (file.createNewFile())
         return file;
     throw new IOException("Couldn't create replay file " + file);
   }
@@ -215,7 +214,7 @@ public class GameRoom implements IGameListener {
     PlayerSlot slot = playerSlots.stream()
         .filter(PlayerSlot::isFree).findFirst()
         .orElseGet(() -> playerSlots.size() < getMaximumPlayerCount() ? openSlot() : null);
-    if(slot == null)
+    if (slot == null)
       return false;
     fillSlot(slot, client);
     return true;
@@ -357,31 +356,33 @@ public class GameRoom implements IGameListener {
 
   /**
    * Pause or un-pause a game.
+   *
    * @param pause true if game is to be paused
+   *
    * @return a RoomPacket with a GamePaused message or null if unsuccessful
    */
   public synchronized void pause(boolean pause) {
     if (isOver()) {
-      logger.warn("Can't set pause to {} for already finished {}", pause, game);
+      logger.warn("Cannot set pause to {} for already finished {}", pause, game);
+      return;
+    }
+    if (!(game instanceof Pausable)) {
+      logger.warn("Cannot pause {}", game);
       return;
     }
 
-    if (pause == isPauseRequested()) {
+    Pausable pausableGame = (Pausable) this.game;
+    boolean pauseState = pausableGame.isPaused();
+    if (pause == pauseState) {
       logger.warn("PAUSE is already {}, dropping request", pause);
       return;
     }
 
-    logger.info("Toggling PAUSE from {} to {}", isPauseRequested(), pause);
-    this.pauseRequested = pause;
-    AbstractGame<?> pausableGame = (AbstractGame<?>) this.game;
-    // pause game after current turn has finished
-    pausableGame.setPaused(pause);
-
-    if (!pause && status == GameStatus.ACTIVE) {
-      // continue execution
-      pausableGame.afterPause();
-    }
+    logger.info("Toggling PAUSE from {} to {} for {}", pauseState, pause, game);
     observerBroadcast(new GamePaused(pause));
+
+    // if true, game is paused after current turn has finished
+    pausableGame.setPaused(pause);
   }
 
   /**
@@ -390,7 +391,7 @@ public class GameRoom implements IGameListener {
    * @param forced If true, the game will be forcibly started if starting
    *               conditions are not met. This should result in a GameOver.
    */
-  public synchronized void step(boolean forced) throws GameRoomException {
+  public synchronized void step(boolean forced) {
     if (this.status == GameStatus.CREATED) {
       if (forced) {
         logger.warn("Forcing game start for {}", game);
@@ -398,15 +399,9 @@ public class GameRoom implements IGameListener {
       } else {
         logger.info("Game isn't active yet, step was not forced.");
       }
-
       return;
     }
-    if (isPauseRequested()) {
-      logger.info("Stepping {}", game);
-      ((AbstractGame<?>) game).afterPause();
-    } else {
-      logger.warn("Can't step unpaused {}", game);
-    }
+    game.step();
   }
 
   /** Kick all players, destroy the game and remove it from the manager. */
@@ -423,11 +418,6 @@ public class GameRoom implements IGameListener {
   /** Return true if GameStatus is OVER. */
   public boolean isOver() {
     return getStatus() == GameStatus.OVER;
-  }
-
-  /** Return whether or not the game is paused or will be paused in the next turn. */
-  public boolean isPauseRequested() {
-    return this.pauseRequested;
   }
 
   /** @return current status of the Game. */
