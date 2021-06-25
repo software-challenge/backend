@@ -38,13 +38,13 @@ val enableIntegrationTesting = !project.hasProperty("nointegration") && (version
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 tasks {
     val startServer by creating {
-        group = "application"
         dependsOn(":server:run")
+        group = "application"
     }
     
     val doc by creating(DokkaTask::class) {
-        group = "documentation"
         dependsOn(documentedProjects.map { ":$it:classes" })
+        group = "documentation"
         outputDirectory = deployDir.resolve("doc").toString()
         outputFormat = "javadoc"
         subProjects = documentedProjects
@@ -56,16 +56,16 @@ tasks {
     }
     
     val deploy by creating {
-        group = "distribution"
         dependsOn(doc)
         dependOnSubprojects()
+        group = "distribution"
         description = "Zips everything up for release into ${deployDir.relativeTo(projectDir)}"
         outputs.dir(deployDir)
     }
     
     val release by creating {
+        dependsOn(clean, check)
         group = "distribution"
-        dependsOn(check)
         description = "Prepares a new Release by bumping the version and creating a commit with a git tag of the new version"
         doLast {
             fun edit(original: String, version: String, new: Int) =
@@ -115,8 +115,8 @@ tasks {
     val maxGameLength = 150L
     
     val testGame by creating {
-        group = "verification"
         dependsOn(":server:deploy", ":player:deployJar")
+        group = "verification"
         doFirst {
             val testGameDir = testingDir.resolve("game")
             testGameDir.deleteRecursively()
@@ -183,8 +183,8 @@ tasks {
     }
     
     val testTestClient by creating {
-        group = "verification"
         dependsOn(":server:deploy")
+        group = "verification"
         shouldRunAfter(testGame)
         val testClientGames = 3
         doFirst {
@@ -215,10 +215,10 @@ tasks {
     }
     
     val integrationTest by creating {
-        group = "verification"
         dependsOn(testGame, ":player:playerTest")
         if (enableTestClient)
             dependsOn(testTestClient)
+        group = "verification"
         shouldRunAfter(test)
     }
     
