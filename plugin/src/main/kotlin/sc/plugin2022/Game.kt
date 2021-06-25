@@ -90,14 +90,15 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
         var cause: ScoreCause = ScoreCause.REGULAR
         var reason = ""
         var score: Int = Constants.LOSE_SCORE
-    
-        // Is the game already finished?
-        if (winCondition?.reason == WinReason.EQUAL_SCORE)
-            // TODO something is going wrong on draw scores
-            score = Constants.DRAW_SCORE
-        if (winCondition?.reason == WinReason.DIFFERING_SCORES)
-            if (winCondition.winner == team)
-                score = Constants.WIN_SCORE
+        
+        if (winCondition != null) {
+            // Game is already finished
+            score = if (winCondition.winner == null)
+                Constants.DRAW_SCORE
+            else {
+                if (winCondition.winner == team) Constants.WIN_SCORE else Constants.LOSE_SCORE
+            }
+        }
         
         // Opponent did something wrong
         if (opponent.hasViolated() && !player.hasViolated() ||

@@ -42,7 +42,7 @@ class GamePlayTest: WordSpec({
         }
         "stay paused after move" {
             game.isPaused = true
-            game.onRoundBasedAction(Move(0 y 0, 1 y 2))
+            game.onRoundBasedAction(game.currentState.possibleMoves.first())
             game.isPaused shouldBe true
         }
     }
