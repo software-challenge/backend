@@ -15,6 +15,17 @@ import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import sc.shared.WinCondition
+import kotlin.math.abs
+
+fun <T> Collection<T>.maxByNoEqual(selector: (T) -> Int): T? =
+        fold(Int.MIN_VALUE to (null as T?)) { acc, pos ->
+            val value = selector(pos)
+            when {
+                value > acc.first -> value to pos
+                value == acc.first -> value to null
+                else -> acc
+            }
+        }.second
 
 class Game(override val currentState: GameState = GameState()): AbstractGame<Player>(GamePlugin.PLUGIN_ID) {
     companion object {
@@ -36,15 +47,8 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
             val compliant = players.filter { !it.hasViolated() && !it.hasLeft() }
             if (compliant.size < players.size)
                 return compliant
-            
-            val first = currentState.getPointsForTeam(players.first().team)
-            val second = currentState.getPointsForTeam(players.last().team)
-            
-            if (first > second)
-                return players.subList(0, 1)
-            if (first < second)
-                return players.subList(1, 2)
-            return players
+            return checkWinCondition().let { cond -> players.firstOrNull { it.team == cond?.winner } }
+                           ?.let { listOf(it) } ?: emptyList()
         }
     
     override val playerScores: MutableList<PlayerScore>
@@ -61,14 +65,19 @@ class Game(override val currentState: GameState = GameState()): AbstractGame<Pla
     override fun checkWinCondition(): WinCondition? {
         if (!isGameOver) return null
         
-        val scores: Map<Team, Int> = Team.values().associate {
-            it to currentState.getPointsForTeam(it)
-        }
-    
-        return when {
-            scores.getValue(Team.ONE) > scores.getValue(Team.TWO) -> WinCondition(Team.ONE, WinReason.DIFFERING_SCORES)
-            scores.getValue(Team.ONE) < scores.getValue(Team.TWO) -> WinCondition(Team.TWO, WinReason.DIFFERING_SCORES)
-            else -> WinCondition(null, WinReason.EQUAL_SCORE)
+        return Team.values().toList().maxByNoEqual(currentState::getPointsForTeam)?.let {
+            WinCondition(it, WinReason.DIFFERING_SCORES)
+        } ?: run {
+            val lightPieces = currentState.board.filterValues { it.type.isLight }
+            val teamPositions = Team.values().associateWith { team ->
+                fun dist(c: Coordinates) = abs(c.x - team.startLine)
+                lightPieces.filterValues { it.team == team }.keys.map(::dist).sortedDescending()
+            }
+            (0 until teamPositions.values.minOf { it.size }).mapNotNull { index ->
+                teamPositions.entries.maxByNoEqual { it.value[index] }?.key
+            }.firstOrNull().let {
+                WinCondition(it, if (it == null) WinReason.EQUAL_SCORE else WinReason.DIFFERING_POSITIONS)
+            }
         }
     }
     
