@@ -9,11 +9,17 @@ The version should always be in sync with the [GUI](https://github.com/CAU-Kiel-
 - `y` is bumped for any major updates or backwards-incompatible changes.  
   A `y` version of 0 indicates the beta of the current year.
 
-## [22.0.1](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/22.0.1)
+## [22.0.2](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/22.0.2) - 2021-07
 - Removed PlayerScoreRequest - add up the GameResults instead
 
-## [22.0.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/22.0.0)
-- Restructure folders to follow JVM standards
+## [22.0.1](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/22.0.1) - 2021-06-25
+### Ostseeschach
+- Implemented proper winner calculation
+- Added some utility methods
+- Adjusted XML
+
+## [22.0.0](https://github.com/CAU-Kiel-Tech-Inf/backend/commits/22.0.0) - 2021-06-11
+- Restructured folders to follow JVM standards
 - Simplified interface for player development
 
 ## 2022 Game Ostseeschach - 2021-06-11
