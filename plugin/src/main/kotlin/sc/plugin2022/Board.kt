@@ -47,7 +47,10 @@ data class Board(
     fun checkAmber(position: Coordinates): Int =
             piecePositions[position]?.let { piece ->
                 arrayOf(piece.isAmber, piece.type.isLight && position.x == piece.team.opponent().startLine)
-                        .sumBy { if (it) 1 else 0 }
+                        .sumOf {
+                            @Suppress("USELESS_CAST")
+                            if (it) 1 else 0 as Int
+                        }
                         .also { if (it > 0) piecePositions.remove(position) }
             } ?: 0
     

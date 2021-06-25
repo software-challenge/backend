@@ -41,12 +41,11 @@ data class Piece(
     fun capture(other: Piece) = copy(count = count + other.count)
     
     fun shortString(): String {
-        val char = type.char.run { if(team.index > 0) toLowerCase() else this }.toString()
+        val char = type.char.run { if(team.index > 0) lowercaseChar() else this }.toString()
         return if (count == 1) char + char else char + count
     }
     
     companion object {
-        @OptIn(ExperimentalStdlibApi::class)
         fun fromString(string: String): Piece {
             val type = string.first()
             return Piece(PieceType.values().first { it.char.equals(type, true) },

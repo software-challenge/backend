@@ -34,7 +34,7 @@ abstract class RealServerTest {
             LobbyClient("localhost", serverPort).apply { start() }
     
     @ExperimentalTime
-    fun await(clue: String? = null, time: Duration = 1.seconds, f: () -> Boolean) = runBlocking {
+    fun await(clue: String? = null, time: Duration = Duration.seconds(1), f: () -> Boolean) = runBlocking {
         withClue(clue) {
             eventually(time, 20.milliseconds.fibonacci(), predicate = { f() }) {}
         }

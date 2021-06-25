@@ -19,14 +19,14 @@ val minimalReplay = """<protocol>
 <room roomId="some-id">
   <data class="memento">
     <state class="sc.server.plugins.TestGameState">
+      <turn>0</turn>
+      <state>0</state>
       <red displayName="">
         <team class="sc.server.helpers.TestTeam">RED</team>
       </red>
       <blue displayName="">
         <team class="sc.server.helpers.TestTeam">BLUE</team>
       </blue>
-      <turn>0</turn>
-      <state>0</state>
     </state>
   </data>
 </room>

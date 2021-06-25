@@ -6,12 +6,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     maven
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.5.20"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
-    id("com.github.ben-manes.versions") version "0.38.0"
-    id("se.patrikerdes.use-latest-versions") version "0.2.16"
+    id("com.github.ben-manes.versions") version "0.39.0"
+    id("se.patrikerdes.use-latest-versions") version "0.2.17"
 }
 
 val gameName by extra { property("socha.gameName") as String }

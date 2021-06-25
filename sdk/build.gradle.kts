@@ -26,7 +26,7 @@ configurations.archives.get().artifacts.removeIf { it.name == "testConfig" }
 
 dependencies {
     api(kotlin("stdlib"))
-    api("com.thoughtworks.xstream", "xstream", "1.4.16")
+    api("com.thoughtworks.xstream", "xstream", "1.4.17")
     api("jargs", "jargs", "1.0")
     api("ch.qos.logback", "logback-classic", "1.2.3")
     
@@ -35,5 +35,5 @@ dependencies {
     implementation("xmlpull", "xmlpull", "1.1.3.1")
     
     "testConfigApi"("io.kotest", "kotest-assertions-core")
-    "testConfigApi"("io.kotest", "kotest-runner-junit5-jvm", "4.4.3")
+    "testConfigApi"("io.kotest", "kotest-runner-junit5-jvm", "4.6.0")
 }

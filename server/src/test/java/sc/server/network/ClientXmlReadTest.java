@@ -49,7 +49,7 @@ public class ClientXmlReadTest {
     client.start();
     client.send(new ExamplePacket());
     String data = stringInterface.getData();
-    assertEquals(data, "<protocol>\n  <example/>");
+    assertEquals("<protocol>\n  <example/>", data);
   }
 
   private void aliasExamplePacket(XStreamClient client) {
