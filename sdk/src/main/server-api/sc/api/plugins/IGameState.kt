@@ -35,5 +35,9 @@ interface IGameState : RoomMessage, Cloneable {
     /** Das Team am Zug. */
     val currentTeam: ITeam
     
+    /** Die möglichen Züge des aktuellen Teams in der aktuellen Situation. */
+    val possibleMoves: Collection<IMove>
+    
+    /** Eine tiefe Kopie des Status.. */
     public override fun clone(): IGameState
 }

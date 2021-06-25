@@ -41,7 +41,7 @@ data class GameState @JvmOverloads constructor(
     val currentPieces
         get() = board.filterValues { it.team == currentTeam }
     
-    val possibleMoves
+    override val possibleMoves
         get() = currentPieces.flatMap { (pos, piece) ->
             piece.possibleMoves.mapNotNull { delta ->
                 Move.create(pos, delta)?.takeIf { board[it.to]?.team != piece.team }
