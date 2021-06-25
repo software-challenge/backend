@@ -21,7 +21,7 @@ interface XStreamProvider {
                     setMode(XStream.NO_REFERENCES)
                 }
     
-        /** @return a XStream instance able to handle all messages from the sdk. */
+        /** @return a XStream instance able to handle all messages in the sdk. */
         fun getBasicXStream(): XStream =
                 getPureXStream().also { xStream ->
                     LobbyProtocol.registerMessages(xStream)
@@ -36,10 +36,13 @@ interface XStreamProvider {
                 getBasicXStream().also { xStream ->
                     ServiceLoader.load(XStreamProvider::class.java).forEach { provider ->
                         LobbyProtocol.registerAdditionalMessages(xStream, provider.classesToRegister)
+                        provider.setup(xStream)
                     }
                 }
     }
     
     val classesToRegister: Collection<Class<*>>
+    
+    fun setup(xStream: XStream) {}
     
 }

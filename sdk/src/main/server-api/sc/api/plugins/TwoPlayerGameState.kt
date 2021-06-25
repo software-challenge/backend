@@ -1,9 +1,7 @@
 package sc.api.plugins
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-
 abstract class TwoPlayerGameState(
-        @XStreamAsAttribute val startTeam: ITeam
+        val startTeam: ITeam
 ) : IGameState {
     
     abstract val board: IBoard
