@@ -11,6 +11,7 @@ import sc.shared.InvalidMoveException
 /** Das Spielbrett besteht aus 8x8 Feldern mit anfänglich 8 Figuren pro Spieler. */
 @XStreamAlias(value = "board")
 data class Board(
+        @XStreamAlias("pieces")
         private val piecePositions: MutableMap<Coordinates, Piece>,
 ): IBoard, Map<Coordinates, Piece> by piecePositions {
     
@@ -25,19 +26,19 @@ data class Board(
      * @return number of ambers if any */
     @Throws(InvalidMoveException::class)
     fun movePiece(move: Move): Int =
-            (piecePositions[move.start] ?: throw InvalidMoveException(MoveMistake.START_EMPTY, move)).let { piece ->
-                if (!move.destination.isValid)
+            (piecePositions[move.from] ?: throw InvalidMoveException(MoveMistake.START_EMPTY, move)).let { piece ->
+                if (!move.to.isValid)
                     throw InvalidMoveException(MoveMistake.OUT_OF_BOUNDS, move)
                 if (move.delta !in piece.possibleMoves)
                     throw InvalidMoveException(MoveMistake.INVALID_MOVEMENT, move)
-                val newPiece = piecePositions[move.destination]?.let {
+                val newPiece = piecePositions[move.to]?.let {
                     if (it.team == piece.team)
                         throw InvalidMoveException(MoveMistake.DESTINATION_BLOCKED, move)
                     piece.capture(it)
                 } ?: piece
-                piecePositions.remove(move.start)
-                piecePositions[move.destination] = newPiece
-                checkAmber(move.destination)
+                piecePositions.remove(move.from)
+                piecePositions[move.to] = newPiece
+                checkAmber(move.to)
             }
     
     /** Checks whether the piece at [position] should be turned into an amber
@@ -86,19 +87,19 @@ data class Board(
                                 val move = combinations.minOrNull() ?: break
                                 moves.add(move)
                                 combinations.removeIf {
-                                    it.start == move.start ||
-                                    it.destination == move.destination
+                                    it.from == move.from ||
+                                    it.to == move.to
                                 }
                             }
                             moves
                         }.single()
             }
         }
-        val startPoints = moves.map { it.start }
+        val startPoints = moves.map { it.from }
         moves.addAll(keys.filter {
             it !in startPoints
         }.map { Move(it, Coordinates(-1, -1)) })
-        moves.removeIf { it.start == it.destination }
+        moves.removeIf { it.from == it.to }
         return moves
     }
     
@@ -128,7 +129,7 @@ data class Board(
                 }
         
         @JvmStatic
-        fun createField(team: ITeam, y: Int, type: PieceType) =
+        fun createField(team: Team, y: Int, type: PieceType) =
                 Coordinates(team.startLine, if (team.index == 0) y else boardrange.last - y) to Piece(type, team)
     }
 }

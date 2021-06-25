@@ -11,6 +11,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldHaveLineCount
 import io.kotest.matchers.string.shouldMatch
 import sc.api.plugins.Team
+import sc.helpers.shouldSerializeTo
+import sc.helpers.testXStream
 import sc.plugin2022.PieceType.*
 import sc.plugin2022.util.Constants
 import sc.plugin2022.util.MoveMistake
@@ -120,8 +122,40 @@ class BoardTest: FunSpec({
         test("one piece vanished") {
             val newBoard = makeBoard(2 y 0 to "r")
             val move = board.diff(newBoard).single()
-            move.start shouldBe (0 y 0)
-            move.destination.isValid.shouldBeFalse()
+            move.from shouldBe (0 y 0)
+            move.to.isValid.shouldBeFalse()
+        }
+    }
+    context("XML Serialization") {
+        test("empty Board") {
+            Board(HashMap()) shouldSerializeTo """
+              <board>
+                <pieces/>
+              </board>
+            """.trimIndent()
+        }
+        test("random Board") {
+            testXStream.toXML(Board()) shouldHaveLineCount 68
+        }
+        test("filled Board") {
+            makeBoard(0 y 0 to "r", 5 y 6 to "M", 3 y 4 to "R2") shouldSerializeTo """
+              <board>
+                <pieces>
+                  <entry>
+                    <coordinates x="0" y="0"/>
+                    <piece type="Robbe" team="TWO" count="1"/>
+                  </entry>
+                  <entry>
+                    <coordinates x="5" y="6"/>
+                    <piece type="Moewe" team="ONE" count="1"/>
+                  </entry>
+                  <entry>
+                    <coordinates x="3" y="4"/>
+                    <piece type="Robbe" team="ONE" count="2"/>
+                  </entry>
+                </pieces>
+              </board>
+            """.trimIndent()
         }
     }
 })

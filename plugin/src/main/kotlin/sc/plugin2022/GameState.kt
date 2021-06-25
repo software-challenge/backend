@@ -30,7 +30,7 @@ data class GameState @JvmOverloads constructor(
     constructor(other: GameState): this(other.board.clone(), other.turn, other.lastMove, other.ambers.clone())
     
     fun performMove(move: Move) {
-        if(board[move.start]?.team != currentTeam)
+        if(board[move.from]?.team != currentTeam)
             throw InvalidMoveException(MoveMistake.WRONG_COLOR, move)
         ambers[currentTeam as Team] = (ambers[currentTeam] ?: 0) +
                                       board.movePiece(move)
@@ -44,7 +44,7 @@ data class GameState @JvmOverloads constructor(
     val possibleMoves
         get() = currentPieces.flatMap { (pos, piece) ->
             piece.possibleMoves.mapNotNull { delta ->
-                Move.create(pos, delta)?.takeIf { board[it.destination]?.team != piece.team }
+                Move.create(pos, delta)?.takeIf { board[it.to]?.team != piece.team }
             }
         }
     

@@ -35,9 +35,9 @@ data class Coordinates(
         get() = Vector.cardinals.mapTo(HashSet()) { this + it }
     
     /** Whether these coordinates mark a field on the board. */
-    val isValid =
-            x >= 0 && x < Constants.BOARD_SIZE &&
-            y >= 0 && y < Constants.BOARD_SIZE
+    val isValid
+        get() = x >= 0 && x < Constants.BOARD_SIZE &&
+                y >= 0 && y < Constants.BOARD_SIZE
     
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */

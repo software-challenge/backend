@@ -27,7 +27,7 @@ data class Piece(
         /** Typ des (obersten) Steins. */
         @XStreamAsAttribute val type: PieceType,
         /** Welchem Team dieser Stein/Turm gehört. */
-        @XStreamAsAttribute val team: ITeam,
+        @XStreamAsAttribute val team: Team,
         /** Anzahl der Steine in diesem Turm. */
         @XStreamAsAttribute val count: Int = 1,
 ) {
