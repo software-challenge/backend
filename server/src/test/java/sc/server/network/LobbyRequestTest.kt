@@ -32,12 +32,14 @@ import sc.shared.GameResult
 import sc.shared.SlotDescriptor
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.milliseconds
-import kotlin.time.seconds
 
 @ExperimentalTime
-suspend fun await(clue: String? = null, duration: Duration = Duration.seconds(1), interval: Interval = 20.milliseconds.fibonacci(), f: suspend () -> Unit) =
-        withClue(clue) { eventually(duration, interval, f) }
+suspend fun await(
+        clue: String? = null,
+        duration: Duration = Duration.seconds(1),
+        interval: Interval = Duration.milliseconds(20).fibonacci(),
+        f: suspend () -> Unit,
+) = withClue(clue) { eventually(duration, interval, f) }
 
 @ExperimentalTime
 class LobbyRequestTest: WordSpec({

@@ -1,10 +1,11 @@
-package sc.protocol.requests
+package sc.protocol
 
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.matchers.*
+import io.kotest.matchers.types.*
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
+import sc.protocol.requests.PrepareGameRequest
 import sc.shared.SlotDescriptor
 
 class PrepareGameRequestTest: WordSpec({

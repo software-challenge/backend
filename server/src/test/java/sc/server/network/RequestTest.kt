@@ -5,15 +5,14 @@ import io.kotest.matchers.ints.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.Pausable
-import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.LobbyClient
 import sc.protocol.requests.CancelRequest
 import sc.protocol.requests.PauseGameRequest
 import sc.protocol.requests.StepRequest
 import sc.protocol.requests.TestModeRequest
 import sc.protocol.room.ErrorMessage
+import sc.protocol.room.MoveRequest
 import sc.server.Configuration
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
@@ -21,7 +20,7 @@ import sc.server.gaming.GameRoom
 import sc.server.helpers.TestHelper
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
-import sc.shared.WelcomeMessage
+import sc.protocol.room.WelcomeMessage
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -269,7 +268,7 @@ class RequestTest: RealServerTest() {
         assertFalse(listener.newStateReceived)
         
         player1.send(PauseGameRequest(room.id, false))
-        TestHelper.waitUntilEqual(false, { (room.game as AbstractGame<*>).isPaused }, 2000)
+        TestHelper.waitUntilEqual(false, { room.isPauseRequested }, 2000)
         p2Listener.waitForMessage(MoveRequest::class)
     }
     

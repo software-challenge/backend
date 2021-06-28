@@ -1,9 +1,8 @@
-package sc.shared
+package sc.protocol.room
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.ITeam
-import sc.protocol.room.RoomOrchestrationMessage
 
 /** Nachricht, die zu Beginn eines Spiels an einen Client geschickt wird, um ihm seine Spielerfarbe mitzuteilen.  */
 @Suppress("DataClassPrivateConstructor")

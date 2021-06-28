@@ -9,15 +9,15 @@ import sc.api.plugins.exceptions.NotYourTurnException
 import sc.api.plugins.host.IGameListener
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
-import sc.shared.WelcomeMessage
+import sc.protocol.room.WelcomeMessage
 import sc.shared.WinCondition
 
-abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGameInstance, Pausable {
+abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pausable {
     companion object {
         val logger = LoggerFactory.getLogger(AbstractGame::class.java)
     }
     
-    override val players = mutableListOf<P>()
+    override val players = mutableListOf<Player>()
     
     val activePlayer
         get() = players[currentState.currentTeam.index]
@@ -113,7 +113,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
         }
     }
 
-    abstract fun getScoreFor(player: P): PlayerScore
+    abstract fun getScoreFor(player: Player): PlayerScore
 
     /** @return the current state representation. */
     abstract val currentState: IGameState
@@ -125,7 +125,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
 
     /** Sends a MoveRequest directly to the given player.
      * Does not consider the pause state. */
-    protected fun requestMove(player: P) {
+    protected fun requestMove(player: Player) {
         val timeout: ActionTimeout = if (player.canTimeout) getTimeoutFor(player) else ActionTimeout(false)
 
         // Signal the JVM to do a GC run now and lower the propability that the GC
@@ -144,7 +144,7 @@ abstract class AbstractGame<P : Player>(override val pluginUUID: String) : IGame
         player.requestMove()
     }
 
-    protected open fun getTimeoutFor(player: P) = ActionTimeout(true)
+    protected open fun getTimeoutFor(player: Player) = ActionTimeout(true)
     
     @Suppress("ReplaceAssociateFunction")
     fun generateScoreMap(): Map<Player, PlayerScore> =

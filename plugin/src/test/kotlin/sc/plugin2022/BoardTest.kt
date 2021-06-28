@@ -38,7 +38,7 @@ class BoardTest: FunSpec({
             val lineRegex = Regex("\\w\\w------------\\w\\w")
             val lines = string.lines()
             lines.forAll { it shouldMatch lineRegex }
-            lines.joinToString("") { it.substring(0, 2).toLowerCase() }.reversed() shouldBe lines.joinToString("") { it.takeLast(2) }
+            lines.joinToString("") { it.substring(0, 2).lowercase() }.reversed() shouldBe lines.joinToString("") { it.takeLast(2) }
         }
         test("clones well") {
             val board = makeBoard(0 y 0 to "R", 1 y 2 to "m")

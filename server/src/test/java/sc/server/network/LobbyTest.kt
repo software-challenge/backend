@@ -50,7 +50,7 @@ class LobbyTest: RealServerTest() {
         }
         
         await("Game is over") { room.isOver }
-        await("GameResult") { room.result != null }
+        await("Received GameResult") { room.result != null }
         room.result.scores.first().cause shouldBe ScoreCause.LEFT
         
         await("GameRoom closes") { gameMgr.games.isEmpty() }

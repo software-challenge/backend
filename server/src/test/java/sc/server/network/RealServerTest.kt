@@ -19,8 +19,6 @@ import java.net.Socket
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.milliseconds
-import kotlin.time.seconds
 
 abstract class RealServerTest {
     protected lateinit var lobby: Lobby
@@ -36,7 +34,7 @@ abstract class RealServerTest {
     @ExperimentalTime
     fun await(clue: String? = null, time: Duration = Duration.seconds(1), f: () -> Boolean) = runBlocking {
         withClue(clue) {
-            eventually(time, 20.milliseconds.fibonacci(), predicate = { f() }) {}
+            eventually(time, Duration.milliseconds(20).fibonacci(), predicate = { f() }) {}
         }
     }
     

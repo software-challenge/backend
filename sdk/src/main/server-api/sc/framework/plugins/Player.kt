@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.api.plugins.ITeam
 import sc.api.plugins.host.IPlayerListener
-import sc.framework.plugins.protocol.MoveRequest
+import sc.protocol.room.MoveRequest
 import sc.protocol.room.RoomMessage
 
 private val logger = LoggerFactory.getLogger(Player::class.java)
@@ -22,7 +22,7 @@ private val logger = LoggerFactory.getLogger(Player::class.java)
  */
 // TODO split this beast up!
 @XStreamAlias(value = "player")
-open class Player @JvmOverloads constructor(
+class Player @JvmOverloads constructor(
         @XStreamAsAttribute var team: ITeam,
         @XStreamAsAttribute var displayName: String = ""
 ): Cloneable {
@@ -67,7 +67,7 @@ open class Player @JvmOverloads constructor(
         }
     }
 
-    open fun requestMove() {
+    fun requestMove() {
         val request = MoveRequest()
         notifyListeners(request)
         logger.debug("Move requested from $this")

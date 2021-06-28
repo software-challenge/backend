@@ -4,46 +4,48 @@ import com.thoughtworks.xstream.XStream
 import sc.api.plugins.Team
 import sc.protocol.requests.*
 import sc.protocol.responses.*
-import sc.protocol.room.ErrorMessage
-import sc.protocol.room.GamePaused
-import sc.protocol.room.MementoMessage
-import sc.protocol.room.RoomPacket
+import sc.protocol.room.*
 import sc.shared.*
 
 object LobbyProtocol {
     
     @JvmStatic
     fun registerMessages(xStream: XStream): XStream {
-        // Messages
-        registerAdditionalMessages(xStream, listOf(
-                ErrorPacket::class.java,
-                ErrorMessage::class.java,
-                GamePaused::class.java,
-                JoinedRoomResponse::class.java,
-                RemovedFromGame::class.java,
-                MementoMessage::class.java,
-                GamePreparedResponse::class.java,
-                ObservationResponse::class.java,
-                RoomPacket::class.java,
-                WelcomeMessage::class.java,
-                PlayerScoreResponse::class.java,
-                TestModeResponse::class.java,
-                RoomWasJoinedEvent::class.java,
-        ))
-        
         // Requests
         registerAdditionalMessages(xStream, listOf(
                 AuthenticateRequest::class.java,
                 CancelRequest::class.java,
-                JoinPreparedRoomRequest::class.java,
                 JoinGameRequest::class.java,
+                JoinPreparedRoomRequest::class.java,
                 JoinRoomRequest::class.java,
                 ObservationRequest::class.java,
                 PauseGameRequest::class.java,
+                PlayerScoreRequest::class.java,
                 PrepareGameRequest::class.java,
                 StepRequest::class.java,
-                PlayerScoreRequest::class.java,
                 TestModeRequest::class.java,
+        ))
+    
+        // Responses
+        registerAdditionalMessages(xStream, listOf(
+                ErrorPacket::class.java,
+                GamePreparedResponse::class.java,
+                JoinedRoomResponse::class.java,
+                ObservationResponse::class.java,
+                PlayerScoreResponse::class.java,
+                RoomWasJoinedEvent::class.java,
+                TestModeResponse::class.java,
+        ))
+        
+        // Messages
+        registerAdditionalMessages(xStream, listOf(
+                RemovedFromGame::class.java,
+                RoomPacket::class.java,
+                ErrorMessage::class.java,
+                GamePaused::class.java,
+                MementoMessage::class.java,
+                MoveRequest::class.java,
+                WelcomeMessage::class.java,
         ))
         
         // Data
@@ -55,7 +57,6 @@ object LobbyProtocol {
                 ScoreCause::class.java,
                 ScoreDefinition::class.java,
                 ScoreFragment::class.java,
-                WinCondition::class.java,
                 SlotDescriptor::class.java,
                 Score::class.java,
                 ScoreValue::class.java,

@@ -10,7 +10,7 @@ import sc.shared.*
 
 data class TestGame(
         override val currentState: TestGameState = TestGameState(),
-): AbstractGame<Player>(TestPlugin.TEST_PLUGIN_UUID) {
+): AbstractGame(TestPlugin.TEST_PLUGIN_UUID) {
     
     override val playerScores: List<PlayerScore>
         get() = players.map { getScoreFor(it) }

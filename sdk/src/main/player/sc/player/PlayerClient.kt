@@ -1,12 +1,12 @@
 package sc.player
 
-import sc.framework.plugins.protocol.MoveRequest
 import sc.networking.clients.IClient
 import sc.protocol.requests.JoinGameRequest
 import sc.protocol.requests.JoinPreparedRoomRequest
 import sc.protocol.requests.JoinRoomRequest
 import sc.protocol.room.ErrorMessage
 import sc.protocol.room.MementoMessage
+import sc.protocol.room.MoveRequest
 import sc.protocol.room.RoomMessage
 import sc.shared.GameResult
 import java.util.function.Function

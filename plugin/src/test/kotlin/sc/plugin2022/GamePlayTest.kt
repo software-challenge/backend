@@ -16,15 +16,15 @@ import sc.framework.plugins.Player
 import sc.plugin2022.util.Constants
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
+import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.milliseconds
 
 /** This test verifies that the Game implementation can be used to play a game.
  * It is the only test that should stay between seasons. */
 @OptIn(ExperimentalTime::class)
 class GamePlayTest: WordSpec({
     isolationMode = IsolationMode.SingleInstance
-    fun createGame() = IGamePlugin.loadPlugin().createGame() as AbstractGame<Player>
+    fun createGame() = IGamePlugin.loadPlugin().createGame() as AbstractGame
     "A Game" should {
         val game = createGame()
         "let players join" {
@@ -69,7 +69,7 @@ class GamePlayTest: WordSpec({
                 }
             })
             
-            "finish without issues".config(invocationTimeout = Constants.GAME_TIMEOUT.milliseconds) {
+            "finish without issues".config(invocationTimeout = Duration.milliseconds(Constants.GAME_TIMEOUT)) {
                 while (true) {
                     try {
                         val condition = game.checkWinCondition()
