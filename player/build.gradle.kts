@@ -8,7 +8,6 @@ plugins {
 val game: String by project
 val year: String by project
 val gameName: String by project
-val deployDir: File by project
 val testingDir: File by project
 val version = rootProject.version.toString()
 
@@ -67,35 +66,35 @@ tasks {
         })
     }
     
-    val deployJar by creating(Copy::class) {
-        from(shadowJar)
-        into(deployDir)
-        rename { project.property("deployedPlayer") as String }
+    run.configure {
+        args = System.getProperty("args", "").split(" ")
     }
     
+    val deployDir: File by project
+    val deployedPlayer: String by project
+    val deployShadow by creating(Copy::class) {
+        group = "distribution"
+        from(shadowJar)
+        into(deployDir)
+        rename { deployedPlayer }
+    }
     val deploy by creating(Zip::class) {
         group = "distribution"
-        dependsOn(deployJar)
+        dependsOn(deployShadow)
         from(prepareZip, copyDocs)
         destinationDirectory.set(deployDir)
         archiveFileName.set("simpleclient-$gameName-src.zip")
     }
     
-    run.configure {
-        args = System.getProperty("args", "").split(" ")
-    }
-    
     val playerTest by creating(Copy::class) {
         group = "verification"
-        dependsOn(prepareZip)
-        
+        from(prepareZip)
         val execDir = testingDir.resolve("player")
+        into(execDir)
         doFirst {
             execDir.deleteRecursively()
             execDir.mkdirs()
         }
-        from(prepareZip.destinationDir)
-        into(execDir)
         
         doLast {
             // required by gradle to distinguish the test build from

@@ -55,8 +55,8 @@ tasks {
         from(runnableDir)
         doFirst {
             if(project.property("enableTestClient") as Boolean)
-                from((project(":test-client").getTasksByName("jar", false).single() as Jar).destinationDirectory)
-            from(project(":player").getTasksByName("shadowJar", false).single().outputs)
+                from(project(":test-client").getTasksByName("jar", false))
+            from(project(":player").getTasksByName("shadowJar", false))
             exec {
                 commandLine("git", "rev-parse", "HEAD")
                 standardOutput = runnableDir.resolve("version").outputStream()

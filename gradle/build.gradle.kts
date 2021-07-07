@@ -198,9 +198,7 @@ tasks {
                     ProcessBuilder(
                             (project(":test-client").getTasksByName("createStartScripts", false).single() as ScriptsTask).content.split(' ') +
                             arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
-                    )
-                            .directory(serverDir)
-                            .start()
+                    ).directory(serverDir).start()
             if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
                 // TODO check whether TestClient actually played games
@@ -276,10 +274,9 @@ allprojects {
             }
             val docJar by creating(Jar::class) {
                 group = "build"
-                dependsOn(doc)
+                from(doc)
                 archiveBaseName.set(jar.get().archiveBaseName)
                 archiveClassifier.set("javadoc")
-                from(doc.outputDirectory)
             }
             val sourcesJar by creating(Jar::class) {
                 group = "build"
