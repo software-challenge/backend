@@ -21,7 +21,7 @@ dependencies {
     if(gradle.startParameter.isOffline) {
         implementation(fileTree("lib"))
     } else {
-        implementation("com.github.CAU-Kiel-Tech-Inf.backend", "GAME", "VERSION")
+        implementation("com.github.software-challenge.backend", "GAME", "VERSION")
     }
 }
 

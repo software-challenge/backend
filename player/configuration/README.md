@@ -3,8 +3,9 @@
 In diesem Paket ist alles dabei, was du brauchst, um einen Spieler für die
 [Software-Challenge YEAR](https://software-challenge.de) zu entwickeln!
 
-In der [Dokumentation](https://cau-kiel-tech-inf.github.io/socha-enduser-docs)
-findest du eine Anleitung, wie du eine [eigene Strategie umsetzen kannst](https://cau-kiel-tech-inf.github.io/socha-enduser-docs/_den_simpleclient_erweitern.html).
+In der [Dokumentation](https://docs.software-challenge.de)
+findest du eine Anleitung,
+wie du eine [eigene Strategie umsetzen kannst](https://docs.software-challenge.de/_den_simpleclient_erweitern.html).
 
 ## Den Spieler einsetzen
 
