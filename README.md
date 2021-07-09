@@ -1,8 +1,12 @@
-# <a target="_blank" rel="noopener noreferrer" href="https://www.software-challenge.de"><img width="64" src="https://raw.githubusercontent.com/software-challenge/gui/main/assets/build-resources/icon.png" alt="Software-Challenge Germany logo"></a> Software-Challenge Germany ![.github/workflows/gradle.yml](https://github.com/software-challenge/backend/workflows/.github/workflows/gradle.yml/badge.svg)
+# <a target="_blank" rel="noopener noreferrer" href="https://www.software-challenge.de"><img width="128" src="https://software-challenge.de/site/themes/freebird/img/logo.png" alt="Software-Challenge Logo"></a> Spiel-Infrastruktur der Software-Challenge Germany ![.github/workflows/gradle.yml](https://github.com/software-challenge/backend/workflows/.github/workflows/gradle.yml/badge.svg)
 
-Dies ist das offizielle Repository der [Software-Challenge](https://www.software-challenge.de), ein Programmierwettbewerb für Schüler.
-Ziel hierbei ist, für ein jährlich wechselndes Spiel eine künstliche Intelligenz zu entwickeln, die den Gegenspieler besiegt.
- Der Code teilt sich auf in Server, Client und Spiel-Plugins.
+In diesem Repository befindet sich
+der Spiel-Infrastruktur der [Software-Challenge](https://www.software-challenge.de),
+ein Programmierwettbewerb für Schüler.
+Dabei wird für ein jährlich wechselndes Spiel eine künstliche Intelligenz entwickelt,
+die sich dann in Duellen gegen andere durchsetzen muss.
+
+Der Code teilt sich auf in Server, Client und Spiel-Plugins.
 
 | Ordner | Beschreibung |
 | ------ | ------------ |
