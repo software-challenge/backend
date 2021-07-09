@@ -32,7 +32,7 @@ Ideally these fields should then be private with generically typed getters to no
 
 ## Cloning
 
-Relevant discussion: https://github.com/CAU-Kiel-Tech-Inf/backend/pull/148
+Relevant discussion: https://github.com/software-challenge/backend/pull/148
 
 To enable cloning, we implement deep copy constructors together with a clone method which defers to the copy constructors.
 This is needed for all shared plugin classes that hold state and which are not immutable.

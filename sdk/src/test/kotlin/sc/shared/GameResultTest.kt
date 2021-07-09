@@ -4,9 +4,8 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.*
+import io.kotest.matchers.string.*
 import sc.api.plugins.TestTeam
 import sc.framework.plugins.Player
 import sc.helpers.shouldSerializeTo
@@ -32,7 +31,7 @@ class GameResultTest: StringSpec({
         gameResultWinnersEmpty.hashCode() shouldBe gameResultWinnersNull.hashCode()
     }
     "GameResult XML".config(enabled = false) {
-        // FIXME needs https://github.com/CAU-Kiel-Tech-Inf/backend/issues/295
+        // FIXME needs https://github.com/software-challenge/backend/issues/295
         val gameResultXMLWinner = """
                 <result>
                   <definition>
