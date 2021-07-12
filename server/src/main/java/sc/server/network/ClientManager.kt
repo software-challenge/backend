@@ -24,7 +24,7 @@ class ClientManager(private val requestHandler: IClientRequestListener) : Runnab
     }
 
     /**
-     * Adds the given `newClient` and notifies all listeners by invoking `onClientConnected`.
+     * Adds the given `newClient` and listens to it.
      *
      * *(only used by tests and addAll())*
      */

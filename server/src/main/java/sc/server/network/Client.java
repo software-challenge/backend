@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Represents a client in the server.
+ * Handles server-side communication with connected clients.
  *
  * Clients which connect to the server (as separate programs or running as threads started by the server)
  * are represented by {@link sc.networking.clients.LobbyClient}.
@@ -81,11 +81,7 @@ public class Client extends XStreamClient implements IClient {
     }
   }
 
-  /**
-   * Disconnect the client and cleanup.
-   *
-   * @param cause of disconnect
-   */
+  /** Disconnect the client and cleanup. */
   @Override
   protected void onDisconnect(DisconnectCause cause) {
     if (!this.notifiedOnDisconnect) {

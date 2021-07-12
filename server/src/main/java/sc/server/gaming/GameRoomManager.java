@@ -98,8 +98,7 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized RoomWasJoinedEvent createAndJoinGame(Client client, String gameType)
-          throws RescuableClientException {
+  public synchronized RoomWasJoinedEvent createAndJoinGame(Client client, String gameType) {
     GameRoom room = createGameRoom(gameType);
     if (room.join(client)) {
       return roomJoined(room);

@@ -58,10 +58,13 @@ public class PlayerSlot implements IPlayerListener, IClientListener {
 
   /** Sets the player and starts listening to its events. */
   public void setPlayer(Player player) {
+    if(this.player != null)
+      this.player.removePlayerListener(this);
     this.player = player;
     player.addPlayerListener(this);
   }
 
+  /** Clears reservation requirement. */
   public synchronized void free() {
     if (!this.reserved)
       throw new IllegalStateException("This slot isn't reserved.");
