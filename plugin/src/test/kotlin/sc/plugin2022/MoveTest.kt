@@ -6,6 +6,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import sc.helpers.shouldSerializeTo
+import sc.protocol.room.RoomPacket
 
 class MoveTest: FunSpec({
     val move = Move(Coordinates(0, 7), Coordinates(17, 5))
@@ -23,17 +24,19 @@ class MoveTest: FunSpec({
         }
     }
     test("Move XML") {
-        move shouldSerializeTo """
-                <Move>
-                  <from x="0" y="7"/>
-                  <to x="17" y="5"/>
-                </Move>
+        RoomPacket("hi", move) shouldSerializeTo """
+                <room roomId="hi">
+                  <data class="move">
+                    <from x="0" y="7"/>
+                    <to x="17" y="5"/>
+                  </data>
+                </room>
             """.trimIndent()
         Move.create(0 y 1, Vector(1, 1))!! shouldSerializeTo """
-                <Move>
+                <move>
                   <from x="0" y="1"/>
                   <to x="1" y="2"/>
-                </Move>
+                </move>
             """.trimIndent()
     }
 })

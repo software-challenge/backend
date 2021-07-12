@@ -3,7 +3,7 @@ package sc.plugin2022
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IMove
 
-@XStreamAlias("Move")
+@XStreamAlias("move")
 /** Ein Spielzug. */
 data class Move(
         /** Ursprungsposition des Zugs. */
