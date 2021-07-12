@@ -15,7 +15,7 @@ interface IPlayerClient {
     fun joinGameWithReservation(reservation: String)
     fun joinGameRoom(roomId: String)
     /** Join any game with the appropriate [gameType]. */
-    fun joinGame(gameType: String)
+    fun joinGame(gameType: String?)
 }
 
 /**
@@ -45,7 +45,7 @@ class PlayerClient(
     }
     
     /** Join any game with the appropriate [gameType]. */
-    override fun joinGame(gameType: String) {
+    override fun joinGame(gameType: String?) {
         client.send(JoinGameRequest(gameType))
     }
 }

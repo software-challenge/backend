@@ -5,10 +5,11 @@ import io.kotest.matchers.*
 import io.kotest.matchers.types.*
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
+import sc.protocol.requests.JoinGameRequest
 import sc.protocol.requests.PrepareGameRequest
 import sc.shared.SlotDescriptor
 
-class PrepareGameRequestTest: WordSpec({
+class GameProtocolTest: WordSpec({
     PrepareGameRequest::class.java.simpleName should {
         "deserialize with umlauts" {
             val request = testXStream.fromXML("""
@@ -29,6 +30,14 @@ class PrepareGameRequestTest: WordSpec({
                    <slot displayName="p2" canTimeout="true" reserved="true"/>
                  </prepare>
             """.trimIndent()
+        }
+    }
+    JoinGameRequest::class.java.simpleName should {
+        "serialize minimally" {
+            JoinGameRequest(null) shouldSerializeTo "<join/>"
+        }
+        "serialize with gameType" {
+            JoinGameRequest("Häschen") shouldSerializeTo "<join gameType=\"Häschen\"/>"
         }
     }
 })

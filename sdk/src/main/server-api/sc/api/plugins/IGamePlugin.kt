@@ -21,9 +21,11 @@ interface IGamePlugin {
                 it.hasNext()
             } ?: throw PluginLoaderException("Could not find any game plugin")
         
+        /** @param gameType id of the plugin, if null return any
+         * @return The plugin with an id equal to [gameType]. */
         @JvmStatic
-        fun loadPlugin(gameType: String): IGamePlugin = loadPlugins().asSequence().find {
-            it.id == gameType
+        fun loadPlugin(gameType: String?): IGamePlugin = loadPlugins().asSequence().find {
+            gameType == null || it.id == gameType
         } ?: throw PluginLoaderException("Could not find game of type '$gameType'")
         
         @JvmStatic

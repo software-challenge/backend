@@ -10,5 +10,5 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 @XStreamAlias("join")
 data class JoinGameRequest(
         @XStreamAsAttribute
-        val gameType: String
+        val gameType: String?
 ): ILobbyRequest
