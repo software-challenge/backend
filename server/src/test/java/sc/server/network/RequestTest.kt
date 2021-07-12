@@ -23,7 +23,6 @@ import sc.server.plugins.TestPlugin
 import sc.protocol.room.WelcomeMessage
 import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 class RequestTest: RealServerTest() {
     private lateinit var player1: LobbyClient
     private lateinit var player2: LobbyClient

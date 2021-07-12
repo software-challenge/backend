@@ -31,7 +31,7 @@ abstract class RealServerTest {
     fun connectPlayer() =
             LobbyClient("localhost", serverPort).apply { start() }
     
-    @ExperimentalTime
+    @OptIn(ExperimentalTime::class)
     fun await(clue: String? = null, time: Duration = Duration.seconds(1), f: () -> Boolean) = runBlocking {
         withClue(clue) {
             eventually(time, Duration.milliseconds(20).fibonacci(), predicate = { f() }) {}

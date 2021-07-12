@@ -7,9 +7,7 @@ import sc.server.gaming.GameRoom
 import sc.server.plugins.TestPlugin
 import sc.shared.ScoreCause
 import java.net.SocketException
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 class LobbyTest: RealServerTest() {
     
     @Test

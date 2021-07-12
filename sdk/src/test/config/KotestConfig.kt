@@ -14,7 +14,7 @@ object KotestConfig: AbstractProjectConfig() {
     
     private const val timeoutSecs = 10
     override val invocationTimeout = timeoutSecs * 1000L
-    @ExperimentalTime
+    @OptIn(ExperimentalTime::class)
     override val timeout = Duration.seconds(timeoutSecs.times(5))
     
     init {

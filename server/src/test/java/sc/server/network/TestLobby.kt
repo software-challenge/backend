@@ -3,13 +3,12 @@ package sc.server.network
 import sc.networking.clients.LobbyClient
 import sc.server.Configuration
 import sc.server.Lobby
+import sc.server.helpers.TestGameHandler
 import java.io.Closeable
 
 internal const val PASSWORD = "TEST_PASSWORD"
 
-class TestLobby: Closeable {
-    
-    val lobby = Lobby()
+data class TestLobby(val lobby: Lobby = Lobby()): Closeable by lobby {
     
     val serverPort: Int
         get() = NewClientListener.lastUsedPort
@@ -30,10 +29,11 @@ class TestLobby: Closeable {
     }
     
     fun connectClient() =
-        LobbyClient("localhost", serverPort)
+            LobbyClient("localhost", serverPort)
     
-    override fun close() {
-        lobby.close()
-    }
+    fun connectPlayer() =
+            TestGameHandler().let {
+                it to connectClient().asPlayer(it)
+            }
     
 }
