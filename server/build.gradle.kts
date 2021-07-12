@@ -54,7 +54,7 @@ tasks {
         archiveBaseName.set("software-challenge-server")
         from(runnableDir)
         doFirst {
-            if(project.property("enableTestClient") as Boolean)
+            if(project.property("enableTestClient") !in arrayOf(null, false))
                 from(project(":test-client").getTasksByName("jar", false))
             from(project(":player").getTasksByName("shadowJar", false))
             exec {
