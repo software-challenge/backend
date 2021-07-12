@@ -2,16 +2,19 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0),
 
-The `x.y.z` version is tracked in [gradle.properties](./gradle.properties) to enable programmatic updating via the Gradle release task.
+The `x.y.z` version is tracked in [gradle.properties](./gradle.properties) to enable programmatic updating via the Gradle `release` task.
 The version should always be in sync with the [GUI](https://github.com/software-challenge/gui) and have a tag in both repositories.
 
 - The major version `x` corresponds to the year of the contest and thus only changes once a year
 - `y` is bumped for any major updates or backwards-incompatible changes.  
   A `y` version of 0 indicates the beta of the current year.
+  
+## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-09
 
 ## [22.0.2](https://github.com/software-challenge/backend/commits/22.0.2) - 2021-07
 - Factor out parts of JVM XML protocol implementation
-- Removed PlayerScoreRequest - add up the GameResults instead
+- Enable joining without specifying a gameType
+- Update documentation links
 
 ## [22.0.1](https://github.com/software-challenge/backend/commits/22.0.1) - 2021-06-25
 ### Ostseeschach
@@ -30,7 +33,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - Implement generic replay saving & loading
 - Create an AdminClient to interface more conveniently with the server
 - Distinguish RoomMessages from ProtocolPackets
-- The GamePaused message is now actually sent after a Game has been paused
+- Send GamePaused message after a Game has been paused
 
 ## [21.3.3](https://github.com/software-challenge/backend/commits/21.3.3) - 2021-03-01
 - Game: Refactor turn advancing logic ([#391](https://github.com/software-challenge/backend/pull/391))
@@ -38,7 +41,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
 
 ## [21.3.2](https://github.com/software-challenge/backend/commits/21.3.2) - 2021-02-12
 ### Fixed
-- GameState: Round number is now always aligned with turn number (49676b64c)
+- GameState: Alignment of round number with turn number (49676b64c)
 - TestClient: Prevent a race-condition that could occur when getting the results of the first game (4f33fc01f)
 
 ## [21.3.1](https://github.com/software-challenge/backend/commits/21.3.1) - 2021-02-11
