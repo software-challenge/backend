@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.IMove;
+import sc.api.plugins.Team;
 import sc.api.plugins.exceptions.GameException;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.GameRoomException;
@@ -137,7 +138,7 @@ public class GameRoom implements IGameListener {
 
       scores.add(score);
     }
-    return new GameResult(scoreDefinition, scores, game.getWinner());
+    return new GameResult(scoreDefinition, results, (Team)game.getWinner());
   }
 
   /** Send the given message to all Players and Observers in this room. */

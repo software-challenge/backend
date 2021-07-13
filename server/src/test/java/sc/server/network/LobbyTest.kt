@@ -2,6 +2,7 @@ package sc.server.network
 
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import sc.api.plugins.Team
 import sc.server.client.TestLobbyClientListener
 import sc.server.gaming.GameRoom
 import sc.server.plugins.TestPlugin
@@ -48,8 +49,8 @@ class LobbyTest: RealServerTest() {
         }
         
         await("Game is over") { room.isOver }
-        await("Received GameResult") { room.result != null }
-        room.result.scores.first().cause shouldBe ScoreCause.LEFT
+        await("Receive GameResult") { room.result != null }
+        room.result.scores.filterKeys { it.team == Team.ONE }.values.single().cause shouldBe ScoreCause.LEFT
         
         await("GameRoom closes") { gameMgr.games.isEmpty() }
     }

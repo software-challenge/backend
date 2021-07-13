@@ -42,8 +42,8 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
         return player
     }
     
-    override val winner: Player?
-        get() = players.singleOrNull { !it.hasViolated() } ?: checkWinCondition()?.let { players.firstOrNull { p -> p.team == it.winner } }
+    override val winner: ITeam?
+        get() = players.singleOrNull { !it.hasViolated() }?.team ?: checkWinCondition()?.winner
     
     override val playerScores: MutableList<PlayerScore>
         get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }

@@ -4,6 +4,7 @@ import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
+import io.kotest.matchers.maps.shouldContainExactly
 import org.junit.jupiter.api.assertThrows
 import sc.protocol.requests.PrepareGameRequest
 import sc.server.Configuration
@@ -15,41 +16,44 @@ import sc.shared.ScoreCause
 import sc.shared.SlotDescriptor
 import java.io.StringWriter
 
-val minimalReplay = """<protocol>
-<room roomId="some-id">
-  <data class="memento">
-    <state class="sc.server.plugins.TestGameState">
-      <turn>0</turn>
-      <state>0</state>
-      <red displayName="">
-        <team class="sc.server.helpers.TestTeam">RED</team>
-      </red>
-      <blue displayName="">
-        <team class="sc.server.helpers.TestTeam">BLUE</team>
-      </blue>
-    </state>
-  </data>
-</room>
-<room roomId="some-id">
-  <data class="result">
-    <definition>
-      <fragment name="winner">
-        <aggregation>SUM</aggregation>
-        <relevantForRanking>true</relevantForRanking>
-      </fragment>
-    </definition>
-    <score cause="REGULAR" reason="Game terminated">
-      <part>0</part>
-    </score>
-    <score cause="REGULAR" reason="Game terminated">
-      <part>0</part>
-    </score>
-    <winner displayName="">
-      <team class="sc.server.helpers.TestTeam">RED</team>
-    </winner>
-  </data>
-</room>
-</protocol>"""
+val minimalReplay = """
+    <protocol>
+    <room roomId="some-id">
+      <data class="memento">
+        <state class="sc.server.plugins.TestGameState">
+          <turn>0</turn>
+          <state>0</state>
+          <red team="ONE"/>
+          <blue team="TWO"/>
+        </state>
+      </data>
+    </room>
+    <room roomId="some-id">
+      <data class="result">
+        <definition>
+          <fragment name="winner">
+            <aggregation>SUM</aggregation>
+            <relevantForRanking>true</relevantForRanking>
+          </fragment>
+        </definition>
+        <scores>
+          <entry>
+            <player team="ONE"/>
+            <score cause="REGULAR" reason="Game terminated">
+              <part>0</part>
+            </score>
+          </entry>
+          <entry>
+            <player team="TWO"/>
+            <score cause="REGULAR" reason="Game terminated">
+              <part>0</part>
+            </score>
+          </entry>
+        </scores>
+        <winner team="ONE"/>
+      </data>
+    </room>
+    </protocol>""".trimIndent()
 
 class GameRoomTest: WordSpec({
     isolationMode = IsolationMode.SingleInstance
@@ -69,7 +73,7 @@ class GameRoomTest: WordSpec({
             val playersScores = room.game.players.associateWith { PlayerScore(ScoreCause.REGULAR, "Game terminated", 0) }
             room.onGameOver(playersScores)
             room.result.isRegular shouldBe true
-            room.result.scores shouldContainExactly playersScores.values
+            room.result.scores shouldContainExactly playersScores
             room.isOver shouldBe true
         }
         "save a correct replay" {

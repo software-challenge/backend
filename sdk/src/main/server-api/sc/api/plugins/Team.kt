@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 /** Die beiden verfügbaren Teams. */
 @XStreamAlias(value = "team")
 enum class Team(override val index: Int): ITeam {
-
     ONE(0) {
         override fun opponent(): Team = TWO
     },

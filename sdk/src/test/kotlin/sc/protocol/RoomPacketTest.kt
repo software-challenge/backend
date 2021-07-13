@@ -18,7 +18,7 @@ class RoomPacketTest: FunSpec({
             </room>""".trimIndent()
     }
     test(GameResult::class.java.simpleName) {
-        RoomPacket("12345", GameResult(ScoreDefinition("something"), listOf(PlayerScore(true, "Won")), Player(Team.ONE, "Best"))) shouldSerializeTo """
+        RoomPacket("12345", GameResult(ScoreDefinition("something"), mapOf(Player(Team.ONE, "Best") to PlayerScore(true, "Won")), Team.ONE)) shouldSerializeTo """
             <room roomId="12345">
               <data class="result">
                 <definition>
@@ -27,12 +27,15 @@ class RoomPacketTest: FunSpec({
                     <relevantForRanking>true</relevantForRanking>
                   </fragment>
                 </definition>
-                <score cause="REGULAR" reason="Won">
-                  <part>2</part>
-                </score>
-                <winner displayName="Best">
-                  <team class="team">ONE</team>
-                </winner>
+                <scores>
+                  <entry>
+                    <player name="Best" team="ONE"/>
+                    <score cause="REGULAR" reason="Won">
+                      <part>2</part>
+                    </score>
+                  </entry>
+                </scores>
+                <winner team="ONE"/>
               </data>
             </room>""".trimIndent()
     }

@@ -10,6 +10,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import sc.api.plugins.Team
 import sc.protocol.ResponsePacket
 import sc.protocol.requests.JoinPreparedRoomRequest
 import sc.protocol.requests.PrepareGameRequest
@@ -24,7 +25,6 @@ import sc.server.client.MessageListener
 import sc.server.client.PlayerListener
 import sc.server.gaming.GameRoom
 import sc.server.helpers.TestGameHandler
-import sc.server.helpers.TestTeam
 import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
@@ -107,19 +107,19 @@ class LobbyGameTest: WordSpec({
                 await { room.isPauseRequested shouldBe false }
                 val game = room.game as TestGame
                 game.isPaused shouldBe false
-                await("game started") { game.activePlayer.team shouldBe TestTeam.RED }
+                await("game started") { game.activePlayer.team shouldBe Team.ONE }
                 withClue("Processes moves") {
                     await("Move requested from player 1") {
                         playerHandlers[0].moveRequest.shouldNotBeNull()
                     }
                     playerHandlers[0].moveRequest!!.complete(TestMove(1))
-                    await { game.activePlayer.team shouldBe TestTeam.BLUE }
+                    await { game.activePlayer.team shouldBe Team.TWO }
                     game.currentState.state shouldBe 1
                     await("Move requested from player 1") {
                         playerHandlers[1].moveRequest.shouldNotBeNull()
                     }
                     playerHandlers[1].moveRequest!!.complete(TestMove(2))
-                    await { game.activePlayer.team shouldBe TestTeam.RED }
+                    await { game.activePlayer.team shouldBe Team.ONE }
                     await { game.currentState.state shouldBe 2 }
                 }
             }
@@ -183,9 +183,9 @@ class LobbyGameTest: WordSpec({
                 withClue("appropriate result for aborted game") {
                     playerClients[1].sendMessageToRoom(prepared.roomId, TestMove(0))
                     val result = roomListener.waitForMessage(GameResult::class)
-                    // TODO can be checked once moved from plugin to sdk
+                    // TODO can be checked once PlayerScore generation moved from plugin to sdk
                     // result.isRegular shouldBe false
-                    result.winner shouldBe room.game.players.first()
+                    result.winner shouldBe room.game.players.first().team
                 }
             }
         }

@@ -1,11 +1,12 @@
 package sc.server.plugins
 
 import sc.api.plugins.IMove
+import sc.api.plugins.ITeam
+import sc.api.plugins.Team
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.ActionTimeout
 import sc.framework.plugins.Player
-import sc.server.helpers.TestTeam
 import sc.shared.*
 
 data class TestGame(
@@ -15,8 +16,8 @@ data class TestGame(
     override val playerScores: List<PlayerScore>
         get() = players.map { getScoreFor(it) }
     
-    override val winner: Player?
-        get() = players.firstOrNull { !it.hasViolated() && !it.hasLeft() }
+    override val winner: ITeam?
+        get() = players.firstOrNull { !it.hasViolated() && !it.hasLeft() }?.team
     
     override fun onRoundBasedAction(move: IMove) {
         if (move !is TestMove)
@@ -29,7 +30,7 @@ data class TestGame(
 
     override fun checkWinCondition(): WinCondition? {
         return if (currentState.round > 1) {
-            WinCondition(if (currentState.state % 2 == 0) TestTeam.RED else TestTeam.BLUE, TestWinReason.WIN)
+            WinCondition(if (currentState.state % 2 == 0) Team.ONE else Team.TWO, TestWinReason.WIN)
         } else null
     }
 

@@ -2,12 +2,14 @@ package sc.framework.plugins
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamConverter
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.api.plugins.ITeam
 import sc.api.plugins.host.IPlayerListener
 import sc.protocol.room.MoveRequest
 import sc.protocol.room.RoomMessage
+import sc.util.PlayerConverter
 
 private val logger = LoggerFactory.getLogger(Player::class.java)
 
@@ -21,7 +23,8 @@ private val logger = LoggerFactory.getLogger(Player::class.java)
  * Note: the toString/equals/hashCode/clone methods only take [team] and [displayName] into account!
  */
 // TODO split this beast up!
-@XStreamAlias(value = "player")
+@XStreamAlias("player")
+@XStreamConverter(PlayerConverter::class)
 class Player @JvmOverloads constructor(
         @XStreamAsAttribute var team: ITeam,
         @XStreamAsAttribute var displayName: String = ""
