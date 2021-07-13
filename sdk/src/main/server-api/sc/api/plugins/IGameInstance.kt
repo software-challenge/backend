@@ -37,10 +37,10 @@ interface IGameInstance {
     fun step()
     
     /**
-     * Returns the player that has won the game.
+     * Returns the [ITeam] that won the game.
      * Null if not finished or no winner.
      */
-    val winner: Player?
+    val winner: ITeam?
 
     /** Used for generating replay name.  */
     val pluginUUID: String
