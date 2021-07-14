@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.IMove;
-import sc.api.plugins.Team;
 import sc.api.plugins.exceptions.GameException;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.GameRoomException;
@@ -71,7 +70,7 @@ public class GameRoom implements IGameListener {
 
     setStatus(GameStatus.OVER);
     try {
-      result = generateGameResult(results);
+      result = new GameResult(scoreDefinition, results, game.getWinner());
       logger.info("{} is over (regular={})", game, result.isRegular());
       saveReplayMessage(result);
       broadcast(result);
@@ -115,30 +114,6 @@ public class GameRoom implements IGameListener {
       if (file.createNewFile())
         return file;
     throw new IOException("Couldn't create replay file " + file);
-  }
-
-  /**
-   * Generate scores from results parameter and return GameResult.
-   *
-   * @return GameResult containing ordered PlayerScores and winners.
-   */
-  private GameResult generateGameResult(Map<Player, PlayerScore> results) {
-    List<PlayerScore> scores = new ArrayList<>();
-
-    // restore order
-    for (PlayerSlot player : playerSlots) {
-      PlayerScore score = results.get(player.getPlayer());
-
-      if (score == null)
-        throw new RuntimeException("GameScore was not complete!");
-
-      // FIXME: remove cause != unknown
-      if (score.getCause() != ScoreCause.UNKNOWN && !score.matches(scoreDefinition))
-        throw new RuntimeException(String.format("Score %1s did not match Definition %2s", score, scoreDefinition));
-
-      scores.add(score);
-    }
-    return new GameResult(scoreDefinition, results, (Team)game.getWinner());
   }
 
   /** Send the given message to all Players and Observers in this room. */

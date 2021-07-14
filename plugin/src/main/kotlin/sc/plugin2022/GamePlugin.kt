@@ -13,7 +13,7 @@ class GamePlugin: IGamePlugin {
         const val PLUGIN_ID = "swc_2022_ostseeschach"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
-                        ScoreFragment("Gewinner"),
+                        ScoreFragment("Siegpunkte"),
                         ScoreFragment("Bernsteine", ScoreAggregation.AVERAGE),
                         ScoreFragment("Figur vorne", ScoreAggregation.AVERAGE)
                 ))
