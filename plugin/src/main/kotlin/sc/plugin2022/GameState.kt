@@ -58,7 +58,7 @@ data class GameState @JvmOverloads constructor(
     override fun clone() = GameState(this)
     
     override fun toString(): String =
-            "GameState $round/$turn -> ${currentTeam.color} (ambers: $ambers)"
+            "GameState R${round}T$turn -> ${currentTeam.color} (Bernsteine $ambers)"
     
 }
 
