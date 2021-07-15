@@ -7,7 +7,7 @@ abstract class TwoPlayerGameState(
     abstract val board: IBoard
     
     override val round: Int
-        get() = 1 + turn/2
+        get() = (turn+1)/2
     
     /** @return das Team, das am Zug ist. */
     override val currentTeam: ITeam
