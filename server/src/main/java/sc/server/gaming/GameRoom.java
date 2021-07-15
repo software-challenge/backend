@@ -284,13 +284,18 @@ public class GameRoom implements IGameListener {
       game.onAction(player, move);
     } catch (InvalidMoveException e) {
       final String error = String.format("Ungueltiger Zug von '%s'.\n%s", player.getDisplayName(), e);
-      logger.error(error);
+      logger.error(error, e);
       player.setViolationReason(e.getMessage());
       ErrorMessage errorMessage = new ErrorMessage(move, error);
+      player.notifyListeners(errorMessage);
       observerBroadcast(errorMessage);
       saveReplayMessage(errorMessage);
       cancel();
-      throw new GameLogicException(e.toString(), e);
+    } catch (GameLogicException e) {
+      logger.error("Error at " + move, e);
+      player.setViolationReason(e.getMessage());
+      player.notifyListeners(new ErrorMessage(move, e.getMessage()));
+      cancel();
     }
   }
 
