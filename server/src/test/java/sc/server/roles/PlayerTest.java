@@ -19,7 +19,6 @@ import sc.server.network.PacketCallback;
 import sc.server.plugins.TestGameState;
 import sc.server.plugins.TestMove;
 import sc.server.plugins.TestPlugin;
-import sc.shared.InvalidGameStateException;
 import sc.shared.SlotDescriptor;
 
 public class PlayerTest extends AbstractRoleTest {
@@ -27,7 +26,7 @@ public class PlayerTest extends AbstractRoleTest {
   int secondState = 37;
 
   @Test
-  public void shouldBeAbleToJoinNonExistingGame() throws RescuableClientException, InvalidGameStateException {
+  public void shouldBeAbleToJoinNonExistingGame() throws RescuableClientException {
     Client client = connectClient();
 
     this.lobby.onRequest(client, new PacketCallback(
@@ -37,7 +36,7 @@ public class PlayerTest extends AbstractRoleTest {
   }
 
   @Test
-  public void shouldGetRoomIdAfterJoin() throws RescuableClientException, InvalidGameStateException {
+  public void shouldGetRoomIdAfterJoin() throws RescuableClientException {
     MockClient player1 = connectClient();
     MockClient player2 = connectClient();
 
@@ -58,7 +57,7 @@ public class PlayerTest extends AbstractRoleTest {
 
   /** Checks basic sending of Moves and end of game. */
   @Test
-  public void shouldBeAbleToPlayTheGame() throws RescuableClientException, InvalidGameStateException {
+  public void shouldBeAbleToPlayTheGame() throws RescuableClientException {
     MockClient admin = connectClient(true);
     MockClient player1 = connectClient();
     MockClient player2 = connectClient();
@@ -105,7 +104,7 @@ public class PlayerTest extends AbstractRoleTest {
 
   private void shouldPropagateFirstPlayersMove(String roomId,
                                                MockClient player1, MockClient player2, MockClient observer)
-          throws RescuableClientException, InvalidGameStateException {
+          throws RescuableClientException {
     // Do the move
     player1.seekRoomMessage(roomId, MoveRequest.class);
     this.lobby.onRequest(player1,
@@ -125,7 +124,7 @@ public class PlayerTest extends AbstractRoleTest {
   }
 
   private void makeMoveAfterRequest(String roomId, MockClient player)
-          throws RescuableClientException, InvalidGameStateException {
+          throws RescuableClientException {
     player.seekRoomMessage(roomId, MoveRequest.class);
     this.lobby.onRequest(player, new PacketCallback(new RoomPacket(roomId,
             new TestMove(123456))));
@@ -133,7 +132,7 @@ public class PlayerTest extends AbstractRoleTest {
 
   private void shouldPropagateSecondPlayersMove(String roomId,
                                                 MockClient player1, MockClient player2, MockClient observer)
-          throws RescuableClientException, InvalidGameStateException {
+          throws RescuableClientException {
     // Do the move
     player2.seekRoomMessage(roomId, MoveRequest.class);
     this.lobby.onRequest(player2, new PacketCallback(new RoomPacket(roomId,

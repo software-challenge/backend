@@ -7,7 +7,6 @@ import sc.networking.UnprocessedPacketException;
 import sc.protocol.ProtocolPacket;
 import sc.protocol.room.RoomPacket;
 import sc.server.network.Client;
-import sc.shared.InvalidGameStateException;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -83,7 +82,7 @@ public class MockClient extends Client {
   }
 
   @Override
-  protected void onObject(@NotNull ProtocolPacket message) throws UnprocessedPacketException, InvalidGameStateException {
+  protected void onObject(@NotNull ProtocolPacket message) throws UnprocessedPacketException {
     super.onObject(message);
     this.objects.add(message);
   }
