@@ -136,7 +136,6 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
         
         logger.debug("Performing $move")
         currentState.performMove(move)
-        next()
         logger.debug("Current State: ${currentState.longString()}")
     }
     

@@ -25,7 +25,6 @@ data class TestGame(
                 override val message = "TestGame only processes TestMove"
             })
         move.perform(currentState)
-        next()
     }
     
     override fun checkWinCondition(): WinCondition? {

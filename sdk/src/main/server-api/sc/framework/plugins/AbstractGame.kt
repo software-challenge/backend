@@ -7,9 +7,9 @@ import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.exceptions.NotYourTurnException
 import sc.api.plugins.host.IGameListener
+import sc.protocol.room.WelcomeMessage
 import sc.shared.InvalidMoveException
 import sc.shared.PlayerScore
-import sc.protocol.room.WelcomeMessage
 import sc.shared.WinCondition
 
 abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pausable {
@@ -29,7 +29,7 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
     /** Pause the game after current turn has finished or continue playing. */
     override var isPaused = false
         set(value) {
-            if(!value)
+            if(!value && moveRequestTimeout == null)
                 step()
             field = value
         }
@@ -55,6 +55,7 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
         if (fromPlayer != activePlayer)
             throw NotYourTurnException(activePlayer, fromPlayer, move)
         moveRequestTimeout?.let { timer ->
+            moveRequestTimeout = null
             timer.stop()
             logger.info("Time needed for move: " + timer.timeDiff)
             if (timer.didTimeout()) {
@@ -63,6 +64,7 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
                 stop()
             } else {
                 onRoundBasedAction(move)
+                next()
             }
         } ?: throw GameLogicException("Move from $fromPlayer has not been requested.")
     }
