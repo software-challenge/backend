@@ -1,8 +1,10 @@
+# docs
 readme
 contributing
+# chore
 git
 gradle
-travis
+ci
 
 # Modules
 testclient
@@ -15,3 +17,4 @@ gamerules
 sdk
 framework
 network
+logging

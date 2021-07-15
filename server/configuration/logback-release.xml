@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+  <timestamp key="time" datePattern="MM-dd'T'HHmm"/>
 
-  <!-- This config should be released with the app as "logback.xml". -->
   <appender name="FILE"
             class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_DIRECTORY:-log}/game_server.log</file>
+    <file>${LOG_DIRECTORY:-log}/game-server_${time}.log</file>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-      <FileNamePattern>${LOG_DIRECTORY:-log}/game_server.%i.log.gz</FileNamePattern>
+      <FileNamePattern>${LOG_DIRECTORY:-log}/game-server_${time}.%i.log.gz</FileNamePattern>
       <MinIndex>1</MinIndex>
       <MaxIndex>5</MaxIndex>
     </rollingPolicy>

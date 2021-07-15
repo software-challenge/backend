@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+  <timestamp key="time" datePattern="MM-dd'T'HHmm"/>
 
   <appender name="FILE"
             class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_DIRECTORY:-log}/testclient.log</file>
+    <file>${LOG_DIRECTORY:-log}/testclient_${time}.log</file>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
       <FileNamePattern>${LOG_DIRECTORY:-log}/testclient.%i.log.gz</FileNamePattern>
@@ -30,7 +31,7 @@
   <!--
   <logger name="sc" level="INFO" />
   -->
-  <logger name="sc.TestClient" level="info" />
+  <logger name="sc.TestClient" level="INFO" />
 
   <root level="WARN">
     <appender-ref ref="FILE"/>
