@@ -1,5 +1,6 @@
 package sc.networking.clients;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
@@ -64,7 +65,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
 
   /** Sets this client up to play a game utilizing the handler.
    * @return a PlayerClient to join a room as Player. */
-  public IPlayerClient asPlayer(IGameHandler handler) {
+  public @NotNull IPlayerClient asPlayer(IGameHandler handler) {
     start();
     PlayerClient client = new PlayerClient(this, handler);
     player = client;

@@ -1,12 +1,10 @@
 package sc.server
 
-import org.slf4j.LoggerFactory
 import sc.api.plugins.IMove
 import sc.api.plugins.exceptions.GameRoomException
 import sc.api.plugins.exceptions.RescuableClientException
 import sc.protocol.ProtocolPacket
 import sc.protocol.requests.*
-import sc.protocol.responses.TestModeResponse
 import sc.protocol.room.RoomPacket
 import sc.server.gaming.GameRoomManager
 import sc.server.gaming.ReservationManager
@@ -16,8 +14,6 @@ import java.io.IOException
 
 /** The lobby joins clients into a game by finding open rooms or creating new ones. */
 class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
-    private val logger = LoggerFactory.getLogger(Lobby::class.java)
-    
     val clientManager = ClientManager(this)
     
     /** @see ClientManager.start */
