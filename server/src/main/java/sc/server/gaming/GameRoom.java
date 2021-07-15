@@ -287,14 +287,10 @@ public class GameRoom implements IGameListener {
       logger.error(error);
       player.setViolationReason(e.getMessage());
       ErrorMessage errorMessage = new ErrorMessage(move, error);
-      player.notifyListeners(errorMessage);
       observerBroadcast(errorMessage);
       saveReplayMessage(errorMessage);
       cancel();
       throw new GameLogicException(e.toString(), e);
-    } catch (GameLogicException e) {
-      player.notifyListeners(new ErrorMessage(move, e.getMessage()));
-      throw e;
     }
   }
 

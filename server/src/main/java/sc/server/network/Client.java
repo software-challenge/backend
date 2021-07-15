@@ -121,15 +121,8 @@ public class Client extends XStreamClient implements IClient {
     }
 
     for (RescuableClientException error : errors) {
-      logger.warn("An error occured: ", error);
+      logger.warn("Error on " + message, error);
       send(new ErrorPacket(message, error.toString()));
-      if (error instanceof GameLogicException && !(error instanceof NotYourTurnException)) {
-        logger.warn("Game closed because of GameLogicException: " + error.getMessage());
-      }
-    }
-    if (!errors.isEmpty()) {
-      logger.debug("Stopping {} because of error", this);
-      stop();
     }
   }
 
