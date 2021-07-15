@@ -27,13 +27,13 @@ data class TestGame(
         move.perform(currentState)
         next()
     }
-
+    
     override fun checkWinCondition(): WinCondition? {
         return if (currentState.round > 1) {
             WinCondition(if (currentState.state % 2 == 0) Team.ONE else Team.TWO, TestWinReason.WIN)
         } else null
     }
-
+    
     override fun onPlayerJoined(): Player {
         if (players.size < 2) {
             return if (players.isEmpty()) {
@@ -44,13 +44,17 @@ data class TestGame(
         }
         throw TooManyPlayersException()
     }
-
+    
     override fun getScoreFor(player: Player) =
-            if(player.hasLeft())
-                PlayerScore(ScoreCause.LEFT, "Spieler ist rausgeflogen.", 0)
-            else
-                PlayerScore(true, "Spieler hat gewonnen.")
-
+            when {
+                player.hasLeft() ->
+                    PlayerScore(ScoreCause.LEFT, "Spieler ist rausgeflogen.", 0)
+                player.hasViolated() ->
+                    PlayerScore(ScoreCause.RULE_VIOLATION, player.violationReason!!, 0)
+                else ->
+                    PlayerScore(true, "Spieler hat gewonnen.")
+            }
+    
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(false)
     

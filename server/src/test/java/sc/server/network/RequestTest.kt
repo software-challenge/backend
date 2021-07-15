@@ -2,7 +2,8 @@ package sc.server.network
 
 import io.kotest.matchers.*
 import io.kotest.matchers.ints.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import sc.framework.plugins.Pausable
@@ -12,14 +13,15 @@ import sc.protocol.requests.PauseGameRequest
 import sc.protocol.requests.StepRequest
 import sc.protocol.room.ErrorMessage
 import sc.protocol.room.MoveRequest
+import sc.protocol.room.WelcomeMessage
 import sc.server.client.PlayerListener
 import sc.server.client.TestLobbyClientListener
 import sc.server.gaming.GameRoom
 import sc.server.helpers.TestHelper
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
-import sc.protocol.room.WelcomeMessage
 
+// TODO Migrate to LobbyRequestTest
 class RequestTest: RealServerTest() {
     private lateinit var player1: LobbyClient
     private lateinit var player2: LobbyClient
@@ -33,22 +35,6 @@ class RequestTest: RealServerTest() {
         Thread.sleep(200)
         player3 = connectPlayer()
         Thread.sleep(200)
-    }
-    
-    @Test
-    fun authenticationRequest() {
-        player1.authenticate(PASSWORD)
-        Thread.sleep(200)
-        val clients = lobby.clientManager.clients
-        assertTrue(clients[0].isAdministrator)
-        assertEquals(3, lobby.clientManager.clients.size.toLong())
-        
-        player2.authenticate("PASSWORD_FAIL_TEST")
-        Thread.sleep(200)
-        
-        // Player2 got kicked
-        assertEquals(2, lobby.clientManager.clients.size.toLong())
-        assertFalse(clients[1].isAdministrator)
     }
     
     @Test

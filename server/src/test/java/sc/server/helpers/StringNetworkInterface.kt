@@ -2,34 +2,22 @@ package sc.server.helpers
 
 import sc.networking.INetworkInterface
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
 class StringNetworkInterface(data: String): INetworkInterface {
+    private val inputStream = NonEndingByteArrayInputStream(data.toByteArray())
     private val outputStream = ByteArrayOutputStream()
-    private val inputStream: InputStream = NonEndingByteArrayInputStream(data.toByteArray())
     
-    @Throws(IOException::class)
+    override fun getInputStream(): InputStream = inputStream
+    override fun getOutputStream(): OutputStream = outputStream
     override fun close() {
+        inputStream.close()
+        outputStream.close()
     }
     
-    @Throws(IOException::class)
-    override fun getInputStream(): InputStream {
-        return inputStream
+    fun readData(): String {
+        outputStream.flush()
+        return outputStream.toString()
     }
-    
-    @Throws(IOException::class)
-    override fun getOutputStream(): OutputStream {
-        return outputStream
-    }
-    
-    @get:Throws(IOException::class)
-    val data: String
-        get() {
-            outputStream.flush()
-            return outputStream.toString()
-        }
-    
-    override fun toString(): String = "String@" + this.hashCode()
 }
