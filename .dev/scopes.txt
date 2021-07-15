@@ -1,4 +1,5 @@
 readme
+contributing
 git
 gradle
 travis

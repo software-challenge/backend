@@ -1,8 +1,10 @@
 # Beitragen
 
-Wir freuen uns über Unterstützung, sei es in Form von [Fehlermeldungen](https://github.com/CAU-Kiel-Tech-Inf/backend/issues) oder [Code](https://github.com/CAU-Kiel-Tech-Inf/backend/pulls).
+Wir freuen uns über jede Unterstützung,
+sowohl durch [Fehlermeldungen](https://github.com/CAU-Kiel-Tech-Inf/backend/issues)
+als auch mit [Code](https://github.com/CAU-Kiel-Tech-Inf/backend/pulls).
 
-Zuerst sollte man das Projekt klonen
+Dafür klone zuerst das Projekt lokal
 (Submodule sind bisher nur für die Arbeit mit Intellij IDEA wichtig):
 ```sh
 git clone git@github.com:software-challenge/backend.git --recurse-submodules --shallow-submodules
@@ -23,9 +25,9 @@ z. B. könnte ein Branch mit einem Release-Fix für Gradle `chore/gradle/releas
 und ein Branch, der ein neues Login-Feature zum Server hinzufügt, `feat/server/login`.
 
 Wenn die einzelnen Commits eines Pull Requests eigenständig funktionieren,
-sollte ein rebase-merge durchgeführt werden,
-ansonsten (gerade bei experimentier-Branches) ein squash-merge,
-wobei der Titel des Pull Requests der Commit Message entsprechen sollte.
+sollte ein rebase merge durchgeführt werden,
+ansonsten (gerade bei experimentier-Branches) ein squash merge,
+wobei der Titel des Pull Requests der Commit-Message entsprechen sollte.
 
 Detaillierte Informationen zu unserem Kollaborations-Stil
 findet ihr in der [Kull Konvention](https://xerus2000.github.io/kull).
@@ -65,6 +67,7 @@ direkt aus dem Quellcode getestet werden:
     ./gradlew :test-client:run -Dargs="--player1 ../../player/build/libs/defaultplayer.jar --player2 ../../player/build/libs/defaultplayer.jar --tests 3"
 
 ### Arbeit mit Intellij IDEA
+
 Zuerst sollte sichergestellt werden,
 dass die neuste Version von IntelliJ IDEA verwendet wird,
 da es ansonsten Probleme mit Kotlin geben kann.
