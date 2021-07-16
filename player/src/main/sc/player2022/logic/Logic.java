@@ -1,4 +1,4 @@
-package sc.player2021.logic;
+package sc.player2022.logic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

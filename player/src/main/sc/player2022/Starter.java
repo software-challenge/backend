@@ -1,4 +1,4 @@
-package sc.player2021;
+package sc.player2022;
 
 import jargs.gnu.CmdLineParser;
 import org.slf4j.Logger;
@@ -7,7 +7,8 @@ import sc.api.plugins.IGamePlugin;
 import sc.networking.clients.LobbyClient;
 import sc.player.IGameHandler;
 import sc.player.IPlayerClient;
-import sc.player2021.logic.Logic;
+import sc.player2022.logic.Logic;
+import sc.plugin2022.util.Constants;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class Starter {
     CmdLineParser.Option portOption = parser.addIntegerOption('p', "port");
     CmdLineParser.Option reservationOption = parser.addStringOption('r', "reservation");
     CmdLineParser.Option roomOption = parser.addStringOption("room");
+    CmdLineParser.Option verifyOption = parser.addBooleanOption("verify");
 
     try {
       // Parameter auslesen
@@ -53,6 +55,9 @@ public class Starter {
       showHelp(e.getMessage());
       System.exit(2);
     }
+
+    if(parser.getOptionValue(verifyOption) == Boolean.TRUE)
+      System.exit(0);
 
     // Parameter laden
     String host = (String) parser.getOptionValue(hostOption, "localhost");

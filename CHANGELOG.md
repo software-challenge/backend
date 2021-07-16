@@ -7,9 +7,11 @@ The version should always be in sync with the [GUI](https://github.com/software-
 
 - The major version `x` corresponds to the year of the contest and thus only changes once a year
 - `y` is bumped for any major updates or backwards-incompatible changes.  
-  A `y` version of 0 marks the beta of the current year.
+  A `y` version of 0 marks the beta of the current year
+  and likely contains breaking changes between patches.
   
-## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-09
+## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-08
+- Fix player buildscripts
 
 ## [22.0.2](https://github.com/software-challenge/backend/commits/22.0.2) - 2021-07-16
 - Update documentation links

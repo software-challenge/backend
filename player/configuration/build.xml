@@ -55,6 +55,7 @@
     <target name="build-jar" depends="compile">
         <jar destfile="${jar.dir}/${ant.project.name}.jar"
              basedir="${classes.dir}">
+            <fileset dir="src/resources" includes="**" />
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
                 <attribute name="Class-Path" value="${jar.classpath}"/>
@@ -63,8 +64,6 @@
         <copy todir="${jar.dir}/lib" >
             <path refid="classpath.libs" />
         </copy>
-        <copy file="src/logback.xml"
-              tofile="${jar.dir}/logback.xml"/>
     </target>
 
     <target name="build" depends="build-jar" description="Build only"/>
