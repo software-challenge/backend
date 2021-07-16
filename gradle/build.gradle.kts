@@ -66,7 +66,7 @@ tasks {
     val release by creating {
         dependsOn(clean, check)
         group = "distribution"
-        description = "Prepares a new Release by bumping the version and creating a commit with a git tag of the new version"
+        description = "Prepares a new Release by bumping the version and creating a commit with a git tag for the new version"
         doLast {
             fun edit(original: String, version: String, new: Int) =
                 if (original.startsWith("socha.version.$version"))

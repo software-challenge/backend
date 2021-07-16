@@ -30,7 +30,8 @@ tasks {
         dependsOn(createStartScripts)
         doFirst {
             manifest.attributes["Class-Path"] =
-                configurations.default.get().map { "lib/" + it.name }
+                configurations.default.get()
+                        .map { "lib/" + it.name }
                         .plus("server.jar")
                         .joinToString(" ")
             copy {

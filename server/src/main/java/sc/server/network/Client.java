@@ -3,8 +3,6 @@ package sc.server.network;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.api.plugins.exceptions.GameLogicException;
-import sc.api.plugins.exceptions.NotYourTurnException;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
@@ -100,9 +98,9 @@ public class Client extends XStreamClient implements IClient {
   @Override
   protected void onObject(@NotNull ProtocolPacket message) throws UnprocessedPacketException {
     /*
-     * NOTE that this method is called in the receiver thread. Messages
-     * should only be passed to listeners. No callbacks should be invoked
-     * directly in the receiver thread.
+     * NOTE that this method is called in the receiver thread.
+     * Messages should only be passed to listeners.
+     * No callbacks should be invoked directly in the receiver thread.
      */
     Collection<RescuableClientException> errors = new ArrayList<>();
 

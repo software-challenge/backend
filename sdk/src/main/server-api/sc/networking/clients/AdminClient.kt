@@ -5,6 +5,8 @@ import sc.protocol.requests.PrepareGameRequest
 import sc.protocol.room.ObservableRoomMessage
 
 class AdminClient(private val client: LobbyClient) {
+    val closed: Boolean
+        get() = client.isClosed
     
     fun prepareGame(request: PrepareGameRequest) {
         client.send(request)

@@ -7,18 +7,20 @@ The version should always be in sync with the [GUI](https://github.com/software-
 
 - The major version `x` corresponds to the year of the contest and thus only changes once a year
 - `y` is bumped for any major updates or backwards-incompatible changes.  
-  A `y` version of 0 indicates the beta of the current year.
+  A `y` version of 0 marks the beta of the current year.
   
 ## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-09
 
-## [22.0.2](https://github.com/software-challenge/backend/commits/22.0.2) - 2021-07
+## [22.0.2](https://github.com/software-challenge/backend/commits/22.0.2) - 2021-07-16
 - Update documentation links
-- Various improvements in tests
+- Various improvements around testing
 ### Protocol
 - Reworked GameResult XML (add player information, include winner as team)
-- Simplified Player XML (team as attribute)
-- Can join without specifying a gameType
-- Removed PlayerScoreRequest and TestModeRequest - add up the GameResults instead ([#385](https://github.com/software-challenge/backend/pull/385))
+- Simpler Player XML (team as attribute)
+- Join without specifying a gameType
+- Removed test mode - add up the GameResults instead ([#385](https://github.com/software-challenge/backend/pull/385))
+- Do not send repeated MoveRequests when pausing/unpausing
+- Stop terminating client connections upon protocol issues ([6c6d6fa51](https://github.com/software-challenge/backend/commit/6c6d6fa51af71eea3914303cb886bd8b78be53a0))
 
 ## [22.0.1](https://github.com/software-challenge/backend/commits/22.0.1) - 2021-06-25
 ### Ostseeschach
