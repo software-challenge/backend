@@ -12,7 +12,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
   
 ## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-09
 
-## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-07-26
+## [22.0.3](https://github.com/software-challenge/backend/commits/22.0.3) - 2021-07-26
 - Fix simpleclient setup
 - Only end game after full rounds
 
