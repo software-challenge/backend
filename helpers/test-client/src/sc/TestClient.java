@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -171,7 +172,6 @@ public class TestClient extends XStreamClient {
   private int finishedTests;
 
   private boolean terminateWhenPossible = false;
-  private int playerScores = 0;
   private int irregularGames = 0;
 
   public TestClient(String host, int port, int totalTests) throws IOException {
@@ -207,10 +207,9 @@ public class TestClient extends XStreamClient {
         finishedTests++;
         ScoreDefinition scoreDefinition = result.getDefinition();
         StringBuilder scoreUpdate = new StringBuilder(String.format("New scores after %s of %s games:", finishedTests, totalTests));
-        for (int player = 0; player < players.length; player++) {
-          int finalPlayer = player;
-          PlayerScore score = result.getScores().entrySet().stream().filter(entry -> entry.getKey().getTeam().getIndex() == finalPlayer).findFirst().get().getValue();
-          ScoreValue[] scoreValues = players[player].score;
+        for (ClientPlayer player : players) {
+          PlayerScore score = result.getScores().get(player);
+          ScoreValue[] scoreValues = player.score;
           for (int scoreIndex = 0; scoreIndex < scoreDefinition.getSize(); scoreIndex++) {
             ScoreValue value = scoreValues[scoreIndex];
             if (!result.getDefinition().get(scoreIndex).equals(value.getFragment())) {
@@ -223,7 +222,7 @@ public class TestClient extends XStreamClient {
               value.setValue(value.getValue().add(score.getValues().get(scoreIndex)));
           }
           scoreUpdate.append(String.format("%s: Siegpunkte %s, \u2205Wert 1 %5.2f",
-              players[player].name, scoreValues[0].getValue(), scoreValues[1].getValue()));
+              player.name, scoreValues[0].getValue(), scoreValues[1].getValue()));
         }
         logger.info(scoreUpdate.toString());
 
@@ -299,12 +298,11 @@ public class TestClient extends XStreamClient {
   }
 
   private final int BIG_DECIMAL_SCALE = 6;
-  /** Calculates a new average value: average = oldAverage * ((#amount - 1)/ #amount) + newValue / #amount */
-  private BigDecimal updateAverage(BigDecimal oldAverage, int amount, BigDecimal newValue) {
-    BigDecimal decAmount = new BigDecimal(amount);
-    return oldAverage.multiply(decAmount.subtract(BigDecimal.ONE).divide(decAmount, BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
-        .add(newValue.divide(decAmount, BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
-        .round(new MathContext(BIG_DECIMAL_SCALE + 2));
+  /** Calculates a new average value: average = oldAverage * oldAmount / newAmount + newValue / newAmount */
+  private BigDecimal updateAverage(BigDecimal oldAverage, int newAmount, BigDecimal newValue) {
+    BigDecimal decAmount = new BigDecimal(newAmount);
+    return oldAverage.multiply(new BigDecimal(newAmount - 1)).divide(decAmount, BIG_DECIMAL_SCALE, RoundingMode.HALF_UP)
+        .add(newValue.divide(decAmount, BIG_DECIMAL_SCALE, RoundingMode.HALF_UP));
   }
 
   private void startPlayer(int id, String reservation) throws IOException {
@@ -400,36 +398,4 @@ public class TestClient extends XStreamClient {
   public String toString() {
     return String.format("TestClient{port: %d, tests: %d/%d, players: %s}", port, finishedTests, totalTests, Arrays.toString(players));
   }
-}
-
-class ClientPlayer {
-  String name;
-  boolean canTimeout;
-
-  File executable;
-  boolean isJar;
-
-  @Override
-  public String toString() {
-    return String.format("ClientPlayer{name='%s', executable='%s', isJar=%s, canTimeout=%s}", name, executable, isJar, canTimeout);
-  }
-
-  Process proc;
-  ScoreValue[] score;
-}
-
-class Util {
-
-  static boolean isJar(File f) {
-    return f.getName().endsWith("jar") && f.exists();
-  }
-
-  static double factorial(int n) {
-    return n <= 1 ? 1 : factorial(n - 1) * n;
-  }
-
-  static double factorial(int n, int downTo) {
-    return n <= downTo ? 1 : factorial(n - 1, downTo) * n;
-  }
-
 }
