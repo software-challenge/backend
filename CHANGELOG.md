@@ -10,8 +10,11 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
   
-## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-08
-- Fix player buildscripts
+## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-09
+
+## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-07-26
+- Fix simpleclient setup
+- Only end game after full rounds
 
 ## [22.0.2](https://github.com/software-challenge/backend/commits/22.0.2) - 2021-07-16
 - Update documentation links
