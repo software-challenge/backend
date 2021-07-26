@@ -68,29 +68,29 @@ tasks {
         group = "distribution"
         description = "Prepares a new Release by bumping the version and creating a commit with a git tag for the new version"
         doLast {
-            fun edit(original: String, version: String, new: Int) =
-                if (original.startsWith("socha.version.$version"))
-                    "socha.version.$version=${new.toString().padStart(2, '0')}"
-                else original
-            
             var newVersion = version
-            val filter: (String) -> String = when {
+            fun String.editVersion(version: String, new: Int) =
+                    if (startsWith("socha.version.$version"))
+                        "socha.version.$version=${new.toString().padStart(2, '0')}"
+                    else this
+            val versionLineUpdater: (String) -> String = when {
                 project.hasProperty("manual") -> ({ it })
                 project.hasProperty("minor") -> ({
                     newVersion = "${versionObject.major}.${versionObject.minor + 1}.0"
-                    edit(edit(it, "minor", versionObject.minor + 1), "patch", 0)
+                    it.editVersion("minor", versionObject.minor + 1).editVersion("patch", 0)
                 })
                 project.hasProperty("patch") -> ({
                     newVersion = "${versionObject.major}.${versionObject.minor}.${versionObject.patch + 1}"
-                    edit(it, "patch", versionObject.patch + 1)
+                    it.editVersion("patch", versionObject.patch + 1)
                 })
                 else -> throw InvalidUserDataException("Gib entweder -Ppatch oder -Pminor an, um die Versionsnummer automatisch zu inkrementieren, oder ändere sie selbst in gradle.properties und gib dann -Pmanual an!")
             }
+            
             val desc = project.properties["m"]?.toString()
                        ?: throw InvalidUserDataException("Das Argument -Pm=\"Beschreibung dieser Version\" wird benötigt")
             
             val propsFile = file("gradle.properties")
-            propsFile.writeText(propsFile.readLines().joinToString("\n") { filter(it) })
+            propsFile.writeText(propsFile.readLines().joinToString("\n") { versionLineUpdater(it) })
             
             println("Version: $newVersion")
             println("Beschreibung: $desc")
