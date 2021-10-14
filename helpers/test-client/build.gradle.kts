@@ -25,15 +25,27 @@ tasks {
         fileName = "start-tests"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
     }
-
+    
     jar {
         dependsOn(createStartScripts)
         doFirst {
-            manifest.attributes["Class-Path"] =
-                configurations.default.get()
-                        .map { "lib/" + it.name }
-                        .plus("server.jar")
-                        .joinToString(" ")
+            manifest {
+                attributes(
+                        "Class-Path" to
+                                configurations.default.get()
+                                        .map { "lib/" + it.name }
+                                        .plus("server.jar")
+                                        .joinToString(" "),
+                        "Add-Opens" to arrayOf(
+                                "javafx.controls/javafx.scene.control.skin",
+                                "javafx.controls/javafx.scene.control",
+                                "javafx.graphics/javafx.scene",
+                                // For accessing InputMap used in RangeSliderBehavior
+                                "javafx.controls/com.sun.javafx.scene.control.inputmap",
+                                // Expose list internals for xstream conversion: https://github.com/x-stream/xstream/issues/253
+                                "java.base/java.util").joinToString(" ")
+                )
+            }
             copy {
                 from("src/logback-tests.xml")
                 into(destinationDirectory)
