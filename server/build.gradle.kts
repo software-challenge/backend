@@ -76,10 +76,11 @@ tasks {
         group = "application"
         dependsOn(makeRunnable)
         workingDir = buildDir
-		doFirst {
-			val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD")).inputStream.reader().readText().trim()
-			val relativeRunnable = runnableDir.relativeTo(workingDir)
-			commandLine("docker", "build", "--no-cache", "-t", "swc_game-server:latest", "-t", "swc_game-server:$tag", "--build-arg", "game_server_dir=$relativeRunnable", ".")
+        doFirst {
+            val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD"))
+                    .inputStream.reader().readText().trim()
+            val relativeRunnable = runnableDir.relativeTo(workingDir)
+            commandLine("docker", "build", "--no-cache", "-t", "swc_game-server:latest", "-t", "swc_game-server:$tag", "--build-arg", "game_server_dir=$relativeRunnable", ".")
             copy {
                 from(projectDir.resolve("configuration"))
                 include("?ocker*")
@@ -87,25 +88,15 @@ tasks {
                 include("server.properties.production")
                 into(workingDir)
             }
-		}
+        }
     }
     
     jar {
         destinationDirectory.set(runnableDir)
         doFirst {
-            manifest {
-                attributes(
-                        "Class-Path" to configurations.default.get().joinToString(" ") { "lib/" + it.name },
-                        "Add-Opens" to
-                                arrayOf("javafx.controls/javafx.scene.control.skin",
-                                        "javafx.controls/javafx.scene.control",
-                                        "javafx.graphics/javafx.scene",
-                                        // For accessing InputMap used in RangeSliderBehavior
-                                        "javafx.controls/com.sun.javafx.scene.control.inputmap",
-                                        // Expose list internals for xstream conversion: https://github.com/x-stream/xstream/issues/253
-                                        "java.base/java.util").joinToString(" ")
-                )
-            }
+            manifest.attributes(
+                    "Class-Path" to configurations.default.get().joinToString(" ") { "lib/" + it.name }
+            )
         }
     }
     

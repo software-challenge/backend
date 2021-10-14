@@ -303,7 +303,17 @@ allprojects {
             test { testLogging { showStandardStreams = project.properties["verbose"] != null } }
             withType<Jar> {
                 if (plugins.hasPlugin(ApplicationPlugin::class))
-                    manifest.attributes["Main-Class"] = project.extensions.getByType<JavaApplication>().mainClass.get()
+                    manifest.attributes(
+                            "Main-Class" to project.extensions.getByType<JavaApplication>().mainClass.get(),
+                            "Add-Opens" to arrayOf(
+                                    "javafx.controls/javafx.scene.control.skin",
+                                    "javafx.controls/javafx.scene.control",
+                                    "javafx.graphics/javafx.scene",
+                                    // For accessing InputMap used in RangeSliderBehavior
+                                    "javafx.controls/com.sun.javafx.scene.control.inputmap",
+                                    // Expose list internals for xstream conversion: https://github.com/x-stream/xstream/issues/253
+                                    "java.base/java.util").joinToString(" ")
+                    )
             }
         }
     }

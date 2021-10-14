@@ -29,23 +29,12 @@ tasks {
     jar {
         dependsOn(createStartScripts)
         doFirst {
-            manifest {
-                attributes(
-                        "Class-Path" to
-                                configurations.default.get()
-                                        .map { "lib/" + it.name }
-                                        .plus("server.jar")
-                                        .joinToString(" "),
-                        "Add-Opens" to arrayOf(
-                                "javafx.controls/javafx.scene.control.skin",
-                                "javafx.controls/javafx.scene.control",
-                                "javafx.graphics/javafx.scene",
-                                // For accessing InputMap used in RangeSliderBehavior
-                                "javafx.controls/com.sun.javafx.scene.control.inputmap",
-                                // Expose list internals for xstream conversion: https://github.com/x-stream/xstream/issues/253
-                                "java.base/java.util").joinToString(" ")
-                )
-            }
+            manifest.attributes(
+                    "Class-Path" to configurations.default.get()
+                            .map { "lib/" + it.name }
+                            .plus("server.jar")
+                            .joinToString(" ")
+            )
             copy {
                 from("src/logback-tests.xml")
                 into(destinationDirectory)
@@ -61,7 +50,7 @@ tasks {
                 "--start-server --tests 3 --player1 $playerLocation --player2 $playerLocation"
             })
             @Suppress("UNNECESSARY_SAFE_CALL", "SimplifyBooleanWithConstants")
-            if (args?.isEmpty() == false)
+            if(args?.isEmpty() == false)
                 println("Using command-line arguments: $args")
         }
     }
