@@ -7,7 +7,8 @@ plugins {
 application {
     mainClass.set("sc.server.Application")
     applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8",
-            "-XX:+PrintGC", "-XX:+PrintGCDetails", "-XX:+PrintGCDateStamps", "-Xloggc:gc.log")
+            "-XX:+PrintGC", "-XX:+PrintGCDetails", "-XX:+PrintGCDateStamps", "-Xloggc:gc.log" // GC
+    )
 }
 
 dependencies {
@@ -92,7 +93,19 @@ tasks {
     jar {
         destinationDirectory.set(runnableDir)
         doFirst {
-            manifest.attributes["Class-Path"] = configurations.default.get().joinToString(" ") { "lib/" + it.name }
+            manifest {
+                attributes(
+                        "Class-Path" to configurations.default.get().joinToString(" ") { "lib/" + it.name },
+                        "Add-Opens" to
+                                arrayOf("javafx.controls/javafx.scene.control.skin",
+                                        "javafx.controls/javafx.scene.control",
+                                        "javafx.graphics/javafx.scene",
+                                        // For accessing InputMap used in RangeSliderBehavior
+                                        "javafx.controls/com.sun.javafx.scene.control.inputmap",
+                                        // Expose list internals for xstream conversion: https://github.com/x-stream/xstream/issues/253
+                                        "java.base/java.util").joinToString(" ")
+                )
+            }
         }
     }
     

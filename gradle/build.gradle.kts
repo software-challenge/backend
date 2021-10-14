@@ -112,18 +112,20 @@ tasks {
     }
     
     // TODO create a global constant which can be shared with testclient & co - maybe a resource?
-    val maxGameLength = 150L
+    val maxGameLength = 150L // 2m30s
     
     val testGame by creating {
-        dependsOn(":server:deploy", ":player:deployJar")
+        dependsOn(":server:deploy", ":player:deployShadow")
         group = "verification"
         doFirst {
             val testGameDir = testingDir.resolve("game")
             testGameDir.deleteRecursively()
             testGameDir.mkdirs()
+            val java = "java"
+                    //File("/usr/lib/jvm").listFiles { f:File -> f.name.contains("java-1") }?.max()?.resolve("bin/java").toString()
             val server =
                 ProcessBuilder(
-                    "java",
+                    java,
                     "-Dlogback.configurationFile=${project(":server").projectDir.resolve("configuration/logback-trace.xml")}",
                     "-jar", (project(":server").getTasksByName("jar", false).single() as Jar).archiveFile.get().asFile.absolutePath
                 )
@@ -134,7 +136,7 @@ tasks {
             Thread.sleep(400)
             val startClient: (Int) -> Process = {
                 Thread.sleep(100)
-                ProcessBuilder("java", "-jar", deployDir.resolve(deployedPlayer).absolutePath)
+                ProcessBuilder(java, "-jar", deployDir.resolve(deployedPlayer).absolutePath)
                     .redirectOutput(testGameDir.resolve("client$it.log")).redirectError(testGameDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
