@@ -45,11 +45,8 @@ public class NewClientListener implements Runnable, Closeable {
   private void acceptClient() {
     try {
       Socket clientSocket = this.serverSocket.accept();
-
-      logger.info("A Client connected...");
-
+      logger.info("Connecting a Client at {}...", clientSocket);
       Client newClient = new Client(new TcpNetwork(clientSocket));
-
       try {
         this.queue.put(newClient);
         logger.info("Added Client " + newClient + " to ReadyQueue.");
