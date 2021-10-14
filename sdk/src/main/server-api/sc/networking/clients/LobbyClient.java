@@ -37,6 +37,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private final List<IHistoryListener> historyListeners = new ArrayList<>();
 
   private Function<RoomMessage, RoomMessage> player = null;
+  /** Whether to preserve the connection when a game ends. */
+  private boolean keepAlive = true;
   private Consumer<ResponsePacket> administrativeListener = null;
   private final Map<String, Consumer<ObservableRoomMessage>> roomObservers = new HashMap<>();
 
@@ -55,7 +57,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     return new AdminClient(this);
   }
 
-
   /** Sets observer to observe messages in the given room.
    * Whether administrative messages are received depends on authentication,
    * which has to be done separately. */
@@ -64,16 +65,24 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
   }
 
   /** Sets this client up to play a game utilizing the handler.
+   * @param handler the game logic
    * @return a PlayerClient to join a room as Player. */
-  public @NotNull IPlayerClient asPlayer(IGameHandler handler) {
+  public @NotNull IPlayerClient asPlayer(IGameHandler handler) {return asPlayer(handler, false);}
+
+  /** Sets this client up to play games utilizing the handler.
+   * @param handler the game logic
+   * @param keepAlive whether the client should stay connected after a game ends
+   * @return a PlayerClient to join a room as Player. */
+  public @NotNull IPlayerClient asPlayer(IGameHandler handler, boolean keepAlive) {
     start();
     PlayerClient client = new PlayerClient(this, handler);
     player = client;
+    this.keepAlive = keepAlive;
     return client;
   }
 
   @Override
-  protected final void onObject(ProtocolPacket message) {
+  protected void onObject(ProtocolPacket message) {
     if(message instanceof ResponsePacket && administrativeListener != null)
       administrativeListener.accept((ResponsePacket) message);
     if (message instanceof RoomPacket) {
@@ -102,14 +111,17 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
       } else {
         onRoomMessage(roomId, data);
       }
+    } else if (message instanceof RemovedFromGame) {
+      String roomId = ((RemovedFromGame) message).getRoomId();
+      logger.info("Left {}", roomId);
+      if(!keepAlive)
+        stop();
     } else if (message instanceof GamePreparedResponse) {
       onGamePrepared((GamePreparedResponse) message);
     } else if (message instanceof JoinedRoomResponse) {
       onGameJoined(((JoinedRoomResponse) message).getRoomId());
     } else if (message instanceof RoomWasJoinedEvent) {
       onGameJoined(((RoomWasJoinedEvent) message).getRoomId());
-    } else if (message instanceof RemovedFromGame) {
-      onGameLeft(((RemovedFromGame) message).getRoomId());
     } else if (message instanceof ObservationResponse) {
       onGameObserved(((ObservationResponse) message).getRoomId());
     } else if (message instanceof ErrorPacket) {
@@ -138,14 +150,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory {
     for (ILobbyClientListener listener : this.listeners) {
       listener.onGameOver(roomId, data);
     }
-  }
-
-  private void onGameLeft(String roomId) {
-    logger.info("Received RemovedFromGame");
-    for (ILobbyClientListener listener : this.listeners) {
-      listener.onGameLeft(roomId);
-    }
-    logger.info("Left {}", roomId);
   }
 
   private void onGameJoined(String roomId) {

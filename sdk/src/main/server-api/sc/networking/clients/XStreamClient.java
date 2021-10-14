@@ -44,7 +44,7 @@ public abstract class XStreamClient implements IClient {
     /** disconnected because CloseConnection was received (disconnected by other side) */
     RECEIVED_DISCONNECT,
     /** disconnected from this side */
-    DISCONNECTED,
+    INITIATED_DISCONNECTED,
     // error conditions
     PROTOCOL_ERROR,
     LOST_CONNECTION,
@@ -234,7 +234,7 @@ public abstract class XStreamClient implements IClient {
     // this side caused disconnect, notify other side
     if (!isClosed())
       send(new CloseConnection());
-    handleDisconnect(DisconnectCause.DISCONNECTED);
+    handleDisconnect(DisconnectCause.INITIATED_DISCONNECTED);
   }
 
   protected synchronized void stopReceiver() {

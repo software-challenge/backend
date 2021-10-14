@@ -14,7 +14,6 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   public boolean gamePausedReceived = false;
   public boolean gameOverReceived = false;
   public boolean gameJoinedReceived = false;
-  public boolean gameLeftReceived = false;
   public boolean gamePreparedReceived = false;
   public boolean roomMessageReceived = false;
   public boolean errorReceived = false;
@@ -37,7 +36,6 @@ public class TestLobbyClientListener implements ILobbyClientListener {
             gamePausedReceived == o.gamePausedReceived &&
             gameOverReceived == o.gameOverReceived &&
             gameJoinedReceived == o.gameJoinedReceived &&
-            gameLeftReceived == o.gameLeftReceived &&
             gamePreparedReceived == o.gamePreparedReceived &&
             roomMessageReceived == o.roomMessageReceived &&
             errorReceived == o.errorReceived &&
@@ -74,12 +72,6 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onGameLeft(String roomId) {
-    this.roomId = roomId;
-    gameLeftReceived = true;
-  }
-
-  @Override
   public void onGameJoined(String roomId) {
     this.roomId = roomId;
     gameJoinedReceived = true;
@@ -105,7 +97,6 @@ public class TestLobbyClientListener implements ILobbyClientListener {
             ", gamePausedReceived=" + gamePausedReceived +
             ", gameOverReceived=" + gameOverReceived +
             ", gameJoinedReceived=" + gameJoinedReceived +
-            ", gameLeftReceived=" + gameLeftReceived +
             ", gamePreparedReceived=" + gamePreparedReceived +
             ", roomMessageReceived=" + roomMessageReceived +
             ", errorReceived=" + errorReceived +
