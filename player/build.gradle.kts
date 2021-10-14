@@ -30,18 +30,6 @@ tasks {
     shadowJar {
         group = "distribution"
         archiveFileName.set("defaultplayer.jar")
-        manifest {
-            attributes(
-                    "Add-Opens" to arrayOf(
-                            "javafx.controls/javafx.scene.control.skin",
-                            "javafx.controls/javafx.scene.control",
-                            "javafx.graphics/javafx.scene",
-                            // For accessing InputMap used in RangeSliderBehavior
-                            "javafx.controls/com.sun.javafx.scene.control.inputmap",
-                            // Expose list internals for xstream conversion: https://github.com/x-stream/xstream/issues/253
-                            "java.base/java.util").joinToString(" ")
-            )
-        }
     }
     
     val copyDocs by creating(Copy::class) {
@@ -116,7 +104,7 @@ tasks {
         
         timeout.set(Duration.ofMinutes(1))
         workingDir(execDir)
-        executable = "./gradlew${if (OperatingSystem.current().isWindows) ".bat" else ""}"
+        executable = "./gradlew${if(OperatingSystem.current().isWindows) ".bat" else ""}"
         args("shadowJar", "--quiet", "--offline")
         
         doLast {
