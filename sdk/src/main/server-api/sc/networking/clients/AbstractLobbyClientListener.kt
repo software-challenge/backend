@@ -13,7 +13,6 @@ abstract class AbstractLobbyClientListener: ILobbyClientListener {
     
     override fun onError(error: ErrorPacket) {}
     override fun onGamePrepared(response: GamePreparedResponse) {}
-    override fun onGameLeft(roomId: String) {}
     override fun onGameJoined(roomId: String) {}
     override fun onGameObserved(roomId: String) {}
 }

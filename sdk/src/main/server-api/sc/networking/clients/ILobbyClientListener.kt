@@ -15,7 +15,6 @@ interface ILobbyClientListener {
     fun onError(error: ErrorPacket)
     
     fun onGamePrepared(response: GamePreparedResponse)
-    fun onGameLeft(roomId: String)
     fun onGameJoined(roomId: String)
     fun onGameObserved(roomId: String)
 }

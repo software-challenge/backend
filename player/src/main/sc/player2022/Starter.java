@@ -8,7 +8,6 @@ import sc.networking.clients.LobbyClient;
 import sc.player.IGameHandler;
 import sc.player.IPlayerClient;
 import sc.player2022.logic.Logic;
-import sc.plugin2022.util.Constants;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;
@@ -24,7 +23,7 @@ public class Starter {
   public Starter(String host, int port, String reservation, String roomId) throws IOException {
     // Strategie zuweisen
     IGameHandler logic = new Logic();
-    IPlayerClient client = new LobbyClient(host, port).asPlayer(logic);
+    IPlayerClient client = new LobbyClient(host, port).asPlayer(logic, false);
 
     // einem Spiel beitreten
     if (reservation != null && !reservation.isEmpty()) {
@@ -71,8 +70,8 @@ public class Starter {
     } catch (Exception e) {
       logger.error("Beim Starten den Clients ist ein Fehler aufgetreten:", e);
       e.printStackTrace();
+      System.exit(1);
     }
-
   }
 
   private static void showHelp(String errorMsg) {
