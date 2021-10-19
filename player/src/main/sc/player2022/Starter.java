@@ -68,7 +68,7 @@ public class Starter {
     try {
       new Starter(host, port, reservation, room);
     } catch (Exception e) {
-      logger.error("Beim Starten den Clients ist ein Fehler aufgetreten:", e);
+      logger.error("Beim Starten des Clients ist ein Fehler aufgetreten:", e);
       e.printStackTrace();
       System.exit(1);
     }
