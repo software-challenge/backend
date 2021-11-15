@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.StringTokenizer;
@@ -133,16 +134,20 @@ public class TestClient extends XStreamClient {
         logger.info("Starting server from {}", serverLocation);
         ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getPath(), "--port", String.valueOf(port));
         logDir.mkdirs();
-        builder.redirectOutput(new File(logDir, "server_port" + port + ".log"));
+        File stdout = new File(logDir, "server_port" + port + ".log");
+        builder.redirectOutput(stdout);
         builder.redirectError(new File(logDir, "server_port" + port + "-err.log"));
         Process server = builder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
-        Thread.sleep(1000);
+        int i = 0;
+        while(Files.size(stdout.toPath()) < 1000 && i++ < 50)
+          Thread.sleep(300);
+        Thread.sleep(300);
       }
       testclient = new TestClient(host, port, numberOfTests);
       Runtime.getRuntime().addShutdownHook(new Thread(testclient::printScores));
     } catch (Exception e) {
-      logger.error("Error while initializing: " + e.toString());
+      logger.error("Error while initializing: " + e);
       e.printStackTrace();
       exit(2);
     }

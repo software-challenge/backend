@@ -2,6 +2,7 @@ import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import sc.gradle.ScriptsTask
+import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
@@ -133,9 +134,11 @@ tasks {
                     .redirectError(testGameDir.resolve("server-err.log"))
                     .directory(project(":server").buildDir.resolve("runnable"))
                     .start()
-            Thread.sleep(400)
+            var i = 0
+            while(Files.size(testGameDir.resolve("server.log").toPath()) < 1000 && i++ < 50)
+                Thread.sleep(300)
             val startClient: (Int) -> Process = {
-                Thread.sleep(100)
+                Thread.sleep(300)
                 ProcessBuilder(java, "-jar", deployDir.resolve(deployedPlayer).absolutePath)
                     .redirectOutput(testGameDir.resolve("client$it.log")).redirectError(testGameDir.resolve("client$it-err.log")).start()
             }
@@ -221,6 +224,7 @@ tasks {
     }
     
     check {
+        dependOnSubprojects()
         if (enableIntegrationTesting)
             dependsOn(integrationTest)
     }
