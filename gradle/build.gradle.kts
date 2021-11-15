@@ -195,12 +195,10 @@ tasks {
             serverDir.deleteRecursively()
             unzipTo(serverDir, deployDir.resolve("software-challenge-server.zip"))
     
-            println("Testing TestClient...")
-            val testClient =
-                    ProcessBuilder(
-                            (project(":test-client").getTasksByName("createStartScripts", false).single() as ScriptsTask).content.split(' ') +
-                            arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
-                    ).directory(serverDir).start()
+            val command = (project(":test-client").getTasksByName("createStartScripts", false).single() as ScriptsTask).content.split(' ') +
+                          arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
+            println("Testing TestClient with $command")
+            val testClient = ProcessBuilder(command).directory(serverDir).start()
             if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
                 // TODO check whether TestClient actually played games
@@ -306,11 +304,6 @@ allprojects {
                     manifest.attributes(
                             "Main-Class" to project.extensions.getByType<JavaApplication>().mainClass.get(),
                             "Add-Opens" to arrayOf(
-                                    "javafx.controls/javafx.scene.control.skin",
-                                    "javafx.controls/javafx.scene.control",
-                                    "javafx.graphics/javafx.scene",
-                                    // For accessing InputMap used in RangeSliderBehavior
-                                    "javafx.controls/com.sun.javafx.scene.control.inputmap",
                                     // Expose list internals for xstream conversion: https://github.com/x-stream/xstream/issues/253
                                     "java.base/java.util").joinToString(" ")
                     )

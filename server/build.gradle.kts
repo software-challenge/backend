@@ -56,7 +56,7 @@ tasks {
         from(runnableDir)
         doFirst {
             if(project.property("enableTestClient") !in arrayOf(null, false))
-                from(project(":test-client").getTasksByName("jar", false))
+                from(arrayOf("jar", "copyLogbackConfig").map { project(":test-client").getTasksByName(it, false) })
             from(project(":player").getTasksByName("shadowJar", false))
             exec {
                 commandLine("git", "rev-parse", "HEAD")

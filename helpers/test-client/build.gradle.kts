@@ -26,8 +26,13 @@ tasks {
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
     }
     
+    val copyLogbackConfig by creating(Copy::class) {
+        from("src/logback-tests.xml")
+        into(jar.get().destinationDirectory)
+    }
+    
     jar {
-        dependsOn(createStartScripts)
+        dependsOn(createStartScripts, copyLogbackConfig)
         doFirst {
             manifest.attributes(
                     "Class-Path" to configurations.default.get()
@@ -35,10 +40,6 @@ tasks {
                             .plus("server.jar")
                             .joinToString(" ")
             )
-            copy {
-                from("src/logback-tests.xml")
-                into(destinationDirectory)
-            }
         }
     }
     
