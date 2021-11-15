@@ -1,7 +1,8 @@
 package sc.plugin2022
 
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.string.shouldHaveLineCount
+import io.kotest.matchers.*
+import io.kotest.matchers.string.*
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
@@ -58,6 +59,22 @@ class GameStateTest: FunSpec({
                   </ambers>
                 </state>
             """.trimIndent()
+        }
+    }
+    context("state detection") {
+        test("isOver") {
+            val state = GameState()
+            state.round shouldBe 0
+            state.isOver shouldBe false
+            val state60 = GameState(turn = 58)
+            state60.round shouldBe 29
+            state60.isOver shouldBe false
+            state60.turn++
+            state60.round shouldBe 30
+            state60.isOver shouldBe false
+            state60.turn++
+            state60.round shouldBe 30
+            state60.isOver shouldBe true
         }
     }
 })

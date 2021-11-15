@@ -49,7 +49,7 @@ data class GameState @JvmOverloads constructor(
         }
     
     val isOver
-        get() = round > Constants.ROUND_LIMIT || (ambers.any { it.value >= 2 } && turn % 2 == 0)
+        get() = turn % 2 == 0 && (round >= Constants.ROUND_LIMIT || ambers.any { it.value >= 2 } )
     
     /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForTeam(team: ITeam): Int =
