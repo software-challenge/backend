@@ -7,13 +7,15 @@ import jargs.gnu.CmdLineParser.Option;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGamePlugin;
-import sc.framework.plugins.Player;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.ProtocolPacket;
+import sc.protocol.requests.AuthenticateRequest;
+import sc.protocol.requests.ObservationRequest;
+import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.responses.GamePreparedResponse;
+import sc.protocol.responses.ObservationResponse;
 import sc.protocol.room.RoomPacket;
-import sc.protocol.requests.*;
-import sc.protocol.responses.*;
 import sc.server.Configuration;
 import sc.shared.*;
 
@@ -22,13 +24,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntToDoubleFunction;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.pow;
 import static sc.Util.factorial;
@@ -209,25 +211,39 @@ public class TestClient extends XStreamClient {
         StringBuilder scoreUpdate = new StringBuilder(String.format("New scores after %s of %s games:", finishedTests, totalTests));
         for (int player = 0; player < players.length; player++) {
           int finalPlayer = player;
-          PlayerScore score = result.getScores().entrySet().stream().filter(entry -> entry.getKey().getTeam().getIndex() == finalPlayer).findFirst().get().getValue();
+          PlayerScore scores = result.getScores().entrySet().stream().filter(entry -> entry.getKey().getTeam().getIndex() == finalPlayer).findFirst().get().getValue();
+          if(players[player].score == null)
+            players[player].score = new ScoreValue[scoreDefinition.getSize()];
           ScoreValue[] scoreValues = players[player].score;
           for (int scoreIndex = 0; scoreIndex < scoreDefinition.getSize(); scoreIndex++) {
-            ScoreValue value = scoreValues[scoreIndex];
-            if (!result.getDefinition().get(scoreIndex).equals(value.getFragment())) {
-              logger.error("Could not add current game result to scores. Score definition of player and result do not match.");
-              throw new InvalidScoreDefinitionException("ScoreDefinition of player does not match expected score definition");
+            BigDecimal value = scores.getValues().get(scoreIndex);
+            if(scoreValues[scoreIndex] == null) {
+              scoreValues[scoreIndex] = new ScoreValue(scoreDefinition.get(scoreIndex), value);
+            } else {
+              ScoreValue score = scoreValues[scoreIndex];
+              if(!Objects.equals(scoreDefinition.get(scoreIndex), score.getFragment())) {
+                logger.error("Could not add current game result to scores. Score definition of player and result do not match.");
+                throw new InvalidScoreDefinitionException("ScoreDefinition of player does not match expected score definition");
+              }
+              if(score.getFragment().getAggregation() == ScoreAggregation.AVERAGE)
+                score.setValue(updateAverage(score.getValue(), finishedTests, value));
+              else
+                score.setValue(score.getValue().add(value));
             }
-            if(value.getFragment().getAggregation() == ScoreAggregation.AVERAGE)
-              value.setValue(updateAverage(value.getValue(), finishedTests, score.getValues().get(scoreIndex)));
-            else
-              value.setValue(value.getValue().add(score.getValues().get(scoreIndex)));
           }
-          scoreUpdate.append(String.format("%s: Siegpunkte %s, \u2205Wert 1 %5.2f",
-              players[player].name, scoreValues[0].getValue(), scoreValues[1].getValue()));
+          scoreUpdate.append(String.format(" %s[%s]",
+              players[player].name,
+              Arrays.stream(scoreValues).map((value) -> {
+                ScoreFragment fragment = value.getFragment();
+                return String.format("%s%s %5.2f",
+                    fragment.getAggregation() == ScoreAggregation.AVERAGE ? "\u2205" : "",
+                    fragment.getName(), value.getValue());
+              }).collect(Collectors.joining(", "))
+          ));
         }
         logger.info(scoreUpdate.toString());
 
-        if (isSignificant() || terminateWhenPossible) {
+        if (isSignificant() || finishedTests == totalTests) {
           printScores();
           exit(0);
         }
@@ -243,10 +259,7 @@ public class TestClient extends XStreamClient {
             player.proc.destroyForcibly();
           }
 
-        if (finishedTests == totalTests)
-          terminateWhenPossible = true;
-        else
-          prepareNewClients();
+        prepareNewClients();
       } else {
         if (logger.isInfoEnabled() && !logger.isTraceEnabled()) {
           if (!gameProgressing) {
