@@ -1,5 +1,5 @@
 # Changelog
-All notable changes to this project will be documented in this file.
+All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0),
 
 The `x.y.z` version is tracked in [gradle.properties](./gradle.properties) to enable programmatic updating via the Gradle `release` task.
@@ -10,13 +10,17 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
   
-## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) - 2021-09
+## [22.1.0](https://github.com/software-challenge/backend/commits/22.1.0) Polish - 2021-11-15
+- Ensure compatibility beyond Java 16
+- Fix game ending a turn too late on round limit (7b096f105)
+- Fix irritating error messages at game end
+- Release TestClient
 
 ## [22.0.3](https://github.com/software-challenge/backend/commits/22.0.3) - 2021-07-26
 - Fix simpleclient setup
 - Only end game after full rounds
 
-## [22.0.2](https://github.com/software-challenge/backend/commits/22.0.2) - 2021-07-16
+## [22.0.2](https://github.com/software-challenge/backend/commits/22.0.2) Protocol Revamp - 2021-07-16
 - Update documentation links
 - Various improvements around testing
 ### Protocol
@@ -27,8 +31,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - Do not send repeated MoveRequests when pausing/unpausing
 - Stop terminating client connections upon protocol issues ([6c6d6fa51](https://github.com/software-challenge/backend/commit/6c6d6fa51af71eea3914303cb886bd8b78be53a0))
 
-## [22.0.1](https://github.com/software-challenge/backend/commits/22.0.1) - 2021-06-25
-### Ostseeschach
+## [22.0.1](https://github.com/software-challenge/backend/commits/22.0.1) Adjust Ostseeschach plugin - 2021-06-25
 - Implemented proper winner calculation
 - Added some utility methods
 - Adjusted XML
