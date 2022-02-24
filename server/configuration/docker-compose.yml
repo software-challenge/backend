@@ -1,5 +1,5 @@
 version: '3.2'
 services:
   gameserver:
-    image: swc_game-server
+    image: localhost:5000/swc_game-server
     hostname: gameserver
