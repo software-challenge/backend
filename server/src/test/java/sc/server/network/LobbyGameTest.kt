@@ -5,11 +5,10 @@ import io.kotest.assertions.until.Interval
 import io.kotest.assertions.until.fibonacci
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.*
+import io.kotest.matchers.collections.*
+import io.kotest.matchers.nulls.*
+import io.kotest.matchers.string.*
 import sc.api.plugins.Team
 import sc.protocol.ResponsePacket
 import sc.protocol.requests.JoinPreparedRoomRequest
@@ -55,7 +54,15 @@ class LobbyGameTest: WordSpec({
             lobby.games shouldHaveSize 1
             return prepared
         }
-        
+        fun observeRoom(roomId: String): MessageListener<ObservableRoomMessage> {
+            val roomListener = MessageListener<ObservableRoomMessage>()
+            withClue("accept observation") {
+                admin.observe(roomId, roomListener::addMessage)
+                adminListener.waitForMessage(ObservationResponse::class)
+            }
+            return roomListener
+        }
+    
         val playerClients = Array(2) { testLobby.connectClient() }
         val playerHandlers = Array(2) { TestGameHandler() }
         val players = Array(2) { playerClients[it].asPlayer(playerHandlers[it]) }
@@ -64,7 +71,15 @@ class LobbyGameTest: WordSpec({
             players[0].joinGame(TestPlugin.TEST_PLUGIN_UUID)
             "create a room for it" {
                 await("Room opened") { lobby.games.size shouldBe 1 }
-                lobby.games.single().clients shouldHaveSize 1
+                val room = lobby.games.single()
+                room.clients shouldHaveSize 1
+                "return GameResult on step" {
+                    val roomListener = observeRoom(room.id)
+                    admin.control(room.id).step()
+                    val result = roomListener.waitForMessage(GameResult::class)
+                    result.winner shouldBe Team.ONE
+                    playerHandlers[0].gameResult?.winner shouldBe Team.ONE
+                }
                 playerClients[0].stop()
                 await("Stops when client dies") { lobby.games shouldHaveSize 0 }
                 // TODO do not terminate room when client leaves
@@ -163,12 +178,7 @@ class LobbyGameTest: WordSpec({
                 room.slots[1].isEmpty shouldBe false
             }
             
-            val roomListener = MessageListener<ObservableRoomMessage>()
-            withClue("accept observation") {
-                admin.observe(prepared.roomId, roomListener::addMessage)
-                adminListener.waitForMessage(ObservationResponse::class)
-            }
-            
+            val roomListener = observeRoom(prepared.roomId)
             players[0].joinGameWithReservation(prepared.reservations.single())
             "react to controller" {
                 await("game start") {
