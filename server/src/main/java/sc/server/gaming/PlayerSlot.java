@@ -5,6 +5,7 @@ import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.Player;
 import sc.networking.clients.IClient;
 import sc.networking.clients.XStreamClient;
+import sc.protocol.ProtocolPacket;
 import sc.protocol.room.RoomMessage;
 import sc.server.network.Client;
 import sc.server.network.IClientListener;
@@ -72,7 +73,7 @@ public class PlayerSlot implements IPlayerListener, IClientListener {
     this.reserved = false;
   }
 
-  public IClient getClient() {
+  public Object getClient() {
     return this.client;
   }
 
@@ -80,9 +81,17 @@ public class PlayerSlot implements IPlayerListener, IClientListener {
     return player;
   }
 
+  public void sendPacket(ProtocolPacket packet) {
+    if(client != null) {
+      client.send(packet);
+    } else {
+      onClientDisconnected(null, XStreamClient.DisconnectCause.NOT_CONNECTED);
+    }
+  }
+
   @Override
   public void onPlayerEvent(RoomMessage message) {
-    client.send(getRoom().createRoomPacket(message));
+    sendPacket(getRoom().createRoomPacket(message));
   }
 
   @Override

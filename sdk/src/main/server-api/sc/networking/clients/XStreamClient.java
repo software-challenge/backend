@@ -49,6 +49,7 @@ public abstract class XStreamClient implements IClient {
     PROTOCOL_ERROR,
     LOST_CONNECTION,
     TIMEOUT,
+    NOT_CONNECTED,
     UNKNOWN
   }
 

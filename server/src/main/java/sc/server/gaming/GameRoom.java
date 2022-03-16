@@ -75,7 +75,7 @@ public class GameRoom implements IGameListener {
       saveReplayMessage(result);
       broadcast(result);
     } catch (Throwable t) {
-      logger.error("Failed to generate GameResult from " + results, t);
+      logger.error("Failed to broadcast GameResult from " + results, t);
     }
 
     saveReplay();
@@ -123,7 +123,7 @@ public class GameRoom implements IGameListener {
 
   /** Send ProtocolMessage to all listeners. */
   private void broadcast(ProtocolPacket packet) {
-    playerSlots.forEach(slot -> slot.getClient().send(packet));
+    playerSlots.forEach(slot -> slot.sendPacket(packet));
     observers.forEach(observer -> observer.send(packet));
   }
 
@@ -161,7 +161,7 @@ public class GameRoom implements IGameListener {
   /** Sends the given GameState to all Players. */
   private void sendStateToPlayers(IGameState data) {
     playerSlots.forEach(slot ->
-        slot.getClient().send(createRoomPacket(new MementoMessage(data, slot.getPlayer()))));
+        slot.onPlayerEvent(new MementoMessage(data, slot.getPlayer())));
   }
 
 
@@ -226,9 +226,9 @@ public class GameRoom implements IGameListener {
   }
 
   private synchronized void start() {
+    logger.info("Starting {}", game);
     this.game.start();
     setStatus(GameStatus.ACTIVE);
-    logger.info("Started {}", game);
   }
 
   /** Get the number of players allowed in the game. */
@@ -313,7 +313,7 @@ public class GameRoom implements IGameListener {
   }
 
   /** Get Server {@link IClient Clients} of all {@link PlayerSlot Players}. */
-  public Collection<IClient> getClients() {
+  public Collection<Object> getClients() {
     return playerSlots.stream()
         .filter(p -> !p.isEmpty())
         .map(PlayerSlot::getClient)
@@ -364,7 +364,7 @@ public class GameRoom implements IGameListener {
    *               conditions are not met. This should result in a GameOver.
    */
   public synchronized void step(boolean forced) {
-    if (this.status == GameStatus.CREATED) {
+    if (getStatus() == GameStatus.CREATED) {
       if (forced) {
         logger.warn("Forcing game start for {}", game);
         start();
@@ -378,7 +378,7 @@ public class GameRoom implements IGameListener {
 
   /** Kick all players, destroy the game and remove it from the manager. */
   public void cancel() {
-    // this will invoked onGameOver and thus stop everything else
+    // this will invoke onGameOver and thus stop everything else
     this.game.stop();
   }
 

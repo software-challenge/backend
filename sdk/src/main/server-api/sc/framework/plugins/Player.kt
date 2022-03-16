@@ -64,11 +64,8 @@ class Player @JvmOverloads constructor(
         this.listeners.remove(listener)
     }
 
-    fun notifyListeners(o: RoomMessage) {
-        for (listener in ArrayList(listeners)) {
-            listener.onPlayerEvent(o)
-        }
-    }
+    fun notifyListeners(o: RoomMessage) =
+        ArrayList(listeners).forEach { it.onPlayerEvent(o) }
 
     fun requestMove() {
         val request = MoveRequest()
