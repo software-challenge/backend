@@ -221,7 +221,7 @@ public class TestClient extends XStreamClient {
             players[player].score = new ScoreValue[scoreDefinition.getSize()];
           ScoreValue[] scoreValues = players[player].score;
           for (int scoreIndex = 0; scoreIndex < scoreDefinition.getSize(); scoreIndex++) {
-            BigDecimal value = scores.getValues().get(scoreIndex);
+            BigDecimal value = scores.getParts()[scoreIndex];
             if(scoreValues[scoreIndex] == null) {
               scoreValues[scoreIndex] = new ScoreValue(scoreDefinition.get(scoreIndex), value);
             } else {

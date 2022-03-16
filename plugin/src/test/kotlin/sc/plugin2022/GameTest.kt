@@ -7,6 +7,7 @@ import sc.api.plugins.Team
 import sc.plugin2022.util.WinReason
 import sc.shared.InvalidMoveException
 import sc.shared.WinCondition
+import java.math.BigDecimal
 import java.util.EnumMap
 
 class GameTest: FunSpec({
@@ -15,9 +16,12 @@ class GameTest: FunSpec({
         val game = Game(GameState(
                 makeBoard(6 y 6 to "H", 2 y 1 to "s"), 1,
                 ambers = fullAmbers()))
+        val players = Array(2) { game.onPlayerJoined() }
         game.checkWinCondition() shouldBe null
         game.currentState.turn++
         game.checkWinCondition() shouldBe WinCondition(Team.ONE, WinReason.DIFFERING_POSITIONS)
+        game.getScoreFor(players[0]).parts shouldBe arrayOf(BigDecimal(2), BigDecimal(2), BigDecimal(6))
+        game.getScoreFor(players[1]).parts shouldBe arrayOf(BigDecimal(0), BigDecimal(2), BigDecimal(5))
         
         val move = Move(2 y 1, 1 y 1)
         val state = game.currentState

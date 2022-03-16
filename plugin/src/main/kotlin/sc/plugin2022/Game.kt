@@ -48,6 +48,9 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
     val isGameOver: Boolean
         get() = currentState.isOver
     
+    fun Coordinates.lightScore(team: Team) =
+            abs(x - team.startLine)
+    
     /**
      * Checks whether and why the game is over.
      *
@@ -60,8 +63,8 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
         } ?: run {
             val lightPieces = currentState.board.filterValues { it.type.isLight }
             val teamPositions = Team.values().associateWith { team ->
-                fun dist(c: Coordinates) = abs(c.x - team.startLine)
-                lightPieces.filterValues { it.team == team }.keys.map(::dist).sortedDescending()
+                lightPieces.filterValues { it.team == team }.keys
+                        .map { it.lightScore(team) }.sortedDescending()
             }
             logger.trace("checkWinCondition TeamPositions: {}", teamPositions)
             (0 until teamPositions.values.minOf { it.size }).mapNotNull { index ->
@@ -120,7 +123,8 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
                 reason,
                 score,
                 currentState.getPointsForTeam(team),
-                currentState.board.filterValues { it.team == team && it.type.isLight }.maxOf { it.key.y }
+                currentState.board.filterValues { it.team == team && it.type.isLight }
+                        .maxOf { it.key.lightScore(team) }
         )
     }
     

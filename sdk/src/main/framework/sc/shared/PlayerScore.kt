@@ -23,9 +23,6 @@ data class PlayerScore(
     
     fun size(): Int = parts.size
     
-    val values: List<BigDecimal>
-        get() = parts.asList()
-    
     fun matches(definition: ScoreDefinition): Boolean =
             size() == definition.size
     
