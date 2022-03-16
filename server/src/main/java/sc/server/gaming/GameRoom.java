@@ -381,6 +381,7 @@ public class GameRoom implements IGameListener {
 
   /** Kick all players, destroy the game and remove it from the manager. */
   public void cancel() {
+    playerSlots.forEach(slot -> { if(slot.isEmpty()) slot.getPlayer().setLeft(XStreamClient.DisconnectCause.NOT_CONNECTED); });
     // this will invoke onGameOver and thus stop everything else
     this.game.stop();
   }
@@ -409,9 +410,6 @@ public class GameRoom implements IGameListener {
   /** Remove a player and stop the game. */
   public void removePlayer(Player player, XStreamClient.DisconnectCause cause) {
     logger.info("Removing {} from {}", player, this);
-    // Mark all non-joined players as left to trigger a draw when noone joined
-    // Might be superfluous through the check in "step", but keeping for safety
-    playerSlots.forEach(slot -> slot.getPlayer().setLeft(slot.isEmpty() ? cause : null));
     player.setLeft(cause);
     if (!isOver())
       cancel();

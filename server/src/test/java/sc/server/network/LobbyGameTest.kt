@@ -4,6 +4,7 @@ import io.kotest.assertions.timing.eventually
 import io.kotest.assertions.until.Interval
 import io.kotest.assertions.until.fibonacci
 import io.kotest.assertions.withClue
+import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
@@ -29,6 +30,8 @@ import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.shared.GameResult
+import sc.shared.PlayerScore
+import sc.shared.ScoreCause
 import sc.shared.SlotDescriptor
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -78,8 +81,10 @@ class LobbyGameTest: WordSpec({
                     val roomListener = observeRoom(room.id)
                     admin.control(room.id).step(true)
                     val result = roomListener.waitForMessage(GameResult::class)
+                    playerHandlers[0].gameResult shouldBe result
                     result.winner shouldBe Team.ONE
-                    playerHandlers[0].gameResult?.winner shouldBe Team.ONE
+                    result.isRegular shouldBe false
+                    result.scores.values.last().cause shouldBe ScoreCause.LEFT
                     admin.closed shouldBe false
                 }
                 playerClients[0].stop()
@@ -103,6 +108,10 @@ class LobbyGameTest: WordSpec({
                 val result = roomListener.waitForMessage(GameResult::class)
                 withClue("No Winner") {
                     result.winner shouldBe null
+                    result.isRegular shouldBe false
+                    forAll<PlayerScore>(result.scores.mapKeys { it.key.displayName }.toList()) {
+                        it.cause shouldBe ScoreCause.LEFT
+                    }
                 }
                 adminListener.waitForMessage(RemovedFromGame::class)
                 roomListener.clearMessages() shouldBe 0
