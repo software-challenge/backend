@@ -75,10 +75,11 @@ class LobbyGameTest: WordSpec({
                 room.clients shouldHaveSize 1
                 "return GameResult on step" {
                     val roomListener = observeRoom(room.id)
-                    admin.control(room.id).step()
+                    admin.control(room.id).step(true)
                     val result = roomListener.waitForMessage(GameResult::class)
                     result.winner shouldBe Team.ONE
                     playerHandlers[0].gameResult?.winner shouldBe Team.ONE
+                    admin.closed shouldBe false
                 }
                 playerClients[0].stop()
                 await("Stops when client dies") { lobby.games shouldHaveSize 0 }
