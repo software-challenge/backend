@@ -367,7 +367,10 @@ public class GameRoom implements IGameListener {
     if (getStatus() == GameStatus.CREATED) {
       if (forced) {
         logger.warn("Forcing game start for {}", game);
-        start();
+        if(getClients().size() < 2)
+          cancel();
+        else
+          start();
       } else {
         logger.info("Game isn't active yet, step was not forced.");
       }
@@ -406,7 +409,10 @@ public class GameRoom implements IGameListener {
   /** Remove a player and stop the game. */
   public void removePlayer(Player player, XStreamClient.DisconnectCause cause) {
     logger.info("Removing {} from {}", player, this);
-    player.setLeft(true);
+    // Mark all non-joined players as left to trigger a draw when noone joined
+    // Might be superfluous through the check in "step", but keeping for safety
+    playerSlots.forEach(slot -> slot.getPlayer().setLeft(slot.isEmpty() ? cause : null));
+    player.setLeft(cause);
     if (!isOver())
       cancel();
   }

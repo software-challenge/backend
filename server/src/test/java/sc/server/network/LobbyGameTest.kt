@@ -10,6 +10,7 @@ import io.kotest.matchers.collections.*
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
 import sc.api.plugins.Team
+import sc.protocol.RemovedFromGame
 import sc.protocol.ResponsePacket
 import sc.protocol.requests.JoinPreparedRoomRequest
 import sc.protocol.requests.PrepareGameRequest
@@ -94,6 +95,18 @@ class LobbyGameTest: WordSpec({
             withClue("GameRoom is empty and paused") {
                 room.clients.shouldBeEmpty()
                 room.isPauseRequested shouldBe true
+            }
+    
+            "return GameResult on step" {
+                val roomListener = observeRoom(room.id)
+                admin.control(room.id).step(true)
+                val result = roomListener.waitForMessage(GameResult::class)
+                withClue("No Winner") {
+                    result.winner shouldBe null
+                }
+                adminListener.waitForMessage(RemovedFromGame::class)
+                roomListener.clearMessages() shouldBe 0
+                admin.closed shouldBe false
             }
             
             val reservations = prepared.reservations

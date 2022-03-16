@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.api.plugins.ITeam
 import sc.api.plugins.host.IPlayerListener
+import sc.networking.clients.XStreamClient.DisconnectCause
 import sc.protocol.room.MoveRequest
 import sc.protocol.room.RoomMessage
 import sc.util.PlayerConverter
@@ -37,9 +38,9 @@ class Player @JvmOverloads constructor(
     var canTimeout: Boolean = false
 
     @XStreamOmitField
-    var left = false
+    var left: DisconnectCause? = null
 
-    fun hasLeft() = left
+    fun hasLeft() = left != null
 
     @XStreamOmitField
     var softTimeout = false

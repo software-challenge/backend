@@ -8,4 +8,4 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 data class RemovedFromGame(
         @XStreamAsAttribute
         val roomId: String
-): ProtocolPacket
+): ResponsePacket
