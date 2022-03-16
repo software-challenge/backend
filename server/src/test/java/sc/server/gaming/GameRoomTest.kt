@@ -50,7 +50,6 @@ val minimalReplay = """
             </score>
           </entry>
         </scores>
-        <winner team="ONE"/>
       </data>
     </room>
     </protocol>""".trimIndent()
@@ -74,6 +73,7 @@ class GameRoomTest: WordSpec({
             room.onGameOver(playersScores)
             room.result.isRegular shouldBe true
             room.result.scores shouldContainExactly playersScores
+            room.result.winner shouldBe null
             room.isOver shouldBe true
         }
         "save a correct replay" {

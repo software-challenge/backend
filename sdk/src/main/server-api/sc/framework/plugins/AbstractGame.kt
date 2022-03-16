@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGameState
 import sc.api.plugins.IMove
+import sc.api.plugins.ITeam
 import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.exceptions.NotYourTurnException
 import sc.api.plugins.host.IGameListener
@@ -25,6 +26,10 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
     protected val listeners = mutableListOf<IGameListener>()
     
     private var moveRequestTimeout: ActionTimeout? = null
+    
+    override val winner: ITeam?
+        get() = players.singleOrNull { !it.hasViolated() && !it.hasLeft() }?.team ?:
+                checkWinCondition()?.also { logger.trace("No Winner via violation, WinCondition: {}", it) }?.winner
     
     /** Pause the game after current turn has finished or continue playing. */
     override var isPaused = false

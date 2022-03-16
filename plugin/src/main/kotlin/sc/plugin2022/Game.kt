@@ -42,9 +42,6 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
         return player
     }
     
-    override val winner: ITeam?
-        get() = players.singleOrNull { !it.hasViolated() }?.team ?: checkWinCondition()?.winner
-    
     override val playerScores: MutableList<PlayerScore>
         get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
     
@@ -58,7 +55,6 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
      */
     override fun checkWinCondition(): WinCondition? {
         if (!isGameOver) return null
-        
         return Team.values().toList().maxByNoEqual(currentState::getPointsForTeam)?.let {
             WinCondition(it, WinReason.DIFFERING_SCORES)
         } ?: run {
@@ -67,6 +63,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
                 fun dist(c: Coordinates) = abs(c.x - team.startLine)
                 lightPieces.filterValues { it.team == team }.keys.map(::dist).sortedDescending()
             }
+            logger.trace("checkWinCondition TeamPositions: {}", teamPositions)
             (0 until teamPositions.values.minOf { it.size }).mapNotNull { index ->
                 teamPositions.entries.maxByNoEqual { it.value[index] }?.key
             }.firstOrNull().let {
