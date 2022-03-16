@@ -29,7 +29,7 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
     
     override val winner: ITeam?
         get() = players.singleOrNull { !it.hasViolated() && !it.hasLeft() }?.team ?:
-                checkWinCondition()?.also { logger.trace("No Winner via violation, WinCondition: {}", it) }?.winner
+                checkWinCondition()?.also { logger.debug("No Winner via violation, WinCondition: {}", it) }?.winner
     
     /** Pause the game after current turn has finished or continue playing. */
     override var isPaused = false

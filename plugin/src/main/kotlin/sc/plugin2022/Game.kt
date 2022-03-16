@@ -116,12 +116,10 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
                 }
                 player.hasLeft() -> {
                     cause = ScoreCause.LEFT
-                    reason = "Der Spieler hat das Spiel verlassen"
+                    reason = "Der Spieler hat das Spiel verlassen: ${player.left}"
                 }
             }
-        return PlayerScore(cause,
-                reason,
-                score,
+        return PlayerScore(cause, reason, score,
                 currentState.getPointsForTeam(team),
                 currentState.board.filterValues { it.team == team && it.type.isLight }
                         .maxOf { it.key.lightScore(team) }

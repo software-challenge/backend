@@ -160,7 +160,7 @@ public abstract class XStreamClient implements IClient {
   }
 
   public void sendCustomData(byte[] data) throws IOException {
-    logger.info("Sending custom data (size={})", data.length);
+    logger.info("Sending custom data ({} bytes)", data.length);
     networkInterface.getOutputStream().write(data);
     networkInterface.getOutputStream().flush();
   }

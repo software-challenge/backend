@@ -1,5 +1,6 @@
 package sc.server.network
 
+import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import sc.api.plugins.Team
@@ -50,7 +51,10 @@ class LobbyTest: RealServerTest() {
         
         await("Game is over") { room.isOver }
         await("Receive GameResult") { room.result != null }
-        room.result.scores.filterKeys { it.team == Team.ONE }.values.single().cause shouldBe ScoreCause.LEFT
+        withClue("Irregular GameResult") {
+            room.result.isRegular shouldBe false
+            room.result.scores.filterKeys { it.team == Team.ONE }.values.single().cause shouldBe ScoreCause.LEFT
+        }
         
         await("GameRoom closes") { gameMgr.games.isEmpty() }
     }
