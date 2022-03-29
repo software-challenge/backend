@@ -215,7 +215,7 @@ public class TestClient extends XStreamClient {
         ScoreDefinition scoreDefinition = result.getDefinition();
         StringBuilder scoreUpdate = new StringBuilder(String.format("New scores after %s of %s games:", finishedTests, totalTests));
         for (int player = 0; player < players.length; player++) {
-          int finalPlayer = player;
+          int finalPlayer = (finishedTests - 1 + player) % 2;
           PlayerScore scores = result.getScores().entrySet().stream().filter(entry -> entry.getKey().getTeam().getIndex() == finalPlayer).findFirst().get().getValue();
           if(players[player].score == null)
             players[player].score = new ScoreValue[scoreDefinition.getSize()];
