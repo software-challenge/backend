@@ -2,6 +2,18 @@
 
 This document captures development standards and architecture decisions of this project as a point of reference.
 
+## Gradle
+
+We build everything with gradle, nesting projects if needed.
+Currently we have some pending updates, due to the following incompatibilities:
+
+- The new johnrengelman.shadow plugin version needs Gradle 7
+- The current Dokka version can neither handle Gradle 7 nor Kotlin 1.5.30+ nor Java beyond version 8
+
+The bottleneck is updating dokka,
+which is a longer process tracked in 
+https://github.com/software-challenge/backend/pull/404
+
 ## Testing
 
 Unsere Unittests nutzen das [Kotest-Framework](https://kotest.io) 
@@ -41,7 +53,7 @@ annotate the serialized fields with a concrete type instead.
 Ideally these fields should then be private with generically typed getters 
 as to not expose the implementation details internally.
 
-## Cloning
+## Object Cloning
 
 Relevant discussion: https://github.com/software-challenge/backend/pull/148
 
