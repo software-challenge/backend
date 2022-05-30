@@ -8,7 +8,7 @@ import java.io.OutputStream;
 
 public class NullOutputStream extends OutputStream {
   private boolean closed = false;
-  private boolean warnOnWrite = false;
+  private boolean warnOnWrite;
   private static final Logger logger = LoggerFactory.getLogger(NullOutputStream.class);
 
   public NullOutputStream() {
@@ -22,14 +22,14 @@ public class NullOutputStream extends OutputStream {
   @Override
   public void write(int b) throws IOException {
     warn();
-    if (this.closed)
-      throw new IOException("Write to closed stream");
   }
 
-  private void warn() {
+  private void warn() throws IOException {
     if (this.warnOnWrite) {
       logger.warn("Wrote data to a NullOutputStream.");
     }
+    if (this.closed)
+      throw new IOException("Write to a closed stream");
   }
 
   @Override
@@ -38,8 +38,6 @@ public class NullOutputStream extends OutputStream {
 
     if (data == null)
       throw new NullPointerException("data is null");
-    if (this.closed)
-      throw new IOException("Write to closed stream");
   }
 
   @Override

@@ -13,9 +13,8 @@ import java.io.InputStream
 import java.util.zip.GZIPInputStream
 
 /**
- * This client serves the purpose to load a game state from
- * any XML file (a replay for example).
- * It is used to load a given board to play on.
+ * This client serves the purpose to load game information from any XML file
+ * (for example a replay).
  */
 class GameLoaderClient(inputStream: InputStream): XStreamClient(FileSystemInterface(inputStream)) {
     constructor(file: File): this(if(file.extension == "gz") GZIPInputStream(file.inputStream()) else file.inputStream())
@@ -46,6 +45,9 @@ class GameLoaderClient(inputStream: InputStream): XStreamClient(FileSystemInterf
         getHistory().first {
             it.turn >= turn
         }
+    
+    override fun toString(): String =
+        super.toString() + "(histsize: ${history.size}, result: $result)"
     
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)

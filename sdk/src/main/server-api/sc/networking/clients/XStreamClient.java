@@ -227,7 +227,6 @@ public abstract class XStreamClient implements IClient {
    * Should be called when the client needs to be stopped
    * and the disconnect is initiated on this side.
    * There are two situations where this should be done:
-   * <p>
    * - A game has ended
    * - An error occurred
    */
