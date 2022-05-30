@@ -119,9 +119,9 @@ public abstract class XStreamClient implements IClient {
         }
       }
     } catch (IOException e) {
-      // The other side closed the connection. It is better when the other
-      // side sends a CloseConnection message before, giving this side the
-      // chance to close the connection regularly.
+      // The other side closed the connection.
+      // It is better when the other side sends a CloseConnection message beforehand,
+      // giving this side the chance to close the connection properly.
       // NOTE that a XStreamClient exists on both sides of the connection
       // (as a Client object on the server side and as a LobbyClient
       // object on the client side).
@@ -195,16 +195,6 @@ public abstract class XStreamClient implements IClient {
   }
 
   protected final void handleDisconnect(DisconnectCause cause) {
-    handleDisconnect(cause, null);
-  }
-
-  protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
-    if (exception != null) {
-      logger.warn("{} disconnected (Cause: {}, Exception: {})", this, cause, exception, exception);
-    } else {
-      logger.info("{} disconnected (Cause: {})", this, cause);
-    }
-
     this.disconnectCause = cause;
 
     try {
@@ -213,10 +203,16 @@ public abstract class XStreamClient implements IClient {
       logger.error("Failed to close", e);
     }
 
-    onDisconnect(cause);
+    onDisconnected(cause);
   }
 
-  protected void onDisconnect(DisconnectCause cause) {
+  protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
+    logger.warn("{} disconnecting (Cause: {}, Exception: {})", this, cause, exception.toString(), exception);
+    handleDisconnect(cause);
+  }
+
+  protected void onDisconnected(DisconnectCause cause) {
+    logger.info("{} disconnected (Cause: {})", this, cause);
   }
 
   public DisconnectCause getDisconnectCause() {

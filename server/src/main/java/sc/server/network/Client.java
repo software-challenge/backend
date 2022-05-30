@@ -81,7 +81,8 @@ public class Client extends XStreamClient implements IClient {
 
   /** Disconnect the client and cleanup. */
   @Override
-  protected void onDisconnect(DisconnectCause cause) {
+  protected void onDisconnected(DisconnectCause cause) {
+    super.onDisconnected(cause);
     if (!this.notifiedOnDisconnect) {
       this.notifiedOnDisconnect = true;
       for (IClientListener listener : new ArrayList<>(clientListeners)) {
