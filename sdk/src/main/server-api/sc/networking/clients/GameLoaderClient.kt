@@ -47,7 +47,7 @@ class GameLoaderClient(inputStream: InputStream): XStreamClient(FileSystemInterf
         }
     
     override fun toString(): String =
-        super.toString() + "(histsize: ${history.size}, result: $result)"
+        super.toString() + "(histsize=${history.size}, result=$result)"
     
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
