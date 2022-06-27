@@ -2,16 +2,12 @@
 shopt -s lastpipe
 
 scopes_file=".dev/scopes.txt"
+test -r $scopes_file &&
+  scopes="($(cat "$scopes_file" | sed '/^\(#.*\|\)$/d' | sed ':a;N;s/\n/|/g;ta'))"
 
-scopes="("
-cat "$scopes_file" | while read a;
-do test -z "$a" || [[ "$a" == \#* ]] || scopes+="$a|";
-done;
-scopes="${scopes%\|})"
-
-cat "$1" | grep -Eq "(fix|feat|docs|style|refactor|test|chore|rework|release)(\($scopes(/.+)?\))?: [a-z]"
+grep -Eq "(fix|feat|docs|style|refactor|test|chore|rework|release)(\(${scopes:-.*}(/.+)?\))?: [a-z]" "$1"
 result=$?
 if test $result -ne 0
-then echo "Please check that the commit message adheres to the guidelines at http://karma-runner.github.io/latest/dev/git-commit-msg.html and the scope is one of $scopes as defined in $scopes_file"
+then echo "Please check the guidelines at http://karma-runner.github.io/latest/dev/git-commit-msg.html$(test -n "$scopes" && echo ", the scope should be one of $scopes as defined in $scopes_file")"
 fi
 exit $result
