@@ -3,8 +3,8 @@ package sc.framework.plugins;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Tracks timeouts in Milliseconds.
- * TODO We can probably utilise an inbuilt class instead. */
+// TODO We can probably utilise an inbuilt class instead.
+/** Tracks timeouts in Milliseconds. */
 public class ActionTimeout {
   static final Logger logger = LoggerFactory.getLogger(ActionTimeout.class);
 

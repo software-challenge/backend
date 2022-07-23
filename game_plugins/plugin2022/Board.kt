@@ -4,8 +4,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IBoard
 import sc.api.plugins.ITeam
 import sc.api.plugins.Team
-import sc.plugin2022.util.Constants.boardrange
-import sc.plugin2022.util.MoveMistake
+import sc.plugin2023.util.Constants.boardrange
+import sc.plugin2023.Move
+import sc.api.plugins.Coordinates
+import sc.api.plugins.Vector
+import sc.plugin2023.util.PluginConstants.boardrange
+import sc.shared.MoveMistake
 import sc.shared.InvalidMoveException
 
 /** Das Spielbrett besteht aus 8x8 Feldern mit anfänglich 8 Figuren pro Spieler. */

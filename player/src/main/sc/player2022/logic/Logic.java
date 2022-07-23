@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.player.IGameHandler;
-import sc.plugin2022.GameState;
-import sc.plugin2022.Move;
+import sc.plugin2023.GameState;
+import sc.plugin2023.Move;
 import sc.shared.GameResult;
 
 import java.util.List;

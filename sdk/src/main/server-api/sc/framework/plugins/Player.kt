@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.api.plugins.ITeam
 import sc.api.plugins.host.IPlayerListener
+import sc.framework.PublicCloneable
 import sc.networking.clients.XStreamClient.DisconnectCause
 import sc.protocol.room.MoveRequest
 import sc.protocol.room.RoomMessage
@@ -29,7 +30,7 @@ private val logger = LoggerFactory.getLogger(Player::class.java)
 class Player @JvmOverloads constructor(
         @XStreamAsAttribute var team: ITeam,
         @XStreamAsAttribute var displayName: String = ""
-): Cloneable {
+): PublicCloneable<Player> {
     
     @XStreamOmitField
     protected var listeners: MutableList<IPlayerListener> = ArrayList()
@@ -76,7 +77,7 @@ class Player @JvmOverloads constructor(
 
     override fun toString(): String = "%s(%s)".format(team, displayName)
     
-    public override fun clone() = Player(team, displayName)
+    override fun clone() = Player(team, displayName)
     
     override fun equals(other: Any?) = other is Player && other.team == team && other.displayName == displayName
     

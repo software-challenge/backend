@@ -1,12 +1,12 @@
-package sc.plugin2022.util
+package sc.plugin2023.util
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.shared.IWinReason
 
+// TODO koppeln an ScoreDefinition im GamePlugin
 /** Welches Team gewonnen hat und warum. */
 @XStreamAlias(value = "winreason")
 enum class WinReason(override val message: String): IWinReason {
     EQUAL_SCORE("Beide Teams sind gleichauf."),
-    DIFFERING_SCORES("%s hat mehr Bernsteine erzielt."),
-    DIFFERING_POSITIONS("%s hat seine Leichtfiguren weiter vorne."),
+    DIFFERING_SCORES("%s hat mehr Fische gesammelt."),
 }

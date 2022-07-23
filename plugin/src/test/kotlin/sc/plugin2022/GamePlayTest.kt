@@ -13,7 +13,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.Player
-import sc.plugin2022.util.Constants
+import sc.plugin2023.util.Constants
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import kotlin.time.Duration

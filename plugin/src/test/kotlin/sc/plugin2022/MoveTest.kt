@@ -6,6 +6,9 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import sc.helpers.shouldSerializeTo
+import sc.plugin2023.Move
+import sc.api.plugins.Coordinates
+import sc.api.plugins.Vector
 import sc.protocol.room.RoomPacket
 
 class MoveTest: FunSpec({

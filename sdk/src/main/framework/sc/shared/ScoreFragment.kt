@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 data class ScoreFragment @JvmOverloads constructor(
         @XStreamAsAttribute
         val name: String,
-        val aggregation: ScoreAggregation = ScoreAggregation.SUM,
+        val aggregation: ScoreAggregation = ScoreAggregation.AVERAGE,
         val relevantForRanking: Boolean = true) {
 
     override fun toString(): String =

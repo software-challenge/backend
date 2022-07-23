@@ -1,6 +1,4 @@
-package sc.plugin2022.util
-
-import sc.shared.IMoveMistake
+package sc.shared
 
 /**
  * Wird optional bei Validierung von Zügen zurückgegeben, falls ein Zug nicht valide ist.

@@ -1,8 +1,7 @@
-package sc.plugin2022
+package sc.api.plugins
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.plugin2022.util.Constants
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -31,17 +30,20 @@ data class Coordinates(
     operator fun unaryPlus(): Vector = Vector(x, y)
     
     /** Gibt ein Set der vier benachbarten Felder dieser Koordinaten zurück. */
-    val neighbors: Set<Coordinates>
-        get() = Vector.cardinals.mapTo(HashSet()) { this + it }
+    val neighbors: Collection<Coordinates>
+        get() = Vector.cardinals.map { this + it }
     
-    /** Whether these coordinates mark a field on the board. */
-    val isValid
-        get() = x >= 0 && x < Constants.BOARD_SIZE &&
-                y >= 0 && y < Constants.BOARD_SIZE
+    val hexNeighbors: Collection<Coordinates>
+        get() = Vector.DoubledHex.directions.map { this + it }
+    
+    fun fromDoubledHex() = Coordinates(x / 2, y)
+    fun toDoubledHex() = doubledHex(x, y)
     
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
         val origin = Coordinates(0, 0)
+        
+        fun doubledHex(x: Int, y: Int) = Coordinates(x * 2 + y % 2, y)
     }
 }
 
@@ -90,5 +92,22 @@ data class Vector(val dx: Int, val dy: Int): Comparable<Vector> {
                 Vector(1, 0),
                 Vector(0, 1)
         )
+    }
+    
+    object DoubledHex {
+        val LEFT = Vector(+2, 0)
+        val RIGHT = Vector(-2, 0)
+        val UP_LEFT = Vector(-1, -1)
+        val UP_RIGHT = Vector(+1, -1)
+        val DOWN_LEFT = Vector(-1, +1)
+        val DOWN_RIGHT = Vector(+1, +1)
+        val directions = arrayOf(LEFT, UP_LEFT, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN_LEFT)
+        
+        val Vector.straight: Boolean
+            get() = abs(dx) == abs(dy) || (dx % 2 == 0 && dy == 0)
+        
+        init {
+            require(directions.all { it.straight })
+        }
     }
 }

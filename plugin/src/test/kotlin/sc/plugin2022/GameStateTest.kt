@@ -6,12 +6,14 @@ import io.kotest.matchers.string.*
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
+import sc.plugin2023.GameState
+import sc.plugin2023.Move
 import java.util.EnumMap
 
 class GameStateTest: FunSpec({
     context("XML Serialization") {
         test("empty state") {
-            GameState(Board(HashMap())) shouldSerializeTo """
+            GameState(Board(emptyList<MutableList>())) shouldSerializeTo """
                 <state turn="0">
                   <startTeam class="team">ONE</startTeam>
                   <board>

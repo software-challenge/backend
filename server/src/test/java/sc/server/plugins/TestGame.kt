@@ -13,9 +13,6 @@ data class TestGame(
         override val currentState: TestGameState = TestGameState(),
 ): AbstractGame(TestPlugin.TEST_PLUGIN_UUID) {
     
-    override val playerScores: List<PlayerScore>
-        get() = players.map { getScoreFor(it) }
-    
     override fun onRoundBasedAction(move: IMove) {
         if (move !is TestMove)
             throw InvalidMoveException(object: IMoveMistake {
@@ -40,16 +37,6 @@ data class TestGame(
         }
         throw TooManyPlayersException()
     }
-    
-    override fun getScoreFor(player: Player) =
-            when {
-                player.hasLeft() ->
-                    PlayerScore(ScoreCause.LEFT, "Spieler ist rausgeflogen.", 0)
-                player.hasViolated() ->
-                    PlayerScore(ScoreCause.RULE_VIOLATION, player.violationReason!!, 0)
-                else ->
-                    PlayerScore(true, "Spieler hat gewonnen.")
-            }
     
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(false)

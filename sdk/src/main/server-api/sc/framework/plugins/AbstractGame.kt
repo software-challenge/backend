@@ -1,17 +1,13 @@
 package sc.framework.plugins
 
 import org.slf4j.LoggerFactory
-import sc.api.plugins.IGameInstance
-import sc.api.plugins.IGameState
-import sc.api.plugins.IMove
-import sc.api.plugins.ITeam
+import sc.api.plugins.*
 import sc.api.plugins.exceptions.GameLogicException
 import sc.api.plugins.exceptions.NotYourTurnException
+import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.protocol.room.WelcomeMessage
-import sc.shared.InvalidMoveException
-import sc.shared.PlayerScore
-import sc.shared.WinCondition
+import sc.shared.*
 
 abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pausable {
     companion object {
@@ -119,8 +115,65 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
             notifyActivePlayer()
         }
     }
-
-    abstract fun getScoreFor(player: Player): PlayerScore
+    
+    private val availableTeams = ArrayDeque<ITeam>().also { it.addAll(Team.values()) }
+    override fun onPlayerJoined(): Player {
+        if (availableTeams.isEmpty())
+            throw TooManyPlayersException(this)
+        
+        val player = Player(availableTeams.removeFirst())
+        players.add(player)
+        return player
+    }
+    
+    override val playerScores: List<PlayerScore>
+        get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
+    fun getScoreFor(player: Player): PlayerScore {
+        logger.debug("Calculating score for $player")
+        val team = player.team as Team
+        val opponent = players[team.opponent().index]
+        val winCondition = checkWinCondition()
+        
+        var cause: ScoreCause = ScoreCause.REGULAR
+        var reason = ""
+        var score: Int = Constants.LOSE_SCORE
+        
+        if (winCondition != null) {
+            // Game is already finished
+            score = if (winCondition.winner == null)
+                Constants.DRAW_SCORE
+            else {
+                if (winCondition.winner == team) Constants.WIN_SCORE else Constants.LOSE_SCORE
+            }
+        }
+        
+        // Opponent did something wrong
+        if (opponent.hasViolated() && !player.hasViolated() ||
+            opponent.hasLeft() && !player.hasLeft() ||
+            opponent.hasSoftTimeout() ||
+            opponent.hasHardTimeout())
+            score = Constants.WIN_SCORE
+        else
+            when {
+                player.hasSoftTimeout() -> {
+                    cause = ScoreCause.SOFT_TIMEOUT
+                    reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).softTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+                }
+                player.hasHardTimeout() -> {
+                    cause = ScoreCause.SOFT_TIMEOUT
+                    reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+                }
+                player.hasViolated() -> {
+                    cause = ScoreCause.RULE_VIOLATION
+                    reason = player.violationReason!!
+                }
+                player.hasLeft() -> {
+                    cause = ScoreCause.LEFT
+                    reason = "Der Spieler hat das Spiel verlassen: ${player.left}"
+                }
+            }
+        return PlayerScore(cause, reason, score, *currentState.getPointsForTeam(team))
+    }
 
     /** @return the current state representation. */
     abstract val currentState: IGameState
@@ -151,7 +204,9 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
         player.requestMove()
     }
 
-    protected open fun getTimeoutFor(player: Player) = ActionTimeout(true)
+    protected open fun getTimeoutFor(player: Player) =
+            ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
+    
     
     @Suppress("ReplaceAssociateFunction")
     fun generateScoreMap(): Map<Player, PlayerScore> =

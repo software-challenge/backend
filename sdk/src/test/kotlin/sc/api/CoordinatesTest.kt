@@ -4,6 +4,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
+import sc.api.plugins.Coordinates
 
 class CoordinatesTest: WordSpec({
     "Coordinates" should {
@@ -20,9 +21,6 @@ class CoordinatesTest: WordSpec({
             position shouldNotBe Coordinates(-3, 2)
             position shouldNotBe Coordinates(-3, -2)
             position shouldNotBe Coordinates(3, -2)
-        }
-        "not be equal to instances other classes" {
-            position shouldNotBe Board()
         }
     }
 })

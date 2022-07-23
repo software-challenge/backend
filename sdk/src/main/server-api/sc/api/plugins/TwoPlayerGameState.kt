@@ -1,7 +1,10 @@
 package sc.api.plugins
 
-abstract class TwoPlayerGameState(
-        val startTeam: ITeam
+import sc.shared.InvalidMoveException
+import sc.shared.MoveMistake
+
+abstract class TwoPlayerGameState<M: IMove>(
+        val startTeam: Team
 ) : IGameState {
     
     abstract val board: IBoard
@@ -10,23 +13,22 @@ abstract class TwoPlayerGameState(
         get() = (turn+1)/2
     
     /** @return das Team, das am Zug ist. */
-    override val currentTeam: ITeam
+    override val currentTeam
         get() = currentTeamFromTurn()
     
     /** @return das Team, das nicht dran ist. */
-    val otherTeam: ITeam
+    val otherTeam
         get() = currentTeam.opponent()
 
     /** Letzter getaetigter Zug. */
-    abstract val lastMove: IMove?
+    abstract val lastMove: M?
+    
+    abstract fun performMove(move: M)
 
     /** Calculates the color of the current player from the [turn] and the [startTeam].
      * Based on the assumption that the current player switches every turn. */
-    protected fun currentTeamFromTurn(): ITeam =
+    protected fun currentTeamFromTurn(): Team =
             if(turn.rem(2) == 0) startTeam else startTeam.opponent()
-
-    /** Gibt die angezeigte Punktzahl des Spielers zurueck. */
-    abstract fun getPointsForTeam(team: ITeam): Int
 
     override fun toString() =
             "GameState(turn=$turn,currentTeam=$currentTeam)"
