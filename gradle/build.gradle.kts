@@ -263,7 +263,7 @@ subprojects {
 allprojects {
     repositories {
         mavenCentral()
-        maven("https://dist.wso2.org/maven2")
+        maven("http://maven.wso2.org/nexus/content/groups/wso2-public/")
     }
     
     if (this.name in documentedProjects) {
