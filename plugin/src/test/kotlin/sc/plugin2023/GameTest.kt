@@ -1,4 +1,4 @@
-package sc.plugin2022
+package sc.plugin2023
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec

@@ -46,14 +46,20 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
     //    require((x < 0 || y < 0 || x >= Constants.BOARD_SIZE || y >= Constants.BOARD_SIZE || fields[x][y].fish <= 0 || fields[x][y].penguin) == null)
     //    fields[x][y].putPenguin(penguin)
     //}
+
+    override fun isValid(coordinates: Coordinates) =
+            (coordinates.x + coordinates.y) % 2 == 0 &&
+                super.isValid(coordinates.copy(coordinates.x / 2))
     
     /** Gibt das Feld an den gegebenen Koordinaten zurück. */
     override operator fun get(x: Int, y: Int) =
-            gameField[y][x / 2]
+            super.get(x / 2, y)
     
     /** Ersetzt die Fische des Feldes durch einen Pinguin.
      * @return Anzahl der ersetzten Fische. */
     operator fun set(position: Coordinates, team: Team?): Int {
+        if(!isValid(position))
+            outOfBounds(position)
         val field = gameField[position.y][position.x / 2]
         gameField[position.y][position.x / 2] = Field(penguin = team)
         return field.fish
@@ -71,6 +77,8 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
             filterFields { field, coordinates ->
                 field.penguin?.let { Pair(coordinates, it) }
             }
+    
+    fun getOrEmpty(key: Coordinates?) = key?.let { getOrNull(it) } ?: Field()
     
     override val entries: Set<Map.Entry<Coordinates, Field>>
         get() = filterFields { field, coordinates ->

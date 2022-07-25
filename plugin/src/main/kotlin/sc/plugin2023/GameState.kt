@@ -9,6 +9,9 @@ import sc.plugin2023.util.PluginConstants
 import sc.shared.MoveMistake
 import sc.shared.InvalidMoveException
 
+val ITeam.color
+    get() = if(index == 0) "Rot" else "Blau"
+
 /**
  * Der aktuelle Spielstand.
  *
@@ -27,6 +30,9 @@ data class GameState @JvmOverloads constructor(
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
     constructor(other: GameState): this(other.board.clone(), other.turn, other.lastMove, other.fishes)
+    
+    override val currentTeam: Team
+        get() = currentTeamFromTurn().run { takeIf { !immovable(it) } ?: opponent() }
     
     override fun performMove(move: Move) {
         if(move.from != null) {
@@ -61,16 +67,23 @@ data class GameState @JvmOverloads constructor(
         } else {
             pieces.flatMap { (pos, _) ->
                 // TODO incomplete
-                Vector.DoubledHex.directions.map { Move.run(pos, it) }
+                Vector.DoubledHex.directions.mapNotNull { vector ->
+                    Move.run(pos, vector).takeIf { move ->
+                        board.getOrEmpty(move.to).fish > 0
+                    }
+                }
             }
         }
     }
     
-    val isOver: Boolean
-        get() = board.getPenguins()
-                .takeIf { it.size == PluginConstants.PENGUINS * Team.values().size }
-                ?.all { pair -> pair.first.hexNeighbors.all { board[it].fish == 0 } }
-                ?: false
+    fun immovable(team: Team? = null) =
+            board.getPenguins()
+                    .filter { team == null || it.second == team }
+                    .takeIf { it.size == PluginConstants.PENGUINS * Team.values().size }
+                    ?.all { pair -> pair.first.hexNeighbors.all { board.getOrEmpty(it).fish == 0 } } ?: false
+    
+    override val isOver: Boolean
+        get() = immovable()
     
     /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForTeam(team: ITeam): IntArray =
@@ -81,7 +94,26 @@ data class GameState @JvmOverloads constructor(
     override fun toString(): String =
             "GameState$turn - ${currentTeam.color} (Fische)"
     
+    // Generated Stuff below
+    
+    override fun equals(other: Any?): Boolean {
+        if(this === other) return true
+        if(other !is GameState) return false
+        
+        if(board != other.board) return false
+        if(turn != other.turn) return false
+        if(lastMove != other.lastMove) return false
+        if(!fishes.contentEquals(other.fishes)) return false
+        
+        return true
+    }
+    
+    override fun hashCode(): Int {
+        var result = board.hashCode()
+        result = 31 * result + turn
+        result = 31 * result + (lastMove?.hashCode() ?: 0)
+        result = 31 * result + fishes.contentHashCode()
+        return result
+    }
+    
 }
-
-val ITeam.color
-    get() = if(index == 0) "Rot" else "Blau"

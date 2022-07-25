@@ -23,7 +23,7 @@ data class Move(
             other.delta?.let { delta?.compareTo(it) } ?: 0
     
     override fun toString(): String =
-            from?.let { "Schlittern von $from zu $to" } ?: "Setze Pinguin auf $to"
+            from?.let { "Schlittern $from zu $to" } ?: "Setze Pinguin auf $to"
     
     companion object {
         @JvmStatic

@@ -1,8 +1,9 @@
-package sc.plugin2022
+package sc.plugin2023
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.booleans.*
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -87,6 +88,7 @@ class GamePlayTest: WordSpec({
                         break
                     }
                 }
+                game.currentState.isOver.shouldBeTrue()
             }
             "send the final state to listeners" {
                 finalState shouldBe game.currentState.hashCode()

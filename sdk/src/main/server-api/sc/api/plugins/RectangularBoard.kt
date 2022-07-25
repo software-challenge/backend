@@ -12,8 +12,7 @@ fun <T: Cloneable> List<List<PublicCloneable<T>>>.clone() =
 
 /** Ein rechteckiges Spielfeld aus Feldern, die jeweils von einer Spielerfarbe belegt sein können. */
 open class RectangularBoard<FIELD: IField<FIELD>>(
-        @XStreamImplicit protected val gameField: TwoDBoard<FIELD>,
-        // TODO proper post-init for empty gameField
+        @XStreamImplicit protected val gameField: TwoDBoard<FIELD> = emptyList(),
 ): IBoard, AbstractMap<Coordinates, FIELD>(), Collection<FIELD> {
     
     constructor(other: RectangularBoard<FIELD>): this(other.gameField.clone())
@@ -28,14 +27,30 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     fun isObstructed(position: Coordinates): Boolean =
             this[position].isOccupied
     
+    open fun isValid(coordinates: Coordinates) =
+            coordinates.y in gameField.indices &&
+            coordinates.x in gameField[coordinates.y].indices
+    
     /** Gibt das Feld an den gegebenen Koordinaten zurück. */
-    open operator fun get(x: Int, y: Int) =
+    protected open operator fun get(x: Int, y: Int) =
             gameField[y][x]
     
     /** Gibt das Feld an den gegebenen Koordinaten zurück. */
     override operator fun get(key: Coordinates) =
-            get(key.x, key.y)
+            try {
+                get(key.x, key.y)
+            } catch(e: IndexOutOfBoundsException) {
+                outOfBounds(key, e)
+            }
     
+    protected fun outOfBounds(coords: Coordinates, cause: Throwable? = null): Nothing =
+            throw IllegalArgumentException("$coords ist nicht teil des Spielfelds!", cause)
+    
+    fun getOrNull(key: Coordinates) =
+            if(isValid(key))
+                get(key.x, key.y)
+            else
+                null
     
     /** Vergleicht zwei Spielfelder und gibt eine Liste aller Felder zurück, die sich unterscheiden. */
     //fun compare(other: Board): Set<Field> {
@@ -68,10 +83,11 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
             }
         }.toSet()
     
+    // TODO proper xstream post-init for empty gameField, becomes null now
     override val size: Int
-        get() = gameField.sumOf { it.size }
+        get() = gameField?.sumOf { it.size } ?: 0
     
-    override fun iterator(): Iterator<FIELD> = object : AbstractIterator<FIELD>() {
+    override fun iterator(): Iterator<FIELD> = object: AbstractIterator<FIELD>() {
         var index = 0
         override fun computeNext() {
             if(index < size)

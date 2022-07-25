@@ -1,13 +1,14 @@
-package sc.plugin2022
+package sc.plugin2023
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
+import io.kotest.matchers.booleans.*
+import io.kotest.matchers.collections.*
 import io.kotest.matchers.string.*
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
-import sc.plugin2023.*
-import java.util.EnumMap
+import sc.plugin2023.util.PluginConstants
 
 class GameStateTest: FunSpec({
     context("XML Serialization") {
@@ -28,7 +29,7 @@ class GameStateTest: FunSpec({
             """.trimIndent()
         }
         test("random state") {
-            testXStream.toXML(GameState()) shouldHaveLineCount 72
+            testXStream.toXML(GameState()) shouldHaveLineCount 89
         }
         test("later state") {
             // TODO
@@ -49,6 +50,25 @@ class GameStateTest: FunSpec({
             state60.round shouldBe 30
             state60.isOver shouldBe false
             //state60.isOver shouldBe true
+        }
+    }
+    context("move calculation") {
+        test("initial placement") {
+            val board = makeBoard()
+            GameState(board).getPossibleMoves() shouldHaveSize board.size
+        }
+        test("first moves") {
+            // Board with max penguins for one player
+            GameState(makeBoard(*Array(PluginConstants.PENGUINS) { it y it to 0 })).getPossibleMoves() shouldHaveAtLeastSize PluginConstants.PENGUINS * 2
+        }
+        test("immovable") {
+            // Board with max penguins for one player
+            val state = GameState(Board(listOf(
+                    MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.ONE) },
+                    MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.TWO) })))
+            state.getPossibleMoves().shouldBeEmpty()
+            state.immovable(Team.ONE).shouldBeTrue()
+            state.currentTeam shouldBe Team.TWO
         }
     }
 })

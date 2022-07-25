@@ -40,7 +40,7 @@ class BoardTest: FunSpec({
             val board = makeBoard(0 y 0 to 1)
             board.getPenguins() shouldHaveSize 1
             val clone = board.clone()
-            board[1 y 2] = Team.ONE
+            board[1 y 1] = Team.ONE
             board.getPenguins() shouldHaveSize 2
             clone.getPenguins() shouldHaveSize 1
             clone shouldBe makeBoard(0 y 0 to 1)

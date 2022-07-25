@@ -38,6 +38,9 @@ interface IGameState : RoomMessage, PublicCloneable<IGameState> {
     /** Das Team am Zug. */
     val currentTeam: ITeam
     
+    /** Ob das Spiel zu Ende ist. */
+    val isOver: Boolean
+    
     /** Gibt Punktzahlen des Teams entsprechend der [ScoreDefinition] zurück. */
     fun getPointsForTeam(team: ITeam): IntArray
     
