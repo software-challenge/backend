@@ -4,11 +4,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import java.math.BigDecimal
 import java.math.MathContext
 
+/** How to aggregate the individual score values for final evaluation. */
 @XStreamAlias(value = "scoreAggregation")
 enum class ScoreAggregation {
-    /** All values from all games should be summed up.  */
+    /** Sum the values of all games.  */
     SUM,
     
-    /** All values from all games should be averaged.  */
+    /** Average the values of all games.  */
     AVERAGE;
 }

@@ -18,12 +18,16 @@ class RoomPacketTest: FunSpec({
             </room>""".trimIndent()
     }
     test(GameResult::class.java.simpleName) {
-        RoomPacket("12345", GameResult(ScoreDefinition("something"), mapOf(Player(Team.ONE, "Best") to PlayerScore(true, "Won")), Team.ONE)) shouldSerializeTo """
+        RoomPacket("12345", GameResult(ScoreDefinition("winner", "gamescore"), mapOf(Player(Team.ONE, "Best") to PlayerScore(true, "Won")), Team.ONE)) shouldSerializeTo """
             <room roomId="12345">
               <data class="result">
                 <definition>
-                  <fragment name="something">
+                  <fragment name="winner">
                     <aggregation>SUM</aggregation>
+                    <relevantForRanking>true</relevantForRanking>
+                  </fragment>
+                  <fragment name="gamescore">
+                    <aggregation>AVERAGE</aggregation>
                     <relevantForRanking>true</relevantForRanking>
                   </fragment>
                 </definition>
