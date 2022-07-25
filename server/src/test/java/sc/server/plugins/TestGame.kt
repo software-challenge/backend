@@ -14,7 +14,7 @@ data class TestGame(
 ): AbstractGame(TestPlugin.TEST_PLUGIN_UUID) {
     
     override fun onRoundBasedAction(move: IMove) {
-        if (move !is TestMove)
+        if(move !is TestMove)
             throw InvalidMoveException(object: IMoveMistake {
                 override val message = "TestGame only processes TestMove"
             })
@@ -22,21 +22,17 @@ data class TestGame(
     }
     
     override fun checkWinCondition(): WinCondition? {
-        return if (currentState.round > 1) {
-            WinCondition(if (currentState.state % 2 == 0) Team.ONE else Team.TWO, TestWinReason.WIN)
+        return if(currentState.round > 1) {
+            WinCondition(if(currentState.state % 2 == 0) Team.ONE else Team.TWO, TestWinReason.WIN)
         } else null
     }
     
-    override fun onPlayerJoined(): Player {
-        if (players.size < 2) {
-            return if (players.isEmpty()) {
-                currentState.red
-            } else {
-                currentState.blue
+    override fun onPlayerJoined(): Player =
+            when(players.size) {
+                0 -> currentState.red
+                1 -> currentState.blue
+                else -> throw TooManyPlayersException()
             }.also { players.add(it) }
-        }
-        throw TooManyPlayersException()
-    }
     
     override fun getTimeoutFor(player: Player): ActionTimeout =
             ActionTimeout(false)

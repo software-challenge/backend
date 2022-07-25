@@ -9,7 +9,7 @@ import sc.api.plugins.host.IGameListener
 import sc.protocol.room.WelcomeMessage
 import sc.shared.*
 
-abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pausable {
+abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pausable {
     companion object {
         val logger = LoggerFactory.getLogger(AbstractGame::class.java)
     }
@@ -24,8 +24,8 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
     private var moveRequestTimeout: ActionTimeout? = null
     
     override val winner: ITeam?
-        get() = players.singleOrNull { !it.hasViolated() && !it.hasLeft() }?.team ?:
-                checkWinCondition()?.also { logger.debug("No Winner via violation, WinCondition: {}", it) }?.winner
+        get() = players.singleOrNull { !it.hasViolated() && !it.hasLeft() }?.team
+                ?: checkWinCondition()?.also { logger.debug("No Winner via violation, WinCondition: {}", it) }?.winner
     
     /** Pause the game after current turn has finished or continue playing. */
     override var isPaused = false
@@ -53,13 +53,13 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
      */
     @Throws(GameLogicException::class, InvalidMoveException::class)
     override fun onAction(fromPlayer: Player, move: IMove) {
-        if (fromPlayer != activePlayer)
+        if(fromPlayer != activePlayer)
             throw NotYourTurnException(activePlayer, fromPlayer, move)
         moveRequestTimeout?.let { timer ->
             moveRequestTimeout = null
             timer.stop()
             logger.info("Time needed for move: " + timer.timeDiff)
-            if (timer.didTimeout()) {
+            if(timer.didTimeout()) {
                 logger.warn("Client hit soft-timeout.")
                 fromPlayer.softTimeout = true
                 stop()
@@ -69,11 +69,11 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
             }
         } ?: throw GameLogicException("Move from $fromPlayer has not been requested.")
     }
-
+    
     /** Called by [onAction] to execute a move of a Player. */
     @Throws(InvalidMoveException::class)
     abstract fun onRoundBasedAction(move: IMove)
-
+    
     /**
      * Returns a WinCondition if the Game is over.
      * Checks:
@@ -84,7 +84,7 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
      * @return WinCondition, or null if no win condition is met yet.
      */
     abstract fun checkWinCondition(): WinCondition?
-
+    
     /** Stops pending MoveRequests and invokes [notifyOnGameOver]. */
     override fun stop() {
         logger.info("Stopping {}", this)
@@ -98,7 +98,7 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
         players.forEach { it.notifyListeners(WelcomeMessage(it.team)) }
         next()
     }
-
+    
     /** Advances the Game.
      * - sends out a state update
      * - invokes [notifyOnGameOver] if the game is over
@@ -108,17 +108,17 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
         // if paused, notify observers only (e.g. to update the GUI)
         notifyOnNewState(currentState, isPaused)
         
-        if (checkWinCondition() != null) {
+        if(checkWinCondition() != null) {
             logger.debug("Game over")
             stop()
-        } else if (!isPaused) {
+        } else if(!isPaused) {
             notifyActivePlayer()
         }
     }
     
     private val availableTeams = ArrayDeque<ITeam>().also { it.addAll(Team.values()) }
     override fun onPlayerJoined(): Player {
-        if (availableTeams.isEmpty())
+        if(availableTeams.isEmpty())
             throw TooManyPlayersException(this)
         
         val player = Player(availableTeams.removeFirst())
@@ -137,12 +137,12 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
         var reason = ""
         var score: Int = Constants.LOSE_SCORE
         
-        if (winCondition != null) {
+        if(winCondition != null) {
             // Game is already finished
-            score = if (winCondition.winner == null)
+            score = if(winCondition.winner == null)
                 Constants.DRAW_SCORE
             else {
-                if (winCondition.winner == team) Constants.WIN_SCORE else Constants.LOSE_SCORE
+                if(winCondition.winner == team) Constants.WIN_SCORE else Constants.LOSE_SCORE
             }
         }
         
@@ -175,44 +175,43 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
         }
         return PlayerScore(cause, reason, score, *currentState.getPointsForTeam(team))
     }
-
+    
     /** @return the current state representation. */
     abstract val currentState: IGameState
-
+    
     /** Notifies the active player that it's their time to make a move. */
     protected fun notifyActivePlayer() {
         requestMove(activePlayer)
     }
-
+    
     /** Sends a MoveRequest directly to the given player.
      * Does not consider the pause state. */
     protected fun requestMove(player: Player) {
-        val timeout: ActionTimeout = if (player.canTimeout) getTimeoutFor(player) else ActionTimeout(false)
-
+        val timeout: ActionTimeout = if(player.canTimeout) getTimeoutFor(player) else ActionTimeout(false)
+        
         // Signal the JVM to do a GC run now and lower the propability that the GC
         // runs when the player sends back its move, resulting in disqualification
         // because of soft timeout.
         System.gc()
-
+        
         moveRequestTimeout = timeout
         timeout.start {
             logger.warn("Player $player reached the timeout of ${timeout.hardTimeout}ms")
             player.hardTimeout = true
             stop()
         }
-    
+        
         logger.info("Sending MoveRequest to player $activePlayer")
         player.requestMove()
     }
-
+    
     protected open fun getTimeoutFor(player: Player) =
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
-    
     
     @Suppress("ReplaceAssociateFunction")
     fun generateScoreMap(): Map<Player, PlayerScore> =
             players.associate { it to getScoreFor(it) }
-
+    
     /**
      * Extends the set of listeners.
      *
@@ -221,7 +220,7 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
     override fun addGameListener(listener: IGameListener) {
         listeners.add(listener)
     }
-
+    
     /**
      * Removes listener
      *
@@ -230,23 +229,23 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
     override fun removeGameListener(listener: IGameListener) {
         listeners.remove(listener)
     }
-
+    
     protected fun notifyOnGameOver(map: Map<Player, PlayerScore>) {
         listeners.forEach {
             try {
                 it.onGameOver(map)
-            } catch (e: Exception) {
+            } catch(e: Exception) {
                 logger.error("GameOver notification caused an exception, scores: $map", e)
             }
         }
     }
-
+    
     protected fun notifyOnNewState(mementoState: IGameState, observersOnly: Boolean) {
         listeners.forEach {
             logger.debug("Notifying $it about new game state")
             try {
                 it.onStateChanged(mementoState, observersOnly)
-            } catch (e: Exception) {
+            } catch(e: Exception) {
                 logger.error("NewState Notification caused an exception", e)
             }
         }
