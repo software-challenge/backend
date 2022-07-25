@@ -16,7 +16,8 @@ data class Move(
     val delta: Vector?
         get() = from?.let { to - it }
     
-    
+    fun reversed(): Move? =
+            from?.let { Move(to, from) }
     
     override fun compareTo(other: Move): Int =
             other.delta?.let { delta?.compareTo(it) } ?: 0

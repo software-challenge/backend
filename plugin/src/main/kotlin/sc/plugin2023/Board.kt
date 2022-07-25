@@ -17,7 +17,7 @@ import sc.plugin2023.util.PluginConstants as Constants
 @XStreamAlias(value = "board")
 class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field>(fields) {
     
-    constructor(board: Board) : this(board.gameField.clone())
+    constructor(board: Board): this(board.gameField.clone())
     
     /**
      * Setzt einen Pinguin an gewählte Koordinaten. Diese Methode ist nur für
@@ -58,15 +58,26 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
         gameField[position.y][position.x / 2] = Field(penguin = team)
         return field.fish
     }
-
-    override val entries: Set<Map.Entry<Coordinates, Field>>
-        get() = gameField.flatMapIndexed { y, row ->
-            row.mapIndexed { x, field ->
-                // TODO really? an anonymous object?
-                object: Map.Entry<Coordinates, Field> {
-                    override val key = Coordinates.doubledHex(x, y)
-                    override val value = field
+    
+    /** Returns a list of the non-null filter outputs */
+    fun <T> filterFields(filter: (Field, Coordinates) -> T?): Collection<T> =
+            gameField.flatMapIndexed { y, row ->
+                row.mapIndexedNotNull { x, field ->
+                    filter(field, Coordinates.doubledHex(x, y))
                 }
+            }
+    
+    fun getPenguins() =
+            filterFields { field, coordinates ->
+                field.penguin?.let { Pair(coordinates, it) }
+            }
+    
+    override val entries: Set<Map.Entry<Coordinates, Field>>
+        get() = filterFields { field, coordinates ->
+            // TODO really? an anonymous object?
+            object: Map.Entry<Coordinates, Field> {
+                override val key = coordinates
+                override val value = field
             }
         }.toSet()
     
@@ -80,12 +91,12 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
             // TODO val holes =
             return List(Constants.BOARD_SIZE) {
                 MutableList(Constants.BOARD_SIZE) {
-                    val fish = random.nextInt(remainingFish) / 40
+                    val fish = random.nextInt(remainingFish) / 30 + 1
                     remainingFish -= fish
                     Field(fish)
                 }
             }
         }
-    
+        
     }
 }

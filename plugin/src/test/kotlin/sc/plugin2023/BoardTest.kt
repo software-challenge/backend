@@ -10,8 +10,7 @@ import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldHaveLineCount
-import io.kotest.matchers.string.shouldMatch
+import io.kotest.matchers.string.*
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
@@ -19,6 +18,7 @@ import sc.plugin2023.Move
 import sc.api.plugins.Coordinates
 import sc.api.plugins.TwoDBoard
 import sc.framework.plugins.Constants
+import sc.helpers.checkSerialization
 import sc.plugin2023.util.PluginConstants
 import sc.shared.MoveMistake
 import sc.shared.InvalidMoveException
@@ -30,32 +30,29 @@ class BoardTest: FunSpec({
             generatedBoard shouldHaveSize PluginConstants.BOARD_SIZE * PluginConstants.BOARD_SIZE
             generatedBoard.forAll {
                 it.penguin.shouldBeNull()
-                it.fish shouldBeInRange 1..3
+                it.fish shouldBeInRange 1..4
             }
-        }
-        test("is stringified apropriately") {
-            val string = generatedBoard.toString()
-            string shouldHaveLineCount 8
-            val lineRegex = Regex("\\w\\w------------\\w\\w")
-            val lines = string.lines()
-            lines.forAll { it shouldMatch lineRegex }
-            lines.joinToString("") { it.substring(0, 2).lowercase() }.reversed() shouldBe lines.joinToString("") { it.takeLast(2) }
+            generatedBoard.getPenguins() shouldHaveSize 0
+            generatedBoard[0 y 0] = Team.ONE
+            generatedBoard.getPenguins() shouldHaveSize 1
         }
         test("clones well") {
-            val board = makeBoard(0 y 0 to 2)
-            //board shouldHaveSize 2
+            val board = makeBoard(0 y 0 to 1)
+            board.getPenguins() shouldHaveSize 1
             val clone = board.clone()
-            //board.movePiece(Move(0 y 0, 1 y 2))
-            //board shouldHaveSize 1
-            //clone shouldHaveSize 2
-            clone shouldBe makeBoard(0 y 0 to 2)
+            board[1 y 2] = Team.ONE
+            board.getPenguins() shouldHaveSize 2
+            clone.getPenguins() shouldHaveSize 1
+            clone shouldBe makeBoard(0 y 0 to 1)
         }
     }
     context("Board performs Moves") {
         context("refuses invalid moves") {
-            test("can't move backwards or off the fields") {
+            test("can't move off the fields") {
+                // TODO
             }
             test("can't move onto own piece") {
+                // TODO
             }
         }
     }
@@ -86,33 +83,14 @@ class BoardTest: FunSpec({
     context("XML Serialization") {
         test("empty Board") {
             Board(emptyList()) shouldSerializeTo """
-              <board>
-                <pieces/>
-              </board>
+              <board/>
             """.trimIndent()
         }
-        test("random Board") {
-            testXStream.toXML(Board()) shouldHaveLineCount 68
+        test("random Board length") {
+            testXStream.toXML(Board()) shouldHaveLineCount 82
         }
-        test("filled Board") {
-            makeBoard(0 y 0 to 1) shouldSerializeTo """
-              <board>
-                <pieces>
-                  <entry>
-                    <coordinates x="0" y="0"/>
-                    <piece type="Robbe" team="TWO" count="1"/>
-                  </entry>
-                  <entry>
-                    <coordinates x="5" y="6"/>
-                    <piece type="Moewe" team="ONE" count="1"/>
-                  </entry>
-                  <entry>
-                    <coordinates x="3" y="4"/>
-                    <piece type="Robbe" team="ONE" count="2"/>
-                  </entry>
-                </pieces>
-              </board>
-            """.trimIndent()
+        test("Board with content") {
+            testXStream.toXML(makeBoard(0 y 0 to 1)) shouldContainOnlyOnce "<field>TWO</field>"
         }
     }
 })

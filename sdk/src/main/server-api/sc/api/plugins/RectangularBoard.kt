@@ -1,5 +1,8 @@
 package sc.api.plugins
 
+import com.thoughtworks.xstream.annotations.XStreamConverter
+import com.thoughtworks.xstream.annotations.XStreamImplicit
+import com.thoughtworks.xstream.converters.collections.CollectionConverter
 import sc.framework.PublicCloneable
 
 typealias TwoDBoard<FIELD> = List<MutableList<FIELD>>
@@ -9,7 +12,8 @@ fun <T: Cloneable> List<List<PublicCloneable<T>>>.clone() =
 
 /** Ein rechteckiges Spielfeld aus Feldern, die jeweils von einer Spielerfarbe belegt sein können. */
 open class RectangularBoard<FIELD: IField<FIELD>>(
-        protected val gameField: TwoDBoard<FIELD>,
+        @XStreamImplicit protected val gameField: TwoDBoard<FIELD>,
+        // TODO proper post-init for empty gameField
 ): IBoard, AbstractMap<Coordinates, FIELD>(), Collection<FIELD> {
     
     constructor(other: RectangularBoard<FIELD>): this(other.gameField.clone())
@@ -48,7 +52,7 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     
     override fun toString() =
             gameField.joinToString(separator = "\n") { row ->
-                row.joinToString(separator = " ") { it.toString() }
+                row.joinToString(separator = "") { it.toString() }
             }
     
     override fun clone() = RectangularBoard(this.gameField)

@@ -12,8 +12,9 @@ import sc.api.plugins.Team
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.AbstractGame
+import sc.framework.plugins.Constants
 import sc.framework.plugins.Player
-import sc.plugin2023.util.Constants
+import sc.plugin2023.util.PluginConstants
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import kotlin.time.Duration
@@ -42,7 +43,7 @@ class GamePlayTest: WordSpec({
         }
         "stay paused after move" {
             game.isPaused = true
-            game.onRoundBasedAction(game.currentState.possibleMoves.first())
+            game.onRoundBasedAction(game.currentState.getPossibleMoves().first())
             game.isPaused shouldBe true
         }
     }
@@ -60,6 +61,7 @@ class GamePlayTest: WordSpec({
             var finalState: Int? = null
             game.addGameListener(object: IGameListener {
                 override fun onGameOver(results: Map<Player, PlayerScore>) {
+                    println("Game over: $results")
                 }
                 
                 override fun onStateChanged(data: IGameState, observersOnly: Boolean) {
@@ -69,7 +71,7 @@ class GamePlayTest: WordSpec({
                 }
             })
             
-            "finish without issues".config(invocationTimeout = Duration.milliseconds(Constants.GAME_TIMEOUT)) {
+            "finish without issues".config(invocationTimeout = Duration.milliseconds(PluginConstants.GAME_TIMEOUT)) {
                 while (true) {
                     try {
                         val condition = game.checkWinCondition()
@@ -77,7 +79,7 @@ class GamePlayTest: WordSpec({
                             println("Game ended with $condition")
                             break
                         }
-                        val moves = state.possibleMoves
+                        val moves = state.getPossibleMoves()
                         moves.shouldNotBeEmpty()
                         game.onAction(game.players[state.currentTeam.index], moves.random())
                     } catch (e: Exception) {

@@ -9,21 +9,21 @@ import sc.helpers.shouldSerializeTo
 import sc.plugin2023.Move
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Vector
+import sc.plugin2023.y
 import sc.protocol.room.RoomPacket
 
 class MoveTest: FunSpec({
     val move = Move(Coordinates(0, 7), Coordinates(17, 5))
-    test("$move is invalid") {
-        move.isValid.shouldBeFalse()
-        Move.create(move.from, move.delta).shouldBeNull()
-    }
     context("Move manipulation") {
         test("reversal should not be equal") {
             move.reversed() shouldNotBe move
-            move.reversed().compareTo(move) shouldBe 0
+            move.reversed()!!.compareTo(move) shouldBe 0
         }
         test("double reversal should yield identity") {
-            move.reversed().reversed() shouldBe move
+            move.reversed()!!.reversed() shouldBe move
+        }
+        test("can't reverse penguin placement") {
+            Move(null, Coordinates.origin).reversed().shouldBeNull()
         }
     }
     test("Move XML") {
@@ -35,7 +35,7 @@ class MoveTest: FunSpec({
                   </data>
                 </room>
             """.trimIndent()
-        Move.create(0 y 1, Vector(1, 1))!! shouldSerializeTo """
+        Move.run(0 y 1, Vector(1, 1)) shouldSerializeTo """
                 <move>
                   <from x="0" y="1"/>
                   <to x="1" y="2"/>

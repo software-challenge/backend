@@ -23,7 +23,7 @@ data class GameState @JvmOverloads constructor(
         @XStreamAsAttribute override var turn: Int = 0,
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
-        val fishes: IntArray = intArrayOf(Team.values().size),
+        val fishes: IntArray = IntArray(Team.values().size),
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
     constructor(other: GameState): this(other.board.clone(), other.turn, other.lastMove, other.fishes)
@@ -67,8 +67,10 @@ data class GameState @JvmOverloads constructor(
     }
     
     val isOver: Boolean
-        get() = board.filterValues { it.isOccupied }
-                .all { it.key.hexNeighbors.all { board[it].fish == 0 } }
+        get() = board.getPenguins()
+                .takeIf { it.size == PluginConstants.PENGUINS * Team.values().size }
+                ?.all { pair -> pair.first.hexNeighbors.all { board[it].fish == 0 } }
+                ?: false
     
     /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForTeam(team: ITeam): IntArray =

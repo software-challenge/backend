@@ -6,20 +6,24 @@ import io.kotest.matchers.string.*
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
-import sc.plugin2023.GameState
-import sc.plugin2023.Move
+import sc.plugin2023.*
 import java.util.EnumMap
 
 class GameStateTest: FunSpec({
     context("XML Serialization") {
         test("empty state") {
-            GameState(Board(emptyList<MutableList>())) shouldSerializeTo """
+            GameState(Board(listOf(mutableListOf(Field())))) shouldSerializeTo """
                 <state turn="0">
-                  <startTeam class="team">ONE</startTeam>
+                  <startTeam>ONE</startTeam>
                   <board>
-                    <pieces/>
+                    <list>
+                      <field>0</field>
+                    </list>
                   </board>
-                  <ambers enum-type="team"/>
+                  <fishes>
+                    <int>0</int>
+                    <int>0</int>
+                  </fishes>
                 </state>
             """.trimIndent()
         }
@@ -27,40 +31,7 @@ class GameStateTest: FunSpec({
             testXStream.toXML(GameState()) shouldHaveLineCount 72
         }
         test("later state") {
-            GameState(makeBoard(5 y 6 to "R2", 0 y 0 to "m"),
-                    27,
-                    Move(4 y 4, 5 y 6),
-                    EnumMap(mapOf(Team.ONE to 1, Team.TWO to 0))) shouldSerializeTo """
-                <state turn="27">
-                  <startTeam class="team">ONE</startTeam>
-                  <board>
-                    <pieces>
-                      <entry>
-                        <coordinates x="0" y="0"/>
-                        <piece type="Moewe" team="TWO" count="1"/>
-                      </entry>
-                      <entry>
-                        <coordinates x="5" y="6"/>
-                        <piece type="Robbe" team="ONE" count="2"/>
-                      </entry>
-                    </pieces>
-                  </board>
-                  <lastMove>
-                    <from x="4" y="4"/>
-                    <to x="5" y="6"/>
-                  </lastMove>
-                  <ambers enum-type="team">
-                    <entry>
-                      <team>ONE</team>
-                      <int>1</int>
-                    </entry>
-                    <entry>
-                      <team>TWO</team>
-                      <int>0</int>
-                    </entry>
-                  </ambers>
-                </state>
-            """.trimIndent()
+            // TODO
         }
     }
     context("state detection") {
@@ -76,7 +47,8 @@ class GameStateTest: FunSpec({
             state60.isOver shouldBe false
             state60.turn++
             state60.round shouldBe 30
-            state60.isOver shouldBe true
+            state60.isOver shouldBe false
+            //state60.isOver shouldBe true
         }
     }
 })
