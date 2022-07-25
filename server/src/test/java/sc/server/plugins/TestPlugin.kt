@@ -13,7 +13,7 @@ class TestPlugin: IGamePlugin {
     override val id: String = TEST_PLUGIN_UUID
     
     override val scoreDefinition: ScoreDefinition =
-            ScoreDefinition("winner")
+            ScoreDefinition("winner", "index", "turn")
     
     override val gameTimeout = 1000
     

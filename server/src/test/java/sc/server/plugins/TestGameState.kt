@@ -13,13 +13,9 @@ data class TestGameState(
     override val currentTeam: Team
         get() = Team.values()[turn % Team.values().size]
     
-    override fun getPointsForTeam(team: ITeam): IntArray {
-        TODO("Not yet implemented")
-    }
+    override fun getPointsForTeam(team: ITeam): IntArray = intArrayOf(currentTeam.index, turn)
     
-    override fun getPossibleMoves(): Collection<IMove> {
-        TODO("Not yet implemented")
-    }
+    override fun getPossibleMoves(): Collection<IMove> = throw NotImplementedError("TestGame has no possible Moves")
     
     override val round get() = turn / 2
     

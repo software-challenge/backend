@@ -35,6 +35,14 @@ val minimalReplay = """
             <aggregation>SUM</aggregation>
             <relevantForRanking>true</relevantForRanking>
           </fragment>
+          <fragment name="index">
+            <aggregation>AVERAGE</aggregation>
+            <relevantForRanking>true</relevantForRanking>
+          </fragment>
+          <fragment name="turn">
+            <aggregation>AVERAGE</aggregation>
+            <relevantForRanking>true</relevantForRanking>
+          </fragment>
         </definition>
         <scores>
           <entry>

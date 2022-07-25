@@ -131,7 +131,6 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
     fun getScoreFor(player: Player): PlayerScore {
         logger.debug("Calculating score for $player")
         val team = player.team as Team
-        val opponent = players[team.opponent().index]
         val winCondition = checkWinCondition()
         
         var cause: ScoreCause = ScoreCause.REGULAR
@@ -147,31 +146,33 @@ abstract class AbstractGame(override val pluginUUID: String) : IGameInstance, Pa
             }
         }
         
-        // Opponent did something wrong
-        if (opponent.hasViolated() && !player.hasViolated() ||
-            opponent.hasLeft() && !player.hasLeft() ||
-            opponent.hasSoftTimeout() ||
-            opponent.hasHardTimeout())
-            score = Constants.WIN_SCORE
-        else
-            when {
-                player.hasSoftTimeout() -> {
-                    cause = ScoreCause.SOFT_TIMEOUT
-                    reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).softTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
-                }
-                player.hasHardTimeout() -> {
-                    cause = ScoreCause.SOFT_TIMEOUT
-                    reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
-                }
-                player.hasViolated() -> {
-                    cause = ScoreCause.RULE_VIOLATION
-                    reason = player.violationReason!!
-                }
-                player.hasLeft() -> {
-                    cause = ScoreCause.LEFT
-                    reason = "Der Spieler hat das Spiel verlassen: ${player.left}"
-                }
+        when {
+            players.getOrNull(team.opponent().index)?.let { opponent ->
+                opponent.hasViolated() && !player.hasViolated() ||
+                opponent.hasLeft() && !player.hasLeft() ||
+                opponent.hasSoftTimeout() ||
+                opponent.hasHardTimeout()
+            } == true -> {
+                // Opponent did something wrong and we did not
+                score = Constants.WIN_SCORE
             }
+            player.hasSoftTimeout() -> {
+                cause = ScoreCause.SOFT_TIMEOUT
+                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).softTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+            }
+            player.hasHardTimeout() -> {
+                cause = ScoreCause.SOFT_TIMEOUT
+                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+            }
+            player.hasViolated() -> {
+                cause = ScoreCause.RULE_VIOLATION
+                reason = player.violationReason!!
+            }
+            player.hasLeft() -> {
+                cause = ScoreCause.LEFT
+                reason = "Der Spieler hat das Spiel verlassen: ${player.left}"
+            }
+        }
         return PlayerScore(cause, reason, score, *currentState.getPointsForTeam(team))
     }
 
