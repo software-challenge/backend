@@ -79,7 +79,7 @@ data class GameState @JvmOverloads constructor(
     fun immovable(team: Team? = null) =
             board.getPenguins()
                     .filter { team == null || it.second == team }
-                    .takeIf { it.size == PluginConstants.PENGUINS * Team.values().size }
+                    .takeIf { it.size == PluginConstants.PENGUINS * (if(team == null) Team.values().size else 1) }
                     ?.all { pair -> pair.first.hexNeighbors.all { board.getOrEmpty(it).fish == 0 } } ?: false
     
     override val isOver: Boolean

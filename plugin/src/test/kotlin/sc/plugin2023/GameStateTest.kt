@@ -67,6 +67,7 @@ class GameStateTest: FunSpec({
                     MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.ONE) },
                     MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.TWO) })))
             state.getPossibleMoves().shouldBeEmpty()
+            state.board.toString() shouldBe "RRRR\nBBBB"
             state.immovable(Team.ONE).shouldBeTrue()
             state.currentTeam shouldBe Team.TWO
         }
