@@ -7,6 +7,7 @@ import io.kotest.matchers.booleans.*
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.slf4j.LoggerFactory
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.api.plugins.Team
@@ -25,6 +26,7 @@ import kotlin.time.ExperimentalTime
  * It is the only test that should stay between seasons. */
 @OptIn(ExperimentalTime::class)
 class GamePlayTest: WordSpec({
+    val logger = LoggerFactory.getLogger(GamePlayTest::class.java)
     isolationMode = IsolationMode.SingleInstance
     fun createGame() = IGamePlugin.loadPlugin().createGame() as AbstractGame
     "A Game" should {
@@ -62,13 +64,14 @@ class GamePlayTest: WordSpec({
             var finalState: Int? = null
             game.addGameListener(object: IGameListener {
                 override fun onGameOver(results: Map<Player, PlayerScore>) {
-                    println("Game over: $results")
+                    logger.info("Game over: $results")
                 }
                 
                 override fun onStateChanged(data: IGameState, observersOnly: Boolean) {
                     data.hashCode() shouldNotBe finalState
                     // hashing it to avoid cloning, since we get the original mutable object
                     finalState = data.hashCode()
+                    logger.debug("Updating state to $finalState")
                 }
             })
             
@@ -77,14 +80,18 @@ class GamePlayTest: WordSpec({
                     try {
                         val condition = game.checkWinCondition()
                         if (condition != null) {
-                            println("Game ended with $condition")
+                            logger.info("Game ended with $condition")
                             break
                         }
+                        
+                        if(finalState != null)
+                            finalState shouldBe state.hashCode()
+                        
                         val moves = state.getPossibleMoves()
                         moves.shouldNotBeEmpty()
                         game.onAction(game.players[state.currentTeam.index], moves.random())
                     } catch (e: Exception) {
-                        println(e.message)
+                        logger.warn(e.message)
                         break
                     }
                 }

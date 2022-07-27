@@ -68,7 +68,7 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     override fun toString() =
             gameField.joinToString(separator = "\n") { row ->
                 row.joinToString(separator = "") { it.toString() }
-            }
+            }.ifEmpty { "Empty Board@" + System.identityHashCode(this) }
     
     override fun clone() = RectangularBoard(this.gameField)
     
@@ -98,15 +98,24 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
         }
     }
     
-    override fun containsAll(elements: Collection<FIELD>): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun containsAll(elements: Collection<FIELD>): Boolean = elements.all { contains(it) }
     
-    override fun contains(element: FIELD): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun contains(element: FIELD): Boolean = gameField.any { it.contains(element) }
     
     // TODO do this properly for non-squared boards
     operator fun get(index: Int): FIELD =
             gameField[index.div(gameField.size)][index.mod(gameField.size)]
+    
+    fun readResolve(): Any {
+        if(gameField == null) {
+            val field = RectangularBoard::class.java.getDeclaredField("gameField")
+            field.isAccessible = true
+            field.set(this, ArrayList<MutableList<FIELD>>())
+        }
+        return this
+    }
+    
+    override fun equals(other: Any?) = gameField == (other as? RectangularBoard<*>)?.gameField
+    
+    override fun hashCode(): Int = gameField.hashCode()
 }

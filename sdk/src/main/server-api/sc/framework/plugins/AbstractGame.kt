@@ -242,7 +242,8 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
     
     protected fun notifyOnNewState(mementoState: IGameState, observersOnly: Boolean) {
         listeners.forEach {
-            logger.debug("Notifying $it about new game state")
+            if(logger.isDebugEnabled)
+                logger.debug("Notifying $it about new game state with hash ${mementoState.hashCode()}")
             try {
                 it.onStateChanged(mementoState, observersOnly)
             } catch(e: Exception) {
