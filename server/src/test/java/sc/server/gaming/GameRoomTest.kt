@@ -49,12 +49,16 @@ val minimalReplay = """
             <player team="ONE"/>
             <score cause="REGULAR" reason="Game terminated">
               <part>0</part>
+              <part>0</part>
+              <part>2</part>
             </score>
           </entry>
           <entry>
             <player team="TWO"/>
             <score cause="REGULAR" reason="Game terminated">
               <part>0</part>
+              <part>1</part>
+              <part>2</part>
             </score>
           </entry>
         </scores>
@@ -77,7 +81,7 @@ class GameRoomTest: WordSpec({
             manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).playerCount shouldBe 2
         }
         "return correct scores on game over" {
-            val playersScores = room.game.players.associateWith { PlayerScore(ScoreCause.REGULAR, "Game terminated", 0) }
+            val playersScores = room.game.players.associateWith { PlayerScore(ScoreCause.REGULAR, "Game terminated", 0, it.team.index, 2) }
             room.onGameOver(playersScores)
             room.result.isRegular shouldBe true
             room.result.scores shouldContainExactly playersScores

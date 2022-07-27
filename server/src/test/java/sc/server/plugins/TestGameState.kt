@@ -13,6 +13,7 @@ data class TestGameState(
     override val currentTeam: Team
         get() = Team.values()[turn % Team.values().size]
     
+    @Transient
     override val isOver = false
     
     override fun getPointsForTeam(team: ITeam): IntArray = intArrayOf(currentTeam.index, turn)
