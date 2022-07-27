@@ -9,9 +9,6 @@ import sc.plugin2023.util.PluginConstants
 import sc.shared.MoveMistake
 import sc.shared.InvalidMoveException
 
-val ITeam.color
-    get() = if(index == 0) "Rot" else "Blau"
-
 /**
  * Der aktuelle Spielstand.
  *

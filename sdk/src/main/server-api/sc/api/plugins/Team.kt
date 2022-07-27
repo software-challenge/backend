@@ -8,12 +8,17 @@ enum class Team(override val index: Int): ITeam {
     ONE(0) {
         override fun opponent(): Team = TWO
         override val letter = 'R'
+        override val color = "Rot"
     },
 
     TWO(1) {
         override fun opponent(): Team = ONE
         override val letter = 'B'
+        override val color = "Blau"
     };
+    
+    abstract val color: String
+    
     override fun opponent(): Team = throw IllegalArgumentException()
 }
 

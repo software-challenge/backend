@@ -53,17 +53,12 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
                 null
     
     /** Vergleicht zwei Spielfelder und gibt eine Liste aller Felder zurück, die sich unterscheiden. */
-    //fun compare(other: Board): Set<Field> {
-    //    val changedFields = mutableSetOf<Field>()
-    //    for (y in 0 until Constants.BOARD_SIZE) {
-    //        for (x in 0 until Constants.BOARD_SIZE) {
-    //            if (gameField[y][x] != other.gameField[y][x]) {
-    //                changedFields += Field(Coordinates(x, y), other.gameField[y][x])
-    //            }
-    //        }
-    //    }
-    //    return changedFields
-    //}
+    fun compare(other: RectangularBoard<FIELD>): Collection<FIELD> {
+        val entries = this.entries
+        return other.entries.filter {
+            it !in entries
+        }.map { it.value }
+    }
     
     override fun toString() =
             gameField.joinToString(separator = "\n") { row ->
@@ -83,9 +78,8 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
             }
         }.toSet()
     
-    // TODO proper xstream post-init for empty gameField, becomes null now
     override val size: Int
-        get() = gameField?.sumOf { it.size } ?: 0
+        get() = gameField.sumOf { it.size }
     
     override fun iterator(): Iterator<FIELD> = object: AbstractIterator<FIELD>() {
         var index = 0
