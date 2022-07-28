@@ -1,4 +1,4 @@
-package sc.plugin2022
+package sc.api
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

@@ -11,7 +11,7 @@ import sc.shared.ScoreFragment
 
 class GamePlugin: IGamePlugin {
     companion object {
-        const val PLUGIN_ID = "swc_2023_pinguine"
+        const val PLUGIN_ID = "swc_2023_penguins"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", ScoreAggregation.SUM),

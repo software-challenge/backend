@@ -1,4 +1,4 @@
-package sc.plugin2022
+package sc.plugin2023
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
@@ -6,8 +6,6 @@ import io.kotest.matchers.nulls.*
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Vector
 import sc.helpers.shouldSerializeTo
-import sc.plugin2023.Move
-import sc.plugin2023.y
 import sc.protocol.room.RoomPacket
 
 class MoveTest: FunSpec({

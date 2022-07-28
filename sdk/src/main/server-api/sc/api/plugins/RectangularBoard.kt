@@ -101,6 +101,7 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
             gameField[index.div(gameField.size)][index.mod(gameField.size)]
     
     fun readResolve(): Any {
+        @Suppress("SENSELESS_COMPARISON")
         if(gameField == null) {
             val field = RectangularBoard::class.java.getDeclaredField("gameField")
             field.isAccessible = true

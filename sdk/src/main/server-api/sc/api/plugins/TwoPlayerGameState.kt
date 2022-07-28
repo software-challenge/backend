@@ -1,8 +1,5 @@
 package sc.api.plugins
 
-import sc.shared.InvalidMoveException
-import sc.shared.MoveMistake
-
 abstract class TwoPlayerGameState<M: IMove>(
         val startTeam: Team
 ) : IGameState {
