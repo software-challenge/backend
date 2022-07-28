@@ -1,5 +1,6 @@
 package sc.plugin2023
 
+import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.booleans.*
@@ -54,15 +55,16 @@ class GameStateTest: FunSpec({
     }
     context("move calculation") {
         test("initial placement") {
-            val board = makeBoard()
-            GameState(board).getPossibleMoves() shouldHaveSize board.size
+            forAll(Board(), makeBoard()) { board ->
+                GameState(board).getPossibleMoves() shouldHaveSize board.size
+            }
         }
         test("first moves") {
             // Board with max penguins for one player
             GameState(makeBoard(*Array(PluginConstants.PENGUINS) { it y it to 0 })).getPossibleMoves() shouldHaveAtLeastSize PluginConstants.PENGUINS * 2
         }
         test("immovable") {
-            // Board with max penguins for one player
+            // Board with max penguins for both players
             val state = GameState(Board(listOf(
                     MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.ONE) },
                     MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.TWO) })))

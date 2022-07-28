@@ -46,14 +46,15 @@ class BoardTest: FunSpec({
             clone shouldBe makeBoard(0 y 0 to 1)
         }
     }
-    context("Board performs Moves") {
-        context("refuses invalid moves") {
-            test("can't move off the fields") {
-                // TODO
-            }
-            test("can't move onto own piece") {
-                // TODO
-            }
+    context("Board generates Moves") {
+        val board = makeBoard(0 y 0 to 0)
+        test("many possible moves") {
+            // right, right down
+            board.possibleMovesFrom(0 y 0) shouldHaveSize 2 * (PluginConstants.BOARD_SIZE - 1)
+        }
+        test("restricted moves") {
+            board[1 y 1] = Team.ONE
+            board.possibleMovesFrom(0 y 0) shouldHaveSize PluginConstants.BOARD_SIZE - 1
         }
     }
     context("Board calculates diffs") {

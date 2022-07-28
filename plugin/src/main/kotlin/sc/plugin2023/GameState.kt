@@ -40,7 +40,7 @@ data class GameState @JvmOverloads constructor(
             if(!move.to.minus(move.from).straight)
                 throw InvalidMoveException(MoveMistake.INVALID_MOVE, move)
             // TODO avoid this check
-            if(move !in getPossibleMoves())
+            if(move !in board.possibleMovesFrom(move.from))
                 throw InvalidMoveException(MoveMistake.INVALID_MOVE, move)
             board[move.from] = null
         } else {
@@ -62,14 +62,7 @@ data class GameState @JvmOverloads constructor(
         return if(pieces.size < PluginConstants.PENGUINS) {
             board.filterValues { it.fish == 1 }.map { Move(null, it.key) }
         } else {
-            pieces.flatMap { (pos, _) ->
-                // TODO incomplete
-                Vector.DoubledHex.directions.mapNotNull { vector ->
-                    Move.run(pos, vector).takeIf { move ->
-                        board.getOrEmpty(move.to).fish > 0
-                    }
-                }
-            }
+            pieces.flatMap { (pos, _) -> board.possibleMovesFrom(pos) }
         }
     }
     

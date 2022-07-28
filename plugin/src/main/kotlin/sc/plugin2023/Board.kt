@@ -2,9 +2,6 @@ package sc.plugin2023
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.*
-import sc.shared.InvalidMoveException
-import sc.shared.MoveMistake
-import java.util.LinkedList
 import kotlin.random.Random
 import sc.plugin2023.util.PluginConstants as Constants
 
@@ -64,6 +61,13 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
         gameField[position.y][position.x / 2] = Field(penguin = team)
         return field.fish
     }
+    
+    fun possibleMovesFrom(pos: Coordinates) =
+        Vector.DoubledHex.directions.flatMap { vector ->
+            (1 until Constants.BOARD_SIZE).map {
+                Move.run(pos, vector * it)
+            }.takeWhile { getOrEmpty(it.to).fish > 0 }
+        }
     
     /** Returns a list of the non-null filter outputs */
     fun <T> filterFields(filter: (Field, Coordinates) -> T?): Collection<T> =
