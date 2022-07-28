@@ -31,11 +31,13 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
             coordinates.y in gameField.indices &&
             coordinates.x in gameField[coordinates.y].indices
     
-    /** Gibt das Feld an den gegebenen Koordinaten zurück. */
-    protected open operator fun get(x: Int, y: Int) =
+    /** Gibt das Feld an den gegebenen Koordinaten zurück.
+     * Bevorzugt für interne Verwendung, da Fehler roh zurückgegeben werden. */
+    open operator fun get(x: Int, y: Int) =
             gameField[y][x]
     
     /** Gibt das Feld an den gegebenen Koordinaten zurück. */
+    @Throws(IllegalArgumentException::class)
     override operator fun get(key: Coordinates) =
             try {
                 get(key.x, key.y)

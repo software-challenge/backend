@@ -46,6 +46,7 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
 
     override fun isValid(coordinates: Coordinates) =
             (coordinates.x + coordinates.y) % 2 == 0 &&
+                coordinates.x >= 0 &&
                 super.isValid(coordinates.copy(coordinates.x / 2))
     
     /** Gibt das Feld an den gegebenen Koordinaten zurück. */
