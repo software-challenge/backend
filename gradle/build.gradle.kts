@@ -96,7 +96,7 @@ tasks {
             println("Version: $newVersion")
             println("Beschreibung: $desc")
             exec { commandLine("git", "add", "gradle.properties", "CHANGELOG.md") }
-            exec { commandLine("git", "commit", "-m", "release: $newVersion") }
+            exec { commandLine("git", "commit", "-m", "release: v$newVersion") }
             exec { commandLine("git", "tag", newVersion, "-m", desc) }
             exec { commandLine("git", "push", "--follow-tags") }
         }
