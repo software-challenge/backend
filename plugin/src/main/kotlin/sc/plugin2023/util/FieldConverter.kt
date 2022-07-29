@@ -16,8 +16,8 @@ class FieldConverter: Converter {
         writer.setValue(obj.penguin?.name ?: obj.fish.toString())
     }
     
-    override fun unmarshal(reader: HierarchicalStreamReader, context: UnmarshallingContext): Any? =
+    override fun unmarshal(reader: HierarchicalStreamReader, context: UnmarshallingContext): Field =
             reader.value?.let { value ->
-                value.toIntOrNull()?.let { Field(it) } ?: Team.valueOf(value)
+                value.toIntOrNull()?.let { Field(it) } ?: Field(penguin = Team.valueOf(value))
             } ?: Field()
 }

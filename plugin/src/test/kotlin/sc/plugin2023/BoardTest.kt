@@ -26,6 +26,7 @@ class BoardTest: FunSpec({
             
             generatedBoard.getPenguins() shouldHaveSize 0
             generatedBoard[1 y 1] = Team.ONE
+            generatedBoard[1 y 1] shouldBe Field(penguin = Team.ONE)
             generatedBoard.getPenguins() shouldHaveSize 1
             
             arrayOf(-1 y 1, -2 y 0, -1 y 3, -1 y 0).forAll {
@@ -93,7 +94,10 @@ class BoardTest: FunSpec({
             testXStream.toXML(Board()) shouldHaveLineCount 82
         }
         test("Board with content") {
-            testXStream.toXML(makeBoard(0 y 0 to 1)) shouldContainOnlyOnce "<field>TWO</field>"
+            val fieldTwo = "<field>TWO</field>"
+            testXStream.fromXML(fieldTwo) shouldBe Field(penguin = Team.TWO)
+            testXStream.fromXML("<board><list>$fieldTwo</list>") shouldBe Board(listOf(mutableListOf(Field(penguin = Team.TWO))))
+            testXStream.toXML(makeBoard(0 y 0 to 1)) shouldContainOnlyOnce fieldTwo
         }
     }
 })

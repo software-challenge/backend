@@ -14,12 +14,13 @@ import sc.plugin2023.util.PluginConstants
 class GameStateTest: FunSpec({
     context("XML Serialization") {
         test("empty state") {
-            GameState(Board(listOf(mutableListOf(Field())))) shouldSerializeTo """
+            GameState(Board(listOf(mutableListOf(Field(), Field(penguin = Team.TWO))))) shouldSerializeTo """
                 <state turn="0">
                   <startTeam>ONE</startTeam>
                   <board>
                     <list>
                       <field>0</field>
+                      <field>TWO</field>
                     </list>
                   </board>
                   <fishes>
