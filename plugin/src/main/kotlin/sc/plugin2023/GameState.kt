@@ -57,14 +57,17 @@ data class GameState @JvmOverloads constructor(
     val currentPieces
         get() = board.filterValues { it.penguin == currentTeam }
     
-    override fun getPossibleMoves(): List<Move> {
-        val pieces = currentPieces
-        return if(pieces.size < PluginConstants.PENGUINS) {
-            board.filterValues { it.fish == 1 }.map { Move(null, it.key) }
-        } else {
-            pieces.flatMap { (pos, _) -> board.possibleMovesFrom(pos) }
-        }
-    }
+    val penguinsPlaced
+        get() = currentPieces.size == PluginConstants.PENGUINS
+    
+    override fun getPossibleMoves(): List<Move> =
+            if(penguinsPlaced) {
+                currentPieces.flatMap { (pos, _) -> board.possibleMovesFrom(pos) }
+            } else {
+                board.filterValues { it.fish == 1 }.map { Move(null, it.key) }
+            }
+    
+    fun canPlacePenguin(pos: Coordinates) = !penguinsPlaced && board[pos].fish == 1
     
     fun immovable(team: Team? = null) =
             board.getPenguins()

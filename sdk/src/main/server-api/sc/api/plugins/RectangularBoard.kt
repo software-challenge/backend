@@ -1,8 +1,6 @@
 package sc.api.plugins
 
-import com.thoughtworks.xstream.annotations.XStreamConverter
 import com.thoughtworks.xstream.annotations.XStreamImplicit
-import com.thoughtworks.xstream.converters.collections.CollectionConverter
 import sc.framework.PublicCloneable
 
 typealias TwoDBoard<FIELD> = List<MutableList<FIELD>>
@@ -72,13 +70,14 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     override val entries: Set<Map.Entry<Coordinates, FIELD>>
         get() = gameField.flatMapIndexed { y, row ->
             row.mapIndexed { x, field ->
-                // TODO really? an anonymous object?
-                object: Map.Entry<Coordinates, FIELD> {
-                    override val key = Coordinates(x, y)
-                    override val value = field
-                }
+                FieldPosition(Coordinates(x, y), field)
             }
         }.toSet()
+    
+    inner class FieldPosition(
+            override val key: Coordinates,
+            override val value: FIELD
+    ): Map.Entry<Coordinates, FIELD>
     
     override val size: Int
         get() = gameField.sumOf { it.size }

@@ -48,6 +48,7 @@ public class ClientXmlReadTest {
 
     client.start();
     client.send(new ExamplePacket());
+    stringInterface.close();
     String data = stringInterface.readData();
     assertEquals("<protocol>\n  <example/>", data);
   }

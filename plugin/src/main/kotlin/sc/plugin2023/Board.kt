@@ -86,13 +86,7 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
     fun getOrEmpty(key: Coordinates?) = key?.let { getOrNull(it) } ?: Field()
     
     override val entries: Set<Map.Entry<Coordinates, Field>>
-        get() = filterFields { field, coordinates ->
-            // TODO really? an anonymous object?
-            object: Map.Entry<Coordinates, Field> {
-                override val key = coordinates
-                override val value = field
-            }
-        }.toSet()
+        get() = filterFields { field, coordinates -> FieldPosition(coordinates, field) }.toSet()
     
     override fun clone(): Board = Board(this)
     

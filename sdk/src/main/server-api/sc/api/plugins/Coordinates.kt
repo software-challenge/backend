@@ -15,17 +15,14 @@ data class Coordinates(
     override fun toString(): String = "[$x|$y]"
     
     /** Addiere den [Vector] auf die [Coordinates] auf. */
-    operator fun plus(vector: Vector): Coordinates {
-        return Coordinates(x + vector.dx, y + vector.dy)
-    }
+    operator fun plus(vector: Vector): Coordinates =
+            Coordinates(x + vector.dx, y + vector.dy)
     /** Berechne die Distanz zweier Koordinaten, als [Vector] */
-    operator fun minus(other: Coordinates): Vector {
-        return Vector(x - other.x, y - other.y)
-    }
+    operator fun minus(other: Coordinates): Vector =
+            Vector(x - other.x, y - other.y)
     /** Ziehe die Distanz (als [Vector]) von der Koordinate ab. */
-    operator fun minus(other: Vector): Coordinates {
-        return Coordinates(x - other.dx, y - other.dy)
-    }
+    operator fun minus(other: Vector): Coordinates =
+            Coordinates(x - other.dx, y - other.dy)
     /** Wandelt die [Coordinates] in einen entsprechenden [Vector]. */
     operator fun unaryPlus(): Vector = Vector(x, y)
     
@@ -33,6 +30,7 @@ data class Coordinates(
     val neighbors: Collection<Coordinates>
         get() = Vector.cardinals.map { this + it }
     
+    // TODO separate interfaces Positioned and HexPositioned?
     val hexNeighbors: Collection<Coordinates>
         get() = Vector.DoubledHex.directions.map { this + it }
     
