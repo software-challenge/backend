@@ -30,7 +30,7 @@ ansonsten (gerade bei experimentier-Branches) ein squash merge,
 wobei der Titel des Pull Requests der Commit-Message entsprechen sollte.
 
 Detaillierte Informationen zu unserem Kollaborations-Stil
-findet ihr in der [Kull Konvention](https://xerus2000.github.io/kull).
+findet ihr in der [Kull Konvention](https://kull.jfischer.org).
 
 ## Build
 

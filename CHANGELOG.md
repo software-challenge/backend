@@ -10,7 +10,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### [23.0.1](https://github.com/software-challenge/backend/commits/23.0.0) Proper Penguins - 2022-07-28
+### [23.0.1](https://github.com/software-challenge/backend/commits/23.0.1) Proper Penguins - 2022-08-06
 - Proper rule implementation for Penguins with some helpers
 
 ### [23.0.0](https://github.com/software-challenge/backend/commits/23.0.0) Rough Penguins - 2022-07-28
