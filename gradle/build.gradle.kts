@@ -33,7 +33,7 @@ val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
 val testingDir by extra { buildDir.resolve("tests") }
 val documentedProjects = listOf("sdk", "plugin")
 
-val enableTestClient by extra { versionObject.minor > 0 }
+val enableTestClient by extra { arrayOf("check", "testTestClient").any { gradle.startParameter.taskNames.contains(it) } || versionObject.minor > 0 }
 val enableIntegrationTesting = !project.hasProperty("nointegration") && (versionObject.minor > 0 || enableTestClient)
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
