@@ -15,13 +15,13 @@ import sc.helpers.testXStream
 import sc.plugin2023.util.PluginConstants
 
 class BoardTest: FunSpec({
-    context("Board generation") {
+    context("Board") {
         val generatedBoard = Board()
-        test("works properly") {
+        test("generates properly") {
             generatedBoard shouldHaveSize PluginConstants.BOARD_SIZE * PluginConstants.BOARD_SIZE
             generatedBoard.forAll {
                 it.penguin.shouldBeNull()
-                it.fish shouldBeInRange 1..4
+                it.fish shouldBeInRange 0..4
             }
             
             generatedBoard.getPenguins() shouldHaveSize 0
@@ -34,7 +34,7 @@ class BoardTest: FunSpec({
             }
             (0 until PluginConstants.BOARD_SIZE).map { (it * 2) y 2 }.forAll {
                 val field = generatedBoard[it]
-                field.fish shouldBeInRange 1..4
+                field.fish shouldBeInRange 0..4
                 generatedBoard[it.x, it.y] shouldBe field
             }
         }
@@ -48,7 +48,7 @@ class BoardTest: FunSpec({
             clone shouldBe makeBoard(0 y 0 to 1)
         }
     }
-    context("Board generates Moves") {
+    context("Board calculates Moves") {
         val board = makeBoard(0 y 0 to 0)
         test("many possible moves") {
             // right, right down

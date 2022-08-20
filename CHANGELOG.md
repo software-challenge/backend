@@ -10,8 +10,15 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### [23.0.2](https://github.com/software-challenge/backend/commits/23.0.2) New Board generation - 2022-08-21
+- Update Board generation: 
+  The Board is now mirrored with holes,
+  with more holes in the middle and more fish at the edge.
+- Improve automated checks
+
 ### [23.0.1](https://github.com/software-challenge/backend/commits/23.0.1) Proper Penguins - 2022-08-06
 - Proper rule implementation for Penguins with some helpers
+- Improve XML
 
 ### [23.0.0](https://github.com/software-challenge/backend/commits/23.0.0) Rough Penguins - 2022-07-28
 - Generify some plugin functionality to the SDK 
