@@ -25,8 +25,8 @@ data class GameState @JvmOverloads constructor(
         override var lastMove: Move? = null,
         val fishes: IntArray = IntArray(Team.values().size),
 ): TwoPlayerGameState<Move>(Team.ONE) {
-    
-    constructor(other: GameState): this(other.board.clone(), other.turn, other.lastMove, other.fishes)
+
+    constructor(other: GameState): this(other.board.clone(), other.turn, other.lastMove, other.fishes.clone())
     
     override val currentTeam: Team
         get() = currentTeamFromTurn().run { takeIf { !immovable(it) } ?: opponent() }
