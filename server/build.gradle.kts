@@ -86,6 +86,7 @@ tasks {
                 include("?ocker*")
                 include("logback-production.xml")
                 include("server.properties.production")
+                rename("logback-production.xml", "logback.xml")
                 into(workingDir)
             }
         }

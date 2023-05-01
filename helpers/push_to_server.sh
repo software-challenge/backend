@@ -20,4 +20,4 @@ ssh -S ssh-ctrl-socket -O exit $server
 #scp docker-compose-production.yml $server:./docker-compose.yml
 ssh $server 'sudo docker pull localhost:5000/swc_game-server' && \
 # NOTE This requires the other services (client-controller and gameserver) in the compose file also already deployed
-ssh $server 'sudo docker service update --image localhost:5000/swc_game-server:latest --with-registry-auth deploy_gameserver'
+ssh $server 'sudo docker service update --image localhost:5000/swc_game-server:latest --with-registry-auth contest_gameserver'

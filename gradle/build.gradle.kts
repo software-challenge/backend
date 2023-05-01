@@ -67,7 +67,7 @@ tasks {
     val release by creating {
         dependsOn(clean, check)
         group = "distribution"
-        description = "Prepares a new Release by bumping the version and creating and pushing a commit tagged with the new version"
+        description = "Prepares a new Release by bumping the version and pushing a commit tagged with the new version"
         doLast {
             var newVersion = version
             fun String.editVersion(version: String, new: Int) =
