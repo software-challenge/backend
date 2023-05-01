@@ -68,12 +68,15 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
             var remainingFish = Constants.BOARD_SIZE * (Constants.BOARD_SIZE + 1)
             val random = Random(seed)
             println("Board seed: $seed")
+            var maxholes = 6
             return List(Constants.BOARD_SIZE / 2) {
                 MutableList(Constants.BOARD_SIZE) {
                     val rand = random.nextInt(remainingFish)
-                    if(rand < 5)
+                    if(rand < maxholes) {
+                        maxholes--
                         return@MutableList Field()
-                    val fish = rand / 20 + 1
+                    }
+                    val fish = (rand - maxholes) / 20 + 1
                     remainingFish -= fish
                     Field(fish)
                 }
