@@ -65,15 +65,21 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
     companion object {
         /** Generiert ein neues Spielfeld mit zufällig auf dem Spielbrett verteilten Fischen. */
         private fun generateFields(seed: Int = Random.nextInt()): TwoDBoard<Field> {
-            var remainingFish = Constants.BOARD_SIZE * (Constants.BOARD_SIZE + 1)
+            var remainingFish = Constants.BOARD_SIZE * Constants.BOARD_SIZE
             val random = Random(seed)
-            println("Board seed: $seed")
+            println("Board Seed: $seed")
+            var maxholes = 5
+            // Pro Hälfte 32 Felder, mind. 27 Schollen
+            // Maximal (64-20)/2 = 22 2-Fisch-Schollen,
+            // also immer mindestens 5 1-Fisch-Schollen pro Seite
             return List(Constants.BOARD_SIZE / 2) {
                 MutableList(Constants.BOARD_SIZE) {
                     val rand = random.nextInt(remainingFish)
-                    if(rand < 5)
+                    if(rand < maxholes) {
+                        maxholes--
                         return@MutableList Field()
-                    val fish = rand / 20 + 1
+                    }
+                    val fish = (rand - maxholes) / 20 + 1
                     remainingFish -= fish
                     Field(fish)
                 }
