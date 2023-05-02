@@ -13,7 +13,7 @@ application {
 
 repositories {
     jcenter()
-    maven("http://maven.wso2.org/nexus/content/groups/wso2-public/")
+    maven("https://maven.wso2.org/nexus/content/groups/wso2-public/")
     maven("https://jitpack.io")
 }
 
