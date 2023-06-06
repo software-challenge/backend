@@ -1,4 +1,4 @@
-FROM openjdk:11-jre
+FROM eclipse-temurin:17-jre
 
 # Where to get the game server files from. Needs to be below or in directory
 # where this Dockerfile resides. Is the standard build result when executing
