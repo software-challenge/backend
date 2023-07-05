@@ -27,7 +27,7 @@ private val logger = LoggerFactory.getLogger(Player::class.java)
 // TODO split this beast up!
 @XStreamAlias("player")
 @XStreamConverter(PlayerConverter::class)
-class Player @JvmOverloads constructor(
+open class Player @JvmOverloads constructor(
         @XStreamAsAttribute var team: ITeam,
         @XStreamAsAttribute var displayName: String = ""
 ): PublicCloneable<Player> {
