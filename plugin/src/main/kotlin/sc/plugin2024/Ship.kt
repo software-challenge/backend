@@ -5,7 +5,9 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.Coordinates
 import sc.api.plugins.ITeam
 import sc.api.plugins.Team
+import sc.api.plugins.Vector
 import sc.framework.plugins.Player
+import kotlin.math.abs
 
 
 /**
@@ -41,7 +43,7 @@ class Ship(override val index: Int, override val name: String, override val lett
      * Richtung, in die das Schiff ausgerichtet ist.
      */
     @XStreamAsAttribute
-    var direction: Direction? = null
+    var direction: Vector? = null
 
     /**
      * aktuelle Geschwindigkeit des Schiffes des Spielers
@@ -96,5 +98,29 @@ class Ship(override val index: Int, override val name: String, override val lett
 
     override fun opponent(): ITeam {
         TODO("Not yet implemented")
+    }
+
+    /**
+     * Returns the direction after turning by the specified number of times.
+     *
+     * @param turn the number of times to turn
+     * @return the new direction after turning
+     */
+    fun getTurnedDirection(turn: Int): Vector {
+        for (i in Vector.directions.indices) {
+            if (Vector.directions[i] == this.direction) {
+                return Vector.directions[abs(i + turn) % Vector.directions.size]
+            }
+        }
+        return null!!
+    }
+
+    /**
+     * Gibt die Anzahl der Drehungen bei einer Drehung von der aktuellen Richtung zu toDir zurück
+     * @param toDir Endrichtung
+     * @return Anzahl der Drehungen
+     */
+    fun turnToDir(toDir: Vector) {
+
     }
 }

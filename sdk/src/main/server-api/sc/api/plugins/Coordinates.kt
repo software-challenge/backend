@@ -32,7 +32,7 @@ data class Coordinates(
     
     // TODO separate interfaces Positioned and HexPositioned?
     val hexNeighbors: Collection<Coordinates>
-        get() = Vector.DoubledHex.directions.map { this + it }
+        get() = Vector.directions.map { this + it }
     
     fun fromDoubledHex() = Coordinates(x / 2, y)
     fun toDoubledHex() = doubledHex(x, y)
@@ -74,38 +74,27 @@ data class Vector(val dx: Int, val dy: Int): Comparable<Vector> {
     
     /** Konvertiert den Vektor zu entsprechenden [Coordinates]. */
     operator fun unaryPlus(): Coordinates = Coordinates(dx, dy)
-    
-    companion object {
-        /** Die vier Vektoren in diagonaler Richtung. */
-        val diagonals: Array<Vector> = arrayOf(
-                Vector(-1, -1),
-                Vector(-1, 1),
-                Vector(1, -1),
-                Vector(1, 1)
-        )
-        /** Die vier Vektoren in kardinaler Richtung. */
-        val cardinals: Array<Vector> = arrayOf(
-                Vector(-1, 0),
-                Vector(0, -1),
-                Vector(1, 0),
-                Vector(0, 1)
-        )
+
+    fun opposite() = when (this) {
+        RIGHT -> LEFT
+        UP_RIGHT -> DOWN_LEFT
+        UP_LEFT -> DOWN_RIGHT
+        LEFT -> RIGHT
+        DOWN_LEFT -> UP_RIGHT
+        DOWN_RIGHT -> UP_LEFT
+        else -> throw IllegalArgumentException("No opposite direction recognized for vector $this")
     }
-    
-    object DoubledHex {
-        val LEFT = Vector(+2, 0)
-        val RIGHT = Vector(-2, 0)
-        val UP_LEFT = Vector(-1, -1)
+
+    companion object {
+        val RIGHT = Vector(+1, 0)
         val UP_RIGHT = Vector(+1, -1)
+        val UP_LEFT = Vector(-1, -1)
+        val LEFT = Vector(-1, 0)
         val DOWN_LEFT = Vector(-1, +1)
         val DOWN_RIGHT = Vector(+1, +1)
-        val directions = arrayOf(LEFT, UP_LEFT, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN_LEFT)
-        
-        val Vector.straight: Boolean
-            get() = abs(dx) == abs(dy) || (dx % 2 == 0 && dy == 0)
-        
-        init {
-            require(directions.all { it.straight })
-        }
+        val directions = arrayOf(RIGHT, UP_RIGHT, UP_LEFT, LEFT, DOWN_LEFT, DOWN_RIGHT)
+
+        val diagonals = arrayOf(Vector(-1, -1), Vector(-1, 1), Vector(1, -1), Vector(1, 1))
+        val cardinals = arrayOf(Vector(-1, 0), Vector(0, -1), Vector(1, 0), Vector(0, 1))
     }
 }
