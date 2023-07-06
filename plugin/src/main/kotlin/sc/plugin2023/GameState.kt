@@ -3,7 +3,6 @@ package sc.plugin2023
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.*
-import sc.api.plugins.Vector.DoubledHex.straight
 import sc.plugin2023.util.PenguinMoveMistake
 import sc.plugin2023.util.PluginConstants
 import sc.shared.MoveMistake
@@ -37,7 +36,7 @@ data class GameState @JvmOverloads constructor(
                 throw InvalidMoveException(MoveMistake.WRONG_COLOR, move)
             if(currentPieces.size < PluginConstants.PENGUINS)
                 throw InvalidMoveException(PenguinMoveMistake.PENGUINS, move)
-            if(!move.to.minus(move.from).straight)
+            if(!move.to.minus(move.from).straightHex)
                 throw InvalidMoveException(MoveMistake.INVALID_MOVE, move)
             // TODO avoid this check
             if(move !in board.possibleMovesFrom(move.from))

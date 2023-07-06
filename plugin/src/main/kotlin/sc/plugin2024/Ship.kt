@@ -2,11 +2,7 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
-import sc.api.plugins.Coordinates
-import sc.api.plugins.ITeam
-import sc.api.plugins.Team
-import sc.api.plugins.Vector
-import sc.framework.plugins.Player
+import sc.api.plugins.*
 import kotlin.math.abs
 
 
@@ -24,7 +20,7 @@ import kotlin.math.abs
  * @property freeTurns This field is relevant only for the server.
  * @property freeAcc This field is relevant only for the GUI.
  */
-class Ship(override val index: Int, override val name: String, override val letter: Char) : ITeam {
+class Ship(val team: ITeam, @XStreamAsAttribute val position: Coordinates) {
 
     /**
      * Aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
@@ -32,18 +28,10 @@ class Ship(override val index: Int, override val name: String, override val lett
      */
     @XStreamAsAttribute
     val points = 0
-
-    /**
-     * Aktuelle Koordinate des Schiffes
-     */
+    
+    /** Richtung, in die das Schiff ausgerichtet ist. */
     @XStreamAsAttribute
-    val position: Coordinates? = null
-
-    /**
-     * Richtung, in die das Schiff ausgerichtet ist.
-     */
-    @XStreamAsAttribute
-    var direction: Vector? = null
+    var direction: HexDirection = HexDirection.RIGHT
 
     /**
      * aktuelle Geschwindigkeit des Schiffes des Spielers
@@ -95,10 +83,6 @@ class Ship(override val index: Int, override val name: String, override val lett
      */
     fun getField(board: Board): Field? =
         board.tiles!!.find { it.index == this.tile }?.getField(position!!.x, position!!.y)
-
-    override fun opponent(): ITeam {
-        TODO("Not yet implemented")
-    }
 
     /**
      * Returns the direction after turning by the specified number of times.

@@ -2,46 +2,22 @@ package sc.plugin2024.actions
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import sc.api.plugins.HexDirection
+import sc.api.plugins.Vector
 import sc.framework.plugins.Player
 import sc.plugin2024.*
 import sc.shared.InvalidMoveException
 
+/** Erzeugt eine Abdrängaktion in angegebene Richtung. */
 @XStreamAlias(value = "push")
-class Push : Action {
-    /**
-     * Richtung in die abgedrängt werden soll
-     */
-    @XStreamAsAttribute
-    var direction: Direction
-
-    constructor() {
-        order = 0
-        direction = Direction.RIGHT
-    }
-
-    /**
-     * Erzeugt eine Abdrängaktion in angegebene Richtug
-     * @param direction Richtung des Abdrängens
-     */
-    constructor(direction: Direction) {
-        this.direction = direction
-    }
-
-    /**
-     * Erzeugt eine Abdrängaktion in angegebene Richtug
-     * @param direction Richtung des Abdrängens
-     * @param order Nummer der Aktion. Aktionen werden aufsteigend sortiert nach
-     * ihrer Nummer ausgeführt.
-     */
-    constructor(direction: Direction, order: Int) {
-        this.direction = direction
-        order = order
-    }
+data class Push(
+        /** Richtung in die abgedrängt werden soll */
+        @XStreamAsAttribute val direction: HexDirection
+) : Action {
 
     @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState?, player: Ship?) {
-        val nudgedPlayer: Player =
-            state.otherTeam // The player who is being pushed (using different verb to make distinction easier).
+    override fun perform(state: GameState, ship: Ship) {
+        val nudgedPlayer = state.otherTeam // The player who is being pushed (using different verb to make distinction easier).
         if (pushingPlayer.getMovement() === 0) {
             throw InvalidMoveException("Keine Bewegunspunkte mehr vorhanden")
         }
@@ -85,21 +61,5 @@ class Push : Action {
         return
     }
 
-    override fun clone(): Push {
-        return Push(direction, this.order)
-    }
-
-    override fun equals(o: Any?): Boolean {
-        return if (o is Push) {
-            direction === o.direction
-        } else false
-    }
-
-    override fun toString(): String {
-        return "Dränge nach $direction ab"
-    }
-
-    override fun hashCode(): Int {
-        return direction.hashCode()
-    }
+    override fun toString(): String = "Dränge nach $direction ab"
 }

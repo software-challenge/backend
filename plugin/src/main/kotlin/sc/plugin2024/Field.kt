@@ -2,6 +2,7 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamConverter
+import sc.api.plugins.HexDirection
 import sc.api.plugins.IField
 import sc.plugin2024.util.FieldConverter
 
@@ -29,7 +30,7 @@ data class Field(var type: FieldType, val x: Int, val y: Int, val points: Int) :
      *
      * @return The field in the specified direction.
      */
-    fun getFieldInDirection(direction: Direction?, board: Board?): Field? {
+    fun getFieldInDirection(direction: HexDirection?, board: Board?): Field? {
         return _getFieldInDirection(direction!!, board!!, true)
     }
 
@@ -41,37 +42,37 @@ data class Field(var type: FieldType, val x: Int, val y: Int, val points: Int) :
      * @param onlyVisible Specifies whether to only return visible fields.
      * @return The field in the specified direction, or null if the field does not exist.
      */
-    private fun _getFieldInDirection(direction: Direction, board: Board, onlyVisible: Boolean): Field? {
+    private fun _getFieldInDirection(direction: HexDirection, board: Board, onlyVisible: Boolean): Field? {
         val targetX: Int
         val targetY: Int
         val onEvenRow = y % 2 == 0
         when (direction) {
-            Direction.RIGHT -> {
+            HexDirection.RIGHT -> {
                 targetX = x + 1
                 targetY = y
             }
 
-            Direction.UP_RIGHT -> {
+            HexDirection.UP_RIGHT -> {
                 targetX = if (onEvenRow) x + 1 else x
                 targetY = y - 1
             }
 
-            Direction.UP_LEFT -> {
+            HexDirection.UP_LEFT -> {
                 targetX = if (onEvenRow) x else x - 1
                 targetY = y - 1
             }
 
-            Direction.LEFT -> {
+            HexDirection.LEFT -> {
                 targetX = x - 1
                 targetY = y
             }
 
-            Direction.DOWN_LEFT -> {
+            HexDirection.DOWN_LEFT -> {
                 targetX = if (onEvenRow) x else x - 1
                 targetY = y + 1
             }
 
-            Direction.DOWN_RIGHT -> {
+            HexDirection.DOWN_RIGHT -> {
                 targetX = if (onEvenRow) x + 1 else x
                 targetY = y + 1
             }

@@ -15,7 +15,7 @@ import java.util.*
  * @property actions The list of actions in the move.
  */
 data class Move(
-    val actions: ArrayList<Action?>,
+    val actions: List<Action>,
 ) : IMove, Comparable<Move> {
 
     /**
@@ -28,45 +28,12 @@ data class Move(
      *
      * @param other the Move to be compared.
      * @return a negative integer if this Move is smaller than the specified Move,
-     *         zero if they are equal, or a positive integer if this Move is larger than the specified Move.
+     *         zero if they are equal in length,
+     *         or a positive integer if this Move is larger than the specified Move.
      */
     override fun compareTo(other: Move): Int =
         actions.size.compareTo(other.actions.size)
 
-
-    /**
-     * Check if the list of actions contains any Push action.
-     *
-     * @return true if the list of actions contains a Push action, false otherwise.
-     */
-    fun containsPushAction(): Boolean {
-        for (action in actions) {
-            if (action!!.javaClass == Push::class.java) {
-                return true
-            }
-        }
-        return false
-    }
-
-    /**
-     * Sets the order attribute of the trains based on their order in actions.
-     * @param actions The list of actions.
-     */
-    fun setOrderInActions() {
-        var order = 0
-        for (action in actions) {
-            action!!.order = order++
-        }
-    }
-
-    /**
-     * Sorts the list of actions in ascending order.
-     *
-     * @param actions the list of actions to be sorted (nullable)
-     */
-    fun orderActions() {
-        Collections.sort(actions)
-    }
 
     /**
      * Compares this move with the specified object to check if they are equal.
@@ -74,31 +41,14 @@ data class Move(
      * @param o the object to compare with this move
      * @return true if the specified object is a Move and contains the same actions as this move, false otherwise
      */
-    override fun equals(o: Any?): Boolean {
-        if (o is Move) {
-            for (action in o.actions) {
-                if (!actions.contains(action)) {
-                    return false
-                }
-            }
-            for (action in actions) {
-                if (!o.actions.contains(action)) {
-                    return false
-                }
-            }
-            return true
-        }
-        return false
-    }
-
+    override fun equals(o: Any?): Boolean = o is Move && actions == o.actions
+    
     /**
      * Returns the hash code value for this object.
      *
      * @return the hash code value for this object.
      */
-    override fun hashCode(): Int {
-        return actions.hashCode()
-    }
+    override fun hashCode(): Int = actions.hashCode()
 
     /**
      * Returns a string representation of the object.
@@ -107,4 +57,5 @@ data class Move(
      */
     override fun toString(): String =
         actions.joinToString(separator = ", ", prefix = "Move(", postfix = ")")
+    
 }
