@@ -5,6 +5,14 @@ import com.thoughtworks.xstream.annotations.XStreamConverter
 import sc.api.plugins.IField
 import sc.plugin2024.util.FieldConverter
 
+/**
+ * Represents a field on a game board.
+ *
+ * @property type The type of the field.
+ * @property x The x-coordinate of the field.
+ * @property y The y-coordinate of the field.
+ * @property points The number of points assigned to the field.
+ */
 @XStreamConverter(FieldConverter::class)
 @XStreamAlias("field")
 data class Field(var type: FieldType, val x: Int, val y: Int, val points: Int) : IField<Field> {
@@ -14,15 +22,25 @@ data class Field(var type: FieldType, val x: Int, val y: Int, val points: Int) :
         get() = type == FieldType.BLOCKED
 
     /**
-     * Gibt das Feld zurück, welches auf dem Spielbrett in der gegebenen Richtung liegt
-     * @param direction die gegebene Richtung
-     * @param board das Spielbrett
-     * @return das Feld in der Richtung
+     * Retrieves the field on the game board that is located in the given direction.
+     *
+     * @param direction The given direction.
+     * @param board The game board.
+     *
+     * @return The field in the specified direction.
      */
     fun getFieldInDirection(direction: Direction?, board: Board?): Field? {
         return _getFieldInDirection(direction!!, board!!, true)
     }
 
+    /**
+     * Returns the field in the specified direction from the current field.
+     *
+     * @param direction The direction to move to.
+     * @param board The board on which the field exists.
+     * @param onlyVisible Specifies whether to only return visible fields.
+     * @return The field in the specified direction, or null if the field does not exist.
+     */
     private fun _getFieldInDirection(direction: Direction, board: Board, onlyVisible: Boolean): Field? {
         val targetX: Int
         val targetY: Int

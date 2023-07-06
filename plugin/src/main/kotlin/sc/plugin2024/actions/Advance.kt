@@ -64,7 +64,7 @@ class Advance : Action {
             if (start.type !== FieldType.SANDBANK) {
                 throw InvalidMoveException(AdvanceException.BACKWARDS)
             }
-            val next: Field = start.getFieldInDirection(direction.opposite, state.board)!!
+            val next: Field? = start.getFieldInDirection(direction.opposite, state.board)
             if (next == null || next.type === FieldType.LOG || !next.isOccupied) {
                 throw InvalidMoveException(AdvanceException.BLOCKED)
             }
