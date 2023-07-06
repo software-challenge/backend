@@ -1,10 +1,11 @@
 package sc.api
 
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.*
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import sc.api.plugins.Coordinates
+import sc.api.plugins.HexDirection
 
 class CoordinatesTest: WordSpec({
     "Coordinates" should {
@@ -21,6 +22,18 @@ class CoordinatesTest: WordSpec({
             position shouldNotBe Coordinates(-3, 2)
             position shouldNotBe Coordinates(-3, -2)
             position shouldNotBe Coordinates(3, -2)
+        }
+    }
+    "HexDirections" should {
+        "produce correct opposites" {
+            forAll(
+                    HexDirection.LEFT to HexDirection.RIGHT,
+                    HexDirection.UP_LEFT to HexDirection.DOWN_RIGHT,
+                    HexDirection.DOWN_LEFT to HexDirection.UP_RIGHT,
+            ) {
+                it.first.opposite() shouldBe it.second
+                it.second.opposite() shouldBe it.first
+            }
         }
     }
 })

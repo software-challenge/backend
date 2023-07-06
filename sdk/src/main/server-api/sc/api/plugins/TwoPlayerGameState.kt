@@ -1,7 +1,7 @@
 package sc.api.plugins
 
 abstract class TwoPlayerGameState<M: IMove>(
-        val startTeam: ITeam
+        val startTeam: Team
 ) : IGameState {
     
     abstract val board: IBoard
@@ -24,7 +24,7 @@ abstract class TwoPlayerGameState<M: IMove>(
 
     /** Calculates the color of the current player from the [turn] and the [startTeam].
      * Based on the assumption that the current player switches every turn. */
-    protected fun currentTeamFromTurn(): ITeam =
+    protected fun currentTeamFromTurn(): Team =
             if(turn.rem(2) == 0) startTeam else startTeam.opponent()
 
     override fun toString() =
