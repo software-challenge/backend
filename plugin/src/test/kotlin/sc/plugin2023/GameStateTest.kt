@@ -57,19 +57,19 @@ class GameStateTest: FunSpec({
     context("move calculation") {
         test("initial placement") {
             forAll(Board(), makeBoard()) { board ->
-                GameState(board).getPossibleMoves() shouldHaveSize board.size
+                GameState(board).getSensibleMoves() shouldHaveSize board.size
             }
         }
         test("first moves") {
             // Board with max penguins for one player
-            GameState(makeBoard(*Array(PluginConstants.PENGUINS) { it y it to 0 })).getPossibleMoves() shouldHaveAtLeastSize PluginConstants.PENGUINS * 2
+            GameState(makeBoard(*Array(PluginConstants.PENGUINS) { it y it to 0 })).getSensibleMoves() shouldHaveAtLeastSize PluginConstants.PENGUINS * 2
         }
         test("immovable") {
             // Board with max penguins for both players
             val state = GameState(Board(listOf(
                     MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.ONE) },
                     MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.TWO) })))
-            state.getPossibleMoves().shouldBeEmpty()
+            state.getSensibleMoves().shouldBeEmpty()
             state.board.toString() shouldBe "RRRR\nBBBB"
             state.immovable(Team.ONE).shouldBeTrue()
             state.currentTeam shouldBe Team.TWO

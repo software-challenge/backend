@@ -60,7 +60,7 @@ data class GameState @JvmOverloads constructor(
     val penguinsPlaced
         get() = currentPieces.size == PluginConstants.PENGUINS
     
-    override fun getPossibleMoves(): List<Move> =
+    override fun getSensibleMoves(): List<Move> =
             if(penguinsPlaced) {
                 currentPieces.flatMap { (pos, _) -> board.possibleMovesFrom(pos) }
             } else {

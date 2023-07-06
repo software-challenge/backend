@@ -124,8 +124,12 @@ data class GameState @JvmOverloads constructor(
             )
         }
     }
-
-    override fun getPossibleOperations(): List<Action> {
+    
+    override fun getSensibleMoves(): List<Move> {
+       // TODO
+    }
+    
+    fun getPossibleActions(): List<Action> {
         val actions: MutableList<Action> = ArrayList()
         val otherPlayer: Ship = currentTeam.opponent() as Ship
         if (player.getX() === otherPlayer.getX() && player.getY() === otherPlayer.getY()) {

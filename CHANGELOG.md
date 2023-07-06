@@ -10,6 +10,14 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 24.0.0
+
+## 2024 Game Mississippi Queen - 2023-07
+
+### 23.0.3 Final Fixes
+- Fix Deep Cloning of GameState
+- Update Board generation counts to prevent missing ice floes
+
 ### [23.0.2](https://github.com/software-challenge/backend/commits/23.0.2) New Board generation - 2022-08-21
 - Update Board generation: 
   The Board is now mirrored with holes,

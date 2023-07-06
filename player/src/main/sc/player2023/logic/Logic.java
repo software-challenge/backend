@@ -3,9 +3,8 @@ package sc.player2023.logic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
+import sc.api.plugins.IMove;
 import sc.player.IGameHandler;
-import sc.plugin2023.GameState;
-import sc.plugin2023.Move;
 import sc.shared.GameResult;
 
 import java.util.List;
@@ -21,19 +20,20 @@ public class Logic implements IGameHandler {
   private static final Logger log = LoggerFactory.getLogger(Logic.class);
 
   /** Aktueller Spielstatus. */
-  private GameState gameState;
+  private IGameState gameState;
 
   public void onGameOver(GameResult data) {
     log.info("Das Spiel ist beendet, Ergebnis: {}", data);
   }
 
   @Override
-  public Move calculateMove() {
+  public IMove calculateMove() {
     long startTime = System.currentTimeMillis();
     log.info("Es wurde ein Zug von {} angefordert.", gameState.getCurrentTeam());
 
-    List<Move> possibleMoves = gameState.getPossibleOperations();
-    Move move = possibleMoves.get((int) (Math.random() * possibleMoves.size()));
+    List<IMove> possibleMoves = gameState.getSensibleMoves();
+    // Hier intelligente Strategie zur Auswahl des Zuges einfügen
+    IMove move = possibleMoves.get((int) (Math.random() * possibleMoves.size()));
 
     log.info("Sende {} nach {}ms.", move, System.currentTimeMillis() - startTime);
     return move;
@@ -41,7 +41,7 @@ public class Logic implements IGameHandler {
 
   @Override
   public void onUpdate(IGameState gameState) {
-    this.gameState = (GameState) gameState;
+    this.gameState = gameState;
     log.info("Zug: {} Dran: {}", gameState.getTurn(), gameState.getCurrentTeam());
   }
 

@@ -44,6 +44,8 @@ interface IGameState : RoomMessage, PublicCloneable<IGameState> {
     /** Gibt Punktzahlen des Teams entsprechend der [ScoreDefinition] zurück. */
     fun getPointsForTeam(team: ITeam): IntArray
     
-    /** Die möglichen Züge des aktuellen Teams in der aktuellen Situation. */
-    fun getPossibleOperations(): Collection<IMove>
+    /** Die möglichen Züge des aktuellen Teams in der aktuellen Situation.
+     * Bei manchen Spielen wird aufgrund der unüberschaubaren Zahl möglicher Züge
+     * nur ein Ausschnitt zurückgegeben. */
+    fun getSensibleMoves(): List<IMove>
 }
