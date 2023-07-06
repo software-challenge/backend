@@ -3,6 +3,7 @@ package sc.plugin2024.actions
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.plugin2024.*
+import sc.plugin2024.exceptions.MoveException
 import sc.plugin2024.exceptions.TurnException
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
@@ -44,12 +45,12 @@ class Turn : Action {
      * @param player Spieler der die Aktion ausführt
      */
     @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState?, player: MississippiPlayer?) {
+    override fun perform(state: GameState?, player: Ship?) {
         if (direction == 0 || direction < -3 || direction > 3) {
-            throw InvalidMoveException(TurnException.INVALID_TURN)
+            throw InvalidMoveException(MoveException.INVALID_TURN)
         }
         if (player!!.getField(state!!.board)!!.type === FieldType.SANDBANK) {
-            throw InvalidMoveException(TurnException.SANDBANK)
+            throw InvalidMoveException(MoveException.SANDBANK)
         }
         val newDirection: Direction = player!!.direction!!.getTurnedDirection(direction)
         val usedCoal: Int = (abs(direction.toDouble()) - player.freeTurns).toInt()
@@ -63,7 +64,7 @@ class Turn : Action {
             if (player.coal >= usedCoal) {
                 player.coal -= usedCoal
             } else {
-                throw InvalidMoveException(TurnException.COAL)
+                throw InvalidMoveException(MoveException.COAL)
             }
         }
         player.direction = newDirection

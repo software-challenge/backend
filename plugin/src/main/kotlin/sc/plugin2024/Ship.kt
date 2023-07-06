@@ -2,36 +2,40 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
+import sc.api.plugins.Coordinates
+import sc.api.plugins.ITeam
 import sc.api.plugins.Team
 import sc.framework.plugins.Player
 
 
-class MississippiPlayer(team: Team): Player(team) {
+/**
+ * This class represents a Ship in the game.
+ *
+ * @property points The current points of the ship.
+ * @property position The current coordinate of the ship.
+ * @property direction The direction the ship is facing.
+ * @property speed The current speed of the ship.
+ * @property coal The current amount of coal units of the ship.
+ * @property tile The tile index where the ship is located.
+ * @property passengers The number of passengers collected by the player.
+ * @property movement This field is relevant only for the server.
+ * @property freeTurns This field is relevant only for the server.
+ * @property freeAcc This field is relevant only for the GUI.
+ */
+class Ship(override val index: Int, override val name: String, override val letter: Char) : ITeam {
 
     /**
-     * Farbe des Spielers
-     */
-    @XStreamAsAttribute
-    val color: Team? = null
-
-    /**
-     * aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
+     * Aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
      * und der Anzahl der eingesammelten Passagiere
      */
     @XStreamAsAttribute
     val points = 0
 
     /**
-     * aktuelle x-Koordinate des Schiffes
+     * Aktuelle Koordinate des Schiffes
      */
     @XStreamAsAttribute
-    val x = 0
-
-    /**
-     * aktuelle y-Koordinate des Schiffes
-     */
-    @XStreamAsAttribute
-    val y = 0
+    val position: Coordinates? = null
 
     /**
      * Richtung, in die das Schiff ausgerichtet ist.
@@ -61,7 +65,7 @@ class MississippiPlayer(team: Team): Player(team) {
      * Anzahl der vom Spieler eingesammelten Passagiere
      */
     @XStreamAsAttribute
-    val passenger = 0
+    val passengers = 0
 
     /**
      * Nur fuer den Server relevant
@@ -87,12 +91,10 @@ class MississippiPlayer(team: Team): Player(team) {
      * @param board The Board object representing the game board.
      * @return The Field object associated with the current Tile index, or null if it doesn't exist.
      */
-    fun getField(board: Board): Field? {
-        for (tile in board.tiles!!) {
-            if (tile.index == this.tile) {
-                return tile.getField(x, y)
-            }
-        }
-        return null
+    fun getField(board: Board): Field? =
+        board.tiles!!.find { it.index == this.tile }?.getField(position!!.x, position!!.y)
+
+    override fun opponent(): ITeam {
+        TODO("Not yet implemented")
     }
 }

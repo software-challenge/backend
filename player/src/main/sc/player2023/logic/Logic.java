@@ -32,7 +32,7 @@ public class Logic implements IGameHandler {
     long startTime = System.currentTimeMillis();
     log.info("Es wurde ein Zug von {} angefordert.", gameState.getCurrentTeam());
 
-    List<Move> possibleMoves = gameState.getPossibleMoves();
+    List<Move> possibleMoves = gameState.getPossibleOperations();
     Move move = possibleMoves.get((int) (Math.random() * possibleMoves.size()));
 
     log.info("Sende {} nach {}ms.", move, System.currentTimeMillis() - startTime);

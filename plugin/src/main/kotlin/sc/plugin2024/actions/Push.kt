@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.framework.plugins.Player
 import sc.plugin2024.Action
 import sc.plugin2024.GameState
-import sc.plugin2024.MississippiPlayer
+import sc.plugin2024.Ship
 import sc.shared.InvalidMoveException
 
 @XStreamAlias(value = "push")
@@ -41,7 +41,7 @@ class Push : Action {
     }
 
     @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState?, player: MississippiPlayer?) {
+    override fun perform(state: GameState?, player: Ship?) {
         val nudgedPlayer: Player =
             state.getOtherPlayer() // The player who is being pushed (using different verb to make distinction easier).
         if (pushingPlayer.getMovement() === 0) {

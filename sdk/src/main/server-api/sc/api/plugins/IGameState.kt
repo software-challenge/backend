@@ -45,5 +45,5 @@ interface IGameState : RoomMessage, PublicCloneable<IGameState> {
     fun getPointsForTeam(team: ITeam): IntArray
     
     /** Die möglichen Züge des aktuellen Teams in der aktuellen Situation. */
-    fun getPossibleMoves(): Collection<IMove>
+    fun getPossibleOperations(): Collection<IMove>
 }

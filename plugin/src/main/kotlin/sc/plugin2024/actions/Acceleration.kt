@@ -5,8 +5,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.plugin2024.Action
 import sc.plugin2024.FieldType
 import sc.plugin2024.GameState
-import sc.plugin2024.MississippiPlayer
-import sc.plugin2024.exceptions.AccException
+import sc.plugin2024.Ship
+import sc.plugin2024.exceptions.MoveException
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
 
@@ -48,20 +48,20 @@ class Acceleration : Action {
      * @param player Spieler, für den die Beschleunigung ausgeführt wird
      */
     @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState?, player: MississippiPlayer?) {
+    override fun perform(state: GameState?, player: Ship?) {
         var speed: Int = player!!.speed
         speed += acc
         if (acc == 0) {
-            throw InvalidMoveException(AccException.ZERO_ACC)
+            throw InvalidMoveException(MoveException.ZERO_ACC)
         }
         if (speed > 6) {
-            throw InvalidMoveException(AccException.MAX_ACC)
+            throw InvalidMoveException(MoveException.MAX_ACC)
         }
         if (speed < 1) {
-            throw InvalidMoveException(AccException.MIN_ACC)
+            throw InvalidMoveException(MoveException.MIN_ACC)
         }
         if (player.getField(state!!.board)!!.type == FieldType.SANDBANK) {
-            throw InvalidMoveException(AccException.SANDBANK)
+            throw InvalidMoveException(MoveException.SANDBANK)
         }
         val usedCoal: Int = (abs(acc.toDouble()) - player.freeAcc).toInt()
         if (usedCoal > 0) {

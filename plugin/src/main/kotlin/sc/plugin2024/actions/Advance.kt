@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.LoggerFactory
 import sc.plugin2024.*
-import sc.plugin2024.exceptions.AdvanceException
+import sc.plugin2024.exceptions.MoveException
 import sc.shared.InvalidMoveException
 import java.util.*
 
@@ -21,7 +21,7 @@ class Advance : Action {
      * Das Fahren auf eine Sandbank beendet den Zug
      */
     @XStreamOmitField
-    protected var endsTurn = false
+    var endsTurn = false
 
     constructor() {
         distance = 0
@@ -50,23 +50,23 @@ class Advance : Action {
     }
 
     @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState?, player: MississippiPlayer?) {
+    override fun perform(state: GameState?, player: Ship?) {
         if (player!!.movement == 0) {
-            throw InvalidMoveException(AdvanceException.NO_MOVEMENT)
+            throw InvalidMoveException(MoveException.NO_MOVEMENT)
         }
         val start: Field = player.getField(state!!.board)!!
         val nextFields: LinkedList<Field> = LinkedList<Field>()
         val direction: Direction = player.direction!!
         if (distance == 0 || distance > 6 || distance < -1) {
-            throw InvalidMoveException(AdvanceException.INVALID_DISTANCE)
+            throw InvalidMoveException(MoveException.INVALID_DISTANCE)
         }
         if (distance == -1) { // Fall rückwärts von Sandbank
             if (start.type !== FieldType.SANDBANK) {
-                throw InvalidMoveException(AdvanceException.BACKWARDS)
+                throw InvalidMoveException(MoveException.BACKWARDS)
             }
             val next: Field? = start.getFieldInDirection(direction.opposite, state.board)
             if (next == null || next.type === FieldType.LOG || !next.isOccupied) {
-                throw InvalidMoveException(AdvanceException.BLOCKED)
+                throw InvalidMoveException(MoveException.BLOCKED)
             }
             state.put(next.x, next.y, player)
             player.setMovement(0)
@@ -75,13 +75,13 @@ class Advance : Action {
         } else {
             if (start.getType() === FieldType.SANDBANK) {
                 if (distance != 1) {
-                    throw InvalidMoveException(AdvanceException.ONE_FORWARD)
+                    throw InvalidMoveException(MoveException.ONE_FORWARD)
                 }
                 player.setMovement(0)
                 val next: Field = start.getFieldInDirection(direction, state.getBoard())
-                    ?: throw InvalidMoveException(AdvanceException.FIELD_NOT_FOUND)
+                    ?: throw InvalidMoveException(MoveException.FIELD_NOT_FOUND)
                 if (!next.isPassable()) {
-                    throw InvalidMoveException(AdvanceException.BLOCKED)
+                    throw InvalidMoveException(MoveException.BLOCKED)
                 }
                 state.put(next.getX(), next.getY(), player)
                 return
@@ -89,17 +89,17 @@ class Advance : Action {
             nextFields.add(start)
             // Kontrolliere für die Zurückgelegte Distanz, wie viele Bewegunsgpunkte verbraucht werden und ob es möglich ist, soweit zu ziehen
             for (i in 0 until distance) {
-                val next: Field = nextFields[i].getFieldInDirection(player.getDirection(), state.getBoard())
+                val next: Field? = nextFields[i].getFieldInDirection(player.getDirection(), state.getBoard())
                 if (next != null) {
                     nextFields.add(next)
                 } else {
-                    throw InvalidMoveException(AdvanceException.FIELD_NOT_FOUND)
+                    throw InvalidMoveException(MoveException.FIELD_NOT_FOUND)
                 }
                 val checkField: Field = nextFields[i + 1] // get next field
                 if (!checkField.isPassable() || state.getOtherPlayer().getField(state.getBoard())
                         .equals(checkField) && i != distance - 1
                 ) {
-                    throw InvalidMoveException(AdvanceException.BLOCKED)
+                    throw InvalidMoveException(MoveException.BLOCKED)
                 }
                 if (checkField.getType() === FieldType.SANDBANK) {
                     // case sandbar
@@ -108,13 +108,13 @@ class Advance : Action {
                     endsTurn = true
                     if (i != distance - 1) {
                         // Zug endet hier, also darf nicht weitergelaufen werden
-                        throw InvalidMoveException(AdvanceException.MOVE_ON_SANDBANK)
+                        throw InvalidMoveException(MoveException.MOVE_ON_SANDBANK)
                     }
                     state.put(checkField.getX(), checkField.getY(), player)
                     return
                 } else if (checkField.getType() === FieldType.LOG) {
                     if (player.getMovement() <= 1) {
-                        throw InvalidMoveException(AdvanceException.INSUFFICIENT_MOVEMENT)
+                        throw InvalidMoveException(MoveException.INSUFFICIENT_MOVEMENT)
                     }
                     player.setMovement(player.getMovement() - 2)
                     player.setSpeed(Math.max(1, player.getSpeed() - 1))
@@ -128,7 +128,7 @@ class Advance : Action {
         return
     }
 
-    override fun clone(): Advance {
+    fun clone(): Advance {
         return Advance(distance, this.order)
     }
 

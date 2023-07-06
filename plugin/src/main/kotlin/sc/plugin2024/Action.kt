@@ -2,11 +2,11 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.framework.plugins.Player
+import sc.api.plugins.IMove
 import sc.shared.InvalidMoveException
 
 @XStreamAlias(value = "action")
-abstract class Action : Comparable<Action?> {
+abstract class Action : IMove, Comparable<Action?> {
     /**
      * Nummer der Aktion. Aktionen werden aufsteigend sortiert nach ihrer Nummer
      * ausgeführt.
@@ -15,7 +15,7 @@ abstract class Action : Comparable<Action?> {
     var order = 0
 
     @Throws(InvalidMoveException::class)
-    abstract fun perform(state: GameState?, player: MississippiPlayer?)
+    abstract fun perform(state: GameState?, player: Ship?)
     override operator fun compareTo(other: Action?): Int {
         return order.compareTo(other!!.order)
     }

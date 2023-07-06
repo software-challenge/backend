@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
 import sc.plugin2024.actions.Acceleration
+import sc.plugin2024.exceptions.MoveException
 import sc.plugin2024.util.PluginConstants
 import sc.shared.InvalidMoveException
 
@@ -26,10 +27,8 @@ data class GameState @JvmOverloads constructor(
     override var lastMove: Move? = null,
 ) : TwoPlayerGameState<Move>(Team.ONE) {
 
-    constructor(other: GameState) : this(other.board.clone(), other.turn, other.lastMove, other.fishes.clone())
-
-    override val currentTeam: Team
-        get() = currentTeamFromTurn().run { takeIf { !immovable(it) } ?: opponent() }
+    override val currentTeam: Ship
+        get() = currentTeamFromTurn().run { takeIf { !immovable(it) } ?: opponent() } as Ship
 
     /**
      * Der Index des am weitesten vom Start entfernten Segmentes, welches bisher aufgedeckt wurde. Wird nur intern verwendet.
@@ -54,14 +53,15 @@ data class GameState @JvmOverloads constructor(
     var actions: List<Action>? = null
 
     override fun performMove(move: Move) {
-        orderActions()
+        move.orderActions()
         var order = 0
         var onEnemy: Boolean
 
-        if (getActions().isEmpty()) {
-            throw InvalidMoveException("Der Zug enthält keine Aktionen")
+        if (move.actions.isEmpty()) {
+            throw InvalidMoveException(MoveException.NO_ACTIONS)
         }
-        for (action in actions) {
+        for (action in move.actions) {
+            currentTeam
             onEnemy = player.getX() === state.getOtherPlayer().getX() && player.getY() === state.getOtherPlayer().getY()
             if (onEnemy && action.getClass() !== Push::class.java) {
                 throw InvalidMoveException(
@@ -107,8 +107,8 @@ data class GameState @JvmOverloads constructor(
         if (player.getSpeed() === 1 && player.canPickupPassenger(state.getBoard())) {
             state.removePassenger(player)
         }
-        // otherplayer could possible pick up Passenger in enemy turn
-        // otherplayer could possible pick up Passenger in enemy turn
+        // other player could possibly pick up Passenger in enemy turn
+        // other player could possibly pick up Passenger in enemy turn
         if (state.getOtherPlayer().getSpeed() === 1 && state.getOtherPlayer().canPickupPassenger(state.getBoard())) {
             state.removePassenger(state.getOtherPlayer())
         }
@@ -125,26 +125,22 @@ data class GameState @JvmOverloads constructor(
         }
     }
 
-    val currentPieces
-        get() = board.filterValues { it.penguin == currentTeam }
-
-    val penguinsPlaced
-        get() = currentPieces.size == PluginConstants.PENGUINS
-
-    override fun getPossibleMoves(): List<Move> =
-        if (penguinsPlaced) {
-            currentPieces.flatMap { (pos, _) -> board.possibleMovesFrom(pos) }
+    override fun getPossibleOperations(): List<Action> {
+        val actions: MutableList<Action> = ArrayList()
+        val otherPlayer: Ship = currentTeam.opponent() as Ship
+        if (player.getX() === otherPlayer.getX() && player.getY() === otherPlayer.getY()) {
+            actions.addAll(getPossiblePushs(player, movement))
         } else {
-            board.filterValues { it.fish == 1 }.map { Move(null, it.key) }
+            actions.addAll(getPossibleMovesInDirection(player, movement, player.getDirection(), coal))
+            actions.addAll(getPossibleTurnsWithCoal(player, freeTurn, coal))
+            if (acceleration) {
+                actions.addAll(getPossibleAccelerations(player, coal))
+            }
         }
+        return actions
+    }
 
-    fun canPlacePenguin(pos: Coordinates) = !penguinsPlaced && board[pos].fish == 1
-
-    fun immovable(team: Team? = null) =
-        board.getPenguins()
-            .filter { team == null || it.second == team }
-            .takeIf { it.size == PluginConstants.PENGUINS * (if (team == null) Team.values().size else 1) }
-            ?.all { pair -> pair.first.hexNeighbors.all { board.getOrEmpty(it).fish == 0 } } ?: false
+    private fun immovable(ship: ITeam) = true
 
     override val isOver: Boolean
         get() = immovable()

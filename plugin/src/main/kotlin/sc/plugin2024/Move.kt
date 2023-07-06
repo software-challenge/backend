@@ -3,12 +3,20 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IMove
 import sc.plugin2024.actions.Push
+import java.util.*
+
 
 @XStreamAlias("move")
-/** Ein Spielzug. */
+/**
+ * Represents a move in a game.
+ *
+ * A move consists of a list of actions.
+ *
+ * @property actions The list of actions in the move.
+ */
 data class Move(
-        val actions: ArrayList<Action?>,
-): IMove, Comparable<Move> {
+    val actions: ArrayList<Action?>,
+) : IMove, Comparable<Move> {
 
     /**
      * Compares this Move instance with the specified Move for order.
@@ -23,15 +31,42 @@ data class Move(
      *         zero if they are equal, or a positive integer if this Move is larger than the specified Move.
      */
     override fun compareTo(other: Move): Int =
-            actions.size.compareTo(other.actions.size)
+        actions.size.compareTo(other.actions.size)
+
 
     /**
-     * Returns a string representation of the object.
+     * Check if the list of actions contains any Push action.
      *
-     * @return The string representation of the object in the format "Move(action1, action2, ..., actionN)".
+     * @return true if the list of actions contains a Push action, false otherwise.
      */
-    override fun toString(): String =
-                actions.joinToString(separator = ", ", prefix = "Move(", postfix = ")")
+    fun containsPushAction(): Boolean {
+        for (action in actions) {
+            if (action!!.javaClass == Push::class.java) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Sets the order attribute of the trains based on their order in actions.
+     * @param actions The list of actions.
+     */
+    fun setOrderInActions() {
+        var order = 0
+        for (action in actions) {
+            action!!.order = order++
+        }
+    }
+
+    /**
+     * Sorts the list of actions in ascending order.
+     *
+     * @param actions the list of actions to be sorted (nullable)
+     */
+    fun orderActions() {
+        Collections.sort(actions)
+    }
 
     /**
      * Compares this move with the specified object to check if they are equal.
@@ -57,20 +92,6 @@ data class Move(
     }
 
     /**
-     * Check if the list of actions contains any Push action.
-     *
-     * @return true if the list of actions contains a Push action, false otherwise.
-     */
-    fun containsPushAction(): Boolean {
-        for (action in actions) {
-            if (action!!.javaClass == Push::class.java) {
-                return true
-            }
-        }
-        return false
-    }
-
-    /**
      * Returns the hash code value for this object.
      *
      * @return the hash code value for this object.
@@ -78,4 +99,12 @@ data class Move(
     override fun hashCode(): Int {
         return actions.hashCode()
     }
+
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return The string representation of the object in the format "Move(action1, action2, ..., actionN)".
+     */
+    override fun toString(): String =
+        actions.joinToString(separator = ", ", prefix = "Move(", postfix = ")")
 }
