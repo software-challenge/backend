@@ -107,4 +107,8 @@ class Ship(val team: ITeam, @XStreamAsAttribute val position: Coordinates) {
     fun turnToDir(toDir: Vector) {
 
     }
+    
+    fun clone(): Ship {
+        return Ship(team, position)
+    }
 }

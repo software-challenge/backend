@@ -30,7 +30,7 @@ data class Advance(
                 throw InvalidMoveException(MoveException.BACKWARDS)
             }
             val next: Field? = start.getFieldInDirection(direction.opposite, state.board)
-            if (next == null || next.type === FieldType.LOG || !next.isOccupied) {
+            if (next == null || next.type === FieldType.LOG || !next.isBlocked) {
                 throw InvalidMoveException(MoveException.BLOCKED)
             }
             state.put(next.x, next.y, ship)
