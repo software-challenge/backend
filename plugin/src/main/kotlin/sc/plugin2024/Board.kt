@@ -56,11 +56,11 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
                 startCoordinates[i][0] = getXCoordinateInDirection(startCoordinates[i - 1][0], direction[i])
                 startCoordinates[i][1] = getYCoordinateInDirection(startCoordinates[i - 1][1], direction[i])
             }
-            generateStartField()
+            tiles.add(Tile(0, 0, 0, 0, 0, 0, 0)) // start tile only water
             for(i in 1 until Constants.NUMBER_OF_TILES) {
                 generateTile(
                         i, tilesWithPassengers.contains(i),
-                        direction[i], startCoordinates[i][0], startCoordinates[i][1]
+                        direction[i]!!, startCoordinates[i][0], startCoordinates[i][1]
                 )
             }
         }
@@ -105,21 +105,14 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
          * @param x x Coordinate of middle
          * @param y y Coordinate of middle
          */
-        private fun generateTile(index: Int, hasPassenger: Boolean, direction: HexDirection?, x: Int, y: Int) {
+        private fun generateTile(index: Int, hasPassenger: Boolean, direction: HexDirection, x: Int, y: Int): Tile {
             val rnd = Random()
             val blocked: Int =
                     rnd.nextInt(Constants.MAX_ISLANDS - Constants.MIN_ISLANDS + 1) + Constants.MIN_ISLANDS // 2 to 3 blocked fields
             val special: Int =
                     rnd.nextInt(Constants.MAX_SPECIAL - Constants.MIN_SPECIAL + 1) + Constants.MIN_SPECIAL // 1 oder 2 special fields
-            val newTile = Tile(index, direction!!.value, x, y, if (hasPassenger) 1 else 0, blocked, special)
-            tiles.add(newTile)
+            return Tile(index, direction.ordinal, x, y, if (hasPassenger) 1 else 0, blocked, special)
         }
-    }
-
-    private fun generateStartField() {
-        val start = Tile(0, 0, 0, 0, 0, 0, 0) // generate tile with middle at 0,0 in direction 0
-        // with no other fields than WATER fields
-        tiles.add(start)
     }
 
     /**
@@ -128,7 +121,7 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
      * @param y y-Koordinate
      * @return Feld an entsprechenden Koordinaten, gibt null zurück, sollte das Feld nicht (mehr) existieren
      */
-    fun getField(x: Int, y: Int): Field? {
+    fun getField(x: Int, y: Int): FieldType {
         for (tile in tiles) {
             if (tile.isVisible) {
                 val field = tile.getField(x, y)
@@ -146,7 +139,7 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
      * @param y y-Koordinate
      * @return Feld an entsprechenden Koordinaten, gibt null zurück, sollte das Feld nicht (mehr) existieren
      */
-    fun alwaysGetField(x: Int, y: Int): Field? {
+    fun alwaysGetField(x: Int, y: Int): FieldType {
         for (tile in tiles) {
             val field = tile.getField(x, y)
             if (field != null) {
