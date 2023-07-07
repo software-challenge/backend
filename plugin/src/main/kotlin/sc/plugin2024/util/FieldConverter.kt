@@ -6,7 +6,6 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext
 import com.thoughtworks.xstream.io.HierarchicalStreamReader
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter
 import sc.api.plugins.Team
-import sc.plugin2024.Field
 
 class FieldConverter: Converter {
     override fun canConvert(type: Class<*>?): Boolean = type == Field::class.java

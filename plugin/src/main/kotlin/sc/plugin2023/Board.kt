@@ -21,6 +21,10 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
             coordinates.x >= 0 &&
             super.isValid(coordinates.copy(coordinates.x / 2))
     
+    /** Prüft, ob auf dieser [position] bereits eine Spielfigur ist. */
+    fun isOccupied(position: Coordinates): Boolean =
+            this[position].isOccupied
+    
     /** Gibt das Feld an den gegebenen Koordinaten zurück. */
     override operator fun get(x: Int, y: Int) =
             super.get(x / 2, y)
@@ -36,9 +40,9 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
     }
     
     fun possibleMovesFrom(pos: Coordinates) =
-            Vector.DoubledHex.directions.flatMap { vector ->
+            HexDirection.values().flatMap { direction ->
                 (1 until Constants.BOARD_SIZE).map {
-                    Move.run(pos, vector * it)
+                    Move.run(pos, direction.vector * it)
                 }.takeWhile { getOrEmpty(it.to).fish > 0 }
             }
     

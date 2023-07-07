@@ -2,12 +2,13 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import sc.api.plugins.RectangularBoard
+import sc.api.plugins.TwoDBoard
 import java.util.*
 import sc.plugin2024.util.PluginConstants as Constants
 
 @XStreamAlias(value = "tile")
-class Tile {
-    var fields: List<Field> = ArrayList()
+class Tile(fields: TwoDBoard<FieldType>): RectangularBoard<FieldType>(fields) {
 
     @XStreamAsAttribute
     var isVisible = false

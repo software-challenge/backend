@@ -3,22 +3,21 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.HexDirection
 import sc.api.plugins.IBoard
+import sc.api.plugins.RectangularBoard
 import sc.plugin2024.util.PluginConstants as Constants
 import java.util.*
-
+import kotlin.collections.LinkedHashMap
 
 /**
  * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
  * @param tiles Spielsegmente des neuen Spielfelds
  */
 @XStreamAlias(value = "board")
-data class Board(val tiles: List<Tile> = generateBoard()): IBoard {
+data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int = 2): IBoard {
+    
+    fun visibleTiles(): List<Tile> = tiles.subList(0, visibleTiles)
     
     companion object {
-        /**
-         * Nur fuer den Server relevant
-         * initializes the board
-         */
         fun generateBoard(): List<Tile> {
             val tiles = ArrayList<Tile>()
             val rnd = Random()
@@ -65,56 +64,56 @@ data class Board(val tiles: List<Tile> = generateBoard()): IBoard {
                 )
             }
         }
-    }
-
-    /**
-     * Nur fuer den Server relevant. Gibt Koordiante 4 Felder in Richtung zurück
-     * @param y y Koordinate
-     * @param direction Richtung
-     * @return y Koordinate des neuen Feldes
-     */
-    private fun getYCoordinateInDirection(y: Int, direction: HexDirection?): Int {
-        when (direction) {
-            HexDirection.RIGHT, HexDirection.LEFT -> return y
-            HexDirection.UP_RIGHT, HexDirection.UP_LEFT -> return y - 4
-            HexDirection.DOWN_LEFT, HexDirection.DOWN_RIGHT -> return y + 4
+        
+        /**
+         * Nur fuer den Server relevant. Gibt Koordiante 4 Felder in Richtung zurück
+         * @param y y Koordinate
+         * @param direction Richtung
+         * @return y Koordinate des neuen Feldes
+         */
+        private fun getYCoordinateInDirection(y: Int, direction: HexDirection?): Int {
+            when (direction) {
+                HexDirection.RIGHT, HexDirection.LEFT -> return y
+                HexDirection.UP_RIGHT, HexDirection.UP_LEFT -> return y - 4
+                HexDirection.DOWN_LEFT, HexDirection.DOWN_RIGHT -> return y + 4
+            }
+            return 0
         }
-        return 0
-    }
-
-    /**
-     * Nur fuer den Server relevant. Gibt Koordiante 4 Felder in Richtung zurück
-     * @param x x Koordinate
-     * @param direction Richtung
-     * @return x Koordinate des neuen Feldes
-     */
-    private fun getXCoordinateInDirection(x: Int, direction: HexDirection?): Int {
-        when (direction) {
-            HexDirection.RIGHT -> return x + 4
-            HexDirection.LEFT -> return x - 4
-            HexDirection.UP_RIGHT, HexDirection.DOWN_RIGHT -> return x + 2
-            HexDirection.DOWN_LEFT, HexDirection.UP_LEFT -> return x - 2
+        
+        /**
+         * Nur fuer den Server relevant. Gibt Koordiante 4 Felder in Richtung zurück
+         * @param x x Koordinate
+         * @param direction Richtung
+         * @return x Koordinate des neuen Feldes
+         */
+        private fun getXCoordinateInDirection(x: Int, direction: HexDirection?): Int {
+            when (direction) {
+                HexDirection.RIGHT -> return x + 4
+                HexDirection.LEFT -> return x - 4
+                HexDirection.UP_RIGHT, HexDirection.DOWN_RIGHT -> return x + 2
+                HexDirection.DOWN_LEFT, HexDirection.UP_LEFT -> return x - 2
+            }
+            return 0
         }
-        return 0
-    }
-
-    /**
-     * Nur fuer den Server relevant
-     * generates tile
-     * @param index index of Tile
-     * @param hasPassenger has the Tile a passenger?
-     * @param direction direction of tile
-     * @param x x Coordinate of middle
-     * @param y y Coordinate of middle
-     */
-    private fun generateTile(index: Int, hasPassenger: Boolean, direction: HexDirection?, x: Int, y: Int) {
-        val rnd = Random()
-        val blocked: Int =
-            rnd.nextInt(Constants.MAX_ISLANDS - Constants.MIN_ISLANDS + 1) + Constants.MIN_ISLANDS // 2 to 3 blocked fields
-        val special: Int =
-            rnd.nextInt(Constants.MAX_SPECIAL - Constants.MIN_SPECIAL + 1) + Constants.MIN_SPECIAL // 1 oder 2 special fields
-        val newTile = Tile(index, direction!!.value, x, y, if (hasPassenger) 1 else 0, blocked, special)
-        tiles.add(newTile)
+        
+        /**
+         * Nur fuer den Server relevant
+         * generates tile
+         * @param index index of Tile
+         * @param hasPassenger has the Tile a passenger?
+         * @param direction direction of tile
+         * @param x x Coordinate of middle
+         * @param y y Coordinate of middle
+         */
+        private fun generateTile(index: Int, hasPassenger: Boolean, direction: HexDirection?, x: Int, y: Int) {
+            val rnd = Random()
+            val blocked: Int =
+                    rnd.nextInt(Constants.MAX_ISLANDS - Constants.MIN_ISLANDS + 1) + Constants.MIN_ISLANDS // 2 to 3 blocked fields
+            val special: Int =
+                    rnd.nextInt(Constants.MAX_SPECIAL - Constants.MIN_SPECIAL + 1) + Constants.MIN_SPECIAL // 1 oder 2 special fields
+            val newTile = Tile(index, direction!!.value, x, y, if (hasPassenger) 1 else 0, blocked, special)
+            tiles.add(newTile)
+        }
     }
 
     private fun generateStartField() {
@@ -168,17 +167,6 @@ data class Board(val tiles: List<Tile> = generateBoard()): IBoard {
         }
         return Board(clonedTiles)
     }
-
-    protected val visibleTiles: ArrayList<Tile>
-        get() {
-            val visibleTiles = ArrayList<Tile>()
-            for (tile in tiles) {
-                if (tile.isVisible) {
-                    visibleTiles.add(tile)
-                }
-            }
-            return visibleTiles
-        }
 
     override fun toString(): String {
         var toString = "Board:\n"

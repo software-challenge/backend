@@ -21,16 +21,12 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
                 row.all { it.isEmpty }
             }
     
-    /** Prüft, ob auf dieser [position] bereits eine Spielfigur ist. */
-    fun isObstructed(position: Coordinates): Boolean =
-            this[position].isOccupied
-    
     open fun isValid(coordinates: Coordinates) =
             coordinates.y in gameField.indices &&
             coordinates.x in gameField[coordinates.y].indices
     
     /** Gibt das Feld an den gegebenen Koordinaten zurück.
-     * Bevorzugt für interne Verwendung, da Fehler roh zurückgegeben werden. */
+     * Bevorzugt für interne Verwendung, da Fehler ungefiltert zurückgegeben werden. */
     open operator fun get(x: Int, y: Int) =
             gameField[y][x]
     
