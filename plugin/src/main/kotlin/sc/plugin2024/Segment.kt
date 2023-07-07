@@ -21,7 +21,7 @@ import kotlin.random.Random
 class Segment(
         val seed: Int = Random.nextInt(),
         val lastSegment: Segment?,
-        val nextSegment: Segment?,
+        var nextSegment: Segment?,
         val direction: HexDirection,
         val passengers: Int = PluginConstants.NUMBER_OF_PASSENGERS,
         val blocked: Int = Random.nextInt(PluginConstants.MIN_ISLANDS, PluginConstants.MAX_ISLANDS),

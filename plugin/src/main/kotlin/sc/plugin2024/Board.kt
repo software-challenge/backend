@@ -14,19 +14,20 @@ import sc.plugin2024.util.PluginConstants.NUMBER_OF_PASSENGERS
 import kotlin.random.Random
 import sc.plugin2024.util.PluginConstants as Constants
 
+// TODO ich weiss nicht wie sich das mit XStream verhaellt, also kann man XStream speziell sagen,
+//  dass es lediglich bestimmte Segmente serialisieren soll?
+// TODO Es fehlt noch eine Funktionalitaet, die es ermöglicht leicht festzustellen, wo der Startpunkt ist,
+//  also welches Feld genau
 @XStreamAlias(value = "board")
 open class Board(
         gameField: TwoDBoard<Field> = initBoard(),
-        segments: ArrayList<Segment> = ArrayList(),
+        var segments: ArrayList<Segment> = ArrayList(),
 ):
         RectangularBoard<Field>(gameField) {
     
-    private fun getYCoordinateInDirection(y: Int, direction: HexDirection?) {
-    
-    }
-    
-    private fun getXCoordinateInDirection(x: Int, direction: HexDirection?) {
-    
+    init {
+        initSegment(direction = HexDirection.RIGHT, segmentStart = Coordinates(0, 0),
+                passengers = 0, blocked = 0, special = 0, end = false)
     }
     
     open fun getFieldInDirection(direction: HexDirection, field: Field): Field? {
@@ -63,7 +64,6 @@ open class Board(
     
     private fun initSegment(
             seed: Int = Random.nextInt(),
-            lastSegment: Int,
             segmentStart: Coordinates,
             direction: HexDirection,
             passengers: Int = NUMBER_OF_PASSENGERS,
@@ -74,6 +74,13 @@ open class Board(
         val segment: ArrayList<ArrayList<Field>> = ArrayList()
         val pattern = Pattern.match(direction).pattern
         addSegment(segment, pattern, segmentStart)
+        
+        val newSegment = Segment(gameField = segment, seed = seed,
+                lastSegment = if(segments.isNotEmpty()) segments.last() else null,
+                nextSegment = null, direction = direction, blocked = blocked,
+                passengers = passengers, special = special, end = end)
+        segments.last().nextSegment = newSegment
+        segments.add(newSegment)
     }
     
     companion object {
