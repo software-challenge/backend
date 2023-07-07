@@ -5,22 +5,42 @@ import sc.api.plugins.TwoDBoard
 import sc.plugin2024.util.PluginConstants
 import kotlin.random.Random
 
+/**
+ * Represents a segment of the board.
+ *
+ * @property seed The seed used for generating random values.
+ * @property lastSegment The previous segment connected to this segment.
+ * @property nextSegment The next segment connected to this segment.
+ * @property direction The direction in which the segment is facing.
+ * @property passengers The number of passengers placed in the segment.
+ * @property blocked The number of blocked fields placed in the segment.
+ * @property special The number of special fields placed in the segment.
+ * @property end Indicates whether a goal fields is placed in the segment.
+ * @property gameField The two-dimensional board representing the game map.
+ */
 class Segment(
-    val seed: Int = Random.nextInt(),
-    val lastSegment: Segment?,
-    val nextSegment: Segment?,
-    val direction: HexDirection,
-    val passengers: Int = PluginConstants.NUMBER_OF_PASSENGERS,
-    val blocked: Int = Random.nextInt(PluginConstants.MIN_ISLANDS, PluginConstants.MAX_ISLANDS),
-    val special: Int = Random.nextInt(PluginConstants.MIN_SPECIAL, PluginConstants.MAX_SPECIAL),
-    val end: Boolean,
-    gameField: TwoDBoard<Field>
+        val seed: Int = Random.nextInt(),
+        val lastSegment: Segment?,
+        val nextSegment: Segment?,
+        val direction: HexDirection,
+        val passengers: Int = PluginConstants.NUMBER_OF_PASSENGERS,
+        val blocked: Int = Random.nextInt(PluginConstants.MIN_ISLANDS, PluginConstants.MAX_ISLANDS),
+        val special: Int = Random.nextInt(PluginConstants.MIN_SPECIAL, PluginConstants.MAX_SPECIAL),
+        val end: Boolean,
+        gameField: TwoDBoard<Field>,
 ): Board(gameField) {
     
     init {
         fillSegment(passengers, blocked, special, end)
     }
     
+    /**
+     * Returns the field in the given direction from the specified field.
+     *
+     * @param direction the direction in which to search for the field
+     * @param field the field from which to start the search
+     * @return the field in the given direction, or null if it is out of bounds
+     */
     override fun getFieldInDirection(direction: HexDirection, field: Field): Field? {
         val coordinateInDirection = field.coordinate.plus(direction)
         return if(coordinateInDirection.x in gameField.indices && coordinateInDirection.y in 0 until gameField[coordinateInDirection.x].size) {
@@ -84,7 +104,6 @@ class Segment(
      */
     private fun placePassengers(passengers: Int) {
         var localPassengers = passengers
-        val rand = Random(seed)
         var field: Field
         var passengerDirection: HexDirection
         var dock: Field?
@@ -109,15 +128,44 @@ class Segment(
         }
     }
     
+    /**
+     * Places a goal in the game field at the most right column.
+     * The goal is placed at the middle row of the most right column.
+     *
+     * The goal is represented by the [FieldType].GOAL enum value.
+     *
+     * @see FieldType
+     */
+    private fun placeGoal() {
+        val mostRightColumnIndex = gameField.size - 1
+        val columnSize = gameField[mostRightColumnIndex].size
+        val middleIndex = columnSize / 2
+        
+        val fields = listOf(middleIndex - 1, middleIndex, middleIndex + 1).filter {
+            it in gameField[mostRightColumnIndex].indices
+        }
+        
+        fields.forEach { gameField[mostRightColumnIndex][it].type = FieldType.GOAL }
+    }
+    
+    /**
+     * Fills a segment of the game map with specified number of passengers, blocked islands, special islands, and a goal island.
+     *
+     * @param passengers the number of passengers to place in the segment. Default value is PluginConstants.NUMBER_OF_PASSENGERS.
+     * @param blocked the number of blocked islands to place in the segment. Default value is a random value between PluginConstants.MIN_ISLANDS and PluginConstants.MAX_ISLANDS (inclusive).
+     * @param special the number of special islands to place in the segment. Default value is a random value between PluginConstants.MIN_SPECIAL and PluginConstants.MAX_SPECIAL (inclusive).
+     * @param end a flag indicating whether to place a goal island in the segment. True if a goal island should be placed, false otherwise.
+     */
     private fun fillSegment(
-        passengers: Int = PluginConstants.NUMBER_OF_PASSENGERS,
-        blocked: Int = Random.nextInt(PluginConstants.MIN_ISLANDS, PluginConstants.MAX_ISLANDS),
-        special: Int = Random.nextInt(PluginConstants.MIN_SPECIAL, PluginConstants.MAX_SPECIAL),
-        end: Boolean
+            passengers: Int = PluginConstants.NUMBER_OF_PASSENGERS,
+            blocked: Int = Random.nextInt(PluginConstants.MIN_ISLANDS, PluginConstants.MAX_ISLANDS),
+            special: Int = Random.nextInt(PluginConstants.MIN_SPECIAL, PluginConstants.MAX_SPECIAL),
+            end: Boolean,
     ) {
         placeBlocked(blocked)
         placeSpecial(special)
         placePassengers(passengers)
+        if(end) placeGoal()
         
     }
     
