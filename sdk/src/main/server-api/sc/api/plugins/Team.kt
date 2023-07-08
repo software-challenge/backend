@@ -10,7 +10,7 @@ enum class Team(override val index: Int): ITeam {
         override val letter = 'R'
         override val color = "Rot"
     },
-
+    
     TWO(1) {
         override fun opponent(): Team = ONE
         override val letter = 'B'
@@ -18,8 +18,9 @@ enum class Team(override val index: Int): ITeam {
     };
     
     abstract val color: String
-    
     override fun opponent(): Team = throw IllegalArgumentException()
+    
+    val pieces = mutableListOf<IPiece>()
 }
 
 /** This represents the team a player is in / is playing for. */

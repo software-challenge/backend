@@ -15,6 +15,13 @@ import kotlin.math.round
 import kotlin.random.Random
 import sc.plugin2024.util.PluginConstants as Constants
 
+/**
+ * A class representing the game board.
+ *
+ * @constructor Creates a new Board instance.
+ * @property gameField The two-dimensional board representing the game field.
+ * @property segments The list of segments on the board.
+ */
 @XStreamAlias(value = "board")
 open class Board(
         gameField: TwoDBoard<Field> = initBoard(),
@@ -25,6 +32,13 @@ open class Board(
         createSegment(direction = HexDirection.RIGHT, segmentStart = Coordinates(0, 0), passengers = 0, blocked = 0, special = 0, end = false)
     }
     
+    /**
+     * Returns the field adjacent to the given field in the specified direction.
+     *
+     * @param direction the direction in which to find the adjacent field
+     * @param field the field for which to find the adjacent field
+     * @return the adjacent field if it exists, null otherwise
+     */
     open fun getFieldInDirection(direction: HexDirection, field: Field): Field? {
         val coordinateInDirection = field.coordinate.plus(direction)
         return if(coordinateInDirection.x in gameField.indices && coordinateInDirection.y in 0 until gameField[coordinateInDirection.x].size) {
@@ -34,6 +48,13 @@ open class Board(
         }
     }
     
+    /**
+     * Adds a segment of field elements to the specified segment list based on the given pattern and starting coordinates.
+     *
+     * @param segment The segment list to add the field elements to.
+     * @param pattern The pattern to determine the positions of the field elements in the segment.
+     * @param segmentStart The starting coordinates of the segment in the game field.
+     */
     private fun addSegment(
             segment: ArrayList<ArrayList<Field>>,
             pattern: List<Pair<Int, Int>>,
@@ -50,9 +71,20 @@ open class Board(
         }
     }
     
+    /**
+     * Creates and adds a new segment to the game.
+     *
+     * @param seed The seed used for random number generation. Defaults to a random value.
+     * @param direction The direction in which the new segment will be created. Defaults to a random direction.
+     * @param segmentStart The starting coordinates for the new segment. Defaults to the appropriate coordinates for the given direction.
+     * @param passengers The number of passengers in the new segment. Defaults to the constant value NUMBER_OF_PASSENGERS.
+     * @param blocked The number of blocked cells in the new segment. Defaults to a random value between MIN_ISLANDS and MAX_ISLANDS.
+     * @param special The number of special cells in the new segment. Defaults to a random value between MIN_SPECIAL and MAX_SPECIAL.
+     * @param end Whether the new segment is the last segment in the game. Defaults to false.
+     */
     private fun createSegment(
             seed: Int = Random.nextInt(),
-            direction: HexDirection,
+            direction: HexDirection = getRandomSegmentDirection(),
             segmentStart: Coordinates = getSegmentStart(direction),
             passengers: Int = NUMBER_OF_PASSENGERS,
             blocked: Int = Random.nextInt(MIN_ISLANDS, MAX_ISLANDS),
@@ -71,6 +103,47 @@ open class Board(
         segments.add(newSegment)
     }
     
+    /**
+     * Returns a random segment direction based on the direction of the last segment.
+     * The last segment's direction determines the list of possible directions for the random selection.
+     *
+     * @return A random HexDirection.
+     */
+    private fun getRandomSegmentDirection(): HexDirection {
+        return when(segments.last().direction) {
+            HexDirection.RIGHT -> {
+                listOf(HexDirection.UP_RIGHT, HexDirection.DOWN_RIGHT, HexDirection.RIGHT).random()
+            }
+            
+            HexDirection.UP_RIGHT -> {
+                listOf(HexDirection.UP_RIGHT, HexDirection.UP_LEFT, HexDirection.RIGHT).random()
+            }
+            
+            HexDirection.UP_LEFT -> {
+                listOf(HexDirection.UP_RIGHT, HexDirection.UP_LEFT, HexDirection.LEFT).random()
+            }
+            
+            HexDirection.LEFT -> {
+                listOf(HexDirection.UP_LEFT, HexDirection.DOWN_LEFT, HexDirection.LEFT).random()
+            }
+            
+            HexDirection.DOWN_LEFT -> {
+                listOf(HexDirection.DOWN_LEFT, HexDirection.DOWN_RIGHT, HexDirection.LEFT).random()
+            }
+            
+            HexDirection.DOWN_RIGHT -> {
+                listOf(HexDirection.DOWN_RIGHT, HexDirection.DOWN_LEFT, HexDirection.RIGHT).random()
+            }
+        }
+    }
+    
+    /**
+     * Returns the starting coordinates of a segment based on the given direction.
+     *
+     * @param direction the direction in which the segment is located
+     * @return the starting coordinates of the segment
+     * @throws IllegalArgumentException if the direction is not supported
+     */
     private fun getSegmentStart(direction: HexDirection): Coordinates {
         val lastSegment: Segment = segments.last()
         
@@ -100,6 +173,13 @@ open class Board(
     }
     
     companion object {
+        /**
+         * Initializes the game board with the specified width and height.
+         *
+         * @param width The width of the game board. Defaults to Constants.NUMBER_OF_SEGMENTS * (Constants.SEGMENT_FIELDS_WIDTH + 1).
+         * @param height The height of the game board. Defaults to Constants.NUMBER_OF_SEGMENTS * Constants.SEGMENT_FIELDS_HEIGHT.
+         * @return A 2-dimensional list representing the game board, where each element is a mutable field object.
+         */
         fun initBoard(
                 width: Int = Constants.NUMBER_OF_SEGMENTS * (Constants.SEGMENT_FIELDS_WIDTH + 1),
                 height: Int = Constants.NUMBER_OF_SEGMENTS * Constants.SEGMENT_FIELDS_HEIGHT,

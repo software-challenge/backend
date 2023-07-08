@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
 import kotlin.math.abs
 
-
 /**
  * This class represents a Ship in the game.
  *
@@ -20,8 +19,8 @@ import kotlin.math.abs
  * @property freeTurns This field is relevant only for the server.
  * @property freeAcc This field is relevant only for the GUI.
  */
-class Ship(val team: ITeam, @XStreamAsAttribute val position: Coordinates) {
-
+data class Ship(override val id: Int, @XStreamAsAttribute override val position: Coordinates, override val team: ITeam): IPiece {
+    
     /**
      * Aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
      * und der Anzahl der eingesammelten Passagiere
@@ -32,83 +31,47 @@ class Ship(val team: ITeam, @XStreamAsAttribute val position: Coordinates) {
     /** Richtung, in die das Schiff ausgerichtet ist. */
     @XStreamAsAttribute
     var direction: HexDirection = HexDirection.RIGHT
-
+    
     /**
      * aktuelle Geschwindigkeit des Schiffes des Spielers
      */
     @XStreamAsAttribute
     var speed = 0
-
+    
     /**
      * aktuelle Anzahl der Kohleeinheiten des Schiffes des Spielers
      */
     @XStreamAsAttribute
     var coal = 0
-
+    
     /**
      * Spielsegment, auf dem sich das Schiff des Spielers befindet
      */
     @XStreamAsAttribute
     val tile = 0
-
+    
     /**
      * Anzahl der vom Spieler eingesammelten Passagiere
      */
     @XStreamAsAttribute
     val passengers = 0
-
+    
     /**
      * Nur fuer den Server relevant
      */
     @XStreamOmitField
     var movement = 0
-
+    
     /**
      * Nur fuer den Server relevant
      */
     @XStreamOmitField
     var freeTurns = 0
-
+    
     /**
      * Nur fuer die Gui relevant
      */
     @XStreamOmitField
     var freeAcc = 0
-
-    /**
-     * Gets the Field object associated with the current Tile index.
-     *
-     * @param board The Board object representing the game board.
-     * @return The Field object associated with the current Tile index, or null if it doesn't exist.
-     */
-    fun getField(board: Board): Field? =
-        board.tiles!!.find { it.index == this.tile }?.getField(position!!.x, position!!.y)
-
-    /**
-     * Returns the direction after turning by the specified number of times.
-     *
-     * @param turn the number of times to turn
-     * @return the new direction after turning
-     */
-    fun getTurnedDirection(turn: Int): Vector {
-        for (i in Vector.directions.indices) {
-            if (Vector.directions[i] == this.direction) {
-                return Vector.directions[abs(i + turn) % Vector.directions.size]
-            }
-        }
-        return null!!
-    }
-
-    /**
-     * Gibt die Anzahl der Drehungen bei einer Drehung von der aktuellen Richtung zu toDir zurück
-     * @param toDir Endrichtung
-     * @return Anzahl der Drehungen
-     */
-    fun turnToDir(toDir: Vector) {
-
-    }
     
-    fun clone(): Ship {
-        return Ship(team, position)
-    }
 }
