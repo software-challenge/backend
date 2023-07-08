@@ -10,32 +10,34 @@ import kotlin.math.abs
 
 @XStreamAlias(value = "turn")
 data class Turn(
-    @XStreamAsAttribute
-    var direction: Int,
-) : Action {
-
+        @XStreamAsAttribute
+        var direction: HexDirection,
+): Action {
+    
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
-        require(!(direction == 0 || direction < -3 || direction > 3)) {
+        val turnCount = ship.direction.turnCountTo(direction)
+        require(!(turnCount == 0 || turnCount < -3 || turnCount > 3)) {
             throw InvalidMoveException(MoveException.INVALID_TURN)
         }
-        requireNotNull(ship?.getField(state!!.board)) {
+        
+        requireNotNull(ship.getField(state.board)) {
             throw InvalidMoveException(MoveException.SANDBANK)
         }.takeIf { it.type === FieldType.SANDBANK }
-
-        val newDirection: HexDirection = ship!!.direction!!.getTurnedDirection(direction)
-        val usedCoal: Int = (abs(direction.toDouble()) - ship.freeTurns).toInt()
-
-        ship.freeTurns = if (ship.freeTurns - abs(direction.toDouble()) <= 0) 0 else 1
-
-        if (usedCoal > 0) {
+        
+        val absTurnCount = abs(turnCount.toDouble())
+        val usedCoal: Int = (absTurnCount - ship.freeTurns).toInt()
+        
+        ship.freeTurns = if(ship.freeTurns - absTurnCount <= 0) 0 else 1
+        
+        if(usedCoal > 0) {
             require(ship.coal >= usedCoal) {
                 throw InvalidMoveException(MoveException.COAL)
             }
             ship.coal -= usedCoal
         }
-        ship.direction = newDirection
+        ship.direction = direction
     }
-
-    override fun toString(): String = "Drehe um $direction"
+    
+    override fun toString(): String = "Drehe nach $direction"
 }

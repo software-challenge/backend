@@ -11,74 +11,74 @@ import java.util.*
 data class Advance(
         /** Anzahl der Felder, die zurückgelegt werden. */
         @XStreamAsAttribute
-        val distance: Int
-) : Action {
-
+        val distance: Int,
+): Action {
+    
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
-        if (ship.movement == 0) {
+        if(ship.movement == 0) {
             throw InvalidMoveException(MoveException.NO_MOVEMENT)
         }
         val start: Field = ship.getField(state.board)!!
         val nextFields: LinkedList<Field> = LinkedList<Field>()
         val direction = ship.direction
-        if (distance == 0 || distance > 6 || distance < -1) {
+        if(distance == 0 || distance > 6 || distance < -1) {
             throw InvalidMoveException(MoveException.INVALID_DISTANCE)
         }
-        if (distance == -1) { // Fall rückwärts von Sandbank
-            if (start.type !== FieldType.SANDBANK) {
+        if(distance == -1) { // Fall rückwärts von Sandbank
+            if(start.type !== FieldType.SANDBANK) {
                 throw InvalidMoveException(MoveException.BACKWARDS)
             }
-            val next: Field? = start.getFieldInDirection(direction.opposite, state.board)
-            if (next == null || next.type === FieldType.LOG || !next.isBlocked) {
+            val next: Field? = state.board.getFieldInDirection(direction, start)
+            if(next == null || next.type === FieldType.LOG || !next.isBlocked) {
                 throw InvalidMoveException(MoveException.BLOCKED)
             }
-            state.put(next.x, next.y, ship)
-            ship.setMovement(0)
-            ship.setCoal(ship.getCoal() - 1)
+            // TODO state.put(next.x, next.y, ship)
+            ship.movement = 0
+            ship.coal -= 1
             return
         } else {
-            if (start.getType() === FieldType.SANDBANK) {
-                if (distance != 1) {
+            if(start.type === FieldType.SANDBANK) {
+                if(distance != 1) {
                     throw InvalidMoveException(MoveException.ONE_FORWARD)
                 }
-                ship.setMovement(0)
-                val next: Field = start.getFieldInDirection(direction, state.getBoard())
-                    ?: throw InvalidMoveException(MoveException.FIELD_NOT_FOUND)
-                if (!next.isPassable()) {
+                ship.movement = 0
+                val next: Field = state.board.getFieldInDirection(direction, start)
+                                  ?: throw InvalidMoveException(MoveException.FIELD_NOT_FOUND)
+                if(!next.isPassable()) {
                     throw InvalidMoveException(MoveException.BLOCKED)
                 }
-                state.put(next.getX(), next.getY(), ship)
+                // TODO state.put(next.getX(), next.getY(), ship)
                 return
             }
             nextFields.add(start)
-            // Kontrolliere für die Zurückgelegte Distanz, wie viele Bewegunsgpunkte verbraucht werden und ob es möglich ist, soweit zu ziehen
-            for (i in 0 until distance) {
-                val next: Field? = nextFields[i].getFieldInDirection(ship.getDirection(), state.getBoard())
-                if (next != null) {
+            // Kontrolliere für die Zurueckgelegte Distanz, wie viele Bewegunsgpunkte verbraucht werden und ob es möglich ist, soweit zu ziehen
+            for(i in 0 until distance) {
+                val next: Field? =  state.board.getFieldInDirection(direction, nextFields[i])
+                if(next != null) {
                     nextFields.add(next)
                 } else {
                     throw InvalidMoveException(MoveException.FIELD_NOT_FOUND)
                 }
                 val checkField: Field = nextFields[i + 1] // get next field
-                if (!checkField.isPassable() || state.getOtherPlayer().getField(state.getBoard())
-                        .equals(checkField) && i != distance - 1
+                if(!checkField.isPassable() || state.getOtherPlayer().getField(state.getBoard())
+                                .equals(checkField) && i != distance - 1
                 ) {
                     throw InvalidMoveException(MoveException.BLOCKED)
                 }
-                if (checkField.getType() === FieldType.SANDBANK) {
+                if(checkField.getType() === FieldType.SANDBANK) {
                     // case sandbar
                     ship.setSpeed(1)
                     ship.setMovement(0)
                     endsTurn = true
-                    if (i != distance - 1) {
+                    if(i != distance - 1) {
                         // Zug endet hier, also darf nicht weitergelaufen werden
                         throw InvalidMoveException(MoveException.MOVE_ON_SANDBANK)
                     }
                     state.put(checkField.getX(), checkField.getY(), ship)
                     return
-                } else if (checkField.getType() === FieldType.LOG) {
-                    if (ship.getMovement() <= 1) {
+                } else if(checkField.getType() === FieldType.LOG) {
+                    if(ship.getMovement() <= 1) {
                         throw InvalidMoveException(MoveException.INSUFFICIENT_MOVEMENT)
                     }
                     ship.setMovement(ship.getMovement() - 2)
@@ -92,6 +92,6 @@ data class Advance(
         }
         return
     }
-
+    
     override fun toString(): String = "Gehe $distance vor"
 }
