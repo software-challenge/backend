@@ -101,7 +101,12 @@ enum class HexDirection(val vector: Vector): IVector by vector {
     DOWN_LEFT(Vector(-1, +1)),
     DOWN_RIGHT(Vector(+1, +1));
     
-    fun opposite(): HexDirection = HexDirection.values()[(ordinal + 3) % 6]
+    fun opposite(): HexDirection = values().let { it[(ordinal + 3) % it.size] }
+    
+    fun turnCountTo(target: HexDirection): Int {
+        val diff = target.ordinal - this.ordinal
+        return if (diff >= 0) diff else diff + values().size
+    }
     
     companion object {
         fun random(): HexDirection = values()[Random.nextInt(values().size)]
