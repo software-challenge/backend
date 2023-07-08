@@ -3,6 +3,7 @@ package sc.plugin2024
 import sc.api.plugins.HexDirection
 import sc.api.plugins.TwoDBoard
 import sc.plugin2024.util.PluginConstants
+import kotlin.math.round
 import kotlin.random.Random
 
 /**
@@ -32,22 +33,6 @@ class Segment(
     
     init {
         fillSegment(passengers, blocked, special, end)
-    }
-    
-    /**
-     * Returns the field in the given direction from the specified field.
-     *
-     * @param direction the direction in which to search for the field
-     * @param field the field from which to start the search
-     * @return the field in the given direction, or null if it is out of bounds
-     */
-    override fun getFieldInDirection(direction: HexDirection, field: Field): Field? {
-        val coordinateInDirection = field.coordinate.plus(direction)
-        return if(coordinateInDirection.x in gameField.indices && coordinateInDirection.y in 0 until gameField[coordinateInDirection.x].size) {
-            gameField[coordinateInDirection.x][coordinateInDirection.y]
-        } else {
-            null
-        }
     }
     
     /**
@@ -139,7 +124,7 @@ class Segment(
     private fun placeGoal() {
         val mostRightColumnIndex = gameField.size - 1
         val columnSize = gameField[mostRightColumnIndex].size
-        val middleIndex = columnSize / 2
+        val middleIndex = round((columnSize / 2.0)).toInt()
         
         val fields = listOf(middleIndex - 1, middleIndex, middleIndex + 1).filter {
             it in gameField[mostRightColumnIndex].indices

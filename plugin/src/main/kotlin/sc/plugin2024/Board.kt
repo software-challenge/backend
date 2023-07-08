@@ -11,31 +11,23 @@ import sc.plugin2024.util.PluginConstants.MAX_SPECIAL
 import sc.plugin2024.util.PluginConstants.MIN_ISLANDS
 import sc.plugin2024.util.PluginConstants.MIN_SPECIAL
 import sc.plugin2024.util.PluginConstants.NUMBER_OF_PASSENGERS
+import kotlin.math.round
 import kotlin.random.Random
 import sc.plugin2024.util.PluginConstants as Constants
 
-// TODO ich weiss nicht wie sich das mit XStream verhaellt, also kann man XStream speziell sagen,
-//  dass es lediglich bestimmte Segmente serialisieren soll?
-// TODO Es fehlt noch eine Funktionalitaet, die es ermöglicht leicht festzustellen, wo der Startpunkt ist,
-//  also welches Feld genau
 @XStreamAlias(value = "board")
 open class Board(
         gameField: TwoDBoard<Field> = initBoard(),
         var segments: ArrayList<Segment> = ArrayList(),
-):
-        RectangularBoard<Field>(gameField) {
+): RectangularBoard<Field>(gameField) {
     
     init {
-        initSegment(direction = HexDirection.RIGHT, segmentStart = Coordinates(0, 0),
-                passengers = 0, blocked = 0, special = 0, end = false)
+        createSegment(direction = HexDirection.RIGHT, segmentStart = Coordinates(0, 0), passengers = 0, blocked = 0, special = 0, end = false)
     }
     
     open fun getFieldInDirection(direction: HexDirection, field: Field): Field? {
         val coordinateInDirection = field.coordinate.plus(direction)
-        return if(
-                coordinateInDirection.x in gameField.indices &&
-                coordinateInDirection.y in 0 until gameField[coordinateInDirection.x].size
-        ) {
+        return if(coordinateInDirection.x in gameField.indices && coordinateInDirection.y in 0 until gameField[coordinateInDirection.x].size) {
             gameField[coordinateInDirection.x][coordinateInDirection.y]
         } else {
             null
@@ -49,12 +41,8 @@ open class Board(
     ) {
         val segmentPattern = Pattern.RIGHT.pattern
         for(i in pattern.indices) {
-            val offsetCoordinate = Coordinates(
-                    segmentStart.x + pattern[i].first,
-                    segmentStart.y + pattern[i].second
-            ).fromDoubledHex()
-            val currentPositionInSegment =
-                    Coordinates(segmentPattern[i].first, segmentPattern[i].second).fromDoubledHex()
+            val offsetCoordinate = Coordinates(segmentStart.x + pattern[i].first, segmentStart.y + pattern[i].second).fromDoubledHex()
+            val currentPositionInSegment = Coordinates(segmentPattern[i].first, segmentPattern[i].second).fromDoubledHex()
             if(segment.size <= currentPositionInSegment.x) {
                 segment.add(ArrayList())
             }
@@ -62,10 +50,10 @@ open class Board(
         }
     }
     
-    private fun initSegment(
+    private fun createSegment(
             seed: Int = Random.nextInt(),
-            segmentStart: Coordinates,
             direction: HexDirection,
+            segmentStart: Coordinates = getSegmentStart(direction),
             passengers: Int = NUMBER_OF_PASSENGERS,
             blocked: Int = Random.nextInt(MIN_ISLANDS, MAX_ISLANDS),
             special: Int = Random.nextInt(MIN_SPECIAL, MAX_SPECIAL),
@@ -81,6 +69,34 @@ open class Board(
                 passengers = passengers, special = special, end = end)
         segments.last().nextSegment = newSegment
         segments.add(newSegment)
+    }
+    
+    private fun getSegmentStart(direction: HexDirection): Coordinates {
+        val lastSegment: Segment = segments.last()
+        
+        return when(direction) {
+            HexDirection.RIGHT -> {
+                val field: Field = lastSegment.gameField.last().first()
+                field.coordinate.plus(HexDirection.RIGHT)
+            }
+            
+            HexDirection.UP_RIGHT, HexDirection.DOWN_RIGHT -> {
+                val field: Field = lastSegment.gameField.last()[round((lastSegment.gameField.last().size / 2.0)).toInt()]
+                field.coordinate.plus(direction)
+            }
+            
+            HexDirection.UP_LEFT, HexDirection.DOWN_LEFT -> {
+                val field: Field = lastSegment.gameField.first()[round((lastSegment.gameField.first().size / 2.0)).toInt()]
+                field.coordinate.plus(direction)
+            }
+            
+            HexDirection.LEFT -> {
+                val field: Field = lastSegment.gameField.first().first()
+                field.coordinate.plus(HexDirection.LEFT)
+            }
+            
+            else -> throw IllegalArgumentException("Direction not supported")
+        }
     }
     
     companion object {
