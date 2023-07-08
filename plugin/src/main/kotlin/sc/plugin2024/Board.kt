@@ -49,6 +49,29 @@ open class Board(
     }
     
     /**
+     * Indicates whether a passenger can be picked up on the player's current field.
+     *
+     * @param ship the ship object representing the player's position and state
+     * @return true if a passenger can be picked up at the player's position, false otherwise
+     */
+    fun canPickupPassenger(ship: Ship): Boolean {
+        val directions = listOf(
+                HexDirection.RIGHT, HexDirection.UP_RIGHT, HexDirection.UP_LEFT,
+                HexDirection.LEFT, HexDirection.DOWN_LEFT, HexDirection.DOWN_RIGHT
+        )
+        
+        val fieldTypes = listOf(
+                FieldType.PASSENGER3, FieldType.PASSENGER4, FieldType.PASSENGER5,
+                FieldType.PASSENGER0, FieldType.PASSENGER1, FieldType.PASSENGER2
+        )
+        
+        return directions.zip(fieldTypes).any { (direction, type) ->
+            val field = getFieldInDirection(direction, ship.position)
+            field?.type === type
+        } && ship.passengers < 2
+    }
+    
+    /**
      * Adds a segment of field elements to the specified segment list based on the given pattern and starting coordinates.
      *
      * @param segment The segment list to add the field elements to.

@@ -24,6 +24,6 @@ data class Field(
         get() = type == FieldType.BLOCKED
     
     override fun clone(): Field {
-        return Field(coordinate, type, points, ship?.clone(), segmentIndex, segmentDir)
+        return Field(coordinate, type, points, ship?.copy(), segmentIndex, segmentDir)
     }
 }

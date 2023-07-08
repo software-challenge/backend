@@ -21,9 +21,9 @@ data class Turn(
             throw InvalidMoveException(MoveException.INVALID_TURN)
         }
         
-        requireNotNull(ship.getField(state.board)) {
+        requireNotNull(ship.position) {
             throw InvalidMoveException(MoveException.SANDBANK)
-        }.takeIf { it.type === FieldType.SANDBANK }
+        }.takeIf { it.type == FieldType.SANDBANK }
         
         val absTurnCount = abs(turnCount.toDouble())
         val usedCoal: Int = (absTurnCount - ship.freeTurns).toInt()

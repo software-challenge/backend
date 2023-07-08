@@ -1,7 +1,7 @@
 package sc.api.plugins
 
-interface IPiece {
+interface IPiece<FIELD : IField<FIELD>> {
     val id: Int
-    val position: Coordinates
+    val position: FIELD
     val team: ITeam
 }

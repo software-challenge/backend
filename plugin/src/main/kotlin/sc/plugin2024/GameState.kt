@@ -29,11 +29,6 @@ data class GameState @JvmOverloads constructor(
     override val currentTeam: Team
         get() = currentTeamFromTurn().run { takeIf { !immovable(it) } ?: opponent() }
     
-    override val otherTeam: Team
-        get() {
-            TODO()
-        }
-    
     /**
      * Der Index des am weitesten vom Start entfernten Segmentes, welches bisher aufgedeckt wurde. Wird nur intern verwendet.
      */

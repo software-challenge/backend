@@ -3,7 +3,6 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
-import kotlin.math.abs
 
 /**
  * This class represents a Ship in the game.
@@ -19,7 +18,7 @@ import kotlin.math.abs
  * @property freeTurns This field is relevant only for the server.
  * @property freeAcc This field is relevant only for the GUI.
  */
-data class Ship(override val id: Int, @XStreamAsAttribute override val position: Coordinates, override val team: ITeam): IPiece {
+data class Ship(override val id: Int, @XStreamAsAttribute override val position: Field, override val team: ITeam): IPiece<Field> {
     
     /**
      * Aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
