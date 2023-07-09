@@ -77,6 +77,32 @@ open class Board(
             }
         }
     }
+    /**
+     * Finds the closest ship to the goal position.
+     *
+     * @param ship1 the first ship to compare distance with.
+     * @param ship2 the second ship to compare distance with.
+     * @return the ship that is closest to the goal position, or null if no goal positions exist.
+     */
+    fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? {
+        var closestShip: Ship? = null
+        
+        val goals = segments.last().gameField.flatten().filter { it.type == FieldType.GOAL }
+        if (goals.isNotEmpty()) {
+            val ship1Distance = goals.minOfOrNull { ship1.position.coordinate.minus(it.coordinate) }
+            val ship2Distance = goals.minOfOrNull { ship2.position.coordinate.minus(it.coordinate) }
+            
+            if (ship1Distance != null && ship2Distance != null) {
+                closestShip = if (ship1Distance <= ship2Distance) ship1 else ship2
+            } else if (ship1Distance != null) {
+                closestShip = ship1
+            } else if (ship2Distance != null) {
+                closestShip = ship2
+            }
+        }
+        
+        return closestShip
+    }
     
     /**
      * Adds a segment of field elements to the specified segment list based on the given pattern and starting coordinates.

@@ -12,10 +12,14 @@ import sc.shared.InvalidMoveException
 import kotlin.math.min
 
 /**
- * Der aktuelle Spielstand.
+ * The GameState class represents the current state of the game.
  *
- * Er hält alle Informationen zur momentanen Runde,
- * mit deren Hilfe der nächste Zug berechnet werden kann.
+ * It holds all the information about the current round, which is used
+ * to calculate the next move.
+ *
+ * @property board The current game board.
+ * @property turn The number of turns already made in the game.
+ * @property lastMove The last move made in the game.
  */
 @XStreamAlias(value = "state")
 data class GameState @JvmOverloads constructor(
@@ -27,8 +31,76 @@ data class GameState @JvmOverloads constructor(
         override var lastMove: Move? = null,
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
+    /**
+     * The player who started the current round.
+     * By default, [Team.ONE] is the one starting the first round.
+     */
+    private var currentRoundStarter: Team = Team.ONE
+    
+    /**
+     * Get the current [Team] that is allowed to make a move.
+     *
+     * The current team is determined based on the rules of the game.
+     * If it is the end of the round (i.e., both players have made a move),
+     * then the next move starts, according to the given rules.
+     *
+     * @return The current team.
+     */
     override val currentTeam: Team
-        get() = currentTeamFromTurn().run { takeIf { !immovable(it) } ?: opponent() }
+        get() {
+            // Wenn es das Ende der Runde ist (d.h., beide Spieler haben einen Zug gemacht),
+            // dann beginnt der nächste Zug gemäß den gegebenen Regeln
+            if(turn % 2 == 0) {
+                val shipOne = Team.ONE.pieces.first() as Ship
+                val shipTwo = Team.TWO.pieces.first() as Ship
+                
+                currentRoundStarter = when {
+                    // Erstens, der Spieler, dessen Dampfer sich am dichtesten am Ziel befindet, beginnt
+                    board.closestShipToGoal(shipOne, shipTwo) != null -> {
+                        board.closestShipToGoal(shipOne, shipTwo)?.team as Team
+                    }
+                    
+                    // Zweitens, sollte der Dampfer mit der höheren Geschwindigkeit beginnen
+                    shipOne.speed != shipTwo.speed -> decideStarter(shipOne, shipTwo) {
+                        (it.pieces.first() as Ship).speed == maxOf(shipOne.speed, shipTwo.speed)
+                    }
+                    
+                    // Drittens, sollte der Dampfer mit dem höheren Kohlevorrat beginnen
+                    else -> decideStarter(shipOne, shipTwo) {
+                        (it.pieces.first() as Ship).coal == maxOf(shipOne.coal, shipTwo.coal)
+                    }
+                }
+            }
+            return if(currentRoundStarter == Team.ONE) Team.TWO else Team.ONE
+        }
+    
+    /**
+     * Determines which [Team] will start the current round.
+     *
+     * The starting team is determined based on the following criteria:
+     * 1. If the currentRoundStarter function returns true for [Team.ONE], then [Team.ONE] starts.
+     * 2. If the currentRoundStarter function returns true for [Team.TWO], then [Team.TWO] starts.
+     * 3. If both currentRoundStarter function calls return false, the ship with the highest X-coordinate starts.
+     * 4. If both ships have the same X-coordinate, the ship with the highest Y-coordinate starts.
+     *
+     * @param shipOne The first ship.
+     * @param shipTwo The second ship.
+     * @param currentRoundStarter A function that determines the starting team based on the current round.
+     *
+     * @return The team that will start the current round.
+     */
+    private fun decideStarter(shipOne: Ship, shipTwo: Ship, currentRoundStarter: (teamOne: Team) -> Boolean): Team {
+        return when {
+            currentRoundStarter.invoke(Team.ONE) -> Team.ONE
+            currentRoundStarter.invoke(Team.TWO) -> Team.TWO
+            // Viertens, sollte der Dampfer, der am weitesten rechts steht (höchste X-Koordinate), beginnen
+            shipOne.position.coordinate.x > shipTwo.position.coordinate.x -> Team.ONE
+            shipOne.position.coordinate.x < shipTwo.position.coordinate.x -> Team.TWO
+            // Fünftens, sollte der Dampfer, der am weitesten unten steht (höchste Y-Koordinate), beginnen
+            shipOne.position.coordinate.y > shipTwo.position.coordinate.y -> Team.ONE
+            else -> Team.TWO
+        }
+    }
     
     /**
      * Executes the specified move and returns the resulting game state.
@@ -88,32 +160,25 @@ data class GameState @JvmOverloads constructor(
         val actions = getPossibleActions()
         val moves = mutableListOf<Move>()
         
-        for (i in 1..actions.size) {
+        for(i in 1..actions.size) {
             val combos = generateActionCombinations(actions, i)
-            for (combo in combos) {
+            for(combo in combos) {
                 moves.add(Move(combo))
             }
         }
         return moves
     }
     
-    /**
-     * Generates all possible combinations of actions of a given size.
-     *
-     * @param actions the list of actions to generate combinations from.
-     * @param comboSize the size of the combinations to generate.
-     * @return the list of combinations of actions.
-     */
-    private fun generateActionCombinations(actions: List<Action>, comboSize: Int): List<List<Action>> {
-        return if (comboSize == 0) {
+    private fun generateActionCombinations(actions: List<Action>, comboSize: Int, orderShift: Int = 0): List<List<Action>> {
+        return if(comboSize == 0) {
             listOf(emptyList())
-        } else if (actions.isEmpty()) {
+        } else if(actions.isEmpty()) {
             emptyList()
         } else {
-            val head = actions.first()
+            val head = actions.first().apply { order += orderShift } // adding size to order attribute
             val tail = actions.drop(1)
-            val withHead = generateActionCombinations(tail, comboSize - 1).map { combo -> combo + head }
-            val withoutHead = generateActionCombinations(tail, comboSize)
+            val withHead = generateActionCombinations(tail, comboSize - 1, orderShift + 1).map { combo -> combo + head }
+            val withoutHead = generateActionCombinations(tail, comboSize, orderShift + 1)
             withHead + withoutHead
         }
     }
@@ -154,11 +219,11 @@ data class GameState @JvmOverloads constructor(
         val direction: HexDirection = currentShip.direction
         HexDirection.values().forEach { dirs ->
             board.getFieldInDirection(dirs, from)?.let { to ->
-                if (dirs !== direction.opposite() && to.isPassable() && currentShip.movement >= 1) {
-                    when (to.type) {
+                if(dirs !== direction.opposite() && to.isPassable() && currentShip.movement >= 1) {
+                    when(to.type) {
                         // TODO wie wollen wir hier die Order festlegen?
                         //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
-                        FieldType.LOG -> if (currentShip.movement >= 2) push.add(Push(0, dirs))
+                        FieldType.LOG -> if(currentShip.movement >= 2) push.add(Push(0, dirs))
                         else -> push.add(Push(0, dirs))
                     }
                 }
@@ -168,7 +233,7 @@ data class GameState @JvmOverloads constructor(
     }
     
     /**
-     * Returns a list of all possible turn actions that consume at most the specified amount of coal units.
+     * Returns a list of all possible turn actions that consume at most the specified number of coal units.
      *
      * @return List of all turn actions
      */

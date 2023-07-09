@@ -3,6 +3,7 @@ package sc.api.plugins
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -10,21 +11,21 @@ import kotlin.random.Random
  * Für Hex-Koordinaten siehe https://www.redblobgames.com/grids/hexagons/#coordinates-doubled */
 @XStreamAlias(value = "coordinates")
 data class Coordinates(
-    @XStreamAsAttribute val x: Int,
-    @XStreamAsAttribute val y: Int,
+        @XStreamAsAttribute val x: Int,
+        @XStreamAsAttribute val y: Int,
 ) {
     
     override fun toString(): String = "[$x|$y]"
     
     /** Addiere den [Vector] auf die [Coordinates] auf. */
     operator fun plus(vector: IVector): Coordinates =
-        Coordinates(x + vector.dx, y + vector.dy)
+            Coordinates(x + vector.dx, y + vector.dy)
     /** Berechne die Distanz zweier Koordinaten, als [Vector] */
     operator fun minus(other: Coordinates): Vector =
-        Vector(x - other.x, y - other.y)
+            Vector(x - other.x, y - other.y)
     /** Ziehe die Distanz (als [Vector]) von der Koordinate ab. */
     operator fun minus(other: IVector): Coordinates =
-        Coordinates(x - other.dx, y - other.dy)
+            Coordinates(x - other.dx, y - other.dy)
     /** Wandelt die [Coordinates] in einen entsprechenden [Vector]. */
     operator fun unaryPlus(): Vector = Vector(x, y)
     
@@ -69,7 +70,7 @@ data class Vector(override val dx: Int, override val dy: Int): IVector, Comparab
     
     /** Verändert die Länge des Vektors um den gegebenen Faktor, ohne seine Richtung zu ändern. */
     operator fun times(scalar: Int): Vector =
-        Vector(scalar * dx, scalar * dy)
+            Vector(scalar * dx, scalar * dy)
     
     val straightHex: Boolean
         get() = abs(dx) == abs(dy) || (dx % 2 == 0 && dy == 0)
@@ -82,7 +83,7 @@ data class Vector(override val dx: Int, override val dy: Int): IVector, Comparab
      * @return groesser Null, wenn dieser laenger ist
      */
     override operator fun compareTo(other: IVector): Int =
-        comparableLength - other.comparableLength
+            comparableLength - other.comparableLength
     
     /** Konvertiert den Vektor zu entsprechenden [Coordinates]. */
     operator fun unaryPlus(): Coordinates = Coordinates(dx, dy)
@@ -105,7 +106,7 @@ enum class HexDirection(val vector: Vector): IVector by vector {
     
     fun turnCountTo(target: HexDirection): Int {
         val diff = target.ordinal - this.ordinal
-        return if (diff >= 0) diff else diff + values().size
+        return if(diff >= 0) diff else diff + values().size
     }
     
     fun turnBy(turns: Int): HexDirection = values().let { it[(ordinal + turns) % it.size] }
