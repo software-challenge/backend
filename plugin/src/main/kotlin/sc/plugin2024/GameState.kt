@@ -3,6 +3,7 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.*
+import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
@@ -78,23 +79,62 @@ data class GameState @JvmOverloads constructor(
         return copiedState
     }
     
+    /**
+     * Retrieves a list of sensible moves based on the possible actions.
+     *
+     * @return a list of sensible moves
+     */
     override fun getSensibleMoves(): List<IMove> {
-        // TODO
-    }
-    
-    fun getPossibleActions(): List<Action> {
-        val actions: MutableList<Action> = ArrayList()
-        val currentShip = currentTeam.pieces.first() as Ship
-        val otherShip = otherTeam.pieces.first() as Ship
-        if(currentShip.position == otherShip.position) {
-            actions.addAll(getPossiblePushs(player, movement))
-        } else {
-            actions.addAll(getPossibleAdvances(player, movement, player.getDirection(), coal))
-            actions.addAll(getPossibleTurns(player, freeTurn, coal))
-            if(acceleration) {
-                actions.addAll(getPossibleAccelerations(player, coal))
+        val actions = getPossibleActions()
+        val moves = mutableListOf<Move>()
+        
+        for (i in 1..actions.size) {
+            val combos = generateActionCombinations(actions, i)
+            for (combo in combos) {
+                moves.add(Move(combo))
             }
         }
+        return moves
+    }
+    
+    /**
+     * Generates all possible combinations of actions of a given size.
+     *
+     * @param actions the list of actions to generate combinations from.
+     * @param comboSize the size of the combinations to generate.
+     * @return the list of combinations of actions.
+     */
+    private fun generateActionCombinations(actions: List<Action>, comboSize: Int): List<List<Action>> {
+        return if (comboSize == 0) {
+            listOf(emptyList())
+        } else if (actions.isEmpty()) {
+            emptyList()
+        } else {
+            val head = actions.first()
+            val tail = actions.drop(1)
+            val withHead = generateActionCombinations(tail, comboSize - 1).map { combo -> combo + head }
+            val withoutHead = generateActionCombinations(tail, comboSize)
+            withHead + withoutHead
+        }
+    }
+    
+    /**
+     * Retrieves the list of possible [Action]s for the current [Ship]
+     * at the current [GameState].
+     * If you want to get the follow-up [Action]s,
+     * you need tho perform one of these [Action]s as a [Move]
+     * and use this method again on the new [GameState]
+     *
+     * @return a list of the possible actions for the current ship.
+     */
+    fun getPossibleActions(): List<Action> {
+        val actions: MutableList<Action> = ArrayList()
+        
+        actions.addAll(getPossiblePushs())
+        actions.addAll(getPossibleAdvances())
+        actions.addAll(getPossibleTurns())
+        actions.addAll(getPossibleAccelerations())
+        
         return actions
     }
     
@@ -108,18 +148,19 @@ data class GameState @JvmOverloads constructor(
         val currentShip = currentTeam.pieces.first() as Ship
         val otherShip = otherTeam.pieces.first() as Ship
         val from: Field = currentShip.position
-        if(from.type === FieldType.SANDBANK) { // niemand darf von einer Sandbank herunterpushen.
+        if(from.type == FieldType.SANDBANK || currentShip.position == otherShip.position) { // niemand darf von einer Sandbank herunterpushen.
             return push
         }
         val direction: HexDirection = currentShip.direction
-        for(dirs in HexDirection.values()) {
-            val to: Field = board.getFieldInDirection(dirs, from)!!
-            if(dirs !== direction.opposite() && to.isPassable() && currentShip.movement >= 1) {
-                if(to.type === FieldType.LOG && currentShip.movement >= 2) {
-                    // TODO wie wollen wir hier die Order festlegen? Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
-                    push.add(Push(0, dirs))
-                } else if(to.type !== FieldType.LOG) {
-                    push.add(Push(0, dirs))
+        HexDirection.values().forEach { dirs ->
+            board.getFieldInDirection(dirs, from)?.let { to ->
+                if (dirs !== direction.opposite() && to.isPassable() && currentShip.movement >= 1) {
+                    when (to.type) {
+                        // TODO wie wollen wir hier die Order festlegen?
+                        //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
+                        FieldType.LOG -> if (currentShip.movement >= 2) push.add(Push(0, dirs))
+                        else -> push.add(Push(0, dirs))
+                    }
                 }
             }
         }
@@ -140,7 +181,8 @@ data class GameState @JvmOverloads constructor(
         // TODO hier sollte man vielleicht einfach die ausführbaren turns in freeTurns speichern, statt die generellen Turns
         val maxTurn = min(3.0, (currentShip.coal + currentShip.freeTurns).toDouble()).toInt()
         for(i in 1..maxTurn) {
-            // TODO wie wollen wir hier die Order festlegen? Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
+            // TODO wie wollen wir hier die Order festlegen?
+            //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
             turns.add(Turn(0, currentShip.direction.turnBy(i)))
             turns.add(Turn(0, currentShip.direction.turnBy(-i)))
         }
@@ -148,48 +190,53 @@ data class GameState @JvmOverloads constructor(
     }
     
     /**
-     * Gibt alle Bewegungsaktionen des Spielers zurück, die in die gegebene Richtung
-     * mit einer festen Anzahl von Bewegungspunkten möglich sind.
-     * @param player Spieler
-     * @param movement Geschwindigkeit
-     * @param direction Richtung
-     * @param coal Kohleeinheiten, die zur Verfügung stehen
-     * @return Liste aller möglichen Züge des Spielers in entsprechende Richtung
+     * Returns a list of all possible advances for the current ship in the given direction
+     * with the number of movement points the ship has.
+     *
+     * @return List of all possible advances in the corresponding direction
      */
-    fun getPossibleAdvances(player: Player, movement: Int, direction: Direction, coal: Int): List<Advance> {
-        var movement = movement
+    fun getPossibleAdvances(): List<Advance> {
         val step = java.util.ArrayList<Advance>()
-        val start: Field = player.getField(board)
-        var i = 0
-        val enemy: Player = if(player.getPlayerColor() === PlayerColor.RED) blue else red
-        if(start.getType() === FieldType.SANDBANK && movement > 0) {
-            val fieldBehind: Field = start.getFieldInDirection(direction.getOpposite(), board)
-            if(fieldBehind != null && fieldBehind.isPassable()) {
-                step.add(Advance(-1))
+        val currentShip = currentTeam.pieces.first() as Ship
+        val start: Field = currentShip.position
+        val otherShip = otherTeam.pieces.first() as Ship
+        
+        val eligibleForMovement = start.type == FieldType.SANDBANK && currentShip.movement > 0
+        if(!eligibleForMovement) return step
+        
+        val directions = listOf(
+                Pair(currentShip.direction.opposite(), -1),
+                Pair(currentShip.direction, 1)
+        )
+        
+        directions.forEach { (direction, coordinate) ->
+            board.getFieldInDirection(direction, start)?.let {
+                if(it.isPassable()) {
+                    // TODO wie wollen wir hier die Order festlegen?
+                    //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
+                    step.add(Advance(0, coordinate))
+                }
             }
-            val fieldInFront: Field = start.getFieldInDirection(direction, board)
-            if(fieldInFront != null && fieldInFront.isPassable()) {
-                step.add(Advance(1))
-            }
-            return step
         }
-        while(movement > 0) {
+        
+        var i = 0
+        while(currentShip.movement > 0) {
             i++
-            val next: Field = start.getFieldInDirection(direction, board)
+            val next: Field? = board.getFieldInDirection(currentShip.direction, start)
             if(next != null && next.isPassable()) {
-                movement--
-                if(next.getType() === FieldType.LOG) { // das Überqueren eines Baumstammfeldes verbraucht doppelt so viele Bewegungspunkte
-                    movement--
-                    if(movement >= 0) {
-                        step.add(Advance(i))
-                    }
-                } else {
-                    if(movement >= 0) {
-                        step.add(Advance(i))
-                    }
-                    if(next.getType() === FieldType.SANDBANK || next.equals(enemy.getField(board))) {
-                        return step
-                    }
+                currentShip.movement--
+                if(next.type == FieldType.LOG) currentShip.movement--
+                
+                if(currentShip.movement >= 0) {
+                    // TODO wie wollen wir hier die Order festlegen?
+                    //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
+                    step.add(Advance(0, i))
+                }
+                
+                if(next.type == FieldType.LOG) return step
+                
+                if(next.type == FieldType.SANDBANK || next == otherShip.position) {
+                    return step
                 }
             } else {
                 return step
@@ -199,19 +246,21 @@ data class GameState @JvmOverloads constructor(
     }
     
     /**
-     * Liefert alle Beschleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
-     * @param player Spieler
-     * @param coal Kohle, die für die Beschleunigung benötigt werden darf.
-     * @return Liste aller Beschleunigungsaktionen
+     * Returns the list of all possible Acceleration actions that require at most the given coal number.
+     *
+     * @return List of all possible Acceleration actions
      */
-    fun getPossibleAccelerations(player: Player, coal: Int): List<Acceleration> {
+    fun getPossibleAccelerations(): List<Acceleration> {
+        val currentShip = currentTeam.pieces.first() as Ship
         val acc: java.util.ArrayList<Acceleration> = java.util.ArrayList<Acceleration>()
-        for(i in 0..coal) {
-            if(player.getSpeed() < 6 - i) {
-                acc.add(Acceleration(1 + i)) // es wird nicht zu viel beschleunigt
+        for(i in 0..currentShip.coal) {
+            if(currentShip.speed < 6 - i) {
+                // TODO wie wollen wir hier die Order festlegen?
+                //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
+                acc.add(Acceleration(0, 1 + i)) // es wird nicht zu viel beschleunigt
             }
-            if(player.getSpeed() > 1 + i) {
-                acc.add(Acceleration(-1 - i)) // aber zu viel abgebremst
+            if(currentShip.speed > 1 + i) {
+                acc.add(Acceleration(0, -1 - i)) // aber zu viel abgebremst
             }
         }
         return acc
@@ -225,6 +274,10 @@ data class GameState @JvmOverloads constructor(
     override fun getPointsForTeam(team: ITeam): IntArray {
         // TODO
         return intArrayOf(0, 0)
+    }
+    
+    override fun clone(): IGameState {
+        TODO("Not yet implemented")
     }
     
     override fun toString(): String = "GameState(board=$board, turn=$turn, lastMove=$lastMove)"
