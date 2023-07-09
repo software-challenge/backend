@@ -2,9 +2,6 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IMove
-import sc.plugin2024.actions.Push
-import java.util.*
-
 
 @XStreamAlias("move")
 /**
@@ -15,9 +12,22 @@ import java.util.*
  * @property actions The list of actions in the move.
  */
 data class Move(
-    val actions: List<Action>,
-) : IMove, Comparable<Move> {
-
+        var actions: List<Action>,
+): IMove, Comparable<Move> {
+    
+    /**
+     * Orders the actions based on their order property.
+     *
+     * @throws IllegalArgumentException if there are actions with the same order.
+     */
+    fun orderActions() {
+        val orderedActions = actions.sortedBy { it.order }
+        if(orderedActions.size != orderedActions.distinctBy { it.order }.size) {
+            throw IllegalArgumentException("There are actions with the same order.")
+        }
+        this.actions = orderedActions
+    }
+    
     /**
      * Compares this Move instance with the specified Move for order.
      *
@@ -32,16 +42,15 @@ data class Move(
      *         or a positive integer if this Move is larger than the specified Move.
      */
     override fun compareTo(other: Move): Int =
-        actions.size.compareTo(other.actions.size)
-
-
+            actions.size.compareTo(other.actions.size)
+    
     /**
      * Compares this move with the specified object to check if they are equal.
      *
-     * @param o the object to compare with this move
+     * @param other the object to compare with this move
      * @return true if the specified object is a Move and contains the same actions as this move, false otherwise
      */
-    override fun equals(o: Any?): Boolean = o is Move && actions == o.actions
+    override fun equals(other: Any?): Boolean = other is Move && actions == other.actions
     
     /**
      * Returns the hash code value for this object.
@@ -49,13 +58,13 @@ data class Move(
      * @return the hash code value for this object.
      */
     override fun hashCode(): Int = actions.hashCode()
-
+    
     /**
      * Returns a string representation of the object.
      *
      * @return The string representation of the object in the format "Move(action1, action2, ..., actionN)".
      */
     override fun toString(): String =
-        actions.joinToString(separator = ", ", prefix = "Move(", postfix = ")")
+            actions.joinToString(separator = ", ", prefix = "Move(", postfix = ")")
     
 }

@@ -108,6 +108,8 @@ enum class HexDirection(val vector: Vector): IVector by vector {
         return if (diff >= 0) diff else diff + values().size
     }
     
+    fun turnBy(turns: Int): HexDirection = values().let { it[(ordinal + turns) % it.size] }
+    
     companion object {
         fun random(): HexDirection = values()[Random.nextInt(values().size)]
     }

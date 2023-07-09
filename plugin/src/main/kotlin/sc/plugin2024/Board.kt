@@ -5,7 +5,8 @@ import sc.api.plugins.Coordinates
 import sc.api.plugins.HexDirection
 import sc.api.plugins.RectangularBoard
 import sc.api.plugins.TwoDBoard
-import sc.plugin2023.util.Pattern
+import sc.plugin2024.util.Pattern
+import sc.plugin2024.util.PassengerDirection
 import sc.plugin2024.util.PluginConstants.MAX_ISLANDS
 import sc.plugin2024.util.PluginConstants.MAX_SPECIAL
 import sc.plugin2024.util.PluginConstants.MIN_ISLANDS
@@ -55,20 +56,26 @@ open class Board(
      * @return true if a passenger can be picked up at the player's position, false otherwise
      */
     fun canPickupPassenger(ship: Ship): Boolean {
-        val directions = listOf(
-                HexDirection.RIGHT, HexDirection.UP_RIGHT, HexDirection.UP_LEFT,
-                HexDirection.LEFT, HexDirection.DOWN_LEFT, HexDirection.DOWN_RIGHT
-        )
-        
-        val fieldTypes = listOf(
-                FieldType.PASSENGER3, FieldType.PASSENGER4, FieldType.PASSENGER5,
-                FieldType.PASSENGER0, FieldType.PASSENGER1, FieldType.PASSENGER2
-        )
-        
-        return directions.zip(fieldTypes).any { (direction, type) ->
-            val field = getFieldInDirection(direction, ship.position)
-            field?.type === type
+        return PassengerDirection.values().any { passengerField ->
+            val field = getFieldInDirection(passengerField.direction, ship.position)
+            field?.type === passengerField.type
         } && ship.passengers < 2
+    }
+    
+    /**
+     * Picks up a passenger on the given ship.
+     *
+     * @param ship The ship on which to pick up the passenger.
+     */
+    fun pickupPassenger(ship: Ship) {
+        for(passengerField in PassengerDirection.values()) {
+            val field = getFieldInDirection(passengerField.direction, ship.position)
+            if(field?.type == passengerField.type) {
+                field.type = FieldType.BLOCKED
+                ship.passengers += 1
+                break
+            }
+        }
     }
     
     /**

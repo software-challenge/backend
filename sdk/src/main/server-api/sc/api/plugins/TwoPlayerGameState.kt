@@ -20,7 +20,7 @@ abstract class TwoPlayerGameState<M: IMove>(
     /** Letzter getaetigter Zug. */
     abstract val lastMove: M?
     
-    abstract fun performMove(move: M)
+    abstract fun performMove(move: M): IGameState
 
     /** Calculates the color of the current player from the [turn] and the [startTeam].
      * Based on the assumption that the current player switches every turn. */

@@ -18,7 +18,7 @@ import sc.api.plugins.*
  * @property freeTurns This field is relevant only for the server.
  * @property freeAcc This field is relevant only for the GUI.
  */
-data class Ship(override val id: Int, @XStreamAsAttribute override val position: Field, override val team: ITeam): IPiece<Field> {
+data class Ship(override val id: Int, @XStreamAsAttribute override var position: Field, override val team: ITeam): IPiece<Field> {
     
     /**
      * Aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
@@ -53,7 +53,7 @@ data class Ship(override val id: Int, @XStreamAsAttribute override val position:
      * Anzahl der vom Spieler eingesammelten Passagiere
      */
     @XStreamAsAttribute
-    val passengers = 0
+    var passengers = 0
     
     /**
      * Nur fuer den Server relevant

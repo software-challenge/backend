@@ -5,24 +5,25 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.HexDirection
 import sc.plugin2024.*
 import sc.plugin2024.exceptions.MoveException
+import sc.plugin2024.exceptions.TurnException
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
 
 @XStreamAlias(value = "turn")
 data class Turn(
-        @XStreamAsAttribute
-        var direction: HexDirection,
+        @XStreamAsAttribute override var order: Int,
+        @XStreamAsAttribute var direction: HexDirection,
 ): Action {
     
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
         val turnCount = ship.direction.turnCountTo(direction)
         require(!(turnCount == 0 || turnCount < -3 || turnCount > 3)) {
-            throw InvalidMoveException(MoveException.INVALID_TURN)
+            throw InvalidMoveException(TurnException.INVALID_ROTATION)
         }
         
         requireNotNull(ship.position) {
-            throw InvalidMoveException(MoveException.SANDBANK)
+            throw InvalidMoveException(TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED)
         }.takeIf { it.type == FieldType.SANDBANK }
         
         val absTurnCount = abs(turnCount.toDouble())
@@ -30,12 +31,11 @@ data class Turn(
         
         ship.freeTurns = if(ship.freeTurns - absTurnCount <= 0) 0 else 1
         
-        if(usedCoal > 0) {
-            require(ship.coal >= usedCoal) {
-                throw InvalidMoveException(MoveException.COAL)
-            }
-            ship.coal -= usedCoal
+        require(ship.coal >= usedCoal) {
+            throw InvalidMoveException(TurnException.NOT_ENOUGH_COAL_FOR_ROTATION)
         }
+        usedCoal.takeIf { it > 0 }?.let { ship.coal -= it }
+        
         ship.direction = direction
     }
     

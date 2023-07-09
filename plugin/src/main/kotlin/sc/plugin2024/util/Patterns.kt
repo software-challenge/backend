@@ -1,4 +1,4 @@
-package sc.plugin2023.util
+package sc.plugin2024.util
 
 import sc.api.plugins.HexDirection
 

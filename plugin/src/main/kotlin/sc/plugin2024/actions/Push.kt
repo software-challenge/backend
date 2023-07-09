@@ -10,6 +10,7 @@ import sc.shared.InvalidMoveException
 /** Erzeugt eine Abdraengaktion in angegebene Richtung. */
 @XStreamAlias(value = "push")
 data class Push(
+        @XStreamAsAttribute override var order: Int,
         /** Richtung in die abgedrängt werden soll */
         @XStreamAsAttribute val direction: HexDirection,
 ): Action {
@@ -26,7 +27,9 @@ data class Push(
         if(pushResult.shiftTo.type === FieldType.SANDBANK) {
             adjustForSandbankPush(nudgedShip)
         }
-        // TODO state.put(pushTo.getX(), pushTo.getY(), nudgedShip)
+        
+        nudgedShip.freeTurns += 1
+        nudgedShip.position = pushResult.shiftTo
     }
     
     private fun ensureMovementAvailable(ship: Ship) {

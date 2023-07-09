@@ -5,15 +5,16 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.HexDirection
 import sc.plugin2024.*
+import sc.plugin2024.exceptions.AdvanceException
 import sc.plugin2024.exceptions.MoveException
 import sc.shared.InvalidMoveException
 import java.util.*
 
 @XStreamAlias(value = "advance")
 data class Advance(
+        @XStreamAsAttribute override var order: Int,
         /** Anzahl der Felder, die zurückgelegt werden. */
-        @XStreamAsAttribute
-        val distance: Int,
+        @XStreamAsAttribute val distance: Int,
 ): Action {
     
     /**
@@ -37,15 +38,22 @@ data class Advance(
         }
     }
     
+    private fun checkDestinationForShip(target: Field, state: GameState) {
+        val otherShip = state.otherTeam.pieces.first()
+        if(target == otherShip.position) {
+            throw InvalidMoveException(AdvanceException.SHIP_ALREADY_IN_TARGET)
+        }
+    }
+    
     private fun validateDistance() {
         if(distance == 0 || distance > 6 || distance < -1) {
-            throw InvalidMoveException(MoveException.INVALID_DISTANCE)
+            throw InvalidMoveException(AdvanceException.INVALID_DISTANCE)
         }
     }
     
     private fun validateShipMovement(ship: Ship) {
         if(ship.movement == 0) {
-            throw InvalidMoveException(MoveException.NO_MOVEMENT)
+            throw InvalidMoveException(AdvanceException.NO_MOVEMENT_POINTS)
         }
     }
     
@@ -56,11 +64,12 @@ data class Advance(
     private fun handleMoveFromSandbank(ship: Ship, start: Field, direction: HexDirection, state: GameState) {
         ship.movement = 0
         val next: Field = state.board.getFieldInDirection(direction, start)
-                          ?: throw InvalidMoveException(MoveException.FIELD_NOT_FOUND)
+                          ?: throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
+        checkDestinationForShip(next, state)
         if(!next.isPassable()) {
-            throw InvalidMoveException(MoveException.BLOCKED)
+            throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
         }
-        // TODO state.put(next.getX(), next.getY(), ship)
+        ship.position = next
         return
     }
     
@@ -71,10 +80,11 @@ data class Advance(
     private fun handleBackwardsMoveFromSandbank(start: Field, ship: Ship, state: GameState, direction: HexDirection) {
         val next: Field? = state.board.getFieldInDirection(direction, start)
         if(next == null || next.type === FieldType.LOG || !next.isBlocked) {
-            throw InvalidMoveException(MoveException.BLOCKED)
+            throw InvalidMoveException(AdvanceException.BACKWARD_MOVE_NOT_POSSIBLE)
         }
+        checkDestinationForShip(next, state)
         ship.movement = 0
-        // TODO state.put(next.x, next.y, ship)
+        ship.position = next
         return
     }
     
@@ -82,18 +92,19 @@ data class Advance(
         nextFields.add(start)
         for(i in 0 until distance) {
             val next: Field? = state.board.getFieldInDirection(direction, nextFields[i])
-            next?.let { nextFields.add(it) } ?: throw InvalidMoveException(MoveException.FIELD_NOT_FOUND)
+            next?.let { nextFields.add(it) } ?: throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
+            checkDestinationForShip(next, state)
             handleObstacles(ship, state, nextFields, i)
         }
         val target: Field = nextFields[distance]
-        // TODO state.put(target.getX(), target.getY(), ship)
+        ship.position = target
         return
     }
     
     private fun handleObstacles(ship: Ship, state: GameState, nextFields: LinkedList<Field>, i: Int) {
         val checkField: Field = nextFields[i + 1]
         if(!checkField.isPassable() || state.otherTeam.pieces.first().position == checkField && i != distance - 1) {
-            throw InvalidMoveException(MoveException.BLOCKED)
+            throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
         }
         
         when(checkField.type) {
@@ -108,15 +119,14 @@ data class Advance(
         ship.movement = 0
         endsTurn = true
         if(i != distance - 1) {
-            throw InvalidMoveException(MoveException.MOVE_ON_SANDBANK)
+            throw InvalidMoveException(AdvanceException.MOVE_END_ON_SANDBANK)
         }
-        // TODO state.put(checkField.getX(), checkField.getY(), ship)
         return
     }
     
     private fun handleLogObstacle(ship: Ship) {
         if(ship.movement <= 1) {
-            throw InvalidMoveException(MoveException.INSUFFICIENT_MOVEMENT)
+            throw InvalidMoveException(AdvanceException.NOT_ENOUGH_MOVEMENT_POINTS_TO_CROSS_LOG)
         }
         ship.movement -= 2
         ship.speed = 1.coerceAtLeast(ship.speed - 1)
