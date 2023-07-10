@@ -18,17 +18,13 @@ import kotlin.random.Random
 import sc.plugin2024.util.PluginConstants as Constants
 
 /**
- * A class representing the game board.
- *
- * @constructor Creates a new Board instance.
- * @property gameField The two-dimensional board representing the game field.
- * @property segments The list of segments on the board.
+ * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
+ * @param tiles Spielsegmente des neuen Spielfelds
  */
 @XStreamAlias(value = "board")
-open class Board(
-        gameField: TwoDBoard<Field> = initBoard(),
-        var segments: ArrayList<Segment> = ArrayList(),
-): RectangularBoard<Field>(gameField) {
+data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int = 2): IBoard {
+    
+    fun visibleTiles(): List<Tile> = tiles.subList(0, visibleTiles)
     
     init {
         createSegment(direction = HexDirection.RIGHT, segmentStart = Coordinates(0, 0), passengers = 0, blocked = 0, special = 0, end = false)
