@@ -19,7 +19,7 @@ class MoveTest: FunSpec({
             move.reversed()!!.reversed() shouldBe move
         }
         test("can't reverse penguin placement") {
-            Move(null, Coordinates.origin).reversed().shouldBeNull()
+            Move(null, Coordinates.ORIGIN).reversed().shouldBeNull()
         }
     }
     test("Move XML") {

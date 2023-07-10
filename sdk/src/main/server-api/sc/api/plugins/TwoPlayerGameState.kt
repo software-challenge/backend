@@ -20,8 +20,16 @@ abstract class TwoPlayerGameState<M: IMove>(
     /** Letzter getaetigter Zug. */
     abstract val lastMove: M?
     
-    abstract fun performMove(move: M): IGameState
-
+    /** Führe den gegebenen Zug in einer Kopie dieses Gamestate aus und gib ihn zurück. */
+    fun performMove(move: M): IGameState =
+        clone().also { it.performMoveDirectly(move) }
+    
+    /** Performs the Move on this GameState.
+     * Might lead to inconsistent state for invalid Move! */
+    abstract fun performMoveDirectly(move: M)
+    
+    abstract override fun clone(): TwoPlayerGameState<M>
+    
     /** Calculates the color of the current player from the [turn] and the [startTeam].
      * Based on the assumption that the current player switches every turn. */
     protected fun currentTeamFromTurn(): Team =

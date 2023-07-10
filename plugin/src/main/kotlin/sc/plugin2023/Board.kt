@@ -12,7 +12,7 @@ import sc.plugin2023.util.PluginConstants as Constants
  * @author soed
  */
 @XStreamAlias(value = "board")
-class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field>(fields) {
+class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()): RectangularBoard<Field>(gameField) {
     
     constructor(board: Board): this(board.gameField.clone())
     
@@ -68,7 +68,7 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
     
     companion object {
         /** Generiert ein neues Spielfeld mit zufällig auf dem Spielbrett verteilten Fischen. */
-        private fun generateFields(seed: Int = Random.nextInt()): TwoDBoard<Field> {
+        private fun generateFields(seed: Int = Random.nextInt()): MutableTwoDBoard<Field> {
             var remainingFish = Constants.BOARD_SIZE * Constants.BOARD_SIZE
             val random = Random(seed)
             println("Board Seed: $seed")
@@ -76,20 +76,21 @@ class Board(fields: TwoDBoard<Field> = generateFields()): RectangularBoard<Field
             // Pro Hälfte 32 Felder, mind. 27 Schollen
             // Maximal (64-20)/2 = 22 2-Fisch-Schollen,
             // also immer mindestens 5 1-Fisch-Schollen pro Seite
-            return List(Constants.BOARD_SIZE / 2) {
-                MutableList(Constants.BOARD_SIZE) {
+            return Array(Constants.BOARD_SIZE / 2) {
+                Array(Constants.BOARD_SIZE) {
                     val rand = random.nextInt(remainingFish)
                     if(rand < maxholes) {
                         maxholes--
-                        return@MutableList Field()
+                        Field()
+                    } else {
+                        val fish = (rand - maxholes) / 20 + 1
+                        remainingFish -= fish
+                        Field(fish)
                     }
-                    val fish = (rand - maxholes) / 20 + 1
-                    remainingFish -= fish
-                    Field(fish)
                 }
             }.let {
-                it + it.asReversed().map { list ->
-                    MutableList(Constants.BOARD_SIZE) { index -> list[Constants.BOARD_SIZE - index - 1].clone() }
+                it + it.reversedArray().map { list ->
+                    Array(Constants.BOARD_SIZE) { index -> list[Constants.BOARD_SIZE - index - 1].clone() }
                 }
             }
         }

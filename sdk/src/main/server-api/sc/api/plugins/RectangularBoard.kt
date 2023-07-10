@@ -3,17 +3,34 @@ package sc.api.plugins
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.framework.PublicCloneable
 
-typealias TwoDBoard<FIELD> = List<MutableList<FIELD>>
+/** Eine zweidimensionale Anordnung von Feldern, eine Liste von Zeilen. */
+typealias TwoDBoard<FIELD> = Array<Array<FIELD>>
 
-fun <T: Cloneable> List<List<PublicCloneable<T>>>.clone() =
-        List(size) { row -> MutableList(this[row].size) { column -> this[row][column].clone() } }
+/** Eine zweidimensionale Anordnung von Feldern, eine Liste von Zeilen,
+ * wo Elemente verändert werden können. */
+typealias MutableTwoDBoard<FIELD> = Array<Array<FIELD>>
 
-/** Ein rechteckiges Spielfeld aus Feldern, die jeweils von einer Spielerfarbe belegt sein können. */
+inline fun <reified T: Cloneable> Array<Array<PublicCloneable<T>>>.clone() =
+        Array(size) { row -> Array(this[row].size) { column -> this[row][column].clone() } }
+
+/**
+ * Ein rechteckiges Spielfeld aus Feldern.
+ * Intern repräsentiert durch eine Liste an Zeilen.
+ */
 open class RectangularBoard<FIELD: IField<FIELD>>(
-        @XStreamImplicit protected val gameField: TwoDBoard<FIELD> = emptyList(),
-): IBoard, AbstractMap<Coordinates, FIELD>(), Collection<FIELD> {
+        @XStreamImplicit protected open val gameField: TwoDBoard<FIELD>
+): FieldMap<FIELD>(), IBoard, Collection<FIELD> {
     
     constructor(other: RectangularBoard<FIELD>): this(other.gameField.clone())
+    
+    override val size: Int
+        get() = gameField.size * columnCount
+            // For non-rectangular: gameField.sumOf { it.size }
+    
+    /** Anzahl der Spalten im Spielfeld.
+     * Geht von der ersten Zeile aus, da das Spielfeld ja rechteckig ist. */
+    val columnCount: Int
+        get() = gameField.first().size
     
     /** Prüft, ob alle Felder leer sind. */
     fun fieldsEmpty() =
@@ -25,22 +42,8 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
             coordinates.y in gameField.indices &&
             coordinates.x in gameField[coordinates.y].indices
     
-    /** Gibt das Feld an den gegebenen Koordinaten zurück.
-     * Bevorzugt für interne Verwendung, da Fehler ungefiltert zurückgegeben werden. */
-    open operator fun get(x: Int, y: Int) =
+    override operator fun get(x: Int, y: Int): FIELD =
             gameField[y][x]
-    
-    /** Gibt das Feld an den gegebenen Koordinaten zurück. */
-    @Throws(IllegalArgumentException::class)
-    override operator fun get(key: Coordinates) =
-            try {
-                get(key.x, key.y)
-            } catch(e: IndexOutOfBoundsException) {
-                outOfBounds(key, e)
-            }
-    
-    protected fun outOfBounds(coords: Coordinates, cause: Throwable? = null): Nothing =
-            throw IllegalArgumentException("$coords ist nicht teil des Spielfelds!", cause)
     
     fun getOrNull(key: Coordinates) =
             if(isValid(key))
@@ -64,19 +67,11 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     override fun clone() = RectangularBoard(this.gameField)
     
     override val entries: Set<Map.Entry<Coordinates, FIELD>>
-        get() = gameField.flatMapIndexed { y, row ->
+        get() = gameField.flatMapIndexedTo(HashSet()) { y, row ->
             row.mapIndexed { x, field ->
                 FieldPosition(Coordinates(x, y), field)
             }
-        }.toSet()
-    
-    inner class FieldPosition(
-            override val key: Coordinates,
-            override val value: FIELD
-    ): Map.Entry<Coordinates, FIELD>
-    
-    override val size: Int
-        get() = gameField.sumOf { it.size }
+        }
     
     override fun iterator(): Iterator<FIELD> = object: AbstractIterator<FIELD>() {
         var index = 0
@@ -93,9 +88,8 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     
     override fun contains(element: FIELD): Boolean = gameField.any { it.contains(element) }
     
-    // TODO do this properly for non-squared boards
     operator fun get(index: Int): FIELD =
-            gameField[index.div(gameField.size)][index.mod(gameField.size)]
+            gameField[index.div(columnCount)][index.mod(columnCount)]
     
     fun readResolve(): Any {
         @Suppress("SENSELESS_COMPARISON")

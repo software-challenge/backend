@@ -16,19 +16,6 @@ data class Move(
 ): IMove, Comparable<Move> {
     
     /**
-     * Orders the actions based on their order property.
-     *
-     * @throws IllegalArgumentException if there are actions with the same order.
-     */
-    fun orderActions() {
-        val orderedActions = actions.sortedBy { it.order }
-        if(orderedActions.size != orderedActions.distinctBy { it.order }.size) {
-            throw IllegalArgumentException("There are actions with the same order.")
-        }
-        this.actions = orderedActions
-    }
-    
-    /**
      * Compares this Move instance with the specified Move for order.
      *
      * The comparison is based on the size of the actions list.

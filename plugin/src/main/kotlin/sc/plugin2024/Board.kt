@@ -1,33 +1,69 @@
 package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
-import sc.api.plugins.Coordinates
-import sc.api.plugins.HexDirection
-import sc.api.plugins.RectangularBoard
-import sc.api.plugins.TwoDBoard
+import com.thoughtworks.xstream.annotations.XStreamOmitField
+import sc.api.plugins.*
 import sc.plugin2024.util.Pattern
-import sc.plugin2024.util.PassengerDirection
-import sc.plugin2024.util.PluginConstants.MAX_ISLANDS
-import sc.plugin2024.util.PluginConstants.MAX_SPECIAL
-import sc.plugin2024.util.PluginConstants.MIN_ISLANDS
-import sc.plugin2024.util.PluginConstants.MIN_SPECIAL
-import sc.plugin2024.util.PluginConstants.NUMBER_OF_PASSENGERS
+import sc.plugin2024.util.PluginConstants
+import java.util.stream.IntStream
 import kotlin.math.abs
 import kotlin.math.round
 import kotlin.random.Random
+import kotlin.random.nextInt
 import sc.plugin2024.util.PluginConstants as Constants
+
+private typealias Segments = List<Segment>
 
 /**
  * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
- * @param tiles Spielsegmente des neuen Spielfelds
+ * @param allSegments Spielsegmente des neuen Spielfelds
  */
 @XStreamAlias(value = "board")
-data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int = 2): IBoard {
+data class Board(
+        @XStreamOmitField
+        private val segments: Segments = generateBoard(),
+        @XStreamOmitField
+        internal var visibleSegments: Int = 2,
+): FieldMap<FieldType>() {
     
-    fun visibleTiles(): List<Tile> = tiles.subList(0, visibleTiles)
+    data class PlacedSegment(
+            val direction: HexDirection,
+            val center: Coordinates,
+            val segment: Segment,
+    )
+    
+    companion object {
+        fun generateBoard(): Segments {
+            val segments = ArrayList<PlacedSegment>(PluginConstants.NUMBER_OF_SEGMENTS)
+            segments.add(
+                    PlacedSegment(
+                            HexDirection.RIGHT,
+                            Coordinates.ORIGIN,
+                            Segment.generate(false, arrayOf())
+                    ))
+            
+            val passengerTiles = shuffledIndices(PluginConstants.NUMBER_OF_SEGMENTS - 2, PluginConstants.NUMBER_OF_PASSENGERS).toArray()
+            (2..PluginConstants.NUMBER_OF_SEGMENTS).forEach {
+                val previous = segments.last()
+                val direction = if(it == 2) HexDirection.RIGHT else previous.direction.withNeighbors().random()
+                segments.add(
+                        PlacedSegment(
+                                direction,
+                                previous.center + (direction.vector * 4),
+                                Segment.generate(it == PluginConstants.NUMBER_OF_SEGMENTS,
+                                        Array<FieldType>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { FieldType.BLOCKED } +
+                                        Array<FieldType>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { FieldType.SANDBANK } +
+                                        Array<FieldType>( if(passengerTiles.contains(it - 2)) 1 else 0 ) { FieldType.PASSENGER(HexDirection.random()) }
+                                        )
+                        )
+                )
+                
+            }
+        }
+    }
     
     init {
-        createSegment(direction = HexDirection.RIGHT, segmentStart = Coordinates(0, 0), passengers = 0, blocked = 0, special = 0, end = false)
+    
     }
     
     /**
@@ -68,14 +104,14 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
      *         any segment, -1 is returned.
      */
     fun segmentDistance(field1: Field, field2: Field): Int {
-        val field1Index = segments.indexOfFirst { segment ->
-            segment.gameField.any { row -> row.contains(field1) }
+        val field1Index = allSegments.indexOfFirst { segment ->
+            segment.fields.any { row -> row.contains(field1) }
         }
-        val field2Index = segments.indexOfFirst { segment ->
-            segment.gameField.any { row -> row.contains(field2) }
+        val field2Index = allSegments.indexOfFirst { segment ->
+            segment.fields.any { row -> row.contains(field2) }
         }
         
-        return if (field1Index == -1 || field2Index == -1) {
+        return if(field1Index == -1 || field2Index == -1) {
             -1 // return -1 if any of the fields is not found in any segment
         } else {
             abs(field1Index - field2Index) // return distance
@@ -107,16 +143,16 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
     fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? {
         var closestShip: Ship? = null
         
-        val goals = segments.last().gameField.flatten().filter { it.type == FieldType.GOAL }
-        if (goals.isNotEmpty()) {
+        val goals = allSegments.last().fields.flatten().filter { it.type == FieldType.GOAL }
+        if(goals.isNotEmpty()) {
             val ship1Distance = goals.minOfOrNull { ship1.position.coordinate.minus(it.coordinate) }
             val ship2Distance = goals.minOfOrNull { ship2.position.coordinate.minus(it.coordinate) }
             
-            if (ship1Distance != null && ship2Distance != null) {
-                closestShip = if (ship1Distance <= ship2Distance) ship1 else ship2
-            } else if (ship1Distance != null) {
+            if(ship1Distance != null && ship2Distance != null) {
+                closestShip = if(ship1Distance <= ship2Distance) ship1 else ship2
+            } else if(ship1Distance != null) {
                 closestShip = ship1
-            } else if (ship2Distance != null) {
+            } else if(ship2Distance != null) {
                 closestShip = ship2
             }
         }
@@ -171,47 +207,22 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
         val pattern = Pattern.match(direction).pattern
         addSegment(segment, pattern, segmentStart)
         
-        val newSegment = Segment(gameField = segment, seed = seed,
-                lastSegment = if(segments.isNotEmpty()) segments.last() else null,
+        val newSegment = Segment(fields = segment, seed = seed,
+                lastSegment = if(allSegments.isNotEmpty()) allSegments.last() else null,
                 nextSegment = null, direction = direction, blocked = blocked,
                 passengers = passengers, special = special, end = end)
-        segments.last().nextSegment = newSegment
-        segments.add(newSegment)
+        allSegments.last().nextSegment = newSegment
+        allSegments.add(newSegment)
     }
     
-    /**
+g    /**
      * Returns a random segment direction based on the direction of the last segment.
      * The last segment's direction determines the list of possible directions for the random selection.
      *
      * @return A random HexDirection.
      */
-    private fun getRandomSegmentDirection(): HexDirection {
-        return when(segments.last().direction) {
-            HexDirection.RIGHT -> {
-                listOf(HexDirection.UP_RIGHT, HexDirection.DOWN_RIGHT, HexDirection.RIGHT).random()
-            }
-            
-            HexDirection.UP_RIGHT -> {
-                listOf(HexDirection.UP_RIGHT, HexDirection.UP_LEFT, HexDirection.RIGHT).random()
-            }
-            
-            HexDirection.UP_LEFT -> {
-                listOf(HexDirection.UP_RIGHT, HexDirection.UP_LEFT, HexDirection.LEFT).random()
-            }
-            
-            HexDirection.LEFT -> {
-                listOf(HexDirection.UP_LEFT, HexDirection.DOWN_LEFT, HexDirection.LEFT).random()
-            }
-            
-            HexDirection.DOWN_LEFT -> {
-                listOf(HexDirection.DOWN_LEFT, HexDirection.DOWN_RIGHT, HexDirection.LEFT).random()
-            }
-            
-            HexDirection.DOWN_RIGHT -> {
-                listOf(HexDirection.DOWN_RIGHT, HexDirection.DOWN_LEFT, HexDirection.RIGHT).random()
-            }
-        }
-    }
+    private fun getRandomSegmentDirection(): HexDirection =
+            allSegments.last().direction.withNeighbors().random()
     
     /**
      * Returns the starting coordinates of a segment based on the given direction.
@@ -221,26 +232,26 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
      * @throws IllegalArgumentException if the direction is not supported
      */
     private fun getSegmentStart(direction: HexDirection): Coordinates {
-        val lastSegment: Segment = segments.last()
+        val lastSegment: Segment = allSegments.last()
         
         return when(direction) {
             HexDirection.RIGHT -> {
-                val field: Field = lastSegment.gameField.last().first()
+                val field: Field = lastSegment.fields.last().first()
                 field.coordinate.plus(HexDirection.RIGHT)
             }
             
             HexDirection.UP_RIGHT, HexDirection.DOWN_RIGHT -> {
-                val field: Field = lastSegment.gameField.last()[round((lastSegment.gameField.last().size / 2.0)).toInt()]
+                val field: Field = lastSegment.fields.last()[round((lastSegment.fields.last().size / 2.0)).toInt()]
                 field.coordinate.plus(direction)
             }
             
             HexDirection.UP_LEFT, HexDirection.DOWN_LEFT -> {
-                val field: Field = lastSegment.gameField.first()[round((lastSegment.gameField.first().size / 2.0)).toInt()]
+                val field: Field = lastSegment.fields.first()[round((lastSegment.fields.first().size / 2.0)).toInt()]
                 field.coordinate.plus(direction)
             }
             
             HexDirection.LEFT -> {
-                val field: Field = lastSegment.gameField.first().first()
+                val field: Field = lastSegment.fields.first().first()
                 field.coordinate.plus(HexDirection.LEFT)
             }
             
@@ -248,24 +259,11 @@ data class Board(val tiles: List<Tile> = generateBoard(), var visibleTiles: Int 
         }
     }
     
-    companion object {
-        /**
-         * Initializes the game board with the specified width and height.
-         *
-         * @param width The width of the game board. Defaults to Constants.NUMBER_OF_SEGMENTS * (Constants.SEGMENT_FIELDS_WIDTH + 1).
-         * @param height The height of the game board. Defaults to Constants.NUMBER_OF_SEGMENTS * Constants.SEGMENT_FIELDS_HEIGHT.
-         * @return A 2-dimensional list representing the game board, where each element is a mutable field object.
-         */
-        fun initBoard(
-                width: Int = Constants.NUMBER_OF_SEGMENTS * (Constants.SEGMENT_FIELDS_WIDTH + 1),
-                height: Int = Constants.NUMBER_OF_SEGMENTS * Constants.SEGMENT_FIELDS_HEIGHT,
-        ): List<MutableList<Field>> {
-            return List(width) { i ->
-                MutableList(height) { j ->
-                    Field(Coordinates(i, j), FieldType.VOID, 0)
-                }
-            }
-        }
+    override fun get(x: Int, y: Int): FieldType {
+        Coordinates().fromDoubledHex()
     }
+    
+    override val entries: Set<Map.Entry<Coordinates, FieldType>>
+        get() = segments.flatM
 }
 

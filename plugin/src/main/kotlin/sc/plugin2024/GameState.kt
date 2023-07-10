@@ -3,10 +3,12 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.*
+import sc.plugin2024.Board
 import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
+import sc.plugin2024.exceptions.AccException
 import sc.plugin2024.exceptions.MoveException
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
@@ -89,7 +91,6 @@ data class GameState @JvmOverloads constructor(
      * @throws InvalidMoveException if the move is invalid.
      */
     override fun performMove(move: Move): GameState {
-        move.orderActions()
         val copiedState = this.copy()
         val currentShip = copiedState.currentTeam.pieces.first() as Ship
         val otherShip = copiedState.otherTeam.pieces.first() as Ship
@@ -97,17 +98,19 @@ data class GameState @JvmOverloads constructor(
         if(move.actions.isEmpty()) {
             throw InvalidMoveException(MoveException.NO_ACTIONS)
         }
-        for(action in move.actions) {
+        move.actions.forEachIndexed { index, action ->
+            
+            if(board.get(currentShip.coordinates) == FieldType.SANDBANK && index != 0) {
+                throw InvalidMoveException(MoveException.SAND_BANK_END)
+            }
+            
+            if(action is Acceleration && index != 0) {
+                throw InvalidMoveException(AccException.FIRST_ACTION_ACCELERATE)
+            }
             
             if(currentShip.position.coordinate == otherShip.position.coordinate && action !is Push) {
                 throw InvalidMoveException(
                         MoveException.PUSH_ACTION_REQUIRED)
-            }
-            
-            if(action is Advance && action.endsTurn) {
-                if(action.order < move.actions.size - 1) {
-                    throw InvalidMoveException(MoveException.SAND_BANK_END)
-                }
             }
             
             action.perform(copiedState, currentShip)
@@ -199,12 +202,7 @@ data class GameState @JvmOverloads constructor(
         HexDirection.values().forEach { dirs ->
             board.getFieldInDirection(dirs, from)?.let { to ->
                 if(dirs !== direction.opposite() && to.isPassable() && currentShip.movement >= 1) {
-                    when(to.type) {
-                        // TODO wie wollen wir hier die Order festlegen?
-                        //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
-                        FieldType.LOG -> if(currentShip.movement >= 2) push.add(Push(0, dirs))
-                        else -> push.add(Push(0, dirs))
-                    }
+                    push.add(Push(dirs))
                 }
             }
         }
@@ -212,23 +210,21 @@ data class GameState @JvmOverloads constructor(
     }
     
     /**
-     * Returns a list of all possible turn actions that consume at most the specified number of coal units.
+     * Returns a list of all possible turn actions for the current player
+     * that consume at most the specified number of coal units.
      *
      * @return List of all turn actions
      */
-    fun getPossibleTurns(): List<Turn> {
-        val turns: java.util.ArrayList<Turn> = java.util.ArrayList<Turn>()
-        val currentShip = currentTeam.pieces.first() as Ship
+    fun getPossibleTurns(maxCoal: Int = currentShip.coal): List<Turn> {
+        val turns = ArrayList<Turn>()
         if(currentShip.position.type == FieldType.SANDBANK) {
             return turns
         }
         // TODO hier sollte man vielleicht einfach die ausführbaren turns in freeTurns speichern, statt die generellen Turns
         val maxTurn = min(3.0, (currentShip.coal + currentShip.freeTurns).toDouble()).toInt()
         for(i in 1..maxTurn) {
-            // TODO wie wollen wir hier die Order festlegen?
-            //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
-            turns.add(Turn(0, currentShip.direction.turnBy(i)))
-            turns.add(Turn(0, currentShip.direction.turnBy(-i)))
+            turns.add(Turn(currentShip.direction.rotatedBy(i)))
+            turns.add(Turn(currentShip.direction.rotatedBy(-i)))
         }
         return turns
     }
@@ -256,28 +252,18 @@ data class GameState @JvmOverloads constructor(
         directions.forEach { (direction, coordinate) ->
             board.getFieldInDirection(direction, start)?.let {
                 if(it.isPassable()) {
-                    // TODO wie wollen wir hier die Order festlegen?
-                    //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
-                    step.add(Advance(0, coordinate))
+                    step.add(Advance(coordinate))
                 }
             }
         }
         
-        var i = 0
         while(currentShip.movement > 0) {
-            i++
             val next: Field? = board.getFieldInDirection(currentShip.direction, start)
             if(next != null && next.isPassable()) {
                 currentShip.movement--
-                if(next.type == FieldType.LOG) currentShip.movement--
-                
                 if(currentShip.movement >= 0) {
-                    // TODO wie wollen wir hier die Order festlegen?
-                    //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
-                    step.add(Advance(0, i))
+                    step.add(Advance(0))
                 }
-                
-                if(next.type == FieldType.LOG) return step
                 
                 if(next.type == FieldType.SANDBANK || next == otherShip.position) {
                     return step
@@ -299,12 +285,10 @@ data class GameState @JvmOverloads constructor(
         val acc: java.util.ArrayList<Acceleration> = java.util.ArrayList<Acceleration>()
         for(i in 0..currentShip.coal) {
             if(currentShip.speed < 6 - i) {
-                // TODO wie wollen wir hier die Order festlegen?
-                //  Ich dachte daran, dass auf null zu setzen, aber das scheint etwas sketchy zu sein
-                acc.add(Acceleration(0, 1 + i)) // es wird nicht zu viel beschleunigt
+                acc.add(Acceleration(1 + i)) // es wird nicht zu viel beschleunigt
             }
             if(currentShip.speed > 1 + i) {
-                acc.add(Acceleration(0, -1 - i)) // aber zu viel abgebremst
+                acc.add(Acceleration(-1 - i)) // aber zu viel abgebremst
             }
         }
         return acc

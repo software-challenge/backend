@@ -30,7 +30,7 @@ data class GameState @JvmOverloads constructor(
     override val currentTeam: Team
         get() = currentTeamFromTurn().run { takeIf { !immovable(it) } ?: opponent() }
     
-    override fun performMove(move: Move) {
+    override fun performMoveDirectly(move: Move) {
         if(move.from != null) {
             if(board[move.from].penguin != currentTeam)
                 throw InvalidMoveException(MoveMistake.WRONG_COLOR, move)

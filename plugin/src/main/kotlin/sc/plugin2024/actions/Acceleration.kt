@@ -15,7 +15,7 @@ import kotlin.math.abs
 data class Acceleration(
         /**
          * Gibt an, um wie viel beschleunigt wird. Negative Zahl bedeutet, dass entsprechend gebremst wird.
-         * Darf nicht 0 sein, wirft sonst InvalidMoveException beim Ausführen von perform
+         * Darf nicht 0 sein.
          */
         @XStreamAsAttribute val acc: Int,
 ): Action {
@@ -37,9 +37,7 @@ data class Acceleration(
         }
         
         val usedCoal: Int = (abs(acc.toDouble()) - ship.freeAcc).toInt()
-        require(ship.coal >= usedCoal) {
-            throw InvalidMoveException(AccException.INSUFFICIENT_COAL)
-        }
+        if(ship.coal < usedCoal) throw InvalidMoveException(AccException.INSUFFICIENT_COAL)
         usedCoal.takeIf { it > 0 }?.let { ship.coal -= it }
         ship.speed = speed
         ship.movement += acc

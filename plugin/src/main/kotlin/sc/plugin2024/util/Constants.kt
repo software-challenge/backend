@@ -1,8 +1,11 @@
 package sc.plugin2024.util
 
+import sc.framework.plugins.Constants
+import sc.plugin2023.util.PluginConstants
+
 /** Eine Sammlung an verschiedenen Konstanten, die im Spiel verwendet werden. */
 object PluginConstants {
-    const val MAX_PLAYER_COUNT = 2
+    // TODO honor limit in GameState
     const val ROUND_LIMIT = 30
     
     const val SEGMENT_FIELDS_WIDTH = 4
@@ -16,8 +19,8 @@ object PluginConstants {
     
     const val START_COAL = 6
     
-    const val MAX_SPECIAL = 2
-    const val MIN_SPECIAL = 1
+    const val MAX_SPECIAL = 1
+    const val MIN_SPECIAL = 0
     const val MAX_ISLANDS = 3
     const val MIN_ISLANDS = 2
     

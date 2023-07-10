@@ -4,14 +4,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.HexDirection
 import sc.plugin2024.*
-import sc.plugin2024.exceptions.MoveException
 import sc.plugin2024.exceptions.TurnException
 import sc.shared.InvalidMoveException
-import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 @XStreamAlias(value = "turn")
 data class Turn(
-        @XStreamAsAttribute var direction: HexDirection,
+        @XStreamAsAttribute val direction: HexDirection,
 ): Action {
     
     @Throws(InvalidMoveException::class)
@@ -25,10 +24,10 @@ data class Turn(
             throw InvalidMoveException(TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED)
         }.takeIf { it.type == FieldType.SANDBANK }
         
-        val absTurnCount = abs(turnCount.toDouble())
-        val usedCoal: Int = (absTurnCount - ship.freeTurns).toInt()
+        val absTurnCount = turnCount.absoluteValue
+        val usedCoal: Int = absTurnCount - ship.freeTurns
         
-        ship.freeTurns = if(ship.freeTurns - absTurnCount <= 0) 0 else 1
+        ship.freeTurns = maxOf(ship.freeTurns - absTurnCount, 0)
         
         require(ship.coal >= usedCoal) {
             throw InvalidMoveException(TurnException.NOT_ENOUGH_COAL_FOR_ROTATION)

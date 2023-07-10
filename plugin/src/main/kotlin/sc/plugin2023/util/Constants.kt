@@ -8,7 +8,7 @@ object PluginConstants {
     const val BOARD_SIZE = 8
     val boardrange = 0 until BOARD_SIZE
 
-    // Max game length: turns(=ROUND_LIMIT*2) * SOFT_TIMEOUT, one second buffer per round
+    // Max game length: Tiles * SOFT_TIMEOUT, one second buffer per round
     /** Zeit (in ms), die ein Spiel höchstens dauern sollte. */
     @JvmField
     val GAME_TIMEOUT = BOARD_SIZE * BOARD_SIZE * Constants.SOFT_TIMEOUT

@@ -3,7 +3,6 @@ package sc.api.plugins
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import kotlin.math.abs
-import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -43,7 +42,7 @@ data class Coordinates(
     
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
-        val origin = Coordinates(0, 0)
+        val ORIGIN = Coordinates(0, 0)
         
         fun doubledHex(x: Int, y: Int) = Coordinates(x * 2 + y % 2, y)
     }
@@ -94,13 +93,15 @@ data class Vector(override val dx: Int, override val dy: Int): IVector, Comparab
     }
 }
 
-enum class HexDirection(val vector: Vector): IVector by vector {
-    RIGHT(Vector(+1, 0)),
+enum class HexDirection(val vector: Vector): IVector by vector, Comparable<HexDirection> {
+    RIGHT(Vector(+2, 0)),
     UP_RIGHT(Vector(+1, -1)),
-    UP_LEFT(Vector(-1, -1)),
-    LEFT(Vector(-1, 0)),
     DOWN_LEFT(Vector(-1, +1)),
+    LEFT(Vector(-2, 0)),
+    UP_LEFT(Vector(-1, -1)),
     DOWN_RIGHT(Vector(+1, +1));
+    
+    fun withNeighbors(): Array<HexDirection> = arrayOf(rotatedBy(-1), this, rotatedBy(1))
     
     fun opposite(): HexDirection = values().let { it[(ordinal + 3) % it.size] }
     
@@ -109,7 +110,7 @@ enum class HexDirection(val vector: Vector): IVector by vector {
         return if(diff >= 0) diff else diff + values().size
     }
     
-    fun turnBy(turns: Int): HexDirection = values().let { it[(ordinal + turns) % it.size] }
+    fun rotatedBy(turns: Int): HexDirection = values().let { it[(ordinal + turns) % it.size] }
     
     companion object {
         fun random(): HexDirection = values()[Random.nextInt(values().size)]
