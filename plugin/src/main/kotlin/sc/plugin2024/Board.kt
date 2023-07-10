@@ -1,6 +1,7 @@
 package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
 import sc.plugin2024.util.Pattern
@@ -16,7 +17,7 @@ private typealias Segments = List<Segment>
 
 /**
  * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
- * @param allSegments Spielsegmente des neuen Spielfelds
+ * @param segments Spielsegmente des neuen Spielfelds
  */
 @XStreamAlias(value = "board")
 data class Board(
@@ -25,6 +26,10 @@ data class Board(
         @XStreamOmitField
         internal var visibleSegments: Int = 2,
 ): FieldMap<FieldType>() {
+    
+    // TODO direction of segment beyond visible one, set with visibleSegments
+    @XStreamAsAttribute
+    var nextDirection: HexDirection? = null
     
     data class PlacedSegment(
             val direction: HexDirection,
@@ -83,19 +88,6 @@ data class Board(
     }
     
     /**
-     * Indicates whether a passenger can be picked up on the player's current field.
-     *
-     * @param ship the ship object representing the player's position and state
-     * @return true if a passenger can be picked up at the player's position, false otherwise
-     */
-    fun canPickupPassenger(ship: Ship): Boolean {
-        return PassengerDirection.values().any { passengerField ->
-            val field = getFieldInDirection(passengerField.direction, ship.position)
-            field?.type === passengerField.type
-        } && ship.passengers < 2
-    }
-    
-    /**
      * Calculates the distance between two fields in the number of segments.
      *
      * @param field1 The first field to calculate distance from.
@@ -104,10 +96,10 @@ data class Board(
      *         any segment, -1 is returned.
      */
     fun segmentDistance(field1: Field, field2: Field): Int {
-        val field1Index = allSegments.indexOfFirst { segment ->
+        val field1Index = segments.indexOfFirst { segment ->
             segment.fields.any { row -> row.contains(field1) }
         }
-        val field2Index = allSegments.indexOfFirst { segment ->
+        val field2Index = segments.indexOfFirst { segment ->
             segment.fields.any { row -> row.contains(field2) }
         }
         
@@ -143,7 +135,7 @@ data class Board(
     fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? {
         var closestShip: Ship? = null
         
-        val goals = allSegments.last().fields.flatten().filter { it.type == FieldType.GOAL }
+        val goals = segments.last().fields.flatten().filter { it.type == FieldType.GOAL }
         if(goals.isNotEmpty()) {
             val ship1Distance = goals.minOfOrNull { ship1.position.coordinate.minus(it.coordinate) }
             val ship2Distance = goals.minOfOrNull { ship2.position.coordinate.minus(it.coordinate) }
@@ -160,110 +152,14 @@ data class Board(
         return closestShip
     }
     
-    /**
-     * Adds a segment of field elements to the specified segment list based on the given pattern and starting coordinates.
-     *
-     * @param segment The segment list to add the field elements to.
-     * @param pattern The pattern to determine the positions of the field elements in the segment.
-     * @param segmentStart The starting coordinates of the segment in the game field.
-     */
-    private fun addSegment(
-            segment: ArrayList<ArrayList<Field>>,
-            pattern: List<Pair<Int, Int>>,
-            segmentStart: Coordinates,
-    ) {
-        val segmentPattern = Pattern.RIGHT.pattern
-        for(i in pattern.indices) {
-            val offsetCoordinate = Coordinates(segmentStart.x + pattern[i].first, segmentStart.y + pattern[i].second).fromDoubledHex()
-            val currentPositionInSegment = Coordinates(segmentPattern[i].first, segmentPattern[i].second).fromDoubledHex()
-            if(segment.size <= currentPositionInSegment.x) {
-                segment.add(ArrayList())
-            }
-            segment[currentPositionInSegment.x].add(this.gameField[offsetCoordinate.x][offsetCoordinate.y])
-        }
-    }
-    
-    /**
-     * Creates and adds a new segment to the game.
-     *
-     * @param seed The seed used for random number generation. Defaults to a random value.
-     * @param direction The direction in which the new segment will be created. Defaults to a random direction.
-     * @param segmentStart The starting coordinates for the new segment. Defaults to the appropriate coordinates for the given direction.
-     * @param passengers The number of passengers in the new segment. Defaults to the constant value NUMBER_OF_PASSENGERS.
-     * @param blocked The number of blocked cells in the new segment. Defaults to a random value between MIN_ISLANDS and MAX_ISLANDS.
-     * @param special The number of special cells in the new segment. Defaults to a random value between MIN_SPECIAL and MAX_SPECIAL.
-     * @param end Whether the new segment is the last segment in the game. Defaults to false.
-     */
-    private fun createSegment(
-            seed: Int = Random.nextInt(),
-            direction: HexDirection = getRandomSegmentDirection(),
-            segmentStart: Coordinates = getSegmentStart(direction),
-            passengers: Int = NUMBER_OF_PASSENGERS,
-            blocked: Int = Random.nextInt(MIN_ISLANDS, MAX_ISLANDS),
-            special: Int = Random.nextInt(MIN_SPECIAL, MAX_SPECIAL),
-            end: Boolean,
-    ) {
-        val segment: ArrayList<ArrayList<Field>> = ArrayList()
-        val pattern = Pattern.match(direction).pattern
-        addSegment(segment, pattern, segmentStart)
-        
-        val newSegment = Segment(fields = segment, seed = seed,
-                lastSegment = if(allSegments.isNotEmpty()) allSegments.last() else null,
-                nextSegment = null, direction = direction, blocked = blocked,
-                passengers = passengers, special = special, end = end)
-        allSegments.last().nextSegment = newSegment
-        allSegments.add(newSegment)
-    }
-    
-g    /**
-     * Returns a random segment direction based on the direction of the last segment.
-     * The last segment's direction determines the list of possible directions for the random selection.
-     *
-     * @return A random HexDirection.
-     */
-    private fun getRandomSegmentDirection(): HexDirection =
-            allSegments.last().direction.withNeighbors().random()
-    
-    /**
-     * Returns the starting coordinates of a segment based on the given direction.
-     *
-     * @param direction the direction in which the segment is located
-     * @return the starting coordinates of the segment
-     * @throws IllegalArgumentException if the direction is not supported
-     */
-    private fun getSegmentStart(direction: HexDirection): Coordinates {
-        val lastSegment: Segment = allSegments.last()
-        
-        return when(direction) {
-            HexDirection.RIGHT -> {
-                val field: Field = lastSegment.fields.last().first()
-                field.coordinate.plus(HexDirection.RIGHT)
-            }
-            
-            HexDirection.UP_RIGHT, HexDirection.DOWN_RIGHT -> {
-                val field: Field = lastSegment.fields.last()[round((lastSegment.fields.last().size / 2.0)).toInt()]
-                field.coordinate.plus(direction)
-            }
-            
-            HexDirection.UP_LEFT, HexDirection.DOWN_LEFT -> {
-                val field: Field = lastSegment.fields.first()[round((lastSegment.fields.first().size / 2.0)).toInt()]
-                field.coordinate.plus(direction)
-            }
-            
-            HexDirection.LEFT -> {
-                val field: Field = lastSegment.fields.first().first()
-                field.coordinate.plus(HexDirection.LEFT)
-            }
-            
-            else -> throw IllegalArgumentException("Direction not supported")
-        }
-    }
-    
+    /** Get the field at the given doubled Hex Coordinate. */
     override fun get(x: Int, y: Int): FieldType {
-        Coordinates().fromDoubledHex()
+        val segment = (x + 2) / (PluginConstants.SEGMENT_FIELDS_WIDTH * 2)
+        // TODO assumes linear board
+        return segments[segment][(x - segment * 2 + abs(y)) / 2, y]
     }
     
     override val entries: Set<Map.Entry<Coordinates, FieldType>>
-        get() = segments.flatM
+        get() = TODO()
 }
 

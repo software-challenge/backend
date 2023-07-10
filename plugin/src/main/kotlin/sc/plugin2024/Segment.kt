@@ -3,6 +3,7 @@ package sc.plugin2024
 import sc.api.plugins.*
 import sc.plugin2024.util.PluginConstants
 import java.util.stream.IntStream
+import kotlin.math.abs
 import kotlin.math.round
 import kotlin.random.Random
 
@@ -57,18 +58,21 @@ class Segment(
                     if(field is FieldType.PASSENGER) {
                         shuffledIndices(HexDirection.values().size)
                                 .takeWhile {
-                                    if(fields[x + field.direction.dx][y + field.direction.dy] == FieldType.WATER)
+                                    if(fields[x + (field.direction.deltaX + 1) / 2][y + field.direction.dy] == FieldType.WATER)
                                         return@takeWhile false
                                     fields[x][y] = FieldType.PASSENGER(HexDirection.values()[it], 1)
                                     return@takeWhile true
                                 }
-                        if(fields[x + field.direction.dx][y + field.direction.dy] != FieldType.WATER)
+                        if(fields[x + field.direction.deltaX][y + field.direction.dy] != FieldType.WATER)
                             return generate(end, fieldsToPlace)
                     }
                 }
             }
             return Segment(fields)
         }
+        
+        private val IVector.deltaX: Int
+            get() = (dx + abs(dy)) / 2
     }
     
     override operator fun get(x: Int, y: Int): FieldType = fields[x][y]
