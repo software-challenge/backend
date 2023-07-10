@@ -24,7 +24,7 @@ class GamePlugin: IGamePlugin {
     override val scoreDefinition =
             Companion.scoreDefinition
     
-    override val gameTimeout: Int =
+    override val turnLimit: Int =
             PluginConstants.GAME_TIMEOUT
     
     override fun createGame(): IGameInstance =

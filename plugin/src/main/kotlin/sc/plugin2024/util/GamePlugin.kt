@@ -5,18 +5,18 @@ import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.plugin2024.Game
 import sc.plugin2024.GameState
-import sc.plugin2024.util.PluginConstants
 import sc.shared.ScoreAggregation
 import sc.shared.ScoreDefinition
 import sc.shared.ScoreFragment
 
 class GamePlugin: IGamePlugin {
     companion object {
-        const val PLUGIN_ID = "swc_2023_penguins"
+        const val PLUGIN_ID = "swc_2024_mississippi_queen"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", ScoreAggregation.SUM),
-                        ScoreFragment("Fische", ScoreAggregation.AVERAGE),
+                        ScoreFragment("Punkte", ScoreAggregation.AVERAGE),
+                        ScoreFragment("Passagiere", ScoreAggregation.AVERAGE),
                 ))
     }
     
@@ -25,8 +25,8 @@ class GamePlugin: IGamePlugin {
     override val scoreDefinition =
             Companion.scoreDefinition
     
-    override val gameTimeout: Int =
-            PluginConstants.GAME_TIMEOUT
+    override val turnLimit: Int =
+            PluginConstants.ROUND_LIMIT * 2
     
     override fun createGame(): IGameInstance =
             Game()

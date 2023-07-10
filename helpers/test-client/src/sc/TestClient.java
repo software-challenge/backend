@@ -7,6 +7,7 @@ import jargs.gnu.CmdLineParser.Option;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGamePlugin;
+import sc.framework.plugins.Constants;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.ProtocolPacket;
@@ -293,7 +294,7 @@ public class TestClient extends XStreamClient {
                 logger.error("{} crashed, look into {}", player.name, logDir);
                 exit(2);
               }
-            if (slept > plugin.getGameTimeout()) {
+            if (slept > plugin.getTurnLimit() * Constants.SOFT_TIMEOUT) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
             }

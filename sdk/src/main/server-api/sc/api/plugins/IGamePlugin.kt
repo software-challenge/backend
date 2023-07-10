@@ -5,31 +5,39 @@ import sc.shared.ScoreDefinition
 import java.util.ServiceLoader
 
 interface IGamePlugin {
+    /** Plugin identifier for the protocol. */
     val id: String
+    /** Arrangement of ScoreFragments in the GameResult. */
     val scoreDefinition: ScoreDefinition
-    val gameTimeout: Int
+    /**
+     * Maximum Turns allowed in a game.
+     * Used to detect unresponsive games.
+     */
+    val turnLimit: Int
     
-    /** @return eine neues Spiel. */
+    /** @return ein neues Spiel. */
     fun createGame(): IGameInstance
-    /** @return eine neues Spiel mit dem gegebenen GameState. */
+    /** @return ein neues Spiel mit dem gegebenen GameState. */
     fun createGameFromState(state: IGameState): IGameInstance
     
     companion object {
         @JvmStatic
         fun loadPlugins(): Iterator<IGamePlugin> =
-            ServiceLoader.load(IGamePlugin::class.java).iterator().takeIf {
-                it.hasNext()
-            } ?: throw PluginLoaderException("Could not find any game plugin")
+                ServiceLoader.load(IGamePlugin::class.java).iterator().takeIf {
+                    it.hasNext()
+                } ?: throw PluginLoaderException("Could not find any game plugin")
         
         /** @param gameType id of the plugin, if null return any
          * @return The plugin with an id equal to [gameType]. */
         @JvmStatic
-        fun loadPlugin(gameType: String?): IGamePlugin = loadPlugins().asSequence().find {
-            gameType == null || it.id == gameType
-        } ?: throw PluginLoaderException("Could not find game of type '$gameType'")
+        fun loadPlugin(gameType: String?): IGamePlugin =
+                loadPlugins().asSequence().find {
+                    gameType == null || it.id == gameType
+                } ?: throw PluginLoaderException("Could not find game of type '$gameType'")
         
         @JvmStatic
-        fun loadPlugin(): IGamePlugin = loadPlugins().next()
+        fun loadPlugin(): IGamePlugin =
+                loadPlugins().next()
         
         @JvmStatic
         fun loadPluginId(): String =
