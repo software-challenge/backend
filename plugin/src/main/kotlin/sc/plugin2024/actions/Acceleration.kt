@@ -13,7 +13,6 @@ import kotlin.math.abs
 
 @XStreamAlias(value = "acceleration")
 data class Acceleration(
-        @XStreamAsAttribute override var order: Int,
         /**
          * Gibt an, um wie viel beschleunigt wird. Negative Zahl bedeutet, dass entsprechend gebremst wird.
          * Darf nicht 0 sein, wirft sonst InvalidMoveException beim Ausführen von perform
@@ -31,7 +30,6 @@ data class Acceleration(
         var speed: Int = ship.speed
         speed += acc
         when {
-            order != 0 -> throw InvalidMoveException(AccException.FIRST_ACTION_ACCELERATE)
             acc == 0 -> throw InvalidMoveException(AccException.ZERO_ACC)
             speed > 6 -> throw InvalidMoveException(AccException.ABOVE_MAX_SPEED)
             speed < 1 -> throw InvalidMoveException(AccException.BELOW_MIN_SPEED)

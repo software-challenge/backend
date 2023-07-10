@@ -11,7 +11,6 @@ import kotlin.math.abs
 
 @XStreamAlias(value = "turn")
 data class Turn(
-        @XStreamAsAttribute override var order: Int,
         @XStreamAsAttribute var direction: HexDirection,
 ): Action {
     

@@ -12,7 +12,6 @@ import java.util.*
 
 @XStreamAlias(value = "advance")
 data class Advance(
-        @XStreamAsAttribute override var order: Int,
         /** Anzahl der Felder, die zurückgelegt werden. */
         @XStreamAsAttribute val distance: Int,
 ): Action {
