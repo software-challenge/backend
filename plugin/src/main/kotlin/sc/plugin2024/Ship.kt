@@ -11,7 +11,7 @@ import sc.api.plugins.*
  * @property position The current coordinate of the ship.
  * @property direction The direction the ship is facing.
  * @property speed The current speed of the ship.
- * @property coal The current amount of coal units of the ship.
+ * @property coal The current number of coal units of the ship.
  * @property tile The tile index where the ship is located.
  * @property passengers The number of passengers collected by the player.
  * @property movement This field is relevant only for the server.
@@ -25,6 +25,7 @@ data class Ship(override val id: Int, @XStreamAsAttribute override var position:
      * und der Anzahl der eingesammelten Passagiere
      */
     @XStreamAsAttribute
+    // TODO die Punktevergabe muss noch gemacht werden
     val points = 0
     
     /** Richtung, in die das Schiff ausgerichtet ist. */

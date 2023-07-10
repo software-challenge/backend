@@ -1,17 +1,19 @@
 package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamConverter
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.Coordinates
 import sc.api.plugins.HexDirection
 import sc.api.plugins.IField
-import sc.plugin2024.util.FieldConverter
 
-@XStreamConverter(FieldConverter::class)
 @XStreamAlias("field")
 data class Field(
-        val coordinate: Coordinates, var type: FieldType, val points: Int, var ship: Ship? = null,
-        var segmentIndex: Int? = null, var segmentDir: HexDirection? = null,
+        val coordinate: Coordinates,
+        @XStreamAsAttribute var type: FieldType,
+        @XStreamAsAttribute val points: Int,
+        var ship: Ship? = null,
+        @XStreamAsAttribute var segmentIndex: Int? = null,
+        @XStreamAsAttribute var segmentDir: HexDirection? = null,
 ): IField<Field> {
     override val isEmpty: Boolean
         get() = ship == null && !isBlocked

@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter
 import sc.plugin2024.Segment
 
-class GetSegmentsOfBoard: Converter {
+class BoardConverter: Converter {
     override fun canConvert(clazz: Class<*>?): Boolean {
         return clazz == ArrayList::class.java
     }

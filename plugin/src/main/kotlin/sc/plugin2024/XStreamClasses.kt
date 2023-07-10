@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.XStream
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Team
 import sc.networking.XStreamProvider
-import sc.plugin2024.util.GetSegmentsOfBoard
+import sc.plugin2024.util.BoardConverter
 
 class XStreamClasses: XStreamProvider {
     
@@ -18,6 +18,6 @@ class XStreamClasses: XStreamProvider {
             )
     
     override fun setup(xStream: XStream) {
-        xStream.registerConverter(GetSegmentsOfBoard())
+        xStream.registerConverter(BoardConverter())
     }
 }

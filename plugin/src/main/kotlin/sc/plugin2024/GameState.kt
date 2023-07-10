@@ -9,6 +9,7 @@ import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.exceptions.MoveException
 import sc.shared.InvalidMoveException
+import kotlin.math.abs
 import kotlin.math.min
 
 /**
@@ -334,11 +335,36 @@ data class GameState @JvmOverloads constructor(
     // TODO ich glaube das man nie immovable sein kann, oder?
     private fun immovable(ship: ITeam) = true
     
-    // TODO
-    override val isOver: Boolean = true
+    override val isOver: Boolean
+        get() {
+            val shipOne = Team.ONE.pieces.first() as Ship
+            val shipTwo = Team.TWO.pieces.first() as Ship
+            
+            // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
+            if((shipOne.passengers == 2 && shipOne.speed == 1 && shipOne.position.type == FieldType.GOAL) ||
+               (shipTwo.passengers == 2 && shipTwo.speed == 1 && shipTwo.position.type == FieldType.GOAL)) {
+                return true
+            }
+            
+            // Bedingung 2: ein Spieler macht einen ungültigen Zug
+            // Dies wird durch eine InvalidMoveException während des Spiels behandelt.
+            
+            // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
+            if(abs(board.segmentDistance(shipOne.position, shipTwo.position)) > 3) {
+                return true
+            }
+            
+            // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
+            if(turn / 2 >= 30) {
+                return true
+            }
+            
+            // ansonsten geht das Spiel weiter
+            return false
+        }
+    
     override fun getPointsForTeam(team: ITeam): IntArray {
-        // TODO
-        return intArrayOf(0, 0)
+        return IntArray(1) { (team.pieces.first() as Ship).points }
     }
     
     override fun clone(): IGameState {

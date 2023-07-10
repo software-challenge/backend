@@ -7,6 +7,7 @@ import sc.shared.IWinReason
 /** Welches Team gewonnen hat und warum. */
 @XStreamAlias(value = "winreason")
 enum class WinReason(override val message: String): IWinReason {
-    EQUAL_SCORE("Beide Teams sind gleichauf."),
     DIFFERING_SCORES("%s hat mehr Fische gesammelt."),
+    DIFFERING_PASSENGERS("%S hat mehr Passagiere befördert."),
+    EQUAL_PASSENGERS("Beide Teams haben gleich viele Passagiere befördert."),
 }

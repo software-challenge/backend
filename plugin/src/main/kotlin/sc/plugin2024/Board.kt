@@ -12,6 +12,7 @@ import sc.plugin2024.util.PluginConstants.MAX_SPECIAL
 import sc.plugin2024.util.PluginConstants.MIN_ISLANDS
 import sc.plugin2024.util.PluginConstants.MIN_SPECIAL
 import sc.plugin2024.util.PluginConstants.NUMBER_OF_PASSENGERS
+import kotlin.math.abs
 import kotlin.math.round
 import kotlin.random.Random
 import sc.plugin2024.util.PluginConstants as Constants
@@ -60,6 +61,29 @@ open class Board(
             val field = getFieldInDirection(passengerField.direction, ship.position)
             field?.type === passengerField.type
         } && ship.passengers < 2
+    }
+    
+    /**
+     * Calculates the distance between two fields in the number of segments.
+     *
+     * @param field1 The first field to calculate distance from.
+     * @param field2 The second field to calculate distance from.
+     * @return The distance between the given fields in the segment. If any of the fields is not found in
+     *         any segment, -1 is returned.
+     */
+    fun segmentDistance(field1: Field, field2: Field): Int {
+        val field1Index = segments.indexOfFirst { segment ->
+            segment.gameField.any { row -> row.contains(field1) }
+        }
+        val field2Index = segments.indexOfFirst { segment ->
+            segment.gameField.any { row -> row.contains(field2) }
+        }
+        
+        return if (field1Index == -1 || field2Index == -1) {
+            -1 // return -1 if any of the fields is not found in any segment
+        } else {
+            abs(field1Index - field2Index) // return distance
+        }
     }
     
     /**
