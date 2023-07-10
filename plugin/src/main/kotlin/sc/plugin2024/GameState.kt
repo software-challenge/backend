@@ -60,48 +60,26 @@ data class GameState @JvmOverloads constructor(
                     board.closestShipToGoal(shipOne, shipTwo) != null -> {
                         board.closestShipToGoal(shipOne, shipTwo)?.team as Team
                     }
-                    
                     // Zweitens, sollte der Dampfer mit der höheren Geschwindigkeit beginnen
-                    shipOne.speed != shipTwo.speed -> decideStarter(shipOne, shipTwo) {
-                        (it.pieces.first() as Ship).speed == maxOf(shipOne.speed, shipTwo.speed)
+                    shipOne.speed != shipTwo.speed -> {
+                        if(shipOne.speed == maxOf(shipOne.speed, shipTwo.speed)) Team.ONE else Team.TWO
                     }
-                    
                     // Drittens, sollte der Dampfer mit dem höheren Kohlevorrat beginnen
-                    else -> decideStarter(shipOne, shipTwo) {
-                        (it.pieces.first() as Ship).coal == maxOf(shipOne.coal, shipTwo.coal)
+                    shipOne.coal != shipTwo.coal -> {
+                        if(shipOne.coal == maxOf(shipOne.coal, shipTwo.coal)) Team.ONE else Team.TWO
+                    }
+                    // Viertens, sollte der Dampfer, der am weitesten rechts steht (höchste X-Koordinate), beginnen
+                    shipOne.position.coordinate.x != shipTwo.position.coordinate.x -> {
+                        if(shipOne.position.coordinate.x > shipTwo.position.coordinate.x) Team.ONE else Team.TWO
+                    }
+                    // Fünftens, sollte der Dampfer, der am weitesten unten steht (höchste Y-Koordinate), beginnen
+                    else -> {
+                        if(shipOne.position.coordinate.y > shipTwo.position.coordinate.y) Team.ONE else Team.TWO
                     }
                 }
             }
             return if(currentRoundStarter == Team.ONE) Team.TWO else Team.ONE
         }
-    
-    /**
-     * Determines which [Team] will start the current round.
-     *
-     * The starting team is determined based on the following criteria:
-     * 1. If the currentRoundStarter function returns true for [Team.ONE], then [Team.ONE] starts.
-     * 2. If the currentRoundStarter function returns true for [Team.TWO], then [Team.TWO] starts.
-     * 3. If both currentRoundStarter function calls return false, the ship with the highest X-coordinate starts.
-     * 4. If both ships have the same X-coordinate, the ship with the highest Y-coordinate starts.
-     *
-     * @param shipOne The first ship.
-     * @param shipTwo The second ship.
-     * @param currentRoundStarter A function that determines the starting team based on the current round.
-     *
-     * @return The team that will start the current round.
-     */
-    private fun decideStarter(shipOne: Ship, shipTwo: Ship, currentRoundStarter: (teamOne: Team) -> Boolean): Team {
-        return when {
-            currentRoundStarter.invoke(Team.ONE) -> Team.ONE
-            currentRoundStarter.invoke(Team.TWO) -> Team.TWO
-            // Viertens, sollte der Dampfer, der am weitesten rechts steht (höchste X-Koordinate), beginnen
-            shipOne.position.coordinate.x > shipTwo.position.coordinate.x -> Team.ONE
-            shipOne.position.coordinate.x < shipTwo.position.coordinate.x -> Team.TWO
-            // Fünftens, sollte der Dampfer, der am weitesten unten steht (höchste Y-Koordinate), beginnen
-            shipOne.position.coordinate.y > shipTwo.position.coordinate.y -> Team.ONE
-            else -> Team.TWO
-        }
-    }
     
     /**
      * Executes the specified move and returns the resulting game state.
