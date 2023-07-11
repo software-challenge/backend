@@ -20,6 +20,8 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     
     constructor(other: RectangularBoard<FIELD>): this(other.gameField.clone())
     
+    override fun clone() = RectangularBoard(this)
+    
     override val size: Int
         get() = gameField.size * columnCount
             // For non-rectangular: gameField.sumOf { it.size }
@@ -60,8 +62,6 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
             gameField.joinToString(separator = "\n") { row ->
                 row.joinToString(separator = "") { it.toString() }
             }.ifEmpty { "Empty Board@" + System.identityHashCode(this) }
-    
-    override fun clone() = RectangularBoard(this.gameField)
     
     override val entries: Set<Map.Entry<Coordinates, FIELD>>
         get() = gameField.flatMapIndexedTo(HashSet()) { y, row ->
@@ -108,9 +108,8 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
 inline fun <reified T: Cloneable> Array<Array<PublicCloneable<T>>>.deepCopy() =
         Array(size) { row -> Array(this[row].size) { column -> this[row][column].clone() } }
 
-fun <T: Cloneable> List<PublicCloneable<T>>.clone() =
+inline fun <reified T: Cloneable> List<PublicCloneable<T>>.clone() =
         List(size) { this[it].clone() }
 
-fun <T: Cloneable> List<List<PublicCloneable<T>>>.clone() =
+inline fun <reified T: Cloneable> List<List<PublicCloneable<T>>>.deepCopy() =
         List(size) { row -> List(this[row].size) { column -> this[row][column].clone() } }
-

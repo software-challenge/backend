@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.HexDirection
 import sc.api.plugins.IField
+import sc.framework.PublicCloneable
 
 @XStreamAlias("field")
 sealed class FieldType: IField<FieldType> {

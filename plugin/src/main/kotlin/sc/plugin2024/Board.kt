@@ -22,6 +22,8 @@ data class Board(
         internal var visibleSegments: Int = 2,
 ): FieldMap<FieldType>(), IBoard {
     
+    override fun clone(): Board = Board(this.segments.clone(), visibleSegments)
+    
     // TODO direction of segment beyond visible one, set with visibleSegments
     @XStreamAsAttribute
     var nextDirection: HexDirection? = null
@@ -123,7 +125,5 @@ data class Board(
     
     override val entries: Set<Map.Entry<Coordinates, FieldType>>
         get() = TODO()
-    
-    override fun clone(): Board = Board(this.segments.clone())
 }
 

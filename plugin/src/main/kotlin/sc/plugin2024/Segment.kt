@@ -23,7 +23,7 @@ class Segment(
         @XStreamOmitField val center: Coordinates,
         @XStreamImplicit val segment: SegmentFields,
 ): PublicCloneable<Segment> {
-    override fun clone(): Segment = Segment(direction, center, segment.clone())
+    override fun clone(): Segment = Segment(direction, center, segment.clone()) // FIXME deepCopy<FieldType>())
 }
 
 /**
