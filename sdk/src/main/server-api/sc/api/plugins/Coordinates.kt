@@ -6,6 +6,11 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlin.random.Random
 
+class Positioned<FIELD>(
+        override val key: Coordinates,
+        override val value: FIELD
+): Map.Entry<Coordinates, FIELD>
+
 /** Eine 2D Koordinate der Form (x, y).
  * Für Hex-Koordinaten siehe https://www.redblobgames.com/grids/hexagons/#coordinates-doubled */
 @XStreamAlias(value = "coordinates")

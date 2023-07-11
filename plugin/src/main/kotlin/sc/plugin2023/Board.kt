@@ -62,7 +62,7 @@ class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()):
     fun getOrEmpty(key: Coordinates?) = key?.let { getOrNull(it) } ?: Field()
     
     override val entries: Set<Map.Entry<Coordinates, Field>>
-        get() = filterFields { f, coordinates -> FieldPosition(coordinates, f) }.toSet()
+        get() = filterFields { f, coordinates -> Positioned(coordinates, f) }.toSet()
     
     override fun clone(): Board = Board(this)
     

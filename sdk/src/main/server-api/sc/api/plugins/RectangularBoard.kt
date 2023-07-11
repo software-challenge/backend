@@ -66,7 +66,7 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     override val entries: Set<Map.Entry<Coordinates, FIELD>>
         get() = gameField.flatMapIndexedTo(HashSet()) { y, row ->
             row.mapIndexed { x, field ->
-                FieldPosition(Coordinates(x, y), field)
+                Positioned(Coordinates(x, y), field)
             }
         }
     

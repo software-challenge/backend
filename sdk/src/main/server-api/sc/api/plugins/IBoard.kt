@@ -21,10 +21,4 @@ abstract class FieldMap<FIELD>: AbstractMap<Coordinates, FIELD>() {
     fun outOfBounds(coords: Coordinates, cause: Throwable? = null): Nothing =
             throw IllegalArgumentException("$coords ist nicht teil des Spielfelds!", cause)
     
-    
-    inner class FieldPosition(
-            override val key: Coordinates,
-            override val value: FIELD
-    ): Map.Entry<Coordinates, FIELD>
-    
 }
