@@ -4,12 +4,11 @@ import sc.api.plugins.*
 import sc.plugin2024.util.PluginConstants
 import java.util.stream.IntStream
 import kotlin.math.abs
-import kotlin.math.round
 import kotlin.random.Random
 
 private typealias SegmentFields = Array<Array<FieldType>>
 
-fun shuffledIndices(max: Int, limit: Int = max) =
+fun shuffledIndices(max: Int, limit: Int = max): IntStream =
         IntStream.generate { Random.nextInt(max) }
                 .distinct()
                 .limit(limit.toLong())
@@ -21,12 +20,11 @@ class Segment(
     
     companion object {
         /**
-         * Fills a segment of the game map with specified number of passengers, blocked islands, special islands, and a goal island.
+         * Fills a segment of the game map with a specified number of passengers,
+         * blocked islands, special islands, and a goal island.
          *
-         * @param passengers the number of passengers to place in the segment. Default value is PluginConstants.NUMBER_OF_PASSENGERS.
-         * @param blocked the number of blocked islands to place in the segment. Default value is a random value between PluginConstants.MIN_ISLANDS and PluginConstants.MAX_ISLANDS (inclusive).
-         * @param special the number of special islands to place in the segment. Default value is a random value between PluginConstants.MIN_SPECIAL and PluginConstants.MAX_SPECIAL (inclusive).
-         * @param end a flag indicating whether to place a goal island in the segment. True if a goal island should be placed, false otherwise.
+         * @param end a flag indicating whether to place a goal island in the segment.
+         * True if a goal island should be placed, false otherwise.
          */
         fun generate(
                 end: Boolean,
