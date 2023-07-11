@@ -5,14 +5,10 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
-import sc.plugin2024.util.Pattern
 import sc.plugin2024.util.PluginConstants
-import java.util.stream.IntStream
 import kotlin.math.abs
-import kotlin.math.round
 import kotlin.random.Random
 import kotlin.random.nextInt
-import sc.plugin2024.util.PluginConstants as Constants
 
 private typealias Segments = List<Board.PlacedSegment>
 
@@ -113,19 +109,26 @@ data class Board(
     }
     
     /**
-     * Picks up a passenger on the given ship.
+     * Methode zur Abholung eines Passagiers auf einem [Ship].
      *
-     * @param ship The ship on which to pick up the passenger.
+     * @param ship Das [Ship], mit dem der Passagier abgeholt wird.
+     * @return `true`, wenn ein Passagier erfolgreich abgeholt wurde, sonst `false`.
      */
-    fun pickupPassenger(ship: Ship) {
-        for(passengerField in PassengerDirection.values()) {
-            val field = getFieldInDirection(passengerField.direction, ship.position)
-            if(field?.type == passengerField.type) {
-                field.type = FieldType.BLOCKED
-                ship.passengers += 1
-                break
+    fun pickupPassenger(ship: Ship): Boolean {
+        val neighboringFields = ship.position.coordinate.hexNeighbors.map { coordinates ->
+            get(coordinates.x, coordinates.y)
+        }
+        
+        neighboringFields.forEach { field ->
+            if (field is FieldType.PASSENGER && field.passenger > 0) {
+                field.passenger--
+                ship.passengers++
+                
+                return@pickupPassenger true
             }
         }
+        
+        return false
     }
     /**
      * Finds the closest ship to the goal position.

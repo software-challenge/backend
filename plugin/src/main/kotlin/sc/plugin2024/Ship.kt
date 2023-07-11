@@ -18,7 +18,7 @@ import sc.api.plugins.*
  * @property freeTurns This field is relevant only for the server.
  * @property freeAcc This field is relevant only for the GUI.
  */
-data class Ship(override val id: Int, @XStreamAsAttribute override var position: Field, override val team: ITeam): IPiece<Field> {
+data class Ship(val id: Int, @XStreamAsAttribute var position: Field, val team: ITeam) {
     
     /**
      * Aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld

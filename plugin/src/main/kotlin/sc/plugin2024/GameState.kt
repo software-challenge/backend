@@ -32,7 +32,19 @@ data class GameState @JvmOverloads constructor(
         @XStreamAsAttribute override var turn: Int = 0,
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
+        
+        var ships: List<Ship>,
 ): TwoPlayerGameState<Move>(Team.ONE) {
+    
+    val currentShip: Ship
+        get() {
+            return if(currentTeam == Team.ONE) ships.first() else ships.last()
+        }
+    
+    val otherShip: Ship
+        get() {
+            return if(currentTeam == Team.ONE) ships.last() else ships.first()
+        }
     
     /**
      * The player who started the current round.
@@ -54,8 +66,8 @@ data class GameState @JvmOverloads constructor(
             // Wenn es das Ende der Runde ist (d.h., beide Spieler haben einen Zug gemacht),
             // dann beginnt der nächste Zug gemäß den gegebenen Regeln
             if(turn % 2 == 0) {
-                val shipOne = Team.ONE.pieces.first() as Ship
-                val shipTwo = Team.TWO.pieces.first() as Ship
+                val shipOne = ships.first()
+                val shipTwo = ships.last()
                 
                 currentRoundStarter = when {
                     // Erstens, der Spieler, dessen Dampfer sich am dichtesten am Ziel befindet, beginnt
@@ -83,6 +95,10 @@ data class GameState @JvmOverloads constructor(
             return if(currentRoundStarter == Team.ONE) Team.TWO else Team.ONE
         }
     
+    override fun performMoveDirectly(move: Move) {
+        TODO("Not yet implemented")
+    }
+    
     /**
      * Executes the specified move and returns the resulting game state.
      *
@@ -92,15 +108,13 @@ data class GameState @JvmOverloads constructor(
      */
     override fun performMove(move: Move): GameState {
         val copiedState = this.copy()
-        val currentShip = copiedState.currentTeam.pieces.first() as Ship
-        val otherShip = copiedState.otherTeam.pieces.first() as Ship
         
         if(move.actions.isEmpty()) {
             throw InvalidMoveException(MoveException.NO_ACTIONS)
         }
         move.actions.forEachIndexed { index, action ->
             
-            if(board.get(currentShip.coordinates) == FieldType.SANDBANK && index != 0) {
+            if(board.get(currentShip.position.coordinate) == FieldType.SANDBANK && index != 0) {
                 throw InvalidMoveException(MoveException.SAND_BANK_END)
             }
             
@@ -116,11 +130,11 @@ data class GameState @JvmOverloads constructor(
             action.perform(copiedState, currentShip)
         }
         // pick up passenger
-        if(currentShip.speed == 1 && board.canPickupPassenger(currentShip)) {
+        if(currentShip.speed == 1) {
             copiedState.board.pickupPassenger(currentShip)
         }
         // otherPlayer could possibly pick up Passenger in enemy turn
-        if(otherShip.speed == 1 && board.canPickupPassenger(otherShip)) {
+        if(otherShip.speed == 1) {
             copiedState.board.pickupPassenger(otherShip)
         }
         if(currentShip.movement > 0) { // check whether movement points are left
@@ -151,16 +165,16 @@ data class GameState @JvmOverloads constructor(
         return moves
     }
     
-    private fun generateActionCombinations(actions: List<Action>, comboSize: Int, orderShift: Int = 0): List<List<Action>> {
+    private fun generateActionCombinations(actions: List<Action>, comboSize: Int): List<List<Action>> {
         return if(comboSize == 0) {
             listOf(emptyList())
         } else if(actions.isEmpty()) {
             emptyList()
         } else {
-            val head = actions.first().apply { order += orderShift } // adding size to order attribute
+            val head = actions.first()
             val tail = actions.drop(1)
-            val withHead = generateActionCombinations(tail, comboSize - 1, orderShift + 1).map { combo -> combo + head }
-            val withoutHead = generateActionCombinations(tail, comboSize, orderShift + 1)
+            val withHead = generateActionCombinations(tail, comboSize - 1).map { combo -> combo + head }
+            val withoutHead = generateActionCombinations(tail, comboSize)
             withHead + withoutHead
         }
     }
@@ -192,8 +206,6 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossiblePushs(): List<Push> {
         val push = java.util.ArrayList<Push>()
-        val currentShip = currentTeam.pieces.first() as Ship
-        val otherShip = otherTeam.pieces.first() as Ship
         val from: Field = currentShip.position
         if(from.type == FieldType.SANDBANK || currentShip.position == otherShip.position) { // niemand darf von einer Sandbank herunterpushen.
             return push
@@ -237,9 +249,7 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossibleAdvances(): List<Advance> {
         val step = java.util.ArrayList<Advance>()
-        val currentShip = currentTeam.pieces.first() as Ship
         val start: Field = currentShip.position
-        val otherShip = otherTeam.pieces.first() as Ship
         
         val eligibleForMovement = start.type == FieldType.SANDBANK && currentShip.movement > 0
         if(!eligibleForMovement) return step
@@ -281,7 +291,6 @@ data class GameState @JvmOverloads constructor(
      * @return List of all possible Acceleration actions
      */
     fun getPossibleAccelerations(): List<Acceleration> {
-        val currentShip = currentTeam.pieces.first() as Ship
         val acc: java.util.ArrayList<Acceleration> = java.util.ArrayList<Acceleration>()
         for(i in 0..currentShip.coal) {
             if(currentShip.speed < 6 - i) {
@@ -293,14 +302,12 @@ data class GameState @JvmOverloads constructor(
         }
         return acc
     }
-    
-    // TODO ich glaube das man nie immovable sein kann, oder?
     private fun immovable(ship: ITeam) = true
     
     override val isOver: Boolean
         get() {
-            val shipOne = Team.ONE.pieces.first() as Ship
-            val shipTwo = Team.TWO.pieces.first() as Ship
+            val shipOne = ships.first()
+            val shipTwo = ships.last()
             
             // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
             if((shipOne.passengers == 2 && shipOne.speed == 1 && shipOne.position.type == FieldType.GOAL) ||
@@ -326,10 +333,11 @@ data class GameState @JvmOverloads constructor(
         }
     
     override fun getPointsForTeam(team: ITeam): IntArray {
-        return IntArray(1) { (team.pieces.first() as Ship).points }
+        val ship = if(team == Team.ONE) ships.first() else ships.last()
+        return intArrayOf(ship.points)
     }
     
-    override fun clone(): IGameState {
+    override fun clone(): TwoPlayerGameState<Move> {
         TODO("Not yet implemented")
     }
     
