@@ -3,6 +3,13 @@ package sc.framework
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.stream.IntStream
+import kotlin.random.Random
+
+fun shuffledIndices(max: Int, limit: Int = max): IntStream =
+        IntStream.generate { Random.nextInt(max) }
+                .distinct()
+                .limit(limit.toLong())
 
 object HelperMethods {
     private val dateTimeFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")

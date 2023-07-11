@@ -10,8 +10,6 @@ import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-private typealias Segments = List<Board.PlacedSegment>
-
 /**
  * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
  * @param segments Spielsegmente des neuen Spielfelds
@@ -27,47 +25,6 @@ data class Board(
     // TODO direction of segment beyond visible one, set with visibleSegments
     @XStreamAsAttribute
     var nextDirection: HexDirection? = null
-    
-    @XStreamAlias("segment")
-    data class PlacedSegment(
-            @XStreamAsAttribute val direction: HexDirection,
-            @XStreamOmitField val center: Coordinates,
-            @XStreamImplicit val segment: Segment,
-    )
-    
-    companion object {
-        fun generateBoard(): Segments {
-            val segments = ArrayList<PlacedSegment>(PluginConstants.NUMBER_OF_SEGMENTS)
-            segments.add(
-                    PlacedSegment(
-                            HexDirection.RIGHT,
-                            Coordinates.ORIGIN,
-                            Segment.generate(false, arrayOf())
-                    ))
-            
-            val passengerTiles = shuffledIndices(PluginConstants.NUMBER_OF_SEGMENTS - 2, PluginConstants.NUMBER_OF_PASSENGERS).toArray()
-            (2..PluginConstants.NUMBER_OF_SEGMENTS).forEach {
-                val previous = segments.last()
-                val direction = if(it == 2) HexDirection.RIGHT else previous.direction.withNeighbors().random()
-                segments.add(
-                        PlacedSegment(
-                                direction,
-                                previous.center + (direction.vector * 4),
-                                Segment.generate(it == PluginConstants.NUMBER_OF_SEGMENTS,
-                                        Array<FieldType>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { FieldType.BLOCKED } +
-                                        Array<FieldType>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { FieldType.SANDBANK } +
-                                        Array<FieldType>( if(passengerTiles.contains(it - 2)) 1 else 0 ) { FieldType.PASSENGER(HexDirection.random()) }
-                                        )
-                        )
-                )
-            }
-            return segments
-        }
-    }
-    
-    init {
-    
-    }
     
     /**
      * Returns the field adjacent to the given field in the specified direction.

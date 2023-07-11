@@ -5,44 +5,40 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.ints.*
-import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
 import sc.api.plugins.Coordinates
 import sc.api.plugins.HexDirection
-import sc.api.plugins.Team
-import sc.framework.plugins.Constants
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2024.util.PluginConstants
-import sc.y
 
 class BoardTest: FunSpec({
-    context(Segment::class.simpleName!!)  {
+    context(SegmentFields::class.simpleName!!)  {
         test("generates goals") {
-            val segment = Segment.generate(true, arrayOf())
-            segment.filterValues { it == FieldType.WATER }.count() shouldBe 22
+            val segment = generateSegment(true, arrayOf())
+            segment.sumOf { it.count {  it == FieldType.WATER } } shouldBe 22
             forAll(1, 2, 3) {
                 segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe FieldType.GOAL
             }
         }
         test("serializes nicely") {
-            Segment(arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
-              <segment>
+            Segment(HexDirection.RIGHT, Coordinates(0,0), arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
+              <segment direction="RIGHT">
                 <column>
                   <field type="WATER"/>
                 </column>
               </segment>
             """
-            Segment(arrayOf(arrayOf(FieldType.PASSENGER(HexDirection.RIGHT)))) shouldSerializeTo """
-              <segment>
+            Segment(HexDirection.RIGHT, Coordinates(0,0), arrayOf(arrayOf(FieldType.PASSENGER(HexDirection.LEFT)))) shouldSerializeTo """
+              <segment direction="RIGHT">
                 <column>
-                  <field type="PASSENGER" direction="RIGHT" passenger="1" />
+                  <field type="PASSENGER" direction="LEFT" passenger="1" />
                 </column>
               </segment>
             """
-            Board.PlacedSegment(HexDirection.RIGHT, Coordinates(0, 0), Segment(arrayOf(arrayOf(FieldType.PASSENGER(HexDirection.RIGHT, 0), FieldType.WATER), arrayOf(FieldType.SANDBANK, FieldType.GOAL)))) shouldSerializeTo """
-              <segment direction="RIGHT">
+            Segment(HexDirection.DOWN_LEFT, Coordinates(0, 0), arrayOf(arrayOf(FieldType.PASSENGER(HexDirection.RIGHT, 0), FieldType.WATER), arrayOf(FieldType.SANDBANK, FieldType.GOAL))) shouldSerializeTo """
+              <segment direction="DOWN_LEFT">
                 <column>
                   <field type="PASSENGER" direction="RIGHT" passenger="0" />
                   <field type="WATER" />
