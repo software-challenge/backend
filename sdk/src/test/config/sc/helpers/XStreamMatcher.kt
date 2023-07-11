@@ -16,7 +16,7 @@ object XStreamProjectListener: ProjectListener {
 lateinit var testXStream: XStream
 
 inline infix fun <reified T: Any> T.shouldSerializeTo(serialized: String) =
-        checkSerialization(testXStream, this, serialized)
+        checkSerialization(testXStream, this, serialized.trimIndent())
 
 inline fun <reified T: Any> checkSerialization(
         xStream: XStream, obj: T, serialized: String,

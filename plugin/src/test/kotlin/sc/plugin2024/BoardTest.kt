@@ -8,6 +8,8 @@ import io.kotest.matchers.ints.*
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
+import sc.api.plugins.Coordinates
+import sc.api.plugins.HexDirection
 import sc.api.plugins.Team
 import sc.framework.plugins.Constants
 import sc.helpers.shouldSerializeTo
@@ -18,17 +20,46 @@ import sc.y
 class BoardTest: FunSpec({
     context(Segment::class.simpleName!!)  {
         test("generates goals") {
-            val segment = Segment.generate(0, 0, 0, true)
+            val segment = Segment.generate(true, arrayOf())
             segment.filterValues { it == FieldType.WATER }.count() shouldBe 22
             forAll(1, 2, 3) {
                 segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe FieldType.GOAL
             }
         }
+        test("serializes nicely") {
+            Segment(arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
+              <segment>
+                <column>
+                  <field type="WATER"/>
+                </column>
+              </segment>
+            """
+            Segment(arrayOf(arrayOf(FieldType.PASSENGER(HexDirection.RIGHT)))) shouldSerializeTo """
+              <segment>
+                <column>
+                  <field type="PASSENGER" direction="RIGHT" passenger="1" />
+                </column>
+              </segment>
+            """
+            Board.PlacedSegment(HexDirection.RIGHT, Coordinates(0, 0), Segment(arrayOf(arrayOf(FieldType.PASSENGER(HexDirection.RIGHT, 0), FieldType.WATER), arrayOf(FieldType.SANDBANK, FieldType.GOAL)))) shouldSerializeTo """
+              <segment direction="RIGHT">
+                <column>
+                  <field type="PASSENGER" direction="RIGHT" passenger="0" />
+                  <field type="WATER" />
+                </column>
+                <column>
+                  <field type="SANDBANK" />
+                  <field type="GOAL" />
+                </column>
+              </segment>
+            """ // Do not serialize center to avoid imposing coordinate system
+            // TODO how to serialize ship position?
+        }
     }
     context(Board::class.simpleName!!) {
         val generatedBoard = Board()
         test("generates properly") {
-            generatedBoard.tiles
+            generatedBoard.visibleSegments
         }
         test("clones deeply") {
             val board = Board(listOf())
@@ -72,7 +103,7 @@ class BoardTest: FunSpec({
         test("empty Board") {
             Board(emptyList()) shouldSerializeTo """
               <board/>
-            """.trimIndent()
+            """
         }
         test("random Board length") {
             testXStream.toXML(Board()) shouldHaveLineCount 82

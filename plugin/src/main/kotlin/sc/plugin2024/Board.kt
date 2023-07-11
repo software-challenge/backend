@@ -2,6 +2,7 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
 import sc.plugin2024.util.Pattern
@@ -13,7 +14,7 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 import sc.plugin2024.util.PluginConstants as Constants
 
-private typealias Segments = List<Segment>
+private typealias Segments = List<Board.PlacedSegment>
 
 /**
  * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
@@ -25,16 +26,17 @@ data class Board(
         private val segments: Segments = generateBoard(),
         @XStreamOmitField
         internal var visibleSegments: Int = 2,
-): FieldMap<FieldType>() {
+): FieldMap<FieldType>(), IBoard {
     
     // TODO direction of segment beyond visible one, set with visibleSegments
     @XStreamAsAttribute
     var nextDirection: HexDirection? = null
     
+    @XStreamAlias("segment")
     data class PlacedSegment(
-            val direction: HexDirection,
-            val center: Coordinates,
-            val segment: Segment,
+            @XStreamAsAttribute val direction: HexDirection,
+            @XStreamOmitField val center: Coordinates,
+            @XStreamImplicit val segment: Segment,
     )
     
     companion object {
@@ -62,8 +64,8 @@ data class Board(
                                         )
                         )
                 )
-                
             }
+            return segments
         }
     }
     
@@ -161,5 +163,7 @@ data class Board(
     
     override val entries: Set<Map.Entry<Coordinates, FieldType>>
         get() = TODO()
+    
+    override fun clone(): Board = Board(this.segments.clone())
 }
 
