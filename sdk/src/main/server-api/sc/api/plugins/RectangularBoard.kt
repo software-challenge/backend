@@ -10,9 +10,6 @@ typealias TwoDBoard<FIELD> = Array<Array<FIELD>>
  * wo Elemente verändert werden können. */
 typealias MutableTwoDBoard<FIELD> = Array<Array<FIELD>>
 
-inline fun <reified T: Cloneable> Array<Array<PublicCloneable<T>>>.clone() =
-        Array(size) { row -> Array(this[row].size) { column -> this[row][column].clone() } }
-
 /**
  * Ein rechteckiges Spielfeld aus Feldern.
  * Intern repräsentiert durch eine Liste an Zeilen.
@@ -91,6 +88,7 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     operator fun get(index: Int): FIELD =
             gameField[index.div(columnCount)][index.mod(columnCount)]
     
+    /** Initializes an empty gameField when created by XStream. */
     fun readResolve(): Any {
         @Suppress("SENSELESS_COMPARISON")
         if(gameField == null) {
@@ -101,7 +99,18 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
         return this
     }
     
-    override fun equals(other: Any?) = gameField == (other as? RectangularBoard<*>)?.gameField
+    override fun equals(other: Any?) =
+            other is RectangularBoard<*> && gameField.contentDeepEquals(other.gameField)
     
-    override fun hashCode(): Int = gameField.hashCode()
+    override fun hashCode(): Int = gameField.contentDeepHashCode()
 }
+
+inline fun <reified T: Cloneable> Array<Array<PublicCloneable<T>>>.deepCopy() =
+        Array(size) { row -> Array(this[row].size) { column -> this[row][column].clone() } }
+
+fun <T: Cloneable> List<PublicCloneable<T>>.clone() =
+        List(size) { this[it].clone() }
+
+fun <T: Cloneable> List<List<PublicCloneable<T>>>.clone() =
+        List(size) { row -> List(this[row].size) { column -> this[row][column].clone() } }
+
