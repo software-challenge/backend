@@ -9,7 +9,7 @@ import kotlin.random.Random
 /**
  * Two-dimensional coordinates tracking each axis.
  *
- * See https://www.redblobgames.com/grids/hexagons/#coordinates-cube
+ * @see <a href="https://www.redblobgames.com/grids/hexagons/#coordinates-cube">Cube Coordinate</a>
  */
 data class CubeCoordinates
 @JvmOverloads constructor(
@@ -49,6 +49,24 @@ data class CubeCoordinates
     
     /** Spiegelt diese Koordinaten. */
     operator fun unaryMinus() = CubeCoordinates(-q, -r, -s)
+    
+    /**
+     * Wandelt eine [CubeCoordinates] als ein doppeltes Sechseck-[Coordinates] um.
+     *
+     * Diese Methode konvertiert die gegebene [CubeCoordinates] als ein doppeltes Sechseck-[Coordinates].
+     * Sie folgt dem in den Online-Ressourcen beschriebenen Umrechnungsalgorithmus.
+     *
+     * @return Die umgerechnete Koordinate als doppelte Sechseck-[Coordinates].
+     *
+     * @see <a href="https://www.redblobgames.com/grids/hexagons/#conversions-axial">Cube to Axial Coordinate Conversion</a>
+     * @see <a href="https://www.redblobgames.com/grids/hexagons/#conversions-doubled">Axial to Doubled Coordinate Conversion</a>
+     */
+    fun cubeToDoubledHex(): Coordinates {
+        val x = 2 * q + r
+        val y = r
+        
+        return Coordinates(x, y)
+    }
     
     override operator fun compareTo(other: CubeCoordinates): Int {
         var sign = (q - other.q).sign

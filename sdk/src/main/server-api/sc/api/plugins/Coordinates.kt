@@ -45,6 +45,25 @@ data class Coordinates(
     /** Turn array indices for a rectangular board into double Hex coordinates. */
     fun toDoubledHex() = doubledHex(x, y)
     
+    /**
+     * Wandelt eine doppeltes Sechseck-[Coordinates] als ein [CubeCoordinates] um.
+     *
+     * Diese Methode konvertiert die gegebene doppeltes Sechseck-[Coordinates] als ein [CubeCoordinates].
+     * Sie folgt dem in den Online-Ressourcen beschriebenen Umrechnungsalgorithmus.
+     *
+     * @return Die umgerechnete Koordinate als [CubeCoordinates].
+     *
+     * @see <a href="https://www.redblobgames.com/grids/hexagons/#conversions-axial">Cube to Axial Coordinate Conversion</a>
+     * @see <a href="https://www.redblobgames.com/grids/hexagons/#conversions-doubled">Axial to Doubled Coordinate Conversion</a>
+     */
+    fun doubledHexToCube(): CubeCoordinates {
+        val q = (x - y) / 2
+        val r = y
+        val s = -q-r
+        
+        return CubeCoordinates(q, r, s)
+    }
+    
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
         val ORIGIN = Coordinates(0, 0)
