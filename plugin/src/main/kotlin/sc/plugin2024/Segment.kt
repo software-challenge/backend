@@ -8,7 +8,6 @@ import sc.api.plugins.*
 import sc.framework.PublicCloneable
 import sc.framework.shuffledIndices
 import sc.plugin2024.util.PluginConstants
-import kotlin.math.abs
 import kotlin.math.min
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -65,13 +64,13 @@ internal fun generateSegment(
                 // Rotate Passenger fields to water
                 shuffledIndices(CubeDirection.values().size)
                         .takeWhile {
-                            if(fields[x + (field.direction.vector.deltaX + 1) / 2][y + field.direction.vector.r] == FieldType.WATER)
+                            if(fields[x + field.direction.vector.arrayX][y + field.direction.vector.r] == FieldType.WATER)
                                 return@takeWhile false
                             fields[x][y] = FieldType.PASSENGER(CubeDirection.values()[it], 1)
                             return@takeWhile true
                         }
                 // Fallback to new segment on impossible passenger field
-                if(fields[x + field.direction.vector.deltaX][y + field.direction.vector.r] != FieldType.WATER)
+                if(fields[x + field.direction.vector.arrayX][y + field.direction.vector.r] != FieldType.WATER)
                     return generateSegment(end, fieldsToPlace)
             }
         }
@@ -104,12 +103,10 @@ internal fun generateBoard(): Segments {
     return segments
 }
 
-val CubeCoordinates.deltaX: Int
-    get() = min(q, s)
+val CubeCoordinates.arrayX: Int
+    get() = min(q, s) + 1
 
 operator fun SegmentFields.get(x: Int, y: Int): FieldType = this[x][y]
 
-/** Get a field by RELATIVE CubeCoordinates. */
-operator fun SegmentFields.get(coordinates: CubeCoordinates): FieldType = this[coordinates.deltaX][coordinates.r]
-
-operator fun SegmentFields.get(coordinates: Coordinates): FieldType = this[coordinates.x][coordinates.y]
+/** Get a field by RELATIVE CubeCoordinates if it exists. */
+operator fun SegmentFields.get(coordinates: CubeCoordinates): FieldType? = this.getOrNull(coordinates.arrayX)?.getOrNull(coordinates.r)

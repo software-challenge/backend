@@ -16,7 +16,7 @@ data class Board(
         private val segments: Segments = generateBoard(),
         @XStreamOmitField
         internal var visibleSegments: Int = 2,
-): FieldMap<FieldType>(), IBoard {
+): IBoard {
     
     override fun clone(): Board = Board(this.segments.clone(), visibleSegments)
     
@@ -24,22 +24,15 @@ data class Board(
     @XStreamAsAttribute
     var nextDirection: CubeDirection? = null
     
-    /** Das Feld an der gegebenen DoubledHex-Koordinate. */
-    override operator fun get(x: Int, y: Int): FieldType =
-            get(Coordinates(x, y).doubledHexToCube())
-    
     /** Das Feld an der gegebenen Cube-Koordinate. */
     operator fun get(coords: CubeCoordinates) =
-            segments.firstNotNullOf {
+            segments.firstNotNullOfOrNull {
                 val diff = coords - it.center
                 if(diff.distanceTo(CubeCoordinates.ORIGIN) <= 2)
                     it.segment[diff.rotatedBy(it.direction.turnCountTo(CubeDirection.RIGHT))]
                 else
                     null
             }
-    
-    override val entries: Set<Map.Entry<Coordinates, FieldType>>
-        get() = TODO()
     
     /**
      * Gibt den [FieldType] zurück, der an das angegebene Feld in der angegebenen Richtung angrenzt.
