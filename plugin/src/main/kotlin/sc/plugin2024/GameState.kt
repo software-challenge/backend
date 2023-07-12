@@ -206,7 +206,7 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossiblePushs(): List<Push> {
         val push = java.util.ArrayList<Push>()
-        val from: Field = currentShip.position
+        val from: CubeCoordinates = currentShip.position
         if(from.type == FieldType.SANDBANK || currentShip.position == otherShip.position) { // niemand darf von einer Sandbank herunterpushen.
             return push
         }
@@ -242,17 +242,17 @@ data class GameState @JvmOverloads constructor(
     }
     
     /**
-     * Returns a list of all possible advances for the current ship in the given direction
-     * with the number of movement points the ship has.
+     * Gibt eine Liste aller möglichen [Advance]s für das aktuelle [Ship] in die aktuelle [HexDirection] zurück
+     * mit der Anzahl der Bewegungspunkte, die das Schiff hat.
      *
      * @return List of all possible advances in the corresponding direction
      */
     fun getPossibleAdvances(): List<Advance> {
-        val step = java.util.ArrayList<Advance>()
-        val start: Field = currentShip.position
+        val step = mutableListOf<Advance>()
+        val start: CubeCoordinates = currentShip.position
         
-        val eligibleForMovement = start.type == FieldType.SANDBANK && currentShip.movement > 0
-        if(!eligibleForMovement) return step
+        val eligibleForMovement = board.get(key = start.cubeToDoubledHex()) == FieldType.SANDBANK && currentShip.movement > 0
+        if(!eligibleForMovement) return step.toList()
         
         val directions = listOf(
                 Pair(currentShip.direction.opposite(), -1),
@@ -261,28 +261,35 @@ data class GameState @JvmOverloads constructor(
         
         directions.forEach { (direction, coordinate) ->
             board.getFieldInDirection(direction, start)?.let {
-                if(it.isPassable()) {
+                if(it.isEmpty) {
                     step.add(Advance(coordinate))
                 }
             }
         }
         
         while(currentShip.movement > 0) {
-            val next: Field? = board.getFieldInDirection(currentShip.direction, start)
-            if(next != null && next.isPassable()) {
+            val next: FieldType? = board.getFieldInDirection(currentShip.direction, start)
+            val isNextEmptyOrNull = next?.isEmpty ?: return step.toList()
+
+            if(isNextEmptyOrNull) {
                 currentShip.movement--
+
                 if(currentShip.movement >= 0) {
                     step.add(Advance(0))
                 }
                 
-                if(next.type == FieldType.SANDBANK || next == otherShip.position) {
-                    return step
+                val destination = currentShip.position + CubeCoordinates(
+                        currentShip.direction.dx * (step.size - 1),
+                        currentShip.direction.dy * (step.size - 1))
+
+                if(next == FieldType.SANDBANK || destination == otherShip.position) {
+                    return step.toList()
                 }
-            } else {
-                return step
             }
+
+            return step.toList()
         }
-        return step
+        return step.toList()
     }
     
     /**
@@ -302,6 +309,7 @@ data class GameState @JvmOverloads constructor(
         }
         return acc
     }
+
     private fun immovable(ship: ITeam) = true
     
     override val isOver: Boolean

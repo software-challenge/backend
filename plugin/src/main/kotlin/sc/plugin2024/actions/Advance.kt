@@ -3,10 +3,10 @@ package sc.plugin2024.actions
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
+import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.HexDirection
 import sc.plugin2024.*
 import sc.plugin2024.exceptions.AdvanceException
-import sc.plugin2024.exceptions.MoveException
 import sc.shared.InvalidMoveException
 import java.util.*
 
@@ -25,14 +25,14 @@ data class Advance(
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
         validateShipMovement(ship)
-        val start: Field = ship.position
+        val start: CubeCoordinates = ship.position
         val direction = ship.direction
         validateDistance()
         val nextFields: LinkedList<Field> = LinkedList<Field>()
         
         when {
-            isBackwardsMoveFromSandbank(start, direction, state) -> handleBackwardsMoveFromSandbank(start, ship, state, direction)
-            isMoveFromSandbank(start, direction, state) -> handleMoveFromSandbank(ship, start, direction, state)
+            distance == -1 && state.board[start.cubeToDoubledHex()] === FieldType.SANDBANK -> handleMoveFromSandbank(start, ship, state, direction, moveBackward = true)
+            state.board[start.cubeToDoubledHex()] === FieldType.SANDBANK && distance == 1 -> handleMoveFromSandbank(start, ship, state, direction)
             else -> handleOtherMoves(ship, start, direction, state, nextFields)
         }
     }
@@ -56,35 +56,23 @@ data class Advance(
         }
     }
     
-    private fun isMoveFromSandbank(start: Field, direction: HexDirection, state: GameState): Boolean {
-        return start.type === FieldType.SANDBANK && distance == 1
-    }
-    
-    private fun handleMoveFromSandbank(ship: Ship, start: Field, direction: HexDirection, state: GameState) {
-        ship.movement = 0
-        val next: Field = state.board.getFieldInDirection(direction, start)
-                          ?: throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
-        checkDestinationForShip(next, state)
-        if(!next.isPassable()) {
-            throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
-        }
-        ship.position = next
-        return
-    }
-    
-    private fun isBackwardsMoveFromSandbank(start: Field, direction: HexDirection, state: GameState): Boolean {
-        return distance == -1 && start.type === FieldType.SANDBANK
-    }
-    
-    private fun handleBackwardsMoveFromSandbank(start: Field, ship: Ship, state: GameState, direction: HexDirection) {
-        val next: Field? = state.board.getFieldInDirection(direction, start)
-        if(next == null || next.type === FieldType.LOG || !next.isBlocked) {
-            throw InvalidMoveException(AdvanceException.BACKWARD_MOVE_NOT_POSSIBLE)
+    private fun handleMoveFromSandbank(start: Field, ship: Ship, state: GameState, direction: HexDirection, moveBackward: Boolean = false) {
+        var next: FieldType? = state.board.getFieldInDirection(direction, start)
+        if (moveBackward) {
+            next = if(next == null || next === FieldType.BLOCKED || !next.isEmpty) {
+                throw InvalidMoveException(AdvanceException.BACKWARD_MOVE_NOT_POSSIBLE)
+            } else {
+                next
+            }
+        } else {
+            next = next ?: throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
+            if (!next.isEmpty) {
+                throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
+            }
         }
         checkDestinationForShip(next, state)
         ship.movement = 0
         ship.position = next
-        return
     }
     
     private fun handleOtherMoves(ship: Ship, start: Field, direction: HexDirection, state: GameState, nextFields: LinkedList<Field>) {

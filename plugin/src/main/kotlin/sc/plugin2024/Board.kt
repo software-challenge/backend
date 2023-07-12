@@ -2,13 +2,10 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
 import sc.plugin2024.util.PluginConstants
 import kotlin.math.abs
-import kotlin.random.Random
-import kotlin.random.nextInt
 
 /**
  * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
@@ -29,36 +26,30 @@ data class Board(
     var nextDirection: HexDirection? = null
     
     /**
-     * Returns the field adjacent to the given field in the specified direction.
+     * Gibt den [FieldType] zurück, der an das angegebene Feld in der angegebenen Richtung angrenzt.
      *
-     * @param direction the direction in which to find the adjacent field
-     * @param field the field for which to find the adjacent field
-     * @return the adjacent field if it exists, null otherwise
+     * @param direction die [HexDirection], in der das benachbarte Feld zu finden ist
+     * @param coordinate die [Coordinates], für die das angrenzende Feld gefunden werden soll
+     * @return das angrenzende [FieldType], wenn es existiert, sonst null
      */
-    open fun getFieldInDirection(direction: HexDirection, field: Field): Field? {
-        val coordinateInDirection = field.coordinate.plus(direction)
-        return if(coordinateInDirection.x in gameField.indices && coordinateInDirection.y in 0 until gameField[coordinateInDirection.x].size) {
-            gameField[coordinateInDirection.x][coordinateInDirection.y]
-        } else {
-            null
-        }
+    fun getFieldInDirection(direction: HexDirection, coordinate: CubeCoordinates): FieldType? {
+        val targetCoord = coordinate + direction.vector
+        // TODO I assume here, that `get` uses CubeCoordinates
+        return get(targetCoord.q, targetCoord.r)
     }
     
     /**
      * Calculates the distance between two fields in the number of segments.
      *
-     * @param field1 The first field to calculate distance from.
-     * @param field2 The second field to calculate distance from.
+     * @param coordinate1 The first field to calculate distance from.
+     * @param coordinate2 The second field to calculate distance from.
      * @return The distance between the given fields in the segment. If any of the fields is not found in
      *         any segment, -1 is returned.
      */
-    fun segmentDistance(field1: Field, field2: Field): Int {
-        val field1Index = segments.indexOfFirst { segment ->
-            segment.fields.any { row -> row.contains(field1) }
-        }
-        val field2Index = segments.indexOfFirst { segment ->
-            segment.fields.any { row -> row.contains(field2) }
-        }
+    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int {
+        // TODO get index of segment based on CubeCoordinates
+        val field1Index = 1
+        val field2Index = 1
         
         return if(field1Index == -1 || field2Index == -1) {
             -1 // return -1 if any of the fields is not found in any segment
@@ -99,7 +90,7 @@ data class Board(
     fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? {
         var closestShip: Ship? = null
         
-        val goals = segments.last().fields.flatten().filter { it.type == FieldType.GOAL }
+        val goals = segments.last().segment.flatten().filter { it == FieldType.GOAL }
         if(goals.isNotEmpty()) {
             val ship1Distance = goals.minOfOrNull { ship1.position.coordinate.minus(it.coordinate) }
             val ship2Distance = goals.minOfOrNull { ship2.position.coordinate.minus(it.coordinate) }
