@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
-import sc.plugin2024.util.PluginConstants
 import kotlin.math.abs
 
 /**
@@ -23,7 +22,24 @@ data class Board(
     
     // TODO direction of segment beyond visible one, set with visibleSegments
     @XStreamAsAttribute
-    var nextDirection: HexDirection? = null
+    var nextDirection: CubeDirection? = null
+    
+    /** Das Feld an der gegebenen DoubledHex-Koordinate. */
+    override operator fun get(x: Int, y: Int): FieldType =
+            get(Coordinates(x, y).doubledHexToCube())
+    
+    /** Das Feld an der gegebenen Cube-Koordinate. */
+    operator fun get(coords: CubeCoordinates) =
+            segments.firstNotNullOf {
+                val diff = coords - it.center
+                if(diff.distanceTo(CubeCoordinates.ORIGIN) <= 2)
+                    it.segment[diff.rotatedBy(it.direction.turnCountTo(CubeDirection.RIGHT))]
+                else
+                    null
+            }
+    
+    override val entries: Set<Map.Entry<Coordinates, FieldType>>
+        get() = TODO()
     
     /**
      * Gibt den [FieldType] zurück, der an das angegebene Feld in der angegebenen Richtung angrenzt.
@@ -32,11 +48,8 @@ data class Board(
      * @param coordinate die [Coordinates], für die das angrenzende Feld gefunden werden soll
      * @return das angrenzende [FieldType], wenn es existiert, sonst null
      */
-    fun getFieldInDirection(direction: HexDirection, coordinate: CubeCoordinates): FieldType? {
-        val targetCoord = coordinate + direction.vector
-        // TODO I assume here, that `get` uses CubeCoordinates
-        return get(targetCoord.q, targetCoord.r)
-    }
+    fun getFieldInDirection(direction: CubeDirection, coordinate: CubeCoordinates): FieldType?
+        = get(coordinate + direction.vector)
     
     /**
      * Calculates the distance between two fields in the number of segments.
@@ -70,7 +83,7 @@ data class Board(
         }
         
         neighboringFields.forEach { field ->
-            if (field is FieldType.PASSENGER && field.passenger > 0) {
+            if(field is FieldType.PASSENGER && field.passenger > 0) {
                 field.passenger--
                 ship.passengers++
                 
@@ -107,14 +120,5 @@ data class Board(
         return closestShip
     }
     
-    /** Get the field at the given doubled Hex Coordinate. */
-    override fun get(x: Int, y: Int): FieldType {
-        val segment = (x + 2) / (PluginConstants.SEGMENT_FIELDS_WIDTH * 2)
-        // TODO assumes linear board
-        return segments[segment][(x - segment * 2 + abs(y)) / 2, y]
-    }
-    
-    override val entries: Set<Map.Entry<Coordinates, FieldType>>
-        get() = TODO()
 }
 

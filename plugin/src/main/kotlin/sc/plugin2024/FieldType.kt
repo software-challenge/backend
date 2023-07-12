@@ -2,7 +2,7 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.api.plugins.HexDirection
+import sc.api.plugins.CubeDirection
 import sc.api.plugins.IField
 import sc.framework.PublicCloneable
 
@@ -20,7 +20,7 @@ sealed class FieldType: IField<FieldType> {
     }
 
     /** Passagierfeld mit Anleger */
-    class PASSENGER(@XStreamAsAttribute val direction: HexDirection, @XStreamAsAttribute var passenger: Int = 1): FieldType() {
+    class PASSENGER(@XStreamAsAttribute val direction: CubeDirection, @XStreamAsAttribute var passenger: Int = 1): FieldType() {
         override val isEmpty = false
         override fun clone() = PASSENGER(direction, passenger)
     }

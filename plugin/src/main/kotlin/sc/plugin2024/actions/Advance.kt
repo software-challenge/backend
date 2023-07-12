@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.CubeCoordinates
-import sc.api.plugins.HexDirection
+import sc.api.plugins.CubeDirection
 import sc.plugin2024.*
 import sc.plugin2024.exceptions.AdvanceException
 import sc.shared.InvalidMoveException
@@ -56,7 +56,7 @@ data class Advance(
         }
     }
     
-    private fun handleMoveFromSandbank(start: Field, ship: Ship, state: GameState, direction: HexDirection, moveBackward: Boolean = false) {
+    private fun handleMoveFromSandbank(start: Field, ship: Ship, state: GameState, direction: CubeDirection, moveBackward: Boolean = false) {
         var next: FieldType? = state.board.getFieldInDirection(direction, start)
         if (moveBackward) {
             next = if(next == null || next === FieldType.BLOCKED || !next.isEmpty) {
@@ -75,7 +75,7 @@ data class Advance(
         ship.position = next
     }
     
-    private fun handleOtherMoves(ship: Ship, start: Field, direction: HexDirection, state: GameState, nextFields: LinkedList<Field>) {
+    private fun handleOtherMoves(ship: Ship, start: Field, direction: CubeDirection, state: GameState, nextFields: LinkedList<Field>) {
         nextFields.add(start)
         for(i in 0 until distance) {
             val next: Field? = state.board.getFieldInDirection(direction, nextFields[i])

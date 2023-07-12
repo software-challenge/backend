@@ -3,12 +3,9 @@ package sc.plugin2024
 import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
-import io.kotest.matchers.collections.*
-import io.kotest.matchers.ints.*
-import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
-import sc.api.plugins.Coordinates
-import sc.api.plugins.HexDirection
+import sc.api.plugins.CubeCoordinates
+import sc.api.plugins.CubeDirection
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2024.util.PluginConstants
@@ -23,21 +20,21 @@ class BoardTest: FunSpec({
             }
         }
         test("serializes nicely") {
-            Segment(HexDirection.RIGHT, Coordinates(0,0), arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
+            Segment(CubeDirection.RIGHT, CubeCoordinates(0,0), arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
                   <field type="WATER"/>
                 </column>
               </segment>
             """
-            Segment(HexDirection.RIGHT, Coordinates(0,0), arrayOf(arrayOf(FieldType.PASSENGER(HexDirection.LEFT)))) shouldSerializeTo """
+            Segment(CubeDirection.RIGHT, CubeCoordinates(0,0), arrayOf(arrayOf(FieldType.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
                   <field type="PASSENGER" direction="LEFT" passenger="1" />
                 </column>
               </segment>
             """
-            Segment(HexDirection.DOWN_LEFT, Coordinates(0, 0), arrayOf(arrayOf(FieldType.PASSENGER(HexDirection.RIGHT, 0), FieldType.WATER), arrayOf(FieldType.SANDBANK, FieldType.GOAL))) shouldSerializeTo """
+            Segment(CubeDirection.DOWN_LEFT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.PASSENGER(CubeDirection.RIGHT, 0), FieldType.WATER), arrayOf(FieldType.SANDBANK, FieldType.GOAL))) shouldSerializeTo """
               <segment direction="DOWN_LEFT">
                 <column>
                   <field type="PASSENGER" direction="RIGHT" passenger="0" />
@@ -51,6 +48,7 @@ class BoardTest: FunSpec({
             """ // Do not serialize center to avoid imposing coordinate system
             // TODO how to serialize ship position?
         }
+        // TODO test deep copying
     }
     context(Board::class.simpleName!!) {
         val generatedBoard = Board()

@@ -21,45 +21,35 @@ data class CubeCoordinates
         val s: Int = -q - r,
 ): Comparable<CubeCoordinates>, PublicCloneable<CubeCoordinates> {
     
-    val coordinates: IntArray
-        get() = intArrayOf(q, r, s)
-    
     constructor(position: CubeCoordinates): this(position.q, position.r, position.s)
     
-    /** Addiere den [Vector] auf die [CubeCoordinates] auf. */
-    operator fun plus(vector: IVector): CubeCoordinates =
-            CubeCoordinates(q + vector.dx, r + vector.dy)
-    /** Berechne die Distanz zweier Koordinaten, als [Vector] */
-    operator fun minus(other: CubeCoordinates): Vector =
-            Vector(q - other.q, r - other.r)
-    /** Ziehe die Distanz (als [Vector]) von der Koordinate ab. */
-    operator fun minus(other: IVector): CubeCoordinates =
-            CubeCoordinates(q - other.dx, r - other.dy)
-
     override fun clone(): CubeCoordinates = CubeCoordinates(this)
     
     init {
         require(q + r + s == 0) { "Constraint: (x + y + z == 0) not fulfilled for ${this}!" }
     }
     
-    override fun toString(): String = String.format("(%d,%d,%d)", q, r, s)
+    val coordinates: IntArray
+        get() = intArrayOf(q, r, s)
     
-    override fun equals(other: Any?): Boolean =
-            other is CubeCoordinates && q == other.q && r == other.r && s == other.s
+    operator fun times(count: Int) = CubeCoordinates(q * count, r * count)
     
-    override fun hashCode(): Int = q * 31 + r
+    operator fun plus(other: CubeCoordinates): CubeCoordinates =
+            CubeCoordinates(q + other.q, r + other.r)
     
-    fun distanceTo(other: CubeCoordinates) = ((q - other.q).absoluteValue + (r - other.r).absoluteValue + (s - other.s).absoluteValue) / 2
+    /** Berechne die Distanz zweier Koordinaten. */
+    operator fun minus(other: CubeCoordinates): CubeCoordinates =
+            CubeCoordinates(q - other.q, r - other.r)
+    
+    /** Spiegelt diese Koordinaten. */
+    operator fun unaryMinus() =
+            CubeCoordinates(-q, -r, -s)
     
     /** Rotated by *turns* to the right. */
     fun rotatedBy(turns: Int) =
             CubeCoordinates(coordinates[Math.floorMod(turns, 3)], coordinates[Math.floorMod(turns + 1, 3)], coordinates[Math.floorMod(turns + 2, 3)]).let {
                 if(Math.floorMod(turns, 2) == 1) it.unaryMinus() else it
             }
-    
-    /** Spiegelt diese Koordinaten. */
-    operator fun unaryMinus() =
-            CubeCoordinates(-q, -r, -s)
     
     /**
      * Wandelt [CubeCoordinates] zu DoubledHex-[Coordinates] um.
@@ -70,11 +60,26 @@ data class CubeCoordinates
     fun cubeToDoubledHex(): Coordinates =
             Coordinates(2 * q + r, r)
     
+    fun distanceTo(other: CubeCoordinates): Int =
+            ((q - other.q).absoluteValue + (r - other.r).absoluteValue + (s - other.s).absoluteValue) / 2
+    
     override operator fun compareTo(other: CubeCoordinates): Int {
         var sign = (q - other.q).sign
         if(sign == 0)
             sign = (r - other.r).sign
         return sign * distanceTo(other)
+    }
+    
+    override fun toString(): String = String.format("(%d,%d,%d)", q, r, s)
+    
+    override fun equals(other: Any?): Boolean =
+            other is CubeCoordinates && q == other.q && r == other.r && s == other.s
+    
+    override fun hashCode(): Int = q * 9999 + r
+    
+    companion object {
+        /** Der Ursprung des Koordinatensystems (0, 0). */
+        val ORIGIN = CubeCoordinates(0, 0)
     }
     
 }
@@ -91,7 +96,7 @@ enum class CubeDirection(val vector: CubeCoordinates) {
     
     fun opposite() = values().let { it[(ordinal + 3) % it.size] }
     
-    fun turnCountTo(target: HexDirection): Int {
+    fun turnCountTo(target: CubeDirection): Int {
         val diff = target.ordinal - this.ordinal
         return if(diff >= 0) diff else diff + values().size
     }

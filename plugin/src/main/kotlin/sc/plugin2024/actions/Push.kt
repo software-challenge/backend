@@ -2,7 +2,7 @@ package sc.plugin2024.actions
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.api.plugins.HexDirection
+import sc.api.plugins.CubeDirection
 import sc.plugin2024.*
 import sc.plugin2024.exceptions.PushException
 import sc.shared.InvalidMoveException
@@ -11,7 +11,7 @@ import sc.shared.InvalidMoveException
 @XStreamAlias(value = "push")
 data class Push(
         /** Richtung in die abgedrängt werden soll */
-        @XStreamAsAttribute val direction: HexDirection,
+        @XStreamAsAttribute val direction: CubeDirection,
 ): Action {
     
     @Throws(InvalidMoveException::class)

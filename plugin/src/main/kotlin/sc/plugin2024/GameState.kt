@@ -10,6 +10,7 @@ import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.exceptions.AccException
 import sc.plugin2024.exceptions.MoveException
+import sc.plugin2024.util.PluginConstants
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
 import kotlin.math.min
@@ -210,8 +211,8 @@ data class GameState @JvmOverloads constructor(
         if(from.type == FieldType.SANDBANK || currentShip.position == otherShip.position) { // niemand darf von einer Sandbank herunterpushen.
             return push
         }
-        val direction: HexDirection = currentShip.direction
-        HexDirection.values().forEach { dirs ->
+        val direction: CubeDirection = currentShip.direction
+        CubeDirection.values().forEach { dirs ->
             board.getFieldInDirection(dirs, from)?.let { to ->
                 if(dirs !== direction.opposite() && to.isPassable() && currentShip.movement >= 1) {
                     push.add(Push(dirs))
@@ -332,7 +333,7 @@ data class GameState @JvmOverloads constructor(
             }
             
             // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
-            if(turn / 2 >= 30) {
+            if(turn / 2 >= PluginConstants.ROUND_LIMIT) {
                 return true
             }
             

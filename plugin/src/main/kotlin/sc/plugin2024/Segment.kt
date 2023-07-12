@@ -9,6 +9,7 @@ import sc.framework.PublicCloneable
 import sc.framework.shuffledIndices
 import sc.plugin2024.util.PluginConstants
 import kotlin.math.abs
+import kotlin.math.min
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -19,8 +20,8 @@ typealias Segments = List<Segment>
 
 @XStreamAlias("segment")
 class Segment(
-        @XStreamAsAttribute val direction: HexDirection,
-        @XStreamOmitField val center: Coordinates,
+        @XStreamAsAttribute val direction: CubeDirection,
+        @XStreamOmitField val center: CubeCoordinates,
         @XStreamImplicit val segment: SegmentFields,
 ): PublicCloneable<Segment> {
     override fun clone(): Segment = Segment(direction, center, segment.clone()) // FIXME deepCopy<FieldType>())
@@ -61,14 +62,16 @@ internal fun generateSegment(
     fields.forEachIndexed { x, fieldTypes ->
         fieldTypes.forEachIndexed { y, field ->
             if(field is FieldType.PASSENGER) {
-                shuffledIndices(HexDirection.values().size)
+                // Rotate Passenger fields to water
+                shuffledIndices(CubeDirection.values().size)
                         .takeWhile {
-                            if(fields[x + (field.direction.deltaX + 1) / 2][y + field.direction.dy] == FieldType.WATER)
+                            if(fields[x + (field.direction.vector.deltaX + 1) / 2][y + field.direction.vector.r] == FieldType.WATER)
                                 return@takeWhile false
-                            fields[x][y] = FieldType.PASSENGER(HexDirection.values()[it], 1)
+                            fields[x][y] = FieldType.PASSENGER(CubeDirection.values()[it], 1)
                             return@takeWhile true
                         }
-                if(fields[x + field.direction.deltaX][y + field.direction.dy] != FieldType.WATER)
+                // Fallback to new segment on impossible passenger field
+                if(fields[x + field.direction.vector.deltaX][y + field.direction.vector.r] != FieldType.WATER)
                     return generateSegment(end, fieldsToPlace)
             }
         }
@@ -79,31 +82,34 @@ internal fun generateSegment(
 internal fun generateBoard(): Segments {
     val segments = ArrayList<Segment>(PluginConstants.NUMBER_OF_SEGMENTS)
     segments.add(Segment(
-            HexDirection.RIGHT,
-            Coordinates.ORIGIN,
+            CubeDirection.RIGHT,
+            CubeCoordinates.ORIGIN,
             generateSegment(false, arrayOf())
     ))
     
     val passengerTiles = shuffledIndices(PluginConstants.NUMBER_OF_SEGMENTS - 2, PluginConstants.NUMBER_OF_PASSENGERS).toArray()
     (2..PluginConstants.NUMBER_OF_SEGMENTS).forEach {
         val previous = segments.last()
-        val direction = if(it == 2) HexDirection.RIGHT else previous.direction.withNeighbors().random()
+        val direction = if(it == 2) CubeDirection.RIGHT else previous.direction.withNeighbors().random()
         segments.add(Segment(
                 direction,
                 previous.center + (direction.vector * 4),
                 generateSegment(it == PluginConstants.NUMBER_OF_SEGMENTS,
                         Array<FieldType>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { FieldType.BLOCKED } +
                         Array<FieldType>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { FieldType.SANDBANK } +
-                        Array<FieldType>(if(passengerTiles.contains(it - 2)) 1 else 0) { FieldType.PASSENGER(HexDirection.random()) }
+                        Array<FieldType>(if(passengerTiles.contains(it - 2)) 1 else 0) { FieldType.PASSENGER(CubeDirection.random()) }
                 )
         ))
     }
     return segments
 }
 
-private val IVector.deltaX: Int
-    get() = (dx + abs(dy)) / 2
+val CubeCoordinates.deltaX: Int
+    get() = min(q, s)
 
 operator fun SegmentFields.get(x: Int, y: Int): FieldType = this[x][y]
+
+/** Get a field by RELATIVE CubeCoordinates. */
+operator fun SegmentFields.get(coordinates: CubeCoordinates): FieldType = this[coordinates.deltaX][coordinates.r]
 
 operator fun SegmentFields.get(coordinates: Coordinates): FieldType = this[coordinates.x][coordinates.y]

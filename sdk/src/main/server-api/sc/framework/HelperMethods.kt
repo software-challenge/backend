@@ -6,6 +6,8 @@ import java.util.Date
 import java.util.stream.IntStream
 import kotlin.random.Random
 
+/** A Stream of unique integers between 0 (incl) and [max] (exclusive)
+ * with at most [limit] elements. */
 fun shuffledIndices(max: Int, limit: Int = max): IntStream =
         IntStream.generate { Random.nextInt(max) }
                 .distinct()

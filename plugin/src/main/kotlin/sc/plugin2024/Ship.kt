@@ -30,7 +30,7 @@ data class Ship(val id: Int, @XStreamAsAttribute var position: CubeCoordinates, 
     
     /** Richtung, in die das Schiff ausgerichtet ist. */
     @XStreamAsAttribute
-    var direction: HexDirection = HexDirection.RIGHT
+    var direction: CubeDirection = CubeDirection.RIGHT
     
     /**
      * aktuelle Geschwindigkeit des Schiffes des Spielers
