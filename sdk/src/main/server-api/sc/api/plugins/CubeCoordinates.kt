@@ -26,6 +26,16 @@ data class CubeCoordinates
     
     constructor(position: CubeCoordinates): this(position.q, position.r, position.s)
     
+    /** Addiere den [Vector] auf die [CubeCoordinates] auf. */
+    operator fun plus(vector: IVector): CubeCoordinates =
+            CubeCoordinates(q + vector.dx, r + vector.dy)
+    /** Berechne die Distanz zweier Koordinaten, als [Vector] */
+    operator fun minus(other: CubeCoordinates): Vector =
+            Vector(q - other.q, r - other.r)
+    /** Ziehe die Distanz (als [Vector]) von der Koordinate ab. */
+    operator fun minus(other: IVector): CubeCoordinates =
+            CubeCoordinates(q - other.dx, r - other.dy)
+
     override fun clone(): CubeCoordinates = CubeCoordinates(this)
     
     init {
