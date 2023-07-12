@@ -5,6 +5,7 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import sc.api.plugins.Coordinates
+import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.HexDirection
 
 class CoordinatesTest: WordSpec({
@@ -22,6 +23,28 @@ class CoordinatesTest: WordSpec({
             position shouldNotBe Coordinates(-3, 2)
             position shouldNotBe Coordinates(-3, -2)
             position shouldNotBe Coordinates(3, -2)
+        }
+    }
+    "CubeCoordinates" should {
+        val position = CubeCoordinates(3, 2)
+        "be equal to itself" {
+            forAll(position, CubeCoordinates(3, 2), position.rotatedBy(0), position.rotatedBy(-12)) {
+                position shouldBe it
+            }
+            position shouldNotBeSameInstanceAs CubeCoordinates(3, 2)
+        }
+        "not be equal to other positions" {
+            position shouldNotBe CubeCoordinates(2, 3)
+            position shouldNotBe CubeCoordinates(-3, 2)
+            position shouldNotBe CubeCoordinates(-3, -2)
+            position shouldNotBe CubeCoordinates(3, -2)
+        }
+        "produce correct rotation" {
+            CubeCoordinates(1, 0).rotatedBy(2) shouldBe CubeCoordinates(-1, 1)
+            position.rotatedBy(1) shouldBe CubeCoordinates(-2, 5)
+            position.rotatedBy(2) shouldBe position.rotatedBy(-4)
+            position.rotatedBy(3) shouldBe position.rotatedBy(-3)
+            position.rotatedBy(3) shouldBe position.unaryMinus()
         }
     }
     "HexDirections" should {
