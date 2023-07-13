@@ -11,7 +11,8 @@ enum class AdvanceException(override val message: String) : IMoveMistake {
     SHIP_ALREADY_IN_TARGET("Der Zug darf nicht auf dem Gegner enden."),
     FIELD_NOT_EXIST("Feld ist nicht vorhanden. Ungültiger Zug."),
     FIELD_IS_BLOCKED("Feld ist blockiert. Ungültiger Zug."),
-    MOVE_END_ON_SANDBANK("Zug sollte bereits enden, da auf Sandbank gefahren wurde.");
+    MOVE_END_ON_SANDBANK("Zug sollte bereits enden, da auf Sandbank gefahren wurde."),
+    NOT_ENOUGH_MOVEMENT_POINTS_TO_CROSS_LOG("Nicht genug Bewegunspunkte vorhanden, um Baumstamm zu überqueren");
     
     override fun toString() = message
 }
