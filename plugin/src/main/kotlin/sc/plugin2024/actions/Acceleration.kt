@@ -33,7 +33,7 @@ data class Acceleration(
             acc == 0 -> throw InvalidMoveException(AccException.ZERO_ACC)
             speed > 6 -> throw InvalidMoveException(AccException.ABOVE_MAX_SPEED)
             speed < 1 -> throw InvalidMoveException(AccException.BELOW_MIN_SPEED)
-            ship.position.type == FieldType.SANDBANK -> throw InvalidMoveException(AccException.ON_SANDBANK)
+            state.board[ship.position] == FieldType.SANDBANK -> throw InvalidMoveException(AccException.ON_SANDBANK)
         }
         
         val usedCoal: Int = (abs(acc.toDouble()) - ship.freeAcc).toInt()
