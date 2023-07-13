@@ -84,12 +84,12 @@ data class GameState @JvmOverloads constructor(
                         if(shipOne.coal == maxOf(shipOne.coal, shipTwo.coal)) Team.ONE else Team.TWO
                     }
                     // Viertens, sollte der Dampfer, der am weitesten rechts steht (höchste X-Koordinate), beginnen
-                    shipOne.position.coordinate.x != shipTwo.position.coordinate.x -> {
-                        if(shipOne.position.coordinate.x > shipTwo.position.coordinate.x) Team.ONE else Team.TWO
+                    shipOne.position.q != shipTwo.position.q -> {
+                        if(shipOne.position.q > shipTwo.position.q) Team.ONE else Team.TWO
                     }
                     // Fünftens, sollte der Dampfer, der am weitesten unten steht (höchste Y-Koordinate), beginnen
                     else -> {
-                        if(shipOne.position.coordinate.y > shipTwo.position.coordinate.y) Team.ONE else Team.TWO
+                        if(shipOne.position.r > shipTwo.position.r) Team.ONE else Team.TWO
                     }
                 }
             }
@@ -107,7 +107,7 @@ data class GameState @JvmOverloads constructor(
      * @return The game state after performing the move.
      * @throws InvalidMoveException if the move is invalid.
      */
-    override fun performMove(move: Move): GameState {
+    fun performMove(move: Move): GameState {
         val copiedState = this.copy()
         
         if(move.actions.isEmpty()) {
@@ -115,7 +115,7 @@ data class GameState @JvmOverloads constructor(
         }
         move.actions.forEachIndexed { index, action ->
             
-            if(board.get(currentShip.position.coordinate) == FieldType.SANDBANK && index != 0) {
+            if(board[currentShip.position] == FieldType.SANDBANK && index != 0) {
                 throw InvalidMoveException(MoveException.SAND_BANK_END)
             }
             
@@ -123,7 +123,7 @@ data class GameState @JvmOverloads constructor(
                 throw InvalidMoveException(AccException.FIRST_ACTION_ACCELERATE)
             }
             
-            if(currentShip.position.coordinate == otherShip.position.coordinate && action !is Push) {
+            if(currentShip.position == otherShip.position && action !is Push) {
                 throw InvalidMoveException(
                         MoveException.PUSH_ACTION_REQUIRED)
             }
@@ -206,15 +206,15 @@ data class GameState @JvmOverloads constructor(
      * @return A list of all possible push actions.
      */
     fun getPossiblePushs(): List<Push> {
-        val push = java.util.ArrayList<Push>()
+        val push = mutableListOf<Push>()
         val from: CubeCoordinates = currentShip.position
-        if(from.type == FieldType.SANDBANK || currentShip.position == otherShip.position) { // niemand darf von einer Sandbank herunterpushen.
+        if(board[from] == FieldType.SANDBANK || currentShip.position == otherShip.position) { // niemand darf von einer Sandbank herunterpushen.
             return push
         }
         val direction: CubeDirection = currentShip.direction
         CubeDirection.values().forEach { dirs ->
             board.getFieldInDirection(dirs, from)?.let { to ->
-                if(dirs !== direction.opposite() && to.isPassable() && currentShip.movement >= 1) {
+                if(dirs !== direction.opposite() && to.isEmpty && currentShip.movement >= 1) {
                     push.add(Push(dirs))
                 }
             }
@@ -230,7 +230,7 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossibleTurns(maxCoal: Int = currentShip.coal): List<Turn> {
         val turns = ArrayList<Turn>()
-        if(currentShip.position.type == FieldType.SANDBANK) {
+        if(board[currentShip.position] == FieldType.SANDBANK) {
             return turns
         }
         // TODO hier sollte man vielleicht einfach die ausführbaren turns in freeTurns speichern, statt die generellen Turns
@@ -252,7 +252,7 @@ data class GameState @JvmOverloads constructor(
         val step = mutableListOf<Advance>()
         val start: CubeCoordinates = currentShip.position
         
-        val eligibleForMovement = board.get(key = start.cubeToDoubledHex()) == FieldType.SANDBANK && currentShip.movement > 0
+        val eligibleForMovement = board[start] == FieldType.SANDBANK && currentShip.movement > 0
         if(!eligibleForMovement) return step.toList()
         
         val directions = listOf(
@@ -279,9 +279,7 @@ data class GameState @JvmOverloads constructor(
                     step.add(Advance(0))
                 }
                 
-                val destination = currentShip.position + CubeCoordinates(
-                        currentShip.direction.dx * (step.size - 1),
-                        currentShip.direction.dy * (step.size - 1))
+                val destination = currentShip.position + currentShip.direction.vector
 
                 if(next == FieldType.SANDBANK || destination == otherShip.position) {
                     return step.toList()
@@ -319,8 +317,8 @@ data class GameState @JvmOverloads constructor(
             val shipTwo = ships.last()
             
             // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
-            if((shipOne.passengers == 2 && shipOne.speed == 1 && shipOne.position.type == FieldType.GOAL) ||
-               (shipTwo.passengers == 2 && shipTwo.speed == 1 && shipTwo.position.type == FieldType.GOAL)) {
+            if((shipOne.passengers == 2 && shipOne.speed == 1 && board[shipOne.position] == FieldType.GOAL) ||
+               (shipTwo.passengers == 2 && shipTwo.speed == 1 && board[shipTwo.position] == FieldType.GOAL)) {
                 return true
             }
             
