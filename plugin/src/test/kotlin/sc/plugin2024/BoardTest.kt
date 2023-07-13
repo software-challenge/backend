@@ -3,31 +3,33 @@ package sc.plugin2024
 import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
+import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
+import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2024.util.PluginConstants
 
 class BoardTest: FunSpec({
-    context(SegmentFields::class.simpleName!!)  {
+    context(SegmentFields::class.simpleName!!) {
         test("generates goals") {
             val segment = generateSegment(true, arrayOf())
-            segment.sumOf { it.count {  it == FieldType.WATER } } shouldBe 22
+            segment.sumOf { it.count { it == FieldType.WATER } } shouldBe 22
             forAll(1, 2, 3) {
                 segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe FieldType.GOAL
             }
         }
         test("serializes nicely") {
-            Segment(CubeDirection.RIGHT, CubeCoordinates(0,0), arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
+            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
                   <field type="WATER"/>
                 </column>
               </segment>
             """
-            Segment(CubeDirection.RIGHT, CubeCoordinates(0,0), arrayOf(arrayOf(FieldType.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
+            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
                   <field type="PASSENGER" direction="LEFT" passenger="1" />
@@ -93,6 +95,46 @@ class BoardTest: FunSpec({
         //    move.to.isValid.shouldBeFalse()
         //}
     }
+
+    context("get") {
+        val board = Board()
+        test("returns valid FieldType #1") {
+            val field = board[CubeCoordinates(0, 0, 0)]
+            field.shouldNotBeNull()
+        }
+        // TODO maybe there something I dont get, but the get from board doesnt seem to work probably
+        test("returns valid FieldType #2") {
+            val field = board[CubeCoordinates(5, -5, 0)]
+            field.shouldNotBeNull()
+        }
+        test("returns null for invalid coordinates") {
+            val field = board[CubeCoordinates(0, -3, 3)]
+            field.shouldBeNull()
+        }
+    }
+
+    context("getCoordinateByIndex") {
+        val board = Board()
+        test("returns correct CubeCoordinates from indexes") {
+            val coordinate = board.getCoordinateByIndex(0, 0, 0)
+            coordinate shouldBe CubeCoordinates(0, 0, 0)
+            println("Pretty Print")
+            board.prettyPrint()
+        }
+    }
+
+    context("segmentDistance") {
+        val board = Board()
+        test("calculates correct segment distance") {
+            val distance = board.segmentDistance(CubeCoordinates(0, 0, 0), CubeCoordinates(4, -4, 0))
+            distance shouldBe 0
+        }
+        test("returns -1 when there is no segment") {
+            val distance = board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3))
+            distance shouldBe -1
+        }
+    }
+
     context("XML Serialization") {
         test("empty Board") {
             Board(emptyList()) shouldSerializeTo """
