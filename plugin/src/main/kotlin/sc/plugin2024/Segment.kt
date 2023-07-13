@@ -60,18 +60,24 @@ internal fun generateSegment(
     }
     fields.forEachIndexed { x, fieldTypes ->
         fieldTypes.forEachIndexed { y, field ->
-            if(field is FieldType.PASSENGER) {
+            if (field is FieldType.PASSENGER) {
                 // Rotate Passenger fields to water
-                shuffledIndices(CubeDirection.values().size)
-                        .takeWhile {
-                            if(fields[x + field.direction.vector.arrayX][y + field.direction.vector.r] == FieldType.WATER)
-                                return@takeWhile false
-                            fields[x][y] = FieldType.PASSENGER(CubeDirection.values()[it], 1)
-                            return@takeWhile true
-                        }
-                // Fallback to new segment on impossible passenger field
-                if(fields[x + field.direction.vector.arrayX][y + field.direction.vector.r] != FieldType.WATER)
+                // TODO I am not entirely sure what happened here,
+                //  but before it always went straight to the fallback
+                //  This *seems* to work, but not tested
+                val neighborFields = field.direction.withNeighbors().mapNotNull {
+                    val i = x + it.vector.arrayX
+                    val j = y + it.vector.r
+
+                    if (i in fields.indices && j in fields[i].indices) fields[i][j] else null
+                }.toList()
+
+                neighborFields.firstOrNull { it == FieldType.WATER }?.let { waterNeighbor ->
+                    fields[x][y] = FieldType.PASSENGER(field.direction.withNeighbors()[neighborFields.indexOf(waterNeighbor)])
+                } ?: run {
+                    // Fallback to new segment on impossible passenger field
                     return generateSegment(end, fieldsToPlace)
+                }
             }
         }
     }
