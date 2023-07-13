@@ -3,7 +3,6 @@ package sc.plugin2024
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IMove
-import sc.api.plugins.Team
 import sc.framework.plugins.AbstractGame
 import sc.shared.MoveMistake
 import sc.plugin2024.util.WinReason
@@ -34,7 +33,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
         
         AbstractGame.logger.debug("Performing {}", move)
-        currentState.performMove(move)
+        currentState.performMoveWithNewState(move)
         AbstractGame.logger.debug("Current State: ${currentState.longString()}")
     }
     
@@ -45,8 +44,8 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
      */
     override fun checkWinCondition(): WinCondition? {
         if(!isGameOver) return null
-        val currentShip: Ship = currentState.currentTeam.pieces.first() as Ship
-        val otherShip: Ship = currentState.otherTeam.pieces.first() as Ship
+        val currentShip: Ship = currentState.currentShip
+        val otherShip: Ship = currentState.otherShip
         
         return when {
             // victory by points

@@ -3,7 +3,6 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.*
-import sc.plugin2024.Board
 import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
@@ -34,7 +33,7 @@ data class GameState @JvmOverloads constructor(
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
         
-        var ships: List<Ship>,
+        var ships: List<Ship> = listOf(),
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
     val currentShip: Ship
@@ -107,7 +106,7 @@ data class GameState @JvmOverloads constructor(
      * @return The game state after performing the move.
      * @throws InvalidMoveException if the move is invalid.
      */
-    fun performMove(move: Move): GameState {
+    fun performMoveWithNewState(move: Move): GameState {
         val copiedState = this.copy()
         
         if(move.actions.isEmpty()) {
