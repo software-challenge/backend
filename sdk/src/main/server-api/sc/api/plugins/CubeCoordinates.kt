@@ -2,7 +2,6 @@ package sc.api.plugins
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.framework.PublicCloneable
-import java.lang.Math.floorMod
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlin.random.Random
@@ -102,10 +101,7 @@ enum class CubeDirection(val vector: CubeCoordinates) {
         return if(diff >= 0) diff else diff + values().size
     }
     
-    fun rotatedBy(turns: Int) = values().let {
-        // TODO on testing I received here always a index out of bounds error, because it tried to get the index of -1
-        //  maybe?: require(turns >= 0) { "turns must be non-negative, was $turns" }
-        it[floorMod(ordinal + turns, it.size)] }
+    fun rotatedBy(turns: Int) = values().let { it[(ordinal + turns).mod(it.size)] }
     
     companion object {
         fun random(): CubeDirection = values()[Random.nextInt(values().size)]
