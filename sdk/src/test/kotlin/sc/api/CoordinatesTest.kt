@@ -6,6 +6,7 @@ import io.kotest.matchers.*
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import sc.api.plugins.Coordinates
 import sc.api.plugins.CubeCoordinates
+import sc.api.plugins.CubeDirection
 import sc.api.plugins.HexDirection
 
 class CoordinatesTest: WordSpec({
@@ -23,6 +24,18 @@ class CoordinatesTest: WordSpec({
             position shouldNotBe Coordinates(-3, 2)
             position shouldNotBe Coordinates(-3, -2)
             position shouldNotBe Coordinates(3, -2)
+        }
+    }
+    "HexDirections" should {
+        "produce correct opposites" {
+            forAll(
+                    HexDirection.LEFT to HexDirection.RIGHT,
+                    HexDirection.UP_LEFT to HexDirection.DOWN_RIGHT,
+                    HexDirection.DOWN_LEFT to HexDirection.UP_RIGHT,
+            ) {
+                it.first.opposite() shouldBe it.second
+                it.second.opposite() shouldBe it.first
+            }
         }
     }
     "CubeCoordinates" should {
@@ -47,15 +60,18 @@ class CoordinatesTest: WordSpec({
             position.rotatedBy(3) shouldBe position.unaryMinus()
         }
     }
-    "HexDirections" should {
+    "CubeDirections" should {
         "produce correct opposites" {
             forAll(
-                    HexDirection.LEFT to HexDirection.RIGHT,
-                    HexDirection.UP_LEFT to HexDirection.DOWN_RIGHT,
-                    HexDirection.DOWN_LEFT to HexDirection.UP_RIGHT,
+                    CubeDirection.LEFT to CubeDirection.RIGHT,
+                    CubeDirection.UP_LEFT to CubeDirection.DOWN_RIGHT,
+                    CubeDirection.DOWN_LEFT to CubeDirection.UP_RIGHT,
             ) {
                 it.first.opposite() shouldBe it.second
                 it.second.opposite() shouldBe it.first
+                it.first.rotatedBy(3) shouldBe it.second
+                it.first.rotatedBy(-3) shouldBe it.second
+                it.second.rotatedBy(-3) shouldBe it.first
             }
         }
     }

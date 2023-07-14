@@ -101,7 +101,7 @@ enum class CubeDirection(val vector: CubeCoordinates) {
         return if(diff >= 0) diff else diff + values().size
     }
     
-    fun rotatedBy(turns: Int) = values().let { it[(ordinal + turns).mod(it.size)] }
+    fun rotatedBy(turns: Int) = values().let { it[(ordinal + turns) % it.size] }
     
     companion object {
         fun random(): CubeDirection = values()[Random.nextInt(values().size)]
