@@ -3,11 +3,10 @@ package sc.plugin2024.actions
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.plugin2024.Action
-import sc.plugin2024.FieldType
+import sc.plugin2024.Field
 import sc.plugin2024.GameState
 import sc.plugin2024.Ship
 import sc.plugin2024.exceptions.AccException
-import sc.plugin2024.exceptions.MoveException
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
 
@@ -33,7 +32,7 @@ data class Acceleration(
             acc == 0 -> throw InvalidMoveException(AccException.ZERO_ACC)
             speed > 6 -> throw InvalidMoveException(AccException.ABOVE_MAX_SPEED)
             speed < 1 -> throw InvalidMoveException(AccException.BELOW_MIN_SPEED)
-            state.board[ship.position] == FieldType.SANDBANK -> throw InvalidMoveException(AccException.ON_SANDBANK)
+            state.board[ship.position] == Field.SANDBANK -> throw InvalidMoveException(AccException.ON_SANDBANK)
         }
         
         val usedCoal: Int = (abs(acc.toDouble()) - ship.freeAcc).toInt()

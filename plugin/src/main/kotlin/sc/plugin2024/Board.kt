@@ -47,13 +47,14 @@ data class Board(
             }
     
     /**
-     * Gibt den [FieldType] zurück, der an das angegebene Feld in der angegebenen Richtung angrenzt.
+     * Gibt das [Field] zurück, das an das angegebene Feld in der angegebenen Richtung angrenzt.
      *
      * @param direction die [HexDirection], in der das benachbarte Feld zu finden ist
      * @param coordinate die [Coordinates], für die das angrenzende Feld gefunden werden soll
-     * @return das angrenzende [FieldType], wenn es existiert, sonst null
+     *
+     * @return das angrenzende [Field], wenn es existiert, sonst null
      */
-    fun getFieldInDirection(direction: CubeDirection, coordinate: CubeCoordinates): FieldType? =
+    fun getFieldInDirection(direction: CubeDirection, coordinate: CubeCoordinates): Field? =
             get(coordinate + direction.vector)
     
     /**
@@ -71,7 +72,7 @@ data class Board(
     }
     
     /**
-     * Berechnet den Abstand zwischen zwei [FieldType]s in der Anzahl der [Segment].
+     * Berechnet den Abstand zwischen zwei [Field]s in der Anzahl der [Segment].
      *
      * @param coordinate1 Das erste Feld, von dem aus die Entfernung berechnet wird.
      * @param coordinate2 Das zweite Feld, aus dem die Entfernung berechnet wird.
@@ -103,12 +104,12 @@ data class Board(
     }
     
     /**
-     * Gibt eine Liste benachbarter [FieldType]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.
+     * Gibt eine Liste benachbarter [Field]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.
      *
      * @param coords die [CubeCoordinates] des Mittelfeldes
-     * @return eine Liste der benachbarten [FieldType]s
+     * @return eine Liste der benachbarten [Field]s
      */
-    fun neighboringFields(coords: CubeCoordinates): List<FieldType?> =
+    fun neighboringFields(coords: CubeCoordinates): List<Field?> =
             CubeDirection.values().map { direction ->
                 getFieldInDirection(direction, coords)
             }
@@ -121,7 +122,7 @@ data class Board(
      */
     fun pickupPassenger(ship: Ship): Boolean =
         neighboringFields(ship.position).any { field ->
-            if(field is FieldType.PASSENGER && field.passenger > 0) {
+            if(field is Field.PASSENGER && field.passenger > 0) {
                 field.passenger--
                 ship.passengers++
                 true
@@ -144,7 +145,7 @@ data class Board(
         val lastSegment = segments.last()
         val goalFields = lastSegment.segment.mapIndexed { i, array ->
             array.mapIndexed { j, fieldType ->
-                if(fieldType == FieldType.GOAL) {
+                if(fieldType == Field.GOAL) {
                     Pair(i, j)
                 } else null
             }
@@ -169,13 +170,13 @@ data class Board(
     }
     
     /**
-     * Findet das nächstgelegene Feld des angegebenen [FieldType], ausgehend von den angegebenen [CubeCoordinates].
+     * Findet das nächstgelegene Feld des angegebenen [Field], ausgehend von den angegebenen [CubeCoordinates].
      *
      * @param startCoordinates Die Startkoordinaten.
-     * @param fieldType Der FieldType, nach dem gesucht werden soll.
+     * @param field Der FieldType, nach dem gesucht werden soll.
      * @return Die Koordinaten des nächstgelegenen Feldes des angegebenen Feldtyps oder null, wenn es nicht gefunden wurde.
      */
-    fun findNearestFieldType(startCoordinates: CubeCoordinates, fieldType: FieldType): CubeCoordinates? {
+    fun findNearestFieldType(startCoordinates: CubeCoordinates, field: Field): CubeCoordinates? {
         val visited = HashSet<CubeCoordinates>().apply { add(startCoordinates) }
         val queue: ArrayDeque<CubeCoordinates> = ArrayDeque<CubeCoordinates>().apply { add(startCoordinates) }
         
@@ -183,7 +184,7 @@ data class Board(
             val currentCoordinates = queue.removeFirst()
             val currentField = this[currentCoordinates]
             
-            if(currentField == fieldType) {
+            if(currentField == field) {
                 return currentCoordinates
             }
             

@@ -15,27 +15,27 @@ class BoardTest: FunSpec({
     context(Segment::class.simpleName!!) {
         test("generates goals") {
             val segment = generateSegment(true, arrayOf())
-            segment.sumOf { it.count { it == FieldType.WATER } } shouldBe 17
+            segment.sumOf { it.count { it == Field.WATER } } shouldBe 17
             forAll(1, 2, 3) {
-                segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe FieldType.GOAL
+                segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe Field.GOAL
             }
         }
         test("serializes nicely") {
-            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
+            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.WATER))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
                   <field type="WATER"/>
                 </column>
               </segment>
             """
-            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
+            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
                   <field type="PASSENGER" direction="LEFT" passenger="1" />
                 </column>
               </segment>
             """
-            Segment(CubeDirection.DOWN_LEFT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.PASSENGER(CubeDirection.RIGHT, 0), FieldType.WATER), arrayOf(FieldType.SANDBANK, FieldType.GOAL))) shouldSerializeTo """
+            Segment(CubeDirection.DOWN_LEFT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.PASSENGER(CubeDirection.RIGHT, 0), Field.WATER), arrayOf(Field.SANDBANK, Field.GOAL))) shouldSerializeTo """
               <segment direction="DOWN_LEFT">
                 <column>
                   <field type="PASSENGER" direction="RIGHT" passenger="0" />
@@ -73,15 +73,15 @@ class BoardTest: FunSpec({
     context("get field by CubeCoordinates") {
         val board = Board()
         test("delineates first segment") {
-            board[CubeCoordinates(0, 0)] shouldBe FieldType.WATER
-            board[CubeCoordinates(-1, -2)] shouldBe FieldType.WATER
+            board[CubeCoordinates(0, 0)] shouldBe Field.WATER
+            board[CubeCoordinates(-1, -2)] shouldBe Field.WATER
             board[CubeCoordinates(-2, -2)].shouldBeNull()
             board[CubeCoordinates(0, -3)].shouldBeNull()
             board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
         }
         test("end of second segment") {
-            board[CubeCoordinates(6, 2, 0)] shouldBe FieldType.WATER
-            board[CubeCoordinates(6, -2, 0)] shouldBe FieldType.WATER
+            board[CubeCoordinates(6, 2, 0)] shouldBe Field.WATER
+            board[CubeCoordinates(6, -2, 0)] shouldBe Field.WATER
             board.getCoordinateByIndex(1, 4, 0) shouldBe CubeCoordinates(6, -2)
             board.getCoordinateByIndex(1, 4, 4) shouldBe CubeCoordinates(4, 2)
         }

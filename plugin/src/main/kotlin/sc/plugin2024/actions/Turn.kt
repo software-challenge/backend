@@ -22,7 +22,7 @@ data class Turn(
         
         requireNotNull(state.board[ship.position]) {
             throw InvalidMoveException(TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED)
-        }.takeIf { it == FieldType.SANDBANK }
+        }.takeIf { it == Field.SANDBANK }
         
         val absTurnCount = turnCount.absoluteValue
         val usedCoal: Int = absTurnCount - ship.freeTurns

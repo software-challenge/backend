@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.plugin2024.*
-import sc.plugin2024.exceptions.AdvanceException
 import sc.plugin2024.exceptions.PushException
 import sc.shared.InvalidMoveException
 
@@ -29,9 +28,9 @@ data class Push(
         if(pushResult.pushFrom + ship.direction.opposite().vector == pushResult.shiftTo) {
             throw InvalidMoveException(PushException.BACKWARD_PUSHING_RESTRICTED)
         }
-        val shiftToFieldType: FieldType = state.board[pushResult.shiftTo] ?: throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
+        val shiftToField: Field = state.board[pushResult.shiftTo] ?: throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
 
-        if(shiftToFieldType === FieldType.SANDBANK) {
+        if(shiftToField === Field.SANDBANK) {
             nudgedShip.speed = 1
             nudgedShip.movement = 1
         }
@@ -48,15 +47,15 @@ data class Push(
     }
     
     private fun checkValidPush(state: GameState, pushFrom: CubeCoordinates, pushTo: CubeCoordinates, nudgedShip: Ship) {
-        val shiftToFieldType: FieldType = state.board[pushTo] ?: throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
+        val shiftToField: Field = state.board[pushTo] ?: throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
 
         if(pushFrom != nudgedShip.position) {
             throw InvalidMoveException(PushException.SAME_FIELD_PUSH)
         }
-        if(!shiftToFieldType.isEmpty) {
+        if(!shiftToField.isEmpty) {
             throw InvalidMoveException(PushException.BLOCKED_FIELD_PUSH)
         }
-        if(shiftToFieldType === FieldType.SANDBANK) {
+        if(shiftToField === Field.SANDBANK) {
             throw InvalidMoveException(PushException.SANDBANK_PUSH)
         }
     }
