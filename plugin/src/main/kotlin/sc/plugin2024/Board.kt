@@ -67,6 +67,7 @@ data class Board(
      */
     fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates {
         val segment = segments[segmentIndex]
+        // TODO need to convert x to q
         val rotated = CubeCoordinates(xIndex - 1, yIndex - 2).rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT))
         return rotated + segment.center
     }

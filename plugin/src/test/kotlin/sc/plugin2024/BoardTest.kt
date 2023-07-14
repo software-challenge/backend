@@ -71,6 +71,14 @@ class BoardTest: FunSpec({
     }
     
     context("get field by CubeCoordinates") {
+        test("works within segment") {
+            CubeCoordinates(0, 0, 0).arrayX shouldBe 0
+            CubeCoordinates(-3, 2, 1).arrayX shouldBe -1
+            CubeCoordinates(0, 2, -2).arrayX shouldBe 2
+            CubeCoordinates(1, -2, 1).arrayX shouldBe 1
+            val segment = generateSegment(false, arrayOf())
+            segment[CubeCoordinates(0, 0)] shouldBe Field.WATER
+        }
         val board = Board()
         test("delineates first segment") {
             board[CubeCoordinates(0, 0)] shouldBe Field.WATER
@@ -80,10 +88,11 @@ class BoardTest: FunSpec({
             board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
         }
         test("end of second segment") {
-            board[CubeCoordinates(6, 2, 0)] shouldBe Field.WATER
-            board[CubeCoordinates(6, -2, 0)] shouldBe Field.WATER
-            board.getCoordinateByIndex(1, 4, 0) shouldBe CubeCoordinates(6, -2)
-            board.getCoordinateByIndex(1, 4, 4) shouldBe CubeCoordinates(4, 2)
+            board[CubeCoordinates(6, -2)] shouldBe Field.WATER
+            board[CubeCoordinates(4, 2)] shouldBe Field.WATER
+            board.getCoordinateByIndex(0, 2, 3) shouldBe CubeCoordinates(0, 1)
+            board.getCoordinateByIndex(1, 3, 0) shouldBe CubeCoordinates(6, -2)
+            board.getCoordinateByIndex(1, 3, 4) shouldBe CubeCoordinates(4, 2)
         }
     }
     
