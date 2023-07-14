@@ -3,6 +3,7 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
+import sc.framework.PublicCloneable
 
 /**
  * This class represents a Ship in the game.
@@ -18,7 +19,8 @@ import sc.api.plugins.*
  * @property freeTurns This field is relevant only for the server.
  * @property freeAcc This field is relevant only for the GUI.
  */
-data class Ship(@XStreamAsAttribute var position: CubeCoordinates, val team: ITeam) {
+data class Ship(@XStreamAsAttribute var position: CubeCoordinates, val team: ITeam): PublicCloneable<Ship> {
+    // TODO turn this into a proper data class with all relevant attributes in the constructor and implement clone()
     
     /**
      * Aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
@@ -73,5 +75,7 @@ data class Ship(@XStreamAsAttribute var position: CubeCoordinates, val team: ITe
      */
     @XStreamOmitField
     var freeAcc = 0
+    
+    override fun clone(): Ship = TODO("Not yet implemented")
     
 }

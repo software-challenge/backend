@@ -33,8 +33,10 @@ data class GameState @JvmOverloads constructor(
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
         
-        var ships: List<Ship> = listOf(),
+        val ships: List<Ship> = listOf(),
 ): TwoPlayerGameState<Move>(Team.ONE) {
+    
+    override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
     
     val currentShip: Ship
         get() {
@@ -95,20 +97,13 @@ data class GameState @JvmOverloads constructor(
             return if(currentRoundStarter == Team.ONE) Team.TWO else Team.ONE
         }
     
-    override fun performMoveDirectly(move: Move) {
-        TODO("Not yet implemented")
-    }
-    
     /**
-     * Executes the specified move and returns the resulting game state.
+     * Executes the specified move.
      *
      * @param move The move to perform.
-     * @return The game state after performing the move.
      * @throws InvalidMoveException if the move is invalid.
      */
-    fun performMoveWithNewState(move: Move): GameState {
-        val copiedState = this.copy()
-        
+    override fun performMoveDirectly(move: Move) {
         if(move.actions.isEmpty()) {
             throw InvalidMoveException(MoveException.NO_ACTIONS)
         }
@@ -127,15 +122,15 @@ data class GameState @JvmOverloads constructor(
                         MoveException.PUSH_ACTION_REQUIRED)
             }
             
-            action.perform(copiedState, currentShip)
+            action.perform(this, currentShip)
         }
         // pick up passenger
         if(currentShip.speed == 1) {
-            copiedState.board.pickupPassenger(currentShip)
+            this.board.pickupPassenger(currentShip)
         }
         // otherPlayer could possibly pick up Passenger in enemy turn
         if(otherShip.speed == 1) {
-            copiedState.board.pickupPassenger(otherShip)
+            this.board.pickupPassenger(otherShip)
         }
         if(currentShip.movement > 0) { // check whether movement points are left
             throw InvalidMoveException((MoveException.MOVEMENT_POINTS_LEFT))
@@ -143,8 +138,6 @@ data class GameState @JvmOverloads constructor(
         if(currentShip.movement < 0) { // check whether movement points are left
             throw InvalidMoveException(MoveException.EXCESS_MOVEMENT_POINTS)
         }
-        
-        return copiedState
     }
     
     /**
@@ -341,10 +334,6 @@ data class GameState @JvmOverloads constructor(
     override fun getPointsForTeam(team: ITeam): IntArray {
         val ship = if(team == Team.ONE) ships.first() else ships.last()
         return intArrayOf(ship.points)
-    }
-    
-    override fun clone(): TwoPlayerGameState<Move> {
-        TODO("Not yet implemented")
     }
     
     override fun toString(): String = "GameState(board=$board, turn=$turn, lastMove=$lastMove)"

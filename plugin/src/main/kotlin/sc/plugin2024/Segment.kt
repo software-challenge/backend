@@ -18,12 +18,12 @@ typealias SegmentFields = Array<Array<FieldType>>
 typealias Segments = List<Segment>
 
 @XStreamAlias("segment")
-class Segment(
+data class Segment(
         @XStreamAsAttribute val direction: CubeDirection,
         @XStreamOmitField val center: CubeCoordinates,
         @XStreamImplicit val segment: SegmentFields,
 ): PublicCloneable<Segment> {
-    override fun clone(): Segment = Segment(direction, center, segment.clone()) // FIXME deepCopy<FieldType>())
+    override fun clone(): Segment = copy(segment = segment.clone()) // FIXME deepCopy<FieldType>())
 }
 
 /**
