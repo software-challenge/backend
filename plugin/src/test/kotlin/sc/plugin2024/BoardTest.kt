@@ -85,10 +85,28 @@ class BoardTest: FunSpec({
     context("getCoordinateByIndex") {
         val board = Board()
         test("returns correct CubeCoordinates from indexes") {
-            val coordinate = board.getCoordinateByIndex(0, 0, 0)
-            coordinate shouldBe CubeCoordinates(0, 0, 0)
-            println("Pretty Print")
-            board.prettyPrint()
+            val coordinate = board.getCoordinateByIndex(1, 1, 2)
+            coordinate shouldBe CubeCoordinates(5, -2, -3)
+        }
+    }
+
+    context("findSegment") {
+        val board = Board()
+        test("findSegment should return correct segment index") {
+            val coord0 = CubeCoordinates(0, 0, 0)
+            val findSegmentMethod = Board::class.java.getDeclaredMethod("findSegment", CubeCoordinates::class.java)
+            findSegmentMethod.isAccessible = true
+
+            val result0 = findSegmentMethod.invoke(board, coord0) as Int
+            result0 shouldBe 0
+
+            val coord1 = CubeCoordinates(4, 0, -4)
+            val result1 = findSegmentMethod.invoke(board, coord1) as Int
+            result1 shouldBe 1
+
+            val coord2 = CubeCoordinates(0, -3, 3)
+            val result2 = findSegmentMethod.invoke(board, coord2) as Int
+            result2.shouldBeNull()
         }
     }
     
@@ -100,7 +118,7 @@ class BoardTest: FunSpec({
         }
         test("returns -1 when there is no segment") {
             val distance = board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3))
-            distance shouldBe -1
+            distance.shouldBeNull()
         }
     }
     

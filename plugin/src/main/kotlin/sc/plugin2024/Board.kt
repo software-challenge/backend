@@ -64,14 +64,11 @@ data class Board(
      * @return Der Abstand zwischen den angegebenen Feldern im Segment.
      * Wenn eines der Felder in keinem Segment gefunden wird, wird -1 zurückgegeben.
      */
-    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int {
-        val segmentIndex1 = findSegment(coordinate1)
-        val segmentIndex2 = findSegment(coordinate2)
-        
-        return if (segmentIndex1 != -1 && segmentIndex2 != -1) {
-            abs(segmentIndex1 - segmentIndex2)
-        } else {
-            -1
+    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int? {
+        return findSegment(coordinate1)?.let { index1 ->
+            findSegment(coordinate2)?.let { index2 ->
+                abs(index1 - index2)
+            }
         }
     }
     
@@ -81,14 +78,14 @@ data class Board(
      * @param coordinate Die Koordinate, für die das [Segment] gefunden werden soll.
      * @return Der Index des Segments, das die Koordinate enthält, oder -1, falls nicht gefunden.
      */
-    private fun findSegment(coordinate: CubeCoordinates): Int {
+    private fun findSegment(coordinate: CubeCoordinates): Int? {
         segments.forEachIndexed { index, _ ->
             val fieldType = this[coordinate]
             if (fieldType != null) {
                 return index
             }
         }
-        return -1
+        return null
     }
 
     /**
@@ -132,8 +129,9 @@ data class Board(
      */
     fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates {
         val segment = segments[segmentIndex]
-        val diff = CubeCoordinates(xIndex, yIndex) + segment.center
-        return diff.rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT))
+        val coord = CubeCoordinates(xIndex, yIndex)
+        val rotated = coord.rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT))
+        return rotated + segment.center
     }
 
     /**

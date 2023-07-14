@@ -318,7 +318,7 @@ data class GameState @JvmOverloads constructor(
             // Dies wird durch eine InvalidMoveException während des Spiels behandelt.
             
             // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
-            if(abs(board.segmentDistance(shipOne.position, shipTwo.position)) > 3) {
+            if(board.segmentDistance(shipOne.position, shipTwo.position)?.let { abs(it) }!! > 3) {
                 return true
             }
             
