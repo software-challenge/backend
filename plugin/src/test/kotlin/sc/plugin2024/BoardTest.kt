@@ -67,6 +67,43 @@ class BoardTest: FunSpec({
             //clone shouldBe makeBoard(0 y 0 to 1)
         }
     }
+    
+    context("get field by CubeCoordinates") {
+        val board = Board()
+        test("delineates first segment") {
+            board[CubeCoordinates(0, 0)] shouldBe FieldType.WATER
+            board[CubeCoordinates(-1, -2)] shouldBe FieldType.WATER
+            board[CubeCoordinates(-2, -2)].shouldBeNull()
+            board[CubeCoordinates(0, -3, 3)].shouldBeNull()
+        }
+        test("end of second segment") {
+            board[CubeCoordinates(6, 2, 0)] shouldBe FieldType.WATER
+            board[CubeCoordinates(6, -2, 0)] shouldBe FieldType.WATER
+        }
+    }
+    
+    context("getCoordinateByIndex") {
+        val board = Board()
+        test("returns correct CubeCoordinates from indexes") {
+            val coordinate = board.getCoordinateByIndex(0, 0, 0)
+            coordinate shouldBe CubeCoordinates(0, 0, 0)
+            println("Pretty Print")
+            board.prettyPrint()
+        }
+    }
+    
+    context("segmentDistance") {
+        val board = Board()
+        test("calculates correct segment distance") {
+            val distance = board.segmentDistance(CubeCoordinates(0, 0, 0), CubeCoordinates(4, -4, 0))
+            distance shouldBe 0
+        }
+        test("returns -1 when there is no segment") {
+            val distance = board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3))
+            distance shouldBe -1
+        }
+    }
+    
     context("Board calculates Moves") {
         //val board = makeBoard(0 y 0 to 0)
     }
@@ -95,46 +132,6 @@ class BoardTest: FunSpec({
         //    move.to.isValid.shouldBeFalse()
         //}
     }
-
-    context("get") {
-        val board = Board()
-        test("returns valid FieldType #1") {
-            val field = board[CubeCoordinates(0, 0, 0)]
-            field.shouldNotBeNull()
-        }
-        // TODO maybe there something I dont get, but the get from board doesnt seem to work probably
-        test("returns valid FieldType #2") {
-            val field = board[CubeCoordinates(5, -5, 0)]
-            field.shouldNotBeNull()
-        }
-        test("returns null for invalid coordinates") {
-            val field = board[CubeCoordinates(0, -3, 3)]
-            field.shouldBeNull()
-        }
-    }
-
-    context("getCoordinateByIndex") {
-        val board = Board()
-        test("returns correct CubeCoordinates from indexes") {
-            val coordinate = board.getCoordinateByIndex(0, 0, 0)
-            coordinate shouldBe CubeCoordinates(0, 0, 0)
-            println("Pretty Print")
-            board.prettyPrint()
-        }
-    }
-
-    context("segmentDistance") {
-        val board = Board()
-        test("calculates correct segment distance") {
-            val distance = board.segmentDistance(CubeCoordinates(0, 0, 0), CubeCoordinates(4, -4, 0))
-            distance shouldBe 0
-        }
-        test("returns -1 when there is no segment") {
-            val distance = board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3))
-            distance shouldBe -1
-        }
-    }
-
     context("XML Serialization") {
         test("empty Board") {
             Board(emptyList()) shouldSerializeTo """

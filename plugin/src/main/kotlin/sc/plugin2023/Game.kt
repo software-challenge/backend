@@ -21,10 +21,6 @@ fun <T> Collection<T>.maxByNoEqual(selector: (T) -> Int): T? =
         }.second
 
 class Game(override val currentState: GameState = GameState()): AbstractGame(GamePlugin.PLUGIN_ID) {
-    companion object {
-        val logger = LoggerFactory.getLogger(Game::class.java)
-    }
-    
     val isGameOver: Boolean
         get() = currentState.isOver
     
@@ -32,9 +28,9 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
         if (move !is Move)
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
         
-        AbstractGame.logger.debug("Performing $move")
+        logger.debug("Performing {}", move)
         currentState.performMove(move)
-        AbstractGame.logger.debug("Current State: ${currentState.longString()}")
+        logger.debug("Current State: {}", currentState.longString())
     }
     
     /**

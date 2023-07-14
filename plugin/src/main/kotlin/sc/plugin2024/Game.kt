@@ -21,10 +21,6 @@ fun <T> Collection<T>.maxByNoEqual(selector: (T) -> Int): T? =
         }.second
 
 class Game(override val currentState: GameState = GameState()): AbstractGame(GamePlugin.PLUGIN_ID) {
-    companion object {
-        val logger: Logger = LoggerFactory.getLogger(Game::class.java)
-    }
-    
     val isGameOver: Boolean
         get() = currentState.isOver
     

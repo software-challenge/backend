@@ -10,9 +10,7 @@ import sc.protocol.room.WelcomeMessage
 import sc.shared.*
 
 abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pausable {
-    companion object {
-        val logger = LoggerFactory.getLogger(AbstractGame::class.java)
-    }
+    val logger = LoggerFactory.getLogger(this::class.java)
     
     override val players = mutableListOf<Player>()
     

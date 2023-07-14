@@ -3,6 +3,8 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import sc.api.plugins.*
 import java.util.Deque
 import java.util.OptionalInt
@@ -19,6 +21,9 @@ data class Board(
         @XStreamOmitField
         internal var visibleSegments: Int = 2,
 ): IBoard {
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    }
     
     override fun clone(): Board = Board(this.segments.clone(), visibleSegments)
     
@@ -35,7 +40,8 @@ data class Board(
     operator fun get(coords: CubeCoordinates) =
             segments.firstNotNullOfOrNull {
                 val diff = coords - it.center
-                if(diff.distanceTo(CubeCoordinates.ORIGIN) <= 2)
+                logger.trace("{} - {}: {}", coords, it, diff)
+                if(diff.distanceTo(CubeCoordinates.ORIGIN) <= 3)
                     it.segment[diff.rotatedBy(it.direction.turnCountTo(CubeDirection.RIGHT))]
                 else
                     null
