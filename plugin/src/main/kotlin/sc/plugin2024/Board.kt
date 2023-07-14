@@ -2,12 +2,11 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sc.api.plugins.*
-import java.util.Deque
-import java.util.OptionalInt
 import kotlin.math.abs
 
 /**
@@ -16,8 +15,8 @@ import kotlin.math.abs
  */
 @XStreamAlias(value = "board")
 data class Board(
-        @XStreamOmitField
-        private val segments: Segments = generateBoard(),
+        @XStreamImplicit
+        val segments: Segments = generateBoard(),
         @XStreamOmitField
         internal var visibleSegments: Int = 2,
 ): IBoard {
@@ -40,7 +39,7 @@ data class Board(
     operator fun get(coords: CubeCoordinates) =
             segments.firstNotNullOfOrNull {
                 val diff = coords - it.center
-                logger.trace("{} - {}: {}", coords, it, diff)
+                logger.info("Locating {} in {}: {}, {}", coords, it, diff, diff.distanceTo(CubeCoordinates.ORIGIN))
                 if(diff.distanceTo(CubeCoordinates.ORIGIN) <= 3)
                     it.segment[diff.rotatedBy(it.direction.turnCountTo(CubeDirection.RIGHT))]
                 else
@@ -54,7 +53,22 @@ data class Board(
      * @param coordinate die [Coordinates], für die das angrenzende Feld gefunden werden soll
      * @return das angrenzende [FieldType], wenn es existiert, sonst null
      */
-    fun getFieldInDirection(direction: CubeDirection, coordinate: CubeCoordinates): FieldType? = get(coordinate + direction.vector)
+    fun getFieldInDirection(direction: CubeDirection, coordinate: CubeCoordinates): FieldType? =
+            get(coordinate + direction.vector)
+    
+    /**
+     * Gibt die [CubeCoordinates] für einen bestimmten Index innerhalb eines Segments zurück.
+     *
+     * @param segmentIndex Der Index des Segments.
+     * @param xIndex Der x-Index innerhalb des Segments.
+     * @param yIndex Der y-Index innerhalb des Segments.
+     * @return Die [CubeCoordinates] für den angegebenen Index innerhalb des Segments.
+     */
+    fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates {
+        val segment = segments[segmentIndex]
+        val rotated = CubeCoordinates(xIndex - 1, yIndex - 2).rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT))
+        return rotated + segment.center
+    }
     
     /**
      * Berechnet den Abstand zwischen zwei [FieldType]s in der Anzahl der [Segment].
@@ -81,59 +95,41 @@ data class Board(
     private fun findSegment(coordinate: CubeCoordinates): Int? {
         segments.forEachIndexed { index, _ ->
             val fieldType = this[coordinate]
-            if (fieldType != null) {
+            if(fieldType != null) {
                 return index
             }
         }
         return null
     }
-
+    
     /**
      * Gibt eine Liste benachbarter [FieldType]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.
      *
      * @param coords die [CubeCoordinates] des Mittelfeldes
      * @return eine Liste der benachbarten [FieldType]s
      */
-    fun neighboringFields(coords: CubeCoordinates): List<FieldType?> = CubeDirection.values().map { direction ->
-        getFieldInDirection(direction, coords)
-    }
-
+    fun neighboringFields(coords: CubeCoordinates): List<FieldType?> =
+            CubeDirection.values().map { direction ->
+                getFieldInDirection(direction, coords)
+            }
+    
     /**
      * Methode zur Abholung eines Passagiers auf einem [Ship].
      *
      * @param ship Das [Ship], mit dem der Passagier abgeholt wird.
      * @return `true`, wenn ein Passagier erfolgreich abgeholt wurde, sonst `false`.
      */
-    fun pickupPassenger(ship: Ship): Boolean {
-        val neighboringFields: List<FieldType?> = neighboringFields(ship.position)
-        
-        neighboringFields.forEach { field ->
+    fun pickupPassenger(ship: Ship): Boolean =
+        neighboringFields(ship.position).any { field ->
             if(field is FieldType.PASSENGER && field.passenger > 0) {
                 field.passenger--
                 ship.passengers++
-                
-                return@pickupPassenger true
+                true
+            } else {
+                false
             }
         }
-        
-        return false
-    }
-
-    /**
-     * Gibt die [CubeCoordinates] für einen bestimmten Index innerhalb eines Segments zurück.
-     *
-     * @param segmentIndex Der Index des Segments.
-     * @param xIndex Der x-Index innerhalb des Segments.
-     * @param yIndex Der y-Index innerhalb des Segments.
-     * @return Die [CubeCoordinates] für den angegebenen Index innerhalb des Segments.
-     */
-    fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates {
-        val segment = segments[segmentIndex]
-        val coord = CubeCoordinates(xIndex, yIndex)
-        val rotated = coord.rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT))
-        return rotated + segment.center
-    }
-
+    
     /**
      * Findet das [Ship], das dem Ziel im letzten [Segment] am nächsten ist.
      *
@@ -143,6 +139,8 @@ data class Board(
      * wenn beide Schiffe den gleichen Abstand haben.
      */
     fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? {
+        // TODO du kannst die Berechnung nicht von der Position der Zielfelder abhängig machen, das entspricht auch nicht den Regeln - die Spieler haben ja nicht alle Segmente
+        // überarbeiten entsprechend Stand vor 19fa8553
         val lastSegment = segments.last()
         val goalFields = lastSegment.segment.mapIndexed { i, array ->
             array.mapIndexed { j, fieldType ->
@@ -151,10 +149,10 @@ data class Board(
                 } else null
             }
         }.flatten().filterNotNull()
-
+        
         var minDist1 = Int.MAX_VALUE
         var minDist2 = Int.MAX_VALUE
-
+        
         for(pair in goalFields) {
             val coords = getCoordinateByIndex(segments.lastIndex, pair.first, pair.second)
             val dist1 = coords.distanceTo(ship1.position)
@@ -162,14 +160,14 @@ data class Board(
             minDist1 = kotlin.math.min(minDist1, dist1)
             minDist2 = kotlin.math.min(minDist2, dist2)
         }
-
+        
         return when {
             minDist1 < minDist2 -> ship1
             minDist1 > minDist2 -> ship2
             else -> null
         }
     }
-
+    
     /**
      * Findet das nächstgelegene Feld des angegebenen [FieldType], ausgehend von den angegebenen [CubeCoordinates].
      *
@@ -181,18 +179,18 @@ data class Board(
         val visited = HashSet<CubeCoordinates>().apply { add(startCoordinates) }
         val queue: ArrayDeque<CubeCoordinates> = ArrayDeque<CubeCoordinates>().apply { add(startCoordinates) }
         
-        while (queue.isNotEmpty()) {
+        while(queue.isNotEmpty()) {
             val currentCoordinates = queue.removeFirst()
             val currentField = this[currentCoordinates]
             
-            if (currentField == fieldType) {
+            if(currentField == fieldType) {
                 return currentCoordinates
             }
-
+            
             val neighbours = CubeDirection.values().map { direction -> currentCoordinates + direction.vector }
-
-            for (neighbour in neighbours) {
-                if (neighbour !in visited && this[neighbour] != null) {
+            
+            for(neighbour in neighbours) {
+                if(neighbour !in visited && this[neighbour] != null) {
                     visited.add(neighbour)
                     queue.add(neighbour)
                 }
@@ -201,7 +199,7 @@ data class Board(
         
         return null
     }
-
+    
     /**
      * Druckt die Segmente in einem lesbaren Format.
      *
@@ -209,10 +207,10 @@ data class Board(
      */
     fun prettyPrint() {
         val stringBuilder = StringBuilder()
-        for ((index, segment) in this.segments.withIndex()) {
+        for((index, segment) in this.segments.withIndex()) {
             stringBuilder.append("Segment ${index + 1}:\n")
-            for (fieldTypeRow in segment.segment) {
-                for (fieldType in fieldTypeRow) {
+            for(fieldTypeRow in segment.segment) {
+                for(fieldType in fieldTypeRow) {
                     stringBuilder.append("| ${fieldType.javaClass.simpleName.firstOrNull() ?: '-'} ")
                 }
                 stringBuilder.append("|\n")

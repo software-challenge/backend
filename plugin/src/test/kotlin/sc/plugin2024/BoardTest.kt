@@ -7,16 +7,15 @@ import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
-import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2024.util.PluginConstants
 
 class BoardTest: FunSpec({
-    context(SegmentFields::class.simpleName!!) {
+    context(Segment::class.simpleName!!) {
         test("generates goals") {
             val segment = generateSegment(true, arrayOf())
-            segment.sumOf { it.count { it == FieldType.WATER } } shouldBe 22
+            segment.sumOf { it.count { it == FieldType.WATER } } shouldBe 17
             forAll(1, 2, 3) {
                 segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe FieldType.GOAL
             }
@@ -54,8 +53,11 @@ class BoardTest: FunSpec({
     }
     context(Board::class.simpleName!!) {
         val generatedBoard = Board()
-        test("generates properly") {
-            generatedBoard.visibleSegments
+        context("generates properly") {
+            forAll<Segment>(generatedBoard.segments.take(2)) {
+                it.direction shouldBe CubeDirection.RIGHT
+            }
+            generatedBoard.segments[1].center shouldBe CubeCoordinates(4, 0)
         }
         test("clones deeply") {
             val board = Board(listOf())
@@ -74,11 +76,14 @@ class BoardTest: FunSpec({
             board[CubeCoordinates(0, 0)] shouldBe FieldType.WATER
             board[CubeCoordinates(-1, -2)] shouldBe FieldType.WATER
             board[CubeCoordinates(-2, -2)].shouldBeNull()
-            board[CubeCoordinates(0, -3, 3)].shouldBeNull()
+            board[CubeCoordinates(0, -3)].shouldBeNull()
+            board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
         }
         test("end of second segment") {
             board[CubeCoordinates(6, 2, 0)] shouldBe FieldType.WATER
             board[CubeCoordinates(6, -2, 0)] shouldBe FieldType.WATER
+            board.getCoordinateByIndex(1, 4, 0) shouldBe CubeCoordinates(6, -2)
+            board.getCoordinateByIndex(1, 4, 4) shouldBe CubeCoordinates(4, 2)
         }
     }
     

@@ -21,7 +21,7 @@ typealias Segments = List<Segment>
 data class Segment(
         @XStreamAsAttribute val direction: CubeDirection,
         @XStreamOmitField val center: CubeCoordinates,
-        @XStreamImplicit val segment: SegmentFields,
+        @XStreamImplicit @XStreamAlias("segment") val segment: SegmentFields,
 ): PublicCloneable<Segment> {
     override fun clone(): Segment = copy(segment = segment.clone()) // FIXME deepCopy<FieldType>())
 }
@@ -37,7 +37,7 @@ internal fun generateSegment(
         end: Boolean,
         fieldsToPlace: Array<FieldType>,
 ): SegmentFields {
-    val fields: SegmentFields = Array(PluginConstants.SEGMENT_FIELDS_HEIGHT) { Array(PluginConstants.SEGMENT_FIELDS_WIDTH) { FieldType.WATER } }
+    val fields: SegmentFields = Array(PluginConstants.SEGMENT_FIELDS_WIDTH) { Array(PluginConstants.SEGMENT_FIELDS_HEIGHT) { FieldType.WATER } }
     val columnsButLast = fields.size - 1
     
     var currentField = 0
@@ -49,18 +49,19 @@ internal fun generateSegment(
     if(end) {
         // Place Goal fields in the last column, except for top and bottom row
         val lastColumn = fields.last()
-        lastColumn.mapIndexed { index, fieldType ->
-            assert(fieldType == FieldType.WATER)
-            if(index == 0 || index == lastColumn.lastIndex) {
-                fieldType
-            } else {
-                FieldType.GOAL
-            }
-        }
+        fields[fields.lastIndex] =
+                lastColumn.mapIndexed { index, fieldType ->
+                    assert(fieldType == FieldType.WATER)
+                    if(index == 0 || index == lastColumn.lastIndex) {
+                        fieldType
+                    } else {
+                        FieldType.GOAL
+                    }
+                }.toTypedArray()
     }
     fields.forEachIndexed { x, fieldTypes ->
         fieldTypes.forEachIndexed { y, field ->
-            if (field is FieldType.PASSENGER) {
+            if(field is FieldType.PASSENGER) {
                 // Rotate Passenger fields to water
                 // TODO I am not entirely sure what happened here,
                 //  but before it always went straight to the fallback
@@ -68,10 +69,10 @@ internal fun generateSegment(
                 val neighborFields = field.direction.withNeighbors().mapNotNull {
                     val i = x + it.vector.arrayX
                     val j = y + it.vector.r
-
-                    if (i in fields.indices && j in fields[i].indices) fields[i][j] else null
+                    
+                    if(i in fields.indices && j in fields[i].indices) fields[i][j] else null
                 }.toList()
-
+                
                 neighborFields.firstOrNull { it == FieldType.WATER }?.let { waterNeighbor ->
                     fields[x][y] = FieldType.PASSENGER(field.direction.withNeighbors()[neighborFields.indexOf(waterNeighbor)])
                 } ?: run {
