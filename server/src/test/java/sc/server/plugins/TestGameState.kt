@@ -18,7 +18,7 @@ data class TestGameState(
     
     override fun getPointsForTeam(team: ITeam): IntArray = intArrayOf(currentTeam.index, turn)
     
-    override fun getSensibleMoves(): Collection<IMove> = throw NotImplementedError("TestGame has no possible Moves")
+    override fun getSensibleMoves(): List<IMove> = throw NotImplementedError("TestGame has no possible Moves")
     
     override val round get() = turn / 2
     

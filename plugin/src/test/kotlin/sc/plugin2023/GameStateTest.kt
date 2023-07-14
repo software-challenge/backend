@@ -10,13 +10,12 @@ import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2023.util.PluginConstants
+import sc.y
 
-// TODO fix constructor call
-/*
 class GameStateTest: FunSpec({
     context("XML Serialization") {
         test("empty state") {
-            GameState(Board(listOf(mutableListOf(Field(), Field(penguin = Team.TWO))))) shouldSerializeTo """
+            GameState(makeSimpleBoard(Field(), Field(penguin = Team.TWO))) shouldSerializeTo """
                 <state turn="0">
                   <startTeam>ONE</startTeam>
                   <board>
@@ -57,7 +56,7 @@ class GameStateTest: FunSpec({
         }
     }
     context("move calculation") {
-        test("initial placement") {
+        context("initial placement") {
             forAll(Board(), makeBoard()) { board ->
                 GameState(board).getSensibleMoves() shouldHaveSize board.size
             }
@@ -68,13 +67,13 @@ class GameStateTest: FunSpec({
         }
         test("immovable") {
             // Board with max penguins for both players
-            val state = GameState(Board(listOf(
-                    MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.ONE) },
-                    MutableList(PluginConstants.PENGUINS) { Field(penguin = Team.TWO) })))
+            val state = GameState(Board(arrayOf(
+                    Array(PluginConstants.PENGUINS) { Field(penguin = Team.ONE) },
+                    Array(PluginConstants.PENGUINS) { Field(penguin = Team.TWO) })))
             state.getSensibleMoves().shouldBeEmpty()
             state.board.toString() shouldBe "RRRR\nBBBB"
             state.immovable(Team.ONE).shouldBeTrue()
             state.currentTeam shouldBe Team.TWO
         }
     }
-})*/
+})

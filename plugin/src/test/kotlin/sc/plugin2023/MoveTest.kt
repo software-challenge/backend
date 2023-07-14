@@ -7,10 +7,8 @@ import sc.api.plugins.Coordinates
 import sc.api.plugins.Vector
 import sc.helpers.shouldSerializeTo
 import sc.protocol.room.RoomPacket
+import sc.y
 
-
-// TODO fix reference
-/*
 class MoveTest: FunSpec({
     val move = Move(Coordinates(0, 7), Coordinates(17, 5))
     context("Move manipulation") {
@@ -41,4 +39,4 @@ class MoveTest: FunSpec({
                 </move>
             """.trimIndent()
     }
-})*/
+})
