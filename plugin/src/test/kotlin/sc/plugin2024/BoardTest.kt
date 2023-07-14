@@ -100,47 +100,38 @@ class BoardTest: FunSpec({
         val board = Board()
         test("returns correct CubeCoordinates from indexes") {
             val coordinate = board.getCoordinateByIndex(1, 1, 2)
-            coordinate shouldBe CubeCoordinates(5, -2, -3)
+            coordinate shouldBe CubeCoordinates(4, 0)
         }
     }
 
     context("findSegment") {
         val board = Board()
         test("findSegment should return correct segment index") {
-            val coord0 = CubeCoordinates(0, 0, 0)
             val findSegmentMethod = Board::class.java.getDeclaredMethod("findSegment", CubeCoordinates::class.java)
             findSegmentMethod.isAccessible = true
-
-            val result0 = findSegmentMethod.invoke(board, coord0) as Int
-            result0 shouldBe 0
-
-            val coord1 = CubeCoordinates(4, 0, -4)
-            val result1 = findSegmentMethod.invoke(board, coord1) as Int
-            result1 shouldBe 1
-
-            val coord2 = CubeCoordinates(0, -3, 3)
-            val result2 = findSegmentMethod.invoke(board, coord2) as Int
-            result2.shouldBeNull()
+            findSegmentMethod.invoke(board, CubeCoordinates.ORIGIN) shouldBe 0
+            findSegmentMethod.invoke(board, CubeCoordinates(4, 0, -4)) shouldBe 1
+            findSegmentMethod.invoke(board, CubeCoordinates(0, -3, 3)).shouldBeNull()
         }
     }
     
     context("segmentDistance") {
         val board = Board()
         test("calculates correct segment distance") {
-            val distance = board.segmentDistance(CubeCoordinates(0, 0, 0), CubeCoordinates(4, -4, 0))
-            distance shouldBe 0
+            board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(0, 2)) shouldBe 0
+            board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(1, 2)) shouldBe 1
+            board.segmentDistance(CubeCoordinates(-1, -2), CubeCoordinates(3, 2)) shouldBe 1
         }
-        test("returns -1 when there is no segment") {
-            val distance = board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3))
-            distance.shouldBeNull()
+        test("returns null when there is no segment") {
+            board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3)).shouldBeNull()
         }
     }
     
     context("Board calculates Moves") {
         //val board = makeBoard(0 y 0 to 0)
     }
+    
     context("Board calculates diffs") {
-        // TODO
         //val board = makeBoard(0 y 0 to "r", 2 y 0 to "r")
         //test("empty for itself") {
         //    board.diff(board).shouldBeEmpty()

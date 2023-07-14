@@ -23,6 +23,10 @@ data class Segment(
         @XStreamOmitField val center: CubeCoordinates,
         @XStreamImplicit @XStreamAlias("segment") val segment: SegmentFields,
 ): PublicCloneable<Segment> {
+    /** Get from unrotated globa coordinates. */
+    operator fun get(coordinates: CubeCoordinates): Field? =
+        segment[(coordinates - center).rotatedBy(direction.turnCountTo(CubeDirection.RIGHT))]
+    
     override fun clone(): Segment = copy(segment = segment.clone()) // FIXME deepCopy<FieldType>())
 }
 

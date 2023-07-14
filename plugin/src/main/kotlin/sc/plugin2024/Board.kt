@@ -38,10 +38,8 @@ data class Board(
      */
     operator fun get(coords: CubeCoordinates) =
             segments.firstNotNullOfOrNull {
-                val diff = coords - it.center
-                logger.info("Locating {} in {}: {}, {}", coords, it, diff, diff.distanceTo(CubeCoordinates.ORIGIN))
-                if(diff.distanceTo(CubeCoordinates.ORIGIN) <= 3)
-                    it.segment[diff.rotatedBy(it.direction.turnCountTo(CubeDirection.RIGHT))]
+                if(coords.distanceTo(it.center) <= 3)
+                    it[coords]
                 else
                     null
             }
@@ -67,8 +65,8 @@ data class Board(
      */
     fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates {
         val segment = segments[segmentIndex]
-        // TODO need to convert x to q
-        val rotated = CubeCoordinates(xIndex - 1, yIndex - 2).rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT))
+        val r = yIndex - 2
+        val rotated = CubeCoordinates(xIndex - 1 - r.coerceAtLeast(0) , r).rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT))
         return rotated + segment.center
     }
     
@@ -80,13 +78,12 @@ data class Board(
      * @return Der Abstand zwischen den angegebenen Feldern im Segment.
      * Wenn eines der Felder in keinem Segment gefunden wird, wird -1 zurückgegeben.
      */
-    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int? {
-        return findSegment(coordinate1)?.let { index1 ->
-            findSegment(coordinate2)?.let { index2 ->
-                abs(index1 - index2)
+    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int? =
+            findSegment(coordinate1)?.let { index1 ->
+                findSegment(coordinate2)?.let { index2 ->
+                    abs(index1 - index2)
+                }
             }
-        }
-    }
     
     /**
      * Findet den [segments]-Index für die angegebene [CubeCoordinates].
@@ -94,15 +91,10 @@ data class Board(
      * @param coordinate Die Koordinate, für die das [Segment] gefunden werden soll.
      * @return Der Index des Segments, das die Koordinate enthält, oder -1, falls nicht gefunden.
      */
-    private fun findSegment(coordinate: CubeCoordinates): Int? {
-        segments.forEachIndexed { index, _ ->
-            val fieldType = this[coordinate]
-            if(fieldType != null) {
-                return index
-            }
-        }
-        return null
-    }
+    private fun findSegment(coordinate: CubeCoordinates): Int? =
+            segments.indexOfFirst { segment ->
+                segment[coordinate] != null
+            }.takeUnless { it == -1 }
     
     /**
      * Gibt eine Liste benachbarter [Field]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.
