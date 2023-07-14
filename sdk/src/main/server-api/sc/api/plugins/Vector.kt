@@ -51,11 +51,11 @@ data class Vector(override val dx: Int, override val dy: Int): IVector, Comparab
 
 enum class HexDirection(val vector: Vector): IVector by vector {
     RIGHT(Vector(+2, 0)),
-    UP_RIGHT(Vector(+1, -1)),
+    DOWN_RIGHT(Vector(+1, +1)),
     DOWN_LEFT(Vector(-1, +1)),
     LEFT(Vector(-2, 0)),
     UP_LEFT(Vector(-1, -1)),
-    DOWN_RIGHT(Vector(+1, +1));
+    UP_RIGHT(Vector(+1, -1));
     
     fun withNeighbors(): Array<HexDirection> = arrayOf(rotatedBy(-1), this, rotatedBy(1))
     
@@ -66,7 +66,7 @@ enum class HexDirection(val vector: Vector): IVector by vector {
         return if(diff >= 0) diff else diff + values().size
     }
     
-    fun rotatedBy(turns: Int): HexDirection = values().let { it[(ordinal + turns) % it.size] }
+    fun rotatedBy(turns: Int): HexDirection = values().let { it[(ordinal + turns).mod(it.size)] }
     
     companion object {
         fun random(): HexDirection = values()[Random.nextInt(values().size)]

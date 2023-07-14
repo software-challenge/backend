@@ -86,11 +86,11 @@ data class CubeCoordinates
 
 enum class CubeDirection(val vector: CubeCoordinates) {
     RIGHT(CubeCoordinates(+1, -1)),
-    UP_RIGHT(CubeCoordinates(+1, 0)),
+    DOWN_RIGHT(CubeCoordinates(0, -1)),
     DOWN_LEFT(CubeCoordinates(0, +1)),
     LEFT(CubeCoordinates(-1, 1)),
     UP_LEFT(CubeCoordinates(-1, 0)),
-    DOWN_RIGHT(CubeCoordinates(0, -1));
+    UP_RIGHT(CubeCoordinates(+1, 0));
     
     fun withNeighbors() = arrayOf(rotatedBy(-1), this, rotatedBy(1))
     
@@ -101,7 +101,7 @@ enum class CubeDirection(val vector: CubeCoordinates) {
         return if(diff >= 0) diff else diff + values().size
     }
     
-    fun rotatedBy(turns: Int) = values().let { it[(ordinal + turns) % it.size] }
+    fun rotatedBy(turns: Int) = values().let { it[(ordinal + turns).mod(it.size)] }
     
     companion object {
         fun random(): CubeDirection = values()[Random.nextInt(values().size)]
