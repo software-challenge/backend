@@ -82,6 +82,9 @@ class CoordinatesTest: FunSpec({
                 it.first.rotatedBy(3) shouldBe it.second
                 it.first.rotatedBy(-3) shouldBe it.second
                 it.second.rotatedBy(-3) shouldBe it.first
+                
+                it.first.vector.rotatedBy(3) shouldBe it.second.vector
+                it.second.vector shouldBe it.first.vector.unaryMinus()
             }
         }
         test("simple rotation") {

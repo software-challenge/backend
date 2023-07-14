@@ -85,12 +85,12 @@ data class CubeCoordinates
 }
 
 enum class CubeDirection(val vector: CubeCoordinates) {
-    RIGHT(CubeCoordinates(+1, -1)),
-    DOWN_RIGHT(CubeCoordinates(0, -1)),
-    DOWN_LEFT(CubeCoordinates(0, +1)),
-    LEFT(CubeCoordinates(-1, 1)),
-    UP_LEFT(CubeCoordinates(-1, 0)),
-    UP_RIGHT(CubeCoordinates(+1, 0));
+    RIGHT(CubeCoordinates(+1, 0)),
+    DOWN_RIGHT(CubeCoordinates(0, +1)),
+    DOWN_LEFT(CubeCoordinates(-1, +1)),
+    LEFT(CubeCoordinates(-1, 0)),
+    UP_LEFT(CubeCoordinates( 0, -1)),
+    UP_RIGHT(CubeCoordinates(+1, -1));
     
     fun withNeighbors() = arrayOf(rotatedBy(-1), this, rotatedBy(1))
     
