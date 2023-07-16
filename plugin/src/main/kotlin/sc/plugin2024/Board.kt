@@ -92,15 +92,12 @@ data class Board(
      * @param coordinate Die Koordinate, für die das [Segment] gefunden werden soll.
      * @return Der Index des Segments, das die Koordinate enthält, oder -1, falls nicht gefunden.
      */
-    private fun findSegment(coordinate: CubeCoordinates): Int? {
-        segments.forEachIndexed { index, _ ->
-            val fieldType = this[coordinate]
-            if(fieldType != null) {
-                return index
-            }
-        }
-        return null
-    }
+    private fun findSegment(coordinate: CubeCoordinates): Int? =
+            segments.indexOfFirst { segment ->
+                val diff = coordinate - segment.center
+                diff.distanceTo(CubeCoordinates.ORIGIN) <= 3 &&
+                segment.segment[diff.rotatedBy(segment.direction.turnCountTo(CubeDirection.RIGHT))] != null
+            }.takeIf { it != -1 }
     
     /**
      * Gibt eine Liste benachbarter [FieldType]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.

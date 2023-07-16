@@ -108,11 +108,11 @@ class BoardTest: FunSpec({
             result0 shouldBe 0
 
             val coord1 = CubeCoordinates(4, 0, -4)
-            val result1 = findSegmentMethod.invoke(board, coord1) as Int
+            val result1 = findSegmentMethod.invoke(board, coord1)
             result1 shouldBe 1
 
             val coord2 = CubeCoordinates(0, -3, 3)
-            val result2 = findSegmentMethod.invoke(board, coord2) as Int
+            val result2 = findSegmentMethod.invoke(board, coord2)
             result2.shouldBeNull()
         }
     }
@@ -120,8 +120,8 @@ class BoardTest: FunSpec({
     context("segmentDistance") {
         val board = Board()
         test("calculates correct segment distance") {
-            val distance = board.segmentDistance(CubeCoordinates(0, 0, 0), CubeCoordinates(4, -4, 0))
-            distance shouldBe 0
+            val distance = board.segmentDistance(CubeCoordinates(0, 0, 0), CubeCoordinates(4, 0, -4))
+            distance shouldBe 1
         }
         test("returns -1 when there is no segment") {
             val distance = board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3))
