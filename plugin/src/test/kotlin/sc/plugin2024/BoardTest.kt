@@ -3,10 +3,12 @@ package sc.plugin2024
 import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
+import io.kotest.matchers.collections.*
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
+import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2024.util.PluginConstants
@@ -90,8 +92,8 @@ class BoardTest: FunSpec({
     context("getCoordinateByIndex") {
         val board = Board()
         test("returns correct CubeCoordinates from indexes") {
-            val coordinate = board.getCoordinateByIndex(1, 1, 2)
-            coordinate shouldBe CubeCoordinates(5, -2, -3)
+            val coordinate = board.getCoordinateByIndex(1, 0, 0)
+            coordinate shouldBe CubeCoordinates(3, -2, -1)
         }
     }
 

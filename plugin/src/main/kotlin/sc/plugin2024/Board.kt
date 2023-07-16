@@ -64,11 +64,11 @@ data class Board(
      * @param yIndex Der y-Index innerhalb des Segments.
      * @return Die [CubeCoordinates] für den angegebenen Index innerhalb des Segments.
      */
-    fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates {
-        val segment = segments[segmentIndex]
-        val rotated = CubeCoordinates(xIndex - 1, yIndex - 2).rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT))
-        return rotated + segment.center
-    }
+    fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates =
+            segments[segmentIndex].let { segment ->
+                CubeCoordinates(xIndex - 1, yIndex - 2)
+                        .rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT)).plus(segment.center)
+            }
     
     /**
      * Berechnet den Abstand zwischen zwei [FieldType]s in der Anzahl der [Segment].
