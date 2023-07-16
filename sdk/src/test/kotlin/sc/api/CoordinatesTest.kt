@@ -47,6 +47,15 @@ class CoordinatesTest: FunSpec({
             position.rotatedBy(3) shouldBe position.rotatedBy(-3)
             position.rotatedBy(3) shouldBe position.unaryMinus()
         }
+        test("distanceTo properly calculates the distance") {
+            val position1 = CubeCoordinates(0,0)
+            val position2 = CubeCoordinates(2,-2)
+            val position3 = CubeCoordinates(0,-2)
+
+            position1.distanceTo(position2) shouldBe 2
+            position1.distanceTo(position3) shouldBe 2
+            position2.distanceTo(position3) shouldBe 2
+        }
     }
     context("HexDirections") {
         context("produce correct opposites") {

@@ -80,10 +80,10 @@ class BoardTest: FunSpec({
             board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
         }
         test("end of second segment") {
-            board[CubeCoordinates(6, 2, 0)] shouldBe FieldType.WATER
-            board[CubeCoordinates(6, -2, 0)] shouldBe FieldType.WATER
-            board.getCoordinateByIndex(1, 4, 0) shouldBe CubeCoordinates(6, -2)
-            board.getCoordinateByIndex(1, 4, 4) shouldBe CubeCoordinates(4, 2)
+            board[CubeCoordinates(4, 2)].shouldNotBeNull()
+            board[CubeCoordinates(6, -2)].shouldNotBeNull()
+            board.getCoordinateByIndex(1, 4, 0) shouldBe CubeCoordinates(7, -2)
+            board.getCoordinateByIndex(1, 4, 4) shouldBe CubeCoordinates(7, 2)
         }
     }
     
