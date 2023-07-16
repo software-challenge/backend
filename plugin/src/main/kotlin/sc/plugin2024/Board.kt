@@ -135,66 +135,64 @@ data class Board(
      * @return Das [Ship], das dem Ziel im letzten [Segment] am nächsten ist, oder null,
      * wenn beide Schiffe den gleichen Abstand haben.
      */
-    fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? {
-        // TODO du kannst die Berechnung nicht von der Position der Zielfelder abhängig machen, das entspricht auch nicht den Regeln - die Spieler haben ja nicht alle Segmente
-        // überarbeiten entsprechend Stand vor 19fa8553
-        val lastSegment = segments.last()
-        val goalFields = lastSegment.segment.mapIndexed { i, array ->
-            array.mapIndexed { j, fieldType ->
-                if(fieldType == FieldType.GOAL) {
-                    Pair(i, j)
-                } else null
+    fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? =
+            with(segments.last()) {
+                // TODO this assumes that the segment is 5x4
+                val mostFurthestPoint = center + CubeCoordinates(2 * direction.vector.q, 2 * direction.vector.r)
+                val dist1 = ship1.position.distanceTo(mostFurthestPoint)
+                val dist2 = ship2.position.distanceTo(mostFurthestPoint)
+                if(dist1 < dist2) ship1 else if(dist1 > dist2) ship2 else null
             }
-        }.flatten().filterNotNull()
-        
-        var minDist1 = Int.MAX_VALUE
-        var minDist2 = Int.MAX_VALUE
-        
-        for(pair in goalFields) {
-            val coords = getCoordinateByIndex(segments.lastIndex, pair.first, pair.second)
-            val dist1 = coords.distanceTo(ship1.position)
-            val dist2 = coords.distanceTo(ship2.position)
-            minDist1 = kotlin.math.min(minDist1, dist1)
-            minDist2 = kotlin.math.min(minDist2, dist2)
-        }
-        
-        return when {
-            minDist1 < minDist2 -> ship1
-            minDist1 > minDist2 -> ship2
-            else -> null
-        }
-    }
     
     /**
-     * Findet das nächstgelegene Feld des angegebenen [FieldType], ausgehend von den angegebenen [CubeCoordinates].
+     * Findet das nächstgelegene Feld des angegebenen [FieldType], ausgehend von den angegebenen [CubeCoordinates],
+     * aber ohne [startCoordinates].
      *
      * @param startCoordinates Die Startkoordinaten.
      * @param fieldType Der FieldType, nach dem gesucht werden soll.
-     * @return Die Koordinaten des nächstgelegenen Feldes des angegebenen Feldtyps oder null, wenn es nicht gefunden wurde.
+     * @return Eine Liste von CubeCoordinates, die die nächstgelegenen Feldkoordinaten mit dem angegebenen FeldTyp darstellen.
      */
-    fun findNearestFieldType(startCoordinates: CubeCoordinates, fieldType: FieldType): CubeCoordinates? {
-        val visited = HashSet<CubeCoordinates>().apply { add(startCoordinates) }
-        val queue: ArrayDeque<CubeCoordinates> = ArrayDeque<CubeCoordinates>().apply { add(startCoordinates) }
+    fun findNearestFieldTypes(startCoordinates: CubeCoordinates, fieldType: FieldType): List<CubeCoordinates> {
+        val visited = mutableSetOf(startCoordinates)
+        var neighbours = CubeDirection.values().map { direction -> startCoordinates + direction.vector }
+                .filterNot { visited.contains(it) || this[it] == null }
         
+        val queue = ArrayDeque<Pair<CubeCoordinates, Int>>().apply {
+            addAll(neighbours.map { it to 1 })
+        }
+
+        var minDist = Int.MAX_VALUE
+        val minDistCoords = mutableListOf<CubeCoordinates>()
+
         while(queue.isNotEmpty()) {
-            val currentCoordinates = queue.removeFirst()
-            val currentField = this[currentCoordinates]
-            
-            if(currentField == fieldType) {
-                return currentCoordinates
+            val (currentCoordinates, currDist) = queue.removeFirst()
+
+            if(currentCoordinates in visited) {
+                continue
             }
-            
-            val neighbours = CubeDirection.values().map { direction -> currentCoordinates + direction.vector }
-            
-            for(neighbour in neighbours) {
-                if(neighbour !in visited && this[neighbour] != null) {
-                    visited.add(neighbour)
-                    queue.add(neighbour)
+
+            val currentField = this[currentCoordinates]
+            if(currentField == fieldType) {
+                if(currDist < minDist) {
+                    minDist = currDist
+                    minDistCoords.clear()
+                    minDistCoords.add(currentCoordinates)
+                } else if(currDist == minDist) {
+                    minDistCoords.add(currentCoordinates)
                 }
             }
+
+            neighbours = CubeDirection.values().map { direction -> currentCoordinates + direction.vector }
+                    .filterNot { visited.contains(it) }
+
+            queue.addAll(neighbours.map { it to currDist + 1 })
+            visited.add(currentCoordinates)
+
+            if(currDist > 1 && minDistCoords.isNotEmpty())
+                break
         }
-        
-        return null
+
+        return minDistCoords
     }
     
     /**
