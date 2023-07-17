@@ -35,8 +35,8 @@ data class Advance(
         val nextFields: LinkedList<CubeCoordinates> = LinkedList<CubeCoordinates>()
         
         when {
-            distance == -1 && state.board[start] === FieldType.SANDBANK -> handleMoveFromSandbank(start, ship, state, direction, moveBackward = true)
-            state.board[start] === FieldType.SANDBANK && distance == 1 -> handleMoveFromSandbank(start, ship, state, direction)
+            distance == -1 && state.board[start] === Field.SANDBANK -> handleMoveFromSandbank(start, ship, state, direction, moveBackward = true)
+            state.board[start] === Field.SANDBANK && distance == 1 -> handleMoveFromSandbank(start, ship, state, direction)
             else -> handleOtherMoves(ship, start, direction, state, nextFields)
         }
     }
@@ -50,15 +50,15 @@ data class Advance(
     
     private fun handleMoveFromSandbank(start: CubeCoordinates, ship: Ship, state: GameState, direction: CubeDirection, moveBackward: Boolean = false) {
         var next: CubeCoordinates = start + direction.vector
-        val nextFieldType: FieldType = state.board[next] ?: throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
+        val nextField: Field = state.board[next] ?: throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
         if(moveBackward) {
-            next = if(nextFieldType === FieldType.BLOCKED || !nextFieldType.isEmpty) {
+            next = if(nextField === Field.BLOCKED || !nextField.isEmpty) {
                 throw InvalidMoveException(AdvanceException.BACKWARD_MOVE_NOT_POSSIBLE)
             } else {
                 next
             }
         } else {
-            if(!nextFieldType.isEmpty) {
+            if(!nextField.isEmpty) {
                 throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
             }
         }
@@ -86,13 +86,13 @@ data class Advance(
     
     private fun handleObstacles(ship: Ship, state: GameState, nextFields: LinkedList<CubeCoordinates>, i: Int) {
         val checkField: CubeCoordinates = nextFields[i + 1]
-        val checkedFieldType: FieldType? = state.board[checkField]
-        if(checkedFieldType == null || !checkedFieldType.isEmpty || state.otherShip.position == checkField && i != distance - 1) {
+        val checkedField: Field? = state.board[checkField]
+        if(checkedField == null || !checkedField.isEmpty || state.otherShip.position == checkField && i != distance - 1) {
             throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
         }
         
         when(state.board[checkField]) {
-            FieldType.SANDBANK -> {
+            Field.SANDBANK -> {
                 ship.speed = 1
                 ship.movement = 0
                 endsTurn = true

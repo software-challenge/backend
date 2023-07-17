@@ -38,22 +38,21 @@ data class Board(
      */
     operator fun get(coords: CubeCoordinates) =
             segments.firstNotNullOfOrNull {
-                val diff = coords - it.center
-                logger.info("Locating {} in {}: {}, {}", coords, it, diff, diff.distanceTo(CubeCoordinates.ORIGIN))
-                if(diff.distanceTo(CubeCoordinates.ORIGIN) <= 3)
-                    it.segment[diff.rotatedBy(it.direction.turnCountTo(CubeDirection.RIGHT))]
+                if(coords.distanceTo(it.center) <= 3)
+                    it[coords]
                 else
                     null
             }
     
     /**
-     * Gibt den [FieldType] zurück, der an das angegebene Feld in der angegebenen Richtung angrenzt.
+     * Gibt das [Field] zurück, das an das angegebene Feld in der angegebenen Richtung angrenzt.
      *
      * @param direction die [HexDirection], in der das benachbarte Feld zu finden ist
      * @param coordinate die [Coordinates], für die das angrenzende Feld gefunden werden soll
-     * @return das angrenzende [FieldType], wenn es existiert, sonst null
+     *
+     * @return das angrenzende [Field], wenn es existiert, sonst null
      */
-    fun getFieldInDirection(direction: CubeDirection, coordinate: CubeCoordinates): FieldType? =
+    fun getFieldInDirection(direction: CubeDirection, coordinate: CubeCoordinates): Field? =
             get(coordinate + direction.vector)
     
     /**
@@ -71,20 +70,19 @@ data class Board(
             }
     
     /**
-     * Berechnet den Abstand zwischen zwei [FieldType]s in der Anzahl der [Segment].
+     * Berechnet den Abstand zwischen zwei [Field]s in der Anzahl der [Segment].
      *
      * @param coordinate1 Das erste Feld, von dem aus die Entfernung berechnet wird.
      * @param coordinate2 Das zweite Feld, aus dem die Entfernung berechnet wird.
      * @return Der Abstand zwischen den angegebenen Feldern im Segment.
      * Wenn eines der Felder in keinem Segment gefunden wird, wird -1 zurückgegeben.
      */
-    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int? {
-        return findSegment(coordinate1)?.let { index1 ->
-            findSegment(coordinate2)?.let { index2 ->
-                abs(index1 - index2)
+    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int? =
+            findSegment(coordinate1)?.let { index1 ->
+                findSegment(coordinate2)?.let { index2 ->
+                    abs(index1 - index2)
+                }
             }
-        }
-    }
     
     /**
      * Findet den [segments]-Index für die angegebene [CubeCoordinates].
@@ -94,18 +92,16 @@ data class Board(
      */
     private fun findSegment(coordinate: CubeCoordinates): Int? =
             segments.indexOfFirst { segment ->
-                val diff = coordinate - segment.center
-                diff.distanceTo(CubeCoordinates.ORIGIN) <= 3 &&
-                segment.segment[diff.rotatedBy(segment.direction.turnCountTo(CubeDirection.RIGHT))] != null
-            }.takeIf { it != -1 }
+                segment[coordinate] != null
+            }.takeUnless { it == -1 }
     
     /**
-     * Gibt eine Liste benachbarter [FieldType]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.
+     * Gibt eine Liste benachbarter [Field]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.
      *
      * @param coords die [CubeCoordinates] des Mittelfeldes
-     * @return eine Liste der benachbarten [FieldType]s
+     * @return eine Liste der benachbarten [Field]s
      */
-    fun neighboringFields(coords: CubeCoordinates): List<FieldType?> =
+    fun neighboringFields(coords: CubeCoordinates): List<Field?> =
             CubeDirection.values().map { direction ->
                 getFieldInDirection(direction, coords)
             }
@@ -118,7 +114,7 @@ data class Board(
      */
     fun pickupPassenger(ship: Ship): Boolean =
         neighboringFields(ship.position).any { field ->
-            if(field is FieldType.PASSENGER && field.passenger > 0) {
+            if(field is Field.PASSENGER && field.passenger > 0) {
                 field.passenger--
                 ship.passengers++
                 true
@@ -145,14 +141,14 @@ data class Board(
             }
     
     /**
-     * Findet das nächstgelegene Feld des angegebenen [FieldType], ausgehend von den angegebenen [CubeCoordinates],
+     * Findet das nächstgelegene Feld des angegebenen [Field], ausgehend von den angegebenen [CubeCoordinates],
      * aber ohne [startCoordinates].
      *
      * @param startCoordinates Die Startkoordinaten.
-     * @param fieldType Der FieldType, nach dem gesucht werden soll.
+     * @param field Der FieldType, nach dem gesucht werden soll.
      * @return Eine Liste von CubeCoordinates, die die nächstgelegenen Feldkoordinaten mit dem angegebenen FeldTyp darstellen.
      */
-    fun findNearestFieldTypes(startCoordinates: CubeCoordinates, fieldType: FieldType): List<CubeCoordinates> {
+    fun findNearestFieldTypes(startCoordinates: CubeCoordinates, field: Field): List<CubeCoordinates> {
         val visited = mutableSetOf(startCoordinates)
         var neighbours = CubeDirection.values().map { direction -> startCoordinates + direction.vector }
                 .filterNot { visited.contains(it) || this[it] == null }
@@ -172,7 +168,7 @@ data class Board(
             }
 
             val currentField = this[currentCoordinates]
-            if(currentField == fieldType) {
+            if(currentField == field) {
                 if(currDist < minDist) {
                     minDist = currDist
                     minDistCoords.clear()

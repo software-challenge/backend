@@ -17,27 +17,27 @@ class BoardTest: FunSpec({
     context(Segment::class.simpleName!!) {
         test("generates goals") {
             val segment = generateSegment(true, arrayOf())
-            segment.sumOf { it.count { it == FieldType.WATER } } shouldBe 17
+            segment.sumOf { it.count { it == Field.WATER } } shouldBe 17
             forAll(1, 2, 3) {
-                segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe FieldType.GOAL
+                segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe Field.GOAL
             }
         }
         test("serializes nicely") {
-            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.WATER))) shouldSerializeTo """
+            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.WATER))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
                   <field type="WATER"/>
                 </column>
               </segment>
             """
-            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
+            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
                   <field type="PASSENGER" direction="LEFT" passenger="1" />
                 </column>
               </segment>
             """
-            Segment(CubeDirection.DOWN_LEFT, CubeCoordinates(0, 0), arrayOf(arrayOf(FieldType.PASSENGER(CubeDirection.RIGHT, 0), FieldType.WATER), arrayOf(FieldType.SANDBANK, FieldType.GOAL))) shouldSerializeTo """
+            Segment(CubeDirection.DOWN_LEFT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.PASSENGER(CubeDirection.RIGHT, 0), Field.WATER), arrayOf(Field.SANDBANK, Field.GOAL))) shouldSerializeTo """
               <segment direction="DOWN_LEFT">
                 <column>
                   <field type="PASSENGER" direction="RIGHT" passenger="0" />
@@ -73,10 +73,18 @@ class BoardTest: FunSpec({
     }
     
     context("get field by CubeCoordinates") {
+        test("works within segment") {
+            CubeCoordinates(0, 0, 0).arrayX shouldBe 0
+            CubeCoordinates(-3, 2, 1).arrayX shouldBe -1
+            CubeCoordinates(0, 2, -2).arrayX shouldBe 2
+            CubeCoordinates(1, -2, 1).arrayX shouldBe 1
+            val segment = generateSegment(false, arrayOf())
+            segment[CubeCoordinates(0, 0)] shouldBe Field.WATER
+        }
         val board = Board()
         test("delineates first segment") {
-            board[CubeCoordinates(0, 0)] shouldBe FieldType.WATER
-            board[CubeCoordinates(-1, -2)] shouldBe FieldType.WATER
+            board[CubeCoordinates(0, 0)] shouldBe Field.WATER
+            board[CubeCoordinates(-1, -2)] shouldBe Field.WATER
             board[CubeCoordinates(-2, -2)].shouldBeNull()
             board[CubeCoordinates(0, -3)].shouldBeNull()
             board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
@@ -100,32 +108,23 @@ class BoardTest: FunSpec({
     context("findSegment") {
         val board = Board()
         test("findSegment should return correct segment index") {
-            val coord0 = CubeCoordinates(0, 0, 0)
             val findSegmentMethod = Board::class.java.getDeclaredMethod("findSegment", CubeCoordinates::class.java)
             findSegmentMethod.isAccessible = true
-
-            val result0 = findSegmentMethod.invoke(board, coord0) as Int
-            result0 shouldBe 0
-
-            val coord1 = CubeCoordinates(4, 0, -4)
-            val result1 = findSegmentMethod.invoke(board, coord1)
-            result1 shouldBe 1
-
-            val coord2 = CubeCoordinates(0, -3, 3)
-            val result2 = findSegmentMethod.invoke(board, coord2)
-            result2.shouldBeNull()
+            findSegmentMethod.invoke(board, CubeCoordinates.ORIGIN) shouldBe 0
+            findSegmentMethod.invoke(board, CubeCoordinates(4, 0, -4)) shouldBe 1
+            findSegmentMethod.invoke(board, CubeCoordinates(0, -3, 3)).shouldBeNull()
         }
     }
     
     context("segmentDistance") {
         val board = Board()
         test("calculates correct segment distance") {
-            val distance = board.segmentDistance(CubeCoordinates(0, 0, 0), CubeCoordinates(4, 0, -4))
-            distance shouldBe 1
+            board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(0, 2)) shouldBe 0
+            board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(1, 2)) shouldBe 1
+            board.segmentDistance(CubeCoordinates(-1, -2), CubeCoordinates(3, 2)) shouldBe 1
         }
-        test("returns -1 when there is no segment") {
-            val distance = board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3))
-            distance.shouldBeNull()
+        test("returns null when there is no segment") {
+            board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3)).shouldBeNull()
         }
     }
     
@@ -160,8 +159,8 @@ class BoardTest: FunSpec({
     context("Board calculates Moves") {
         //val board = makeBoard(0 y 0 to 0)
     }
+    
     context("Board calculates diffs") {
-        // TODO
         //val board = makeBoard(0 y 0 to "r", 2 y 0 to "r")
         //test("empty for itself") {
         //    board.diff(board).shouldBeEmpty()

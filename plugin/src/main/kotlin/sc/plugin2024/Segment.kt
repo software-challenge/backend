@@ -14,7 +14,7 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 
 /** Represents a segment of the board as a list of columns. */
-typealias SegmentFields = Array<Array<FieldType>>
+typealias SegmentFields = Array<Array<Field>>
 
 typealias Segments = List<Segment>
 
@@ -24,6 +24,10 @@ data class Segment(
         @XStreamOmitField val center: CubeCoordinates,
         @XStreamImplicit @XStreamAlias("segment") val segment: SegmentFields,
 ): PublicCloneable<Segment> {
+    /** Get from unrotated globa coordinates. */
+    operator fun get(coordinates: CubeCoordinates): Field? =
+        segment[(coordinates - center).rotatedBy(direction.turnCountTo(CubeDirection.RIGHT))]
+    
     override fun clone(): Segment = copy(segment = segment.clone()) // FIXME deepCopy<FieldType>())
 }
 
@@ -36,9 +40,9 @@ data class Segment(
  */
 internal fun generateSegment(
         end: Boolean,
-        fieldsToPlace: Array<FieldType>,
+        fieldsToPlace: Array<Field>,
 ): SegmentFields {
-    val fields: SegmentFields = Array(PluginConstants.SEGMENT_FIELDS_WIDTH) { Array(PluginConstants.SEGMENT_FIELDS_HEIGHT) { FieldType.WATER } }
+    val fields: SegmentFields = Array(PluginConstants.SEGMENT_FIELDS_WIDTH) { Array(PluginConstants.SEGMENT_FIELDS_HEIGHT) { Field.WATER } }
     val columnsButLast = fields.size - 1
     
     var currentField = 0
@@ -52,17 +56,17 @@ internal fun generateSegment(
         val lastColumn = fields.last()
         fields[fields.lastIndex] =
                 lastColumn.mapIndexed { index, fieldType ->
-                    assert(fieldType == FieldType.WATER)
+                    assert(fieldType == Field.WATER)
                     if(index == 0 || index == lastColumn.lastIndex) {
                         fieldType
                     } else {
-                        FieldType.GOAL
+                        Field.GOAL
                     }
                 }.toTypedArray()
     }
     fields.forEachIndexed { x, fieldTypes ->
         fieldTypes.forEachIndexed { y, field ->
-            if(field is FieldType.PASSENGER) {
+            if(field is Field.PASSENGER) {
                 // Rotate Passenger fields to water
                 // TODO I am not entirely sure what happened here,
                 //  but before it always went straight to the fallback
@@ -74,8 +78,8 @@ internal fun generateSegment(
                     if(i in fields.indices && j in fields[i].indices) fields[i][j] else null
                 }.toList()
                 
-                neighborFields.firstOrNull { it == FieldType.WATER }?.let { waterNeighbor ->
-                    fields[x][y] = FieldType.PASSENGER(field.direction.withNeighbors()[neighborFields.indexOf(waterNeighbor)])
+                neighborFields.firstOrNull { it == Field.WATER }?.let { waterNeighbor ->
+                    fields[x][y] = Field.PASSENGER(field.direction.withNeighbors()[neighborFields.indexOf(waterNeighbor)])
                 } ?: run {
                     // Fallback to new segment on impossible passenger field
                     return generateSegment(end, fieldsToPlace)
@@ -102,9 +106,9 @@ internal fun generateBoard(): Segments {
                 direction,
                 previous.center + (direction.vector * 4),
                 generateSegment(it == PluginConstants.NUMBER_OF_SEGMENTS,
-                        Array<FieldType>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { FieldType.BLOCKED } +
-                        Array<FieldType>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { FieldType.SANDBANK } +
-                        Array<FieldType>(if(passengerTiles.contains(it - 2)) 1 else 0) { FieldType.PASSENGER(CubeDirection.random()) }
+                        Array<Field>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { Field.BLOCKED } +
+                        Array<Field>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { Field.SANDBANK } +
+                        Array<Field>(if(passengerTiles.contains(it - 2)) 1 else 0) { Field.PASSENGER(CubeDirection.random()) }
                 )
         ))
     }
@@ -112,9 +116,9 @@ internal fun generateBoard(): Segments {
 }
 
 val CubeCoordinates.arrayX: Int
-    get() = min(q, s) + 1
+    get() = maxOf(q, -s)
 
-operator fun SegmentFields.get(x: Int, y: Int): FieldType = this[x][y]
+operator fun SegmentFields.get(x: Int, y: Int): Field = this[x][y]
 
 /** Get a field by RELATIVE CubeCoordinates if it exists. */
 operator fun SegmentFields.get(coordinates: CubeCoordinates): FieldType? {
