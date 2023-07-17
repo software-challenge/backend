@@ -121,7 +121,7 @@ val CubeCoordinates.arrayX: Int
 operator fun SegmentFields.get(x: Int, y: Int): Field = this[x][y]
 
 /** Get a field by RELATIVE CubeCoordinates if it exists. */
-operator fun SegmentFields.get(coordinates: CubeCoordinates): FieldType? {
+operator fun SegmentFields.get(coordinates: CubeCoordinates): Field? {
     val centerX: Int = round(this.size / 2.0).toInt() - 1
     val centerY: Int = round(this[centerX].size / 2.0).toInt()
 
