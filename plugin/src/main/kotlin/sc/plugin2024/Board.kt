@@ -114,15 +114,12 @@ data class Board(
      * @return `true`, wenn ein Passagier erfolgreich abgeholt wurde, sonst `false`.
      */
     fun pickupPassenger(ship: Ship): Boolean =
-        neighboringFields(ship.position).any { field ->
-            if(field is Field.PASSENGER && field.passenger > 0) {
-                field.passenger--
-                ship.passengers++
-                true
-            } else {
-                false
-            }
-        }
+            neighboringFields(ship.position)
+                    .filterIsInstance<Field.PASSENGER>().firstOrNull { it.passenger > 0 }?.run {
+                        passenger--
+                        ship.passengers++
+                        true
+                    } ?: false
     
     /**
      * Findet das [Ship], das dem Ziel im letzten [Segment] am nächsten ist.
