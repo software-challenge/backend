@@ -4,6 +4,7 @@ import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
+import io.kotest.matchers.ints.*
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
 import sc.api.plugins.CubeCoordinates
@@ -152,8 +153,46 @@ class BoardTest: FunSpec({
             board.findNearestFieldTypes(startCoordinates, Field.WATER::class) shouldContain CubeCoordinates(1, 0, -1)
 
             val dynamicField = board.segments.last().center + board.segments.last().direction.vector
-            board.findNearestFieldTypes(board.segments.last().center, board[dynamicField]!!) shouldContain dynamicField
+            val result = board.findNearestFieldTypes(board.segments.last().center, board[dynamicField]!!::class)
+            result shouldContain dynamicField
+            
+            board.findNearestFieldTypes(startCoordinates, Field.PASSENGER::class).size shouldBeGreaterThanOrEqual 1
         }
+    }
+
+    context("pickupPassenger") {
+        
+        test("pickupPassenger should decrease passenger count of the neighbouring field and increase passenger count of the ship") {
+            val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))
+            val board = Board()
+            val nextPassengerField = board.findNearestFieldTypes(CubeCoordinates(0, 0), Field.PASSENGER::class).first()
+            ship.position = nextPassengerField + (board[nextPassengerField] as Field.PASSENGER).direction.vector
+            
+            val initialShipPassengers: Int = ship.passengers
+            val initialFieldPassengers: Int = board.neighboringFields(ship.position)
+                                                 .filterIsInstance<Field.PASSENGER>().first().passenger
+            
+            val isPickedUp = board.pickupPassenger(ship)
+            
+            isPickedUp shouldBe true
+            
+            ship.passengers shouldBe initialShipPassengers + initialFieldPassengers
+            board.neighboringFields(ship.position)
+                    .filterIsInstance<Field.PASSENGER>().first().passenger shouldBe initialFieldPassengers - 1
+        }
+        
+        test("pickupPassenger should return false and not change passenger count when no neighbouring passenger fields") {
+            val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))
+            val board = Board()
+            
+            val initialShipPassengers = ship.passengers
+            
+            val isPickedUp = board.pickupPassenger(ship)
+            
+            isPickedUp shouldBe false
+            ship.passengers shouldBe initialShipPassengers
+        }
+        
     }
 
     context("Board calculates Moves") {

@@ -146,33 +146,45 @@ data class Board(
      * aber ohne [startCoordinates].
      *
      * @param startCoordinates Die Startkoordinaten.
-     * @param field Der FieldType, nach dem gesucht werden soll.
-     * @return Eine Liste von CubeCoordinates, die die nächstgelegenen Feldkoordinaten mit dem angegebenen FeldTyp darstellen.
+     * @param field Der [Field], nach dem gesucht werden soll.
+     * @return Eine Liste von [CubeCoordinates], die die nächstgelegenen Feldkoordinaten mit dem angegebenen [Field] darstellen.
      */
     fun findNearestFieldTypes(startCoordinates: CubeCoordinates, field: KClass<out Field>): List<CubeCoordinates> {
-        val visited = mutableSetOf(startCoordinates)
-        val queue = ArrayDeque(
-                CubeDirection.values()
-                        .map { direction -> startCoordinates + direction.vector }
-                        .filter { it !in visited && this[it] != null }
-                        .map { it to 1 }
-        )
-
-        return generateSequence { if (queue.isEmpty()) null else queue.removeFirst() }
-                       .onEach { visited += it.first }
-                       .takeWhile { (coord, dist) ->
-                           val currentField = this[coord]
-                           queue += CubeDirection.values()
-                                   .map { direction -> coord + direction.vector }
-                                   .filter { it !in visited }
-                                   .map { it to dist + 1 }
-
-                           dist <= 1 || currentField == null || currentField::class != field
-                       }
-                       .filter { (coord, _) -> this[coord]?.let { it::class == field } == true }
-                       .groupBy({ (_, dist) -> dist }, { (coord, _) -> coord })
-                       .minByOrNull { (dist, _) -> dist }
-                       ?.value ?: emptyList()
+        val visitedCoordinates = mutableSetOf<CubeCoordinates>()
+        val neighbourCoordinatesQueue = ArrayDeque<CubeCoordinates>()
+        val nearestFieldCoordinates: MutableList<CubeCoordinates> = mutableListOf()
+        
+        /** Prüft das [Field] an den angegebenen [CubeCoordinates] und fügt es ggf. der [ArrayDeque] hinzu. */
+        fun checkFieldAndAddToQueue(coordinates: CubeCoordinates) {
+            val neighbourField = this[coordinates]
+            if(neighbourField != null && !visitedCoordinates.contains(coordinates) && !neighbourCoordinatesQueue.contains(coordinates)) {
+                neighbourCoordinatesQueue.add(coordinates)
+            }
+        }
+        
+        CubeDirection.values().forEach { direction ->
+            checkFieldAndAddToQueue(startCoordinates + direction.vector)
+        }
+        
+        while(neighbourCoordinatesQueue.isNotEmpty()) {
+            val currentCoordinates = neighbourCoordinatesQueue.removeFirst()
+            
+            if(nearestFieldCoordinates.isNotEmpty() && startCoordinates.distanceTo(currentCoordinates) > startCoordinates.distanceTo(nearestFieldCoordinates.last()))
+                break
+            
+            visitedCoordinates.add(currentCoordinates)
+            
+            val currentField = this[currentCoordinates]
+            if(currentField != null && field.isInstance(currentField)) {
+                nearestFieldCoordinates.add(currentCoordinates)
+            } else {
+                CubeDirection.values().forEach { direction ->
+                    checkFieldAndAddToQueue(currentCoordinates + direction.vector)
+                }
+            }
+        }
+        
+        return nearestFieldCoordinates
     }
     
     /**
