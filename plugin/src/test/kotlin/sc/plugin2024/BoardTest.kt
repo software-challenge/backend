@@ -149,7 +149,7 @@ class BoardTest: FunSpec({
 
         test("finds correct nearest specified field type") {
             val startCoordinates = CubeCoordinates(0, 0, 0)
-            board.findNearestFieldTypes(startCoordinates, Field.WATER) shouldContain CubeCoordinates(1, 0, -1)
+            board.findNearestFieldTypes(startCoordinates, Field.WATER::class) shouldContain CubeCoordinates(1, 0, -1)
 
             val dynamicField = board.segments.last().center + board.segments.last().direction.vector
             board.findNearestFieldTypes(board.segments.last().center, board[dynamicField]!!) shouldContain dynamicField

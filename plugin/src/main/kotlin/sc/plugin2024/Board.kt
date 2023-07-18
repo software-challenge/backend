@@ -8,6 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sc.api.plugins.*
 import kotlin.math.abs
+import kotlin.reflect.KClass
 
 /**
  * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
@@ -148,47 +149,30 @@ data class Board(
      * @param field Der FieldType, nach dem gesucht werden soll.
      * @return Eine Liste von CubeCoordinates, die die nächstgelegenen Feldkoordinaten mit dem angegebenen FeldTyp darstellen.
      */
-    fun findNearestFieldTypes(startCoordinates: CubeCoordinates, field: Field): List<CubeCoordinates> {
+    fun findNearestFieldTypes(startCoordinates: CubeCoordinates, field: KClass<out Field>): List<CubeCoordinates> {
         val visited = mutableSetOf(startCoordinates)
-        var neighbours = CubeDirection.values().map { direction -> startCoordinates + direction.vector }
-                .filterNot { visited.contains(it) || this[it] == null }
-        
-        val queue = ArrayDeque<Pair<CubeCoordinates, Int>>().apply {
-            addAll(neighbours.map { it to 1 })
-        }
+        val queue = ArrayDeque(
+                CubeDirection.values()
+                        .map { direction -> startCoordinates + direction.vector }
+                        .filter { it !in visited && this[it] != null }
+                        .map { it to 1 }
+        )
 
-        var minDist = Int.MAX_VALUE
-        val minDistCoords = mutableListOf<CubeCoordinates>()
+        return generateSequence { if (queue.isEmpty()) null else queue.removeFirst() }
+                       .onEach { visited += it.first }
+                       .takeWhile { (coord, dist) ->
+                           val currentField = this[coord]
+                           queue += CubeDirection.values()
+                                   .map { direction -> coord + direction.vector }
+                                   .filter { it !in visited }
+                                   .map { it to dist + 1 }
 
-        while(queue.isNotEmpty()) {
-            val (currentCoordinates, currDist) = queue.removeFirst()
-
-            if(currentCoordinates in visited) {
-                continue
-            }
-
-            val currentField = this[currentCoordinates]
-            if(currentField == field) {
-                if(currDist < minDist) {
-                    minDist = currDist
-                    minDistCoords.clear()
-                    minDistCoords.add(currentCoordinates)
-                } else if(currDist == minDist) {
-                    minDistCoords.add(currentCoordinates)
-                }
-            }
-
-            neighbours = CubeDirection.values().map { direction -> currentCoordinates + direction.vector }
-                    .filterNot { visited.contains(it) }
-
-            queue.addAll(neighbours.map { it to currDist + 1 })
-            visited.add(currentCoordinates)
-
-            if(currDist > 1 && minDistCoords.isNotEmpty())
-                break
-        }
-
-        return minDistCoords
+                           dist <= 1 || currentField == null || currentField::class != field
+                       }
+                       .filter { (coord, _) -> this[coord]?.let { it::class == field } == true }
+                       .groupBy({ (_, dist) -> dist }, { (coord, _) -> coord })
+                       .minByOrNull { (dist, _) -> dist }
+                       ?.value ?: emptyList()
     }
     
     /**
