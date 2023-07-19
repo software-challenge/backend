@@ -93,8 +93,10 @@ data class GameState @JvmOverloads constructor(
                         if(shipOne.position.r > shipTwo.position.r) Team.ONE else Team.TWO
                     }
                 }
+                return currentRoundStarter
+            } else {
+                return if(currentRoundStarter == Team.ONE) Team.TWO else Team.ONE
             }
-            return if(currentRoundStarter == Team.ONE) Team.TWO else Team.ONE
         }
     
     /**
@@ -263,21 +265,21 @@ data class GameState @JvmOverloads constructor(
         while(currentShip.movement > 0) {
             val next: Field? = board.getFieldInDirection(currentShip.direction, start)
             val isNextEmptyOrNull = next?.isEmpty ?: return step.toList()
-
+            
             if(isNextEmptyOrNull) {
                 currentShip.movement--
-
+                
                 if(currentShip.movement >= 0) {
                     step.add(Advance(0))
                 }
                 
                 val destination = currentShip.position + currentShip.direction.vector
-
+                
                 if(next == Field.SANDBANK || destination == otherShip.position) {
                     return step.toList()
                 }
             }
-
+            
             return step.toList()
         }
         return step.toList()
@@ -300,7 +302,7 @@ data class GameState @JvmOverloads constructor(
         }
         return acc
     }
-
+    
     private fun immovable(ship: ITeam) = true
     
     override val isOver: Boolean
