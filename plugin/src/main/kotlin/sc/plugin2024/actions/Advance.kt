@@ -34,77 +34,57 @@ data class Advance(
         }
         val nextFields: LinkedList<CubeCoordinates> = LinkedList<CubeCoordinates>()
         
-        when {
-            distance == -1 && state.board[start] === Field.SANDBANK -> handleMoveFromSandbank(start, ship, state, direction, moveBackward = true)
-            state.board[start] === Field.SANDBANK && distance == 1 -> handleMoveFromSandbank(start, ship, state, direction)
-            else -> handleOtherMoves(ship, start, direction, state, nextFields)
-        }
+        handleMoves(ship, start, direction, state, nextFields)
     }
     
-    private fun checkDestinationForShip(target: CubeCoordinates, state: GameState) {
-        val otherShip = state.otherShip
-        if(target == otherShip.position) {
-            throw InvalidMoveException(AdvanceException.SHIP_ALREADY_IN_TARGET)
-        }
-    }
-    
-    private fun handleMoveFromSandbank(start: CubeCoordinates, ship: Ship, state: GameState, direction: CubeDirection, moveBackward: Boolean = false) {
-        var next: CubeCoordinates = start + direction.vector
-        val nextField: Field = state.board[next] ?: throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
-        if(moveBackward) {
-            next = if(nextField === Field.BLOCKED || !nextField.isEmpty) {
-                throw InvalidMoveException(AdvanceException.BACKWARD_MOVE_NOT_POSSIBLE)
-            } else {
-                next
-            }
-        } else {
-            if(!nextField.isEmpty) {
-                throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
-            }
-        }
-        checkDestinationForShip(next, state)
-        ship.movement = 0
-        ship.position = next
-    }
-    
-    private fun handleOtherMoves(ship: Ship, start: CubeCoordinates, direction: CubeDirection, state: GameState, nextFields: LinkedList<CubeCoordinates>) {
+    private fun handleMoves(
+            ship: Ship,
+            start: CubeCoordinates,
+            direction: CubeDirection,
+            state: GameState,
+            nextFields: LinkedList<CubeCoordinates>,
+    ) {
         nextFields.add(start)
-        for(i in 0 until distance) {
-            val neighbour: CubeCoordinates = nextFields[i] + direction.vector
-            if(state.board[neighbour] != null) {
-                nextFields.add(neighbour)
-                checkDestinationForShip(neighbour, state)
-                handleObstacles(ship, state, nextFields, i)
-            } else {
-                throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
+        val iterations = if(distance == -1) 1 else distance
+        for(i in 0 until iterations) {
+            val vector = if(distance == -1) -direction.vector else direction.vector
+            val neighbour: CubeCoordinates = nextFields[i] + vector
+            val nextField = state.board[neighbour]
+            
+            when {
+                nextField == null -> throw InvalidMoveException(AdvanceException.FIELD_NOT_EXIST)
+                !nextField.isEmpty -> throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
+                distance == -1 && state.board[start] !== Field.SANDBANK -> throw InvalidMoveException(AdvanceException.BACKWARD_MOVE_NOT_POSSIBLE)
+                distance > 1 && state.board[start] == Field.SANDBANK -> throw InvalidMoveException(AdvanceException.ONLY_ONE_MOVE_ALLOWED_ON_SANDBANK)
+                i != distance - 1 && nextField == Field.SANDBANK -> throw InvalidMoveException(AdvanceException.MOVE_END_ON_SANDBANK)
+                i != distance - 1 && neighbour == state.otherShip.position -> throw InvalidMoveException(AdvanceException.SHIP_ALREADY_IN_TARGET)
             }
-        }
-        val target: CubeCoordinates = nextFields[distance]
-        ship.position = target
-        return
-    }
-    
-    private fun handleObstacles(ship: Ship, state: GameState, nextFields: LinkedList<CubeCoordinates>, i: Int) {
-        val checkField: CubeCoordinates = nextFields[i + 1]
-        val checkedField: Field? = state.board[checkField]
-        if(checkedField == null || !checkedField.isEmpty || state.otherShip.position == checkField && i != distance - 1) {
-            throw InvalidMoveException(AdvanceException.FIELD_IS_BLOCKED)
-        }
-        
-        when(state.board[checkField]) {
-            Field.SANDBANK -> {
-                ship.speed = 1
-                ship.movement = 0
-                endsTurn = true
-                if(i != distance - 1) {
-                    throw InvalidMoveException(AdvanceException.MOVE_END_ON_SANDBANK)
+            
+            when {
+                nextField == Field.SANDBANK -> {
+                    ship.speed = 1
+                    ship.movement = 0
+                    endsTurn = true
                 }
-                return
+                
+                distance == -1 -> {
+                    ship.movement = 0
+                    endsTurn = true
+                }
+                
+                ship.movement - 1 == 0 -> {
+                    ship.movement = 0
+                    endsTurn = true
+                }
+                
+                else -> ship.movement -= 1
             }
-
-            else -> ship.movement -= 1
+            
+            nextFields.add(neighbour)
         }
+        val target: CubeCoordinates = nextFields.last()
+        ship.position = target
     }
     
-    override fun toString(): String = "Gehe $distance vor"
+    override fun toString(): String = if(distance >= 0) "Gehe $distance Felder vor" else "Gehe $distance Felder zurück"
 }
