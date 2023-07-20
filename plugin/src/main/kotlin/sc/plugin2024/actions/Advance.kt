@@ -24,14 +24,13 @@ data class Advance(
     
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
-        if(ship.movement == 0) {
-            throw InvalidMoveException(AdvanceException.NO_MOVEMENT_POINTS)
+        when {
+            ship.movement == 0 -> throw InvalidMoveException(AdvanceException.NO_MOVEMENT_POINTS)
+            distance == 0 || distance > 6 || distance < -1 -> throw InvalidMoveException(AdvanceException.INVALID_DISTANCE)
         }
+        
         val start: CubeCoordinates = ship.position
         val direction = ship.direction
-        if(distance == 0 || distance > 6 || distance < -1) {
-            throw InvalidMoveException(AdvanceException.INVALID_DISTANCE)
-        }
         val nextFields: LinkedList<CubeCoordinates> = LinkedList<CubeCoordinates>()
         
         handleMoves(ship, start, direction, state, nextFields)
