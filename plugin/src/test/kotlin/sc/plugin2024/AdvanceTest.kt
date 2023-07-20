@@ -15,15 +15,16 @@ class AdvanceTest: FunSpec({
     context("Advance") {
         
         test("valid moves") {
-            val gameState = GameState()
-            val ship = Ship(CubeCoordinates.ORIGIN, Team.ONE)
+            val ship = Ship(CubeCoordinates.ORIGIN + CubeDirection.UP_LEFT.vector, Team.ONE)
+            val shipTWO = Ship(CubeCoordinates.ORIGIN + CubeDirection.DOWN_LEFT.vector, Team.TWO)
+            val gameState = GameState(ships = listOf(ship, shipTWO))
             ship.speed = 2
             ship.movement = 2
             
             val validAdvance = Advance(2)
             validAdvance.perform(gameState, ship)
             
-            ship.position shouldBe CubeCoordinates(2, 0)
+            ship.position shouldBe CubeCoordinates(2, -1)
             ship.direction shouldBe CubeDirection.RIGHT
             ship.movement shouldBe 0
             ship.speed shouldBe 2
