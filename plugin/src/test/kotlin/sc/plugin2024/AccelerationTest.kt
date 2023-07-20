@@ -1,5 +1,6 @@
 package sc.plugin2024
 
+import com.thoughtworks.xstream.XStream
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
@@ -7,9 +8,22 @@ import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.ITeam
 import sc.api.plugins.Team
 import sc.plugin2024.actions.Acceleration
+import sc.plugin2024.actions.Advance
 import sc.shared.InvalidMoveException
 
 class AccelerationTest: FunSpec({
+    
+    test("serializes nicely") {
+        val xStream = XStream().apply {
+            processAnnotations(Acceleration::class.java)
+            XStream.setupDefaultSecurity(this)
+            allowTypesByWildcard(arrayOf("sc.plugin2024.actions.*"))
+        }
+        
+        val serialized = xStream.toXML(Acceleration(5))
+        
+        serialized shouldBe """<acceleration acc="5"/>"""
+    }
     
     val team: ITeam = Team.ONE
     
