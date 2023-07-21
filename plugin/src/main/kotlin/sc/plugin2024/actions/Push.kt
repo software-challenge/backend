@@ -18,46 +18,46 @@ data class Push(
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
         val nudgedShip = state.otherShip
-
-        if(ship.movement == 0) {
-            throw InvalidMoveException(PushException.MOVEMENT_POINTS_EXCEEDED)
-        }
-        ship.movement -= 1
-
-        val pushResult = calculatePush(ship, nudgedShip, state)
-        if(pushResult.pushFrom + ship.direction.opposite().vector == pushResult.shiftTo) {
-            throw InvalidMoveException(PushException.BACKWARD_PUSHING_RESTRICTED)
-        }
-        val shiftToField: Field = state.board[pushResult.shiftTo] ?: throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
-
-        if(shiftToField === Field.SANDBANK) {
-            nudgedShip.speed = 1
-            nudgedShip.movement = 1
+        
+        when {
+            ship.movement == 0 -> throw InvalidMoveException(PushException.MOVEMENT_POINTS_EXCEEDED)
+            else -> ship.movement -= 1
         }
         
-        nudgedShip.freeTurns += 1
-        nudgedShip.position = pushResult.shiftTo
+        val pushResult = calculatePush(ship, nudgedShip, state)
+        val shiftToField: Field = when {
+            pushResult.pushFrom + ship.direction.opposite().vector == pushResult.shiftTo -> throw InvalidMoveException(PushException.BACKWARD_PUSHING_RESTRICTED)
+            else -> state.board[pushResult.shiftTo] ?: throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
+        }
+        
+        when {
+            shiftToField == Field.SANDBANK -> {
+                nudgedShip.speed = 1
+                nudgedShip.movement = 1
+            }
+            
+            else -> {
+                nudgedShip.freeTurns += 1
+                nudgedShip.position = pushResult.shiftTo
+            }
+        }
     }
     
     private fun calculatePush(ship: Ship, nudgedShip: Ship, state: GameState): PushResult {
         val pushFrom: CubeCoordinates = ship.position
         val pushTo: CubeCoordinates = pushFrom + direction.vector
-        checkValidPush(state, pushFrom, pushTo, nudgedShip)
+        
+        val shiftToField: Field? = state.board[pushTo]
+        
+        when {
+            shiftToField == null -> throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
+            pushFrom != nudgedShip.position -> throw InvalidMoveException(PushException.SAME_FIELD_PUSH)
+            !shiftToField.isEmpty -> throw InvalidMoveException(PushException.BLOCKED_FIELD_PUSH)
+            state.board[pushFrom] == Field.SANDBANK -> throw InvalidMoveException(PushException.SANDBANK_PUSH)
+            
+        }
+        
         return PushResult(pushFrom, pushTo)
-    }
-    
-    private fun checkValidPush(state: GameState, pushFrom: CubeCoordinates, pushTo: CubeCoordinates, nudgedShip: Ship) {
-        val shiftToField: Field = state.board[pushTo] ?: throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
-
-        if(pushFrom != nudgedShip.position) {
-            throw InvalidMoveException(PushException.SAME_FIELD_PUSH)
-        }
-        if(!shiftToField.isEmpty) {
-            throw InvalidMoveException(PushException.BLOCKED_FIELD_PUSH)
-        }
-        if(shiftToField === Field.SANDBANK) {
-            throw InvalidMoveException(PushException.SANDBANK_PUSH)
-        }
     }
     
     private data class PushResult(val pushFrom: CubeCoordinates, val shiftTo: CubeCoordinates)
