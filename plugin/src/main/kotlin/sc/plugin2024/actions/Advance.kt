@@ -10,6 +10,24 @@ import sc.plugin2024.exceptions.AdvanceException
 import sc.shared.InvalidMoveException
 import java.util.*
 
+/**
+ * Stellt eine [Advance]-Aktion für ein Schiff dar.
+ *
+ * 1. Eine [Advance]-Aktion ohne Bewegungspunkte ist ungültig.
+ * 2. Eine rückwärtsfahrende [Advance]-Aktion ist nur möglich, wenn das Schiff sich auf einer [Field.SANDBANK] befindet.
+ * Das nächste [Field] muss [Field.isEmpty] sein.
+ * Bei erfolgreichem Rückzug verliert das [Ship] einen [Ship.coal] und alle [Ship.movement].
+ * 3. Wenn sich das [Ship] auf einer [Field.SANDBANK] befindet, ist nur ein Schritt nach vorne erlaubt.
+ * Nach diesem Schritt verliert das [Ship] alle [Ship.movement].
+ * 4. Für jedes [Field] der Distanz, die der Spieler zurücklegen möchte, wird überprüft, ob das nächste [Field] vorhanden und [Field.isEmpty] ist
+ * und ob genügend [Ship.movement] vorhanden sind, um es zu erreichen.
+ * Bei Erreichen einer [Field.SANDBANK] endet der Zug des Spielers sofort.
+ * 5. Das Bewegen auf das (oder durch das) [Field] des Gegners ist nur möglich, wenn es sich um das Endfeld der Bewegungsaktion handelt.
+ * 6. Die [CubeDirection] kann nicht geändert werden - das [Ship] bewegt sich immer in der aktuellen [Ship.direction].
+ *
+ * @property distance Die Anzahl der [Field]s, die vorzurücken sind.
+ * @property endsTurn Zeigt an, ob der Zug nach der [Advance]-Aktion endet.
+ */
 @XStreamAlias(value = "advance")
 data class Advance(
         /** Anzahl der Felder, die zurückgelegt werden. */
