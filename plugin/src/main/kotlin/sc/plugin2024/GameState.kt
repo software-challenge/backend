@@ -72,26 +72,20 @@ data class GameState @JvmOverloads constructor(
                 val shipTwo = ships.last()
                 
                 currentRoundStarter = when {
+                    // TODO praktisch darf es eigentlich nicht passieren, dass beide Schiffe auf dem selben Feld sind
+                    //  und die Runde beginnt, aber theoretisch lässt die Datenstruktur dies zu.
+                    //  Ich habe deshalb zum schluss es so gemacht, dass, wenn alle Werte gleich sind,
+                    //  einfach das erste Schiff genommen wird.
                     // Erstens, der Spieler, dessen Dampfer sich am dichtesten am Ziel befindet, beginnt
-                    board.closestShipToGoal(shipOne, shipTwo) != null -> {
-                        board.closestShipToGoal(shipOne, shipTwo)?.team as Team
-                    }
+                    board.closestShipToGoal(shipOne, shipTwo) != null -> board.closestShipToGoal(shipOne, shipTwo)?.team as Team
                     // Zweitens, sollte der Dampfer mit der höheren Geschwindigkeit beginnen
-                    shipOne.speed != shipTwo.speed -> {
-                        if(shipOne.speed == maxOf(shipOne.speed, shipTwo.speed)) Team.ONE else Team.TWO
-                    }
+                    shipOne.speed != shipTwo.speed -> if(shipOne.speed > shipTwo.speed) Team.ONE else Team.TWO
                     // Drittens, sollte der Dampfer mit dem höheren Kohlevorrat beginnen
-                    shipOne.coal != shipTwo.coal -> {
-                        if(shipOne.coal == maxOf(shipOne.coal, shipTwo.coal)) Team.ONE else Team.TWO
-                    }
+                    shipOne.coal != shipTwo.coal -> if(shipOne.coal > shipTwo.coal) Team.ONE else Team.TWO
                     // Viertens, sollte der Dampfer, der am weitesten rechts steht (höchste X-Koordinate), beginnen
-                    shipOne.position.q != shipTwo.position.q -> {
-                        if(shipOne.position.q > shipTwo.position.q) Team.ONE else Team.TWO
-                    }
+                    shipOne.position.q != shipTwo.position.q ->  if(shipOne.position.q > shipTwo.position.q) Team.ONE else Team.TWO
                     // Fünftens, sollte der Dampfer, der am weitesten unten steht (höchste Y-Koordinate), beginnen
-                    else -> {
-                        if(shipOne.position.r > shipTwo.position.r) Team.ONE else Team.TWO
-                    }
+                    else -> if(shipOne.position.r >= shipTwo.position.r) Team.ONE else Team.TWO
                 }
                 return currentRoundStarter
             } else {
