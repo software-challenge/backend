@@ -8,8 +8,24 @@ import sc.plugin2024.*
 import sc.plugin2024.exceptions.PushException
 import sc.shared.InvalidMoveException
 
-/** Erzeugt eine Abdraengaktion in angegebene Richtung. */
 @XStreamAlias(value = "push")
+/**
+ * Stellt eine Abdränge-Aktion im Spiel dar.
+ *
+ * 1. Ein Spieler kann nur einen anderen Spieler abdrängen, wenn er noch [Ship.movement]-Punkte hat.
+ * 2. Der verschiebende Spieler und der zu verschiebende Spieler müssen sich im selben Feld befinden.
+ * 3. Spieler kann nicht auf ein nicht vorhandenes oder blockiertes Feld abgedrängt werden.
+ * 4. Ein Spieler kann nicht von einem Sandbank-Feld aus abgedrängt werden.
+ * 5. Das Abdrängen kostet den verschiebenden Spieler einen Bewegungspunkt.
+ * 7. Ein Spieler kann nicht in die entgegengesetzte Richtung seiner Bewegungsrichtung abgedrängt werden.
+ * 8. Wenn ein Spieler auf eine Sandbank abgedrängt wird, werden seine Geschwindigkeit und Bewegung auf eins gesetzt.
+ * 9. Nach dem Abdrängen wird die Position des zu verschiebenden Spielers auf dem Spielbrett geändert.
+ * 10. Der abgedrängte Spieler bekommt eine zusätzliche freie Drehung für seinen nächsten Zug.
+ * 11. Wurde der Spieler auf eine Sandbank abgedrängt, entfällt diese freie Drehung.
+ *
+ * @property direction Die [CubeDirection], in der der [Push] ausgeführt werden soll.
+ * @constructor Erzeugt ein neues [Push]-Objekt.
+ */
 data class Push(
         /** Richtung in die abgedrängt werden soll */
         @XStreamAsAttribute val direction: CubeDirection,
