@@ -8,6 +8,22 @@ import sc.plugin2024.exceptions.TurnException
 import sc.shared.InvalidMoveException
 import kotlin.math.absoluteValue
 
+/**
+ * Stellt eine [Turn]-Aktion dar, die von einem [Ship] im Spiel durchgeführt werden kann.
+ *
+ * 1. Wenn der Spieler sich auf [Field.SANDBANK] befindet, ist die Drehaktion nicht erlaubt.
+ * In diesem Fall wird die Ausnahme [TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED] ausgelöst.
+ * 2. Die benötigte Kohle für die Drehung berechnet sich aus dem absoluten Wert der [direction] minus [Ship.direction],
+ * minus den verfügbaren [Ship.freeTurns] des Spielers.
+ * Wenn die benötigte Kohle größer als 0 ist und der Spieler nicht genügend Kohle hat, wird die Ausnahme [TurnException.NOT_ENOUGH_COAL_FOR_ROTATION] ausgelöst.
+ * 3. Der Spieler kann [Ship.freeTurns] nutzen, um die Drehung auszuführen, die ihren Wert reduziert.
+ * Wenn der Spieler mehr [Turn]s benötigt, wird [Ship.coal] verbraucht.
+ * 4. Nach erfolgreicher Drehung wird die Richtung des Spielers auf die neue Richtung aktualisiert.
+ *
+ * @property direction Die [CubeDirection], in die das Schiff gedreht werden soll.
+ * @constructor Erzeugt eine neue Instanz der Klasse [Turn].
+ * @see [CubeDirection.turnCountTo]
+ */
 @XStreamAlias(value = "turn")
 data class Turn(
         @XStreamAsAttribute val direction: CubeDirection,
@@ -16,23 +32,18 @@ data class Turn(
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
         val turnCount = ship.direction.turnCountTo(direction)
-        require(!(turnCount == 0 || turnCount < -3 || turnCount > 3)) {
-            throw InvalidMoveException(TurnException.INVALID_ROTATION)
-        }
-        
-        requireNotNull(state.board[ship.position]) {
-            throw InvalidMoveException(TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED)
-        }.takeIf { it == Field.SANDBANK }
         
         val absTurnCount = turnCount.absoluteValue
         val usedCoal: Int = absTurnCount - ship.freeTurns
         
         ship.freeTurns = maxOf(ship.freeTurns - absTurnCount, 0)
         
-        require(ship.coal >= usedCoal) {
-            throw InvalidMoveException(TurnException.NOT_ENOUGH_COAL_FOR_ROTATION)
+        when {
+            state.board[ship.position] == null -> throw InvalidMoveException(TurnException.ROTATION_ON_NON_EXISTING_FIELD)
+            state.board[ship.position] == Field.SANDBANK -> throw InvalidMoveException(TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED)
+            ship.coal < usedCoal -> throw InvalidMoveException(TurnException.NOT_ENOUGH_COAL_FOR_ROTATION)
+            usedCoal > 0 -> ship.coal -= usedCoal
         }
-        usedCoal.takeIf { it > 0 }?.let { ship.coal -= it }
         
         ship.direction = direction
     }
