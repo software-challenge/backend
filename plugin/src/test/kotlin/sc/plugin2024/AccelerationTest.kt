@@ -25,7 +25,7 @@ class AccelerationTest: FunSpec({
         serialized shouldBe """<acceleration acc="5"/>"""
     }
     
-    val team: ITeam = Team.ONE
+    val team: Team = Team.ONE
     
     test("Acceleration should correctly update speed and coal of the ship") {
         val gameState = GameState()
