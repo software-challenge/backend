@@ -83,7 +83,7 @@ data class GameState @JvmOverloads constructor(
                     // Drittens, sollte der Dampfer mit dem höheren Kohlevorrat beginnen
                     shipOne.coal != shipTwo.coal -> if(shipOne.coal > shipTwo.coal) Team.ONE else Team.TWO
                     // Viertens, sollte der Dampfer, der am weitesten rechts steht (höchste X-Koordinate), beginnen
-                    shipOne.position.q != shipTwo.position.q ->  if(shipOne.position.q > shipTwo.position.q) Team.ONE else Team.TWO
+                    shipOne.position.q != shipTwo.position.q -> if(shipOne.position.q > shipTwo.position.q) Team.ONE else Team.TWO
                     // Fünftens, sollte der Dampfer, der am weitesten unten steht (höchste Y-Koordinate), beginnen
                     else -> if(shipOne.position.r >= shipTwo.position.r) Team.ONE else Team.TWO
                 }
@@ -194,20 +194,14 @@ data class GameState @JvmOverloads constructor(
      * @return A list of all possible push actions.
      */
     fun getPossiblePushs(): List<Push> {
-        val push = mutableListOf<Push>()
-        val from: CubeCoordinates = currentShip.position
-        if(board[from] == Field.SANDBANK || currentShip.position == otherShip.position) { // niemand darf von einer Sandbank herunterpushen.
-            return push
-        }
-        val direction: CubeDirection = currentShip.direction
-        CubeDirection.values().forEach { dirs ->
-            board.getFieldInDirection(dirs, from)?.let { to ->
-                if(dirs !== direction.opposite() && to.isEmpty && currentShip.movement >= 1) {
-                    push.add(Push(dirs))
-                }
+        if(board[currentShip.position] == Field.SANDBANK ||
+           currentShip.position == otherShip.position) return emptyList()
+        
+        return CubeDirection.values().mapNotNull { dirs ->
+            board.getFieldInDirection(dirs, currentShip.position)?.let { to ->
+                if(dirs !== currentShip.direction.opposite() && to.isEmpty && currentShip.movement >= 1) Push(dirs) else null
             }
         }
-        return push
     }
     
     /**
@@ -217,17 +211,15 @@ data class GameState @JvmOverloads constructor(
      * @return List of all turn actions
      */
     fun getPossibleTurns(maxCoal: Int = currentShip.coal): List<Turn> {
-        val turns = ArrayList<Turn>()
-        if(board[currentShip.position] == Field.SANDBANK) {
-            return turns
-        }
+        if(board[currentShip.position] == Field.SANDBANK) return emptyList()
         // TODO hier sollte man vielleicht einfach die ausführbaren turns in freeTurns speichern, statt die generellen Turns
-        val maxTurn = min(3.0, (currentShip.coal + currentShip.freeTurns).toDouble()).toInt()
-        for(i in 1..maxTurn) {
-            turns.add(Turn(currentShip.direction.rotatedBy(i)))
-            turns.add(Turn(currentShip.direction.rotatedBy(-i)))
+        val maxTurn = min(3.0, (maxCoal + currentShip.freeTurns).toDouble()).toInt()
+        return (1..maxTurn).flatMap { i ->
+            listOf(
+                    Turn(currentShip.direction.rotatedBy(i)),
+                    Turn(currentShip.direction.rotatedBy(-i))
+            )
         }
-        return turns
     }
     
     /**
@@ -239,44 +231,27 @@ data class GameState @JvmOverloads constructor(
     fun getPossibleAdvances(): List<Advance> {
         val step = mutableListOf<Advance>()
         val start: CubeCoordinates = currentShip.position
+        if(board[start] != Field.SANDBANK || currentShip.movement <= 0) return step
         
-        val eligibleForMovement = board[start] == Field.SANDBANK && currentShip.movement > 0
-        if(!eligibleForMovement) return step.toList()
-        
-        val directions = listOf(
-                Pair(currentShip.direction.opposite(), -1),
-                Pair(currentShip.direction, 1)
-        )
-        
-        directions.forEach { (direction, coordinate) ->
-            board.getFieldInDirection(direction, start)?.let {
-                if(it.isEmpty) {
-                    step.add(Advance(coordinate))
+        listOf(Pair(currentShip.direction.opposite(), -1), Pair(currentShip.direction, 1))
+                .forEach { (direction, coordinate) ->
+                    board.getFieldInDirection(direction, start)?.let {
+                        if(it.isEmpty) step.add(Advance(coordinate))
+                    }
                 }
-            }
-        }
         
         while(currentShip.movement > 0) {
             val next: Field? = board.getFieldInDirection(currentShip.direction, start)
-            val isNextEmptyOrNull = next?.isEmpty ?: return step.toList()
+            if(next?.isEmpty != true) return step
             
-            if(isNextEmptyOrNull) {
-                currentShip.movement--
-                
-                if(currentShip.movement >= 0) {
-                    step.add(Advance(0))
-                }
-                
-                val destination = currentShip.position + currentShip.direction.vector
-                
-                if(next == Field.SANDBANK || destination == otherShip.position) {
-                    return step.toList()
-                }
-            }
+            currentShip.movement--
+            if(currentShip.movement < 0) break
             
-            return step.toList()
+            step.add(Advance(0))
+            val destination = currentShip.position + currentShip.direction.vector
+            if(next == Field.SANDBANK || destination == otherShip.position) break
         }
-        return step.toList()
+        return step
     }
     
     /**
@@ -284,53 +259,34 @@ data class GameState @JvmOverloads constructor(
      *
      * @return List of all possible Acceleration actions
      */
-    fun getPossibleAccelerations(): List<Acceleration> {
-        val acc: java.util.ArrayList<Acceleration> = java.util.ArrayList<Acceleration>()
-        for(i in 0..currentShip.coal) {
-            if(currentShip.speed < 6 - i) {
-                acc.add(Acceleration(1 + i)) // es wird nicht zu viel beschleunigt
-            }
-            if(currentShip.speed > 1 + i) {
-                acc.add(Acceleration(-1 - i)) // aber zu viel abgebremst
-            }
-        }
-        return acc
+    fun getPossibleAccelerations(maxCoal: Int = currentShip.coal): List<Acceleration> = (0..maxCoal).flatMap { i ->
+        listOfNotNull(
+                if(currentShip.speed < 6 - i) Acceleration(1 + i) else null,
+                if(currentShip.speed > 1 + i) Acceleration(-1 - i) else null
+        )
     }
-    
-    private fun immovable(ship: ITeam) = true
     
     override val isOver: Boolean
         get() {
             val shipOne = ships.first()
             val shipTwo = ships.last()
             
-            // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
-            if((shipOne.passengers == 2 && shipOne.speed == 1 && board[shipOne.position] == Field.GOAL) ||
-               (shipTwo.passengers == 2 && shipTwo.speed == 1 && board[shipTwo.position] == Field.GOAL)) {
-                return true
+            return when {
+                // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
+                (shipOne.passengers == 2 && shipOne.speed == 1 && board[shipOne.position] == Field.GOAL) ||
+                (shipTwo.passengers == 2 && shipTwo.speed == 1 && board[shipTwo.position] == Field.GOAL) -> true
+                // Bedingung 2: ein Spieler macht einen ungültigen Zug.
+                // Das wird durch eine InvalidMoveException während des Spiels behandelt.
+                // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
+                board.segmentDistance(shipOne.position, shipTwo.position)?.let { abs(it) }!! > 3 -> true
+                // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
+                turn / 2 >= PluginConstants.ROUND_LIMIT -> true
+                // ansonsten geht das Spiel weiter
+                else -> false
             }
-            
-            // Bedingung 2: ein Spieler macht einen ungültigen Zug
-            // Dies wird durch eine InvalidMoveException während des Spiels behandelt.
-            
-            // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
-            if(board.segmentDistance(shipOne.position, shipTwo.position)?.let { abs(it) }!! > 3) {
-                return true
-            }
-            
-            // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
-            if(turn / 2 >= PluginConstants.ROUND_LIMIT) {
-                return true
-            }
-            
-            // ansonsten geht das Spiel weiter
-            return false
         }
     
-    override fun getPointsForTeam(team: ITeam): IntArray {
-        val ship = if(team == Team.ONE) ships.first() else ships.last()
-        return intArrayOf(ship.points)
-    }
+    override fun getPointsForTeam(team: ITeam): IntArray = intArrayOf(if(team == Team.ONE) ships.first().points else ships.last().points)
     
     override fun toString(): String = "GameState(board=$board, turn=$turn, lastMove=$lastMove)"
 }
