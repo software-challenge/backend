@@ -63,6 +63,10 @@ data class CubeCoordinates
     fun distanceTo(other: CubeCoordinates): Int =
             ((q - other.q).absoluteValue + (r - other.r).absoluteValue + (s - other.s).absoluteValue) / 2
     
+    fun horizontalDistanceTo(other: CubeCoordinates): Int = (q - other.q).absoluteValue
+    
+    fun verticalDistanceTo(other: CubeCoordinates): Int = (r - other.r).absoluteValue
+    
     override operator fun compareTo(other: CubeCoordinates): Int {
         var sign = (q - other.q).sign
         if(sign == 0)
@@ -89,7 +93,7 @@ enum class CubeDirection(val vector: CubeCoordinates) {
     DOWN_RIGHT(CubeCoordinates(0, +1)),
     DOWN_LEFT(CubeCoordinates(-1, +1)),
     LEFT(CubeCoordinates(-1, 0)),
-    UP_LEFT(CubeCoordinates( 0, -1)),
+    UP_LEFT(CubeCoordinates(0, -1)),
     UP_RIGHT(CubeCoordinates(+1, -1));
     
     fun withNeighbors() = arrayOf(rotatedBy(-1), this, rotatedBy(1))
