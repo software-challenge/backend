@@ -191,11 +191,12 @@ data class Board(
      */
     fun prettyPrint() {
         val stringBuilder = StringBuilder()
-        for((index, segment) in this.segments.withIndex()) {
-            stringBuilder.append("Segment ${index + 1}:\n")
-            for(fieldTypeRow in segment.segment) {
-                for(fieldType in fieldTypeRow) {
-                    stringBuilder.append("| ${fieldType.javaClass.simpleName.firstOrNull() ?: '-'} ")
+        for((segmentIndex, segment) in this.segments.withIndex()) {
+            stringBuilder.append("Segment ${segmentIndex + 1}:\n")
+            for((x, fieldTypeRow) in segment.segment.withIndex()) {
+                for((y, fieldType) in fieldTypeRow.withIndex()) {
+                    val cubeCoordinates = getCoordinateByIndex(segmentIndex, x, y)
+                    stringBuilder.append("| ${fieldType.javaClass.simpleName.firstOrNull() ?: '-'} (${cubeCoordinates.q}, ${cubeCoordinates.r}) ")
                 }
                 stringBuilder.append("|\n")
             }
