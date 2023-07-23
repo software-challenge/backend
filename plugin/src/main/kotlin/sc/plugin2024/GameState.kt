@@ -95,45 +95,30 @@ data class GameState @JvmOverloads constructor(
         }
     
     /**
-     * Executes the specified move.
+     * Führt den angegebenen Zug aus.
+     * Der Zug wird auf der aktuellen Instanz ausgeführt.
+     * Es sollte also eine Kopie der alten angelegt werden, wenn diese noch gebraucht wird.
      *
-     * @param move The move to perform.
-     * @throws InvalidMoveException if the move is invalid.
+     * @param move Der Zug zum Ausführen
+     * @throws InvalidMoveException wenn der Zug ungültig ist
      */
     override fun performMoveDirectly(move: Move) {
-        if(move.actions.isEmpty()) {
-            throw InvalidMoveException(MoveException.NO_ACTIONS)
-        }
+        if(move.actions.isEmpty()) throw InvalidMoveException(MoveException.NO_ACTIONS)
+        
         move.actions.forEachIndexed { index, action ->
             
-            if(board[currentShip.position] == Field.SANDBANK && index != 0) {
-                throw InvalidMoveException(MoveException.SAND_BANK_END)
+            when {
+                board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveException.SAND_BANK_END)
+                action is Acceleration && index != 0 -> throw InvalidMoveException(MoveException.SAND_BANK_END)
+                currentShip.position == otherShip.position && action !is Push -> throw InvalidMoveException(MoveException.PUSH_ACTION_REQUIRED)
+                else -> action.perform(this, currentShip)
             }
-            
-            if(action is Acceleration && index != 0) {
-                throw InvalidMoveException(AccException.FIRST_ACTION_ACCELERATE)
-            }
-            
-            if(currentShip.position == otherShip.position && action !is Push) {
-                throw InvalidMoveException(
-                        MoveException.PUSH_ACTION_REQUIRED)
-            }
-            
-            action.perform(this, currentShip)
         }
-        // pick up passenger
-        if(currentShip.speed == 1) {
-            this.board.pickupPassenger(currentShip)
-        }
-        // otherPlayer could possibly pick up Passenger in enemy turn
-        if(otherShip.speed == 1) {
-            this.board.pickupPassenger(otherShip)
-        }
-        if(currentShip.movement > 0) { // check whether movement points are left
-            throw InvalidMoveException((MoveException.MOVEMENT_POINTS_LEFT))
-        }
-        if(currentShip.movement < 0) { // check whether movement points are left
-            throw InvalidMoveException(MoveException.EXCESS_MOVEMENT_POINTS)
+        when {
+            currentShip.speed == 1 -> this.board.pickupPassenger(currentShip)
+            otherShip.speed == 1 -> this.board.pickupPassenger(otherShip)
+            currentShip.movement > 0 -> throw InvalidMoveException((MoveException.MOVEMENT_POINTS_LEFT))
+            currentShip.movement < 0 -> throw InvalidMoveException(MoveException.EXCESS_MOVEMENT_POINTS)
         }
     }
     
@@ -143,48 +128,32 @@ data class GameState @JvmOverloads constructor(
      * @return a list of sensible moves
      */
     override fun getSensibleMoves(): List<IMove> {
-        val actions = getPossibleActions()
+        val actions = getPossibleActions(0)
         val moves = mutableListOf<Move>()
         
-        for(i in 1..actions.size) {
-            val combos = generateActionCombinations(actions, i)
-            for(combo in combos) {
-                moves.add(Move(combo))
-            }
+        for(action in actions) {
+            moves.add(Move(listOf(action)))
         }
         return moves
-    }
-    
-    private fun generateActionCombinations(actions: List<Action>, comboSize: Int): List<List<Action>> {
-        return if(comboSize == 0) {
-            listOf(emptyList())
-        } else if(actions.isEmpty()) {
-            emptyList()
-        } else {
-            val head = actions.first()
-            val tail = actions.drop(1)
-            val withHead = generateActionCombinations(tail, comboSize - 1).map { combo -> combo + head }
-            val withoutHead = generateActionCombinations(tail, comboSize)
-            withHead + withoutHead
-        }
     }
     
     /**
      * Retrieves the list of possible [Action]s for the current [Ship]
      * at the current [GameState].
      * If you want to get the follow-up [Action]s,
-     * you need tho perform one of these [Action]s as a [Move]
-     * and use this method again on the new [GameState]
+     * you need to perform one of these [Action]s as a [Move]
+     * and use this method again on the new [GameState].
      *
+     * @param rank the rank the action has in the [Move]
      * @return a list of the possible actions for the current ship.
      */
-    fun getPossibleActions(): List<Action> {
+    fun getPossibleActions(rank: Int): List<Action> {
         val actions: MutableList<Action> = ArrayList()
         
-        actions.addAll(getPossiblePushs())
-        actions.addAll(getPossibleAdvances())
+        if(rank == 0) actions.addAll(getPossibleAccelerations())
         actions.addAll(getPossibleTurns())
-        actions.addAll(getPossibleAccelerations())
+        actions.addAll(getPossibleAdvances())
+        actions.addAll(getPossiblePushs())
         
         return actions
     }
@@ -212,7 +181,7 @@ data class GameState @JvmOverloads constructor(
      * @return List of all turn actions
      */
     fun getPossibleTurns(maxCoal: Int = currentShip.coal): List<Turn> {
-        if(board[currentShip.position] == Field.SANDBANK) return emptyList()
+        if(board[currentShip.position] == Field.SANDBANK || currentShip.position == otherShip.position) return emptyList()
         // TODO hier sollte man vielleicht einfach die ausführbaren turns in freeTurns speichern, statt die generellen Turns
         val maxTurn = min(3.0, (maxCoal + currentShip.freeTurns).toDouble()).toInt()
         return (1..maxTurn).flatMap { i ->
@@ -233,7 +202,7 @@ data class GameState @JvmOverloads constructor(
         val step = mutableListOf<Advance>()
         
         when {
-            currentShip.movement <= 0 -> return step
+            currentShip.movement <= 0 || currentShip.position == otherShip.position -> return step
             board[currentShip.position] == Field.SANDBANK -> return listOf(Advance(1), Advance(-1))
         }
         
@@ -254,11 +223,15 @@ data class GameState @JvmOverloads constructor(
      *
      * @return List of all possible Acceleration actions
      */
-    fun getPossibleAccelerations(maxCoal: Int = currentShip.coal): List<Acceleration> = (0..maxCoal).flatMap { i ->
-        listOfNotNull(
-                if(currentShip.speed < 6 - i) Acceleration(1 + i) else null,
-                if(currentShip.speed > 1 + i) Acceleration(-1 - i) else null
-        )
+    fun getPossibleAccelerations(maxCoal: Int = currentShip.coal): List<Acceleration> {
+        if(currentShip.position == otherShip.position) return emptyList()
+        
+        return (0..maxCoal).flatMap { i ->
+            listOfNotNull(
+                    if(currentShip.speed < 6 - i) Acceleration(1 + i) else null,
+                    if(currentShip.speed > 1 + i) Acceleration(-1 - i) else null
+            )
+        }
     }
     
     override val isOver: Boolean
