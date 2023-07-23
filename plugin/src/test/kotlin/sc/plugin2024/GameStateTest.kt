@@ -1,11 +1,13 @@
 package sc.plugin2024
 
+import com.thoughtworks.xstream.XStream
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
+import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 
 class GameStateTest: FunSpec({
@@ -13,6 +15,30 @@ class GameStateTest: FunSpec({
     val shipTWO = Ship(CubeCoordinates.ORIGIN + CubeDirection.DOWN_LEFT.vector, Team.TWO)
     val gameState = GameState(ships = listOf(shipONE, shipTWO))
     val strippedDownGameState = GameState(ships = listOf(shipONE, shipTWO), board = Board(segments = generateBoard().take(2)))
+    
+    test("serializes nicely") {
+        val xStream = XStream().apply {
+            processAnnotations(GameState::class.java)
+            processAnnotations(Segment::class.java)
+            XStream.setupDefaultSecurity(this)
+            allowTypesByWildcard(arrayOf("sc.plugin2024.*"))
+        }
+        
+        val serialized = xStream.toXML(strippedDownGameState)
+        
+        serialized shouldBe """<state turn="0">
+    <board>
+    </board>
+    <lastMove>
+    </lastMove>
+    <ships>
+        <ship>
+        </ship>
+        <ship>
+        </ship>
+    </ships>
+</state>"""
+    }
     
     test("gameState should return current ship") {
         strippedDownGameState.currentShip shouldBe shipTWO
