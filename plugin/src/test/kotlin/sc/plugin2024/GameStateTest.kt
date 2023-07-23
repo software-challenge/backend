@@ -54,4 +54,18 @@ class GameStateTest: FunSpec({
         
         gameState.getPossibleAccelerations(1).size shouldBe 2
     }
+    
+    test("getPossibleActions should perform correctly") {
+        val possibleActions = strippedDownGameState.getPossibleActions(0)
+        possibleActions shouldHaveSize 12
+        
+        strippedDownGameState.currentShip.position = strippedDownGameState.otherShip.position
+        val possibleActionsAfterMove = strippedDownGameState.getPossibleActions(0)
+        possibleActionsAfterMove shouldHaveSize 5
+    }
+    
+    test("getSensibleMoves should perform correctly") {
+        val sensibleMoves = strippedDownGameState.getSensibleMoves()
+        sensibleMoves shouldHaveSize 12
+    }
 })
