@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
-import sc.api.plugins.ITeam
 import sc.api.plugins.Team
 import sc.framework.PublicCloneable
 import sc.plugin2024.actions.Acceleration
