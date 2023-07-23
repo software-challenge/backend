@@ -196,7 +196,7 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossiblePushs(): List<Push> {
         if(board[currentShip.position] == Field.SANDBANK ||
-           currentShip.position == otherShip.position) return emptyList()
+           currentShip.position != otherShip.position) return emptyList()
         
         return CubeDirection.values().mapNotNull { dirs ->
             board.getFieldInDirection(dirs, currentShip.position)?.let { to ->
@@ -231,25 +231,19 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossibleAdvances(): List<Advance> {
         val step = mutableListOf<Advance>()
-        val start: CubeCoordinates = currentShip.position
-        if(board[start] != Field.SANDBANK || currentShip.movement <= 0) return step
         
-        listOf(Pair(currentShip.direction.opposite(), -1), Pair(currentShip.direction, 1))
-                .forEach { (direction, coordinate) ->
-                    board.getFieldInDirection(direction, start)?.let {
-                        if(it.isEmpty) step.add(Advance(coordinate))
-                    }
-                }
+        when {
+            currentShip.movement <= 0 -> return step
+            board[currentShip.position] == Field.SANDBANK -> return listOf(Advance(1), Advance(-1))
+        }
         
-        while(currentShip.movement > 0) {
-            val next: Field? = board.getFieldInDirection(currentShip.direction, start)
-            if(next?.isEmpty != true) return step
+        for(i in 1..currentShip.movement) {
+            val destination = currentShip.position + currentShip.direction.vector * i
+            val next: Field? = board[destination]
+            if(next == null || !next.isEmpty) break
             
-            currentShip.movement--
-            if(currentShip.movement < 0) break
+            step.add(Advance(i))
             
-            step.add(Advance(0))
-            val destination = currentShip.position + currentShip.direction.vector
             if(next == Field.SANDBANK || destination == otherShip.position) break
         }
         return step
