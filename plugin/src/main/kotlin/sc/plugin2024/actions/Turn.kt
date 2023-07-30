@@ -9,16 +9,12 @@ import sc.shared.InvalidMoveException
 import kotlin.math.absoluteValue
 
 /**
- * Stellt eine [Turn]-Aktion dar, die von einem [Ship] im Spiel durchgeführt werden kann.
+ * Stellt eine [Turn]-[Action] dar, die von einem [Ship] im Spiel durchgeführt werden kann.
  *
- * 1. Wenn der Spieler sich auf [Field.SANDBANK] befindet, ist die Drehaktion nicht erlaubt.
- * In diesem Fall wird die Ausnahme [TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED] ausgelöst.
- * 2. Die benötigte Kohle für die Drehung berechnet sich aus dem absoluten Wert der [direction] minus [Ship.direction],
- * minus den verfügbaren [Ship.freeTurns] des Spielers.
- * Wenn die benötigte Kohle größer als 0 ist und der Spieler nicht genügend Kohle hat, wird die Ausnahme [TurnException.NOT_ENOUGH_COAL_FOR_ROTATION] ausgelöst.
- * 3. Der Spieler kann [Ship.freeTurns] nutzen, um die Drehung auszuführen, die ihren Wert reduziert.
- * Wenn der Spieler mehr [Turn]s benötigt, wird [Ship.coal] verbraucht.
- * 4. Nach erfolgreicher Drehung wird die Richtung des Spielers auf die neue Richtung aktualisiert.
+ * 1. Wenn das [Ship] sich auf [Field.SANDBANK] befindet, ist die [Turn]-[Action] nicht erlaubt.
+ * 2. Die benötigte Kohle für den [Turn] berechnet sich aus dem absoluten Wert der [direction] minus der [Ship.direction],
+ * minus den verfügbaren [Ship.freeTurns] des [Ship].
+ * 4. Nach erfolgreichem [Turn] wird die [Ship.direction] auf die neue Richtung aktualisiert.
  *
  * @property direction Die [CubeDirection], in die das Schiff gedreht werden soll.
  * @constructor Erzeugt eine neue Instanz der Klasse [Turn].
