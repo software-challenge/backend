@@ -9,6 +9,7 @@ import sc.api.plugins.Team
 import sc.framework.PublicCloneable
 import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Turn
+import sc.plugin2024.util.PluginConstants.START_COAL
 
 /**
  * This class represents a Ship in the game.
@@ -52,11 +53,10 @@ import sc.plugin2024.actions.Turn
 data class Ship(
         var position: CubeCoordinates,
         @XStreamAsAttribute val team: Team,
-        // TODO die Punktevergabe muss noch gemacht werden
         @XStreamAsAttribute var points: Int = 0,
         @XStreamAsAttribute var direction: CubeDirection = CubeDirection.RIGHT,
         @XStreamAsAttribute var speed: Int = 1,
-        @XStreamAsAttribute var coal: Int = 6,
+        @XStreamAsAttribute var coal: Int = START_COAL,
         @XStreamAsAttribute var passengers: Int = 0,
         @XStreamOmitField var movement: Int = 1,
         @XStreamOmitField var freeTurns: Int = 1,

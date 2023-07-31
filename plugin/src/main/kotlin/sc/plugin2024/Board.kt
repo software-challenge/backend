@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sc.api.plugins.*
+import sc.plugin2024.util.PluginConstants.POINTS_PER_PASSENGER
 import kotlin.math.abs
 import kotlin.reflect.KClass
 
@@ -91,7 +92,7 @@ data class Board(
      * @param coordinate Die Koordinate, für die das [Segment] gefunden werden soll.
      * @return Der Index des Segments, das die Koordinate enthält, oder -1, falls nicht gefunden.
      */
-    private fun findSegment(coordinate: CubeCoordinates): Int? =
+    fun findSegment(coordinate: CubeCoordinates): Int? =
             segments.indexOfFirst { segment ->
                 segment[coordinate] != null
             }.takeUnless { it == -1 }
@@ -118,6 +119,7 @@ data class Board(
                     .filterIsInstance<Field.PASSENGER>().firstOrNull { it.passenger > 0 }?.run {
                         passenger--
                         ship.passengers++
+                        ship.points += POINTS_PER_PASSENGER
                         true
                     } ?: false
     

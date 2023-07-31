@@ -10,6 +10,7 @@ import sc.plugin2024.actions.Turn
 import sc.plugin2024.exceptions.AccException
 import sc.plugin2024.exceptions.MoveException
 import sc.plugin2024.util.PluginConstants
+import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENTS
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
 import kotlin.math.min
@@ -113,6 +114,12 @@ data class GameState @JvmOverloads constructor(
                 currentShip.position == otherShip.position && action !is Push -> throw InvalidMoveException(MoveException.PUSH_ACTION_REQUIRED)
                 else -> action.perform(this, currentShip)
             }
+        }
+        currentShip.points += board.findSegment(currentShip.position)?.times(POINTS_PER_SEGMENTS) ?: 0
+        board.findSegment(currentShip.position)?.let {
+            val segmentIndex = board.segments[it]
+            val xPositionInSegment = ((currentShip.position - segmentIndex.center).rotatedBy(segmentIndex.direction.turnCountTo(CubeDirection.RIGHT)).q + 1)
+            currentShip.points += xPositionInSegment
         }
         when {
             currentShip.speed == 1 -> this.board.pickupPassenger(currentShip)
