@@ -67,8 +67,8 @@ data class Board(
      */
     fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates =
             segments[segmentIndex].let { segment ->
-                val r = yIndex - 2
-                CubeCoordinates(xIndex - 1 - r.coerceAtLeast(0), r)
+                Coordinates(xIndex, yIndex)
+                        .localToCube()
                         .rotatedBy(CubeDirection.RIGHT.turnCountTo(segment.direction))
                         .plus(segment.center)
             }

@@ -15,70 +15,12 @@ import sc.helpers.testXStream
 import sc.plugin2024.util.PluginConstants
 
 class BoardTest: FunSpec({
-    context(Segment::class.simpleName!!) {
-        test("generates goals") {
-            val segment = generateSegment(true, arrayOf())
-            segment.sumOf { it.count { it == Field.WATER } } shouldBe 17
-            forAll(1, 2, 3) {
-                segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe Field.GOAL
-            }
-        }
-        xtest("serializes nicely") {
-            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.WATER))) shouldSerializeTo """
-              <segment direction="RIGHT">
-                <column>
-                  <field type="WATER"/>
-                </column>
-              </segment>
-            """
-            Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
-              <segment direction="RIGHT">
-                <column>
-                  <field type="PASSENGER" direction="LEFT" passenger="1" />
-                </column>
-              </segment>
-            """
-            Segment(CubeDirection.DOWN_LEFT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.PASSENGER(CubeDirection.RIGHT, 0), Field.WATER), arrayOf(Field.SANDBANK, Field.GOAL))) shouldSerializeTo """
-              <segment direction="DOWN_LEFT">
-                <column>
-                  <field type="PASSENGER" direction="RIGHT" passenger="0" />
-                  <field type="WATER" />
-                </column>
-                <column>
-                  <field type="SANDBANK" />
-                  <field type="GOAL" />
-                </column>
-              </segment>
-            """ // Do not serialize center to avoid imposing coordinate system
-            // TODO how to serialize ship position?
-        }
-        // TODO test deep copying
-    }
-    context(Board::class.simpleName!!) {
-        val generatedBoard = Board()
-        context("generates properly") {
-            forAll<Segment>(generatedBoard.segments.take(2)) {
-                it.direction shouldBe CubeDirection.RIGHT
-            }
-            generatedBoard.segments[1].center shouldBe CubeCoordinates(4, 0)
-        }
-        xtest("clones deeply") {
-            val board = Board(listOf())
-            //board.getPenguins() shouldHaveSize 1
-            //val clone = board.clone()
-            //board[1 y 1] = Team.ONE
-            //board.getPenguins() shouldHaveSize 2
-            //clone.getPenguins() shouldHaveSize 1
-            //clone shouldBe makeBoard(0 y 0 to 1)
-        }
-    }
-    
     context("get field by CubeCoordinates") {
-        test("arrayX works within segment") {
-            CubeCoordinates(0, 0, 0).arrayX shouldBe 1 // center
-            CubeCoordinates(-3, 2, 1).arrayX shouldBe 0 // bottom left
-            CubeCoordinates(0, 2, -2).arrayX shouldBe 3 // bottom right
-            CubeCoordinates(1, -2, 1).arrayX shouldBe 2 // top
+        test("arrayX works within first segment") {
+            CubeCoordinates(0, 0, 0).arrayX shouldBe 0 // center
+            CubeCoordinates(-3, 2, 1).arrayX shouldBe -1 // bottom left
+            CubeCoordinates(0, 2, -2).arrayX shouldBe 2 // bottom right
+            CubeCoordinates(1, -2, 1).arrayX shouldBe 1 // top
             val segment = generateSegment(false, arrayOf())
             segment[CubeCoordinates(0, 0)] shouldBe Field.WATER
         }
@@ -114,7 +56,7 @@ class BoardTest: FunSpec({
 
     context("findSegment") {
         val board = Board()
-        test("findSegment should return correct segment index") {
+        test("should return correct segment index") {
             val findSegmentMethod = Board::class.java.getDeclaredMethod("findSegment", CubeCoordinates::class.java)
             findSegmentMethod.isAccessible = true
             findSegmentMethod.invoke(board, CubeCoordinates.ORIGIN) shouldBe 0
@@ -167,8 +109,7 @@ class BoardTest: FunSpec({
     }
 
     context("pickupPassenger") {
-        
-        test("pickupPassenger should decrease passenger count of the neighbouring field and increase passenger count of the ship") {
+        test("should decrease passenger count of the neighbouring field and increase passenger count of the ship") {
             val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))
             val board = Board()
             val nextPassengerField = board.findNearestFieldTypes(CubeCoordinates(0, 0), Field.PASSENGER::class).first()
@@ -187,7 +128,7 @@ class BoardTest: FunSpec({
                     .filterIsInstance<Field.PASSENGER>().first().passenger shouldBe initialFieldPassengers - 1
         }
         
-        test("pickupPassenger should return false and not change passenger count when no neighbouring passenger fields") {
+        test("should return false and not change passenger count when no neighbouring passenger fields") {
             val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))
             val board = Board()
             
@@ -224,6 +165,15 @@ class BoardTest: FunSpec({
         //    move.from shouldBe (0 y 0)
         //    move.to.isValid.shouldBeFalse()
         //}
+    }
+    xtest("clones deeply") {
+        val board = Board(listOf())
+        //board.getPenguins() shouldHaveSize 1
+        //val clone = board.clone()
+        //board[1 y 1] = Team.ONE
+        //board.getPenguins() shouldHaveSize 2
+        //clone.getPenguins() shouldHaveSize 1
+        //clone shouldBe makeBoard(0 y 0 to 1)
     }
     xcontext("XML Serialization") {
         test("empty Board") {

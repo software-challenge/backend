@@ -22,7 +22,7 @@ sealed class Field: IField<Field> {
     }
 
     /** Passagierfeld mit Anleger */
-    class PASSENGER(@XStreamAsAttribute val direction: CubeDirection, @XStreamAsAttribute var passenger: Int = 1): Field() {
+    data class PASSENGER(@XStreamAsAttribute val direction: CubeDirection = CubeDirection.random(), @XStreamAsAttribute var passenger: Int = 1): Field() {
         override val isEmpty = false
         override fun clone() = PASSENGER(direction, passenger)
     }

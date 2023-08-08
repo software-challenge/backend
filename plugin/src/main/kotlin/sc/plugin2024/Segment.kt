@@ -8,6 +8,7 @@ import sc.api.plugins.*
 import sc.framework.PublicCloneable
 import sc.framework.shuffledIndices
 import sc.plugin2024.util.PluginConstants
+import kotlin.math.absoluteValue
 import kotlin.math.min
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -34,11 +35,10 @@ data class Segment(
 }
 
 /**
- * Fills a segment of the game map with a specified number of passengers,
- * blocked islands, special islands, and a goal island.
+ * Fills a segment of the game map with the provided fields
+ * and optionally goal fields.
  *
- * @param end a flag indicating whether to place a goal island in the segment.
- * True if a goal island should be placed, false otherwise.
+ * @param end whether to place goal fields on the segment
  */
 internal fun generateSegment(
         end: Boolean,
@@ -66,30 +66,37 @@ internal fun generateSegment(
                     }
                 }.toTypedArray()
     }
-    fields.forEachIndexed { x, fieldTypes ->
-        fieldTypes.forEachIndexed { y, field ->
+    if(!fields.alignPassengers()) {
+        // Fallback to new segment on impossible passenger field
+        return generateSegment(end, fieldsToPlace)
+    }
+    return fields
+}
+
+/** Rotates all passenger fields towards water.
+ * @return false if there is an impossible field */
+internal fun SegmentFields.alignPassengers(random: Random = Random): Boolean {
+    val fields = this
+    fields.forEachIndexed { x, column ->
+        column.forEachIndexed { y, field ->
             if(field is Field.PASSENGER) {
-                // Rotate Passenger fields to water
-                // TODO I am not entirely sure what happened here,
-                //  but before it always went straight to the fallback
-                //  This *seems* to work, but not tested
-                val neighborFields = field.direction.withNeighbors().mapNotNull {
-                    val i = x + it.vector.arrayX
-                    val j = y + it.vector.r
-                    
-                    if(i in fields.indices && j in fields[i].indices) fields[i][j] else null
-                }.toList()
-                
-                neighborFields.firstOrNull { it == Field.WATER }?.let { waterNeighbor ->
-                    fields[x][y] = Field.PASSENGER(field.direction.withNeighbors()[neighborFields.indexOf(waterNeighbor)])
-                } ?: run {
-                    // Fallback to new segment on impossible passenger field
-                    return generateSegment(end, fieldsToPlace)
-                }
+                val result = shuffledIndices(CubeDirection.values().size, random = random)
+                        .mapToObj { Field.PASSENGER(CubeDirection.values()[it], 1) }
+                        .filter {
+                            val target = Coordinates(x, y).localToCube() + it.direction.vector
+                            get(target) == Field.WATER ||
+                                (target.arrayX == -2 && target.r.absoluteValue < 3) // in front of a tile is always water
+                        }
+                        .findFirst()
+                if(result.isPresent)
+                    fields[x][y] = result.get()
+                else
+                    // Impossible passenger field
+                    return false
             }
         }
     }
-    return fields
+    return true
 }
 
 internal fun generateBoard(): Segments {
@@ -118,11 +125,17 @@ internal fun generateBoard(): Segments {
 }
 
 val CubeCoordinates.arrayX: Int
-    get() = maxOf(q, -s) + 1
+    get() = maxOf(q, -s)
+
+fun Coordinates.localToCube(): CubeCoordinates {
+    val r = y - 2
+    return CubeCoordinates(x - 1 - r.coerceAtLeast(0), r)
+}
 
 /** Get a field by local cartesian coordinates. */
-operator fun SegmentFields.get(x: Int, y: Int): Field = this[x][y]
+operator fun SegmentFields.get(x: Int, y: Int): Field? =
+        this.getOrNull(x)?.getOrNull(y)
 
-/** Get a field by RELATIVE CubeCoordinates if it exists. */
+/** Get a field by CubeCoordinates RELATIVE to segment center, if it exists. */
 operator fun SegmentFields.get(coordinates: CubeCoordinates): Field? =
-        this.getOrNull(coordinates.arrayX)?.getOrNull(coordinates.r + 2)
+        this[coordinates.arrayX + 1, coordinates.r + 2]
