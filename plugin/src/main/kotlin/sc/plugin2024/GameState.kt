@@ -32,7 +32,12 @@ data class GameState @JvmOverloads constructor(
         @XStreamAsAttribute override var turn: Int = 0,
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
-        val ships: List<Ship> = listOf(),
+        val ships: List<Ship> = (CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector).let { start ->
+            listOf(
+                    Ship(start + CubeDirection.UP_LEFT.vector, Team.ONE),
+                    Ship(start + CubeDirection.DOWN_LEFT.vector, Team.TWO)
+            )
+        },
         /**
          * The player who started the current round.
          * By default, [Team.ONE] is the one starting the first round.
