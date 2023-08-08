@@ -23,6 +23,7 @@ class AdvanceTest: FunSpec({
         val serialized = xStream.toXML(Advance(5))
         
         serialized shouldBe """<advance distance="5"/>"""
+        Advance(5) shouldSerializeTo """<advance distance="5"/>"""
     }
     
     test("valid moves") {
@@ -49,7 +50,8 @@ class AdvanceTest: FunSpec({
         val invalidAdvance = Advance(3)
         
         shouldThrow<InvalidMoveException> {
-            invalidAdvance.perform(gameState, shipONE)
+            gameState.performMoveDirectly(Move(invalidAdvance))
+            println(gameState.ships)
         }.mistake shouldBe AdvanceException.NO_MOVEMENT_POINTS
     }
     
