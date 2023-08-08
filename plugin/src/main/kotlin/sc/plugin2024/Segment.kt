@@ -118,11 +118,11 @@ internal fun generateBoard(): Segments {
 }
 
 val CubeCoordinates.arrayX: Int
-    get() = maxOf(q, -s)
+    get() = maxOf(q, -s) + 1
 
 /** Get a field by local cartesian coordinates. */
 operator fun SegmentFields.get(x: Int, y: Int): Field = this[x][y]
 
 /** Get a field by RELATIVE CubeCoordinates if it exists. */
 operator fun SegmentFields.get(coordinates: CubeCoordinates): Field? =
-        this.getOrNull(coordinates.arrayX)?.getOrNull(coordinates.r)
+        this.getOrNull(coordinates.arrayX)?.getOrNull(coordinates.r + 2)

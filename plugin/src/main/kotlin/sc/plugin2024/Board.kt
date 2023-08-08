@@ -67,8 +67,10 @@ data class Board(
      */
     fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates =
             segments[segmentIndex].let { segment ->
-                CubeCoordinates(xIndex - 1, yIndex - 2)
-                        .rotatedBy(-segment.direction.turnCountTo(CubeDirection.RIGHT)).plus(segment.center)
+                val r = yIndex - 2
+                CubeCoordinates(xIndex - 1 - r.coerceAtLeast(0), r)
+                        .rotatedBy(CubeDirection.RIGHT.turnCountTo(segment.direction))
+                        .plus(segment.center)
             }
     
     /**
@@ -192,13 +194,17 @@ data class Board(
      * Diese Methode durchläuft jedes Segment des gegebenen Objekts und druckt dessen Inhalt in formatierter Form aus.
      */
     fun prettyPrint() {
+        /*segments.joinToString("\n\n") {
+            "Segment pointing ${it.direction}" +
+            // TODO how to join columns
+        }*/
         val stringBuilder = StringBuilder()
         for((segmentIndex, segment) in this.segments.withIndex()) {
             stringBuilder.append("Segment ${segmentIndex + 1}:\n")
-            for((x, fieldTypeRow) in segment.segment.withIndex()) {
-                for((y, fieldType) in fieldTypeRow.withIndex()) {
+            for((x, column) in segment.segment.withIndex()) {
+                for((y, field) in column.withIndex()) {
                     val cubeCoordinates = getCoordinateByIndex(segmentIndex, x, y)
-                    stringBuilder.append("| ${fieldType.javaClass.simpleName.firstOrNull() ?: '-'} (${cubeCoordinates.q}, ${cubeCoordinates.r}) ")
+                    stringBuilder.append("| ${field.letter} (${cubeCoordinates.q}, ${cubeCoordinates.r}) ")
                 }
                 stringBuilder.append("|\n")
             }

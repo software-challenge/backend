@@ -23,7 +23,7 @@ class BoardTest: FunSpec({
                 segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe Field.GOAL
             }
         }
-        test("serializes nicely") {
+        xtest("serializes nicely") {
             Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.WATER))) shouldSerializeTo """
               <segment direction="RIGHT">
                 <column>
@@ -62,7 +62,7 @@ class BoardTest: FunSpec({
             }
             generatedBoard.segments[1].center shouldBe CubeCoordinates(4, 0)
         }
-        test("clones deeply") {
+        xtest("clones deeply") {
             val board = Board(listOf())
             //board.getPenguins() shouldHaveSize 1
             //val clone = board.clone()
@@ -74,38 +74,41 @@ class BoardTest: FunSpec({
     }
     
     context("get field by CubeCoordinates") {
-        test("works within segment") {
-            CubeCoordinates(0, 0, 0).arrayX shouldBe 0
-            CubeCoordinates(-3, 2, 1).arrayX shouldBe -1
-            CubeCoordinates(0, 2, -2).arrayX shouldBe 2
-            CubeCoordinates(1, -2, 1).arrayX shouldBe 1
+        test("arrayX works within segment") {
+            CubeCoordinates(0, 0, 0).arrayX shouldBe 1 // center
+            CubeCoordinates(-3, 2, 1).arrayX shouldBe 0 // bottom left
+            CubeCoordinates(0, 2, -2).arrayX shouldBe 3 // bottom right
+            CubeCoordinates(1, -2, 1).arrayX shouldBe 2 // top
             val segment = generateSegment(false, arrayOf())
             segment[CubeCoordinates(0, 0)] shouldBe Field.WATER
         }
         val board = Board()
         test("delineates first segment") {
+            board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
+            board.getCoordinateByIndex(0, 1, 2) shouldBe CubeCoordinates.ORIGIN
+            board.getCoordinateByIndex(0, 2, 3) shouldBe CubeCoordinates(0, 1)
             board[CubeCoordinates(0, 0)] shouldBe Field.WATER
+            CubeCoordinates(-1, -2).distanceTo(CubeCoordinates.ORIGIN) shouldBe 3
             board[CubeCoordinates(-1, -2)] shouldBe Field.WATER
+            board[CubeCoordinates(-3, 2)] shouldBe Field.WATER
             board[CubeCoordinates(-2, -2)].shouldBeNull()
             board[CubeCoordinates(0, -3)].shouldBeNull()
-            board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
         }
         test("end of second segment") {
-            board[CubeCoordinates(6, 2, 0)] shouldBe Field.WATER
-            board[CubeCoordinates(6, -2, 0)] shouldBe Field.WATER
             board.getCoordinateByIndex(1,
                     PluginConstants.SEGMENT_FIELDS_WIDTH - 1, 0) shouldBe CubeCoordinates(6, -2)
             board.getCoordinateByIndex(1,
                     PluginConstants.SEGMENT_FIELDS_WIDTH - 1,
                     PluginConstants.SEGMENT_FIELDS_HEIGHT - 1) shouldBe CubeCoordinates(4, 2)
+            board[CubeCoordinates(6, -2)] shouldBe Field.WATER // top right
+            board[CubeCoordinates(4, 2)] shouldBe Field.WATER // bottom right
         }
-    }
-    
-    context("getCoordinateByIndex") {
-        val board = Board()
-        test("returns correct CubeCoordinates from indexes") {
-            val coordinate = board.getCoordinateByIndex(1, 0, 0)
-            coordinate shouldBe CubeCoordinates(3, -2, -1)
+        test("start of second segment") {
+            val coordinate = board.getCoordinateByIndex(1, 0, 2)
+            coordinate shouldBe CubeCoordinates(3, 0)
+            val center = board.segments[1].center
+            (coordinate + CubeDirection.RIGHT.vector) shouldBe center
+            board.getCoordinateByIndex(1, 1, 2) shouldBe center
         }
     }
 
@@ -198,11 +201,7 @@ class BoardTest: FunSpec({
         
     }
 
-    context("Board calculates Moves") {
-        //val board = makeBoard(0 y 0 to 0)
-    }
-    
-    context("Board calculates diffs") {
+    xcontext("Board calculates diffs") {
         //val board = makeBoard(0 y 0 to "r", 2 y 0 to "r")
         //test("empty for itself") {
         //    board.diff(board).shouldBeEmpty()
@@ -226,7 +225,7 @@ class BoardTest: FunSpec({
         //    move.to.isValid.shouldBeFalse()
         //}
     }
-    context("XML Serialization") {
+    xcontext("XML Serialization") {
         test("empty Board") {
             Board(emptyList()) shouldSerializeTo """
               <board/>

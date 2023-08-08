@@ -10,6 +10,9 @@ sealed class Field: IField<Field> {
     override val isEmpty = true
     override fun clone() = this
     
+    val letter: Char
+        get() = javaClass.simpleName.first()
+    
     /** Wasserfeld, auf ihm kann sich normal bewegt werden */
     object WATER : Field()
     
