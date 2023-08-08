@@ -53,8 +53,8 @@ data class Push(
             }
             
             else -> {
-                nudgedShip.freeTurns += 1
                 nudgedShip.position = pushResult.shiftTo
+                nudgedShip.freeTurns++
             }
         }
     }

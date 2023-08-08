@@ -58,15 +58,15 @@ data class Ship(
         @XStreamAsAttribute var speed: Int = 1,
         @XStreamAsAttribute var coal: Int = START_COAL,
         @XStreamAsAttribute var passengers: Int = 0,
-        @XStreamOmitField var movement: Int = 1,
-        @XStreamOmitField var freeTurns: Int = 1,
+        @XStreamAsAttribute var freeTurns: Int = 1,
+        @XStreamOmitField var movement: Int = speed,
         @XStreamOmitField var freeAcc: Int = 1,
 ): PublicCloneable<Ship> {
-    override fun clone(): Ship {
-        return this.copy(
-                position = this.position.copy(),
-                team = this.team,
-                direction = this.direction
-        )
+    override fun clone(): Ship =
+            this.copy()
+    fun readResolve(): Ship {
+        freeAcc = 1
+        movement = speed
+        return this
     }
 }
