@@ -24,7 +24,10 @@ data class Segment(
         @XStreamOmitField val center: CubeCoordinates,
         @XStreamImplicit @XStreamAlias("segment") val segment: SegmentFields,
 ): PublicCloneable<Segment> {
-    /** Get from unrotated globa coordinates. */
+    val tip: CubeCoordinates
+        get() = center + (direction.vector * 2)
+    
+    /** Get Field by global coordinates. */
     operator fun get(coordinates: CubeCoordinates): Field? =
         segment[(coordinates - center).rotatedBy(direction.turnCountTo(CubeDirection.RIGHT))]
     
@@ -120,7 +123,7 @@ val CubeCoordinates.arrayX: Int
 
 operator fun SegmentFields.get(x: Int, y: Int): Field = this[x][y]
 
-/** Get a field by RELATIVE CubeCoordinates if it exists. */
+/** Get a field by RELATIVE Coordinates if it exists. */
 operator fun SegmentFields.get(coordinates: CubeCoordinates): Field? {
     val centerX: Int = round(this.size / 2.0).toInt() - 1
     val centerY: Int = round(this[centerX].size / 2.0).toInt()

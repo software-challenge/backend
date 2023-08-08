@@ -134,7 +134,7 @@ data class Board(
     fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? =
             with(segments.last()) {
                 // TODO this assumes that the segment is 5x4
-                val mostFurthestPoint = center + (direction.vector * 2)
+                val mostFurthestPoint = tip
                 val dist1 = ship1.position.distanceTo(mostFurthestPoint)
                 val dist2 = ship2.position.distanceTo(mostFurthestPoint)
                 if(dist1 < dist2) ship1 else if(dist1 > dist2) ship2 else null
