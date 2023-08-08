@@ -5,9 +5,9 @@ import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
+import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
-import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 
@@ -55,6 +55,7 @@ class GameStateTest: FunSpec({
     test("getPossibleTurns") {
         gameState.getPossibleTurns(0).shouldHaveSize(2)
         gameState.getPossibleTurns(1).shouldHaveSize(4)
+        gameState.getPossibleTurns(2).shouldHaveSize(5)
     }
     
     context("getPossibleAdvances") {
@@ -75,7 +76,7 @@ class GameStateTest: FunSpec({
     
     context("getPossibleActions") {
         test("from starting position") {
-            gameState.getPossibleActions(0) shouldHaveSize 12
+            gameState.getPossibleActions(0) shouldHaveSize 11
         }
         test("push") {
             gameState.currentShip.position = gameState.otherShip.position
@@ -84,8 +85,8 @@ class GameStateTest: FunSpec({
     }
     
     test("getSensibleMoves") {
-        val sensibleMoves = gameState.getSensibleMoves()
-        sensibleMoves shouldHaveSize 7
+        gameState.currentShip.position shouldBe CubeCoordinates(-1, -1)
+        gameState.getSensibleMoves() shouldHaveSize 8
     }
     
     

@@ -12,7 +12,7 @@ import sc.plugin2024.util.PluginConstants
 import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENT
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
-import kotlin.math.min
+import kotlin.math.absoluteValue
 
 /**
  * The GameState class represents the current state of the game.
@@ -83,8 +83,8 @@ data class GameState @JvmOverloads constructor(
                 it.speed * 10 +
                 it.coal
             }!!.team
-            // TODO or something like this?
-            //  Team.values().maxByOrNull { getPointsForTeam(it) }
+    // TODO or something like this?
+    //  Team.values().maxByOrNull { getPointsForTeam(it) }
     
     fun Ship.calculatePoints() =
             board.findSegment(this.position)?.let { segmentIndex ->
@@ -123,6 +123,7 @@ data class GameState @JvmOverloads constructor(
         if(move.actions.any { it is Push })
             otherShip.calculatePoints()
         
+        lastMove = move
         advanceTurn()
     }
     
@@ -133,24 +134,20 @@ data class GameState @JvmOverloads constructor(
             currentRoundStarter = determineAheadTeam()
     }
     
-    /**
-     * Retrieves a list of sensible moves based on the possible actions.
-     *
-     * @return a list of sensible moves
-     */
+    /** Retrieves a list of sensible moves based on the possible actions. */
     override fun getSensibleMoves(): List<IMove> =
             getPossibleMoves(1).ifEmpty { getPossibleMoves() }
     
-    fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> {
-        val actions = getPossibleActions(0, maxCoal)
-        val moves = mutableListOf<Move>()
-        
-        for(action in actions) {
-            moves.add(Move(listOf(action)))
-            // TODO
-        }
-        return moves
-    }
+    /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount. */
+    fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> =
+            (getPossibleTurns(maxCoal.coerceAtMost(1)) + null).flatMap { turn ->
+                getPossibleAdvances(currentShip.position,
+                        turn?.direction ?: currentShip.direction,
+                        currentShip.movement + currentShip.freeAcc + (maxCoal - (turn?.direction?.turnCountTo(currentShip.direction)?.absoluteValue?.minus(currentShip.freeTurns) ?: 0)))
+                        .map { advance ->
+                            Move(listOfNotNull(Acceleration(advance.distance - currentShip.movement).takeUnless { it.acc == 0 }, turn, advance))
+                        }
+            }
     
     /**
      * Retrieves the list of possible [Action]s for the current [Ship]
@@ -198,13 +195,13 @@ data class GameState @JvmOverloads constructor(
     fun getPossibleTurns(maxCoal: Int = currentShip.coal): List<Turn> {
         if(board[currentShip.position] == Field.SANDBANK || currentShip.position == otherShip.position) return emptyList()
         // TODO hier sollte man vielleicht einfach die ausführbaren turns in freeTurns speichern, statt die generellen Turns
-        val maxTurn = min(3.0, (maxCoal + currentShip.freeTurns).toDouble()).toInt()
-        return (1..maxTurn).flatMap { i ->
+        val maxTurnCount = (maxCoal + currentShip.freeTurns).coerceAtMost(3)
+        return (1..maxTurnCount).flatMap { i ->
             listOf(
                     Turn(currentShip.direction.rotatedBy(i)),
                     Turn(currentShip.direction.rotatedBy(-i))
             )
-        }
+        }.take(5)
     }
     
     /**
@@ -214,20 +211,22 @@ data class GameState @JvmOverloads constructor(
      * @return List of all possible advances in the corresponding direction
      */
     fun getPossibleAdvances(): List<Advance> {
-        when {
-            currentShip.movement <= 0 || currentShip.position == otherShip.position -> return emptyList()
-            board[currentShip.position] == Field.SANDBANK -> return listOf(Advance(1), Advance(-1))
-        }
+        if(currentShip.movement <= 0 || currentShip.position == otherShip.position) return emptyList()
+        return getPossibleAdvances(currentShip.position, currentShip.direction, currentShip.movement)
+    }
+    
+    fun getPossibleAdvances(start: CubeCoordinates, direction: CubeDirection, movement: Int): List<Advance> {
+        if(board[start] == Field.SANDBANK) return listOf(Advance(1), Advance(-1))
         
         val advances = mutableListOf<Advance>()
-        for(i in 1..currentShip.movement) {
-            val destination = currentShip.position + currentShip.direction.vector * i
+        for(i in 1..movement) {
+            val destination = start + direction.vector * i
             val next: Field? = board[destination]
             if(next == null || !next.isEmpty) break
             
             advances.add(Advance(i))
             
-            if(next == Field.SANDBANK || destination == otherShip.position) break
+            if(next == Field.SANDBANK || ships.any { it.position == destination }) break
         }
         return advances
     }

@@ -53,7 +53,7 @@ import sc.plugin2024.util.PluginConstants.START_COAL
 data class Ship(
         var position: CubeCoordinates,
         @XStreamAsAttribute val team: Team,
-        @XStreamAsAttribute var points: Int = 0,
+        @XStreamAsAttribute var points: Int = 0, // TODO don't track points here
         @XStreamAsAttribute var direction: CubeDirection = CubeDirection.RIGHT,
         @XStreamAsAttribute var speed: Int = 1,
         @XStreamAsAttribute var coal: Int = START_COAL,
