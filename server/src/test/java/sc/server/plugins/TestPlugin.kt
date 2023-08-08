@@ -15,7 +15,8 @@ class TestPlugin: IGamePlugin {
     override val scoreDefinition: ScoreDefinition =
             ScoreDefinition("winner", "index", "turn")
     
-    override val turnLimit = throw NotImplementedError()
+    override val turnLimit
+        get() = throw NotImplementedError()
     
     override fun createGame(): IGameInstance =
             TestGame()
