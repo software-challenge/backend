@@ -48,8 +48,8 @@ data class CubeCoordinates
     
     /** Rotated by *turns* to the right. */
     fun rotatedBy(turns: Int) =
-            CubeCoordinates(coordinates[Math.floorMod(turns, 3)], coordinates[Math.floorMod(turns + 1, 3)], coordinates[Math.floorMod(turns + 2, 3)]).let {
-                if(Math.floorMod(turns, 2) == 1) it.unaryMinus() else it
+            CubeCoordinates(coordinates[turns.mod(3)], coordinates[turns.plus(1).mod(3)], coordinates[turns.plus(2).mod(3)]).let {
+                if(turns.mod(2) == 1) it.unaryMinus() else it
             }
     
     /**
@@ -93,18 +93,18 @@ enum class CubeDirection(val vector: CubeCoordinates) {
     UP_LEFT(CubeCoordinates(0, -1)),
     UP_RIGHT(CubeCoordinates(+1, -1));
     
+    /** @return an array of this and the two neighboring directions. */
     fun withNeighbors() = arrayOf(rotatedBy(-1), this, rotatedBy(1))
     
     fun opposite() = values().let { it[(ordinal + 3) % it.size] }
     
+    /** Required clockwise turns to target direction.
+     * @return value between 3 and -3 */
     fun turnCountTo(target: CubeDirection): Int {
-        val diff = target.ordinal - this.ordinal
-        return if(diff >= 0) diff else diff + values().size
+        val diff = (target.ordinal - this.ordinal).mod(6)
+        return if(diff > 3) diff - values().size else diff
     }
     
+    /** @return the direction rotated clockwise [turns] times. */
     fun rotatedBy(turns: Int) = values().let { it[(ordinal + turns).mod(it.size)] }
-    
-    companion object {
-        fun random(): CubeDirection = values()[Random.nextInt(values().size)]
-    }
 }

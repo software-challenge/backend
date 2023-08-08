@@ -99,7 +99,10 @@ class CoordinatesTest: FunSpec({
         test("simple rotation") {
             CubeDirection.RIGHT.rotatedBy(1) shouldBe CubeDirection.RIGHT.rotatedBy(-5)
             CubeDirection.RIGHT.rotatedBy(1) shouldBe CubeDirection.DOWN_RIGHT
+            CubeDirection.RIGHT.rotatedBy(-1) shouldBe CubeDirection.UP_RIGHT
             CubeDirection.RIGHT.turnCountTo(CubeDirection.DOWN_RIGHT) shouldBe 1
+            CubeDirection.RIGHT.turnCountTo(CubeDirection.UP_RIGHT) shouldBe -1
+            CubeDirection.RIGHT.turnCountTo(CubeDirection.LEFT) shouldBe 3
         }
     }
 })
