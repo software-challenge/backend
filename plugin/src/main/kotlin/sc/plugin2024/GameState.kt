@@ -130,10 +130,10 @@ data class GameState @JvmOverloads constructor(
             currentShip.points += xPositionInSegment
         }
         when {
+            currentShip.movement > 0 -> throw InvalidMoveException(MoveException.MOVEMENT_POINTS_LEFT)
+            currentShip.movement < 0 -> throw InvalidMoveException(MoveException.MOVEMENT_POINTS_MISSING)
             currentShip.speed == 1 -> this.board.pickupPassenger(currentShip)
             otherShip.speed == 1 -> this.board.pickupPassenger(otherShip)
-            currentShip.movement > 0 -> throw InvalidMoveException(MoveException.MOVEMENT_POINTS_LEFT)
-            currentShip.movement < 0 -> throw InvalidMoveException(MoveException.EXCESS_MOVEMENT_POINTS)
         }
         
         advanceTurn()

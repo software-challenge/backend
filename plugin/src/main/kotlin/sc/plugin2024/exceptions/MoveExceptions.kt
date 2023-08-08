@@ -11,7 +11,7 @@ enum class MoveException(override val message: String) : IMoveMistake {
     OPPONENT_END("Der Zug darf nicht auf dem Gegner enden."),
     INSUFFICIENT_COAL("Nicht genug Kohle für den Zug vorhanden."),
     MOVEMENT_POINTS_LEFT("Es sind noch Bewegungspunkte übrig."),
-    EXCESS_MOVEMENT_POINTS("Nicht genug Bewegungspunkte.");
+    MOVEMENT_POINTS_MISSING("Nicht genug Bewegungspunkte.");
 
     override fun toString() = message
 }
