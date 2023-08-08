@@ -12,8 +12,10 @@ import sc.api.plugins.IMove
  * @property actions The list of actions in the move.
  */
 data class Move(
-        var actions: List<Action>,
+        val actions: List<Action>,
 ): IMove, Comparable<Move> {
+    
+    constructor(vararg actions: Action) : this(actions.asList())
     
     /**
      * Compares this Move instance with the specified Move for order.

@@ -7,10 +7,9 @@ import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
-import sc.plugin2024.exceptions.AccException
 import sc.plugin2024.exceptions.MoveException
 import sc.plugin2024.util.PluginConstants
-import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENTS
+import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENT
 import sc.shared.InvalidMoveException
 import kotlin.math.abs
 import kotlin.math.min
@@ -33,27 +32,21 @@ data class GameState @JvmOverloads constructor(
         @XStreamAsAttribute override var turn: Int = 0,
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
-        
         val ships: List<Ship> = listOf(),
-): TwoPlayerGameState<Move>(Team.ONE) {
+        /**
+         * The player who started the current round.
+         * By default, [Team.ONE] is the one starting the first round.
+         */
+        private var currentRoundStarter: Team = Team.ONE
+): TwoPlayerGameState<Move>(currentRoundStarter) {
     
     override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
     
     val currentShip: Ship
-        get() {
-            return if(currentTeam == Team.ONE) ships.first() else ships.last()
-        }
+        get() = ships[currentTeam.index]
     
     val otherShip: Ship
-        get() {
-            return if(currentTeam == Team.ONE) ships.last() else ships.first()
-        }
-    
-    /**
-     * The player who started the current round.
-     * By default, [Team.ONE] is the one starting the first round.
-     */
-    private var currentRoundStarter: Team = Team.ONE
+        get() = ships[currentTeam.opponent().index]
     
     /**
      * Get the current [Team] that is allowed to make a move.
@@ -65,35 +58,46 @@ data class GameState @JvmOverloads constructor(
      * @return The current team.
      */
     override val currentTeam: Team
-        get() {
-            // Wenn es das Ende der Runde ist (d.h., beide Spieler haben einen Zug gemacht),
-            // dann beginnt der nächste Zug gemäß den gegebenen Regeln
+        get() =
             if(turn % 2 == 0) {
-                val shipOne = ships.first()
-                val shipTwo = ships.last()
-                val shipOneHorizontalDistance = CubeCoordinates.ORIGIN.horizontalDistanceTo(shipOne.position)
-                val shipTwoHorizontalDistance = CubeCoordinates.ORIGIN.horizontalDistanceTo(shipTwo.position)
-                val shipOneVerticalDistance = CubeCoordinates.ORIGIN.verticalDistanceTo(shipOne.position)
-                val shipTwoVerticalDistance = CubeCoordinates.ORIGIN.verticalDistanceTo(shipTwo.position)
-                
-                currentRoundStarter = when {
-                    // Erstens, der Spieler, dessen Dampfer sich am dichtesten am Ziel befindet, beginnt
-                    board.closestShipToGoal(shipOne, shipTwo) != null -> board.closestShipToGoal(shipOne, shipTwo)?.team as Team
-                    // Zweitens, sollte der Dampfer mit der höheren Geschwindigkeit beginnen
-                    shipOne.speed != shipTwo.speed -> if(shipOne.speed > shipTwo.speed) Team.ONE else Team.TWO
-                    // Drittens, sollte der Dampfer mit dem höheren Kohlevorrat beginnen
-                    shipOne.coal != shipTwo.coal -> if(shipOne.coal > shipTwo.coal) Team.ONE else Team.TWO
-                    // Viertens, sollte der Dampfer, der am weitesten rechts steht (höchste X-Koordinate), beginnen
-                    shipOneHorizontalDistance != shipTwoHorizontalDistance ->
-                        if(shipOneHorizontalDistance > shipTwoHorizontalDistance) Team.ONE else Team.TWO
-                    // Fünftens, sollte der Dampfer, der am weitesten unten steht (höchste Y-Koordinate), beginnen
-                    else -> if(shipOneVerticalDistance > shipTwoVerticalDistance) Team.ONE else Team.TWO
-                }
-                return currentRoundStarter
+                currentRoundStarter
             } else {
-                return if(currentRoundStarter == Team.ONE) Team.TWO else Team.ONE
+                currentRoundStarter.opponent()
             }
+    
+    fun determineCurrentTeam(): Team {
+        val shipOne = ships.first()
+        val shipTwo = ships.last()
+        val shipOneHorizontalDistance = CubeCoordinates.ORIGIN.horizontalDistanceTo(shipOne.position)
+        val shipTwoHorizontalDistance = CubeCoordinates.ORIGIN.horizontalDistanceTo(shipTwo.position)
+        val shipOneVerticalDistance = CubeCoordinates.ORIGIN.verticalDistanceTo(shipOne.position)
+        val shipTwoVerticalDistance = CubeCoordinates.ORIGIN.verticalDistanceTo(shipTwo.position)
+        
+        //val criteria = arrayOf<(Ship) -> Comparable<*>>(
+        //        {
+        //            val segment = board.findSegment(it.position)!!
+        //            board.segments[segment].tip
+        //            segment * 10 +
+        //        },
+        //)
+        //ships.sortedBy { CubeCoordinates.ORIGIN.verticalDistanceTo(it.position) }
+        
+        return when {
+            // Erstens, der Dampfer, der am weitesten vorne steht
+            board.closestShipToGoal(shipOne, shipTwo) != null -> board.closestShipToGoal(shipOne, shipTwo)?.team as Team
+            // Zweitens, der Dampfer mit der höheren Geschwindigkeit
+            shipOne.speed != shipTwo.speed -> if(shipOne.speed > shipTwo.speed) Team.ONE else Team.TWO
+            // Drittens, der Dampfer mit dem höheren Kohlevorrat
+            shipOne.coal != shipTwo.coal -> if(shipOne.coal > shipTwo.coal) Team.ONE else Team.TWO
+            // Viertens, der Dampfer, der am weitesten rechts steht (höchste Q-Koordinate)
+            shipOneHorizontalDistance != shipTwoHorizontalDistance ->
+                if(shipOneHorizontalDistance > shipTwoHorizontalDistance) Team.ONE else Team.TWO
+            // Fünftens, der Dampfer, der am weitesten außen steht
+            shipOneVerticalDistance != shipTwoVerticalDistance ->
+                if(shipOneVerticalDistance > shipTwoVerticalDistance) Team.ONE else Team.TWO
+            else -> startTeam
         }
+    }
     
     /**
      * Führt den angegebenen Zug aus.
@@ -107,15 +111,14 @@ data class GameState @JvmOverloads constructor(
         if(move.actions.isEmpty()) throw InvalidMoveException(MoveException.NO_ACTIONS)
         
         move.actions.forEachIndexed { index, action ->
-            
             when {
                 board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveException.SAND_BANK_END)
-                action is Acceleration && index != 0 -> throw InvalidMoveException(MoveException.SAND_BANK_END)
+                action is Acceleration && index != 0 -> throw InvalidMoveException(MoveException.FIRST_ACTION_ACCELERATE)
                 currentShip.position == otherShip.position && action !is Push -> throw InvalidMoveException(MoveException.PUSH_ACTION_REQUIRED)
                 else -> action.perform(this, currentShip)
             }
         }
-        currentShip.points += board.findSegment(currentShip.position)?.times(POINTS_PER_SEGMENTS) ?: 0
+        currentShip.points += board.findSegment(currentShip.position)?.times(POINTS_PER_SEGMENT) ?: 0
         board.findSegment(currentShip.position)?.let {
             val segmentIndex = board.segments[it]
             val xPositionInSegment = ((currentShip.position - segmentIndex.center).rotatedBy(segmentIndex.direction.turnCountTo(CubeDirection.RIGHT)).q + 1)
@@ -124,9 +127,18 @@ data class GameState @JvmOverloads constructor(
         when {
             currentShip.speed == 1 -> this.board.pickupPassenger(currentShip)
             otherShip.speed == 1 -> this.board.pickupPassenger(otherShip)
-            currentShip.movement > 0 -> throw InvalidMoveException((MoveException.MOVEMENT_POINTS_LEFT))
+            currentShip.movement > 0 -> throw InvalidMoveException(MoveException.MOVEMENT_POINTS_LEFT)
             currentShip.movement < 0 -> throw InvalidMoveException(MoveException.EXCESS_MOVEMENT_POINTS)
         }
+        
+        advanceTurn()
+    }
+    
+    /** Increment the turn and update the current team. */
+    fun advanceTurn() {
+        turn++
+        if(turn % 2 == 0)
+            currentRoundStarter = determineCurrentTeam()
     }
     
     /**
@@ -134,12 +146,16 @@ data class GameState @JvmOverloads constructor(
      *
      * @return a list of sensible moves
      */
-    override fun getSensibleMoves(): List<IMove> {
-        val actions = getPossibleActions(0)
+    override fun getSensibleMoves(): List<IMove> =
+            getPossibleMoves(1).ifEmpty { getPossibleMoves() }
+    
+    fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> {
+        val actions = getPossibleActions(0, maxCoal)
         val moves = mutableListOf<Move>()
         
         for(action in actions) {
             moves.add(Move(listOf(action)))
+            // TODO
         }
         return moves
     }
@@ -151,16 +167,16 @@ data class GameState @JvmOverloads constructor(
      * you need to perform one of these [Action]s as a [Move]
      * and use this method again on the new [GameState].
      *
-     * @param rank the rank the action has in the [Move]
+     * @param position the rank the action has in the [Move]
      * @return a list of the possible actions for the current ship.
      */
-    fun getPossibleActions(rank: Int): List<Action> {
+    fun getPossibleActions(position: Int, maxCoal: Int = currentShip.coal): List<Action> {
         val actions: MutableList<Action> = ArrayList()
         
-        if(rank == 0) actions.addAll(getPossibleAccelerations())
-        actions.addAll(getPossibleTurns())
+        if(position == 0) actions.addAll(getPossibleAccelerations(maxCoal))
+        actions.addAll(getPossibleTurns(maxCoal))
         actions.addAll(getPossibleAdvances())
-        actions.addAll(getPossiblePushs())
+        if(position != 0) actions.addAll(getPossiblePushs())
         
         return actions
     }
@@ -174,9 +190,9 @@ data class GameState @JvmOverloads constructor(
         if(board[currentShip.position] == Field.SANDBANK ||
            currentShip.position != otherShip.position) return emptyList()
         
-        return CubeDirection.values().mapNotNull { dirs ->
-            board.getFieldInDirection(dirs, currentShip.position)?.let { to ->
-                if(dirs !== currentShip.direction.opposite() && to.isEmpty && currentShip.movement >= 1) Push(dirs) else null
+        return CubeDirection.values().mapNotNull { dir ->
+            board.getFieldInDirection(dir, currentShip.position)?.let { to ->
+                if(dir !== currentShip.direction.opposite() && to.isEmpty && currentShip.movement >= 1) Push(dir) else null
             }
         }
     }
@@ -206,23 +222,22 @@ data class GameState @JvmOverloads constructor(
      * @return List of all possible advances in the corresponding direction
      */
     fun getPossibleAdvances(): List<Advance> {
-        val step = mutableListOf<Advance>()
-        
         when {
-            currentShip.movement <= 0 || currentShip.position == otherShip.position -> return step
+            currentShip.movement <= 0 || currentShip.position == otherShip.position -> return emptyList()
             board[currentShip.position] == Field.SANDBANK -> return listOf(Advance(1), Advance(-1))
         }
         
+        val advances = mutableListOf<Advance>()
         for(i in 1..currentShip.movement) {
             val destination = currentShip.position + currentShip.direction.vector * i
             val next: Field? = board[destination]
             if(next == null || !next.isEmpty) break
             
-            step.add(Advance(i))
+            advances.add(Advance(i))
             
             if(next == Field.SANDBANK || destination == otherShip.position) break
         }
-        return step
+        return advances
     }
     
     /**

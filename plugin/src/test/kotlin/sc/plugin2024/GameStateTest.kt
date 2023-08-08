@@ -7,7 +7,6 @@ import io.kotest.matchers.collections.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
-import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 
 class GameStateTest: FunSpec({
@@ -40,58 +39,57 @@ class GameStateTest: FunSpec({
 </state>"""
     }
     
-    test("gameState should return current ship") {
-        strippedDownGameState.currentShip shouldBe shipTWO
+    test("currentTeam should be determined correctly") {
+        strippedDownGameState.startTeam shouldBe Team.ONE
+        strippedDownGameState.currentTeam shouldBe strippedDownGameState.startTeam
+        strippedDownGameState.determineCurrentTeam() shouldBe strippedDownGameState.currentTeam
+        strippedDownGameState.currentShip shouldBe shipONE
+        strippedDownGameState.otherShip shouldBe shipTWO
+        strippedDownGameState.turn++
+        strippedDownGameState.currentTeam shouldBe strippedDownGameState.startTeam.opponent()
+        strippedDownGameState.turn++
+        strippedDownGameState.currentTeam shouldBe strippedDownGameState.startTeam
     }
     
-    test("gameState should return other ship") {
-        strippedDownGameState.otherShip shouldBe shipONE
-    }
-    
-    test("currenTeam getter should work correctly") {
-        strippedDownGameState.currentTeam shouldBe Team.TWO
-        strippedDownGameState.turn = 1
-        strippedDownGameState.currentTeam shouldBe Team.ONE
-    }
-    
-    test("getPossiblePushs should perform correctly") {
-        gameState.getPossiblePushs().size shouldBe 0
-        
+    test("getPossiblePushs") {
+        gameState.getPossiblePushs().shouldBeEmpty()
         gameState.currentShip.position = gameState.otherShip.position
-        gameState.getPossiblePushs().size shouldNotBe 0
+        gameState.getPossiblePushs().shouldNotBeEmpty()
     }
     
-    test("getPossibleTurns should perform correctly") {
-        gameState.getPossibleTurns(0).size shouldBe 2
-        
-        gameState.getPossibleTurns(1).size shouldBe 4
+    test("getPossibleTurns") {
+        gameState.getPossibleTurns(0).shouldHaveSize(2)
+        gameState.getPossibleTurns(1).shouldHaveSize(4)
     }
     
-    test("getPossibleAdvances should perform correctly") {
-        gameState.getPossibleAdvances().size shouldBe 1
-        
-        gameState.currentShip.position = gameState.board
-                .findNearestFieldTypes(gameState.currentShip.position, Field.SANDBANK::class).first()
-        gameState.getPossibleAdvances() shouldContainAnyOf listOf(Advance(1), Advance(-1))
+    context("getPossibleAdvances") {
+        test("from starting position") {
+            gameState.getPossibleAdvances().size shouldBe 1
+        }
+        test("from sandbank")  {
+            gameState.currentShip.position =
+                    gameState.board.findNearestFieldTypes(gameState.currentShip.position, Field.SANDBANK::class).first()
+            gameState.getPossibleAdvances() shouldContainAnyOf listOf(Advance(1), Advance(-1))
+        }
     }
     
-    test("getPossibleAccelerations should perform correctly") {
+    test("getPossibleAccelerations") {
         gameState.getPossibleAccelerations(0).size shouldBe 1
-        
         gameState.getPossibleAccelerations(1).size shouldBe 2
     }
     
-    test("getPossibleActions should perform correctly") {
-        val possibleActions = strippedDownGameState.getPossibleActions(0)
-        possibleActions shouldHaveSize 12
-        
-        strippedDownGameState.currentShip.position = strippedDownGameState.otherShip.position
-        val possibleActionsAfterMove = strippedDownGameState.getPossibleActions(0)
-        possibleActionsAfterMove shouldHaveSize 5
+    context("getPossibleActions") {
+        test("from starting position") {
+            strippedDownGameState.getPossibleActions(0) shouldHaveSize 12
+        }
+        test("push") {
+            strippedDownGameState.currentShip.position = strippedDownGameState.otherShip.position
+            strippedDownGameState.getPossibleActions(1) shouldHaveSize 4
+        }
     }
     
-    test("getSensibleMoves should perform correctly") {
+    test("getSensibleMoves") {
         val sensibleMoves = strippedDownGameState.getSensibleMoves()
-        sensibleMoves shouldHaveSize 12
+        sensibleMoves shouldHaveSize 7
     }
 })

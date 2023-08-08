@@ -1,8 +1,5 @@
 package sc.plugin2024.util
 
-import sc.framework.plugins.Constants
-import sc.plugin2023.util.PluginConstants
-
 /** Eine Sammlung an verschiedenen Konstanten, die im Spiel verwendet werden. */
 object PluginConstants {
     // TODO honor limit in GameState
@@ -15,7 +12,7 @@ object PluginConstants {
     const val NUMBER_OF_PASSENGERS = 5
     
     const val POINTS_PER_PASSENGER = 5
-    const val POINTS_PER_SEGMENTS = 5
+    const val POINTS_PER_SEGMENT = 5
     
     const val START_COAL = 6
     

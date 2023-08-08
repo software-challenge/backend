@@ -11,7 +11,7 @@ import sc.shared.InvalidMoveException
 import java.util.*
 
 /**
- * Stellt eine [Advance]-[Action] für ein Schiff dar.
+ * Das Schiff soll in Fahrtrichtung vorrücken.
  *
  * 1. Eine [Advance]-[Action] ohne Bewegungspunkte ist ungültig.
  * 2. Wenn ein [Ship] sich auf ein [Field.SANDBANK] befindet, dann ist diesem [Ship] genau __ein__ Schritt vor __oder__ zurück erlaubt.
@@ -24,19 +24,12 @@ import java.util.*
  * 6. Die [CubeDirection] kann nicht innerhalb einer [Advance]-[Action] geändert werden - das [Ship] bewegt sich immer in der aktuellen [Ship.direction].
  *
  * @property distance Die Anzahl der [Field]s, die vorzurücken sind.
- * @property endsTurn Zeigt an, ob der Zug nach der [Advance]-Aktion endet.
  */
 @XStreamAlias(value = "advance")
 data class Advance(
         /** Anzahl der Felder, die zurückgelegt werden. */
         @XStreamAsAttribute val distance: Int,
 ): Action {
-    
-    /**
-     * Das Fahren auf eine Sandbank beendet den Zug
-     */
-    @XStreamOmitField
-    var endsTurn = false
     
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
@@ -49,16 +42,6 @@ data class Advance(
         val direction = ship.direction
         val nextFields: LinkedList<CubeCoordinates> = LinkedList<CubeCoordinates>()
         
-        handleMoves(ship, start, direction, state, nextFields)
-    }
-    
-    private fun handleMoves(
-            ship: Ship,
-            start: CubeCoordinates,
-            direction: CubeDirection,
-            state: GameState,
-            nextFields: LinkedList<CubeCoordinates>,
-    ) {
         nextFields.add(start)
         val iterations = if(distance == -1) 1 else distance
         for(i in 0 until iterations) {
@@ -79,19 +62,10 @@ data class Advance(
                 nextField == Field.SANDBANK -> {
                     ship.speed = 1
                     ship.movement = 0
-                    endsTurn = true
                 }
-                
                 distance == -1 -> {
                     ship.movement = 0
-                    endsTurn = true
                 }
-                
-                ship.movement - 1 == 0 -> {
-                    ship.movement = 0
-                    endsTurn = true
-                }
-                
                 else -> ship.movement -= 1
             }
             
