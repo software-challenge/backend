@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
 import sc.framework.PublicCloneable
+import sc.framework.plugins.Constants
 import sc.framework.shuffledIndices
 import sc.plugin2024.util.PluginConstants
 import kotlin.math.absoluteValue
@@ -25,13 +26,39 @@ data class Segment(
         @XStreamImplicit @XStreamAlias("segment") val segment: SegmentFields,
 ): PublicCloneable<Segment> {
     val tip: CubeCoordinates
-        get() = center + (direction.vector * 2)
+        get() = center + (direction.vector * (segment.size / 2))
     
     /** Get Field by global coordinates. */
     operator fun get(coordinates: CubeCoordinates): Field? =
-        segment[(coordinates - center).rotatedBy(direction.turnCountTo(CubeDirection.RIGHT))]
+            segment[globalToLocal(coordinates)]
     
-    override fun clone(): Segment = copy(segment = segment.clone()) // FIXME deepCopy<FieldType>())
+    fun globalToLocal(coordinates: CubeCoordinates) =
+            (coordinates - center).rotatedBy(direction.turnCountTo(CubeDirection.RIGHT))
+    
+    override fun toString() = "Segment at $center to $direction ${segment.contentDeepToString()}"
+    
+    override fun clone(): Segment =
+            copy(segment = Array(segment.size) { x ->
+                Array(segment[x].size) { y -> segment[x][y].clone() }
+            })
+    
+    override fun equals(other: Any?): Boolean {
+        if(this === other) return true
+        if(other !is Segment) return false
+        
+        if(direction != other.direction) return false
+        if(center != other.center) return false
+        if(!segment.contentDeepEquals(other.segment)) return false
+        
+        return true
+    }
+    
+    override fun hashCode(): Int {
+        var result = direction.hashCode()
+        result = 31 * result + center.hashCode()
+        result = 31 * result + segment.contentDeepHashCode()
+        return result
+    }
 }
 
 /**
@@ -85,13 +112,13 @@ internal fun SegmentFields.alignPassengers(random: Random = Random): Boolean {
                         .filter {
                             val target = Coordinates(x, y).localToCube() + it.direction.vector
                             get(target) == Field.WATER ||
-                                (target.arrayX == -2 && target.r.absoluteValue < 3) // in front of a tile is always water
+                            (target.arrayX == -2 && target.r.absoluteValue < 3) // in front of a tile is always water
                         }
                         .findFirst()
                 if(result.isPresent)
                     fields[x][y] = result.get()
                 else
-                    // Impossible passenger field
+                // Impossible passenger field
                     return false
             }
         }

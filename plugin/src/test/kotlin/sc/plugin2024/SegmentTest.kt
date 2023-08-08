@@ -40,6 +40,14 @@ class SegmentTest: FunSpec({
             generatedBoard.segments[1].center shouldBe CubeCoordinates(4, 0)
         }
     }
+    test("clones deeply") {
+        val single = Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf<Field>(Field.PASSENGER())))
+        val clone = single.clone()
+        clone shouldBe single
+        (clone.segment[0][0] as Field.PASSENGER).passenger--
+        clone shouldNotBe single
+        (single.segment[0][0] as Field.PASSENGER).passenger shouldBe 1
+    }
     xtest("serialize Segment") {
         Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.WATER))) shouldSerializeTo """
           <segment direction="RIGHT">
@@ -69,5 +77,4 @@ class SegmentTest: FunSpec({
         """ // Do not serialize center to avoid imposing coordinate system
         // TODO how to serialize ship position?
     }
-    // TODO test deep copying
 })
