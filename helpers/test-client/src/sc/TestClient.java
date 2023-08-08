@@ -294,7 +294,7 @@ public class TestClient extends XStreamClient {
                 logger.error("{} crashed, look into {}", player.name, logDir);
                 exit(2);
               }
-            if (slept > plugin.getTurnLimit() * Constants.SOFT_TIMEOUT) {
+            if (slept > plugin.getGameTimeout()) {
               logger.error("The game seems to hang, exiting!");
               exit(2);
             }

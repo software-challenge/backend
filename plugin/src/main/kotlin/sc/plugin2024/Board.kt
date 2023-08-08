@@ -126,23 +126,6 @@ data class Board(
                     } ?: false
     
     /**
-     * Findet das [Ship], das dem Ziel im letzten [Segment] am nächsten ist.
-     *
-     * @param ship1 Das erste [Ship] zum Vergleich.
-     * @param ship2 Das zweite [Ship] zum Vergleich.
-     * @return Das [Ship], das dem Ziel im letzten [Segment] am nächsten ist, oder null,
-     * wenn beide Schiffe den gleichen Abstand haben.
-     */
-    fun closestShipToGoal(ship1: Ship, ship2: Ship): Ship? =
-            with(segments.last()) {
-                // TODO this assumes that the segment is 5x4
-                val mostFurthestPoint = tip
-                val dist1 = ship1.position.distanceTo(mostFurthestPoint)
-                val dist2 = ship2.position.distanceTo(mostFurthestPoint)
-                if(dist1 < dist2) ship1 else if(dist1 > dist2) ship2 else null
-            }
-    
-    /**
      * Findet das nächstgelegene Feld des angegebenen [Field], ausgehend von den angegebenen [CubeCoordinates],
      * aber ohne [startCoordinates].
      *

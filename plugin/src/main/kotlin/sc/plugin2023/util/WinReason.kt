@@ -8,5 +8,5 @@ import sc.shared.IWinReason
 @XStreamAlias(value = "winreason")
 enum class WinReason(override val message: String): IWinReason {
     EQUAL_SCORE("Beide Teams sind gleichauf."),
-    DIFFERING_SCORES("%s hat mehr Fische gesammelt."),
+    DIFFERING_SCORES("%s hat mehr Punkte gesammelt."),
 }

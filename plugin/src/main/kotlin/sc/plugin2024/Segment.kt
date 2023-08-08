@@ -32,6 +32,7 @@ data class Segment(
     operator fun get(coordinates: CubeCoordinates): Field? =
             segment[globalToLocal(coordinates)]
     
+    /** Turn global into local CubeCoordinates. */
     fun globalToLocal(coordinates: CubeCoordinates) =
             (coordinates - center).rotatedBy(direction.turnCountTo(CubeDirection.RIGHT))
     

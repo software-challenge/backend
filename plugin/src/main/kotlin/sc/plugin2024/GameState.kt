@@ -30,8 +30,6 @@ data class GameState @JvmOverloads constructor(
         override val board: Board = Board(),
         /** Die Anzahl an bereits getätigten Zügen. */
         @XStreamAsAttribute override var turn: Int = 0,
-        /** Der zuletzt gespielte Zug. */
-        override var lastMove: Move? = null,
         val ships: List<Ship> = (CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector).let { start ->
             listOf(
                     Ship(start + CubeDirection.UP_LEFT.vector, Team.ONE),
@@ -42,7 +40,9 @@ data class GameState @JvmOverloads constructor(
          * The player who started the current round.
          * By default, [Team.ONE] is the one starting the first round.
          */
-        private var currentRoundStarter: Team = Team.ONE
+        private var currentRoundStarter: Team = ships.first().team,
+        /** Der zuletzt gespielte Zug. */
+        override var lastMove: Move? = null,
 ): TwoPlayerGameState<Move>(currentRoundStarter) {
     
     override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
@@ -70,39 +70,27 @@ data class GameState @JvmOverloads constructor(
                 currentRoundStarter.opponent()
             }
     
-    fun determineCurrentTeam(): Team {
-        val shipOne = ships.first()
-        val shipTwo = ships.last()
-        val shipOneHorizontalDistance = CubeCoordinates.ORIGIN.horizontalDistanceTo(shipOne.position)
-        val shipTwoHorizontalDistance = CubeCoordinates.ORIGIN.horizontalDistanceTo(shipTwo.position)
-        val shipOneVerticalDistance = CubeCoordinates.ORIGIN.verticalDistanceTo(shipOne.position)
-        val shipTwoVerticalDistance = CubeCoordinates.ORIGIN.verticalDistanceTo(shipTwo.position)
-        
-        //val criteria = arrayOf<(Ship) -> Comparable<*>>(
-        //        {
-        //            val segment = board.findSegment(it.position)!!
-        //            board.segments[segment].tip
-        //            segment * 10 +
-        //        },
-        //)
-        //ships.sortedBy { CubeCoordinates.ORIGIN.verticalDistanceTo(it.position) }
-        
-        return when {
-            // Erstens, der Dampfer, der am weitesten vorne steht
-            board.closestShipToGoal(shipOne, shipTwo) != null -> board.closestShipToGoal(shipOne, shipTwo)?.team as Team
-            // Zweitens, der Dampfer mit der höheren Geschwindigkeit
-            shipOne.speed != shipTwo.speed -> if(shipOne.speed > shipTwo.speed) Team.ONE else Team.TWO
-            // Drittens, der Dampfer mit dem höheren Kohlevorrat
-            shipOne.coal != shipTwo.coal -> if(shipOne.coal > shipTwo.coal) Team.ONE else Team.TWO
-            // Viertens, der Dampfer, der am weitesten rechts steht (höchste Q-Koordinate)
-            shipOneHorizontalDistance != shipTwoHorizontalDistance ->
-                if(shipOneHorizontalDistance > shipTwoHorizontalDistance) Team.ONE else Team.TWO
-            // Fünftens, der Dampfer, der am weitesten außen steht
-            shipOneVerticalDistance != shipTwoVerticalDistance ->
-                if(shipOneVerticalDistance > shipTwoVerticalDistance) Team.ONE else Team.TWO
-            else -> startTeam
-        }
-    }
+    /**
+     * Determine the team that should go first at the beginning of the round.
+     * 1. Weiter vorne
+     * 2. Geschwindigkeit
+     * 3. Kohle
+     * Ansonsten Startspieler zuerst.
+     */
+    fun determineAheadTeam(): Team =
+            ships.maxByOrNull {
+                it.points * 100 +
+                it.speed * 10 +
+                it.coal
+            }!!.team
+            // TODO or something like this?
+            //  Team.values().maxByOrNull { getPointsForTeam(it) }
+    
+    fun Ship.calculatePoints() =
+            board.findSegment(this.position)?.let { segmentIndex ->
+                segmentIndex * POINTS_PER_SEGMENT +
+                board.segments[segmentIndex].globalToLocal(this.position).arrayX + 1
+            } ?: 0
     
     /**
      * Führt den angegebenen Zug aus.
@@ -123,18 +111,17 @@ data class GameState @JvmOverloads constructor(
                 else -> action.perform(this, currentShip)
             }
         }
-        currentShip.points += board.findSegment(currentShip.position)?.times(POINTS_PER_SEGMENT) ?: 0
-        board.findSegment(currentShip.position)?.let {
-            val segmentIndex = board.segments[it]
-            val xPositionInSegment = ((currentShip.position - segmentIndex.center).rotatedBy(segmentIndex.direction.turnCountTo(CubeDirection.RIGHT)).q + 1)
-            currentShip.points += xPositionInSegment
-        }
+        
         when {
             currentShip.movement > 0 -> throw InvalidMoveException(MoveException.MOVEMENT_POINTS_LEFT)
             currentShip.movement < 0 -> throw InvalidMoveException(MoveException.MOVEMENT_POINTS_MISSING)
             currentShip.speed == 1 -> this.board.pickupPassenger(currentShip)
             otherShip.speed == 1 -> this.board.pickupPassenger(otherShip)
         }
+        
+        currentShip.points = currentShip.calculatePoints()
+        if(move.actions.any { it is Push })
+            otherShip.calculatePoints()
         
         advanceTurn()
     }
@@ -143,7 +130,7 @@ data class GameState @JvmOverloads constructor(
     fun advanceTurn() {
         turn++
         if(turn % 2 == 0)
-            currentRoundStarter = determineCurrentTeam()
+            currentRoundStarter = determineAheadTeam()
     }
     
     /**
@@ -262,26 +249,23 @@ data class GameState @JvmOverloads constructor(
     }
     
     override val isOver: Boolean
-        get() {
-            val shipOne = ships.first()
-            val shipTwo = ships.last()
-            
-            return when {
-                // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
-                (shipOne.passengers == 2 && shipOne.speed == 1 && board[shipOne.position] == Field.GOAL) ||
-                (shipTwo.passengers == 2 && shipTwo.speed == 1 && board[shipTwo.position] == Field.GOAL) -> true
-                // Bedingung 2: ein Spieler macht einen ungültigen Zug.
-                // Das wird durch eine InvalidMoveException während des Spiels behandelt.
-                // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
-                board.segmentDistance(shipOne.position, shipTwo.position)?.let { abs(it) }!! > 3 -> true
-                // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
-                turn / 2 >= PluginConstants.ROUND_LIMIT -> true
-                // ansonsten geht das Spiel weiter
-                else -> false
-            }
+        get() = when {
+            // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
+            ships.any { it.passengers == 2 && it.speed == 1 && board[it.position] == Field.GOAL } -> true
+            // Bedingung 2: ein Spieler macht einen ungültigen Zug.
+            // Das wird durch eine InvalidMoveException während des Spiels behandelt.
+            // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
+            board.segmentDistance(ships.first().position, ships.last().position)?.let { abs(it) }!! > 3 -> true
+            // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
+            turn / 2 >= PluginConstants.ROUND_LIMIT -> true
+            // ansonsten geht das Spiel weiter
+            else -> false
         }
     
-    override fun getPointsForTeam(team: ITeam): IntArray = intArrayOf(if(team == Team.ONE) ships.first().points else ships.last().points)
+    override fun getPointsForTeam(team: ITeam): IntArray =
+            ships[team.index].let { ship ->
+                intArrayOf(ship.points, ship.speed, ship.coal)
+            }
     
     override fun toString(): String = "GameState(board=$board, turn=$turn, lastMove=$lastMove)"
 }

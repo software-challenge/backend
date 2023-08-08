@@ -17,7 +17,7 @@ import sc.plugin2024.util.PluginConstants.START_COAL
  * @property points Die aktuellen Punkte des Schiffes.
  * - Jeder eingesammelte Passagier bringt 5 Punkte.
  * - Jedes überwundene Segment bringt 5 Punkte.
- * - Anhand der Position innerhalb eines Segments werden 0 bis 4 Punkte vergeben.
+ * - Anhand der Position innerhalb eines Segments werden 0 bis 3 Punkte vergeben.
  * - Ein Spieler, der einen ungültigen Zug macht, erhält für das Spiel insgesamt 0 Punkte.
  *
  * @property position Die aktuelle absolute [CubeCoordinates] des Schiffes auf dem Spielfeld.

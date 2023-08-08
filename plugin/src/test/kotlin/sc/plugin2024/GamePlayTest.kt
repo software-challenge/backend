@@ -1,4 +1,4 @@
-package sc.plugin2023
+package sc.plugin2024
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
@@ -16,8 +16,7 @@ import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.Constants
 import sc.framework.plugins.Player
-import sc.plugin2023.util.GamePlugin
-import sc.plugin2023.util.PluginConstants
+import sc.plugin2024.util.GamePlugin
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import kotlin.time.Duration

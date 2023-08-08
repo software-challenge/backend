@@ -12,6 +12,8 @@ import sc.shared.*
 abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pausable {
     val logger = LoggerFactory.getLogger(this::class.java)
     
+    abstract val currentState: IGameState
+    
     override val players = mutableListOf<Player>()
     
     val activePlayer
@@ -82,6 +84,8 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
      * @return WinCondition, or null if no win condition is met yet.
      */
     abstract fun checkWinCondition(): WinCondition?
+    // TODO this can be generified through getPointsForTeam
+    //  I think this whole class can be un-abstracted as GameState provides all necessary plugin-details
     
     /** Stops pending MoveRequests and invokes [notifyOnGameOver]. */
     override fun stop() {
@@ -173,9 +177,6 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
         }
         return PlayerScore(cause, reason, score, *currentState.getPointsForTeam(team))
     }
-    
-    /** @return the current state representation. */
-    abstract val currentState: IGameState
     
     /** Notifies the active player that it's their time to make a move. */
     protected fun notifyActivePlayer() {

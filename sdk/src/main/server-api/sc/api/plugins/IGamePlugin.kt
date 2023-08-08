@@ -1,6 +1,7 @@
 package sc.api.plugins
 
 import sc.api.plugins.exceptions.PluginLoaderException
+import sc.framework.plugins.Constants
 import sc.shared.ScoreDefinition
 import java.util.ServiceLoader
 
@@ -14,6 +15,9 @@ interface IGamePlugin {
      * Used to detect unresponsive games.
      */
     val turnLimit: Int
+    
+    val gameTimeout
+        get() = turnLimit * Constants.SOFT_TIMEOUT
     
     /** @return ein neues Spiel. */
     fun createGame(): IGameInstance

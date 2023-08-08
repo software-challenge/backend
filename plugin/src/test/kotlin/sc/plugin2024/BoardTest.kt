@@ -77,22 +77,6 @@ class BoardTest: FunSpec({
         }
     }
     
-    context("closestShipToGoal") {
-        val board = Board()
-
-        test("returns the ship closest to the goal") {
-            val ship1 = Ship(team = Team.ONE, position = CubeCoordinates(0, 0, 0))
-            val ship2 = Ship(team = Team.TWO, position = board.segments.last().center)
-            board.closestShipToGoal(ship1, ship2) shouldBe ship2
-        }
-
-        test("returns null if ships are at the same distance to the goal") {
-            val ship3 = Ship(team = Team.ONE, position = CubeCoordinates(3, 0, -3))
-            val ship4 = Ship(team = Team.TWO, position = CubeCoordinates(3, 0, -3))
-            board.closestShipToGoal(ship3, ship4).shouldBeNull()
-        }
-    }
-
     context("find nearest field type") {
         val board = Board()
 

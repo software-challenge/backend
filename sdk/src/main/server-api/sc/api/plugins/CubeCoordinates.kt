@@ -32,7 +32,8 @@ data class CubeCoordinates
     val coordinates: IntArray
         get() = intArrayOf(q, r, s)
     
-    operator fun times(count: Int) = CubeCoordinates(q * count, r * count)
+    operator fun times(count: Int): CubeCoordinates =
+            CubeCoordinates(q * count, r * count)
     
     operator fun plus(other: CubeCoordinates): CubeCoordinates =
             CubeCoordinates(q + other.q, r + other.r)
@@ -62,10 +63,6 @@ data class CubeCoordinates
     
     fun distanceTo(other: CubeCoordinates): Int =
             ((q - other.q).absoluteValue + (r - other.r).absoluteValue + (s - other.s).absoluteValue) / 2
-    
-    fun horizontalDistanceTo(other: CubeCoordinates): Int = (q - other.q).absoluteValue
-    
-    fun verticalDistanceTo(other: CubeCoordinates): Int = (r - other.r).absoluteValue
     
     override operator fun compareTo(other: CubeCoordinates): Int {
         var sign = (q - other.q).sign
