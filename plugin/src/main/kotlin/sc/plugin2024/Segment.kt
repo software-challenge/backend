@@ -9,7 +9,6 @@ import sc.framework.PublicCloneable
 import sc.framework.shuffledIndices
 import sc.plugin2024.util.PluginConstants
 import kotlin.math.min
-import kotlin.math.round
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -121,18 +120,9 @@ internal fun generateBoard(): Segments {
 val CubeCoordinates.arrayX: Int
     get() = maxOf(q, -s)
 
+/** Get a field by local cartesian coordinates. */
 operator fun SegmentFields.get(x: Int, y: Int): Field = this[x][y]
 
-/** Get a field by RELATIVE Coordinates if it exists. */
-operator fun SegmentFields.get(coordinates: CubeCoordinates): Field? {
-    val centerX: Int = round(this.size / 2.0).toInt() - 1
-    val centerY: Int = round(this[centerX].size / 2.0).toInt()
-
-    val relX: Int = coordinates.q + centerX
-    val relY: Int = coordinates.r + centerY
-
-    if(relX < 0 || relX >= this.size || relY < 0 || relY >= this[centerX].size)
-        return null
-
-    return this[relX][relY]
-}
+/** Get a field by RELATIVE CubeCoordinates if it exists. */
+operator fun SegmentFields.get(coordinates: CubeCoordinates): Field? =
+        this.getOrNull(coordinates.arrayX)?.getOrNull(coordinates.r)

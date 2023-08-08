@@ -91,10 +91,13 @@ class BoardTest: FunSpec({
             board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
         }
         test("end of second segment") {
-            board[CubeCoordinates(4, 2)].shouldNotBeNull()
-            board[CubeCoordinates(6, -2)].shouldNotBeNull()
-            board.getCoordinateByIndex(1, 4, 0) shouldBe CubeCoordinates(7, -2)
-            board.getCoordinateByIndex(1, 4, 4) shouldBe CubeCoordinates(7, 2)
+            board[CubeCoordinates(6, 2, 0)] shouldBe Field.WATER
+            board[CubeCoordinates(6, -2, 0)] shouldBe Field.WATER
+            board.getCoordinateByIndex(1,
+                    PluginConstants.SEGMENT_FIELDS_WIDTH - 1, 0) shouldBe CubeCoordinates(6, -2)
+            board.getCoordinateByIndex(1,
+                    PluginConstants.SEGMENT_FIELDS_WIDTH - 1,
+                    PluginConstants.SEGMENT_FIELDS_HEIGHT - 1) shouldBe CubeCoordinates(4, 2)
         }
     }
     
