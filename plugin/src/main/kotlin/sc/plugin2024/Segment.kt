@@ -22,7 +22,8 @@ typealias Segments = List<Segment>
 @XStreamAlias("segment")
 data class Segment(
         @XStreamAsAttribute val direction: CubeDirection,
-        @XStreamOmitField val center: CubeCoordinates,
+        //@XStreamOmitField
+        val center: CubeCoordinates,
         @XStreamImplicit @XStreamAlias("segment") val segment: SegmentFields,
 ): PublicCloneable<Segment> {
     val tip: CubeCoordinates
@@ -92,7 +93,7 @@ internal fun generateSegment(
             .forEach {
                 fields[it.mod(columnsButLast)][it.div(columnsButLast)] = fieldsToPlace[currentField++]
             }
-    // TODO are we allowed to place other stuff on the last segment?
+    // TODO currently we place other stuff on the last segment, but should we?
     if(end) {
         // Place Goal fields in the last column, except for top and bottom row
         val lastColumn = fields.last()

@@ -19,13 +19,9 @@ class XStreamClasses: XStreamProvider {
                     Push::class.java,
                     Turn::class.java,
                     Board::class.java,
-                    Coordinates::class.java,
                     GameState::class.java,
                     Move::class.java,
-                    Team::class.java
+                    Ship::class.java,
             )
     
-    override fun setup(xStream: XStream) {
-        xStream.registerConverter(BoardConverter())
-    }
 }

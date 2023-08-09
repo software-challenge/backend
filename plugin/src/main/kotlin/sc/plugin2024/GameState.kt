@@ -124,6 +124,7 @@ data class GameState @JvmOverloads constructor(
             otherShip.calculatePoints()
         
         lastMove = move
+        board.revealSegment(board.segmentIndex(currentShip.position) + 1)
         advanceTurn()
     }
     
@@ -265,7 +266,7 @@ data class GameState @JvmOverloads constructor(
             // Bedingung 2: ein Spieler macht einen ungültigen Zug.
             // Das wird durch eine InvalidMoveException während des Spiels behandelt.
             // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
-            board.segmentDistance(ships.first().position, ships.last().position)?.let { abs(it) }!! > 3 -> true
+            board.segmentDistance(ships.first().position, ships.last().position).absoluteValue > 3 -> true
             // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
             turn / 2 >= PluginConstants.ROUND_LIMIT -> true
             // Bedingung 5: Der aktuelle Dampfer kann sich nicht mehr bewegen

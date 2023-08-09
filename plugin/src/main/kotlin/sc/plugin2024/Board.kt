@@ -28,9 +28,21 @@ data class Board(
     
     override fun clone(): Board = Board(this.segments.clone(), visibleSegments)
     
-    // TODO direction of segment beyond visible one, set with visibleSegments
     @XStreamAsAttribute
-    var nextDirection: CubeDirection = segments[visibleSegments].direction
+    var nextDirection: CubeDirection = getNextDirection()
+    
+    internal fun getNextDirection() =
+            segments[visibleSegments.coerceAtMost(segments.lastIndex)].direction
+    
+    internal fun revealSegment(segment: Int) {
+        visibleSegments = visibleSegments.coerceIn(segment, segments.size)
+        nextDirection = getNextDirection()
+    }
+    
+    fun readResolve(): Board {
+        visibleSegments = segments.size
+        return this
+    }
     
     /**
      * Ruft das Feld an den angegebenen [CubeCoordinates] ab.
@@ -87,14 +99,9 @@ data class Board(
      * @param coordinate1 Das erste Feld, von dem aus die Entfernung berechnet wird.
      * @param coordinate2 Das zweite Feld, aus dem die Entfernung berechnet wird.
      * @return Der Abstand zwischen den angegebenen Feldern im Segment.
-     * Wenn eines der Felder in keinem Segment gefunden wird, wird -1 zurückgegeben.
      */
-    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int? =
-            segmentIndex(coordinate1)?.let { index1 ->
-                segmentIndex(coordinate2)?.let { index2 ->
-                    abs(index1 - index2)
-                }
-            }
+    fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int =
+            abs(segmentIndex(coordinate1) - segmentIndex(coordinate2))
     
     /**
      * Findet den [segments]-Index für die angegebene [CubeCoordinates].
@@ -102,13 +109,13 @@ data class Board(
      * @param coordinate Die Koordinate, für die das [Segment] gefunden werden soll.
      * @return Der Index des Segments, das die Koordinate enthält, oder -1, falls nicht gefunden.
      */
-    fun segmentIndex(coordinate: CubeCoordinates): Int? =
+    fun segmentIndex(coordinate: CubeCoordinates): Int =
             segments.indexOfFirst { segment ->
                 segment[coordinate] != null
-            }.takeUnless { it == -1 }
+            }
     
     fun findSegment(coordinate: CubeCoordinates) =
-            segmentIndex(coordinate)?.let { segments[it] }
+            segmentIndex(coordinate).takeUnless { it == -1 }?.let { segments[it] }
     
     /**
      * Gibt eine Liste benachbarter [Field]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.

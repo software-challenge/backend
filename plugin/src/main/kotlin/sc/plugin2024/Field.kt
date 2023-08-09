@@ -2,34 +2,45 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.IField
 
 @XStreamAlias("field")
 sealed class Field: IField<Field> {
-    override val isEmpty = true
+    override val isEmpty
+        get() = true
     override fun clone() = this
     
     val letter: Char
         get() = javaClass.simpleName.first()
     
     /** Wasserfeld, auf ihm kann sich normal bewegt werden */
-    object WATER : Field()
+    object WATER : Field() {
+        private fun readResolve(): Any = WATER
+    }
     
     /** Inselfeld, es kann nicht überwunden werden und kein Spieler kann darauf stehen */
     object BLOCKED: Field() {
-        override val isEmpty = false
+        private fun readResolve(): Any = BLOCKED
+        override val isEmpty
+            get() = false
     }
 
     /** Passagierfeld mit Anleger */
     data class PASSENGER(@XStreamAsAttribute val direction: CubeDirection = CubeDirection.values().random(), @XStreamAsAttribute var passenger: Int = 1): Field() {
-        override val isEmpty = false
+        override val isEmpty
+            get() = false
         override fun clone() = PASSENGER(direction, passenger)
     }
 
     /** Ein Zielfeld */
-    object GOAL: Field()
-
+    object GOAL: Field() {
+        private fun readResolve(): Any = GOAL
+    }
+    
     /** Ein Sandbankfeld */
-    object SANDBANK: Field()
+    object SANDBANK: Field() {
+        private fun readResolve(): Any = SANDBANK
+    }
 }

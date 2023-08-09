@@ -53,49 +53,36 @@ class BoardTest: FunSpec({
             board.getCoordinateByIndex(1, 1, 2) shouldBe center
         }
     }
-
-    context("findSegment") {
-        val board = Board()
-        test("should return correct segment index") {
-            val findSegmentMethod = Board::class.java.getDeclaredMethod("findSegment", CubeCoordinates::class.java)
-            findSegmentMethod.isAccessible = true
-            findSegmentMethod.invoke(board, CubeCoordinates.ORIGIN) shouldBe 0
-            findSegmentMethod.invoke(board, CubeCoordinates(4, 0, -4)) shouldBe 1
-            findSegmentMethod.invoke(board, CubeCoordinates(0, -3, 3)).shouldBeNull()
-        }
+    
+    val board = Board()
+    test("segmentIndex") {
+        board.segmentIndex(CubeCoordinates.ORIGIN) shouldBe 0
+        board.segmentIndex(CubeCoordinates(4, 0, -4)) shouldBe 1
+        board.segmentIndex(CubeCoordinates(0, -3, 3)) shouldBe -1
+        
     }
     
-    context("segmentDistance") {
-        val board = Board()
-        test("calculates correct segment distance") {
-            board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(0, 2)) shouldBe 0
-            board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(1, 2)) shouldBe 1
-            board.segmentDistance(CubeCoordinates(-1, -2), CubeCoordinates(3, 2)) shouldBe 1
-        }
-        test("returns null when there is no segment") {
-            board.segmentDistance(CubeCoordinates(0, -3, 3), CubeCoordinates(0, -3, 3)).shouldBeNull()
-        }
+    test("segmentDistance") {
+        board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(0, 2)) shouldBe 0
+        board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(1, 2)) shouldBe 1
+        board.segmentDistance(CubeCoordinates(-1, -2), CubeCoordinates(3, 2)) shouldBe 1
     }
     
-    context("find nearest field type") {
-        val board = Board()
+    test("find nearest field type") {
+        val startCoordinates = CubeCoordinates(0, 0, 0)
+        board.findNearestFieldTypes(startCoordinates, Field.WATER::class) shouldContain CubeCoordinates(1, 0, -1)
 
-        test("finds correct nearest specified field type") {
-            val startCoordinates = CubeCoordinates(0, 0, 0)
-            board.findNearestFieldTypes(startCoordinates, Field.WATER::class) shouldContain CubeCoordinates(1, 0, -1)
-
-            val dynamicField = board.segments.last().center + board.segments.last().direction.vector
-            val result = board.findNearestFieldTypes(board.segments.last().center, board[dynamicField]!!::class)
-            result shouldContain dynamicField
-            
-            board.findNearestFieldTypes(startCoordinates, Field.PASSENGER::class).size shouldBeGreaterThanOrEqual 1
-        }
+        val dynamicField = board.segments.last().center + board.segments.last().direction.vector
+        val result = board.findNearestFieldTypes(board.segments.last().center, board[dynamicField]!!::class)
+        result shouldContain dynamicField
+        
+        board.findNearestFieldTypes(startCoordinates, Field.PASSENGER::class).size shouldBeGreaterThanOrEqual 1
+        
     }
 
     context("pickupPassenger") {
         test("should decrease passenger count of the neighbouring field and increase passenger count of the ship") {
             val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))
-            val board = Board()
             val nextPassengerField = board.findNearestFieldTypes(CubeCoordinates(0, 0), Field.PASSENGER::class).first()
             ship.position = nextPassengerField + (board[nextPassengerField] as Field.PASSENGER).direction.vector
             
@@ -159,14 +146,52 @@ class BoardTest: FunSpec({
         //clone.getPenguins() shouldHaveSize 1
         //clone shouldBe makeBoard(0 y 0 to 1)
     }
-    xcontext("XML Serialization") {
-        test("empty Board") {
-            Board(emptyList()) shouldSerializeTo """
-              <board/>
-            """
+    context("XML Serialization") {
+        test("single segment") {
+            val serializedSegment = """
+                  <segment direction="RIGHT">
+                    <center q="0" r="0" s="0"/>
+                    <field-array>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                    </field-array>
+                    <field-array>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                    </field-array>
+                    <field-array>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                    </field-array>
+                    <field-array>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                      <sc.plugin2024.Field_-WATER/>
+                    </field-array>
+                  </segment>"""
+            val serialized = """
+                <board nextDirection="RIGHT">$serializedSegment
+                </board>"""
+            val segment = Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, generateSegment(false, arrayOf()))
+            Board(listOf(segment), 1) shouldSerializeTo serialized
+            // TODO Board(listOf(segment, segment), 1) shouldSerializeTo serialized
+            Board(listOf(segment, segment), 2) shouldSerializeTo """
+                <board nextDirection="RIGHT">$serializedSegment$serializedSegment
+                </board>"""
         }
-        test("random Board length") {
-            testXStream.toXML(Board()) shouldHaveLineCount 82
+        test("random Board has correct length") {
+            testXStream.toXML(Board()) shouldHaveLineCount 265
         }
         test("Board with content") {
             val fieldTwo = "<field>TWO</field>"
