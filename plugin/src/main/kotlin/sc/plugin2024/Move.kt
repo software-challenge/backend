@@ -54,6 +54,6 @@ data class Move(
      * @return The string representation of the object in the format "Move(action1, action2, ..., actionN)".
      */
     override fun toString(): String =
-            actions.joinToString(separator = ", ", prefix = "Move(", postfix = ")")
+            actions.joinToString(separator = ", ", prefix = "Move[", postfix = "]")
     
 }

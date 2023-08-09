@@ -136,16 +136,22 @@ data class GameState @JvmOverloads constructor(
     
     /** Retrieves a list of sensible moves based on the possible actions. */
     override fun getSensibleMoves(): List<IMove> =
-            getPossibleMoves(1).ifEmpty { getPossibleMoves() }
+            getPossibleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { getPossibleMoves() }
     
+    // TODO this should be a stream
     /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount. */
     fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> =
             (getPossibleTurns(maxCoal.coerceAtMost(1)) + null).flatMap { turn ->
-                getPossibleAdvances(currentShip.position,
-                        turn?.direction ?: currentShip.direction,
+                val direction = turn?.direction ?: currentShip.direction
+                getPossibleAdvances(currentShip.position, direction,
                         currentShip.movement + currentShip.freeAcc + (maxCoal - (turn?.direction?.turnCountTo(currentShip.direction)?.absoluteValue?.minus(currentShip.freeTurns) ?: 0)))
                         .map { advance ->
-                            Move(listOfNotNull(Acceleration(advance.distance - currentShip.movement).takeUnless { it.acc == 0 }, turn, advance))
+                            Move(listOfNotNull(Acceleration(advance.distance - currentShip.movement).takeUnless { it.acc == 0 }, turn, advance,
+                                    if(currentShip.position + (direction.vector * advance.distance) == otherShip.position) {
+                                        val currentRotation = board.segmentDirection(otherShip.position)
+                                        getPossiblePushs(otherShip.position, direction).maxByOrNull { currentRotation?.turnCountTo(it.direction)?.absoluteValue ?: 2 }
+                                    } else null
+                            ))
                         }
             }
     
@@ -177,14 +183,16 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossiblePushs(): List<Push> {
         if(board[currentShip.position] == Field.SANDBANK ||
-           currentShip.position != otherShip.position) return emptyList()
-        
-        return CubeDirection.values().mapNotNull { dir ->
-            board.getFieldInDirection(dir, currentShip.position)?.let { to ->
-                if(dir !== currentShip.direction.opposite() && to.isEmpty && currentShip.movement >= 1) Push(dir) else null
-            }
-        }
+           currentShip.position != otherShip.position ||
+           currentShip.movement >= 1) return emptyList()
+        return getPossiblePushs(currentShip.position, currentShip.direction)
     }
+    
+    fun getPossiblePushs(position: CubeCoordinates, incomingDirection: CubeDirection): List<Push> =
+            CubeDirection.values().filter { dir ->
+                dir != incomingDirection.opposite() &&
+                board.getFieldInDirection(dir, position)?.isEmpty == true
+            }.map { Push(it) }
     
     /**
      * Returns a list of all possible turn actions for the current player
@@ -247,16 +255,21 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
+    fun canMove() =
+        getSensibleMoves().isNotEmpty() // TODO make more efficient and take ship as parameter
+    
     override val isOver: Boolean
         get() = when {
             // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
-            ships.any { it.passengers == 2 && it.speed == 1 && board[it.position] == Field.GOAL } -> true
+            turn % 2 == 0 && ships.any { it.passengers == 2 && it.speed == 1 && board[it.position] == Field.GOAL } -> true
             // Bedingung 2: ein Spieler macht einen ungültigen Zug.
             // Das wird durch eine InvalidMoveException während des Spiels behandelt.
             // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
             board.segmentDistance(ships.first().position, ships.last().position)?.let { abs(it) }!! > 3 -> true
             // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
             turn / 2 >= PluginConstants.ROUND_LIMIT -> true
+            // Bedingung 5: Der aktuelle Dampfer kann sich nicht mehr bewegen
+            !canMove() -> true
             // ansonsten geht das Spiel weiter
             else -> false
         }
@@ -266,5 +279,10 @@ data class GameState @JvmOverloads constructor(
                 intArrayOf(ship.points, ship.speed, ship.coal)
             }
     
-    override fun toString(): String = "GameState(board=$board, turn=$turn, lastMove=$lastMove)"
+    override fun toString() =
+            "GameState $turn, $currentTeam ist dran"
+    
+    override fun longString() =
+            "$this\n${ships.joinToString("\n")}\nLast Move: $lastMove"
+    
 }

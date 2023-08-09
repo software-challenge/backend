@@ -46,6 +46,8 @@ data class Board(
                     null
             }
     
+    //fun doesFieldHaveCurrent(coords: CubeCoordinates) =
+    
     /**
      * Gibt das [Field] zurück, das an das angegebene Feld in der angegebenen Richtung angrenzt.
      *
@@ -67,10 +69,7 @@ data class Board(
      */
     fun getCoordinateByIndex(segmentIndex: Int, xIndex: Int, yIndex: Int): CubeCoordinates =
             segments[segmentIndex].let { segment ->
-                Coordinates(xIndex, yIndex)
-                        .localToCube()
-                        .rotatedBy(CubeDirection.RIGHT.turnCountTo(segment.direction))
-                        .plus(segment.center)
+                segment.localToGlobal(Coordinates(xIndex, yIndex))
             }
     
     /**
@@ -98,6 +97,11 @@ data class Board(
             segments.indexOfFirst { segment ->
                 segment[coordinate] != null
             }.takeUnless { it == -1 }
+    
+    fun segmentDirection(coordinate: CubeCoordinates): CubeDirection? =
+            findSegment(coordinate)?.let { segments[it].direction }
+    
+    
     
     /**
      * Gibt eine Liste benachbarter [Field]s auf der Grundlage der angegebenen [CubeCoordinates] zurück.
@@ -171,30 +175,6 @@ data class Board(
         return nearestFieldCoordinates
     }
     
-    /**
-     * Druckt die Segmente in einem lesbaren Format.
-     *
-     * Diese Methode durchläuft jedes Segment des gegebenen Objekts und druckt dessen Inhalt in formatierter Form aus.
-     */
-    fun prettyPrint() {
-        /*segments.joinToString("\n\n") {
-            "Segment pointing ${it.direction}" +
-            // TODO how to join columns
-        }*/
-        val stringBuilder = StringBuilder()
-        for((segmentIndex, segment) in this.segments.withIndex()) {
-            stringBuilder.append("Segment ${segmentIndex + 1}:\n")
-            for((x, column) in segment.segment.withIndex()) {
-                for((y, field) in column.withIndex()) {
-                    val cubeCoordinates = getCoordinateByIndex(segmentIndex, x, y)
-                    stringBuilder.append("| ${field.letter} (${cubeCoordinates.q}, ${cubeCoordinates.r}) ")
-                }
-                stringBuilder.append("|\n")
-            }
-            stringBuilder.append("\n")
-        }
-        print(stringBuilder.toString())
-    }
-    
+    override fun toString() = segments.joinToString("\n\nBoard", prefix = "Board")
 }
 

@@ -1,6 +1,7 @@
 package sc.plugin2024
 
 import com.thoughtworks.xstream.XStream
+import io.kotest.assertions.withClue
 import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
@@ -13,6 +14,12 @@ import sc.plugin2024.actions.Push
 
 class GameStateTest: FunSpec({
     val gameState = GameState()
+    
+    test("hashCode changes after move") {
+        val code = gameState.hashCode()
+        gameState.ships.first().coal--
+        gameState.hashCode() shouldNotBe code
+    }
     
     test("currentTeam should be determined correctly") {
         gameState.startTeam shouldBe Team.ONE
@@ -89,6 +96,46 @@ class GameStateTest: FunSpec({
         gameState.getSensibleMoves() shouldHaveSize 8
     }
     
+    context("game over on") {
+        test("immovable") {
+            gameState.board.segments.first().segment[1][3] = Field.BLOCKED
+            gameState.otherShip.freeTurns = 0
+            gameState.otherShip.coal = 0
+            gameState.isOver shouldBe false
+            gameState.turn++
+            gameState.getSensibleMoves().shouldBeEmpty()
+            gameState.isOver shouldBe true
+        }
+        test("round limit") {
+            gameState.turn = 59
+            gameState.isOver shouldBe false
+            gameState.turn = 60
+            gameState.isOver shouldBe true
+        }
+        test("distance and reaching goal field") {
+            gameState.currentShip.position =
+                    gameState.board.segments.last().tip
+            gameState.board[gameState.currentShip.position] shouldBe Field.GOAL
+            withClue("segment distance") {
+                gameState.isOver shouldBe true
+                gameState.turn++
+                gameState.isOver shouldBe true
+            }
+            withClue("Nachzug") {
+                gameState.currentShip.position =
+                        gameState.board.segments.takeLast(2).first().tip
+                gameState.turn shouldBe 1
+                gameState.getSensibleMoves().shouldNotBeEmpty()
+                gameState.isOver shouldBe false // Nachzug ermöglichen
+            }
+            withClue("Gerade Zugzahl") {
+                gameState.turn++
+                gameState.isOver shouldBe false
+                gameState.currentShip.passengers = 2
+                gameState.isOver shouldBe true
+            }
+        }
+    }
     
     xtest("serializes nicely") {
         val xStream = XStream().apply {

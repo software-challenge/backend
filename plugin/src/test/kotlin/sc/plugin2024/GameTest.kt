@@ -1,4 +1,4 @@
-package sc.plugin2023
+package sc.plugin2024
 
 import io.kotest.core.spec.style.FunSpec
 

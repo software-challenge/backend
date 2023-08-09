@@ -32,11 +32,23 @@ data class Segment(
     operator fun get(coordinates: CubeCoordinates): Field? =
             segment[globalToLocal(coordinates)]
     
+    fun localToGlobal(coordinates: Coordinates) =
+            coordinates
+                    .localToCube()
+                    .rotatedBy(CubeDirection.RIGHT.turnCountTo(direction))
+                    .plus(center)
+    
     /** Turn global into local CubeCoordinates. */
     fun globalToLocal(coordinates: CubeCoordinates) =
             (coordinates - center).rotatedBy(direction.turnCountTo(CubeDirection.RIGHT))
     
-    override fun toString() = "Segment at $center to $direction ${segment.contentDeepToString()}"
+    override fun toString() =
+            "Segment at $center to $direction\n" + segment.first().mapIndexed { y, field ->
+                segment.mapIndexed { x, column ->
+                    val cubeCoordinates = localToGlobal(Coordinates(x, y))
+                    "${column[y].letter} (${cubeCoordinates.q}, ${cubeCoordinates.r})"
+                }.joinToString("|")
+            }.joinToString("\n")
     
     override fun clone(): Segment =
             copy(segment = Array(segment.size) { x ->

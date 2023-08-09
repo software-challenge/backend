@@ -29,7 +29,7 @@ class Game(override val currentState: GameState = GameState()): AbstractGame(Gam
             throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
         
         logger.debug("Performing {}", move)
-        currentState.performMove(move)
+        currentState.performMoveDirectly(move)
         logger.debug("Current State: {}", currentState.longString())
     }
     
