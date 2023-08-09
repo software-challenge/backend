@@ -101,7 +101,6 @@ class BoardTest: FunSpec({
         
         test("should return false and not change passenger count when no neighbouring passenger fields") {
             val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))
-            val board = Board()
             
             val initialShipPassengers = ship.passengers
             
@@ -113,38 +112,18 @@ class BoardTest: FunSpec({
         
     }
 
-    xcontext("Board calculates diffs") {
-        //val board = makeBoard(0 y 0 to "r", 2 y 0 to "r")
-        //test("empty for itself") {
-        //    board.diff(board).shouldBeEmpty()
-        //    board.diff(board.clone()).shouldBeEmpty()
-        //    board.clone().diff(board).shouldBeEmpty()
-        //}
-        //test("one moved and one unmoved piece") {
-        //    val move = Move(0 y 0, 2 y 1)
-        //    val newBoard = board.clone()
-        //    newBoard.movePiece(move)
-        //    board.diff(newBoard) shouldContainExactly listOf(move)
-        //}
-        //test("both pieces moved") {
-        //    val newBoard = makeBoard(2 y 1 to "r", 1 y 2 to "r")
-        //    board.diff(newBoard) shouldHaveSize 2
-        //}
-        //test("one piece vanished") {
-        //    val newBoard = makeBoard(2 y 0 to "r")
-        //    val move = board.diff(newBoard).single()
-        //    move.from shouldBe (0 y 0)
-        //    move.to.isValid.shouldBeFalse()
-        //}
-    }
-    xtest("clones deeply") {
-        val board = Board(listOf())
-        //board.getPenguins() shouldHaveSize 1
-        //val clone = board.clone()
-        //board[1 y 1] = Team.ONE
-        //board.getPenguins() shouldHaveSize 2
-        //clone.getPenguins() shouldHaveSize 1
-        //clone shouldBe makeBoard(0 y 0 to 1)
+    test("clones deeply") {
+        val clone = board.clone()
+        board shouldBe clone
+        board.hashCode() shouldBe clone.hashCode()
+        
+        val coords = board.findNearestFieldTypes(CubeCoordinates(4, 0), Field.PASSENGER::class).first()
+        val passengerSegment  = board.findSegment(coords)!!
+        //val passengerSegment = board.segments.indexOfFirst { it.segment.any { it.any { it is Field.PASSENGER } } }
+        (passengerSegment[coords] as Field.PASSENGER).passenger = 0
+        board shouldNotBe clone
+        board.hashCode() shouldNotBe clone.hashCode()
+        (clone[coords] as Field.PASSENGER).passenger shouldBe 1
     }
     context("XML Serialization") {
         test("single segment") {
