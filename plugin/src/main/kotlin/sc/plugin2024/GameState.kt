@@ -185,7 +185,7 @@ data class GameState @JvmOverloads constructor(
     fun getPossiblePushs(): List<Push> {
         if(board[currentShip.position] == Field.SANDBANK ||
            currentShip.position != otherShip.position ||
-           currentShip.movement >= 1) return emptyList()
+           currentShip.movement < 1) return emptyList()
         return getPossiblePushs(currentShip.position, currentShip.direction)
     }
     

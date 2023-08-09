@@ -57,6 +57,8 @@ class GameStateTest: FunSpec({
         gameState.getPossiblePushs().shouldBeEmpty()
         gameState.currentShip.position = gameState.otherShip.position
         gameState.getPossiblePushs().shouldNotBeEmpty()
+        gameState.currentShip.movement = 0
+        gameState.getPossiblePushs().shouldBeEmpty()
     }
     
     test("getPossibleTurns") {
