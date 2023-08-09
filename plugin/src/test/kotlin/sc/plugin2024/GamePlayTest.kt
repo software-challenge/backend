@@ -3,10 +3,9 @@ package sc.plugin2024
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.*
 import io.kotest.matchers.booleans.*
-import io.kotest.matchers.collections.shouldNotBeEmpty
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.collections.*
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
@@ -92,7 +91,8 @@ class GamePlayTest: WordSpec({
                         break
                     }
                 }
-                // TODO game.currentState.isOver.shouldBeTrue()
+                // TODO violation?
+                game.currentState.isOver.shouldBeTrue()
             }
             "send the final state to listeners" {
                 finalState shouldBe game.currentState.hashCode()

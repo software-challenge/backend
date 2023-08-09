@@ -86,10 +86,10 @@ data class GameState @JvmOverloads constructor(
     //  Team.values().maxByOrNull { getPointsForTeam(it) }
     
     fun Ship.calculatePoints() =
-            board.segmentIndex(this.position)?.let { segmentIndex ->
+            board.segmentIndex(this.position).let { segmentIndex ->
                 segmentIndex * POINTS_PER_SEGMENT +
                 board.segments[segmentIndex].globalToLocal(this.position).arrayX + 1
-            } ?: 0
+            }
     
     /**
      * Führt den angegebenen Zug aus.

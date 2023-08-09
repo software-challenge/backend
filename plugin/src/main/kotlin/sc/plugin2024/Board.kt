@@ -60,7 +60,7 @@ data class Board(
                         segment.center + nextDirection.vector,
                         segment.center + nextDirection.vector * 2
                 )
-            }.contains(coords) ?: false
+            }.contains(coords)
     
     /**
      * Gibt das [Field] zurück, das an das angegebene Feld in der angegebenen Richtung angrenzt.
