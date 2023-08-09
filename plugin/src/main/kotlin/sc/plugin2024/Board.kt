@@ -1,12 +1,10 @@
 package sc.plugin2024
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamImplicit
-import com.thoughtworks.xstream.annotations.XStreamOmitField
+import com.thoughtworks.xstream.annotations.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sc.api.plugins.*
+import sc.plugin2024.util.BoardConverter
 import sc.plugin2024.util.PluginConstants.POINTS_PER_PASSENGER
 import kotlin.math.abs
 import kotlin.reflect.KClass
@@ -15,12 +13,15 @@ import kotlin.reflect.KClass
  * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
  * @param segments Spielsegmente des neuen Spielfelds
  */
+@XStreamConverter(BoardConverter::class)
 @XStreamAlias(value = "board")
 data class Board(
         @XStreamImplicit
         val segments: Segments = generateBoard(),
         @XStreamOmitField
-        internal var visibleSegments: Int = 2,
+        internal var visibleSegments: Int = 2.coerceAtMost(segments.size),
+        @XStreamAsAttribute
+        var nextDirection: CubeDirection = segments.last().direction
 ): IBoard {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -28,20 +29,12 @@ data class Board(
     
     override fun clone(): Board = Board(this.segments.clone(), visibleSegments)
     
-    @XStreamAsAttribute
-    var nextDirection: CubeDirection = getNextDirection()
-    
     internal fun getNextDirection() =
             segments[visibleSegments.coerceAtMost(segments.lastIndex)].direction
     
     internal fun revealSegment(segment: Int) {
-        visibleSegments = visibleSegments.coerceIn(segment, segments.size)
+        visibleSegments = segment.coerceIn(visibleSegments, segments.size)
         nextDirection = getNextDirection()
-    }
-    
-    fun readResolve(): Board {
-        visibleSegments = segments.size
-        return this
     }
     
     /**
@@ -59,15 +52,15 @@ data class Board(
             }
     
     fun doesFieldHaveCurrent(coords: CubeCoordinates): Boolean =
-            segmentIndex(coords)?.let {
+            segmentIndex(coords).let {
                 val segment = segments[it]
                 val nextDirection = segments.getOrNull(it + 1)?.direction ?: nextDirection
                 arrayOf(segment.center + segment.direction.opposite().vector,
                         segment.center,
                         segment.center + nextDirection.vector,
                         segment.center + nextDirection.vector * 2
-                        )
-            }?.contains(coords) ?: false
+                )
+            }.contains(coords) ?: false
     
     /**
      * Gibt das [Field] zurück, das an das angegebene Feld in der angegebenen Richtung angrenzt.
@@ -189,6 +182,7 @@ data class Board(
         return nearestFieldCoordinates
     }
     
-    override fun toString() = segments.joinToString("\n\nBoard", prefix = "Board")
+    override fun toString() =
+            segments.joinToString("\n\nBoard", prefix = "Board", postfix = "\nNext Segment towards $nextDirection")
 }
 

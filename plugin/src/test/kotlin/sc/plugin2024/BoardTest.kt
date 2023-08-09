@@ -1,6 +1,5 @@
 package sc.plugin2024
 
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
@@ -10,6 +9,7 @@ import io.kotest.matchers.string.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
+import sc.helpers.checkSerialization
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2024.util.PluginConstants
@@ -131,52 +131,76 @@ class BoardTest: FunSpec({
                   <segment direction="RIGHT">
                     <center q="0" r="0" s="0"/>
                     <field-array>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
+                      <water/>
+                      <water/>
+                      <water/>
+                      <water/>
+                      <water/>
                     </field-array>
                     <field-array>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
+                      <water/>
+                      <water/>
+                      <water/>
+                      <water/>
+                      <water/>
                     </field-array>
                     <field-array>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
+                      <water/>
+                      <water/>
+                      <water/>
+                      <water/>
+                      <water/>
                     </field-array>
                     <field-array>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
-                      <sc.plugin2024.Field_-WATER/>
+                      <water/>
+                      <water/>
+                      <water/>
+                      <water/>
+                      <water/>
                     </field-array>
                   </segment>"""
             val serialized = """
                 <board nextDirection="RIGHT">$serializedSegment
                 </board>"""
             val segment = Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, generateSegment(false, arrayOf()))
-            Board(listOf(segment), 1) shouldSerializeTo serialized
-            // TODO Board(listOf(segment, segment), 1) shouldSerializeTo serialized
-            Board(listOf(segment, segment), 2) shouldSerializeTo """
-                <board nextDirection="RIGHT">$serializedSegment$serializedSegment
+            val singleSegmentBoard = Board(listOf(segment))
+            singleSegmentBoard shouldSerializeTo serialized
+            checkSerialization(testXStream, Board(listOf(segment, segment), 1), serialized.trimIndent()) { orig, deserialized ->
+                deserialized shouldBe singleSegmentBoard
+            }
+            Board(listOf(segment, segment), 2).also {
+                it.nextDirection = CubeDirection.UP_RIGHT
+            } shouldSerializeTo """
+                <board nextDirection="UP_RIGHT">$serializedSegment$serializedSegment
                 </board>"""
         }
         test("random Board has correct length") {
-            testXStream.toXML(Board()) shouldHaveLineCount 265
+            testXStream.toXML(board) shouldHaveLineCount 64
+            board.visibleSegments = PluginConstants.NUMBER_OF_SEGMENTS
+            val full = testXStream.toXML(board)
+            full shouldHaveLineCount 250
+            testXStream.fromXML(full) shouldBe board
         }
-        test("Board with content") {
-            val fieldTwo = "<field>TWO</field>"
-            //testXStream.fromXML(fieldTwo) shouldBe Field(penguin = Team.TWO)
-            //testXStream.fromXML("<board><list>$fieldTwo</list>") shouldBe Board(listOf(mutableListOf(Field(penguin = Team.TWO))))
-            //testXStream.toXML(makeBoard(0 y 0 to 1)) shouldContainOnlyOnce fieldTwo
+        test("field types") {
+            Board(listOf(Segment(CubeDirection.UP_LEFT, CubeCoordinates(1, 1), arrayOf(arrayOf(
+                    Field.WATER,
+                    Field.GOAL,
+                    Field.BLOCKED,
+                    Field.SANDBANK,
+                    Field.PASSENGER(CubeDirection.RIGHT),
+            ))))) shouldSerializeTo """
+                <board nextDirection="UP_LEFT">
+                  <segment direction="UP_LEFT">
+                    <center q="1" r="1" s="-2"/>
+                    <field-array>
+                      <water/>
+                      <goal/>
+                      <island/>
+                      <sandbank/>
+                      <passenger direction="RIGHT" passenger="1"/>
+                    </field-array>
+                  </segment>
+                </board>"""
         }
     }
 })

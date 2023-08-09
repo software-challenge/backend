@@ -3,14 +3,13 @@ package sc.plugin2024
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
-import com.thoughtworks.xstream.annotations.XStreamOmitField
-import sc.api.plugins.*
+import sc.api.plugins.Coordinates
+import sc.api.plugins.CubeCoordinates
+import sc.api.plugins.CubeDirection
 import sc.framework.PublicCloneable
-import sc.framework.plugins.Constants
 import sc.framework.shuffledIndices
 import sc.plugin2024.util.PluginConstants
 import kotlin.math.absoluteValue
-import kotlin.math.min
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -24,7 +23,7 @@ data class Segment(
         @XStreamAsAttribute val direction: CubeDirection,
         //@XStreamOmitField
         val center: CubeCoordinates,
-        @XStreamImplicit @XStreamAlias("segment") val segment: SegmentFields,
+        @XStreamImplicit val segment: SegmentFields,
 ): PublicCloneable<Segment> {
     val tip: CubeCoordinates
         get() = center + (direction.vector * (segment.size / 2))
@@ -124,6 +123,7 @@ internal fun SegmentFields.alignPassengers(random: Random = Random): Boolean {
                 val result = shuffledIndices(CubeDirection.values().size, random = random)
                         .mapToObj { Field.PASSENGER(CubeDirection.values()[it], 1) }
                         .filter {
+                            // TODO this rotation is relative now!
                             val target = Coordinates(x, y).localToCube() + it.direction.vector
                             get(target) == Field.WATER ||
                             (target.arrayX == -2 && target.r.absoluteValue < 3) // in front of a tile is always water

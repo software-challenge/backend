@@ -5,28 +5,24 @@ import com.thoughtworks.xstream.converters.MarshallingContext
 import com.thoughtworks.xstream.converters.UnmarshallingContext
 import com.thoughtworks.xstream.io.HierarchicalStreamReader
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter
-import sc.plugin2024.SegmentFields
+import sc.api.plugins.CubeDirection
+import sc.plugin2024.Board
+import sc.plugin2024.Segments
+import sc.util.read
 
 class BoardConverter: Converter {
     override fun canConvert(clazz: Class<*>?): Boolean =
-            clazz == ArrayList::class.java
+            clazz == Board::class.java
     
-    override fun marshal(value: Any?, writer: HierarchicalStreamWriter?, context: MarshallingContext?) {
-        @Suppress("Unchecked_cast") val list = value as ArrayList<SegmentFields>
-        
-        list.takeLast(4).forEach {
-            context?.convertAnother(it)
-        }
+    override fun marshal(value: Any, writer: HierarchicalStreamWriter, context: MarshallingContext) {
+        @Suppress("Unchecked_cast") val board = value as Board
+        writer.addAttribute("nextDirection", board.nextDirection.toString())
+        context.convertAnother(board.segments.take(board.visibleSegments))
     }
     
-    override fun unmarshal(reader: HierarchicalStreamReader?, context: UnmarshallingContext?): Any {
-        val list = ArrayList<SegmentFields>()
-        while(reader?.hasMoreChildren() == true) {
-            reader.moveDown()
-            val segment = context?.convertAnother(list, SegmentFields::class.java) as SegmentFields
-            list.add(segment)
-            reader.moveUp()
-        }
-        return list
+    override fun unmarshal(reader: HierarchicalStreamReader, context: UnmarshallingContext): Board {
+        val dir = CubeDirection.valueOf(reader.getAttribute("nextDirection"))
+        val segments = context.read<Segments>()
+        return Board(segments, segments.size, nextDirection = dir)
     }
 }
