@@ -5,7 +5,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sc.api.plugins.*
 import sc.plugin2024.util.BoardConverter
-import sc.plugin2024.util.PluginConstants.POINTS_PER_PASSENGER
 import kotlin.math.abs
 import kotlin.reflect.KClass
 
@@ -132,7 +131,6 @@ data class Board(
                     .filterIsInstance<Field.PASSENGER>().firstOrNull { it.passenger > 0 }?.run {
                         passenger--
                         ship.passengers++
-                        ship.points += POINTS_PER_PASSENGER
                         true
                     } ?: false
     

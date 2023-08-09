@@ -46,10 +46,17 @@ class GameStateTest: FunSpec({
             }
         }
         test("after push") {
-            gameState.currentShip.position = gameState.otherShip.position
+            val pusher = gameState.currentShip
+            val pushed = gameState.otherShip
+            pushed.position shouldBe CubeCoordinates(-2, 1)
+            pusher.position = pushed.position
             gameState.performMoveDirectly(Move(Push(CubeDirection.DOWN_RIGHT)))
-            gameState.currentShip.points = 0
-            gameState.otherShip.points = 1
+            
+            pusher.points shouldBe 0
+            pusher.position shouldBe CubeCoordinates(-2, 1)
+            pushed.position shouldBe CubeCoordinates(-2, 2)
+            gameState.calculatePoints(pushed) shouldBe 1
+            pushed.points shouldBe 1
         }
     }
     
@@ -99,9 +106,11 @@ class GameStateTest: FunSpec({
     }
     
     test("getSensibleMoves") {
+        gameState.turn shouldBe 0
+        gameState.currentTeam shouldBe Team.ONE
         gameState.currentShip.position shouldBe CubeCoordinates(-1, -1)
-        gameState.getSensibleMoves() shouldHaveSize 8
         // TODO sometimes returns extra moves in all directions?
+        gameState.getSensibleMoves() shouldHaveSize 8
     }
     
     context("game over on") {

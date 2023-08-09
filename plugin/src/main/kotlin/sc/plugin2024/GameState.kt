@@ -85,10 +85,11 @@ data class GameState @JvmOverloads constructor(
     // TODO or something like this?
     //  Team.values().maxByOrNull { getPointsForTeam(it) }
     
-    fun Ship.calculatePoints() =
-            board.segmentIndex(this.position).let { segmentIndex ->
+    fun calculatePoints(ship: Ship) =
+            board.segmentIndex(ship.position).let { segmentIndex ->
                 segmentIndex * POINTS_PER_SEGMENT +
-                board.segments[segmentIndex].globalToLocal(this.position).arrayX + 1
+                board.segments[segmentIndex].globalToLocal(ship.position).arrayX + 1
+                // TODO points per passenger
             }
     
     /**
@@ -118,9 +119,9 @@ data class GameState @JvmOverloads constructor(
             otherShip.speed == 1 -> this.board.pickupPassenger(otherShip)
         }
         
-        currentShip.points = currentShip.calculatePoints()
+        currentShip.points = calculatePoints(currentShip)
         if(move.actions.any { it is Push })
-            otherShip.calculatePoints()
+            otherShip.points = calculatePoints(otherShip)
         
         lastMove = move
         board.revealSegment(board.segmentIndex(currentShip.position) + 1)

@@ -8,7 +8,7 @@ enum class PushException(override val message: String): IMoveMistake {
     INVALID_FIELD_PUSH("Ein Spieler darf nicht auf ein nicht vorhandenes (oder nicht sichtbares) Feld abgedrängt werden."),
     BLOCKED_FIELD_PUSH("Ein Spieler darf nicht auf ein blockiertes Feld abgedrängt werden."),
     SANDBANK_PUSH("Von einer Sandbank ist abdrängen nicht möglich."),
-    BACKWARD_PUSHING_RESTRICTED("Ein Spieler darf nicht hinter sich, also auf das zu ihm benachbarte Feld entgegen seiner Bewegungsrichtung, abdrängen.");
+    BACKWARD_PUSHING_RESTRICTED("Ein Spieler darf nicht auf das Feld abdrängen, von dem er kommt.");
     
     override fun toString() = message
 }
