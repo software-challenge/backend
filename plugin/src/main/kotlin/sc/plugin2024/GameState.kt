@@ -7,10 +7,12 @@ import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
+import sc.plugin2024.exceptions.AdvanceException
 import sc.plugin2024.exceptions.MoveException
 import sc.plugin2024.util.PluginConstants
 import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENT
 import sc.shared.InvalidMoveException
+import java.util.BitSet
 import kotlin.math.absoluteValue
 
 /**
@@ -145,12 +147,15 @@ data class GameState @JvmOverloads constructor(
             (getPossibleTurns(maxCoal.coerceAtMost(1)) + null).flatMap { turn ->
                 val direction = turn?.direction ?: currentShip.direction
                 getPossibleAdvances(currentShip.position, direction,
-                        currentShip.movement + currentShip.freeAcc + (maxCoal - (turn?.direction?.turnCountTo(currentShip.direction)?.absoluteValue?.minus(currentShip.freeTurns) ?: 0)))
+                        currentShip.movement + currentShip.freeAcc + (maxCoal - (turn?.direction?.turnCountTo(currentShip.direction)?.absoluteValue?.minus(currentShip.freeTurns)
+                                                                                 ?: 0)))
                         .map { advance ->
                             Move(listOfNotNull(Acceleration(advance.distance - currentShip.movement).takeUnless { it.acc == 0 || advance.distance < 1 }, turn, advance,
                                     if(currentShip.position + (direction.vector * advance.distance) == otherShip.position) {
                                         val currentRotation = board.findSegment(otherShip.position)?.direction
-                                        getPossiblePushs(otherShip.position, direction).maxByOrNull { currentRotation?.turnCountTo(it.direction)?.absoluteValue ?: 2 }
+                                        getPossiblePushs(otherShip.position, direction).maxByOrNull {
+                                            currentRotation?.turnCountTo(it.direction)?.absoluteValue ?: 2
+                                        }
                                     } else null
                             ))
                         }
@@ -240,6 +245,57 @@ data class GameState @JvmOverloads constructor(
         return advances
     }
     
+    data class AdvanceInfo(val distance: Int, val extraCost: BitSet, val problem: AdvanceException) {
+        fun costUntil(distance: Int) =
+                distance + extraCost[0, distance].cardinality()
+    }
+    
+    /**
+     * Check how far an advancement is possible in the given direction.
+     * Does not honor special conditions of the starting tile.
+     * @return how far movement is possible, how many movement points it costs and why not further
+     * */
+    fun checkAdvanceLimit(start: CubeCoordinates, direction: CubeDirection, maxMovement: Int): AdvanceInfo {
+        var currentPosition = start
+        var totalCost = 0
+        var hasCurrent = false
+        val extraCost = BitSet()
+        fun distance() = totalCost - extraCost.cardinality()
+        fun requireExtraCost(): Boolean {
+            return if(totalCost < maxMovement) {
+                extraCost.set(distance() - 1)
+                totalCost++
+                true
+            } else {
+                totalCost--
+                false
+            }
+        }
+        fun result(condition: AdvanceException) =
+                AdvanceInfo(distance(), extraCost, condition)
+        while(totalCost < maxMovement) {
+            currentPosition += direction.vector
+            val currentField = board[currentPosition]
+            totalCost++
+            when {
+                currentField == null || currentField.isEmpty -> {
+                    totalCost--
+                    return result(AdvanceException.FIELD_IS_BLOCKED)
+                }
+                ships.any { it.position == currentPosition } ->
+                    result(if(requireExtraCost()) AdvanceException.SHIP_ALREADY_IN_TARGET else AdvanceException.INSUFFICIENT_PUSH)
+                currentField == Field.SANDBANK ->
+                    return result(AdvanceException.MOVE_END_ON_SANDBANK)
+                board.doesFieldHaveCurrent(currentPosition) && !hasCurrent -> {
+                    hasCurrent = true
+                    if(!requireExtraCost())
+                        break
+                }
+            }
+        }
+        return result(AdvanceException.NO_MOVEMENT_POINTS)
+    }
+    
     /**
      * Returns the list of all possible Acceleration actions that require at most the given coal number.
      *
@@ -257,7 +313,7 @@ data class GameState @JvmOverloads constructor(
     }
     
     fun canMove() =
-        getSensibleMoves().isNotEmpty() // TODO make more efficient and take ship as parameter
+            getSensibleMoves().isNotEmpty() // TODO make more efficient and take ship as parameter
     
     override val isOver: Boolean
         get() = when {
