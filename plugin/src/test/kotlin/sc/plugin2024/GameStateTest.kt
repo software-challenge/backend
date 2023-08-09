@@ -72,9 +72,14 @@ class GameStateTest: FunSpec({
             gameState.getPossibleAdvances() shouldHaveSingleElement Advance(1)
         }
         test("from sandbank") {
-            gameState.currentShip.position =
-                    gameState.board.findNearestFieldTypes(gameState.currentShip.position, Field.SANDBANK::class).first()
-            gameState.getPossibleAdvances() shouldContainAnyOf listOf(Advance(1), Advance(-1))
+            val sandState = GameState(Board(
+                    listOf(Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, generateSegment(false, arrayOf())),
+                            Segment(CubeDirection.RIGHT, CubeCoordinates(4,0), generateSegment(false, arrayOf(Field.SANDBANK))))
+            ))
+            sandState.currentShip.position =
+                    sandState.board.findNearestFieldTypes(sandState.currentShip.position, Field.SANDBANK::class).first()
+            sandState.getPossibleAdvances() shouldContainExactly listOf(Advance(1), Advance(-1))
+            sandState.getSensibleMoves() shouldContainExactly listOf(Move(Advance(1)), Move(Advance(-1)))
         }
     }
     

@@ -11,7 +11,6 @@ import sc.plugin2024.exceptions.MoveException
 import sc.plugin2024.util.PluginConstants
 import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENT
 import sc.shared.InvalidMoveException
-import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 /**
@@ -147,7 +146,7 @@ data class GameState @JvmOverloads constructor(
                 getPossibleAdvances(currentShip.position, direction,
                         currentShip.movement + currentShip.freeAcc + (maxCoal - (turn?.direction?.turnCountTo(currentShip.direction)?.absoluteValue?.minus(currentShip.freeTurns) ?: 0)))
                         .map { advance ->
-                            Move(listOfNotNull(Acceleration(advance.distance - currentShip.movement).takeUnless { it.acc == 0 }, turn, advance,
+                            Move(listOfNotNull(Acceleration(advance.distance - currentShip.movement).takeUnless { it.acc == 0 || advance.distance < 1 }, turn, advance,
                                     if(currentShip.position + (direction.vector * advance.distance) == otherShip.position) {
                                         val currentRotation = board.findSegment(otherShip.position)?.direction
                                         getPossiblePushs(otherShip.position, direction).maxByOrNull { currentRotation?.turnCountTo(it.direction)?.absoluteValue ?: 2 }
