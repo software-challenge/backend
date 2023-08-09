@@ -10,9 +10,11 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 24.0.0
+### 24.0.0 - 2023-08-10
+- Fix Orientation of Coordinates and Directions for Cartesian, DoubledHex and Cube
+- Implement basic version of Mississippi Queen - XML and Rules are subject to change!
 
-## 2024 Game Mississippi Queen - 2023-07
+## 2024 Game Mississippi Queen - 2023-08
 
 ### 23.0.3 Final Fixes
 - Fix Deep Cloning of GameState
