@@ -87,7 +87,7 @@ data class GameState @JvmOverloads constructor(
     //  Team.values().maxByOrNull { getPointsForTeam(it) }
     
     fun Ship.calculatePoints() =
-            board.findSegment(this.position)?.let { segmentIndex ->
+            board.segmentIndex(this.position)?.let { segmentIndex ->
                 segmentIndex * POINTS_PER_SEGMENT +
                 board.segments[segmentIndex].globalToLocal(this.position).arrayX + 1
             } ?: 0
@@ -148,7 +148,7 @@ data class GameState @JvmOverloads constructor(
                         .map { advance ->
                             Move(listOfNotNull(Acceleration(advance.distance - currentShip.movement).takeUnless { it.acc == 0 }, turn, advance,
                                     if(currentShip.position + (direction.vector * advance.distance) == otherShip.position) {
-                                        val currentRotation = board.segmentDirection(otherShip.position)
+                                        val currentRotation = board.findSegment(otherShip.position)?.direction
                                         getPossiblePushs(otherShip.position, direction).maxByOrNull { currentRotation?.turnCountTo(it.direction)?.absoluteValue ?: 2 }
                                     } else null
                             ))
