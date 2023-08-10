@@ -2,14 +2,16 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.XStream
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.helpers.shouldSerializeTo
+import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
+import sc.plugin2024.actions.Turn
 import sc.plugin2024.exceptions.AdvanceException
-import sc.plugin2024.exceptions.MoveException
 import sc.shared.InvalidMoveException
 
 class AdvanceTest: FunSpec({
@@ -42,11 +44,17 @@ class AdvanceTest: FunSpec({
             shipONE.speed shouldBe 2
         }
         
+        test("through current") {
+            forAll<Int>((1..3).toList()) {
+                gameState.performMoveDirectly(Move(Acceleration(it), Turn(CubeDirection.DOWN_RIGHT), Advance(it + 1)))
+                shipONE.position shouldBe CubeCoordinates(0, it - 1)
+            }
+        }
+        
         test("no movement points") {
             shouldThrow<InvalidMoveException> {
                 gameState.performMoveDirectly(Move(Advance(3)))
-                println(gameState.ships)
-            }.mistake shouldBe MoveException.MOVEMENT_POINTS_MISSING
+            }.mistake shouldBe AdvanceException.NO_MOVEMENT_POINTS
         }
         
         test("invalid distance") {
@@ -103,7 +111,7 @@ class AdvanceTest: FunSpec({
             shipONE.direction = CubeDirection.DOWN_RIGHT
             shouldThrow<InvalidMoveException> {
                 Advance(-1).perform(gameState, shipONE)
-            }.mistake shouldBe AdvanceException.BACKWARD_MOVE_NOT_POSSIBLE
+            }.mistake shouldBe AdvanceException.INVALID_DISTANCE
         }
         
         test("only one move allowed on sandbank") {
@@ -117,22 +125,31 @@ class AdvanceTest: FunSpec({
                 dest != null && dest.isEmpty
             } ?: throw IllegalStateException("No valid direction found.")
             
-            val invalidAdvanceLessThanMinusOne = Advance(2)
-            
             shouldThrow<InvalidMoveException> {
-                invalidAdvanceLessThanMinusOne.perform(gameState, shipONE)
-            }.mistake shouldBe AdvanceException.ONLY_ONE_MOVE_ALLOWED_ON_SANDBANK
+                Advance(2).perform(gameState, shipONE)
+            }.mistake shouldBe AdvanceException.NO_MOVEMENT_POINTS
         }
         
-        test("ship already in target") {
+        context("on opponent") {
             shipONE.position = CubeCoordinates(-1, 0)
             shipONE.direction = CubeDirection.DOWN_LEFT
             
-            val moveOnOtherShip = Advance(2)
+            test("insufficient movement") {
+                shouldThrow<InvalidMoveException> {
+                    Advance(1).perform(gameState, shipONE)
+                }.mistake shouldBe AdvanceException.INSUFFICIENT_PUSH
+            }
             
-            shouldThrow<InvalidMoveException> {
-                moveOnOtherShip.perform(gameState, shipONE)
-            }.mistake shouldBe AdvanceException.SHIP_ALREADY_IN_TARGET
+            shipONE.movement = 2
+            test("allowed") {
+                Advance(1).perform(gameState, shipONE)
+            }
+            
+            test("ship already in target") {
+                shouldThrow<InvalidMoveException> {
+                    Advance(2).perform(gameState, shipONE)
+                }.mistake shouldBe AdvanceException.SHIP_ALREADY_IN_TARGET
+            }
         }
     }
 })

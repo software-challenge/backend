@@ -42,7 +42,6 @@ data class Advance(
         result.extraCost.clear(distance + 1, 999)
         ship.position += ship.direction.vector * distance
         ship.movement -= result.costUntil(distance)
-        // TODO test this oof
     }
     
     override fun toString(): String = if(distance >= 0) "Gehe $distance Felder vor" else "Gehe $distance Felder zurück"
