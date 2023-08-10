@@ -125,14 +125,15 @@ data class GameState @JvmOverloads constructor(
     // TODO this should be a Stream
     /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount. */
     fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> =
+            checkSandbankAdvances(currentShip)?.map { Move(it) } ?:
             (getPossibleTurns(maxCoal.coerceAtMost(1)) + null).flatMap { turn ->
                 val direction = turn?.direction ?: currentShip.direction
-                getPossibleAdvances(currentShip.position, direction,
-                        currentShip.movement + currentShip.freeAcc + (maxCoal - (turn?.direction?.turnCountTo(currentShip.direction)?.absoluteValue?.minus(currentShip.freeTurns)
-                                                                                 ?: 0)))
-                        .map { advance ->
-                            Move(listOfNotNull(Acceleration(advance.distance - currentShip.movement).takeUnless { it.acc == 0 || advance.distance < 1 }, turn, advance,
-                                    if(currentShip.position + (direction.vector * advance.distance) == otherShip.position) {
+                val info = checkAdvanceLimit(currentShip.position, direction,
+                        currentShip.movement + currentShip.freeAcc + (maxCoal - (turn?.coalCost(currentShip) ?: 0)))
+                (1..info.distance)
+                        .map { dist ->
+                            Move(listOfNotNull(Acceleration(info.costUntil(dist) - currentShip.movement).takeUnless { it.acc == 0 || dist < 1 }, turn, Advance(dist),
+                                    if(currentShip.position + (direction.vector * dist) == otherShip.position) {
                                         val currentRotation = board.findSegment(otherShip.position)?.direction
                                         getPossiblePushs(otherShip.position, direction).maxByOrNull {
                                             currentRotation?.turnCountTo(it.direction)?.absoluteValue ?: 2
@@ -207,29 +208,30 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossibleAdvances(): List<Advance> {
         if(currentShip.movement <= 0 || currentShip.position == otherShip.position) return emptyList()
-        return getPossibleAdvances(currentShip.position, currentShip.direction, currentShip.movement)
+        return getPossibleAdvances(currentShip)
     }
     
-    fun getPossibleAdvances(start: CubeCoordinates, direction: CubeDirection, movement: Int): List<Advance> {
-        if(board[start] == Field.SANDBANK) return listOf(Advance(1), Advance(-1))
-        
-        val advances = mutableListOf<Advance>()
-        for(i in 1..movement) {
-            val destination = start + direction.vector * i
-            val next: Field? = board[destination]
-            if(next == null || !next.isEmpty) break
-            
-            advances.add(Advance(i))
-            
-            if(next == Field.SANDBANK || ships.any { it.position == destination }) break
+    fun getPossibleAdvances(ship: Ship): List<Advance> =
+            checkSandbankAdvances(ship) ?: checkAdvanceLimit(ship).advances()
+    
+    /** @return a list of possible advances in case the ship is on a sandbank. */
+    fun checkSandbankAdvances(ship: Ship): List<Advance>? {
+        if(board[ship.position] == Field.SANDBANK) {
+            return listOfNotNull(Advance(1).takeIf { checkAdvanceLimit(ship.position, ship.direction, 1).distance > 1 },
+                    Advance(-1).takeIf { checkAdvanceLimit(ship.position, ship.direction.opposite(), 1).distance > 1 })
         }
-        return advances
+        return null
     }
     
     data class AdvanceInfo(val distance: Int, val extraCost: BitSet, val problem: AdvanceException) {
         fun costUntil(distance: Int) =
-                distance + extraCost[0, distance].cardinality()
+                distance + extraCost[0, distance - 1].cardinality()
+        
+        fun advances() = (1..distance).map { Advance(it) }
     }
+    
+    fun checkAdvanceLimit(ship: Ship) =
+            checkAdvanceLimit(ship.position, ship.direction, ship.movement)
     
     /**
      * Check how far an advancement is possible in the given direction.
@@ -252,6 +254,7 @@ data class GameState @JvmOverloads constructor(
                 false
             }
         }
+        
         fun result(condition: AdvanceException) =
                 AdvanceInfo(distance(), extraCost, condition)
         while(totalCost < maxMovement) {
@@ -263,10 +266,12 @@ data class GameState @JvmOverloads constructor(
                     totalCost--
                     return result(AdvanceException.FIELD_IS_BLOCKED)
                 }
+                
                 ships.any { it.position == currentPosition } ->
                     return result(if(requireExtraCost()) AdvanceException.SHIP_ALREADY_IN_TARGET else AdvanceException.INSUFFICIENT_PUSH)
-                currentField == Field.SANDBANK ->
-                    return result(AdvanceException.MOVE_END_ON_SANDBANK)
+                
+                currentField == Field.SANDBANK -> return result(AdvanceException.MOVE_END_ON_SANDBANK)
+                
                 board.doesFieldHaveCurrent(currentPosition) && !hasCurrent -> {
                     hasCurrent = true
                     if(!requireExtraCost())

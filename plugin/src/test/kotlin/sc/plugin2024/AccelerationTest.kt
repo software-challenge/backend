@@ -47,11 +47,12 @@ class AccelerationTest: FunSpec({
         }
         
         test("on a sandbank") {
-            val sandBankCoordinate: CubeCoordinates = gameState.board
+            ship.position = gameState.board
                     .findNearestFieldTypes(CubeCoordinates.ORIGIN, Field.SANDBANK::class).first()
-            ship.position = sandBankCoordinate
             val acceleration = Acceleration(1)
-            shouldThrow<InvalidMoveException> { acceleration.perform(gameState, ship) }
+            shouldThrow<InvalidMoveException> {
+                acceleration.perform(gameState, ship)
+            }
         }
     }
 })

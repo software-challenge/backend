@@ -109,8 +109,7 @@ class GameStateTest: FunSpec({
         gameState.turn shouldBe 0
         gameState.currentTeam shouldBe Team.ONE
         gameState.currentShip.position shouldBe CubeCoordinates(-1, -1)
-        // TODO sometimes returns extra moves in all directions?
-        gameState.getSensibleMoves() shouldHaveSize 8
+        gameState.getSensibleMoves() shouldHaveSize 7
     }
     
     context("game over on") {

@@ -30,6 +30,7 @@ data class Advance(
         @XStreamAsAttribute val distance: Int,
 ): Action {
     
+    // TODO return rather than throw
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
         if(distance < 1 && state.board[ship.position] != Field.SANDBANK || distance > 6)
