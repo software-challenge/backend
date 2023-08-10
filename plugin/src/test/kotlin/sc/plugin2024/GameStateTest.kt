@@ -1,6 +1,5 @@
 package sc.plugin2024
 
-import com.thoughtworks.xstream.XStream
 import io.kotest.assertions.withClue
 import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
@@ -9,6 +8,7 @@ import io.kotest.matchers.collections.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
+import sc.helpers.shouldSerializeTo
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 
@@ -27,11 +27,11 @@ class GameStateTest: FunSpec({
         gameState.determineAheadTeam() shouldBe gameState.currentTeam
         gameState.currentShip shouldBe gameState.ships.first()
         gameState.otherShip shouldBe gameState.ships.last()
-        gameState.turn++
+        gameState.advanceTurn()
         gameState.currentTeam shouldBe gameState.startTeam.opponent()
-        gameState.turn++
+        gameState.advanceTurn()
         gameState.currentTeam shouldBe gameState.startTeam
-        gameState.turn++
+        gameState.advanceTurn()
         gameState.currentTeam shouldBe gameState.startTeam.opponent()
         gameState.performMoveDirectly(Move(Advance(1)))
         gameState.turn shouldBe 4
@@ -119,63 +119,56 @@ class GameStateTest: FunSpec({
             gameState.otherShip.freeTurns = 0
             gameState.otherShip.coal = 0
             gameState.isOver shouldBe false
-            gameState.turn++
+            gameState.advanceTurn()
             gameState.getSensibleMoves().shouldBeEmpty()
             gameState.isOver shouldBe true
         }
         test("round limit") {
-            gameState.turn = 59
-            gameState.isOver shouldBe false
-            gameState.turn = 60
-            gameState.isOver shouldBe true
+            val endState = GameState(turn = 59)
+            endState.isOver shouldBe false
+            endState.advanceTurn()
+            endState.isOver shouldBe true
         }
         test("distance and reaching goal field") {
-            gameState.currentShip.position =
+            val ship = gameState.currentShip
+            ship.position =
                     gameState.board.segments.last().tip
-            gameState.board[gameState.currentShip.position] shouldBe Field.GOAL
+            gameState.board[ship.position] shouldBe Field.GOAL
             withClue("segment distance") {
                 gameState.isOver shouldBe true
-                gameState.turn++
+                gameState.advanceTurn()
                 gameState.isOver shouldBe true
             }
             withClue("Nachzug") {
+                // Distanz eliminieren
                 gameState.currentShip.position =
                         gameState.board.segments.takeLast(2).first().tip
+                
                 gameState.turn shouldBe 1
                 gameState.getSensibleMoves().shouldNotBeEmpty()
+                ship.passengers = 2
                 gameState.isOver shouldBe false // Nachzug ermöglichen
             }
             withClue("Gerade Zugzahl") {
-                gameState.turn++
-                gameState.isOver shouldBe false
-                gameState.currentShip.passengers = 2
+                gameState.advanceTurn()
                 gameState.isOver shouldBe true
+                ship.passengers = 1
+                gameState.isOver shouldBe false
             }
         }
     }
     
-    xtest("serializes nicely") {
-        val xStream = XStream().apply {
-            processAnnotations(GameState::class.java)
-            processAnnotations(Segment::class.java)
-            XStream.setupDefaultSecurity(this)
-            allowTypesByWildcard(arrayOf("sc.plugin2024.*"))
-        }
-        
-        val serialized = xStream.toXML(gameState)
-        
-        serialized shouldBe """<state turn="0">
-    <board>
-    </board>
-    <lastMove>
-    </lastMove>
-    <ships>
-        <ship>
-        </ship>
-        <ship>
-        </ship>
-    </ships>
-</state>"""
+    test("serializes nicely") {
+        GameState(Board(listOf())) shouldSerializeTo  """
+            <state startTeam="ONE" turn="0" currentTeam="ONE">
+              <board nextDirection="RIGHT"/>
+              <ship team="ONE" points="0" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1">
+                <position q="-1" r="-1" s="2"/>
+              </ship>
+              <ship team="TWO" points="0" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1">
+                <position q="-2" r="1" s="1"/>
+              </ship>
+            </state>"""
     }
     
 })

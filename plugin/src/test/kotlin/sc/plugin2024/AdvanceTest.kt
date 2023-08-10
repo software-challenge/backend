@@ -3,7 +3,7 @@ package sc.plugin2024
 import com.thoughtworks.xstream.XStream
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.helpers.shouldSerializeTo
@@ -53,18 +53,14 @@ class AdvanceTest: FunSpec({
             shipONE.speed = 2
             shipONE.movement = 6
             
-            val invalidAdvanceLessThanMinusOne = Advance(-2)
-            val invalidAdvanceZero = Advance(0)
-            val invalidAdvanceMoreThanSix = Advance(7)
-            
             shouldThrow<InvalidMoveException> {
-                invalidAdvanceLessThanMinusOne.perform(gameState, shipONE)
+                Advance(-2).perform(gameState, shipONE)
             }.mistake shouldBe AdvanceException.INVALID_DISTANCE
             shouldThrow<InvalidMoveException> {
-                invalidAdvanceZero.perform(gameState, shipONE)
+                Advance(0).perform(gameState, shipONE)
             }.mistake shouldBe AdvanceException.INVALID_DISTANCE
             shouldThrow<InvalidMoveException> {
-                invalidAdvanceMoreThanSix.perform(gameState, shipONE)
+                Advance(7).perform(gameState, shipONE)
             }.mistake shouldBe AdvanceException.INVALID_DISTANCE
         }
         
@@ -77,7 +73,7 @@ class AdvanceTest: FunSpec({
             
             shouldThrow<InvalidMoveException> {
                 invalidAdvanceLessThanMinusOne.perform(gameState, shipONE)
-            }.mistake shouldBe AdvanceException.FIELD_NOT_EXIST
+            }.mistake shouldBe AdvanceException.FIELD_IS_BLOCKED
         }
         
         test("field is blocked") {

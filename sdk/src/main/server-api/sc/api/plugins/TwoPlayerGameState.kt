@@ -1,6 +1,9 @@
 package sc.api.plugins
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+
 abstract class TwoPlayerGameState<M: IMove>(
+        @XStreamAsAttribute
         val startTeam: Team
 ) : IGameState {
     
@@ -30,7 +33,7 @@ abstract class TwoPlayerGameState<M: IMove>(
     
     abstract override fun clone(): TwoPlayerGameState<M>
     
-    /** Calculates the color of the current player from the [turn] and the [startTeam].
+    /** Calculates the [Team] of the current player from [turn] and [startTeam].
      * Based on the assumption that the current player switches every turn. */
     protected fun currentTeamFromTurn(): Team =
             if(turn.rem(2) == 0) startTeam else startTeam.opponent()

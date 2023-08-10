@@ -2,7 +2,6 @@ package sc.plugin2024.actions
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.plugin2024.*
 import sc.plugin2024.exceptions.AdvanceException
@@ -33,7 +32,7 @@ data class Advance(
     
     @Throws(InvalidMoveException::class)
     override fun perform(state: GameState, ship: Ship) {
-        if(distance < 0 && state.board[ship.position] != Field.SANDBANK || distance > 6)
+        if(distance < 1 && state.board[ship.position] != Field.SANDBANK || distance > 6)
             throw InvalidMoveException(AdvanceException.INVALID_DISTANCE)
         
         val result = state.checkAdvanceLimit(ship.position, if(distance > 0) ship.direction else ship.direction.opposite(), ship.movement)

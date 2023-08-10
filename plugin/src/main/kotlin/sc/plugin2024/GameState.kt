@@ -2,6 +2,7 @@ package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
 import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
@@ -29,47 +30,28 @@ import kotlin.math.absoluteValue
 data class GameState @JvmOverloads constructor(
         /** Das aktuelle Spielfeld. */
         override val board: Board = Board(),
-        /** Die Anzahl an bereits getätigten Zügen. */
+        /** Die Anzahl an bereits getätigten Zügen.
+         * Modifikation nur via [advanceTurn]. */
         @XStreamAsAttribute override var turn: Int = 0,
+        @XStreamImplicit
         val ships: List<Ship> = (CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector).let { start ->
             listOf(
                     Ship(start + CubeDirection.UP_LEFT.vector, Team.ONE),
                     Ship(start + CubeDirection.DOWN_LEFT.vector, Team.TWO)
             )
         },
-        /**
-         * The player who started the current round.
-         * By default, [Team.ONE] is the one starting the first round.
-         */
-        private var currentRoundStarter: Team = ships.first().team,
+        /** Das [Team], das am Zug ist. */
+        @XStreamAsAttribute
+        override var currentTeam: Team = ships.first().team,
         /** Der zuletzt gespielte Zug. */
         override var lastMove: Move? = null,
-): TwoPlayerGameState<Move>(currentRoundStarter) {
-    
-    override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
+): TwoPlayerGameState<Move>(currentTeam) {
     
     val currentShip: Ship
         get() = ships[currentTeam.index]
     
     val otherShip: Ship
         get() = ships[currentTeam.opponent().index]
-    
-    /**
-     * Get the current [Team] that is allowed to make a move.
-     *
-     * The current team is determined based on the rules of the game.
-     * If it is the end of the round (i.e., both players have made a move),
-     * then the next move starts, according to the given rules.
-     *
-     * @return The current team.
-     */
-    override val currentTeam: Team
-        get() =
-            if(turn % 2 == 0) {
-                currentRoundStarter
-            } else {
-                currentRoundStarter.opponent()
-            }
     
     /**
      * Determine the team that should go first at the beginning of the round.
@@ -133,15 +115,14 @@ data class GameState @JvmOverloads constructor(
     /** Increment the turn and update the current team. */
     fun advanceTurn() {
         turn++
-        if(turn % 2 == 0)
-            currentRoundStarter = determineAheadTeam()
+        currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
     }
     
     /** Retrieves a list of sensible moves based on the possible actions. */
     override fun getSensibleMoves(): List<IMove> =
             getPossibleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { getPossibleMoves() }
     
-    // TODO this should be a stream
+    // TODO this should be a Stream
     /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount. */
     fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> =
             (getPossibleTurns(maxCoal.coerceAtMost(1)) + null).flatMap { turn ->
@@ -278,7 +259,7 @@ data class GameState @JvmOverloads constructor(
             val currentField = board[currentPosition]
             totalCost++
             when {
-                currentField == null || currentField.isEmpty -> {
+                currentField == null || !currentField.isEmpty -> {
                     totalCost--
                     return result(AdvanceException.FIELD_IS_BLOCKED)
                 }
@@ -335,6 +316,8 @@ data class GameState @JvmOverloads constructor(
             ships[team.index].let { ship ->
                 intArrayOf(ship.points, ship.speed, ship.coal)
             }
+    
+    override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
     
     override fun toString() =
             "GameState $turn, $currentTeam ist dran"

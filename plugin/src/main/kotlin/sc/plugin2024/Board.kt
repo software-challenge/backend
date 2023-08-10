@@ -20,7 +20,7 @@ data class Board(
         @XStreamOmitField
         internal var visibleSegments: Int = 2.coerceAtMost(segments.size),
         @XStreamAsAttribute
-        var nextDirection: CubeDirection = segments.last().direction
+        var nextDirection: CubeDirection = segments.lastOrNull()?.direction ?: CubeDirection.RIGHT
 ): IBoard {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
