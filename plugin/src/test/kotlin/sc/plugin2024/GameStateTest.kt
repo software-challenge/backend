@@ -115,7 +115,7 @@ class GameStateTest: FunSpec({
     
     context("game over on") {
         test("immovable") {
-            gameState.board.segments.first().segment[1][3] = Field.BLOCKED
+            gameState.board.segments.first().fields[1][3] = Field.BLOCKED
             gameState.otherShip.freeTurns = 0
             gameState.otherShip.coal = 0
             gameState.isOver shouldBe false

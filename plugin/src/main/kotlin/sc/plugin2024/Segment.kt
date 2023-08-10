@@ -23,36 +23,41 @@ data class Segment(
         @XStreamAsAttribute val direction: CubeDirection,
         //@XStreamOmitField
         val center: CubeCoordinates,
-        @XStreamImplicit val segment: SegmentFields,
+        @XStreamImplicit val fields: SegmentFields,
 ): PublicCloneable<Segment> {
+    
     val tip: CubeCoordinates
-        get() = center + (direction.vector * (segment.size / 2))
+        get() = center + (direction.vector * (fields.size / 2))
+    
+    /** Iterate over each field paired with its GLOBAL coordinates. */
+    fun forEachField(handler: (CubeCoordinates, Field) -> Unit) =
+            fields.forEachField { coordinates, field -> handler(localToGlobal(coordinates), field) }
     
     /** Get Field by global coordinates. */
     operator fun get(coordinates: CubeCoordinates): Field? =
-            segment[globalToLocal(coordinates)]
+            fields[globalToLocal(coordinates)]
     
-    fun localToGlobal(coordinates: Coordinates) =
+    fun localToGlobal(coordinates: Coordinates): CubeCoordinates =
             coordinates
                     .localToCube()
                     .rotatedBy(CubeDirection.RIGHT.turnCountTo(direction))
                     .plus(center)
     
     /** Turn global into local CubeCoordinates. */
-    fun globalToLocal(coordinates: CubeCoordinates) =
+    fun globalToLocal(coordinates: CubeCoordinates): CubeCoordinates =
             (coordinates - center).rotatedBy(direction.turnCountTo(CubeDirection.RIGHT))
     
     override fun toString() =
-            "Segment at $center to $direction\n" + segment.first().mapIndexed { y, field ->
-                segment.mapIndexed { x, column ->
+            "Segment at $center to $direction\n" + fields.first().mapIndexed { y, _ ->
+                fields.mapIndexed { x, column ->
                     val cubeCoordinates = localToGlobal(Coordinates(x, y))
                     "${column[y].letter} (${cubeCoordinates.q}, ${cubeCoordinates.r})"
                 }.joinToString("|")
             }.joinToString("\n")
     
     override fun clone(): Segment =
-            copy(segment = Array(segment.size) { x ->
-                Array(segment[x].size) { y -> segment[x][y].clone() }
+            copy(fields = Array(fields.size) { x ->
+                Array(fields[x].size) { y -> fields[x][y].clone() }
             })
     
     override fun equals(other: Any?): Boolean {
@@ -61,7 +66,7 @@ data class Segment(
         
         if(direction != other.direction) return false
         if(center != other.center) return false
-        if(!segment.contentDeepEquals(other.segment)) return false
+        if(!fields.contentDeepEquals(other.fields)) return false
         
         return true
     }
@@ -69,9 +74,48 @@ data class Segment(
     override fun hashCode(): Int {
         var result = direction.hashCode()
         result = 31 * result + center.hashCode()
-        result = 31 * result + segment.contentDeepHashCode()
+        result = 31 * result + fields.contentDeepHashCode()
         return result
     }
+    
+    companion object {
+        fun inDirection(previousCenter: CubeCoordinates, direction: CubeDirection, fields: SegmentFields) =
+                Segment(direction, previousCenter + direction.vector * PluginConstants.SEGMENT_FIELDS_WIDTH, fields)
+    }
+}
+
+internal fun SegmentFields.forEachField(handler: (Coordinates, Field) -> Unit) =
+        this.forEachIndexed { x, column ->
+            column.forEachIndexed { y, field ->
+                handler(Coordinates(x, y), field)
+            }
+        }
+
+/** Rotates all passenger fields towards water.
+ * @return false if there is an impossible field */
+internal fun SegmentFields.alignPassengers(random: Random = Random): Boolean {
+    val fields = this
+    fields.forEachIndexed { x, column ->
+        column.forEachIndexed { y, field ->
+            if(field is Field.PASSENGER) {
+                val result = shuffledIndices(CubeDirection.values().size, random = random)
+                        .mapToObj { Field.PASSENGER(CubeDirection.values()[it], 1) }
+                        .filter {
+                            // TODO this rotation is relative now!
+                            val target = Coordinates(x, y).localToCube() + it.direction.vector
+                            get(target) == Field.WATER ||
+                            (target.arrayX == -2 && target.r.absoluteValue < 3) // in front of a tile is always water
+                        }
+                        .findFirst()
+                if(result.isPresent)
+                    fields[x][y] = result.get()
+                else
+                // Impossible passenger field
+                    return false
+            }
+        }
+    }
+    return true
 }
 
 /**
@@ -113,33 +157,6 @@ internal fun generateSegment(
     return fields
 }
 
-/** Rotates all passenger fields towards water.
- * @return false if there is an impossible field */
-internal fun SegmentFields.alignPassengers(random: Random = Random): Boolean {
-    val fields = this
-    fields.forEachIndexed { x, column ->
-        column.forEachIndexed { y, field ->
-            if(field is Field.PASSENGER) {
-                val result = shuffledIndices(CubeDirection.values().size, random = random)
-                        .mapToObj { Field.PASSENGER(CubeDirection.values()[it], 1) }
-                        .filter {
-                            // TODO this rotation is relative now!
-                            val target = Coordinates(x, y).localToCube() + it.direction.vector
-                            get(target) == Field.WATER ||
-                            (target.arrayX == -2 && target.r.absoluteValue < 3) // in front of a tile is always water
-                        }
-                        .findFirst()
-                if(result.isPresent)
-                    fields[x][y] = result.get()
-                else
-                // Impossible passenger field
-                    return false
-            }
-        }
-    }
-    return true
-}
-
 internal fun generateBoard(): Segments {
     val segments = ArrayList<Segment>(PluginConstants.NUMBER_OF_SEGMENTS)
     segments.add(Segment(
@@ -152,15 +169,20 @@ internal fun generateBoard(): Segments {
     (2..PluginConstants.NUMBER_OF_SEGMENTS).forEach {
         val previous = segments.last()
         val direction = if(it == 2) CubeDirection.RIGHT else previous.direction.withNeighbors().random()
-        segments.add(Segment(
-                direction,
-                previous.center + (direction.vector * 4),
+        
+        val segment =
                 generateSegment(it == PluginConstants.NUMBER_OF_SEGMENTS,
                         Array<Field>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { Field.BLOCKED } +
                         Array<Field>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { Field.SANDBANK } +
                         Array<Field>(if(passengerTiles.contains(it - 2)) 1 else 0) { Field.PASSENGER() }
                 )
-        ))
+        segment.forEachField { c, f ->
+            // Turn local passenger field rotation into global
+            if(f is Field.PASSENGER) {
+                segment[c.x][c.y] = f.copy(f.direction.rotatedBy(CubeDirection.RIGHT.turnCountTo(direction)))
+            }
+        }
+        segments.add(Segment.inDirection(previous.center, direction, segment))
     }
     return segments
 }

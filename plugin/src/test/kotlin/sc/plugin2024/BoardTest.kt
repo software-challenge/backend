@@ -6,6 +6,7 @@ import io.kotest.matchers.collections.*
 import io.kotest.matchers.ints.*
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
+import io.kotest.matchers.types.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
@@ -77,7 +78,26 @@ class BoardTest: FunSpec({
         result shouldContain dynamicField
         
         board.findNearestFieldTypes(startCoordinates, Field.PASSENGER::class).size shouldBeGreaterThanOrEqual 1
-        
+    }
+    
+    test("doesFieldHaveCurrent") {
+        val turningBoard = Board(listOf(
+                Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, generateSegment(false, arrayOf())),
+                Segment(CubeDirection.UP_RIGHT, CubeCoordinates(4, -4), generateSegment(false, arrayOf()))
+        ), nextDirection = CubeDirection.UP_LEFT)
+        val current = listOf(
+                CubeCoordinates(-1, 0),
+                CubeCoordinates(0, 0),
+                CubeCoordinates(1, -1),
+                CubeCoordinates(2, -2),
+                CubeCoordinates(3, -3),
+                CubeCoordinates(4, -4),
+                CubeCoordinates(4, -5),
+                CubeCoordinates(4, -6),
+        )
+        turningBoard.forEachField { cubeCoordinates, _ ->
+            turningBoard.doesFieldHaveCurrent(cubeCoordinates) shouldBe (cubeCoordinates in current)
+        }
     }
 
     context("pickupPassenger") {
@@ -110,6 +130,14 @@ class BoardTest: FunSpec({
             ship.passengers shouldBe initialShipPassengers
         }
         
+        test("return false when rotation mismatch") {
+            val board = Board(listOf(Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.WATER, Field.WATER, Field.PASSENGER(CubeDirection.LEFT))))))
+            val ship = Ship(CubeCoordinates.ORIGIN, Team.ONE)
+            board.pickupPassenger(CubeCoordinates.ORIGIN) shouldBe null
+            board.pickupPassenger(ship) shouldBe false
+            board[CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector].shouldBeInstanceOf<Field.PASSENGER>()
+            board.pickupPassenger(CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector * 2) shouldBe Field.PASSENGER(CubeDirection.LEFT)
+        }
     }
 
     test("clones deeply") {
@@ -125,6 +153,7 @@ class BoardTest: FunSpec({
         board.hashCode() shouldNotBe clone.hashCode()
         (clone[coords] as Field.PASSENGER).passenger shouldBe 1
     }
+    
     context("XML Serialization") {
         test("single segment") {
             val serializedSegment = """

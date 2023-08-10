@@ -44,26 +44,26 @@ class SegmentTest: FunSpec({
         val single = Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf<Field>(Field.PASSENGER())))
         val clone = single.clone()
         clone shouldBe single
-        (clone.segment[0][0] as Field.PASSENGER).passenger--
+        (clone.fields[0][0] as Field.PASSENGER).passenger--
         clone shouldNotBe single
-        (single.segment[0][0] as Field.PASSENGER).passenger shouldBe 1
+        (single.fields[0][0] as Field.PASSENGER).passenger shouldBe 1
     }
     xtest("serialize Segment") {
-        Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.WATER))) shouldSerializeTo """
+        Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.WATER))) shouldSerializeTo """
           <segment direction="RIGHT">
             <column>
               <field type="WATER"/>
             </column>
           </segment>
         """
-        Segment(CubeDirection.RIGHT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
+        Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.PASSENGER(CubeDirection.LEFT)))) shouldSerializeTo """
           <segment direction="RIGHT">
             <column>
               <field type="PASSENGER" direction="LEFT" passenger="1" />
             </column>
           </segment>
         """
-        Segment(CubeDirection.DOWN_LEFT, CubeCoordinates(0, 0), arrayOf(arrayOf(Field.PASSENGER(CubeDirection.RIGHT, 0), Field.WATER), arrayOf(Field.SANDBANK, Field.GOAL))) shouldSerializeTo """
+        Segment(CubeDirection.DOWN_LEFT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.PASSENGER(CubeDirection.RIGHT, 0), Field.WATER), arrayOf(Field.SANDBANK, Field.GOAL))) shouldSerializeTo """
           <segment direction="DOWN_LEFT">
             <column>
               <field type="PASSENGER" direction="RIGHT" passenger="0" />

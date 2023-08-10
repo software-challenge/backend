@@ -36,6 +36,10 @@ data class Board(
         nextDirection = getNextDirection()
     }
     
+    /** Iterate over each [Field] paired with its [CubeCoordinates]. */
+    fun forEachField(handler: (CubeCoordinates, Field) -> Unit) =
+            segments.forEach { it.forEachField { coordinates, field -> handler(coordinates, field) } }
+    
     /**
      * Ruft das Feld an den angegebenen [CubeCoordinates] ab.
      *
@@ -127,12 +131,27 @@ data class Board(
      * @return `true`, wenn ein Passagier erfolgreich abgeholt wurde, sonst `false`.
      */
     fun pickupPassenger(ship: Ship): Boolean =
-            neighboringFields(ship.position)
-                    .filterIsInstance<Field.PASSENGER>().firstOrNull { it.passenger > 0 }?.run {
-                        passenger--
-                        ship.passengers++
-                        true
-                    } ?: false
+            pickupPassenger(ship.position).let { field ->
+                if(field != null) {
+                    field.passenger--
+                    ship.passengers++
+                    true
+                } else {
+                    false
+                }
+            }
+            
+    /**
+     * Check zur Abholung eines Passagiers mit einem Schiff auf den gegebenen Koordinaten.
+     *
+     * @return Feld mit abholbarem Passagier, wenn vorhanden
+     */
+    fun pickupPassenger(pos: CubeCoordinates): Field.PASSENGER? =
+            CubeDirection.values().firstNotNullOfOrNull { direction ->
+                getFieldInDirection(direction, pos).takeIf { field ->
+                    field is Field.PASSENGER && field.passenger > 0 && field.direction == direction.opposite()
+                } as Field.PASSENGER?
+            }
     
     /**
      * Findet das nächstgelegene Feld des angegebenen [Field], ausgehend von den angegebenen [CubeCoordinates],
