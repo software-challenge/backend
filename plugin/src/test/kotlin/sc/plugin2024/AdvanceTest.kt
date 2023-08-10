@@ -44,10 +44,35 @@ class AdvanceTest: FunSpec({
             shipONE.speed shouldBe 2
         }
         
-        test("through current") {
-            forAll<Int>((1..3).toList()) {
-                gameState.performMoveDirectly(Move(Acceleration(it), Turn(CubeDirection.DOWN_RIGHT), Advance(it + 1)))
-                shipONE.position shouldBe CubeCoordinates(0, it - 1)
+        context("current") {
+            test("across") {
+                shouldThrow<InvalidMoveException> {
+                    gameState.performMoveDirectly(Move(Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
+                }.mistake shouldBe AdvanceException.NO_MOVEMENT_POINTS
+                forAll<Int>((1..3).toList()) {
+                    gameState.performMoveDirectly(Move(Acceleration(it), Turn(CubeDirection.DOWN_RIGHT), Advance(it)))
+                    shipONE.position shouldBe CubeCoordinates(0, it - 1)
+                }
+                shouldThrow<InvalidMoveException> {
+                    gameState.performMoveDirectly(Move(Acceleration(4), Turn(CubeDirection.DOWN_RIGHT), Advance(4)))
+                }.mistake shouldBe AdvanceException.FIELD_IS_BLOCKED
+            }
+            test("within") {
+                shipONE.position = CubeCoordinates.ORIGIN
+                shouldThrow<InvalidMoveException> {
+                    gameState.performMoveDirectly(Move(Advance(1)))
+                }.mistake shouldBe AdvanceException.NO_MOVEMENT_POINTS
+                forAll<Int>((1..2).toList()) {
+                    gameState.performMoveDirectly(Move(Acceleration(it), Advance(it + 1)))
+                    shipONE.position shouldBe CubeCoordinates(it, 0)
+                }
+            }
+            test("double crossing") {
+                shouldThrow<InvalidMoveException> {
+                    gameState.performMove(Move(Acceleration(4), Turn(CubeDirection.DOWN_RIGHT), Advance(2), Turn(CubeDirection.UP_RIGHT), Advance(2)))
+                }.mistake shouldBe AdvanceException.NO_MOVEMENT_POINTS
+                gameState.performMoveDirectly(Move(Acceleration(5), Turn(CubeDirection.DOWN_RIGHT), Advance(2), Turn(CubeDirection.UP_RIGHT), Advance(2)))
+                shipONE.position shouldBe CubeCoordinates(1, -1)
             }
         }
         
