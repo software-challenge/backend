@@ -1,17 +1,12 @@
 package sc.plugin2024
 
-import com.thoughtworks.xstream.XStream
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
-import org.junit.jupiter.api.Assertions.assertThrows
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
-import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
-import sc.plugin2024.exceptions.PushException
-import sc.shared.InvalidMoveException
+import sc.plugin2024.mistake.PushProblem
 
 class PushTest: FunSpec({
     lateinit var gameState: GameState
@@ -25,47 +20,26 @@ class PushTest: FunSpec({
         pushingShip.movement = 3
     }
     
-    test("serializes nicely") {
-        val xStream = XStream().apply {
-            processAnnotations(Push::class.java)
-            XStream.setupDefaultSecurity(this)
-            allowTypesByWildcard(arrayOf("sc.plugin2024.actions.*"))
-        }
-        
-        val serialized = xStream.toXML(Push(CubeDirection.UP_RIGHT))
-        
-        serialized shouldBe """<push direction="UP_RIGHT"/>"""
-    }
-    
-    test("Pushing another player requires a direction") {
-        val push = Push(CubeDirection.UP_RIGHT)
-        push.direction.shouldBe(CubeDirection.UP_RIGHT)
+    test("XML Serialization") {
+        Push(CubeDirection.UP_RIGHT) shouldBe """<push direction="UP_RIGHT"/>"""
     }
     
     test("Can not push another player without movement points") {
         pushingShip.movement = 0
         val push = Push(CubeDirection.UP_RIGHT)
-        shouldThrow<InvalidMoveException> {
-            push.perform(gameState, pushingShip)
-        }.mistake shouldBe PushException.MOVEMENT_POINTS_EXCEEDED
+        push.perform(gameState) shouldBe PushProblem.MOVEMENT_POINTS_EXCEEDED
     }
     
     test("A player can only push another player if they are on the same field") {
         nudgedShip.position += CubeDirection.LEFT.vector
-        val push = Push(CubeDirection.UP_RIGHT)
-        shouldThrow<InvalidMoveException> {
-            push.perform(gameState, pushingShip)
-        }.mistake shouldBe PushException.SAME_FIELD_PUSH
+        Push(CubeDirection.UP_RIGHT).perform(gameState) shouldBe PushProblem.SAME_FIELD_PUSH
     }
     
     test("Cannot push another player onto a non-existing field") {
         pushingShip.direction = CubeDirection.LEFT
         pushingShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
         nudgedShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
-        val push = Push(CubeDirection.LEFT)
-        shouldThrow<InvalidMoveException> {
-            push.perform(gameState, pushingShip)
-        }.mistake shouldBe PushException.INVALID_FIELD_PUSH
+        Push(CubeDirection.LEFT).perform(gameState) shouldBe PushProblem.INVALID_FIELD_PUSH
     }
     
     test("Cannot push another player from a sandbank field") {
@@ -81,31 +55,24 @@ class PushTest: FunSpec({
         pushingShip.position = sandbankField
         nudgedShip.position = pushingShip.position
         
-        val push = Push(validPushDirection)
-        
-        shouldThrow<InvalidMoveException> {
-            push.perform(gameState, pushingShip)
-        }.mistake shouldBe PushException.SANDBANK_PUSH
+        Push(validPushDirection).perform(gameState) shouldBe PushProblem.SANDBANK_PUSH
     }
     
     test("Pushing costs the pushing player a movement point") {
         val movementPointsBefore = pushingShip.movement
-        val push = Push(CubeDirection.RIGHT)
-        push.perform(gameState, pushingShip)
+        Push(CubeDirection.RIGHT).perform(gameState) shouldBe null
         pushingShip.movement shouldBe (movementPointsBefore - 1)
     }
     
     test("Cannot push another player in the opposite direction of its movement") {
         val movementDirection = pushingShip.direction
         val push = Push(movementDirection.opposite())
-        shouldThrow<InvalidMoveException> {
-            push.perform(gameState, pushingShip)
-        }
+        push.perform(gameState) shouldBe PushProblem.BACKWARD_PUSHING_RESTRICTED
     }
     
     test("When a nudged player gets pushed, he gets an additional free turn") {
         val push = Push(CubeDirection.UP_RIGHT)
-        push.perform(gameState, pushingShip)
+        push.perform(gameState) shouldBe null
         nudgedShip.freeTurns shouldBe 1
     }
     
@@ -129,16 +96,14 @@ class PushTest: FunSpec({
         
         pushingShip.direction = pushDirection
         
-        val push = Push(pushDirection)
-        push.perform(gameState, pushingShip)
+        Push(pushDirection).perform(gameState) shouldBe null
         nudgedShip.speed shouldBe 1
         nudgedShip.movement shouldBe 1
     }
     
     test("Player position on game board changes after being pushed") {
         val initialPosition = nudgedShip.position
-        val push = Push(CubeDirection.UP_RIGHT)
-        push.perform(gameState, pushingShip)
+        Push(CubeDirection.UP_RIGHT).perform(gameState) shouldBe null
         nudgedShip.position shouldNotBe initialPosition
     }
     

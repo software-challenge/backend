@@ -3,9 +3,11 @@ package sc.plugin2024.actions
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.CubeDirection
-import sc.plugin2024.*
-import sc.plugin2024.exceptions.TurnException
-import sc.shared.InvalidMoveException
+import sc.plugin2024.Action
+import sc.plugin2024.Field
+import sc.plugin2024.GameState
+import sc.plugin2024.Ship
+import sc.plugin2024.mistake.TurnProblem
 import kotlin.math.absoluteValue
 
 /**
@@ -25,23 +27,22 @@ data class Turn(
         @XStreamAsAttribute val direction: CubeDirection,
 ): Action {
     
-    @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState, ship: Ship) {
-        val turnCount = ship.direction.turnCountTo(direction)
+    override fun perform(state: GameState): TurnProblem? {
+        val turnCount = state.currentShip.direction.turnCountTo(direction)
         
         val absTurnCount = turnCount.absoluteValue
-        val usedCoal: Int = absTurnCount - ship.freeTurns
+        val usedCoal: Int = absTurnCount - state.currentShip.freeTurns
         
-        ship.freeTurns = maxOf(ship.freeTurns - absTurnCount, 0)
+        state.currentShip.freeTurns = maxOf(state.currentShip.freeTurns - absTurnCount, 0)
         
         when {
-            state.board[ship.position] == null -> throw InvalidMoveException(TurnException.ROTATION_ON_NON_EXISTING_FIELD)
-            state.board[ship.position] == Field.SANDBANK -> throw InvalidMoveException(TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED)
-            ship.coal < usedCoal -> throw InvalidMoveException(TurnException.NOT_ENOUGH_COAL_FOR_ROTATION)
-            usedCoal > 0 -> ship.coal -= usedCoal
+            state.board[state.currentShip.position] == Field.SANDBANK -> return TurnProblem.ROTATION_ON_SANDBANK_NOT_ALLOWED
+            state.currentShip.coal < usedCoal -> return TurnProblem.NOT_ENOUGH_COAL_FOR_ROTATION
+            usedCoal > 0 -> state.currentShip.coal -= usedCoal
         }
         
-        ship.direction = direction
+        state.currentShip.direction = direction
+        return null
     }
     
     fun coalCost(ship: Ship) =

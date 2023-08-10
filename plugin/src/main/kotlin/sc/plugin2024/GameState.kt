@@ -8,8 +8,8 @@ import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
-import sc.plugin2024.exceptions.AdvanceException
-import sc.plugin2024.exceptions.MoveException
+import sc.plugin2024.mistake.AdvanceProblem
+import sc.plugin2024.mistake.MoveMistake
 import sc.plugin2024.util.PluginConstants
 import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENT
 import sc.shared.InvalidMoveException
@@ -85,20 +85,22 @@ data class GameState @JvmOverloads constructor(
      * @throws InvalidMoveException wenn der Zug ungültig ist
      */
     override fun performMoveDirectly(move: Move) {
-        if(move.actions.isEmpty()) throw InvalidMoveException(MoveException.NO_ACTIONS)
+        currentShip.freeAcc++
+        currentShip.movement = if(board[currentShip.position] == Field.SANDBANK) 1 else currentShip.speed
+        if(move.actions.isEmpty()) throw InvalidMoveException(MoveMistake.NO_ACTIONS)
         
         move.actions.forEachIndexed { index, action ->
             when {
-                board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveException.SAND_BANK_END)
-                action is Acceleration && index != 0 -> throw InvalidMoveException(MoveException.FIRST_ACTION_ACCELERATE)
-                currentShip.position == otherShip.position && action !is Push -> throw InvalidMoveException(MoveException.PUSH_ACTION_REQUIRED)
-                else -> action.perform(this, currentShip)
+                board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveMistake.SAND_BANK_END, move)
+                currentShip.position == otherShip.position && action !is Push -> throw InvalidMoveException(MoveMistake.PUSH_ACTION_REQUIRED, move)
+                action is Acceleration && index != 0 -> throw InvalidMoveException(MoveMistake.FIRST_ACTION_ACCELERATE, move)
+                else -> action.perform(this)?.let { throw InvalidMoveException(it, move) }
             }
         }
         
         when {
-            currentShip.movement > 0 -> throw InvalidMoveException(MoveException.MOVEMENT_POINTS_LEFT)
-            currentShip.movement < 0 -> throw InvalidMoveException(MoveException.MOVEMENT_POINTS_MISSING)
+            currentShip.movement > 0 -> throw InvalidMoveException(MoveMistake.MOVEMENT_POINTS_LEFT, move)
+            currentShip.movement < 0 -> throw InvalidMoveException(MoveMistake.MOVEMENT_POINTS_MISSING, move)
             currentShip.speed == 1 -> this.board.pickupPassenger(currentShip)
             otherShip.speed == 1 -> this.board.pickupPassenger(otherShip)
         }
@@ -224,7 +226,7 @@ data class GameState @JvmOverloads constructor(
         return null
     }
     
-    data class AdvanceInfo(val distance: Int, val extraCost: BitSet, val problem: AdvanceException) {
+    data class AdvanceInfo(val distance: Int, val extraCost: BitSet, val problem: AdvanceProblem) {
         fun costUntil(distance: Int) =
                 distance + extraCost[0, distance - 1].cardinality()
         
@@ -256,7 +258,7 @@ data class GameState @JvmOverloads constructor(
             }
         }
         
-        fun result(condition: AdvanceException) =
+        fun result(condition: AdvanceProblem) =
                 AdvanceInfo(distance(), extraCost, condition)
         while(totalCost < maxMovement) {
             currentPosition += direction.vector
@@ -265,14 +267,14 @@ data class GameState @JvmOverloads constructor(
             when {
                 currentField == null || !currentField.isEmpty -> {
                     totalCost--
-                    return result(AdvanceException.FIELD_IS_BLOCKED)
+                    return result(AdvanceProblem.FIELD_IS_BLOCKED)
                 }
                 
                 ships.any { it.position == currentPosition } ->
-                    return result(if(requireExtraCost()) AdvanceException.SHIP_ALREADY_IN_TARGET else AdvanceException.INSUFFICIENT_PUSH)
+                    return result(if(requireExtraCost()) AdvanceProblem.SHIP_ALREADY_IN_TARGET else AdvanceProblem.INSUFFICIENT_PUSH)
                 
                 currentField == Field.SANDBANK ->
-                    return result(AdvanceException.MOVE_END_ON_SANDBANK)
+                    return result(AdvanceProblem.MOVE_END_ON_SANDBANK)
                 
                 board.doesFieldHaveCurrent(currentPosition) && !hasCurrent -> {
                     hasCurrent = true
@@ -281,7 +283,7 @@ data class GameState @JvmOverloads constructor(
                 }
             }
         }
-        return result(AdvanceException.NO_MOVEMENT_POINTS)
+        return result(AdvanceProblem.NO_MOVEMENT_POINTS)
     }
     
     /**

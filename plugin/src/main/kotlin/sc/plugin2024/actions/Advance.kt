@@ -3,10 +3,11 @@ package sc.plugin2024.actions
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.CubeDirection
-import sc.plugin2024.*
-import sc.plugin2024.exceptions.AdvanceException
-import sc.shared.InvalidMoveException
-import java.util.*
+import sc.plugin2024.Action
+import sc.plugin2024.Field
+import sc.plugin2024.GameState
+import sc.plugin2024.Ship
+import sc.plugin2024.mistake.AdvanceProblem
 import kotlin.math.absoluteValue
 
 /**
@@ -30,19 +31,18 @@ data class Advance(
         @XStreamAsAttribute val distance: Int,
 ): Action {
     
-    // TODO return rather than throw
-    @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState, ship: Ship) {
-        if(distance < 1 && state.board[ship.position] != Field.SANDBANK || distance > 6)
-            throw InvalidMoveException(AdvanceException.INVALID_DISTANCE)
+    override fun perform(state: GameState): AdvanceProblem? {
+        if(distance < 1 && state.board[state.currentShip.position] != Field.SANDBANK || distance > 6)
+            return AdvanceProblem.INVALID_DISTANCE
         
-        val result = state.checkAdvanceLimit(ship.position, if(distance > 0) ship.direction else ship.direction.opposite(), ship.movement)
+        val result = state.checkAdvanceLimit(state.currentShip.position, if(distance > 0) state.currentShip.direction else state.currentShip.direction.opposite(), state.currentShip.movement)
         if(result.distance < distance.absoluteValue)
-            throw InvalidMoveException(result.problem)
+            return result.problem
         
         result.extraCost.clear(distance + 1, 999)
-        ship.position += ship.direction.vector * distance
-        ship.movement -= result.costUntil(distance)
+        state.currentShip.position += state.currentShip.direction.vector * distance
+        state.currentShip.movement -= result.costUntil(distance)
+        return null
     }
     
     override fun toString(): String = if(distance >= 0) "Gehe $distance Felder vor" else "Gehe $distance Felder zurück"

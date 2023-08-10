@@ -5,6 +5,7 @@ import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
+import io.kotest.matchers.nulls.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
@@ -63,7 +64,7 @@ class GameStateTest: FunSpec({
     test("getPossiblePushs") {
         gameState.getPossiblePushs().shouldBeEmpty()
         gameState.currentShip.position = gameState.otherShip.position
-        gameState.getPossiblePushs().shouldNotBeEmpty()
+        gameState.getPossiblePushs() shouldHaveSize 4
         gameState.currentShip.movement = 0
         gameState.getPossiblePushs().shouldBeEmpty()
     }
@@ -101,6 +102,7 @@ class GameStateTest: FunSpec({
         }
         test("push") {
             gameState.currentShip.position = gameState.otherShip.position
+            gameState.board.getFieldInDirection(CubeDirection.UP_LEFT, gameState.currentShip.position).shouldBeNull()
             gameState.getPossibleActions(1) shouldHaveSize 4
         }
     }
@@ -132,6 +134,8 @@ class GameStateTest: FunSpec({
             val ship = gameState.currentShip
             ship.position =
                     gameState.board.segments.last().tip
+            println(gameState)
+            println(gameState.board)
             gameState.board[ship.position] shouldBe Field.GOAL
             withClue("segment distance") {
                 gameState.isOver shouldBe true

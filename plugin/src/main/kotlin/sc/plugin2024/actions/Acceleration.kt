@@ -2,13 +2,8 @@ package sc.plugin2024.actions
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.plugin2024.Action
-import sc.plugin2024.Field
-import sc.plugin2024.GameState
-import sc.plugin2024.Ship
-import sc.plugin2024.Move
-import sc.plugin2024.exceptions.AccException
-import sc.shared.InvalidMoveException
+import sc.plugin2024.*
+import sc.plugin2024.mistake.AccelerationProblem
 import kotlin.math.abs
 
 /**
@@ -43,24 +38,23 @@ data class Acceleration(
      * @param state [GameState], auf dem die Beschleunigung ausgeführt wird
      * @param ship [Ship], für welches die Beschleunigung ausgeführt wird
      */
-    @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState, ship: Ship) {
-        var speed: Int = ship.speed
+    override fun perform(state: GameState): AccelerationProblem? {
+        var speed: Int = state.currentShip.speed
         speed += acc
         when {
-            acc == 0 -> throw InvalidMoveException(AccException.ZERO_ACC)
-            speed > 6 -> throw InvalidMoveException(AccException.ABOVE_MAX_SPEED)
-            speed < 1 -> throw InvalidMoveException(AccException.BELOW_MIN_SPEED)
-            state.board[ship.position] == Field.SANDBANK -> throw InvalidMoveException(AccException.ON_SANDBANK)
+            acc == 0 -> return AccelerationProblem.ZERO_ACC
+            speed > 6 -> return AccelerationProblem.ABOVE_MAX_SPEED
+            speed < 1 -> return AccelerationProblem.BELOW_MIN_SPEED
+            state.board[state.currentShip.position] == Field.SANDBANK -> return AccelerationProblem.ON_SANDBANK
         }
         
-        val usedCoal: Int = (abs(acc.toDouble()) - ship.freeAcc).toInt()
-        if(ship.coal < usedCoal) throw InvalidMoveException(AccException.INSUFFICIENT_COAL)
-        usedCoal.takeIf { it > 0 }?.let { ship.coal -= it }
-        ship.speed = speed
-        ship.movement += acc
-        ship.freeAcc = 0
-        return
+        val usedCoal: Int = (abs(acc.toDouble()) - state.currentShip.freeAcc).toInt()
+        if(state.currentShip.coal < usedCoal) return AccelerationProblem.INSUFFICIENT_COAL
+        usedCoal.takeIf { it > 0 }?.let { state.currentShip.coal -= it }
+        state.currentShip.speed = speed
+        state.currentShip.movement += acc
+        state.currentShip.freeAcc = 0
+        return null
     }
     
     override fun toString(): String = "Beschleunige um $acc"

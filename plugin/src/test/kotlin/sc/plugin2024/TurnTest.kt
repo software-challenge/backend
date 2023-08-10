@@ -8,7 +8,7 @@ import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
 import sc.plugin2024.actions.Turn
-import sc.plugin2024.exceptions.TurnException
+import sc.plugin2024.mistake.TurnProblem
 import sc.shared.InvalidMoveException
 
 class TurnTest: FunSpec({
@@ -40,24 +40,24 @@ class TurnTest: FunSpec({
                     .findNearestFieldTypes(CubeCoordinates.ORIGIN, Field.SANDBANK::class).first()
             val turn = Turn(CubeDirection.UP_RIGHT)
             shouldThrow<InvalidMoveException> {
-                turn.perform(gameState, shipONE)
-            }.mistake shouldBe TurnException.ROTATION_ON_SANDBANK_NOT_ALLOWED
+                turn.perform(gameState)
+            }.mistake shouldBe TurnProblem.ROTATION_ON_SANDBANK_NOT_ALLOWED
         }
         
         test("Not enough COAL for rotation should not allowed") {
             shipONE.coal = 0
             val turn = Turn(CubeDirection.UP_LEFT)
             shouldThrow<InvalidMoveException> {
-                turn.perform(gameState, shipONE)
-            }.mistake shouldBe TurnException.NOT_ENOUGH_COAL_FOR_ROTATION
+                turn.perform(gameState)
+            }.mistake shouldBe TurnProblem.NOT_ENOUGH_COAL_FOR_ROTATION
         }
         
         test("Rotation on non existing field should not allowed") {
             shipONE.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector * 2
             val turn = Turn(CubeDirection.UP_RIGHT)
             shouldThrow<InvalidMoveException> {
-                turn.perform(gameState, shipONE)
-            }.mistake shouldBe TurnException.ROTATION_ON_NON_EXISTING_FIELD
+                turn.perform(gameState)
+            }.mistake shouldBe TurnProblem.ROTATION_ON_NON_EXISTING_FIELD
         }
         
         test("Successful turn action should update direction") {
@@ -65,7 +65,7 @@ class TurnTest: FunSpec({
             shipONE.freeTurns = 2
             val previousDirection = shipONE.direction
             val turn = Turn(CubeDirection.UP_LEFT)
-            turn.perform(gameState, shipONE)
+            turn.perform(gameState)
             shipONE.direction shouldNotBe previousDirection
         }
     }

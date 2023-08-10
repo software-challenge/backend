@@ -4,9 +4,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
-import sc.plugin2024.*
-import sc.plugin2024.exceptions.PushException
-import sc.shared.InvalidMoveException
+import sc.plugin2024.Action
+import sc.plugin2024.Field
+import sc.plugin2024.GameState
+import sc.plugin2024.Ship
+import sc.plugin2024.mistake.PushProblem
 
 @XStreamAlias(value = "push")
 /**
@@ -31,23 +33,22 @@ data class Push(
         @XStreamAsAttribute val direction: CubeDirection,
 ): Action {
     
-    @Throws(InvalidMoveException::class)
-    override fun perform(state: GameState, ship: Ship) {
+    override fun perform(state: GameState): PushProblem? {
         val nudgedShip = state.otherShip
         
-        if(ship.movement == 0)
-            throw InvalidMoveException(PushException.MOVEMENT_POINTS_EXCEEDED)
-        ship.movement--
+        if(state.currentShip.movement == 0)
+            return PushProblem.MOVEMENT_POINTS_EXCEEDED
+        state.currentShip.movement--
         
-        val pushFrom: CubeCoordinates = ship.position
+        val pushFrom: CubeCoordinates = state.currentShip.position
         val pushTo: CubeCoordinates = pushFrom + direction.vector
         val shiftToField: Field? = state.board[pushTo]
         when {
-            shiftToField == null -> throw InvalidMoveException(PushException.INVALID_FIELD_PUSH)
-            !shiftToField.isEmpty -> throw InvalidMoveException(PushException.BLOCKED_FIELD_PUSH)
-            pushFrom != nudgedShip.position -> throw InvalidMoveException(PushException.SAME_FIELD_PUSH)
-            state.board[pushFrom] == Field.SANDBANK -> throw InvalidMoveException(PushException.SANDBANK_PUSH)
-            direction == ship.direction.opposite() -> throw InvalidMoveException(PushException.BACKWARD_PUSHING_RESTRICTED)
+            shiftToField == null -> return PushProblem.INVALID_FIELD_PUSH
+            !shiftToField.isEmpty -> return PushProblem.BLOCKED_FIELD_PUSH
+            pushFrom != nudgedShip.position -> return PushProblem.SAME_FIELD_PUSH
+            state.board[pushFrom] == Field.SANDBANK -> return PushProblem.SANDBANK_PUSH
+            direction == state.currentShip.direction.opposite() -> return PushProblem.BACKWARD_PUSHING_RESTRICTED
         }
         
         if(shiftToField == Field.SANDBANK) {
@@ -56,6 +57,7 @@ data class Push(
         }
         nudgedShip.position = pushTo
         nudgedShip.freeTurns++
+        return null
     }
     
     override fun toString(): String = "Dränge nach $direction ab"
