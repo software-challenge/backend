@@ -19,6 +19,7 @@ dependencies {
 }
 
 val deployDir: File by project
+val isBeta: Boolean by project
 
 tasks {
     test {
@@ -84,9 +85,10 @@ tasks {
             copy {
                 from(projectDir.resolve("configuration"))
                 include("?ocker*")
-                include("logback-production.xml")
                 include("server.properties.production")
-                rename("logback-production.xml", "logback.xml")
+                val suffix = if(isBeta) "trace" else "production"
+                include("logback-$suffix.xml")
+                rename("logback-$suffix.xml", "logback.xml")
                 into(workingDir)
             }
         }
