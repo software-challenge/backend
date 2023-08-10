@@ -78,7 +78,7 @@ class GameStateTest: FunSpec({
         test("from starting position") {
             gameState.getPossibleAdvances() shouldHaveSingleElement Advance(1)
         }
-        test("from sandbank") {
+        xtest("from sandbank") {
             val sandState = GameState(Board(
                     listOf(Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, generateSegment(false, arrayOf())),
                             Segment(CubeDirection.RIGHT, CubeCoordinates(4,0), generateSegment(false, arrayOf(Field.SANDBANK))))

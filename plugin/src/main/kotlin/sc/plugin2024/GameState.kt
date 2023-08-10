@@ -270,7 +270,8 @@ data class GameState @JvmOverloads constructor(
                 ships.any { it.position == currentPosition } ->
                     return result(if(requireExtraCost()) AdvanceException.SHIP_ALREADY_IN_TARGET else AdvanceException.INSUFFICIENT_PUSH)
                 
-                currentField == Field.SANDBANK -> return result(AdvanceException.MOVE_END_ON_SANDBANK)
+                currentField == Field.SANDBANK ->
+                    return result(AdvanceException.MOVE_END_ON_SANDBANK)
                 
                 board.doesFieldHaveCurrent(currentPosition) && !hasCurrent -> {
                     hasCurrent = true
