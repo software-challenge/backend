@@ -118,7 +118,8 @@ data class GameState @JvmOverloads constructor(
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
     }
     
-    /** Retrieves a list of sensible moves based on the possible actions. */
+    /** Retrieves a list of sensible moves based on the possible actions.
+     * TODO this still sometimes returns invalid moves. */
     override fun getSensibleMoves(): List<IMove> =
             getPossibleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { getPossibleMoves() }
     

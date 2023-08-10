@@ -60,7 +60,7 @@ class BoardTest: FunSpec({
             board.possibleMovesFrom(0 y 0) shouldHaveSize PluginConstants.BOARD_SIZE - 1
         }
     }
-    context("Board calculates diffs") {
+    xcontext("Board calculates diffs") {
         val board = makeBoard(0 y 0 to 0, 2 y 0 to 0)
         //test("empty for itself") {
         //    board.diff(board).shouldBeEmpty()

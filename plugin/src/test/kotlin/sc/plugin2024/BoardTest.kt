@@ -25,8 +25,8 @@ class BoardTest: FunSpec({
             val segment = generateSegment(false, arrayOf())
             segment[CubeCoordinates(0, 0)] shouldBe Field.WATER
         }
-        val board = Board()
         test("delineates first segment") {
+            val board = Board()
             board.getCoordinateByIndex(0, 0, 0) shouldBe CubeCoordinates(-1, -2)
             board.getCoordinateByIndex(0, 1, 2) shouldBe CubeCoordinates.ORIGIN
             board.getCoordinateByIndex(0, 2, 3) shouldBe CubeCoordinates(0, 1)
@@ -38,6 +38,7 @@ class BoardTest: FunSpec({
             board[CubeCoordinates(0, -3)].shouldBeNull()
         }
         test("end of second segment") {
+            val board = Board()
             board.getCoordinateByIndex(1,
                     PluginConstants.SEGMENT_FIELDS_WIDTH - 1, 0) shouldBe CubeCoordinates(6, -2)
             board.getCoordinateByIndex(1,
@@ -47,6 +48,7 @@ class BoardTest: FunSpec({
             board[CubeCoordinates(4, 2)] shouldBe Field.WATER // bottom right
         }
         test("start of second segment") {
+            val board = Board()
             val coordinate = board.getCoordinateByIndex(1, 0, 2)
             coordinate shouldBe CubeCoordinates(3, 0)
             val center = board.segments[1].center
@@ -140,7 +142,7 @@ class BoardTest: FunSpec({
         }
     }
 
-    test("clones deeply") {
+    test("clones segment deeply") {
         val clone = board.clone()
         board shouldBe clone
         board.hashCode() shouldBe clone.hashCode()

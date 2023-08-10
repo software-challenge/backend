@@ -40,7 +40,7 @@ class SegmentTest: FunSpec({
             generatedBoard.segments[1].center shouldBe CubeCoordinates(4, 0)
         }
     }
-    test("clones deeply") {
+    test("clone is deep") {
         val single = Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf<Field>(Field.PASSENGER())))
         val clone = single.clone()
         clone shouldBe single
