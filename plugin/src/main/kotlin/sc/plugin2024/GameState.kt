@@ -121,10 +121,12 @@ data class GameState @JvmOverloads constructor(
     /** Increment the turn and update the current team. */
     fun advanceTurn() {
         currentShip.freeAcc = 1
+        currentShip.freeTurns = 1
         currentShip.movement = if(board[currentShip.position] == Field.SANDBANK) 1 else currentShip.speed
         turn++
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
-        // TODO if(!canMove()) advanceTurn()
+        if(!canMove() && !isOver)
+            advanceTurn()
     }
     
     /** Retrieves a list of sensible moves based on the possible actions. */

@@ -1,6 +1,7 @@
 package sc
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
@@ -84,8 +85,10 @@ class GamePlayTest: WordSpec({
                             finalState shouldBe state.hashCode()
                         
                         val moves = state.getSensibleMoves()
-                        moves.shouldNotBeEmpty()
-                        game.onAction(game.players[state.currentTeam.index], moves.random())
+                        withClue(state) {
+                            moves.shouldNotBeEmpty()
+                            game.onAction(game.players[state.currentTeam.index], moves.random())
+                        }
                     } catch (e: Exception) {
                         logger.warn(e.message)
                         break
