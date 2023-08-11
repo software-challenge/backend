@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.Coordinates
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
+import sc.api.plugins.deepCopy
 import sc.framework.PublicCloneable
 import sc.framework.shuffledIndices
 import sc.plugin2024.util.PluginConstants
@@ -55,10 +56,7 @@ data class Segment(
                 }.joinToString("|")
             }.joinToString("\n")
     
-    override fun clone(): Segment =
-            copy(fields = Array(fields.size) { x ->
-                Array(fields[x].size) { y -> fields[x][y].clone() }
-            })
+    override fun clone(): Segment = copy(fields = fields.deepCopy())
     
     override fun equals(other: Any?): Boolean {
         if(this === other) return true

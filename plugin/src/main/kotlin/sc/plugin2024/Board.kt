@@ -20,7 +20,7 @@ data class Board(
         @XStreamOmitField
         internal var visibleSegments: Int = 2.coerceAtMost(segments.size),
         @XStreamAsAttribute
-        var nextDirection: CubeDirection = segments.lastOrNull()?.direction ?: CubeDirection.RIGHT
+        var nextDirection: CubeDirection = segments.lastOrNull()?.direction ?: CubeDirection.RIGHT,
 ): IBoard {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -124,23 +124,29 @@ data class Board(
                 getFieldInDirection(direction, coords)
             }
     
+    fun effectiveSpeed(ship: Ship) =
+            ship.speed.minus(if(doesFieldHaveCurrent(ship.position)) 1 else 0)
+    
     /**
      * Methode zur Abholung eines Passagiers auf einem [Ship].
+     * Berücksichtigt die effektive Schiffsgeschwindigkeit.
      *
      * @param ship Das [Ship], mit dem der Passagier abgeholt wird.
-     * @return `true`, wenn ein Passagier erfolgreich abgeholt wurde, sonst `false`.
+     * @return ob ein Passagier erfolgreich abgeholt wurde
      */
     fun pickupPassenger(ship: Ship): Boolean =
-            pickupPassenger(ship.position).let { field ->
-                if(field != null) {
-                    field.passenger--
-                    ship.passengers++
-                    true
-                } else {
-                    false
+            if(effectiveSpeed(ship) < 2) {
+                pickupPassenger(ship.position).let { field ->
+                    if(field != null) {
+                        field.passenger--
+                        ship.passengers++
+                        true
+                    } else {
+                        false
+                    }
                 }
-            }
-            
+            } else false
+    
     /**
      * Check zur Abholung eines Passagiers mit einem Schiff auf den gegebenen Koordinaten.
      *

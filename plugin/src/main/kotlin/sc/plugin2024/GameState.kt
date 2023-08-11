@@ -103,13 +103,15 @@ data class GameState @JvmOverloads constructor(
         when {
             currentShip.movement > 0 -> throw InvalidMoveException(MoveMistake.MOVEMENT_POINTS_LEFT, move)
             currentShip.movement < 0 -> throw InvalidMoveException(MoveMistake.MOVEMENT_POINTS_MISSING, move)
-            currentShip.speed == 1 -> this.board.pickupPassenger(currentShip)
-            otherShip.speed == 1 -> this.board.pickupPassenger(otherShip)
         }
         
+        board.pickupPassenger(currentShip)
         currentShip.points = calculatePoints(currentShip)
-        if(move.actions.any { it is Push })
+        if(move.actions.any { it is Push }) {
             otherShip.points = calculatePoints(otherShip)
+            if(otherShip.speed == 1)
+                board.pickupPassenger(otherShip)
+        }
         
         lastMove = move
         board.revealSegment(board.segmentIndex(currentShip.position) + 1)
@@ -122,10 +124,10 @@ data class GameState @JvmOverloads constructor(
         currentShip.movement = if(board[currentShip.position] == Field.SANDBANK) 1 else currentShip.speed
         turn++
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
+        // TODO if(!canMove()) advanceTurn()
     }
     
-    /** Retrieves a list of sensible moves based on the possible actions.
-     * TODO this still sometimes returns invalid moves. */
+    /** Retrieves a list of sensible moves based on the possible actions. */
     override fun getSensibleMoves(): List<IMove> =
             getPossibleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { getPossibleMoves() }
     
@@ -314,15 +316,13 @@ data class GameState @JvmOverloads constructor(
     override val isOver: Boolean
         get() = when {
             // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
-            turn % 2 == 0 && ships.any { it.passengers == 2 && it.speed == 1 && board[it.position] == Field.GOAL } -> true
+            turn % 2 == 0 && ships.any { it.passengers == 2 && board.effectiveSpeed(it) < 2 && board[it.position] == Field.GOAL } -> true
             // Bedingung 2: ein Spieler macht einen ungültigen Zug.
             // Das wird durch eine InvalidMoveException während des Spiels behandelt.
             // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
             board.segmentDistance(ships.first().position, ships.last().position).absoluteValue > 3 -> true
             // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
             turn / 2 >= PluginConstants.ROUND_LIMIT -> true
-            // Bedingung 5: Der aktuelle Dampfer kann sich nicht mehr bewegen
-            !canMove() -> true
             // ansonsten geht das Spiel weiter
             else -> false
         }

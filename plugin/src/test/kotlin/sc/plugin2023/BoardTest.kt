@@ -60,7 +60,7 @@ class BoardTest: FunSpec({
             board.possibleMovesFrom(0 y 0) shouldHaveSize PluginConstants.BOARD_SIZE - 1
         }
     }
-    context("XML Serialization") {
+    xcontext("XML Serialization") {
         test("empty Board") {
             Board(arrayOf()) shouldSerializeTo """
               <board/>

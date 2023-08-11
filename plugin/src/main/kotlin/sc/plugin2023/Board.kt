@@ -14,7 +14,7 @@ import sc.plugin2023.util.PluginConstants as Constants
 @XStreamAlias(value = "board")
 class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()): RectangularBoard<Field>(gameField) {
     
-    constructor(board: Board): this(board.gameField.clone())
+    constructor(board: Board): this(board.gameField.deepCopy())
     
     override fun isValid(coordinates: Coordinates) =
             (coordinates.x + coordinates.y) % 2 == 0 &&

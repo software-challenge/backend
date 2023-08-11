@@ -105,11 +105,11 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     override fun hashCode(): Int = gameField.contentDeepHashCode()
 }
 
-inline fun <reified T: Cloneable> Array<Array<PublicCloneable<T>>>.deepCopy() =
+inline fun <reified T: PublicCloneable<T>> Array<Array<T>>.deepCopy() =
         Array(size) { row -> Array(this[row].size) { column -> this[row][column].clone() } }
 
-inline fun <reified T: Cloneable> List<PublicCloneable<T>>.clone() =
+inline fun <reified T: PublicCloneable<T>> List<T>.clone() =
         List(size) { this[it].clone() }
 
-inline fun <reified T: Cloneable> List<List<PublicCloneable<T>>>.deepCopy() =
+inline fun <reified T: PublicCloneable<T>> List<List<T>>.deepCopy() =
         List(size) { row -> List(this[row].size) { column -> this[row][column].clone() } }
