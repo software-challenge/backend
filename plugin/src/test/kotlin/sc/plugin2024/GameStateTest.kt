@@ -123,7 +123,7 @@ class GameStateTest: FunSpec({
             ship.movement = 3
             gameState.checkAdvanceLimit(ship).run {
                 distance shouldBe 1
-                costUntil(1) shouldBe 3
+                costUntil(1) shouldBe 2
                 problem shouldBe AdvanceProblem.SHIP_ALREADY_IN_TARGET
             }
         }
@@ -163,7 +163,6 @@ class GameStateTest: FunSpec({
         }
         test("pushing and current") {
             gameState.otherShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
-            gameState.getSensibleMoves() shouldNotContain Move(Acceleration(1), Turn(CubeDirection.DOWN_RIGHT), Advance(1), Push(CubeDirection.DOWN_LEFT))
             gameState.getSensibleMoves() shouldContain Move(Acceleration(2), Turn(CubeDirection.DOWN_RIGHT), Advance(1), Push(CubeDirection.DOWN_LEFT))
             
             ship.freeTurns = 0

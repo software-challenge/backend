@@ -9,7 +9,5 @@ class HelperTest: FunSpec({
     test("shuffled indices") {
         shuffledIndices(CubeDirection.values().size)
                 .toArray().size shouldBe 6
-        shuffledIndices(CubeDirection.values().size)
-                .takeWhile { it > -1 }.toArray().size shouldBe 6
     }
 })

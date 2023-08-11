@@ -270,6 +270,9 @@ data class GameState @JvmOverloads constructor(
             val currentField = board[currentPosition]
             totalCost++
             
+            if(currentField == null || !currentField.isEmpty)
+                return result(AdvanceProblem.FIELD_IS_BLOCKED)
+            
             if(!hasCurrent && board.doesFieldHaveCurrent(currentPosition)) {
                 hasCurrent = true
                 if(totalCost < maxMovement) {
@@ -279,22 +282,16 @@ data class GameState @JvmOverloads constructor(
                 }
             }
             
-            when {
-                currentField == null || !currentField.isEmpty -> {
-                    return result(AdvanceProblem.FIELD_IS_BLOCKED)
+            if(ships.any { it.position == currentPosition }) {
+                if(totalCost < maxMovement) {
+                    result.add(totalCost)
+                    return result(AdvanceProblem.SHIP_ALREADY_IN_TARGET)
                 }
-                
-                ships.any { it.position == currentPosition } -> {
-                    if(totalCost < maxMovement) {
-                        result.add(totalCost)
-                        return result(AdvanceProblem.SHIP_ALREADY_IN_TARGET)
-                    }
-                    return result(AdvanceProblem.INSUFFICIENT_PUSH)
-                }
-                
-                currentField == Field.SANDBANK ->
-                    return result(AdvanceProblem.MOVE_END_ON_SANDBANK)
+                return result(AdvanceProblem.INSUFFICIENT_PUSH)
             }
+            
+            if(currentField == Field.SANDBANK)
+                return result(AdvanceProblem.MOVE_END_ON_SANDBANK)
             
             result.add(totalCost)
         }

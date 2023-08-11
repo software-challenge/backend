@@ -48,7 +48,7 @@ public class ClientXmlReadTest {
 
     client.start();
     client.send(new ExamplePacket());
-    stringInterface.close();
+    // TODO this attempts to close a closed stream: client.close();
     String data = stringInterface.readData();
     assertEquals("<protocol>\n  <example/>", data);
   }

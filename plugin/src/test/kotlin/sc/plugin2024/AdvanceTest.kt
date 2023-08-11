@@ -98,6 +98,7 @@ class AdvanceTest: FunSpec({
             shipONE.direction = takenDirection?.opposite()
                                 ?: throw IllegalStateException("No valid opposite direction found.")
             
+            // TODO this failed once: https://github.com/software-challenge/backend/actions/runs/5837615628/job/15833410929
             Advance(1).perform(gameState) shouldBe AdvanceProblem.FIELD_IS_BLOCKED
         }
         
