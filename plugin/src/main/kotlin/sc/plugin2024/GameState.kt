@@ -47,6 +47,10 @@ data class GameState @JvmOverloads constructor(
         override var lastMove: Move? = null,
 ): TwoPlayerGameState<Move>(currentTeam) {
     
+    init {
+        println(this.longString())
+    }
+    
     val currentShip: Ship
         get() = ships[currentTeam.index]
     
@@ -85,8 +89,6 @@ data class GameState @JvmOverloads constructor(
      * @throws InvalidMoveException wenn der Zug ungültig ist
      */
     override fun performMoveDirectly(move: Move) {
-        currentShip.freeAcc++
-        currentShip.movement = if(board[currentShip.position] == Field.SANDBANK) 1 else currentShip.speed
         if(move.actions.isEmpty()) throw InvalidMoveException(MoveMistake.NO_ACTIONS)
         
         move.actions.forEachIndexed { index, action ->
@@ -116,6 +118,8 @@ data class GameState @JvmOverloads constructor(
     
     /** Increment the turn and update the current team. */
     fun advanceTurn() {
+        currentShip.freeAcc = 1
+        currentShip.movement = if(board[currentShip.position] == Field.SANDBANK) 1 else currentShip.speed
         turn++
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
     }
@@ -228,7 +232,7 @@ data class GameState @JvmOverloads constructor(
     
     data class AdvanceInfo(val distance: Int, val extraCost: BitSet, val problem: AdvanceProblem) {
         fun costUntil(distance: Int) =
-                distance + extraCost[0, distance - 1].cardinality()
+                distance + extraCost[0, distance].cardinality()
         
         fun advances() = (1..distance).map { Advance(it) }
     }
@@ -332,6 +336,6 @@ data class GameState @JvmOverloads constructor(
             "GameState $turn, $currentTeam ist dran"
     
     override fun longString() =
-            "$this\n${ships.joinToString("\n")}\nLast Move: $lastMove"
+            "$this\n${ships.joinToString("\n")}\nLast Move: $lastMove\n$board"
     
 }

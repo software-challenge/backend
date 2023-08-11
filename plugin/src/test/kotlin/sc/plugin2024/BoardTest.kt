@@ -196,7 +196,7 @@ class BoardTest: FunSpec({
             val segment = Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, generateSegment(false, arrayOf()))
             val singleSegmentBoard = Board(listOf(segment))
             singleSegmentBoard shouldSerializeTo serialized
-            checkSerialization(testXStream, Board(listOf(segment, segment), 1), serialized.trimIndent()) { orig, deserialized ->
+            checkSerialization(testXStream, Board(listOf(segment, segment), 1), serialized.trimIndent()) { _, deserialized ->
                 deserialized shouldBe singleSegmentBoard
             }
             Board(listOf(segment, segment), 2).also {

@@ -1,12 +1,11 @@
-package sc.plugin2023
+package sc
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.*
 import io.kotest.matchers.booleans.*
-import io.kotest.matchers.collections.shouldNotBeEmpty
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.collections.*
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
@@ -16,20 +15,19 @@ import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.Constants
 import sc.framework.plugins.Player
-import sc.plugin2023.util.GamePlugin
-import sc.plugin2023.util.PluginConstants
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 /** This test verifies that the Game implementation can be used to play a game.
- * It is the only test that should stay between seasons. */
+ * It is the only plugin-test independent of the season. */
 @OptIn(ExperimentalTime::class)
 class GamePlayTest: WordSpec({
     val logger = LoggerFactory.getLogger(GamePlayTest::class.java)
     isolationMode = IsolationMode.SingleInstance
-    fun createGame() = IGamePlugin.loadPlugin().createGame() as AbstractGame
+    val plugin = IGamePlugin.loadPlugin()
+    fun createGame() = plugin.createGame() as AbstractGame
     "A Game" should {
         val game = createGame()
         "let players join" {
@@ -51,16 +49,12 @@ class GamePlayTest: WordSpec({
             game.isPaused shouldBe true
         }
     }
-    val startGame = {
-        val game = createGame()
-        game.onPlayerJoined().team shouldBe Team.ONE
-        game.onPlayerJoined().team shouldBe Team.TWO
-        game.start()
-        Pair(game, game.currentState)
-    }
     "A Game started with two players" When {
         "played normally" should {
-            val (game, state) = startGame()
+            val game = createGame()
+            game.onPlayerJoined().team shouldBe Team.ONE
+            game.onPlayerJoined().team shouldBe Team.TWO
+            game.start()
             
             var finalState: Int? = null
             game.addGameListener(object: IGameListener {
@@ -70,13 +64,13 @@ class GamePlayTest: WordSpec({
                 
                 override fun onStateChanged(data: IGameState, observersOnly: Boolean) {
                     data.hashCode() shouldNotBe finalState
-                    // hashing it to avoid cloning, since we get the original mutable object
+                    // hashing it to avoid cloning, since we get the original object which might be mutable
                     finalState = data.hashCode()
-                    logger.debug("Updating state to $finalState")
+                    logger.debug("Updating state hash to $finalState")
                 }
             })
             
-            "finish without issues".config(invocationTimeout = Duration.milliseconds(GamePlugin().gameTimeout)) {
+            "finish without issues".config(invocationTimeout = Duration.milliseconds(plugin.gameTimeout)) {
                 while (true) {
                     try {
                         val condition = game.checkWinCondition()
@@ -85,6 +79,7 @@ class GamePlayTest: WordSpec({
                             break
                         }
                         
+                        val state = game.currentState
                         if(finalState != null)
                             finalState shouldBe state.hashCode()
                         
@@ -96,6 +91,7 @@ class GamePlayTest: WordSpec({
                         break
                     }
                 }
+                // TODO violation?
                 game.currentState.isOver.shouldBeTrue()
             }
             "send the final state to listeners" {

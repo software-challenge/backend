@@ -200,6 +200,6 @@ data class Board(
     }
     
     override fun toString() =
-            segments.joinToString("\n\nBoard", prefix = "Board", postfix = "\nNext Segment towards $nextDirection")
+            segments.joinToString("\nBoard", prefix = "Board", postfix = "\nNext Segment towards $nextDirection")
 }
 

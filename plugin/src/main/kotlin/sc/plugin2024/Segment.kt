@@ -166,15 +166,15 @@ internal fun generateBoard(): Segments {
     ))
     
     val passengerTiles = shuffledIndices(PluginConstants.NUMBER_OF_SEGMENTS - 2, PluginConstants.NUMBER_OF_PASSENGERS).toArray()
-    (2..PluginConstants.NUMBER_OF_SEGMENTS).forEach {
+    (2..PluginConstants.NUMBER_OF_SEGMENTS).forEach { index ->
         val previous = segments.last()
-        val direction = if(it == 2) CubeDirection.RIGHT else previous.direction.withNeighbors().random()
+        val direction = if(index == 2) CubeDirection.RIGHT else previous.direction.withNeighbors().filterNot { it == CubeDirection.LEFT }.random()
         
         val segment =
-                generateSegment(it == PluginConstants.NUMBER_OF_SEGMENTS,
+                generateSegment(index == PluginConstants.NUMBER_OF_SEGMENTS,
                         Array<Field>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { Field.BLOCKED } +
                         Array<Field>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { Field.SANDBANK } +
-                        Array<Field>(if(passengerTiles.contains(it - 2)) 1 else 0) { Field.PASSENGER() }
+                        Array<Field>(if(passengerTiles.contains(index - 2)) 1 else 0) { Field.PASSENGER() }
                 )
         segment.forEachField { c, f ->
             // Turn local passenger field rotation into global

@@ -12,6 +12,8 @@ import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
+import sc.plugin2024.mistake.AdvanceProblem
+import java.util.BitSet
 
 class GameStateTest: FunSpec({
     val gameState = GameState()
@@ -97,6 +99,14 @@ class GameStateTest: FunSpec({
     }
     
     context("getPossibleActions") {
+        test("advanceLimit") {
+            val ship = gameState.currentShip
+            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 1) shouldBe GameState.AdvanceInfo(0, BitSet(),  AdvanceProblem.NO_MOVEMENT_POINTS)
+            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 2) shouldBe GameState.AdvanceInfo(1, BitSet().also { it.flip(0) },  AdvanceProblem.NO_MOVEMENT_POINTS)
+            val furtherInfo = GameState.AdvanceInfo(2, BitSet().also { it.flip(0) },  AdvanceProblem.NO_MOVEMENT_POINTS)
+            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 3) shouldBe furtherInfo
+            furtherInfo.costUntil(1) shouldBe 2
+        }
         test("from starting position") {
             gameState.getPossibleActions(0) shouldHaveSize 11
         }
@@ -134,8 +144,6 @@ class GameStateTest: FunSpec({
             val ship = gameState.currentShip
             ship.position =
                     gameState.board.segments.last().tip
-            println(gameState)
-            println(gameState.board)
             gameState.board[ship.position] shouldBe Field.GOAL
             withClue("segment distance") {
                 gameState.isOver shouldBe true
