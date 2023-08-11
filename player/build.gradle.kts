@@ -18,7 +18,7 @@ sourceSets.main {
 }
 
 application {
-    mainClassName = "sc.player2023.Starter"
+    mainClassName = "sc.player$year.Starter"
 }
 
 dependencies {

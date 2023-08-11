@@ -35,7 +35,7 @@ val javaTargetVersion = JavaVersion.VERSION_1_8
 val javaVersion = JavaVersion.current()
 println("Current version: $version (Beta: $isBeta) Game: $game (Java Version: $javaVersion)")
 if (javaVersion != javaTargetVersion)
-    System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider using '-x doc' if you don't care)")
+    System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider '-x doc' if you don't care)")
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 tasks {
