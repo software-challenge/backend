@@ -39,7 +39,6 @@ data class Advance(
         if(result.distance < distance.absoluteValue)
             return result.problem
         
-        result.extraCost.clear(distance + 1, 999)
         state.currentShip.position += state.currentShip.direction.vector * distance
         state.currentShip.movement -= result.costUntil(distance)
         return null

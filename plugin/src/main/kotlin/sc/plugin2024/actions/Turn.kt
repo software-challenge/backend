@@ -46,7 +46,7 @@ data class Turn(
     }
     
     fun coalCost(ship: Ship) =
-            ship.direction.turnCountTo(direction).absoluteValue - ship.freeTurns
+            ship.direction.turnCountTo(direction).absoluteValue.minus(ship.freeTurns).coerceAtLeast(0)
     
     override fun toString(): String = "Drehe nach $direction"
 }

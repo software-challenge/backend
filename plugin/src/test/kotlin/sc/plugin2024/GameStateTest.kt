@@ -14,8 +14,8 @@ import sc.helpers.shouldSerializeTo
 import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
+import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
-import java.util.BitSet
 
 class GameStateTest: FunSpec({
     val gameState = GameState()
@@ -100,15 +100,35 @@ class GameStateTest: FunSpec({
         gameState.getPossibleAccelerations(1).size shouldBe 2
     }
     
-    context("getPossibleActions") {
-        test("advanceLimit") {
-            val ship = gameState.currentShip
-            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 1) shouldBe GameState.AdvanceInfo(0, BitSet(), AdvanceProblem.NO_MOVEMENT_POINTS)
-            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 2) shouldBe GameState.AdvanceInfo(1, BitSet().also { it.flip(0) }, AdvanceProblem.NO_MOVEMENT_POINTS)
-            val furtherInfo = GameState.AdvanceInfo(2, BitSet().also { it.flip(0) }, AdvanceProblem.NO_MOVEMENT_POINTS)
-            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 3) shouldBe furtherInfo
+    context("advanceLimit") {
+        val ship = gameState.currentShip
+        test("from start") {
+            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 1).distance shouldBe 0
+            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 2).distance shouldBe 1
+            val furtherInfo = gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 3)
             furtherInfo.costUntil(1) shouldBe 2
+            furtherInfo.distance shouldBe 2
+            furtherInfo.costUntil(2) shouldBe 3
         }
+        test("considers pushing and current") {
+            ship.direction = CubeDirection.DOWN_RIGHT
+            gameState.otherShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
+            
+            gameState.checkAdvanceLimit(ship).run {
+                distance shouldBe 0
+                problem shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+            }
+            
+            ship.speed = 3
+            ship.movement = 3
+            gameState.checkAdvanceLimit(ship).run {
+                distance shouldBe 1
+                costUntil(1) shouldBe 3
+                problem shouldBe AdvanceProblem.SHIP_ALREADY_IN_TARGET
+            }
+        }
+    }
+    context("getPossibleActions") {
         test("from starting position") {
             gameState.getPossibleActions(0) shouldHaveSize 11
         }
@@ -126,20 +146,42 @@ class GameStateTest: FunSpec({
             gameState.currentShip.position shouldBe CubeCoordinates(-1, -1)
             gameState.getSensibleMoves() shouldHaveSize 7
         }
+        val ship = gameState.currentShip
         test("respects coal") {
-            val ship = gameState.currentShip
             ship.coal = 2
             ship.speed = 4
             ship.movement = 4
             gameState.getSensibleMoves() shouldNotContain Move(Acceleration(-3), Advance(1))
             
             val firstSegment = gameState.board.segments.first()
-            arrayOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(2, 1), Coordinates(0,2)).forEach {
+            arrayOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(2, 1), Coordinates(0, 2)).forEach {
                 firstSegment.fields[it.x][it.y] = Field.BLOCKED
             }
             withClue("fall back to using all coal") {
                 gameState.getSensibleMoves() shouldHaveSingleElement Move(Acceleration(-3), Advance(1))
             }
+        }
+        test("pushing and current") {
+            gameState.otherShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
+            gameState.getSensibleMoves() shouldNotContain Move(Acceleration(1), Turn(CubeDirection.DOWN_RIGHT), Advance(1), Push(CubeDirection.DOWN_LEFT))
+            gameState.getSensibleMoves() shouldContain Move(Acceleration(2), Turn(CubeDirection.DOWN_RIGHT), Advance(1), Push(CubeDirection.DOWN_LEFT))
+            
+            ship.freeTurns = 0
+            ship.direction = CubeDirection.DOWN_RIGHT
+            val moves = gameState.getSensibleMoves()
+            moves shouldContain Move(Acceleration(2), Advance(1), Push(CubeDirection.DOWN_LEFT))
+            moves shouldHaveSize 3
+        }
+        test("costly move") {
+            ship.coal = 0
+            ship.speed = 2
+            ship.movement = 2
+            ship.freeAcc = 0
+            ship.freeTurns = 0
+            ship.direction = CubeDirection.DOWN_RIGHT
+            gameState.getSensibleMoves() shouldHaveSingleElement Move(Advance(1))
+            ship.movement = 3
+            gameState.getSensibleMoves() shouldHaveSingleElement Move(Advance(2))
         }
     }
     

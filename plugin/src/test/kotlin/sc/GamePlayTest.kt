@@ -95,6 +95,7 @@ class GamePlayTest: WordSpec({
                     }
                 }
                 withClue(game.currentState) {
+                    // Note that this fails if the game ends incorrectly
                     game.currentState.isOver.shouldBeTrue()
                 }
             }
