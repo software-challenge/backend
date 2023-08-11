@@ -94,8 +94,9 @@ class GamePlayTest: WordSpec({
                         break
                     }
                 }
-                // TODO violation?
-                game.currentState.isOver.shouldBeTrue()
+                withClue(game.currentState) {
+                    game.currentState.isOver.shouldBeTrue()
+                }
             }
             "send the final state to listeners" {
                 finalState shouldBe game.currentState.hashCode()

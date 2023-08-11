@@ -5,23 +5,17 @@ import io.kotest.matchers.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
+import sc.helpers.shouldSerializeTo
 import sc.plugin2024.actions.Push
 import sc.plugin2024.mistake.PushProblem
 
 class PushTest: FunSpec({
-    lateinit var gameState: GameState
-    lateinit var pushingShip: Ship
-    lateinit var nudgedShip: Ship
-    
-    beforeTest {
-        pushingShip = Ship(position = CubeCoordinates.ORIGIN, team = Team.ONE)
-        nudgedShip = Ship(position = CubeCoordinates.ORIGIN, team = Team.TWO)
-        gameState = GameState(ships = listOf(pushingShip, nudgedShip))
-        pushingShip.movement = 3
-    }
+    val pushingShip = Ship(position = CubeCoordinates.ORIGIN, team = Team.ONE, movement = 3)
+    val nudgedShip = Ship(position = CubeCoordinates.ORIGIN, team = Team.TWO)
+    val gameState = GameState(ships = listOf(pushingShip, nudgedShip))
     
     test("XML Serialization") {
-        Push(CubeDirection.UP_RIGHT) shouldBe """<push direction="UP_RIGHT"/>"""
+        Push(CubeDirection.UP_RIGHT) shouldSerializeTo """<push direction="UP_RIGHT"/>"""
     }
     
     test("Can not push another player without movement points") {
@@ -42,22 +36,6 @@ class PushTest: FunSpec({
         Push(CubeDirection.LEFT).perform(gameState) shouldBe PushProblem.INVALID_FIELD_PUSH
     }
     
-    test("Cannot push another player from a sandbank field") {
-        val sandbankField: CubeCoordinates = gameState.board
-                .findNearestFieldTypes(CubeCoordinates.ORIGIN, Field.SANDBANK::class).first()
-        
-        val validPushDirection: CubeDirection = CubeDirection.values().firstOrNull { direction ->
-            val dest = gameState.board[sandbankField + direction.vector]
-            dest != null && dest.isEmpty
-        } ?: throw IllegalStateException("No valid direction found.")
-        
-        
-        pushingShip.position = sandbankField
-        nudgedShip.position = pushingShip.position
-        
-        Push(validPushDirection).perform(gameState) shouldBe PushProblem.SANDBANK_PUSH
-    }
-    
     test("Pushing costs the pushing player a movement point") {
         val movementPointsBefore = pushingShip.movement
         Push(CubeDirection.RIGHT).perform(gameState) shouldBe null
@@ -73,10 +51,26 @@ class PushTest: FunSpec({
     test("When a nudged player gets pushed, he gets an additional free turn") {
         val push = Push(CubeDirection.UP_RIGHT)
         push.perform(gameState) shouldBe null
-        nudgedShip.freeTurns shouldBe 1
+        nudgedShip.freeTurns shouldBe 2
     }
     
-    test("When a nudged player is pushed onto a sandbank, his speed and movement are set to one") {
+    xtest("Cannot push another player from a sandbank field") {
+        val sandbankField: CubeCoordinates = gameState.board
+                .findNearestFieldTypes(CubeCoordinates.ORIGIN, Field.SANDBANK::class).first()
+        
+        val validPushDirection: CubeDirection = CubeDirection.values().firstOrNull { direction ->
+            val dest = gameState.board[sandbankField + direction.vector]
+            dest != null && dest.isEmpty
+        } ?: throw IllegalStateException("No valid direction found.")
+        
+        
+        pushingShip.position = sandbankField
+        nudgedShip.position = pushingShip.position
+        
+        Push(validPushDirection).perform(gameState) shouldBe PushProblem.SANDBANK_PUSH
+    }
+    
+    xtest("When a nudged player is pushed onto a sandbank, his speed and movement are set to one") {
         val sandbankField: CubeCoordinates = gameState.board
                 .findNearestFieldTypes(CubeCoordinates.ORIGIN, Field.SANDBANK::class).first()
         

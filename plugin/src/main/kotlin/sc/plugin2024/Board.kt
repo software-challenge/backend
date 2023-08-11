@@ -56,14 +56,16 @@ data class Board(
     
     fun doesFieldHaveCurrent(coords: CubeCoordinates): Boolean =
             segmentIndex(coords).let {
+                if(it == -1)
+                    return@let false
                 val segment = segments[it]
                 val nextDirection = segments.getOrNull(it + 1)?.direction ?: nextDirection
                 arrayOf(segment.center + segment.direction.opposite().vector,
                         segment.center,
                         segment.center + nextDirection.vector,
                         segment.center + nextDirection.vector * 2
-                )
-            }.contains(coords)
+                ).contains(coords)
+            }
     
     /**
      * Gibt das [Field] zurück, das an das angegebene Feld in der angegebenen Richtung angrenzt.
