@@ -1,8 +1,8 @@
 package sc.plugin2024
 
 import io.kotest.assertions.withClue
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.nulls.*
@@ -43,9 +43,9 @@ class GameStateTest: FunSpec({
         gameState.currentTeam shouldBe gameState.startTeam.opponent()
     }
     
-    context("points") {
+    context("points calculation") {
         test("at start") {
-            forAll<Ship>(gameState.ships) {
+            gameState.ships.forAll {
                 it.points shouldBe 0
                 gameState.getPointsForTeam(it.team).first() shouldBe 0
             }

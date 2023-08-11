@@ -1,9 +1,9 @@
 package sc.plugin2024
 
-import com.thoughtworks.xstream.XStream
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
@@ -16,15 +16,6 @@ import sc.shared.InvalidMoveException
 
 class AdvanceTest: FunSpec({
     test("serializes nicely") {
-        val xStream = XStream().apply {
-            processAnnotations(Advance::class.java)
-            XStream.setupDefaultSecurity(this)
-            allowTypesByWildcard(arrayOf("sc.plugin2024.actions.*"))
-        }
-        
-        val serialized = xStream.toXML(Advance(5))
-        
-        serialized shouldBe """<advance distance="5"/>"""
         Advance(5) shouldSerializeTo """<advance distance="5"/>"""
     }
     
@@ -47,9 +38,9 @@ class AdvanceTest: FunSpec({
                 shouldThrow<InvalidMoveException> {
                     gameState.performMoveDirectly(Move(Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
                 }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
-                forAll<Int>((1..3).toList()) {
-                    gameState.performMoveDirectly(Move(Acceleration(it), Turn(CubeDirection.DOWN_RIGHT), Advance(it)))
-                    shipONE.position shouldBe CubeCoordinates(0, it - 1)
+                listOf(1, 2, 3).forAll {
+                    val state = gameState.performMove(Move(Acceleration(it), Advance(it)))
+                    (state as GameState).otherShip.position shouldBe CubeCoordinates(-1, it - 1)
                 }
                 shouldThrow<InvalidMoveException> {
                     gameState.performMoveDirectly(Move(Acceleration(4), Turn(CubeDirection.DOWN_RIGHT), Advance(4)))
@@ -60,9 +51,9 @@ class AdvanceTest: FunSpec({
                 shouldThrow<InvalidMoveException> {
                     gameState.performMoveDirectly(Move(Advance(1)))
                 }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
-                forAll<Int>((1..2).toList()) {
-                    gameState.performMoveDirectly(Move(Acceleration(it), Advance(it + 1)))
-                    shipONE.position shouldBe CubeCoordinates(it, 0)
+                listOf(1, 2).forAll {
+                    val state = gameState.performMove(Move(Acceleration(it), Advance(it)))
+                    (state as GameState).otherShip.position shouldBe CubeCoordinates(it, 0)
                 }
             }
             test("double crossing") {
@@ -78,7 +69,7 @@ class AdvanceTest: FunSpec({
             Advance(3).perform(gameState) shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
         }
         
-        test("invalid distance") {
+        context("invalid distance") {
             shipONE.movement = 8
             forAll(-2, -1, 0, 7) {
                 Advance(it).perform(gameState) shouldBe AdvanceProblem.INVALID_DISTANCE

@@ -2,6 +2,7 @@ package sc.plugin2024
 
 import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import sc.api.plugins.CubeCoordinates
@@ -28,13 +29,13 @@ class SegmentTest: FunSpec({
         test("goal fields") {
             val segment = generateSegment(true, arrayOf())
             segment.sumOf { it.count { it == Field.WATER } } shouldBe 17
-            forAll(1, 2, 3) {
+            (1..3).toList().forAll {
                 segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe Field.GOAL
             }
         }
         test("proper board start") {
             val generatedBoard = Board()
-            forAll<Segment>(generatedBoard.segments.take(2)) {
+            generatedBoard.segments.take(2).forAll {
                 it.direction shouldBe CubeDirection.RIGHT
             }
             generatedBoard.segments[1].center shouldBe CubeCoordinates(4, 0)
