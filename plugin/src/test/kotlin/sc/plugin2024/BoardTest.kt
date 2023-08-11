@@ -148,7 +148,7 @@ class BoardTest: FunSpec({
         board.hashCode() shouldBe clone.hashCode()
         
         val coords = board.findNearestFieldTypes(CubeCoordinates(4, 0), Field.PASSENGER::class).first()
-        val passengerSegment  = board.findSegment(coords)!!
+        val passengerSegment = board.findSegment(coords)!!
         //val passengerSegment = board.segments.indexOfFirst { it.segment.any { it.any { it is Field.PASSENGER } } }
         (passengerSegment[coords] as Field.PASSENGER).passenger = 0
         board shouldNotBe clone
@@ -156,8 +156,9 @@ class BoardTest: FunSpec({
         (clone[coords] as Field.PASSENGER).passenger shouldBe 1
     }
     
-    context("XML Serialization") {
+    context("XML Serialization of") {
         test("single segment") {
+            // TODO column rather than field-array
             val serializedSegment = """
                   <segment direction="RIGHT">
                     <center q="0" r="0" s="0"/>

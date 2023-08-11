@@ -22,12 +22,6 @@ version = versionObject.toString()
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
 
-val javaTargetVersion = JavaVersion.VERSION_1_8
-val javaVersion = JavaVersion.current()
-println("Current version: $version Game: $game (Java Version: $javaVersion)")
-if (javaVersion != javaTargetVersion)
-    System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider using '-x doc' if you don't care)")
-
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
 val testingDir by extra { buildDir.resolve("tests") }
@@ -36,6 +30,12 @@ val documentedProjects = listOf("sdk", "plugin")
 val isBeta by extra { versionObject.minor == 0 }
 val enableTestClient by extra { arrayOf("check", "testTestClient").any { gradle.startParameter.taskNames.contains(it) } || !isBeta }
 val enableIntegrationTesting = !project.hasProperty("nointegration") && (!isBeta || enableTestClient)
+
+val javaTargetVersion = JavaVersion.VERSION_1_8
+val javaVersion = JavaVersion.current()
+println("Current version: $version (Beta: $isBeta) Game: $game (Java Version: $javaVersion)")
+if (javaVersion != javaTargetVersion)
+    System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider using '-x doc' if you don't care)")
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 tasks {
