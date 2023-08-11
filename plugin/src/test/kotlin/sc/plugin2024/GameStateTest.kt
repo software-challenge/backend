@@ -6,10 +6,12 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.nulls.*
+import sc.api.plugins.Coordinates
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
+import sc.plugin2024.actions.Acceleration
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.mistake.AdvanceProblem
@@ -84,7 +86,7 @@ class GameStateTest: FunSpec({
         xtest("from sandbank") {
             val sandState = GameState(Board(
                     listOf(Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, generateSegment(false, arrayOf())),
-                            Segment(CubeDirection.RIGHT, CubeCoordinates(4,0), generateSegment(false, arrayOf(Field.SANDBANK))))
+                            Segment(CubeDirection.RIGHT, CubeCoordinates(4, 0), generateSegment(false, arrayOf(Field.SANDBANK))))
             ))
             sandState.currentShip.position =
                     sandState.board.findNearestFieldTypes(sandState.currentShip.position, Field.SANDBANK::class).first()
@@ -101,9 +103,9 @@ class GameStateTest: FunSpec({
     context("getPossibleActions") {
         test("advanceLimit") {
             val ship = gameState.currentShip
-            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 1) shouldBe GameState.AdvanceInfo(0, BitSet(),  AdvanceProblem.NO_MOVEMENT_POINTS)
-            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 2) shouldBe GameState.AdvanceInfo(1, BitSet().also { it.flip(0) },  AdvanceProblem.NO_MOVEMENT_POINTS)
-            val furtherInfo = GameState.AdvanceInfo(2, BitSet().also { it.flip(0) },  AdvanceProblem.NO_MOVEMENT_POINTS)
+            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 1) shouldBe GameState.AdvanceInfo(0, BitSet(), AdvanceProblem.NO_MOVEMENT_POINTS)
+            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 2) shouldBe GameState.AdvanceInfo(1, BitSet().also { it.flip(0) }, AdvanceProblem.NO_MOVEMENT_POINTS)
+            val furtherInfo = GameState.AdvanceInfo(2, BitSet().also { it.flip(0) }, AdvanceProblem.NO_MOVEMENT_POINTS)
             gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 3) shouldBe furtherInfo
             furtherInfo.costUntil(1) shouldBe 2
         }
@@ -117,11 +119,28 @@ class GameStateTest: FunSpec({
         }
     }
     
-    test("getSensibleMoves") {
-        gameState.turn shouldBe 0
-        gameState.currentTeam shouldBe Team.ONE
-        gameState.currentShip.position shouldBe CubeCoordinates(-1, -1)
-        gameState.getSensibleMoves() shouldHaveSize 7
+    context("getSensibleMoves") {
+        test("from starting position") {
+            gameState.turn shouldBe 0
+            gameState.currentTeam shouldBe Team.ONE
+            gameState.currentShip.position shouldBe CubeCoordinates(-1, -1)
+            gameState.getSensibleMoves() shouldHaveSize 7
+        }
+        test("respects coal") {
+            val ship = gameState.currentShip
+            ship.coal = 2
+            ship.speed = 4
+            ship.movement = 4
+            gameState.getSensibleMoves() shouldNotContain Move(Acceleration(-3), Advance(1))
+            
+            val firstSegment = gameState.board.segments.first()
+            arrayOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(2, 1), Coordinates(0,2)).forEach {
+                firstSegment.fields[it.x][it.y] = Field.BLOCKED
+            }
+            withClue("fall back to using all coal") {
+                gameState.getSensibleMoves() shouldHaveSingleElement Move(Acceleration(-3), Advance(1))
+            }
+        }
     }
     
     context("game over on") {
@@ -170,7 +189,7 @@ class GameStateTest: FunSpec({
     }
     
     test("serializes nicely") {
-        GameState(Board(listOf())) shouldSerializeTo  """
+        GameState(Board(listOf())) shouldSerializeTo """
             <state startTeam="ONE" turn="0" currentTeam="ONE">
               <board nextDirection="RIGHT"/>
               <ship team="ONE" points="0" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1">

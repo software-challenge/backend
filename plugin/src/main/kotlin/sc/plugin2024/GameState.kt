@@ -135,9 +135,11 @@ data class GameState @JvmOverloads constructor(
             checkSandbankAdvances(currentShip)?.map { Move(it) } ?:
             (getPossibleTurns(maxCoal.coerceAtMost(1)) + null).flatMap { turn ->
                 val direction = turn?.direction ?: currentShip.direction
+                val availableCoal = (maxCoal - (turn?.coalCost(currentShip) ?: 0))
                 val info = checkAdvanceLimit(currentShip.position, direction,
-                        currentShip.movement + currentShip.freeAcc + (maxCoal - (turn?.coalCost(currentShip) ?: 0)))
-                (1..info.distance)
+                        currentShip.movement + currentShip.freeAcc + availableCoal)
+                val minMovement = (currentShip.movement - currentShip.freeAcc - availableCoal).coerceAtLeast(1)
+                (minMovement..info.distance)
                         .map { dist ->
                             Move(listOfNotNull(Acceleration(info.costUntil(dist) - currentShip.movement).takeUnless { it.acc == 0 || dist < 1 }, turn, Advance(dist),
                                     if(currentShip.position + (direction.vector * dist) == otherShip.position) {
