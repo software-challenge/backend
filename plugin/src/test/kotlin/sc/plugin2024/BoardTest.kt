@@ -133,12 +133,12 @@ class BoardTest: FunSpec({
         }
         
         test("return false when rotation mismatch") {
-            val board = Board(listOf(Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.WATER, Field.WATER, Field.PASSENGER(CubeDirection.LEFT))))))
+            val miniBoard = Board(listOf(Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.WATER, Field.WATER, Field.PASSENGER(CubeDirection.LEFT))))))
             val ship = Ship(CubeCoordinates.ORIGIN, Team.ONE)
-            board.pickupPassenger(CubeCoordinates.ORIGIN) shouldBe null
-            board.pickupPassenger(ship) shouldBe false
-            board[CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector].shouldBeInstanceOf<Field.PASSENGER>()
-            board.pickupPassenger(CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector * 2) shouldBe Field.PASSENGER(CubeDirection.LEFT)
+            miniBoard.pickupPassenger(CubeCoordinates.ORIGIN) shouldBe null
+            miniBoard.pickupPassenger(ship) shouldBe false
+            miniBoard[CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector].shouldBeInstanceOf<Field.PASSENGER>()
+            miniBoard.pickupPassenger(CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector * 2) shouldBe Field.PASSENGER(CubeDirection.LEFT)
         }
     }
 

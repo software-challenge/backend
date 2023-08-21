@@ -66,6 +66,9 @@ data class GameState @JvmOverloads constructor(
                 board.filterValues { it.fish == 1 }.map { Move(null, it.key) }
             }
     
+    override fun getAllMoves(): Iterator<IMove> =
+            getSensibleMoves().iterator()
+    
     fun canPlacePenguin(pos: Coordinates) = !penguinsPlaced && board[pos].fish == 1
     
     fun immovable(team: Team? = null) =

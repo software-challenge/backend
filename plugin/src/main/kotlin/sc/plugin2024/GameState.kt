@@ -132,6 +132,10 @@ data class GameState @JvmOverloads constructor(
     override fun getSensibleMoves(): List<IMove> =
             getPossibleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { getPossibleMoves() }
     
+    /** TODO Incomplete */
+    override fun getAllMoves(): Iterator<IMove> =
+            getPossibleMoves().iterator()
+    
     // TODO this should be a Stream
     /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount. */
     fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> =

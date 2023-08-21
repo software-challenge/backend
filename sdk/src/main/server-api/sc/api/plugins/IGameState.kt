@@ -28,10 +28,10 @@ import sc.protocol.room.RoomMessage
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen abgefragt werden.
  */
-interface IGameState : RoomMessage, PublicCloneable<IGameState> {
+interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     /** Aktuelle Zugzahl  */
     val turn: Int
-
+    
     /** Aktuelle Rundenzahl */
     val round: Int
     
@@ -44,8 +44,18 @@ interface IGameState : RoomMessage, PublicCloneable<IGameState> {
     /** Gibt Punktzahlen des Teams entsprechend der [ScoreDefinition] zurück. */
     fun getPointsForTeam(team: ITeam): IntArray
     
-    /** Die möglichen Züge des aktuellen Teams in der aktuellen Situation.
+    /** Mögliche Züge des aktuellen Teams in der aktuellen Situation.
      * Bei manchen Spielen wird aufgrund der unüberschaubaren Zahl möglicher Züge
      * nur ein Ausschnitt zurückgegeben. */
-    fun getSensibleMoves(): List<IMove>
+    fun getSensibleMoves(): List<IMove> {
+        val possibleMoves = getAllMoves()
+        val someMoves: MutableList<IMove> = ArrayList()
+        while(possibleMoves.hasNext() && someMoves.size < 100)
+            someMoves.add(possibleMoves.next())
+        return someMoves
+    }
+    
+    /** Eine Abfolge aller möglichen Züge des aktuellen Teams,
+     * nur soweit berechnet wie nötig. */
+    fun getAllMoves(): Iterator<IMove>
 }

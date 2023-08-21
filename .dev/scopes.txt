@@ -12,6 +12,7 @@ testclient
 player
 server
 
+plugin
 plugin23
 plugin24
 gamerules
