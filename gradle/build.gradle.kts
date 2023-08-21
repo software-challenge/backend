@@ -253,10 +253,11 @@ subprojects {
                 jvmTarget = javaTargetVersion.toString()
                 freeCompilerArgs = listOf("-Xjvm-default=all")
             }
-        }
-        
-        compileTestKotlin.get().kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn")
+            if(name.contains("test", true)) {
+                kotlinOptions {
+                    freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn")
+                }
+            }
         }
     }
 }
