@@ -113,7 +113,7 @@ data class GameState @JvmOverloads constructor(
         }
         
         lastMove = move
-        board.revealSegment(board.segmentIndex(currentShip.position) + 1)
+        board.revealSegment(board.segmentIndex(currentShip.position) + 2)
         advanceTurn()
     }
     

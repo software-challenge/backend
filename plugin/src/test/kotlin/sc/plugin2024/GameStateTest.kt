@@ -43,6 +43,18 @@ class GameStateTest: FunSpec({
         gameState.currentTeam shouldBe gameState.startTeam.opponent()
     }
     
+    test("reveals segment after move") {
+        val state = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4,0)), Segment.empty(CubeCoordinates(8,0)))))
+        val move = Move(Acceleration(5), Advance(6))
+        var found = false
+        state.getAllMoves().forEachRemaining { if(move == it) found = true }
+        found shouldBe true
+        
+        state.performMoveDirectly(move)
+        state.board.segmentIndex(state.otherShip.position) shouldBe 1
+        state.board.visibleSegments shouldBe 3
+    }
+    
     context("points calculation") {
         test("at start") {
             gameState.ships.forAll {
