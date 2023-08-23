@@ -8,7 +8,7 @@ import io.kotest.matchers.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.helpers.shouldSerializeTo
-import sc.plugin2024.actions.Acceleration
+import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
@@ -39,11 +39,11 @@ class AdvanceTest: FunSpec({
                     gameState.performMoveDirectly(Move(Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
                 }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
                 listOf(1, 2, 3).forAll {
-                    val state = gameState.performMove(Move(Acceleration(it), Advance(it)))
+                    val state = gameState.performMove(Move(Accelerate(it), Advance(it)))
                     (state as GameState).otherShip.position shouldBe CubeCoordinates(-1, it - 1)
                 }
                 shouldThrow<InvalidMoveException> {
-                    gameState.performMoveDirectly(Move(Acceleration(4), Turn(CubeDirection.DOWN_RIGHT), Advance(4)))
+                    gameState.performMoveDirectly(Move(Accelerate(4), Turn(CubeDirection.DOWN_RIGHT), Advance(4)))
                 }.mistake shouldBe AdvanceProblem.FIELD_IS_BLOCKED
             }
             test("within current") {
@@ -52,15 +52,15 @@ class AdvanceTest: FunSpec({
                     gameState.performMoveDirectly(Move(Advance(1)))
                 }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
                 listOf(1, 2).forAll {
-                    val state = gameState.performMove(Move(Acceleration(it), Advance(it)))
+                    val state = gameState.performMove(Move(Accelerate(it), Advance(it)))
                     (state as GameState).otherShip.position shouldBe CubeCoordinates(it, 0)
                 }
             }
             test("double crossing") {
                 shouldThrow<InvalidMoveException> {
-                    gameState.performMove(Move(Acceleration(4), Turn(CubeDirection.DOWN_RIGHT), Advance(2), Turn(CubeDirection.UP_RIGHT), Advance(2)))
+                    gameState.performMove(Move(Accelerate(4), Turn(CubeDirection.DOWN_RIGHT), Advance(2), Turn(CubeDirection.UP_RIGHT), Advance(2)))
                 }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
-                gameState.performMoveDirectly(Move(Acceleration(5), Turn(CubeDirection.DOWN_RIGHT), Advance(2), Turn(CubeDirection.UP_RIGHT), Advance(2)))
+                gameState.performMoveDirectly(Move(Accelerate(5), Turn(CubeDirection.DOWN_RIGHT), Advance(2), Turn(CubeDirection.UP_RIGHT), Advance(2)))
                 shipONE.position shouldBe CubeCoordinates(1, -1)
             }
         }

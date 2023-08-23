@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
-import sc.plugin2024.actions.Acceleration
+import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
@@ -88,7 +88,7 @@ data class GameState @JvmOverloads constructor(
             when {
                 board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveMistake.SAND_BANK_END, move)
                 currentShip.position == otherShip.position && action !is Push -> throw InvalidMoveException(MoveMistake.PUSH_ACTION_REQUIRED, move)
-                action is Acceleration && index != 0 -> throw InvalidMoveException(MoveMistake.FIRST_ACTION_ACCELERATE, move)
+                action is Accelerate && index != 0 -> throw InvalidMoveException(MoveMistake.FIRST_ACTION_ACCELERATE, move)
                 else -> action.perform(this)?.let { throw InvalidMoveException(it, move) }
             }
         }
@@ -144,7 +144,7 @@ data class GameState @JvmOverloads constructor(
                     return@flatMap emptyList()
                 (minDistance..info.distance)
                         .map { dist ->
-                            Move(listOfNotNull(Acceleration(info.costUntil(dist) + (if(dist == info.distance && info.problem == AdvanceProblem.SHIP_ALREADY_IN_TARGET) 1 else 0) - currentShip.movement).takeUnless { it.acc == 0 || dist < 1 },
+                            Move(listOfNotNull(Accelerate(info.costUntil(dist) + (if(dist == info.distance && info.problem == AdvanceProblem.SHIP_ALREADY_IN_TARGET) 1 else 0) - currentShip.movement).takeUnless { it.acc == 0 || dist < 1 },
                                     turn, Advance(dist),
                                     if(currentShip.position + (direction.vector * dist) == otherShip.position) {
                                         val currentRotation = board.findSegment(otherShip.position)?.direction
@@ -301,13 +301,13 @@ data class GameState @JvmOverloads constructor(
      *
      * @return List of all possible Acceleration actions
      */
-    fun getPossibleAccelerations(maxCoal: Int = currentShip.coal): List<Acceleration> {
+    fun getPossibleAccelerations(maxCoal: Int = currentShip.coal): List<Accelerate> {
         if(currentShip.position == otherShip.position) return emptyList()
         
         return (0..maxCoal).flatMap { i ->
             listOfNotNull(
-                    if(currentShip.speed < 6 - i) Acceleration(1 + i) else null,
-                    if(currentShip.speed > 1 + i) Acceleration(-1 - i) else null
+                    if(currentShip.speed < 6 - i) Accelerate(1 + i) else null,
+                    if(currentShip.speed > 1 + i) Accelerate(-1 - i) else null
             )
         }
     }

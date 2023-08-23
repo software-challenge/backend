@@ -11,7 +11,7 @@ import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
-import sc.plugin2024.actions.Acceleration
+import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
@@ -45,7 +45,7 @@ class GameStateTest: FunSpec({
     
     test("reveals segment after move") {
         val state = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4,0)), Segment.empty(CubeCoordinates(8,0)))))
-        val move = Move(Acceleration(5), Advance(6))
+        val move = Move(Accelerate(5), Advance(6))
         var found = false
         state.getAllMoves().forEachRemaining { if(move == it) found = true }
         found shouldBe true
@@ -163,24 +163,24 @@ class GameStateTest: FunSpec({
             ship.coal = 2
             ship.speed = 4
             ship.movement = 4
-            gameState.getSensibleMoves() shouldNotContain Move(Acceleration(-3), Advance(1))
+            gameState.getSensibleMoves() shouldNotContain Move(Accelerate(-3), Advance(1))
             
             val firstSegment = gameState.board.segments.first()
             arrayOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(2, 1), Coordinates(0, 2)).forEach {
                 firstSegment.fields[it.x][it.y] = Field.ISLAND
             }
             withClue("fall back to using all coal") {
-                gameState.getSensibleMoves() shouldHaveSingleElement Move(Acceleration(-3), Advance(1))
+                gameState.getSensibleMoves() shouldHaveSingleElement Move(Accelerate(-3), Advance(1))
             }
         }
         test("pushing and current") {
             gameState.otherShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
-            gameState.getSensibleMoves() shouldContain Move(Acceleration(2), Turn(CubeDirection.DOWN_RIGHT), Advance(1), Push(CubeDirection.DOWN_LEFT))
+            gameState.getSensibleMoves() shouldContain Move(Accelerate(2), Turn(CubeDirection.DOWN_RIGHT), Advance(1), Push(CubeDirection.DOWN_LEFT))
             
             ship.freeTurns = 0
             ship.direction = CubeDirection.DOWN_RIGHT
             val moves = gameState.getSensibleMoves()
-            moves shouldContain Move(Acceleration(2), Advance(1), Push(CubeDirection.DOWN_LEFT))
+            moves shouldContain Move(Accelerate(2), Advance(1), Push(CubeDirection.DOWN_LEFT))
             moves shouldHaveSize 3
         }
         test("costly move") {

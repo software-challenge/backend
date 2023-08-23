@@ -7,12 +7,11 @@ import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
 import sc.framework.PublicCloneable
-import sc.plugin2024.actions.Acceleration
-import sc.plugin2024.actions.Turn
+import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.util.PluginConstants.START_COAL
 
 /**
- * This class represents a Ship in the game.
+ * Repräsentiert das Schiff eines Spielers.
  *
  * @property points Die aktuellen Punkte des Schiffes.
  * - Jeder eingesammelte Passagier bringt 5 Punkte.
@@ -25,8 +24,8 @@ import sc.plugin2024.util.PluginConstants.START_COAL
  * @property direction Die [CubeDirection], in die das Schiff fährt.
  *
  * @property speed Die aktuelle Geschwindigkeit des Schiffes.
- * - Die Geschwindigkeit eines Schiffes wird durch die Beschleunigungsaktionen bestimmt.
- * - Eine [Acceleration] um eine Geschwindigkeitseinheit pro Zug ist frei, jede weitere [Acceleration] kostet eine Kohleeinheit.
+ * - Die Geschwindigkeit eines Schiffes wird durch die Beschleunigungsaktionen ([Accelerate]) bestimmt.
+ * - Eine Änderung der Geschwindikeit um eins pro Zug ist frei, jede weitere kostet eine Kohleeinheit.
  *
  * @property coal The current number of coal units of the ship.
  * - Jedes Schiff startet zu Beginn des Spiels mit 6 Kohleeinheiten.
@@ -39,15 +38,12 @@ import sc.plugin2024.util.PluginConstants.START_COAL
  * - Die Bewegungsreichweite wird basierend auf der aktuellen Geschwindigkeit des Dampfers berechnet.
  * - Jeder Bewegungspunkt entspricht einer Einheit der Bewegungsreichweite.
  *
- * @property freeTurns This field is relevant only for the server.
- * - Jeder [Turn] um eine [CubeDirection], also um 60°, ist frei.
- * - Jeder weitere [Turn] kostet eine Kohleeinheit.
- * - Wenn ein Schiff abgedrängt wird, erhält dieses eine weitere freie Drehung.
- * - Dies entfällt, wenn man auf eine [Field.SANDBANK] abgedrängt wird.
+ * @property freeTurns Erfasst freie Drehungen für diesen Zug.
+ * - Eine Drehung um 60° pro Zug ist frei.
+ * - Jede weitere Drehung kostet eine Kohleeinheit.
+ * - Wenn ein Schiff abgedrängt wird, erhält es eine weitere freie Drehung.
  *
- * @property freeAcc This field is relevant only for the GUI.
- * - Jede [Acceleration] um 1 ist frei.
- * - Jede weitere kostet eine Kohleeinheit.
+ * @property freeAcc Erfasst freie Beschleunigungen für diesen Zug.
  */
 @XStreamAlias(value = "ship")
 data class Ship(

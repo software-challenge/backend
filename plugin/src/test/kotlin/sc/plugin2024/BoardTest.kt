@@ -14,7 +14,7 @@ import sc.api.plugins.Team
 import sc.helpers.checkSerialization
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
-import sc.plugin2024.actions.Acceleration
+import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.util.PluginConstants
 
@@ -122,7 +122,7 @@ class BoardTest: FunSpec({
         }
         
         state.getPossibleMoves(1) shouldContainAll state.copy(Board(commonBoard.segments.subList(0, 2), nextDirection = CubeDirection.UP_RIGHT)).getPossibleMoves(1)
-        state.performMove(Move(Acceleration(3), Advance(4)))
+        state.performMove(Move(Accelerate(3), Advance(4)))
     }
 
     context("pickupPassenger") {
