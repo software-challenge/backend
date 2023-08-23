@@ -69,8 +69,8 @@ data class GameState @JvmOverloads constructor(
     fun calculatePoints(ship: Ship) =
             board.segmentIndex(ship.position).let { segmentIndex ->
                 segmentIndex * POINTS_PER_SEGMENT +
-                board.segments[segmentIndex].globalToLocal(ship.position).arrayX + 1
-                // TODO points per passenger
+                board.segments[segmentIndex].globalToLocal(ship.position).arrayX + 1 +
+                ship.passengers * PluginConstants.POINTS_PER_PASSENGER
             }
     
     /**
@@ -101,9 +101,9 @@ data class GameState @JvmOverloads constructor(
         board.pickupPassenger(currentShip)
         currentShip.points = calculatePoints(currentShip)
         if(move.actions.any { it is Push }) {
-            otherShip.points = calculatePoints(otherShip)
             if(otherShip.speed == 1)
                 board.pickupPassenger(otherShip)
+            otherShip.points = calculatePoints(otherShip)
         }
         
         lastMove = move
@@ -317,7 +317,7 @@ data class GameState @JvmOverloads constructor(
     override val isOver: Boolean
         get() = when {
             // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
-            turn % 2 == 0 && ships.any { it.passengers == 2 && board.effectiveSpeed(it) < 2 && board[it.position] == Field.GOAL } -> true
+            turn % 2 == 0 && ships.any { isWinner(it) } -> true
             // Bedingung 2: ein Spieler macht einen ungültigen Zug.
             // Das wird durch eine InvalidMoveException während des Spiels behandelt.
             // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
@@ -328,9 +328,12 @@ data class GameState @JvmOverloads constructor(
             else -> false
         }
     
+    fun isWinner(ship: Ship) =
+            ship.passengers == 2 && board.effectiveSpeed(ship) < 2 && board[ship.position] == Field.GOAL
+    
     override fun getPointsForTeam(team: ITeam): IntArray =
             ships[team.index].let { ship ->
-                intArrayOf(ship.points, ship.coal * 2)
+                intArrayOf(ship.points, ship.coal * 2, if(isWinner(ship)) 6 else 0)
             }
     
     override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
