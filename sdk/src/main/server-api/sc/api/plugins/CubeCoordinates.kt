@@ -95,6 +95,9 @@ enum class CubeDirection(val vector: CubeCoordinates) {
     UP_LEFT(CubeCoordinates(0, -1)),
     UP_RIGHT(CubeCoordinates(+1, -1));
     
+    val angle
+        get() = ordinal * 60
+    
     /** @return an array of this and the two neighboring directions. */
     fun withNeighbors() = arrayOf(rotatedBy(-1), this, rotatedBy(1))
     

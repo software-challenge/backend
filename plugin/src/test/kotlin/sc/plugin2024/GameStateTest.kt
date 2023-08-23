@@ -188,15 +188,26 @@ class GameStateTest: FunSpec({
             moves shouldHaveSize 3
         }
         test("costly move") {
+            ship.accelerateBy(1)
             ship.coal = 0
-            ship.speed = 2
-            ship.movement = 2
             ship.freeAcc = 0
             ship.freeTurns = 0
             ship.direction = CubeDirection.DOWN_RIGHT
             gameState.getSensibleMoves() shouldHaveSingleElement Move(Advance(1))
             ship.movement = 3
             gameState.getSensibleMoves() shouldHaveSingleElement Move(Advance(2))
+        }
+        test("unpushable opponent") {
+            val state = GameState(
+                    Board(listOf(Segment (CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.WATER, Field.WATER, Field.WATER))))),
+                    ships = listOf(
+                            Ship(CubeCoordinates(-1, -2), Team.ONE),
+                            Ship(CubeCoordinates(-1, 0), Team.TWO),
+                    )
+            )
+            state.getSensibleMoves() shouldBe listOf(Move(Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
+            state.currentShip.accelerateBy(2)
+            state.getSensibleMoves() shouldBe listOf(Move(Accelerate(-2), Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
         }
     }
     

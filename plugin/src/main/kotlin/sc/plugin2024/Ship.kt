@@ -60,6 +60,12 @@ data class Ship(
 ): PublicCloneable<Ship> {
     override fun clone(): Ship =
             this.copy()
+    
+    fun accelerateBy(diff: Int) {
+        speed += diff
+        movement += diff
+    }
+    
     fun readResolve(): Ship {
         freeAcc = 1
         movement = speed

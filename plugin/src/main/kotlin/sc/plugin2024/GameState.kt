@@ -143,14 +143,14 @@ data class GameState @JvmOverloads constructor(
                 if(minDistance < 1)
                     return@flatMap emptyList()
                 (minDistance..info.distance)
-                        .map { dist ->
+                        .mapNotNull { dist ->
                             Move(listOfNotNull(Accelerate(info.costUntil(dist) + (if(dist == info.distance && info.problem == AdvanceProblem.SHIP_ALREADY_IN_TARGET) 1 else 0) - currentShip.movement).takeUnless { it.acc == 0 || dist < 1 },
                                     turn, Advance(dist),
                                     if(currentShip.position + (direction.vector * dist) == otherShip.position) {
                                         val currentRotation = board.findSegment(otherShip.position)?.direction
                                         getPossiblePushs(otherShip.position, direction).maxByOrNull {
                                             currentRotation?.turnCountTo(it.direction)?.absoluteValue ?: 2
-                                        }
+                                        } ?: return@mapNotNull null
                                     } else null
                             ))
                         }
