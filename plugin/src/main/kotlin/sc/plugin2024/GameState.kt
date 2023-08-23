@@ -261,10 +261,11 @@ data class GameState @JvmOverloads constructor(
      * Does not honor special conditions of the starting tile.
      * @return how far movement is possible, how many movement points it costs and why not further
      * */
-    fun checkAdvanceLimit(start: CubeCoordinates, direction: CubeDirection, maxMovement: Int): AdvanceInfo {
+    fun checkAdvanceLimit(start: CubeCoordinates, direction: CubeDirection, maxMovementPoints: Int): AdvanceInfo {
         var currentPosition = start
         var totalCost = 0
         var hasCurrent = false
+        val maxMovement = maxMovementPoints.coerceAtMost(6)
         val result = ArrayList<Int>(maxMovement)
         
         fun result(condition: AdvanceProblem) =
