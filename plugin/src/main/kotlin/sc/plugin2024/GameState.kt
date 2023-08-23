@@ -123,15 +123,15 @@ data class GameState @JvmOverloads constructor(
     }
     
     /** Retrieves a list of sensible moves based on the possible actions. */
-    override fun getSensibleMoves(): List<IMove> =
+    override fun getSensibleMoves(): List<Move> =
             getPossibleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { getPossibleMoves() }
     
     /** TODO Incomplete */
-    override fun getAllMoves(): Iterator<IMove> =
+    override fun getAllMoves(): Iterator<Move> =
             getPossibleMoves().iterator()
     
     /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount. */
-    fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> =
+    fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<Move> =
             // SANDBANK checkSandbankAdvances(currentShip)?.map { Move(it) } ?:
             (getPossibleTurns(maxCoal.coerceAtMost(1)) + null).flatMap { turn ->
                 val direction = turn?.direction ?: currentShip.direction

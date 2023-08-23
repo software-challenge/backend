@@ -38,7 +38,7 @@ data class Board(
     val rectangleSize: Coordinates
         get() = bounds.let { Coordinates(it.first.second - it.first.first + 5, it.second.second - it.second.first + 5) }
         
-    override fun clone(): Board = Board(this.segments.clone(), visibleSegments)
+    override fun clone(): Board = copy(segments = this.segments.clone())
     
     internal fun getNextDirection() =
             segments[visibleSegments.coerceAtMost(segments.lastIndex)].direction

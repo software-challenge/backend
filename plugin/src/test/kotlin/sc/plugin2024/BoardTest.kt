@@ -110,21 +110,6 @@ class BoardTest: FunSpec({
         }
     }
     
-    test("current preserved across serialization") {
-        val commonBoard = Board(listOf(Segment.empty(),
-                Segment.empty(CubeCoordinates(4, 0)),
-                Segment(CubeDirection.UP_RIGHT, CubeCoordinates(8, -4), generateSegment(true, arrayOf()))))
-        val state = GameState(commonBoard)
-        state.ships.first().run {
-            position = CubeCoordinates(1,-1)
-            speed = 2
-            movement = 2
-        }
-        
-        state.getPossibleMoves(1) shouldContainAll state.copy(Board(commonBoard.segments.subList(0, 2), nextDirection = CubeDirection.UP_RIGHT)).getPossibleMoves(1)
-        state.performMove(Move(Accelerate(3), Advance(4)))
-    }
-
     context("pickupPassenger") {
         test("should decrease passenger count of the neighbouring field and increase passenger count of the ship") {
             val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))

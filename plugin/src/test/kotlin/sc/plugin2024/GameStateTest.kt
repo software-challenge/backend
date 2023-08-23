@@ -1,6 +1,8 @@
 package sc.plugin2024
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
+import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
@@ -16,6 +18,8 @@ import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
+import sc.plugin2024.mistake.MoveMistake
+import sc.shared.InvalidMoveException
 
 class GameStateTest: FunSpec({
     val gameState = GameState()
@@ -44,7 +48,7 @@ class GameStateTest: FunSpec({
     }
     
     test("reveals segment after move") {
-        val state = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4,0)), Segment.empty(CubeCoordinates(8,0)))))
+        val state = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4, 0)), Segment.empty(CubeCoordinates(8, 0)))))
         val move = Move(Accelerate(5), Advance(6))
         var found = false
         state.getAllMoves().forEachRemaining { if(move == it) found = true }
@@ -193,6 +197,32 @@ class GameStateTest: FunSpec({
             gameState.getSensibleMoves() shouldHaveSingleElement Move(Advance(1))
             ship.movement = 3
             gameState.getSensibleMoves() shouldHaveSingleElement Move(Advance(2))
+        }
+    }
+    
+    context("current works when board is truncated") {
+        val commonBoard = Board(listOf(Segment.empty(),
+                Segment.empty(CubeCoordinates(4, 0)),
+                Segment(CubeDirection.UP_RIGHT, CubeCoordinates(8, -4), generateSegment(true, arrayOf()))))
+        val state = GameState(commonBoard)
+        val start = CubeCoordinates(1, -1)
+        state.currentShip.run {
+            position = start
+            speed = 2
+            movement = 2
+        }
+        
+        val moves = state.getPossibleMoves(1)
+        val truncState = state.copy(Board(commonBoard.segments.subList(0, 2), nextDirection = CubeDirection.UP_RIGHT))
+        moves shouldContainAll truncState.getPossibleMoves(1)
+        forAll<GameState>("full" to state, "truncated" to truncState) { state ->
+            state.checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
+            state.clone().checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
+            state.performMove(Move(Accelerate(1), Advance(3)))
+            state.performMove(Move(Accelerate(3), Advance(4)))
+            state.performMove(Move(Accelerate(4), Advance(5)))
+            shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(3))) }.mistake shouldBe MoveMistake.MOVEMENT_POINTS_LEFT
+            shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(4))) }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
         }
     }
     
