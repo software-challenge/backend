@@ -10,7 +10,18 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 24.0.0 - 2023-08-10
+### 24.0.4 Eliminating Oversights - 2023-08-23
+- Revamp calculation structure for available Moves
+- Fix revealing of Segments including nextDirection
+- Add some helpers and documentation
+
+### 24.0.3 Rule Fixes - 2023-08-12
+- Properly deep copy board
+- Allow picking up passengers at speed 2 in current
+- Skip player turn if ship is immovable
+- Extend tests
+
+### 24.0.0 New Game with adjusted rules - 2023-08-10
 - Fix Orientation of Coordinates and Directions for Cartesian, DoubledHex and Cube
 - Implement basic version of Mississippi Queen - XML and Rules are subject to change!
 

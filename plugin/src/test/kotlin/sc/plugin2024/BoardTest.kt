@@ -165,7 +165,7 @@ class BoardTest: FunSpec({
         }
     }
 
-    xtest("clones segment deeply") {
+    test("clones segment deeply") {
         val clone = board.clone()
         board shouldBe clone
         board.hashCode() shouldBe clone.hashCode()
