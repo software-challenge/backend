@@ -246,7 +246,7 @@ class BoardTest: FunSpec({
             Board(listOf(Segment(CubeDirection.UP_LEFT, CubeCoordinates(1, 1), arrayOf(arrayOf(
                     Field.WATER,
                     Field.GOAL,
-                    Field.BLOCKED,
+                    Field.ISLAND,
                     Field.SANDBANK,
                     Field.PASSENGER(CubeDirection.RIGHT),
             ))))) shouldSerializeTo """

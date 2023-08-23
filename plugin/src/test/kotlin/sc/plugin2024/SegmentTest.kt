@@ -20,8 +20,8 @@ class SegmentTest: FunSpec({
             single.first().first() shouldBe Field.PASSENGER(CubeDirection.DOWN_LEFT)
             
             arrayOf(arrayOf<Field>(Field.PASSENGER(), Field.WATER)).alignPassengers() shouldBe true
-            arrayOf(arrayOf<Field>(Field.BLOCKED), arrayOf<Field>(Field.PASSENGER())).alignPassengers() shouldBe false
-            val bottomPassenger = arrayOf(arrayOf<Field>(Field.BLOCKED, Field.BLOCKED, Field.BLOCKED, Field.BLOCKED, Field.PASSENGER()))
+            arrayOf(arrayOf<Field>(Field.ISLAND), arrayOf<Field>(Field.PASSENGER())).alignPassengers() shouldBe false
+            val bottomPassenger = arrayOf(arrayOf<Field>(Field.ISLAND, Field.ISLAND, Field.ISLAND, Field.ISLAND, Field.PASSENGER()))
             bottomPassenger.alignPassengers() shouldBe true
             (bottomPassenger.first().last() as Field.PASSENGER).direction shouldBeIn arrayOf(CubeDirection.LEFT, CubeDirection.UP_LEFT)
         }

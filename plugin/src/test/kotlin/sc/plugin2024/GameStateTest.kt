@@ -167,7 +167,7 @@ class GameStateTest: FunSpec({
             
             val firstSegment = gameState.board.segments.first()
             arrayOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(2, 1), Coordinates(0, 2)).forEach {
-                firstSegment.fields[it.x][it.y] = Field.BLOCKED
+                firstSegment.fields[it.x][it.y] = Field.ISLAND
             }
             withClue("fall back to using all coal") {
                 gameState.getSensibleMoves() shouldHaveSingleElement Move(Acceleration(-3), Advance(1))
@@ -198,7 +198,7 @@ class GameStateTest: FunSpec({
     
     context("game over on") {
         xtest("immovable") {
-            gameState.board.segments.first().fields[1][3] = Field.BLOCKED
+            gameState.board.segments.first().fields[1][3] = Field.ISLAND
             gameState.otherShip.freeTurns = 0
             gameState.otherShip.coal = 0
             gameState.isOver shouldBe false

@@ -84,7 +84,7 @@ class AdvanceTest: FunSpec({
         
         test("field is blocked") {
             val blockedFieldCoordinate = gameState.board
-                    .findNearestFieldTypes(CubeCoordinates.ORIGIN, Field.BLOCKED::class).first()
+                    .findNearestFieldTypes(CubeCoordinates.ORIGIN, Field.ISLAND::class).first()
             
             var takenDirection: CubeDirection? = null
             

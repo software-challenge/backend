@@ -173,7 +173,7 @@ internal fun generateBoard(): Segments {
         
         val segment =
                 generateSegment(index == PluginConstants.NUMBER_OF_SEGMENTS,
-                        Array<Field>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { Field.BLOCKED } +
+                        Array<Field>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { Field.ISLAND } +
                         Array<Field>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { Field.SANDBANK } +
                         Array<Field>(if(passengerTiles.contains(index - 2)) 1 else 0) { Field.PASSENGER() }
                 )

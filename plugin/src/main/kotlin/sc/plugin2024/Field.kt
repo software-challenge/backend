@@ -24,8 +24,8 @@ sealed class Field: IField<Field> {
     
     /** Inselfeld, es kann nicht überwunden werden und kein Spieler kann darauf stehen */
     @XStreamAlias("island")
-    object BLOCKED: Field() {
-        private fun readResolve(): Any = BLOCKED
+    object ISLAND: Field() {
+        private fun readResolve(): Any = ISLAND
         override val isEmpty
             get() = false
     }

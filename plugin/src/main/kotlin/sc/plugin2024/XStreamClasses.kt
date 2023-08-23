@@ -20,7 +20,7 @@ class XStreamClasses: XStreamProvider {
                     Ship::class.java,
                     Field.WATER::class.java,
                     Field.SANDBANK::class.java,
-                    Field.BLOCKED::class.java,
+                    Field.ISLAND::class.java,
                     Field.GOAL::class.java,
                     Field.PASSENGER::class.java,
             )
