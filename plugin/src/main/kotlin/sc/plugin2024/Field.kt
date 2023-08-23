@@ -11,6 +11,8 @@ sealed class Field: IField<Field> {
         get() = true
     override fun clone() = this
     
+    override fun toString() = javaClass.simpleName
+    
     val letter: Char
         get() = javaClass.simpleName.first()
     
@@ -34,6 +36,7 @@ sealed class Field: IField<Field> {
         override val isEmpty
             get() = false
         override fun clone() = PASSENGER(direction, passenger)
+        override fun toString() = "PASSENGER${direction.ordinal}${passenger}"
     }
 
     /** Ein Zielfeld */

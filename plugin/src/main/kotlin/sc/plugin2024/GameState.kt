@@ -46,10 +46,6 @@ data class GameState @JvmOverloads constructor(
         override var lastMove: Move? = null,
 ): TwoPlayerGameState<Move>(currentTeam) {
     
-    init {
-        println(this.longString())
-    }
-    
     val currentShip: Ship
         get() = ships[currentTeam.index]
     
@@ -69,8 +65,6 @@ data class GameState @JvmOverloads constructor(
                 it.speed * 10 +
                 it.coal
             }!!.team
-    // TODO or something like this?
-    //  Team.values().maxByOrNull { getPointsForTeam(it) }
     
     fun calculatePoints(ship: Ship) =
             board.segmentIndex(ship.position).let { segmentIndex ->
@@ -136,7 +130,6 @@ data class GameState @JvmOverloads constructor(
     override fun getAllMoves(): Iterator<IMove> =
             getPossibleMoves().iterator()
     
-    // TODO this should be a Stream
     /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount. */
     fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<IMove> =
             // SANDBANK checkSandbankAdvances(currentShip)?.map { Move(it) } ?:
@@ -337,7 +330,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun getPointsForTeam(team: ITeam): IntArray =
             ships[team.index].let { ship ->
-                intArrayOf(ship.points, ship.speed, ship.coal)
+                intArrayOf(ship.points, ship.coal * 2)
             }
     
     override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
