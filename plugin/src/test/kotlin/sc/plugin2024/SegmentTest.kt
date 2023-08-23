@@ -1,6 +1,5 @@
 package sc.plugin2024
 
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.*

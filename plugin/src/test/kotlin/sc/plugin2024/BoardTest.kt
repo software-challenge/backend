@@ -13,6 +13,8 @@ import sc.api.plugins.Team
 import sc.helpers.checkSerialization
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
+import sc.plugin2024.actions.Acceleration
+import sc.plugin2024.actions.Advance
 import sc.plugin2024.util.PluginConstants
 
 class BoardTest: FunSpec({
@@ -101,6 +103,21 @@ class BoardTest: FunSpec({
             turningBoard.doesFieldHaveCurrent(cubeCoordinates) shouldBe (cubeCoordinates in current)
         }
     }
+    
+    test("current preserved across serialization") {
+        val commonBoard = Board(listOf(Segment.empty(),
+                Segment.empty(CubeCoordinates(4, 0)),
+                Segment(CubeDirection.UP_RIGHT, CubeCoordinates(8, -4), generateSegment(true, arrayOf()))))
+        val state = GameState(commonBoard)
+        state.ships.first().run {
+            position = CubeCoordinates(1,-1)
+            speed = 2
+            movement = 2
+        }
+        
+        state.getPossibleMoves(1) shouldContainAll state.copy(Board(commonBoard.segments.subList(0, 2), nextDirection = CubeDirection.UP_RIGHT)).getPossibleMoves(1)
+        state.performMove(Move(Acceleration(3), Advance(4)))
+    }
 
     context("pickupPassenger") {
         test("should decrease passenger count of the neighbouring field and increase passenger count of the ship") {
@@ -157,7 +174,7 @@ class BoardTest: FunSpec({
     }
     
     context("XML Serialization of") {
-        test("single segment") {
+        test("few segments") {
             // TODO column rather than field-array
             val serializedSegment = """
                   <segment direction="RIGHT">
@@ -194,17 +211,23 @@ class BoardTest: FunSpec({
             val serialized = """
                 <board nextDirection="RIGHT">$serializedSegment
                 </board>"""
-            val segment = Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, generateSegment(false, arrayOf()))
+            val segment = Segment.empty(CubeCoordinates.ORIGIN)
             val singleSegmentBoard = Board(listOf(segment))
+            
             singleSegmentBoard shouldSerializeTo serialized
-            checkSerialization(testXStream, Board(listOf(segment, segment), 1), serialized.trimIndent()) { _, deserialized ->
+            checkSerialization(testXStream,
+                    Board(listOf(segment, segment), 1),
+                    serialized.trimIndent()) { _, deserialized ->
                 deserialized shouldBe singleSegmentBoard
             }
-            Board(listOf(segment, segment), 2).also {
-                it.nextDirection = CubeDirection.UP_RIGHT
-            } shouldSerializeTo """
+            checkSerialization(testXStream,
+                    Board(listOf(segment, segment, Segment(CubeDirection.UP_RIGHT, CubeCoordinates(8, -4), generateSegment(true, arrayOf()))), 2, CubeDirection.UP_LEFT),
+                    """
                 <board nextDirection="UP_RIGHT">$serializedSegment$serializedSegment
-                </board>"""
+                </board>""".trimIndent()) { original, deserialized ->
+                deserialized shouldBe Board(listOf(segment, segment), nextDirection = CubeDirection.UP_RIGHT)
+                GameState(original).getPossibleMoves(1) shouldBe GameState(deserialized).getPossibleMoves(1)
+            }
         }
         test("random Board has correct length") {
             testXStream.toXML(board) shouldHaveLineCount 64

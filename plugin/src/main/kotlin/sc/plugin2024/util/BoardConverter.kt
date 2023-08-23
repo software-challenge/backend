@@ -16,7 +16,7 @@ class BoardConverter: Converter {
     
     override fun marshal(value: Any, writer: HierarchicalStreamWriter, context: MarshallingContext) {
         @Suppress("Unchecked_cast") val board = value as Board
-        writer.addAttribute("nextDirection", board.nextDirection.toString())
+        writer.addAttribute("nextDirection", (board.segments.getOrNull(board.visibleSegments)?.direction ?: board.nextDirection).toString())
         context.convertAnother(board.segments.take(board.visibleSegments))
     }
     
