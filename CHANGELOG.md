@@ -10,10 +10,11 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 24.0.4 Eliminating Oversights - 2023-08-23
+### 24.0.5 Eliminating Oversights - 2023-08-23
 - Revamp calculation structure for available Moves
-- Fix revealing of Segments including nextDirection
 - Add some helpers and documentation
+- Fix revealing of Segments including nextDirection
+- Fix passing on of nextDirection in Board
 
 ### 24.0.3 Rule Fixes - 2023-08-12
 - Properly deep copy board
