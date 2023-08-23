@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.framework.PublicCloneable
 import kotlin.math.absoluteValue
 import kotlin.math.sign
-import kotlin.random.Random
 
 /**
  * Two-dimensional coordinates tracking each axis.
@@ -31,6 +30,9 @@ data class CubeCoordinates
     
     val coordinates: IntArray
         get() = intArrayOf(q, r, s)
+    
+    val x: Int
+        get() = q * 2 + r
     
     operator fun times(count: Int): CubeCoordinates =
             CubeCoordinates(q * count, r * count)

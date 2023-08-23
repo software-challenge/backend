@@ -7,6 +7,7 @@ import io.kotest.matchers.ints.*
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
 import io.kotest.matchers.types.*
+import sc.api.plugins.Coordinates
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
@@ -59,12 +60,17 @@ class BoardTest: FunSpec({
         }
     }
     
+    test("board bounds") {
+        Board(listOf(Segment.empty())).rectangleSize shouldBe Coordinates(5, 5)
+        Board(listOf(Segment.empty(CubeCoordinates(4,0)))).rectangleSize shouldBe Coordinates(9, 5)
+        Board(listOf(Segment.empty(CubeCoordinates(4,4)))).rectangleSize shouldBe Coordinates(11, 9)
+    }
+    
     val board = Board()
     test("segmentIndex") {
         board.segmentIndex(CubeCoordinates.ORIGIN) shouldBe 0
         board.segmentIndex(CubeCoordinates(4, 0, -4)) shouldBe 1
         board.segmentIndex(CubeCoordinates(0, -3, 3)) shouldBe -1
-        
     }
     
     test("segmentDistance") {

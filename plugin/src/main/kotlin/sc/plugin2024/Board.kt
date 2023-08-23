@@ -26,6 +26,18 @@ data class Board(
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
     
+    /** Size of the map. */
+    val bounds
+        get() = segments.fold(Pair(0 to 0, 0 to 0)) { acc, segment ->
+            val center = segment.center
+            val x = center.x / 2
+            Pair(acc.first.first.coerceAtMost(x) to acc.first.second.coerceAtLeast(x),
+                    acc.second.first.coerceAtMost(center.r) to acc.second.second.coerceAtLeast(center.r))
+        }
+    
+    val rectangleSize: Coordinates
+        get() = bounds.let { Coordinates(it.first.second - it.first.first + 5, it.second.second - it.second.first + 5) }
+        
     override fun clone(): Board = Board(this.segments.clone(), visibleSegments)
     
     internal fun getNextDirection() =
