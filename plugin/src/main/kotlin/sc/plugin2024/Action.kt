@@ -5,5 +5,5 @@ import sc.shared.IMoveMistake
 
 @XStreamAlias(value = "action")
 interface Action {
-    fun perform(state: GameState): IMoveMistake?
+    fun perform(state: GameState, movementCheck: Boolean = true): IMoveMistake?
 }

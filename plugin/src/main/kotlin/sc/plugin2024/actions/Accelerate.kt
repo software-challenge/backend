@@ -38,7 +38,7 @@ data class Accelerate(
      * @param state [GameState], auf dem die Beschleunigung ausgeführt wird
      * @param ship [Ship], für welches die Beschleunigung ausgeführt wird
      */
-    override fun perform(state: GameState): AccelerationProblem? {
+    override fun perform(state: GameState, movementCheck: Boolean): AccelerationProblem? {
         var speed: Int = state.currentShip.speed
         speed += acc
         when {

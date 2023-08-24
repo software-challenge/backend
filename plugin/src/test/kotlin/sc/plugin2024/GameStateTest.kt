@@ -86,7 +86,7 @@ class GameStateTest: FunSpec({
                 
                 gameState.checkAdvanceLimit(ship).run {
                     distance shouldBe 0
-                    problem shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+                    problem shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
                 }
                 
                 ship.speed = 3
@@ -213,9 +213,9 @@ class GameStateTest: FunSpec({
         test("merges duplicate advances") {
             straightState.currentShip.position = CubeCoordinates.ORIGIN
             val actions = arrayOf(Turn(CubeDirection.RIGHT), Turn(CubeDirection.UP_RIGHT), Turn(CubeDirection.RIGHT), Advance(1))
-            shouldThrow<InvalidMoveException> { straightState.performMove(Move(*actions)) }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+            shouldThrow<InvalidMoveException> { straightState.performMove(Move(*actions)) }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
             straightState.performMove(Move(Accelerate(1), *actions))
-            shouldThrow<InvalidMoveException> { straightState.performMove(Move(*actions)) }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+            shouldThrow<InvalidMoveException> { straightState.performMove(Move(*actions)) }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
             straightState.performMove(Move(Accelerate(2), *actions, Advance(1)))
             straightState.performMoveDirectly(Move(Accelerate(2), *actions, Advance(1), Turn(CubeDirection.DOWN_RIGHT)))
             straightState.otherShip.run {
@@ -246,7 +246,7 @@ class GameStateTest: FunSpec({
                 state.performMove(Move(Accelerate(3), Advance(4)))
                 state.performMove(Move(Accelerate(4), Advance(5)))
                 shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(3))) }.mistake shouldBe MoveMistake.MOVEMENT_POINTS_LEFT
-                shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(4))) }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+                shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(4))) }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
             }
         }
     }

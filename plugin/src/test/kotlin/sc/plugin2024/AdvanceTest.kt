@@ -37,7 +37,7 @@ class AdvanceTest: FunSpec({
             test("across current") {
                 shouldThrow<InvalidMoveException> {
                     gameState.performMoveDirectly(Move(Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
-                }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+                }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
                 listOf(1, 2, 3).forAll {
                     val state = gameState.performMove(Move(Accelerate(it), Advance(it)))
                     (state as GameState).otherShip.position shouldBe CubeCoordinates(-1, it - 1)
@@ -50,7 +50,7 @@ class AdvanceTest: FunSpec({
                 shipONE.position = CubeCoordinates.ORIGIN
                 shouldThrow<InvalidMoveException> {
                     gameState.performMoveDirectly(Move(Advance(1)))
-                }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+                }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
                 listOf(1, 2).forAll {
                     val state = gameState.performMove(Move(Accelerate(it), Advance(it)))
                     (state as GameState).otherShip.position shouldBe CubeCoordinates(it, 0)
@@ -59,14 +59,14 @@ class AdvanceTest: FunSpec({
             test("double crossing") {
                 shouldThrow<InvalidMoveException> {
                     gameState.performMove(Move(Accelerate(4), Turn(CubeDirection.DOWN_RIGHT), Advance(2), Turn(CubeDirection.UP_RIGHT), Advance(2)))
-                }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+                }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
                 gameState.performMoveDirectly(Move(Accelerate(5), Turn(CubeDirection.DOWN_RIGHT), Advance(2), Turn(CubeDirection.UP_RIGHT), Advance(2)))
                 shipONE.position shouldBe CubeCoordinates(1, -1)
             }
         }
         
         test("no movement points") {
-            Advance(3).perform(gameState) shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+            Advance(3).perform(gameState) shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
         }
         
         context("invalid distance") {
@@ -118,7 +118,7 @@ class AdvanceTest: FunSpec({
                 dest != null && dest.isEmpty
             } ?: throw IllegalStateException("No valid direction found.")
             
-            Advance(2).perform(gameState) shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+            Advance(2).perform(gameState) shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
         }
         
         context("on opponent") {

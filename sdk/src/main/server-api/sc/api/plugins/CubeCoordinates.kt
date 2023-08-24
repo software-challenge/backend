@@ -112,4 +112,7 @@ enum class CubeDirection(val vector: CubeCoordinates) {
     
     /** @return the direction rotated clockwise [turns] times. */
     fun rotatedBy(turns: Int) = values().let { it[(ordinal + turns).mod(it.size)] }
+    
+    operator fun minus(count: Int) = rotatedBy(-count)
+    operator fun plus(count: Int) = rotatedBy(count)
 }

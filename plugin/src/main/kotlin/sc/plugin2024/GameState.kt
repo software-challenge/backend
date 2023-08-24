@@ -302,7 +302,7 @@ data class GameState @JvmOverloads constructor(
             
             result.add(totalCost)
         }
-        return result(AdvanceProblem.NO_MOVEMENT_POINTS)
+        return result(AdvanceProblem.MOVEMENT_POINTS_MISSING)
     }
     
     /**

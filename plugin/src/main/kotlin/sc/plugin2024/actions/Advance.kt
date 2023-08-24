@@ -31,12 +31,12 @@ data class Advance(
         @XStreamAsAttribute val distance: Int,
 ): Action {
     
-    override fun perform(state: GameState): AdvanceProblem? {
+    override fun perform(state: GameState, movementCheck: Boolean): AdvanceProblem? {
         if(distance < 1 && state.board[state.currentShip.position] != Field.SANDBANK || distance > 6)
             return AdvanceProblem.INVALID_DISTANCE
         
         val result = state.checkAdvanceLimit(state.currentShip.position, if(distance > 0) state.currentShip.direction else state.currentShip.direction.opposite(), state.currentShip.movement)
-        if(result.distance < distance.absoluteValue)
+        if(result.distance < distance.absoluteValue && movementCheck)
             return result.problem
         
         state.currentShip.position += state.currentShip.direction.vector * distance

@@ -21,7 +21,7 @@ class PushTest: FunSpec({
     test("Can not push another player without movement points") {
         pushingShip.movement = 0
         val push = Push(CubeDirection.UP_RIGHT)
-        push.perform(gameState) shouldBe PushProblem.MOVEMENT_POINTS_EXCEEDED
+        push.perform(gameState) shouldBe PushProblem.MOVEMENT_POINTS_MISSING
     }
     
     test("A player can only push another player if they are on the same field") {
