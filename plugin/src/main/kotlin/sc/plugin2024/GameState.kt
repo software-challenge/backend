@@ -338,7 +338,7 @@ data class GameState @JvmOverloads constructor(
         }
     
     fun isWinner(ship: Ship) =
-            ship.passengers == 2 && board.effectiveSpeed(ship) < 2 && board[ship.position] == Field.GOAL
+            ship.passengers > 1 && board.effectiveSpeed(ship) < 2 && board[ship.position] == Field.GOAL
     
     override fun getPointsForTeam(team: ITeam): IntArray =
             ships[team.index].let { ship ->
