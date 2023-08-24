@@ -47,18 +47,6 @@ class GameStateTest: FunSpec({
         gameState.currentTeam shouldBe gameState.startTeam.opponent()
     }
     
-    test("reveals segment after move") {
-        val state = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4, 0)), Segment.empty(CubeCoordinates(8, 0)))))
-        val move = Move(Accelerate(5), Advance(6))
-        var found = false
-        state.getAllMoves().forEachRemaining { if(move == it) found = true }
-        found shouldBe true
-        
-        state.performMoveDirectly(move)
-        state.board.segmentIndex(state.otherShip.position) shouldBe 1
-        state.board.visibleSegments shouldBe 3
-    }
-    
     context("points calculation") {
         test("at start") {
             gameState.ships.forAll {
@@ -81,21 +69,35 @@ class GameStateTest: FunSpec({
         }
     }
     
-    test("getPossiblePushs") {
-        gameState.getPossiblePushs().shouldBeEmpty()
-        gameState.currentShip.position = gameState.otherShip.position
-        gameState.getPossiblePushs() shouldHaveSize 4
-        gameState.currentShip.movement = 0
-        gameState.getPossiblePushs().shouldBeEmpty()
-    }
-    
-    test("getPossibleTurns") {
-        gameState.getPossibleTurns(0).shouldHaveSize(2)
-        gameState.getPossibleTurns(1).shouldHaveSize(4)
-        gameState.getPossibleTurns(2).shouldHaveSize(5)
-    }
-    
     context("getPossibleAdvances") {
+        context("advanceLimit") {
+            val ship = gameState.currentShip
+            test("from start") {
+                gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 1).distance shouldBe 0
+                gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 2).distance shouldBe 1
+                val furtherInfo = gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 3)
+                furtherInfo.costUntil(1) shouldBe 2
+                furtherInfo.distance shouldBe 2
+                furtherInfo.costUntil(2) shouldBe 3
+            }
+            test("considers pushing and current") {
+                ship.direction = CubeDirection.DOWN_RIGHT
+                gameState.otherShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
+                
+                gameState.checkAdvanceLimit(ship).run {
+                    distance shouldBe 0
+                    problem shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+                }
+                
+                ship.speed = 3
+                ship.movement = 3
+                gameState.checkAdvanceLimit(ship).run {
+                    distance shouldBe 1
+                    costUntil(1) shouldBe 2
+                    problem shouldBe AdvanceProblem.SHIP_ALREADY_IN_TARGET
+                }
+            }
+        }
         test("from starting position") {
             gameState.getPossibleAdvances() shouldHaveSingleElement Advance(1)
         }
@@ -111,40 +113,24 @@ class GameStateTest: FunSpec({
         }
     }
     
-    test("getPossibleAccelerations") {
-        gameState.getPossibleAccelerations(0).size shouldBe 1
-        gameState.getPossibleAccelerations(1).size shouldBe 2
-    }
-    
-    context("advanceLimit") {
-        val ship = gameState.currentShip
-        test("from start") {
-            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 1).distance shouldBe 0
-            gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 2).distance shouldBe 1
-            val furtherInfo = gameState.checkAdvanceLimit(ship.position, CubeDirection.DOWN_RIGHT, 3)
-            furtherInfo.costUntil(1) shouldBe 2
-            furtherInfo.distance shouldBe 2
-            furtherInfo.costUntil(2) shouldBe 3
-        }
-        test("considers pushing and current") {
-            ship.direction = CubeDirection.DOWN_RIGHT
-            gameState.otherShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
-            
-            gameState.checkAdvanceLimit(ship).run {
-                distance shouldBe 0
-                problem shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
-            }
-            
-            ship.speed = 3
-            ship.movement = 3
-            gameState.checkAdvanceLimit(ship).run {
-                distance shouldBe 1
-                costUntil(1) shouldBe 2
-                problem shouldBe AdvanceProblem.SHIP_ALREADY_IN_TARGET
-            }
-        }
-    }
     context("getPossibleActions") {
+        test("getPossibleAccelerations") {
+            gameState.getPossibleAccelerations(0).size shouldBe 1
+            gameState.getPossibleAccelerations(1).size shouldBe 2
+        }
+        test("getPossibleTurns") {
+            gameState.getPossibleTurns(0).shouldHaveSize(2)
+            gameState.getPossibleTurns(1).shouldHaveSize(4)
+            gameState.getPossibleTurns(2).shouldHaveSize(5)
+        }
+        test("getPossiblePushs") {
+            gameState.getPossiblePushs().shouldBeEmpty()
+            gameState.currentShip.position = gameState.otherShip.position
+            gameState.getPossiblePushs() shouldHaveSize 4
+            gameState.currentShip.movement = 0
+            gameState.getPossiblePushs().shouldBeEmpty()
+        }
+        
         test("from starting position") {
             gameState.getPossibleActions(0) shouldHaveSize 11
         }
@@ -199,7 +185,7 @@ class GameStateTest: FunSpec({
         }
         test("unpushable opponent") {
             val state = GameState(
-                    Board(listOf(Segment (CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.WATER, Field.WATER, Field.WATER))))),
+                    Board(listOf(Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.WATER, Field.WATER, Field.WATER))))),
                     ships = listOf(
                             Ship(CubeCoordinates(-1, -2), Team.ONE),
                             Ship(CubeCoordinates(-1, 0), Team.TWO),
@@ -211,29 +197,57 @@ class GameStateTest: FunSpec({
         }
     }
     
-    context("current works when board is truncated") {
-        val commonBoard = Board(listOf(Segment.empty(),
-                Segment.empty(CubeCoordinates(4, 0)),
-                Segment(CubeDirection.UP_RIGHT, CubeCoordinates(8, -4), generateSegment(true, arrayOf()))))
-        val state = GameState(commonBoard)
-        val start = CubeCoordinates(1, -1)
-        state.currentShip.run {
-            position = start
-            speed = 2
-            movement = 2
+    context("performing move") {
+        val straightState = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4, 0)), Segment.empty(CubeCoordinates(8, 0)))))
+        test("reveals next segment") {
+            val move = Move(Accelerate(5), Advance(6))
+            var found = false
+            straightState.getAllMoves().forEachRemaining { if(move == it) found = true }
+            found shouldBe true
+            
+            straightState.performMoveDirectly(move)
+            straightState.board.segmentIndex(straightState.otherShip.position) shouldBe 1
+            straightState.board.visibleSegments shouldBe 3
         }
         
-        val moves = state.getPossibleMoves(1)
-        val truncState = state.copy(Board(commonBoard.segments.subList(0, 2), nextDirection = CubeDirection.UP_RIGHT))
-        moves shouldContainAll truncState.getPossibleMoves(1)
-        forAll<GameState>("full" to state, "truncated" to truncState) { state ->
-            state.checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
-            state.clone().checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
-            state.performMove(Move(Accelerate(1), Advance(3)))
-            state.performMove(Move(Accelerate(3), Advance(4)))
-            state.performMove(Move(Accelerate(4), Advance(5)))
-            shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(3))) }.mistake shouldBe MoveMistake.MOVEMENT_POINTS_LEFT
-            shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(4))) }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+        test("merges duplicate advances") {
+            straightState.currentShip.position = CubeCoordinates.ORIGIN
+            val actions = arrayOf(Turn(CubeDirection.RIGHT), Turn(CubeDirection.UP_RIGHT), Turn(CubeDirection.RIGHT), Advance(1))
+            shouldThrow<InvalidMoveException> { straightState.performMove(Move(*actions)) }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+            straightState.performMove(Move(Accelerate(1), *actions))
+            shouldThrow<InvalidMoveException> { straightState.performMove(Move(*actions)) }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+            straightState.performMove(Move(Accelerate(2), *actions, Advance(1)))
+            straightState.performMoveDirectly(Move(Accelerate(2), *actions, Advance(1), Turn(CubeDirection.DOWN_RIGHT)))
+            straightState.otherShip.run {
+                position shouldBe CubeCoordinates(2, 0)
+                coal shouldBe 3
+            }
+        }
+        
+        context("current works when board is truncated") {
+            val commonBoard = Board(listOf(Segment.empty(),
+                    Segment.empty(CubeCoordinates(4, 0)),
+                    Segment(CubeDirection.UP_RIGHT, CubeCoordinates(8, -4), generateSegment(true, arrayOf()))))
+            val state = GameState(commonBoard)
+            val start = CubeCoordinates(1, -1)
+            state.currentShip.run {
+                position = start
+                speed = 2
+                movement = 2
+            }
+            
+            val moves = state.getPossibleMoves(1)
+            val truncState = state.copy(Board(commonBoard.segments.subList(0, 2), nextDirection = CubeDirection.UP_RIGHT))
+            moves shouldContainAll truncState.getPossibleMoves(1)
+            forAll<GameState>("full" to state, "truncated" to truncState) { state ->
+                state.checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
+                state.clone().checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
+                state.performMove(Move(Accelerate(1), Advance(3)))
+                state.performMove(Move(Accelerate(3), Advance(4)))
+                state.performMove(Move(Accelerate(4), Advance(5)))
+                shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(3))) }.mistake shouldBe MoveMistake.MOVEMENT_POINTS_LEFT
+                shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(4))) }.mistake shouldBe AdvanceProblem.NO_MOVEMENT_POINTS
+            }
         }
     }
     

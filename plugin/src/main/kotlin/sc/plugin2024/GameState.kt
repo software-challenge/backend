@@ -84,7 +84,16 @@ data class GameState @JvmOverloads constructor(
     override fun performMoveDirectly(move: Move) {
         if(move.actions.isEmpty()) throw InvalidMoveException(MoveMistake.NO_ACTIONS)
         
-        move.actions.forEachIndexed { index, action ->
+        val actions = move.actions.fold(ArrayList<Action>()) { acc, act ->
+            val last = acc.lastOrNull()
+            if(last is Advance && act is Advance) {
+                acc[acc.lastIndex] = last + act
+            } else {
+                acc.add(act)
+            }
+            acc
+        }
+        actions.forEachIndexed { index, action ->
             when {
                 board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveMistake.SAND_BANK_END, move)
                 currentShip.position == otherShip.position && action !is Push -> throw InvalidMoveException(MoveMistake.PUSH_ACTION_REQUIRED, move)
@@ -100,7 +109,7 @@ data class GameState @JvmOverloads constructor(
         
         board.pickupPassenger(currentShip)
         currentShip.points = calculatePoints(currentShip)
-        if(move.actions.any { it is Push }) {
+        if(actions.any { it is Push }) {
             if(otherShip.speed == 1)
                 board.pickupPassenger(otherShip)
             otherShip.points = calculatePoints(otherShip)

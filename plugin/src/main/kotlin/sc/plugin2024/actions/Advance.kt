@@ -45,4 +45,6 @@ data class Advance(
     }
     
     override fun toString(): String = if(distance >= 0) "Gehe $distance Felder vor" else "Gehe $distance Felder zurück"
+    
+    operator fun plus(other: Advance) = Advance(distance + other.distance)
 }
