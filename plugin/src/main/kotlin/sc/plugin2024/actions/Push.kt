@@ -33,10 +33,10 @@ data class Push(
         @XStreamAsAttribute val direction: CubeDirection,
 ): Action {
     
-    override fun perform(state: GameState, movementCheck: Boolean): PushProblem? {
+    override fun perform(state: GameState): PushProblem? {
         val nudgedShip = state.otherShip
         
-        if(state.currentShip.movement == 0 && movementCheck)
+        if(state.currentShip.movement == 0)
             return PushProblem.MOVEMENT_POINTS_MISSING
         state.currentShip.movement--
         

@@ -27,7 +27,7 @@ data class Turn(
         @XStreamAsAttribute val direction: CubeDirection,
 ): Action {
     
-    override fun perform(state: GameState, movementCheck: Boolean): TurnProblem? {
+    override fun perform(state: GameState): TurnProblem? {
         val turnCount = state.currentShip.direction.turnCountTo(direction)
         
         val absTurnCount = turnCount.absoluteValue
