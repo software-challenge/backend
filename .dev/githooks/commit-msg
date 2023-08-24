@@ -5,10 +5,10 @@ scopes_file=".dev/scopes.txt"
 test -r $scopes_file &&
   scopes="($(cat "$scopes_file" | sed '/^\(#.*\|\)$/d' | sed ':a;N;s/\n/|/g;ta'))"
 
-head -1 "$1" | grep -Eq "^(fix|feat|docs|style|refactor|test|chore|rework|release)(\(${scopes:-.*}(/.+)?\))?: [A-Za-z]"
+head -1 "$1" | grep -Eq "^(fix|feat|docs|style|refactor|test|chore|rework|release|revert)(\(${scopes:-.*}(/.+)?\))?: [A-Za-z]"
 result=$?
 if test $result -ne 0
 then printf "Invalid commit message: '$(head -1 "$1")'
-Please check the guidelines at https://karma-runner.github.io/6.2/dev/git-commit-msg.html$(test -n "$scopes" && echo ", the scope should be one of $scopes as defined in $scopes_file")" >&2
+Please check the guidelines at http://karma-runner.github.io/6.2/dev/git-commit-msg.html$(test -n "$scopes" && echo " with the scope one of $scopes as defined in $scopes_file")" >&2
 fi
 exit $result
