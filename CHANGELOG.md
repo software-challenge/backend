@@ -10,6 +10,10 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 24.0.6 Refine Adjuncts - 2023-08-24
+- Properly handle consecutive advances
+- Fix ScoreDefinition
+
 ### 24.0.5 Eliminating Oversights - 2023-08-23
 - Revamp calculation structure for available Moves
 - Add some helpers and documentation
