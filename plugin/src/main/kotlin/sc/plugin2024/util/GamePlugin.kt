@@ -16,7 +16,8 @@ class GamePlugin: IGamePlugin {
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", ScoreAggregation.SUM),
                         ScoreFragment("Punkte", ScoreAggregation.AVERAGE),
-                        ScoreFragment("Passagiere", ScoreAggregation.AVERAGE),
+                        ScoreFragment("Kohle", ScoreAggregation.AVERAGE),
+                        ScoreFragment("Gewonnen", ScoreAggregation.AVERAGE),
                 ))
     }
     
