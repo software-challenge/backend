@@ -26,17 +26,19 @@ data class Board(
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
     
-    /** Size of the map. */
+    /** Corner coordinates, using offset system.
+     * @return ((min-x, max-x), (min-y, max-y)) */
     val bounds
         get() = segments.fold(Pair(0 to 0, 0 to 0)) { acc, segment ->
             val center = segment.center
             val x = center.x / 2
-            Pair(acc.first.first.coerceAtMost(x) to acc.first.second.coerceAtLeast(x),
-                    acc.second.first.coerceAtMost(center.r) to acc.second.second.coerceAtLeast(center.r))
+            Pair(acc.first.first.coerceAtMost(x - 2) to acc.first.second.coerceAtLeast(x + 2),
+                    acc.second.first.coerceAtMost(center.r - 2) to acc.second.second.coerceAtLeast(center.r + 2))
         }
     
+    /** Size of the map. */
     val rectangleSize: Coordinates
-        get() = bounds.let { Coordinates(it.first.second - it.first.first + 5, it.second.second - it.second.first + 5) }
+        get() = bounds.let { Coordinates(it.first.second - it.first.first + 1, it.second.second - it.second.first + 1) }
         
     override fun clone(): Board = copy(segments = this.segments.clone())
     
