@@ -20,5 +20,5 @@ enum class ScoreCause {
     HARD_TIMEOUT,
     
     /** An error occurred during communication. This could indicate a bug in the server's code.  */
-    UNKNOWN
+    UNKNOWN;
 }

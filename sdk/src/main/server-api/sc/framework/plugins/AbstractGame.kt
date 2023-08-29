@@ -160,11 +160,11 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
             }
             player.hasSoftTimeout() -> {
                 cause = ScoreCause.SOFT_TIMEOUT
-                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).softTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+                reason = "Der Spieler hat für die Antwort auf die Zugaufforderung länger als ${getTimeoutFor(player).softTimeout / 1000} Sekunden gebraucht."
             }
             player.hasHardTimeout() -> {
-                cause = ScoreCause.SOFT_TIMEOUT
-                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet"
+                cause = ScoreCause.HARD_TIMEOUT
+                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet."
             }
             player.hasViolated() -> {
                 cause = ScoreCause.RULE_VIOLATION

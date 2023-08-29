@@ -3,6 +3,7 @@ package sc.shared
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
+import sc.framework.plugins.Constants
 import java.math.BigDecimal
 
 @XStreamAlias(value = "score")
@@ -15,9 +16,8 @@ data class PlayerScore(
         val parts: Array<BigDecimal>
 ) {
     
-    // TODO use constants for WIN and LOSE score
     constructor(winner: Boolean, reason: String):
-            this(ScoreCause.REGULAR, reason, if (winner) 2 else 0)
+            this(ScoreCause.REGULAR, reason, if (winner) Constants.WIN_SCORE else Constants.LOSE_SCORE)
     constructor(cause: ScoreCause?, reason: String, vararg scores: Int):
             this(cause, reason, scores.map { BigDecimal(it) }.toTypedArray())
     

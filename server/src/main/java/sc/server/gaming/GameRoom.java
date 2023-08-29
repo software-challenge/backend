@@ -285,7 +285,7 @@ public class GameRoom implements IGameListener {
     } catch (InvalidMoveException e) {
       final String error = String.format("Ungueltiger Zug von '%s'.\n%s", player.getDisplayName(), e);
       logger.error(error, e);
-      player.setViolationReason(e.getMessage());
+      player.setViolationReason(e.getMistake().getMessage());
       ErrorMessage errorMessage = new ErrorMessage(move, error);
       player.notifyListeners(errorMessage);
       observerBroadcast(errorMessage);
