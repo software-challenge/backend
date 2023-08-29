@@ -10,6 +10,10 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 24.0.7 Game Procedure - 2023-08-29
+- Make SimplePlayer template more convenient
+- Clarify game over edge case conditions
+
 ### 24.0.6 Refine Adjuncts - 2023-08-24
 - Properly handle consecutive advances
 - Fix ScoreDefinition
