@@ -61,6 +61,12 @@ tasks {
         }, copySpec {
             from("src")
             into("src")
+            filter {
+                it.replace("sc.api.plugins.IMove", "sc.plugin$year.Move")
+                        .replace("IMove", "Move")
+                        .replace("sc.api.plugins.TwoPlayerGameState", "sc.plugin$year.GameState")
+                        .replace("TwoPlayerGameState<Move>", "GameState")
+            }
         }, copySpec {
             from(configurations.default, arrayOf("sdk", "plugin")
                     .map { project(":$it").getTasksByName("sourcesJar", false) })

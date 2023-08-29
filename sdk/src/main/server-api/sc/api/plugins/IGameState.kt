@@ -41,7 +41,7 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     /** Ob das Spiel zu Ende ist. */
     val isOver: Boolean
     
-    /** Gibt Punktzahlen des Teams entsprechend der [ScoreDefinition] zurück. */
+    /** Gibt Punktzahlen des Teams passend zur ScoreDefinition des aktuellen Spielplugins zurück. */
     fun getPointsForTeam(team: ITeam): IntArray
     
     /** Mögliche Züge des aktuellen Teams in der aktuellen Situation.
