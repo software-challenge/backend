@@ -127,8 +127,10 @@ data class GameState @JvmOverloads constructor(
         currentShip.movement = if(board[currentShip.position] == Field.SANDBANK) 1 else currentShip.speed
         turn++
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
-        if(!canMove() && !isOver)
+        if(!canMove() && !isOver) {
+            lastMove = null
             advanceTurn()
+        }
     }
     
     /** Retrieves a list of sensible moves based on the possible actions. */
@@ -333,6 +335,8 @@ data class GameState @JvmOverloads constructor(
             board.segmentDistance(ships.first().position, ships.last().position).absoluteValue > 3 -> true
             // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
             turn / 2 >= PluginConstants.ROUND_LIMIT -> true
+            // Bedingung 5: beide Spieler können sich nicht mehr bewegen
+            lastMove == null && !canMove() -> true
             // ansonsten geht das Spiel weiter
             else -> false
         }
