@@ -1,4 +1,4 @@
-package sc.player2024;
+package sc.player.util;
 
 import jargs.gnu.CmdLineParser;
 import org.slf4j.Logger;
@@ -7,7 +7,7 @@ import sc.api.plugins.IGamePlugin;
 import sc.networking.clients.LobbyClient;
 import sc.player.IGameHandler;
 import sc.player.IPlayerClient;
-import sc.player2024.logic.Logic;
+import sc.player.Logic;
 import sc.shared.SharedConfiguration;
 
 import java.io.File;

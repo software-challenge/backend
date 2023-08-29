@@ -1,11 +1,10 @@
-package sc.player2024.logic;
+package sc.player;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.IMove;
 import sc.api.plugins.TwoPlayerGameState;
-import sc.player.IGameHandler;
 import sc.shared.GameResult;
 
 import java.util.List;
