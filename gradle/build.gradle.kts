@@ -21,9 +21,9 @@ version = versionObject.toString()
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
 
-val deployDir by extra { buildDir.resolve("deploy") }
+val deployDir by extra { layout.buildDirectory.asFile.get().resolve("deploy") }
 val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
-val testingDir by extra { buildDir.resolve("tests") }
+val testingDir by extra { layout.buildDirectory.asFile.get().resolve("tests") }
 val documentedProjects = listOf("sdk", "plugin")
 
 val isBeta by extra { versionObject.minor == 0 }
@@ -126,7 +126,7 @@ tasks {
                 )
                     .redirectOutput(testGameDir.resolve("server.log"))
                     .redirectError(testGameDir.resolve("server-err.log"))
-                    .directory(project(":server").buildDir.resolve("runnable"))
+                    .directory(project(":server").layout.buildDirectory.asFile.get().resolve("runnable"))
                     .start()
             var i = 0
             while(Files.size(testGameDir.resolve("server.log").toPath()) < 1000 && i++ < 50)
@@ -267,7 +267,7 @@ allprojects {
             val doc by creating(DokkaTask::class) {
                 group = "documentation"
                 dependsOn(classes)
-                outputDirectory = buildDir.resolve("doc").toString()
+                outputDirectory = layout.buildDirectory.asFile.get().resolve("doc").toString()
                 outputFormat = "javadoc"
             }
             val docJar by creating(Jar::class) {
