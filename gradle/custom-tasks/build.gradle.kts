@@ -6,7 +6,7 @@ plugins {
 sourceSets.main.get().java.setSrcDirs(listOf("src"))
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
