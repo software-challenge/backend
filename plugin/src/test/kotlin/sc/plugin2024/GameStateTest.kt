@@ -182,7 +182,7 @@ class GameStateTest: FunSpec({
             val moves = gameState.getSensibleMoves()
             moves shouldContain Move(Accelerate(2), Advance(1), Push(CubeDirection.DOWN_LEFT))
             moves shouldHaveSize 3
-            gameState.iterableMoves().shouldContainAll(moves)
+            gameState.moves().shouldContainAll(moves)
         }
         test("unpushable opponent") {
             val state = GameState(
@@ -200,13 +200,13 @@ class GameStateTest: FunSpec({
     
     context("getAllMoves") {
         test("has valid Move") {
-            gameState.getAllMoves().hasNext() shouldBe true
+            gameState.moveIterator().hasNext() shouldBe true
             shouldNotThrow<InvalidMoveException> {
-                gameState.performMoveDirectly(gameState.getAllMoves().next())
+                gameState.performMoveDirectly(gameState.moveIterator().next())
             }
         }
         test("offers turns") {
-            gameState.iterableMoves().find { it.actions.first() is Turn }
+            gameState.moves().find { it.actions.first() is Turn }
         }
     }
     
@@ -214,7 +214,7 @@ class GameStateTest: FunSpec({
         test("reveals next segment") {
             val straightState = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4, 0)), Segment.empty(CubeCoordinates(8, 0)))))
             val move = Move(Accelerate(5), Advance(6))
-            straightState.iterableMoves() shouldContain move
+            straightState.moves() shouldContain move
             
             straightState.performMoveDirectly(move)
             straightState.board.segmentIndex(straightState.otherShip.position) shouldBe 1
@@ -282,7 +282,7 @@ class GameStateTest: FunSpec({
                 it.freeTurns = 0
                 it.coal = 0
             }
-            gameState.getAllMoves().hasNext() shouldBe false
+            gameState.moveIterator().hasNext() shouldBe false
             gameState.isOver shouldBe true
         }
         test("round limit") {
@@ -308,7 +308,7 @@ class GameStateTest: FunSpec({
                 
                 gameState.turn shouldBe 1
                 gameState.getSensibleMoves().shouldNotBeEmpty()
-                gameState.getAllMoves().hasNext().shouldBeTrue()
+                gameState.moveIterator().hasNext().shouldBeTrue()
                 ship.passengers = 2
                 gameState.isOver shouldBe false
             }

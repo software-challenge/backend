@@ -135,7 +135,7 @@ data class GameState @JvmOverloads constructor(
     
     /** Retrieves a list of sensible moves based on the possible actions. */
     override fun getSensibleMoves(): List<Move> =
-            getSimpleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { iterableMoves().toList() }
+            getSimpleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { moves().toList() }
     
     /** Performs the given [Action] on a GameState cloned just deep enough not to affect the original.
      * @return the new State */
@@ -144,7 +144,7 @@ data class GameState @JvmOverloads constructor(
     
     /** Gibt progressiv alle möglichen Züge in der aktuellen Spielsituation zurück.
      * Sinnvollere Züge kommen tendenziell früher. */
-    override fun getAllMoves(): Iterator<Move> = object: Iterator<Move> {
+    override fun moveIterator(): Iterator<Move> = object: Iterator<Move> {
         val queue = ArrayDeque<Pair<GameState, List<Action>>>(64)
         
         init {
@@ -378,7 +378,7 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
-    fun canMove() = getAllMoves().hasNext() // TODO make more efficient and take ship as parameter
+    fun canMove() = moveIterator().hasNext() // TODO make more efficient and take ship as parameter
     
     override val isOver: Boolean
         get() = when {

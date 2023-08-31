@@ -46,7 +46,7 @@ class GamePlayTest: WordSpec({
         }
         "stay paused after move" {
             game.isPaused = true
-            game.onRoundBasedAction(game.currentState.getAllMoves().next())
+            game.onRoundBasedAction(game.currentState.moveIterator().next())
             game.isPaused shouldBe true
         }
     }
@@ -84,7 +84,7 @@ class GamePlayTest: WordSpec({
                         if(finalState != null)
                             finalState shouldBe state.hashCode()
                         
-                        val moves = state.getAllMoves()
+                        val moves = state.moveIterator()
                         withClue(state) {
                             moves.shouldHaveNext()
                             game.onAction(game.players[state.currentTeam.index], moves.next())

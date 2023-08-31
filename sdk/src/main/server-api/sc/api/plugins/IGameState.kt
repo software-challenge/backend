@@ -46,5 +46,5 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     
     /** Eine Abfolge aller möglichen Züge des aktuellen Teams,
      * nur soweit berechnet wie nötig. */
-    fun getAllMoves(): Iterator<IMove>
+    fun moveIterator(): Iterator<IMove>
 }

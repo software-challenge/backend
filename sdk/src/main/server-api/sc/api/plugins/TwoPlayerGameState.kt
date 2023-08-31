@@ -31,19 +31,23 @@ abstract class TwoPlayerGameState<M: IMove>(
      * Might lead to inconsistent state for invalid Move! */
     abstract fun performMoveDirectly(move: M)
     
-    abstract override fun getAllMoves(): Iterator<M>
-    
     /**
      * Mögliche Züge des aktuellen Teams in der aktuellen Situation.
      * Bei manchen Spielen wird aufgrund der unüberschaubaren Zahl möglicher Züge
      * nur ein Ausschnitt zurückgegeben.
      * */
-    open fun getSensibleMoves(): List<M> = iterableMoves().take(64)
+    open fun getSensibleMoves(): List<M> = moves().take(64)
     
-    /** Eine Instanz von Iterable, die über alle möglichen Züge iteriert.
+    /**
+     * Gibt progressiv alle möglichen Züge in der aktuellen Spielsituation zurück.
+     * Sinnvollere Züge kommen tendenziell früher.
+     * */
+    abstract override fun moveIterator(): Iterator<M>
+    
+    /** Eine Instanz von Iterable, die [moveIterator] zurückgibt.
      * Für Zugriff auf Hilfsfunktionen. */
-    fun iterableMoves(): Iterable<M> = object: Iterable<M> {
-        override fun iterator(): Iterator<M> = getAllMoves()
+    fun moves(): Iterable<M> = object: Iterable<M> {
+        override fun iterator(): Iterator<M> = moveIterator()
     }
     
     abstract override fun clone(): TwoPlayerGameState<M>

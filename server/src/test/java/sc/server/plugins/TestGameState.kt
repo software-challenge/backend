@@ -19,8 +19,8 @@ data class TestGameState(
     override fun getPointsForTeam(team: ITeam): IntArray =
             intArrayOf(currentTeam.index, turn)
     
-    override fun getAllMoves(): Iterator<IMove> =
-            throw NotImplementedError("TestGame has no possible Moves")
+    override fun moveIterator(): Iterator<IMove> =
+            throw NotImplementedError("TestGame has no Moves")
     
     override val round get() = turn / 2
     
