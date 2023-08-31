@@ -137,34 +137,43 @@ data class GameState @JvmOverloads constructor(
     override fun getSensibleMoves(): List<Move> =
             getSimpleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { iterableMoves().toList() }
     
-    /** A new GameState cloned just deep enough for the action not to affect the original. */
+    /** Performs the given [Action] on a GameState cloned just deep enough not to affect the original.
+     * @return the new State */
     fun actionPerformed(action: Action): GameState =
             copy(ships = ships.clone()).also { action.perform(it) }
     
+    /** Gibt progressiv alle möglichen Züge in der aktuellen Spielsituation zurück.
+     * Sinnvollere Züge kommen tendenziell früher. */
     override fun getAllMoves(): Iterator<Move> = object: Iterator<Move> {
         val queue = ArrayDeque<Pair<GameState, List<Action>>>(64)
         
         init {
-            val state = this@GameState
-            queue.add(state to listOf())
-            getPossibleAccelerations().forEach { acc ->
-                queue.add(state.copy(ships = ships.map { ship ->
-                    ship.takeUnless { it.team == state.currentTeam } ?:
-                    ship.clone().also { acc.accelerate(it) }
-                }) to listOf(acc))
-            }
+            queue.add(this@GameState to listOf())
         }
         
         fun process(): List<Action> {
             val (state, move) = queue.removeFirst()
+            if(move.lastOrNull() !is Advance) {
+                state.getPossibleAdvances().forEach { adv ->
+                    val newState = state.actionPerformed(adv)
+                    val newMove = (move + adv)
+                    val pushes = newState.getPossiblePushs()
+                    pushes.takeUnless { it.isEmpty() }?.forEach { push ->
+                        queue.add(newState.actionPerformed(push) to (newMove + push))
+                    } ?: queue.add(newState to newMove)
+                }
+            }
             if(move.lastOrNull() !is Turn) {
                 state.getPossibleTurns().forEach { turn ->
                     queue.add(state.actionPerformed(turn) to (move + turn))
                 }
             }
-            if(move.lastOrNull() !is Advance) {
-                state.getPossibleAdvances().forEach { adv ->
-                    queue.add(state.actionPerformed(adv) to (move + adv))
+            if(move.isEmpty()) {
+                state.getPossibleAccelerations().forEach { acc ->
+                    queue.add(state.copy(ships = ships.map { ship ->
+                        ship.takeUnless { it.team == state.currentTeam } ?:
+                        ship.clone().also { acc.accelerate(it) }
+                    }) to listOf(acc))
                 }
             }
             return move

@@ -153,8 +153,7 @@ class GameStateTest: FunSpec({
         test("respects coal") {
             ship.freeTurns = 0
             ship.coal = 2
-            ship.speed = 4
-            ship.movement = 4
+            ship.accelerateBy(3)
             gameState.getSensibleMoves() shouldNotContain Move(Accelerate(-3), Advance(1))
             withClue("falls back to using all coal") {
                 val firstSegment = gameState.board.segments.first()
@@ -163,16 +162,6 @@ class GameStateTest: FunSpec({
                 }
                 gameState.getSensibleMoves() shouldHaveSingleElement Move(Accelerate(-3), Advance(1))
             }
-        }
-        test("pushing and current") {
-            gameState.otherShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
-            gameState.getSensibleMoves() shouldContain Move(Accelerate(2), Turn(CubeDirection.DOWN_RIGHT), Advance(1), Push(CubeDirection.DOWN_LEFT))
-            
-            ship.freeTurns = 0
-            ship.direction = CubeDirection.DOWN_RIGHT
-            val moves = gameState.getSensibleMoves()
-            moves shouldContain Move(Accelerate(2), Advance(1), Push(CubeDirection.DOWN_LEFT))
-            moves shouldHaveSize 3
         }
         test("costly move") {
             ship.accelerateBy(1)
@@ -183,6 +172,17 @@ class GameStateTest: FunSpec({
             gameState.getSensibleMoves() shouldHaveSingleElement Move(Advance(1))
             ship.movement = 3
             gameState.getSensibleMoves() shouldHaveSingleElement Move(Advance(2))
+        }
+        test("pushing and current") {
+            gameState.otherShip.position = CubeCoordinates.ORIGIN + CubeDirection.LEFT.vector
+            gameState.getSensibleMoves() shouldContain Move(Accelerate(2), Turn(CubeDirection.DOWN_RIGHT), Advance(1), Push(CubeDirection.DOWN_LEFT))
+            
+            ship.freeTurns = 0
+            ship.direction = CubeDirection.DOWN_RIGHT
+            val moves = gameState.getSensibleMoves()
+            moves shouldContain Move(Accelerate(2), Advance(1), Push(CubeDirection.DOWN_LEFT))
+            moves shouldHaveSize 3
+            gameState.iterableMoves().shouldContainAll(moves)
         }
         test("unpushable opponent") {
             val state = GameState(
