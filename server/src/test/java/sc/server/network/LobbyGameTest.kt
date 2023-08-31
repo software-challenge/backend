@@ -4,7 +4,6 @@ import io.kotest.assertions.timing.eventually
 import io.kotest.assertions.until.Interval
 import io.kotest.assertions.until.fibonacci
 import io.kotest.assertions.withClue
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
@@ -30,7 +29,6 @@ import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.shared.GameResult
-import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import sc.shared.SlotDescriptor
 import kotlin.time.Duration
@@ -109,8 +107,10 @@ class LobbyGameTest: WordSpec({
                 withClue("No Winner") {
                     result.winner shouldBe null
                     result.isRegular shouldBe false
-                    forAll<PlayerScore>(result.scores.mapKeys { it.key.displayName }.toList()) {
-                        it.cause shouldBe ScoreCause.LEFT
+                    result.scores.forEach {
+                        withClue(it.key.displayName) {
+                            it.value.cause shouldBe ScoreCause.LEFT
+                        }
                     }
                 }
                 adminListener.waitForMessage(RemovedFromGame::class)

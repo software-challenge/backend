@@ -1,11 +1,9 @@
 package sc.api
 
-import io.kotest.core.datatest.forAll
-import io.kotest.core.script.test
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.core.spec.style.WordSpec
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
-import io.kotest.matchers.types.shouldNotBeSameInstanceAs
+import io.kotest.matchers.types.*
 import sc.api.plugins.Coordinates
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
@@ -28,8 +26,12 @@ class CoordinatesTest: FunSpec({
     }
     context("CubeCoordinates") {
         val position = CubeCoordinates(3, 2)
-        context("is equal to same position") {
-            forAll(CubeCoordinates(3, 2), position.rotatedBy(0), position.rotatedBy(-12)) {
+        test("is equal to same position") {
+            listOf(
+                    CubeCoordinates(3, 2),
+                    position.rotatedBy(0),
+                    position.rotatedBy(-12)
+            ).forAll {
                 position shouldBe it
                 position shouldNotBeSameInstanceAs it
             }
@@ -58,12 +60,12 @@ class CoordinatesTest: FunSpec({
         }
     }
     context("HexDirections") {
-        context("produce correct opposites") {
-            forAll(
+        test("produce correct opposites") {
+            listOf(
                     HexDirection.LEFT to HexDirection.RIGHT,
                     HexDirection.UP_LEFT to HexDirection.DOWN_RIGHT,
                     HexDirection.DOWN_LEFT to HexDirection.UP_RIGHT,
-            ) {
+            ).forAll {
                 it.first shouldNotBe it.second
                 it.first.opposite() shouldBe it.second
                 it.second.opposite() shouldBe it.first
@@ -79,12 +81,12 @@ class CoordinatesTest: FunSpec({
         }
     }
     context("CubeDirections") {
-        context("produce correct opposites") {
-            forAll(
+        test("produce correct opposites") {
+            listOf(
                     CubeDirection.LEFT to CubeDirection.RIGHT,
                     CubeDirection.UP_LEFT to CubeDirection.DOWN_RIGHT,
                     CubeDirection.DOWN_LEFT to CubeDirection.UP_RIGHT,
-            ) {
+            ).forAll {
                 it.first shouldNotBe it.second
                 it.first.opposite() shouldBe it.second
                 it.second.opposite() shouldBe it.first

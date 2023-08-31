@@ -1,9 +1,8 @@
 package sc.server.gaming
 
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.*
 import sc.networking.clients.GameLoaderClient
 import sc.server.plugins.TestGameState
 import java.io.File
@@ -18,15 +17,17 @@ class GameLoaderTest: FunSpec({
             out.close()
         }
         val state = TestGameState()
-        forAll(
+        listOf(
                 "String" to GameLoaderClient(minimalReplay.byteInputStream()),
                 "GZip File" to GameLoaderClient(tmpfile)
-        ) { client: GameLoaderClient ->
-            client.getHistory() shouldBe listOf(state)
-            client.getTurn(0) shouldBe state
-            client.getTurn(-1) shouldBe state
-            shouldThrow<NoSuchElementException> {
-                client.getTurn(1)
+        ).forEach { (clue, client) ->
+            test(clue) {
+                client.getHistory() shouldBe listOf(state)
+                client.getTurn(0) shouldBe state
+                client.getTurn(-1) shouldBe state
+                shouldThrow<NoSuchElementException> {
+                    client.getTurn(1)
+                }
             }
         }
     }

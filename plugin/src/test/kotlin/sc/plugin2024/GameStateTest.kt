@@ -251,7 +251,7 @@ class GameStateTest: FunSpec({
             val moves = state.getSimpleMoves(1)
             val truncState = state.copy(Board(commonBoard.segments.subList(0, 2), nextDirection = CubeDirection.UP_RIGHT))
             moves shouldContainAll truncState.getSimpleMoves(1)
-            mapOf("full" to state, "truncated" to truncState).forEach { (name, state) ->
+            listOf("full" to state, "truncated" to truncState).forAll { (name, state) ->
                 test(name) {
                     state.checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
                     state.clone().checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
