@@ -2,11 +2,14 @@ package sc.plugin2023
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.api.plugins.*
+import sc.api.plugins.Coordinates
+import sc.api.plugins.ITeam
+import sc.api.plugins.Team
+import sc.api.plugins.TwoPlayerGameState
 import sc.plugin2023.util.PenguinMoveMistake
 import sc.plugin2023.util.PluginConstants
-import sc.shared.MoveMistake
 import sc.shared.InvalidMoveException
+import sc.shared.MoveMistake
 
 /**
  * Der aktuelle Spielstand.
@@ -66,7 +69,7 @@ data class GameState @JvmOverloads constructor(
                 board.filterValues { it.fish == 1 }.map { Move(null, it.key) }
             }
     
-    override fun getAllMoves(): Iterator<IMove> =
+    override fun getAllMoves(): Iterator<Move> =
             getSensibleMoves().iterator()
     
     fun canPlacePenguin(pos: Coordinates) = !penguinsPlaced && board[pos].fish == 1

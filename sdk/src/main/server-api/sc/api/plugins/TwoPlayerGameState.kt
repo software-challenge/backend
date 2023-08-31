@@ -31,6 +31,21 @@ abstract class TwoPlayerGameState<M: IMove>(
      * Might lead to inconsistent state for invalid Move! */
     abstract fun performMoveDirectly(move: M)
     
+    abstract override fun getAllMoves(): Iterator<M>
+    
+    /**
+     * Mögliche Züge des aktuellen Teams in der aktuellen Situation.
+     * Bei manchen Spielen wird aufgrund der unüberschaubaren Zahl möglicher Züge
+     * nur ein Ausschnitt zurückgegeben.
+     * */
+    open fun getSensibleMoves(): List<M> = iterableMoves().take(64)
+    
+    /** Eine Instanz von Iterable, die über alle möglichen Züge iteriert.
+     * Für Zugriff auf Hilfsfunktionen. */
+    fun iterableMoves(): Iterable<M> = object: Iterable<M> {
+        override fun iterator(): Iterator<M> = getAllMoves()
+    }
+    
     abstract override fun clone(): TwoPlayerGameState<M>
     
     /** Calculates the [Team] of the current player from [turn] and [startTeam].

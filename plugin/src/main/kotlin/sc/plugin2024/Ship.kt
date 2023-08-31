@@ -61,6 +61,7 @@ data class Ship(
     override fun clone(): Ship =
             this.copy()
     
+    /** Adjust speed and movement simultaneously. */
     fun accelerateBy(diff: Int) {
         speed += diff
         movement += diff

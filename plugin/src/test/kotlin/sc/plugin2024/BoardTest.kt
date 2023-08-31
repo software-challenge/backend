@@ -14,8 +14,6 @@ import sc.api.plugins.Team
 import sc.helpers.checkSerialization
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
-import sc.plugin2024.actions.Accelerate
-import sc.plugin2024.actions.Advance
 import sc.plugin2024.util.PluginConstants
 
 class BoardTest: FunSpec({
@@ -217,7 +215,7 @@ class BoardTest: FunSpec({
                 <board nextDirection="UP_RIGHT">$serializedSegment$serializedSegment
                 </board>""".trimIndent()) { original, deserialized ->
                 deserialized shouldBe Board(listOf(segment, segment), nextDirection = CubeDirection.UP_RIGHT)
-                GameState(original).getPossibleMoves(1) shouldBe GameState(deserialized).getPossibleMoves(1)
+                GameState(original).getSimpleMoves(1) shouldBe GameState(deserialized).getSimpleMoves(1)
             }
         }
         test("random Board has correct length") {

@@ -1,11 +1,12 @@
 package sc.plugin2024
 
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
+import io.kotest.matchers.booleans.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.nulls.*
 import sc.api.plugins.Coordinates
@@ -150,16 +151,16 @@ class GameStateTest: FunSpec({
         }
         val ship = gameState.currentShip
         test("respects coal") {
+            ship.freeTurns = 0
             ship.coal = 2
             ship.speed = 4
             ship.movement = 4
             gameState.getSensibleMoves() shouldNotContain Move(Accelerate(-3), Advance(1))
-            
-            val firstSegment = gameState.board.segments.first()
-            arrayOf(Coordinates(0, 0), Coordinates(1, 0), Coordinates(2, 1), Coordinates(0, 2)).forEach {
-                firstSegment.fields[it.x][it.y] = Field.ISLAND
-            }
-            withClue("fall back to using all coal") {
+            withClue("falls back to using all coal") {
+                val firstSegment = gameState.board.segments.first()
+                arrayOf(Coordinates(2, 0), Coordinates(2, 1), Coordinates(0, 2), Coordinates(1, 2)).forEach {
+                    firstSegment.fields[it.x][it.y] = Field.ISLAND
+                }
                 gameState.getSensibleMoves() shouldHaveSingleElement Move(Accelerate(-3), Advance(1))
             }
         }
@@ -197,13 +198,23 @@ class GameStateTest: FunSpec({
         }
     }
     
+    context("getAllMoves") {
+        test("has valid Move") {
+            gameState.getAllMoves().hasNext() shouldBe true
+            shouldNotThrow<InvalidMoveException> {
+                gameState.performMoveDirectly(gameState.getAllMoves().next())
+            }
+        }
+        test("offers turns") {
+            gameState.iterableMoves().find { it.actions.first() is Turn }
+        }
+    }
+    
     context("performing move") {
-        val straightState = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4, 0)), Segment.empty(CubeCoordinates(8, 0)))))
         test("reveals next segment") {
+            val straightState = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4, 0)), Segment.empty(CubeCoordinates(8, 0)))))
             val move = Move(Accelerate(5), Advance(6))
-            var found = false
-            straightState.getAllMoves().forEachRemaining { if(move == it) found = true }
-            found shouldBe true
+            straightState.iterableMoves() shouldContain move
             
             straightState.performMoveDirectly(move)
             straightState.board.segmentIndex(straightState.otherShip.position) shouldBe 1
@@ -211,6 +222,7 @@ class GameStateTest: FunSpec({
         }
         
         test("merges duplicate advances") {
+            val straightState = GameState(Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4, 0)), Segment.empty(CubeCoordinates(8, 0)))))
             straightState.currentShip.position = CubeCoordinates.ORIGIN
             val actions = arrayOf(Turn(CubeDirection.RIGHT), Turn(CubeDirection.UP_RIGHT), Turn(CubeDirection.RIGHT), Advance(1))
             shouldThrow<InvalidMoveException> { straightState.performMove(Move(*actions)) }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
@@ -236,29 +248,41 @@ class GameStateTest: FunSpec({
                 movement = 2
             }
             
-            val moves = state.getPossibleMoves(1)
+            val moves = state.getSimpleMoves(1)
             val truncState = state.copy(Board(commonBoard.segments.subList(0, 2), nextDirection = CubeDirection.UP_RIGHT))
-            moves shouldContainAll truncState.getPossibleMoves(1)
-            forAll<GameState>("full" to state, "truncated" to truncState) { state ->
-                state.checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
-                state.clone().checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
-                state.performMove(Move(Accelerate(1), Advance(3)))
-                state.performMove(Move(Accelerate(3), Advance(4)))
-                state.performMove(Move(Accelerate(4), Advance(5)))
-                shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(3))) }.mistake shouldBe MoveMistake.MOVEMENT_POINTS_LEFT
-                shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(4))) }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
+            moves shouldContainAll truncState.getSimpleMoves(1)
+            mapOf("full" to state, "truncated" to truncState).forEach { (name, state) ->
+                test(name) {
+                    state.checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
+                    state.clone().checkAdvanceLimit(start, CubeDirection.RIGHT, 5).costUntil(4) shouldBe 5
+                    shouldNotThrow<InvalidMoveException> {
+                        state.performMove(Move(Accelerate(1), Advance(3)))
+                        state.performMove(Move(Accelerate(3), Advance(4)))
+                        state.performMove(Move(Accelerate(4), Advance(5)))
+                    }
+                    shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(3))) }.mistake shouldBe MoveMistake.MOVEMENT_POINTS_LEFT
+                    shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(4))) }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
+                }
             }
         }
     }
     
     context("game over on") {
-        xtest("immovable") {
+        test("both immovable") {
             gameState.board.segments.first().fields[1][3] = Field.ISLAND
-            gameState.otherShip.freeTurns = 0
-            gameState.otherShip.coal = 0
+            gameState.ships.forEach {
+                it.freeTurns = 0
+                it.coal = 0
+            }
+            gameState.performMoveDirectly(Move(Advance(1)))
             gameState.isOver shouldBe false
-            gameState.advanceTurn()
-            gameState.getSensibleMoves().shouldBeEmpty()
+            gameState.turn shouldBe 2
+            gameState.board.segments.first().fields[2][1] = Field.ISLAND
+            gameState.ships.forEach {
+                it.freeTurns = 0
+                it.coal = 0
+            }
+            gameState.getAllMoves().hasNext() shouldBe false
             gameState.isOver shouldBe true
         }
         test("round limit") {
@@ -277,19 +301,22 @@ class GameStateTest: FunSpec({
                 gameState.advanceTurn()
                 gameState.isOver shouldBe true
             }
-            withClue("Nachzug") {
+            withClue("Nachzug ermöglichen") {
                 // Distanz eliminieren
                 gameState.currentShip.position =
                         gameState.board.segments.takeLast(2).first().tip
                 
                 gameState.turn shouldBe 1
                 gameState.getSensibleMoves().shouldNotBeEmpty()
+                gameState.getAllMoves().hasNext().shouldBeTrue()
                 ship.passengers = 2
-                gameState.isOver shouldBe false // Nachzug ermöglichen
+                gameState.isOver shouldBe false
             }
-            withClue("Gerade Zugzahl") {
+            withClue("bei gerader Zugzahl") {
                 gameState.advanceTurn()
                 gameState.isOver shouldBe true
+            }
+            withClue("fehlende Passagiere") {
                 ship.passengers = 1
                 gameState.isOver shouldBe false
             }

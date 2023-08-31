@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.plugin2024.*
 import sc.plugin2024.mistake.AccelerationProblem
-import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 /**
  * Stellt eine [Accelerate]-[Action] dar, die im Spiel ausgeführt werden kann.
@@ -39,22 +39,32 @@ data class Accelerate(
      * @param ship [Ship], für welches die Beschleunigung ausgeführt wird
      */
     override fun perform(state: GameState): AccelerationProblem? {
-        var speed: Int = state.currentShip.speed
+        val ship = state.currentShip
+        var speed: Int = ship.speed
         speed += acc
         when {
             acc == 0 -> return AccelerationProblem.ZERO_ACC
             speed > 6 -> return AccelerationProblem.ABOVE_MAX_SPEED
             speed < 1 -> return AccelerationProblem.BELOW_MIN_SPEED
-            state.board[state.currentShip.position] == Field.SANDBANK -> return AccelerationProblem.ON_SANDBANK
+            state.board[ship.position] == Field.SANDBANK -> return AccelerationProblem.ON_SANDBANK
         }
         
-        val usedCoal: Int = (abs(acc.toDouble()) - state.currentShip.freeAcc).toInt()
-        if(state.currentShip.coal < usedCoal) return AccelerationProblem.INSUFFICIENT_COAL
-        usedCoal.takeIf { it > 0 }?.let { state.currentShip.coal -= it }
-        state.currentShip.speed = speed
-        state.currentShip.movement += acc
-        state.currentShip.freeAcc = 0
+        accelerate(ship)
+        if(ship.coal < 0)
+            return AccelerationProblem.INSUFFICIENT_COAL
         return null
+    }
+    
+    /** Accelerate the ship without checking for issues. */
+    fun accelerate(ship: Ship) {
+        val usedCoal: Int = acc.absoluteValue - ship.freeAcc
+        if(usedCoal > 0) {
+            ship.coal -= usedCoal
+            ship.freeAcc = 0
+        } else {
+            ship.freeAcc = usedCoal.absoluteValue
+        }
+        ship.accelerateBy(acc)
     }
     
     override fun toString(): String = "Beschleunige um $acc"

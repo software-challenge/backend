@@ -135,16 +135,62 @@ data class GameState @JvmOverloads constructor(
     
     /** Retrieves a list of sensible moves based on the possible actions. */
     override fun getSensibleMoves(): List<Move> =
-            getPossibleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { getPossibleMoves() }
+            getSimpleMoves(currentShip.coal.coerceAtMost(1)).ifEmpty { iterableMoves().toList() }
     
-    /** TODO Incomplete */
-    override fun getAllMoves(): Iterator<Move> =
-            getPossibleMoves().iterator()
+    /** A new GameState cloned just deep enough for the action not to affect the original. */
+    fun actionPerformed(action: Action): GameState =
+            copy(ships = ships.clone()).also { action.perform(it) }
     
-    /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount. */
-    fun getPossibleMoves(maxCoal: Int = currentShip.coal): List<Move> =
+    override fun getAllMoves(): Iterator<Move> = object: Iterator<Move> {
+        val queue = ArrayDeque<Pair<GameState, List<Action>>>(64)
+        
+        init {
+            val state = this@GameState
+            queue.add(state to listOf())
+            getPossibleAccelerations().forEach { acc ->
+                queue.add(state.copy(ships = ships.map { ship ->
+                    ship.takeUnless { it.team == state.currentTeam } ?:
+                    ship.clone().also { acc.accelerate(it) }
+                }) to listOf(acc))
+            }
+        }
+        
+        fun process(): List<Action> {
+            val (state, move) = queue.removeFirst()
+            if(move.lastOrNull() !is Turn) {
+                state.getPossibleTurns().forEach { turn ->
+                    queue.add(state.actionPerformed(turn) to (move + turn))
+                }
+            }
+            if(move.lastOrNull() !is Advance) {
+                state.getPossibleAdvances().forEach { adv ->
+                    queue.add(state.actionPerformed(adv) to (move + adv))
+                }
+            }
+            return move
+        }
+        
+        fun findNext() {
+            while(queue.isNotEmpty() && queue.first().first.currentShip.movement != 0)
+                process()
+        }
+        
+        override fun hasNext(): Boolean {
+            findNext()
+            return queue.isNotEmpty()
+        }
+        
+        override fun next(): Move {
+            findNext()
+            return Move(process())
+        }
+    }
+    
+    /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount.
+     * If a push is needed, only one push direction is offered for simplicity. */
+    fun getSimpleMoves(maxCoal: Int = currentShip.coal): List<Move> =
             // SANDBANK checkSandbankAdvances(currentShip)?.map { Move(it) } ?:
-            (getPossibleTurns(maxCoal.coerceAtMost(1)) + null).flatMap { turn ->
+            (ArrayList<Turn?>().apply { add(null); addAll(getPossibleTurns(maxCoal.coerceAtMost(1))) }).flatMap { turn ->
                 val direction = turn?.direction ?: currentShip.direction
                 val availableCoal = (maxCoal - (turn?.coalCost(currentShip) ?: 0))
                 val info = checkAdvanceLimit(currentShip.position, direction,
@@ -251,7 +297,7 @@ data class GameState @JvmOverloads constructor(
         fun costUntil(distance: Int) =
                 costs[distance - 1]
         
-        fun advances() = (1..distance).map { Advance(it) }
+        fun advances() = (distance downTo 1).map { Advance(it) }
         
         val distance
             get() = costs.size
@@ -323,7 +369,7 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
-    fun canMove() = getSensibleMoves().isNotEmpty() // TODO make more efficient and take ship as parameter
+    fun canMove() = getAllMoves().hasNext() // TODO make more efficient and take ship as parameter
     
     override val isOver: Boolean
         get() = when {
@@ -352,7 +398,7 @@ data class GameState @JvmOverloads constructor(
     override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
     
     override fun toString() =
-            "GameState $turn, $currentTeam ist dran"
+            "GameState $turn, $currentTeam ist dran [${ships.joinToString { "${it.team.index.plus(1)}:C${it.coal}S${it.speed}" }}]"
     
     override fun longString() =
             "$this\n${ships.joinToString("\n")}\nLast Move: $lastMove\n$board"
