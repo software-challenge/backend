@@ -6,8 +6,7 @@ import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
-    maven
-    kotlin("jvm") version "1.5.20"
+    kotlin("jvm") version "1.9.10"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
@@ -30,12 +29,6 @@ val documentedProjects = listOf("sdk", "plugin")
 val isBeta by extra { versionObject.minor == 0 }
 val enableTestClient by extra { arrayOf("check", "testTestClient").any { gradle.startParameter.taskNames.contains(it) } || !isBeta }
 val enableIntegrationTesting = !project.hasProperty("nointegration") && (!isBeta || enableTestClient)
-
-val javaTargetVersion = JavaVersion.VERSION_1_8
-val javaVersion = JavaVersion.current()
-println("Current version: $version (Beta: $isBeta) Game: $game (Java Version: $javaVersion)")
-if (javaVersion != javaTargetVersion)
-    System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider '-x doc' if you don't care)")
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 tasks {
@@ -240,7 +233,7 @@ subprojects {
     apply(plugin = "se.patrikerdes.use-latest-versions")
     
     dependencies {
-        testImplementation(project(":sdk", "testConfig"))
+        testImplementation(project(":testConfig"))
     }
     
     tasks {
@@ -250,7 +243,6 @@ subprojects {
         
         withType<KotlinCompile> {
             kotlinOptions {
-                jvmTarget = javaTargetVersion.toString()
                 freeCompilerArgs = listOf("-Xjvm-default=all")
             }
             if(name.contains("test", true)) {
@@ -269,7 +261,7 @@ allprojects {
     }
     
     if (this.name in documentedProjects) {
-        apply(plugin = "maven")
+        // apply(plugin = "maven")
         apply(plugin = "org.jetbrains.dokka")
         tasks {
             val doc by creating(DokkaTask::class) {
@@ -290,9 +282,9 @@ allprojects {
                 archiveClassifier.set("sources")
                 from(sourceSets.main.get().allSource)
             }
-            install {
-                dependsOn(docJar, sourcesJar)
-            }
+            // install {
+            //     dependsOn(docJar, sourcesJar)
+            // }
             artifacts {
                 archives(sourcesJar.archiveFile) { classifier = "sources" }
                 archives(docJar.archiveFile) { classifier = "javadoc" }

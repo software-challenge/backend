@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
     application
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.github.johnrengelman.shadow") version "8.0.0"
 }
 
 val game: String by project
@@ -18,7 +18,7 @@ sourceSets.main {
 }
 
 application {
-    mainClassName = "sc.player.util.Starter"
+    mainClass.set("sc.player.util.Starter")
 }
 
 dependencies {
@@ -68,7 +68,7 @@ tasks {
                         .replace("TwoPlayerGameState<Move>", "GameState")
             }
         }, copySpec {
-            from(configurations.default, arrayOf("sdk", "plugin")
+            from(configurations.runtimeClasspath, arrayOf("sdk", "plugin")
                     .map { project(":$it").getTasksByName("sourcesJar", false) })
             into("lib")
         })

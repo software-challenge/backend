@@ -35,7 +35,7 @@ tasks {
         dependsOn(createStartScripts, copyLogbackConfig)
         doFirst {
             manifest.attributes(
-                    "Class-Path" to configurations.default.get()
+                    "Class-Path" to configurations.runtimeClasspath.get()
                             .map { "lib/" + it.name }
                             .plus("server.jar")
                             .joinToString(" ")
