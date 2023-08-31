@@ -60,8 +60,8 @@ class BoardTest: FunSpec({
     
     test("board bounds") {
         Board(listOf(Segment.empty())).rectangleSize shouldBe Coordinates(5, 5)
-        Board(listOf(Segment.empty(CubeCoordinates(4,0)))).rectangleSize shouldBe Coordinates(9, 5)
-        Board(listOf(Segment.empty(CubeCoordinates(4,4)))).rectangleSize shouldBe Coordinates(11, 9)
+        Board(listOf(Segment.empty(CubeCoordinates(4,0)))).rectangleSize shouldBe Coordinates(7, 5)
+        Board(listOf(Segment.empty(), Segment.empty(CubeCoordinates(4,4)))).rectangleSize shouldBe Coordinates(11, 9)
     }
     
     val board = Board()
