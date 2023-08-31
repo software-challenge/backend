@@ -18,7 +18,9 @@ import java.io.IOException
 import java.net.Socket
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
+import kotlin.time.toDuration
 
 abstract class RealServerTest {
     protected lateinit var lobby: Lobby
@@ -32,9 +34,9 @@ abstract class RealServerTest {
             LobbyClient("localhost", serverPort).apply { start() }
     
     @OptIn(ExperimentalTime::class)
-    fun await(clue: String? = null, time: Duration = Duration.seconds(1), f: () -> Boolean) = runBlocking {
+    fun await(clue: String? = null, time: Duration = 1.toDuration(DurationUnit.SECONDS), f: () -> Boolean) = runBlocking {
         withClue(clue) {
-            eventually(time, Duration.milliseconds(20).fibonacci(), predicate = { f() }) {}
+            eventually(time, 20.toDuration(DurationUnit.MILLISECONDS).fibonacci(), predicate = { f() }) {}
         }
     }
     

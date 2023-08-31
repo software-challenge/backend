@@ -34,13 +34,15 @@ import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import sc.shared.SlotDescriptor
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
+import kotlin.time.toDuration
 
 @OptIn(ExperimentalTime::class)
 suspend fun await(
         clue: String? = null,
-        duration: Duration = Duration.seconds(1),
-        interval: Interval = Duration.milliseconds(20).fibonacci(),
+        duration: Duration = 1.toDuration(DurationUnit.SECONDS),
+        interval: Interval = 20.toDuration(DurationUnit.MILLISECONDS).fibonacci(),
         f: suspend () -> Unit,
 ) = withClue(clue) { eventually(duration, interval, f) }
 

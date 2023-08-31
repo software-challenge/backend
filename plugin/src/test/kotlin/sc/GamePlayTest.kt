@@ -19,7 +19,9 @@ import sc.framework.plugins.Player
 import sc.shared.PlayerScore
 import sc.shared.ScoreCause
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
+import kotlin.time.toDuration
 
 /** This test verifies that the Game implementation can be used to play a game.
  * It is the only plugin-test independent of the season. */
@@ -71,7 +73,7 @@ class GamePlayTest: WordSpec({
                 }
             })
             
-            "finish without issues".config(invocationTimeout = Duration.milliseconds(plugin.gameTimeout)) {
+            "finish without issues".config(invocationTimeout = plugin.gameTimeout.toDuration(DurationUnit.MILLISECONDS)) {
                 while (true) {
                     try {
                         val condition = game.checkWinCondition()
