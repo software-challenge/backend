@@ -35,5 +35,6 @@ dependencies {
     implementation("xmlpull", "xmlpull", "1.1.3.1")
     
     "testConfigApi"("io.kotest", "kotest-assertions-core")
-    "testConfigApi"("io.kotest", "kotest-runner-junit5-jvm", "4.6.4")
+    "testConfigApi"("io.kotest", "kotest-runner-junit5-jvm", "5.0.3")
+    // TODO update kotest with Kotlin: https://mvnrepository.com/artifact/io.kotest/kotest-runner-junit5-jvm
 }

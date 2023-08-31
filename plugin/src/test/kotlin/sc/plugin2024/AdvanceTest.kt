@@ -1,7 +1,6 @@
 package sc.plugin2024
 
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
@@ -71,7 +70,7 @@ class AdvanceTest: FunSpec({
         
         context("invalid distance") {
             shipONE.movement = 8
-            forAll(-2, -1, 0, 7) {
+            listOf(-2, -1, 0, 7).forAll {
                 Advance(it).perform(gameState) shouldBe AdvanceProblem.INVALID_DISTANCE
             }
         }
