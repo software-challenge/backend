@@ -8,7 +8,7 @@ sourceSets.main.get().java.srcDir("src/main")
 sourceSets.main.get().resources.srcDir("src/resources")
 
 application {
-    mainClassName = "sc.playerYEAR.Starter"
+    mainClassName = "sc.player.util.Starter"
 }
 
 repositories {
