@@ -376,12 +376,12 @@ data class GameState @JvmOverloads constructor(
         return (1..maxCoal + currentShip.freeAcc).flatMap { i ->
             listOfNotNull(
                     Accelerate(i).takeIf { PluginConstants.MAX_SPEED >= currentShip.speed + i },
-                    Accelerate(-i).takeIf { PluginConstants.MIN_SPEED <= currentShip.speed - 1 }
+                    Accelerate(-i).takeIf { PluginConstants.MIN_SPEED <= currentShip.speed - i }
             )
         }
     }
     
-    fun canMove() = moveIterator().hasNext() // TODO make more efficient and take ship as parameter
+    fun canMove() = moveIterator().hasNext()
     
     override val isOver: Boolean
         get() = when {
