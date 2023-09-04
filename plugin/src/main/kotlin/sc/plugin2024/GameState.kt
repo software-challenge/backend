@@ -96,7 +96,7 @@ data class GameState @JvmOverloads constructor(
         actions.forEachIndexed { index, action ->
             when {
                 board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveMistake.SAND_BANK_END, move)
-                currentShip.position == otherShip.position && action !is Push -> throw InvalidMoveException(MoveMistake.PUSH_ACTION_REQUIRED, move)
+                mustPush && action !is Push -> throw InvalidMoveException(MoveMistake.PUSH_ACTION_REQUIRED, move)
                 action is Accelerate && index != 0 -> throw InvalidMoveException(MoveMistake.FIRST_ACTION_ACCELERATE, move)
                 else -> action.perform(this)?.let { throw InvalidMoveException(it, move) }
             }
@@ -243,6 +243,9 @@ data class GameState @JvmOverloads constructor(
         return actions
     }
     
+    val mustPush: Boolean
+        get() = currentShip.position == otherShip.position
+    
     /**
      * Retrieves all possible push actions that can be performed with the available movement points.
      *
@@ -250,7 +253,7 @@ data class GameState @JvmOverloads constructor(
      */
     fun getPossiblePushs(): List<Push> {
         if(board[currentShip.position] == Field.SANDBANK ||
-           currentShip.position != otherShip.position ||
+           !mustPush ||
            currentShip.movement < 1) return emptyList()
         return getPossiblePushs(currentShip.position, currentShip.direction)
     }
@@ -268,7 +271,7 @@ data class GameState @JvmOverloads constructor(
      * @return List of all turn actions
      */
     fun getPossibleTurns(maxCoal: Int = currentShip.coal): List<Turn> {
-        if(board[currentShip.position] == Field.SANDBANK || currentShip.position == otherShip.position) return emptyList()
+        if(board[currentShip.position] == Field.SANDBANK || mustPush) return emptyList()
         // TODO hier sollte man vielleicht einfach die ausführbaren turns in freeTurns speichern, statt die generellen Turns
         val maxTurnCount = (maxCoal + currentShip.freeTurns).coerceAtMost(3)
         return (1..maxTurnCount).flatMap { i ->
@@ -286,7 +289,7 @@ data class GameState @JvmOverloads constructor(
      * @return List of all possible advances in the corresponding direction
      */
     fun getPossibleAdvances(): List<Advance> {
-        if(currentShip.movement <= 0 || currentShip.position == otherShip.position) return emptyList()
+        if(currentShip.movement < 1 || mustPush) return emptyList()
         return getPossibleAdvances(currentShip)
     }
     
@@ -368,7 +371,7 @@ data class GameState @JvmOverloads constructor(
      * @return List of all possible Acceleration actions
      */
     fun getPossibleAccelerations(maxCoal: Int = currentShip.coal): List<Accelerate> {
-        if(currentShip.position == otherShip.position) return emptyList()
+        if(mustPush) return emptyList()
         
         return (1..maxCoal + currentShip.freeAcc).flatMap { i ->
             listOfNotNull(
