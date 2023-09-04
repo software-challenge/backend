@@ -73,6 +73,9 @@ data class GameState @JvmOverloads constructor(
                 ship.passengers * PluginConstants.POINTS_PER_PASSENGER
             }
     
+    fun isCurrentShipOnCurrent() =
+            board.doesFieldHaveCurrent(currentShip.position)
+    
     /**
      * Führt den angegebenen Zug aus.
      * Der Zug wird auf der aktuellen Instanz ausgeführt.
