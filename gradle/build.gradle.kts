@@ -1,18 +1,17 @@
 import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import sc.gradle.ScriptsTask
 import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     maven
-    kotlin("jvm") version "1.5.20"
+    kotlin("jvm") version "1.6.21"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
-    id("com.github.ben-manes.versions") version "0.39.0"
-    id("se.patrikerdes.use-latest-versions") version "0.2.17"
+    id("com.github.ben-manes.versions") version "0.47.0"
+    id("se.patrikerdes.use-latest-versions") version "0.2.18"
 }
 
 val gameName by extra { property("socha.gameName") as String }
@@ -241,6 +240,8 @@ subprojects {
     
     dependencies {
         testImplementation(project(":sdk", "testConfig"))
+        if(name in listOf("server", "player", "test-client"))
+            implementation("ch.qos.logback", "logback-classic", "1.3.11") // Update to 1.4 with JDK upgrade
     }
     
     tasks {
@@ -248,15 +249,15 @@ subprojects {
             useJUnitPlatform()
         }
         
-        withType<KotlinCompile> {
+        withType<JavaCompile> {
+            this.sourceCompatibility = javaTargetVersion.toString()
+            this.targetCompatibility = javaTargetVersion.toString()
+        }
+        
+        withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
             kotlinOptions {
-                jvmTarget = javaTargetVersion.toString()
-                freeCompilerArgs = listOf("-Xjvm-default=all")
-            }
-            if(name.contains("test", true)) {
-                kotlinOptions {
-                    freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn")
-                }
+                this.jvmTarget = javaTargetVersion.toString()
+                this.freeCompilerArgs = listOf("-Xjvm-default=all")
             }
         }
     }

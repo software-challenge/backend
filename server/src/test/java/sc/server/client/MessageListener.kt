@@ -27,7 +27,6 @@ open class MessageListener<T: Any> {
     
     /** Waits until a message arrives and asserts its type.
      * @return the message. */
-    @OptIn(ExperimentalTime::class)
     fun <U: T> waitForMessage(messageType: KClass<out U>): U = runBlocking {
         await("Expected to receive ${messageType.simpleName}") {
             messages.shouldNotBeEmpty()

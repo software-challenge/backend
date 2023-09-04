@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
     application
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0" // Update to v8 with Gradle update
 }
 
 val game: String by project

@@ -14,8 +14,8 @@ application {
 }
 
 dependencies {
-    // TODO this is only here to access some default server Configuration, move that to SDK or smth
-    implementation(project(":server"))
+    implementation(project(":sdk"))
+    implementation(project(":server")) // Only to access defaults of sc.server.Configuration
     runtimeOnly(project(":plugin"))
 }
 

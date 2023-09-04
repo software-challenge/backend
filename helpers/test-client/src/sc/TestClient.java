@@ -7,7 +7,6 @@ import jargs.gnu.CmdLineParser.Option;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import sc.api.plugins.IGamePlugin;
-import sc.framework.plugins.Constants;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.ProtocolPacket;
@@ -17,7 +16,6 @@ import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.GamePreparedResponse;
 import sc.protocol.responses.ObservationResponse;
 import sc.protocol.room.RoomPacket;
-import sc.server.Configuration;
 import sc.shared.*;
 
 import java.io.File;
@@ -89,7 +87,7 @@ public class TestClient extends XStreamClient {
       exit(2);
     }
 
-    Configuration.loadServerProperties();
+    sc.server.Configuration.loadServerProperties();
 
     // read commandline options
     String loglevel = (String) parser.getOptionValue(loglevelOption, null);
@@ -190,7 +188,7 @@ public class TestClient extends XStreamClient {
     this.totalTests = totalTests;
     start();
     logger.debug("Authenticating as administrator");
-    send(new AuthenticateRequest(Configuration.getAdministrativePassword()));
+    send(new AuthenticateRequest(sc.server.Configuration.getAdministrativePassword()));
     logger.info("Starting clients");
     prepareNewClients();
   }
