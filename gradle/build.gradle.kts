@@ -240,8 +240,6 @@ subprojects {
     
     dependencies {
         testImplementation(project(":sdk", "testConfig"))
-        if(name in listOf("server", "player", "test-client"))
-            implementation("ch.qos.logback", "logback-classic", "1.3.11") // Update to 1.4 with JDK upgrade
     }
     
     tasks {

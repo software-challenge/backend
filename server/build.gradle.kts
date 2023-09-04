@@ -13,8 +13,9 @@ application {
 
 dependencies {
     api(project(":sdk"))
-    runtimeOnly(project(":plugin"))
+    implementation("ch.qos.logback", "logback-classic", "1.3.11") // Update to 1.4 with JDK upgrade
     
+    runtimeOnly(project(":plugin"))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine") // legacy java tests
 }
 

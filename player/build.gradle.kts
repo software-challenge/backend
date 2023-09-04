@@ -1,5 +1,5 @@
-import java.time.Duration
 import org.gradle.internal.os.OperatingSystem
+import java.time.Duration
 
 plugins {
     application
@@ -24,6 +24,7 @@ application {
 dependencies {
     implementation(project(":plugin"))
     implementation(kotlin("script-runtime"))
+    implementation("ch.qos.logback", "logback-classic", "1.3.11") // Update to 1.4 with JDK upgrade
 }
 
 tasks {
