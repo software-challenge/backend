@@ -10,6 +10,12 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 24.0.8 All The Moves - 2023-08-29
+- moveIterator should now generate all possible Moves
+- Reduce usage of magic numbers
+- Fix some test cases and update kotest
+- Fix oversight in SimplePlayer template
+
 ### 24.0.7 Game Procedure - 2023-08-29
 - Make SimplePlayer template more convenient
 - Clarify game over edge case conditions
