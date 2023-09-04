@@ -8,6 +8,7 @@ import sc.plugin2024.Field
 import sc.plugin2024.GameState
 import sc.plugin2024.Ship
 import sc.plugin2024.mistake.AdvanceProblem
+import sc.plugin2024.util.PluginConstants
 import kotlin.math.absoluteValue
 
 /**
@@ -32,7 +33,7 @@ data class Advance(
 ): Action {
     
     override fun perform(state: GameState): AdvanceProblem? {
-        if(distance < 1 && state.board[state.currentShip.position] != Field.SANDBANK || distance > 6)
+        if(distance < PluginConstants.MIN_SPEED && state.board[state.currentShip.position] != Field.SANDBANK || distance > PluginConstants.MAX_SPEED)
             return AdvanceProblem.INVALID_DISTANCE
         
         val result = state.checkAdvanceLimit(state.currentShip.position, if(distance > 0) state.currentShip.direction else state.currentShip.direction.opposite(), state.currentShip.movement)

@@ -324,7 +324,7 @@ data class GameState @JvmOverloads constructor(
         var currentPosition = start
         var totalCost = 0
         var hasCurrent = false
-        val maxMovement = maxMovementPoints.coerceAtMost(6)
+        val maxMovement = maxMovementPoints.coerceAtMost(PluginConstants.MAX_SPEED)
         val result = ArrayList<Int>(maxMovement)
         
         fun result(condition: AdvanceProblem) =
@@ -363,17 +363,17 @@ data class GameState @JvmOverloads constructor(
     }
     
     /**
-     * Returns the list of all possible Acceleration actions that require at most the given coal number.
-     *
+     * Returns the list of all possible Acceleration actions that require at most the given coal amount.
+     * @param maxCoal maximum amount of coal to consume per action
      * @return List of all possible Acceleration actions
      */
     fun getPossibleAccelerations(maxCoal: Int = currentShip.coal): List<Accelerate> {
         if(currentShip.position == otherShip.position) return emptyList()
         
-        return (0..maxCoal).flatMap { i ->
+        return (1..maxCoal + currentShip.freeAcc).flatMap { i ->
             listOfNotNull(
-                    if(currentShip.speed < 6 - i) Accelerate(1 + i) else null,
-                    if(currentShip.speed > 1 + i) Accelerate(-1 - i) else null
+                    Accelerate(i).takeIf { PluginConstants.MAX_SPEED >= currentShip.speed + i },
+                    Accelerate(-i).takeIf { PluginConstants.MIN_SPEED <= currentShip.speed - 1 }
             )
         }
     }
@@ -401,7 +401,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun getPointsForTeam(team: ITeam): IntArray =
             ships[team.index].let { ship ->
-                intArrayOf(ship.points, ship.coal * 2, if(isWinner(ship)) 6 else 0)
+                intArrayOf(ship.points, ship.coal * 2, if(isWinner(ship)) PluginConstants.FINISH_POINTS else 0)
             }
     
     override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())

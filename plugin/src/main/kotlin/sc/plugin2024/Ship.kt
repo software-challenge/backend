@@ -8,6 +8,7 @@ import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
 import sc.framework.PublicCloneable
 import sc.plugin2024.actions.Accelerate
+import sc.plugin2024.util.PluginConstants
 import sc.plugin2024.util.PluginConstants.START_COAL
 
 /**
@@ -49,14 +50,14 @@ import sc.plugin2024.util.PluginConstants.START_COAL
 data class Ship(
         var position: CubeCoordinates,
         @XStreamAsAttribute val team: Team,
-        @XStreamAsAttribute var points: Int = 0, // TODO don't track points here
         @XStreamAsAttribute var direction: CubeDirection = CubeDirection.RIGHT,
-        @XStreamAsAttribute var speed: Int = 1,
+        @XStreamAsAttribute var speed: Int = PluginConstants.MIN_SPEED,
         @XStreamAsAttribute var coal: Int = START_COAL,
         @XStreamAsAttribute var passengers: Int = 0,
         @XStreamAsAttribute var freeTurns: Int = 1,
+        @XStreamAsAttribute var points: Int = 0, // TODO don't track points here
+        @XStreamOmitField var freeAcc: Int = PluginConstants.FREE_ACC,
         @XStreamOmitField var movement: Int = speed,
-        @XStreamOmitField var freeAcc: Int = 1,
 ): PublicCloneable<Ship> {
     override fun clone(): Ship =
             this.copy()
@@ -68,7 +69,7 @@ data class Ship(
     }
     
     fun readResolve(): Ship {
-        freeAcc = 1
+        freeAcc = PluginConstants.FREE_ACC
         movement = speed
         return this
     }

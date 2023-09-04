@@ -20,6 +20,7 @@ import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
 import sc.plugin2024.mistake.MoveMistake
+import sc.plugin2024.util.PluginConstants
 import sc.shared.InvalidMoveException
 
 class GameStateTest: FunSpec({
@@ -116,8 +117,9 @@ class GameStateTest: FunSpec({
     
     context("getPossibleActions") {
         test("getPossibleAccelerations") {
-            gameState.getPossibleAccelerations(0).size shouldBe 1
-            gameState.getPossibleAccelerations(1).size shouldBe 2
+            gameState.getPossibleAccelerations(0).size shouldBe PluginConstants.FREE_ACC
+            gameState.getPossibleAccelerations(1).size shouldBe PluginConstants.FREE_ACC + 1
+            gameState.getPossibleAccelerations().size shouldBe 5
         }
         test("getPossibleTurns") {
             gameState.getPossibleTurns(0).shouldHaveSize(2)
@@ -188,13 +190,15 @@ class GameStateTest: FunSpec({
             val state = GameState(
                     Board(listOf(Segment(CubeDirection.RIGHT, CubeCoordinates.ORIGIN, arrayOf(arrayOf(Field.WATER, Field.WATER, Field.WATER))))),
                     ships = listOf(
-                            Ship(CubeCoordinates(-1, -2), Team.ONE),
+                            Ship(CubeCoordinates(-1, -2), Team.ONE, coal = 0, freeAcc = 2),
                             Ship(CubeCoordinates(-1, 0), Team.TWO),
                     )
             )
-            state.getSensibleMoves() shouldBe listOf(Move(Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
+            state.getSensibleMoves() shouldHaveSingleElement Move(Turn(CubeDirection.DOWN_RIGHT), Advance(1))
+            state.moves() shouldHaveSingleElement Move(Turn(CubeDirection.DOWN_RIGHT), Advance(1))
             state.currentShip.accelerateBy(2)
-            state.getSensibleMoves() shouldBe listOf(Move(Accelerate(-2), Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
+            state.getSensibleMoves() shouldHaveSingleElement Move(Accelerate(-2), Turn(CubeDirection.DOWN_RIGHT), Advance(1))
+            state.moves() shouldHaveSingleElement Move(Accelerate(-2), Turn(CubeDirection.DOWN_RIGHT), Advance(1))
         }
     }
     
@@ -327,10 +331,10 @@ class GameStateTest: FunSpec({
         GameState(Board(listOf())) shouldSerializeTo """
             <state startTeam="ONE" turn="0" currentTeam="ONE">
               <board nextDirection="RIGHT"/>
-              <ship team="ONE" points="0" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1">
+              <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0">
                 <position q="-1" r="-1" s="2"/>
               </ship>
-              <ship team="TWO" points="0" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1">
+              <ship team="TWO" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0">
                 <position q="-2" r="1" s="1"/>
               </ship>
             </state>"""
