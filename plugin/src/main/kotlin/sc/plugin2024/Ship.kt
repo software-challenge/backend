@@ -62,6 +62,8 @@ data class Ship(
     override fun clone(): Ship =
             this.copy()
     
+    fun canTurn() = freeTurns > 0 || coal > 0
+    
     /** Adjust speed and movement simultaneously. */
     fun accelerateBy(diff: Int) {
         speed += diff
