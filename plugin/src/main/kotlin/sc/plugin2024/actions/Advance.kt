@@ -33,8 +33,12 @@ data class Advance(
 ): Action {
     
     override fun perform(state: GameState): AdvanceProblem? {
-        if(distance < PluginConstants.MIN_SPEED && state.board[state.currentShip.position] != Field.SANDBANK || distance > PluginConstants.MAX_SPEED)
+        if(distance < PluginConstants.MIN_SPEED &&
+           state.board[state.currentShip.position] != Field.SANDBANK ||
+           distance > PluginConstants.MAX_SPEED)
             return AdvanceProblem.INVALID_DISTANCE
+        if(distance > state.currentShip.movement)
+            return AdvanceProblem.MOVEMENT_POINTS_MISSING
         
         val result = state.checkAdvanceLimit(state.currentShip.position, if(distance > 0) state.currentShip.direction else state.currentShip.direction.opposite(), state.currentShip.movement)
         if(result.distance < distance.absoluteValue)

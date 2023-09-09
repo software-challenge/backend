@@ -29,17 +29,12 @@ data class Board(
     /** Corner coordinates, using offset system.
      * @return ((min-x, max-x), (min-y, max-y)) */
     val bounds
-        get() = segments.fold(Pair(0 to 0, 0 to 0)) { acc, segment ->
-            val center = segment.center
-            val x = center.x / 2
-            Pair(acc.first.first.coerceAtMost(x - 2) to acc.first.second.coerceAtLeast(x + 2),
-                    acc.second.first.coerceAtMost(center.r - 2) to acc.second.second.coerceAtLeast(center.r + 2))
-        }
+        get() = segments.bounds
     
     /** Size of the map. */
     val rectangleSize: Coordinates
         get() = bounds.let { Coordinates(it.first.second - it.first.first + 1, it.second.second - it.second.first + 1) }
-        
+    
     override fun clone(): Board = copy(segments = this.segments.clone())
     
     internal fun getNextDirection() =
@@ -68,17 +63,29 @@ data class Board(
                     null
             }
     
+    // TODO check current on goal field
     fun doesFieldHaveCurrent(coords: CubeCoordinates): Boolean =
-            segmentIndex(coords).let {
-                if(it == -1)
-                    return@let false
-                val segment = segments[it]
-                val nextDirection = segments.getOrNull(it + 1)?.direction ?: nextDirection
-                arrayOf(segment.center + segment.direction.opposite().vector,
+            getFieldCurrentDirection(coords) != null
+    
+    fun getFieldCurrentDirection(coords: CubeCoordinates): CubeDirection? =
+            segmentIndex(coords).let { segmentIndex ->
+                if(segmentIndex == -1)
+                    return null
+                val segment = segments[segmentIndex]
+                val nextDirection = segments.getOrNull(segmentIndex + 1)?.direction ?: nextDirection
+                arrayOf(
+                        segment.center + segment.direction.opposite().vector,
                         segment.center,
                         segment.center + nextDirection.vector,
                         segment.center + nextDirection.vector * 2
-                ).contains(coords)
+                ).indexOf(coords).let {
+                    when {
+                        it == -1 -> null
+                        segment[coords]?.isEmpty == false -> null
+                        it < 2 -> segment.direction.opposite()
+                        else -> nextDirection.opposite()
+                    }
+                }
             }
     
     /**

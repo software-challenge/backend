@@ -57,21 +57,24 @@ data class GameState @JvmOverloads constructor(
      * 1. Weiter vorne
      * 2. Geschwindigkeit
      * 3. Kohle
+     *
      * Ansonsten Startspieler zuerst.
      */
     fun determineAheadTeam(): Team =
-            ships.maxByOrNull {
-                it.points * 100 +
-                it.speed * 10 +
-                it.coal
-            }!!.team
+            ships.maxByOrNull { ship ->
+                shipAdvancePoints(ship) * 100 +
+                ship.speed * 10 +
+                ship.coal
+            }?.team ?: startTeam
     
-    fun calculatePoints(ship: Ship) =
+    fun shipAdvancePoints(ship: Ship) =
             board.segmentIndex(ship.position).let { segmentIndex ->
                 segmentIndex * POINTS_PER_SEGMENT +
-                board.segments[segmentIndex].globalToLocal(ship.position).arrayX + 1 +
-                ship.passengers * PluginConstants.POINTS_PER_PASSENGER
+                board.segments[segmentIndex].globalToLocal(ship.position).arrayX + 1
             }
+    
+    fun calculatePoints(ship: Ship) =
+            shipAdvancePoints(ship) + ship.passengers * PluginConstants.POINTS_PER_PASSENGER
     
     fun isCurrentShipOnCurrent() =
             board.doesFieldHaveCurrent(currentShip.position)
@@ -174,8 +177,7 @@ data class GameState @JvmOverloads constructor(
             if(move.isEmpty()) {
                 state.getPossibleAccelerations().forEach { acc ->
                     queue.add(state.copy(ships = ships.map { ship ->
-                        ship.takeUnless { it.team == state.currentTeam } ?:
-                        ship.clone().also { acc.accelerate(it) }
+                        ship.takeUnless { it.team == state.currentTeam } ?: ship.clone().also { acc.accelerate(it) }
                     }) to listOf(acc))
                 }
             }
@@ -330,7 +332,7 @@ data class GameState @JvmOverloads constructor(
         var currentPosition = start
         var totalCost = 0
         var hasCurrent = false
-        val maxMovement = maxMovementPoints.coerceAtMost(PluginConstants.MAX_SPEED)
+        val maxMovement = maxMovementPoints.coerceIn(0, PluginConstants.MAX_SPEED)
         val result = ArrayList<Int>(maxMovement)
         
         fun result(condition: AdvanceProblem) =
@@ -384,6 +386,8 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
+    // In rare cases this returns true on the server
+    // even though the player cannot move because the target tile is not revealed yet
     fun canMove() = moveIterator().hasNext()
     
     override val isOver: Boolean

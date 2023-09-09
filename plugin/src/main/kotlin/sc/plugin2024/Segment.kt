@@ -19,6 +19,14 @@ typealias SegmentFields = Array<Array<Field>>
 
 typealias Segments = List<Segment>
 
+val Segments.bounds
+    get() = fold(Pair(0 to 0, 0 to 0)) { acc, segment ->
+        val center = segment.center
+        val x = center.x / 2
+        Pair(acc.first.first.coerceAtMost(x - 2) to acc.first.second.coerceAtLeast(x + 2),
+                acc.second.first.coerceAtMost(center.r - 2) to acc.second.second.coerceAtLeast(center.r + 2))
+    }
+
 @XStreamAlias("segment")
 data class Segment(
         @XStreamAsAttribute val direction: CubeDirection,
