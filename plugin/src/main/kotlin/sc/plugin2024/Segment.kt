@@ -20,7 +20,7 @@ typealias SegmentFields = Array<Array<Field>>
 typealias Segments = List<Segment>
 
 val Segments.bounds
-    get() = fold(Pair(0 to 0, 0 to 0)) { acc, segment ->
+    get() = fold(Pair(99 to -99, 99 to -99)) { acc, segment ->
         val center = segment.center
         val x = center.x / 2
         Pair(acc.first.first.coerceAtMost(x - 2) to acc.first.second.coerceAtLeast(x + 2),

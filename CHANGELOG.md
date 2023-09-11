@@ -10,6 +10,11 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 24.1.1
+- Fix segment boundaries in special cases
+- Crash oversped ships
+- Allow other player to move on when one is disqualified
+
 ### 24.1.0 New Helpers - 2023-09-11
 - Add a few helpers
 

@@ -9,9 +9,10 @@ import sc.api.plugins.IField
 sealed class Field: IField<Field> {
     override val isEmpty
         get() = true
+    
     override fun clone() = this
     
-    override fun toString() = javaClass.simpleName
+    override fun toString(): String = javaClass.simpleName
     
     val letter: Char
         get() = javaClass.simpleName.first()
@@ -32,7 +33,10 @@ sealed class Field: IField<Field> {
 
     /** Passagierfeld mit Anleger */
     @XStreamAlias("passenger")
-    data class PASSENGER(@XStreamAsAttribute val direction: CubeDirection = CubeDirection.values().random(), @XStreamAsAttribute var passenger: Int = 1): Field() {
+    data class PASSENGER(
+            @XStreamAsAttribute val direction: CubeDirection = CubeDirection.values().random(),
+            @XStreamAsAttribute var passenger: Int = 1,
+    ): Field() {
         override val isEmpty
             get() = false
         override fun clone() = PASSENGER(direction, passenger)

@@ -64,6 +64,11 @@ data class Ship(
     
     fun canTurn() = freeTurns > 0 || coal > 0
     
+    
+    /** The maximum count of points this speed is able and allowed to accelerate by. */
+    val maxAcc: Int
+        get() = (coal + freeAcc).coerceAtMost(PluginConstants.MAX_SPEED - speed)
+    
     /** Adjust speed and movement simultaneously. */
     fun accelerateBy(diff: Int) {
         speed += diff
