@@ -110,7 +110,7 @@ internal fun SegmentFields.alignPassengers(random: Random = Random): Boolean {
                 val result = shuffledIndices(CubeDirection.values().size, random = random)
                         .mapToObj { Field.PASSENGER(CubeDirection.values()[it], 1) }
                         .filter {
-                            // TODO this rotation is relative now!
+                            // this rotation is relative!
                             val target = Coordinates(x, y).localToCube() + it.direction.vector
                             get(target) == Field.WATER ||
                             (target.arrayX == -2 && target.r.absoluteValue < 3) // in front of a tile is always water

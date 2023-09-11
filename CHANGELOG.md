@@ -10,7 +10,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 24.0.9 All The Moves - 2023-09-XX
+### 24.1.0 New Helpers - 2023-09-11
 - Add a few helpers
 
 ### 24.0.8 All The Moves - 2023-09-04
