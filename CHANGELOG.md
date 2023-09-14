@@ -10,13 +10,14 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 24.1.1
+### 24.1.X - 2023-09-XX
 - Fix segment boundaries in special cases
 - Crash oversped ships
 - Allow other player to move on when one is disqualified
 
-### 24.1.0 New Helpers - 2023-09-11
-- Add a few helpers
+### 24.1.1 Helper Adjustments - 2023-09-14
+
+### 24.1.0 Add New Helpers - 2023-09-11
 
 ### 24.0.8 All The Moves - 2023-09-04
 - moveIterator should now generate all possible Moves
