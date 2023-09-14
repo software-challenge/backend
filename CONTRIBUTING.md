@@ -49,8 +49,8 @@ Die wichtigsten Tasks:
 | `integrationTest`                | Testet ein komplettes Spiel sowie den TestClient
 | `startServer` oder `:server:run` | Startet den Server direkt vom Quellcode
 | `:server:startProduction`        | Startet den gepackten Server
-| `:player:run`                    | Startet den SimpleClient direkt vom Quellcode
-| `:player:shadowJar`              | Packt den SimpleClient zu einer eigenständig ausführbaren Datei
+| `:player:run`                    | Startet den Zufallsspieler direkt vom Quellcode
+| `:player:shadowJar`              | Packt den Zufallsspieler zu einer eigenständig ausführbaren Datei
 | `:test-client:run`               | Startet den TestClient
 
 ### Unterprojekte

@@ -8,7 +8,7 @@ lies erstmal die [Dokumentation](https://docs.software-challenge.de).
 Dieses Projekt ist mit [Gradle](https://gradle.org) vorkonfiguriert,
 wodurch alle Abhängigkeiten automatisch sichergestellt werden 
 und du dich voll und ganz auf das konzentrieren kannst, was wirklich zählt –
-[deine Strategie umsetzen](https://docs.software-challenge.de/_den_simpleclient_erweitern.html) :)
+[deine Strategie umsetzen](https://docs.software-challenge.de/entwicklung/spielervorlage-erweitern) :)
 
 Du kannst Gradle entweder über deine IDE oder über die Kommandozeile aufrufen
 (`./gradlew`). Dazu gibst du Gradle noch einen Auftrag:

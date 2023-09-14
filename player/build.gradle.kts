@@ -92,7 +92,7 @@ tasks {
         dependsOn(deployShadow)
         from(prepareZip, copyDocs)
         destinationDirectory.set(deployDir)
-        archiveFileName.set("simpleclient-$gameName-src.zip")
+        archiveFileName.set("player-$gameName-src.zip")
     }
     
     val playerTest by creating(Exec::class) {

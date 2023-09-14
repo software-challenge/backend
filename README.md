@@ -8,13 +8,13 @@ die sich dann in Duellen gegen andere durchsetzen muss.
 
 Der Code teilt sich auf in Server, Client und Spiel-Plugins.
 
-| Ordner | Beschreibung |
-| ------ | ------------ |
+| Ordner  | Beschreibung                                   |
+|---------|------------------------------------------------|
 | helpers | Zusätzliche Tools (aktuell nur der TestClient) |
-| player | SimpleClient des aktuellen Jahres |
-| plugin | Plugin des aktuellen Jahres |
-| server | Spielserver |
-| sdk | Projektübergreifend verwendete Klassen |
+| player  | Spielervorlage des aktuellen Jahres            |
+| plugin  | Plugin des aktuellen Jahres                    |
+| server  | Spielserver                                    |
+| sdk     | Projektübergreifend verwendete Klassen         |
 
 Wir sind immer für Mithilfe dankbar!
 Eine Entwickler-Anleitung findet sich in [CONTRIBUTING](CONTRIBUTING.md).
