@@ -148,6 +148,7 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
             }
         }
         
+        // FIXME somehow this sometimes produces a null winner when it should not
         when {
             players.getOrNull(team.opponent().index)?.let { opponent ->
                 opponent.hasViolated() && !player.hasViolated() ||

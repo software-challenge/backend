@@ -19,6 +19,8 @@ typealias SegmentFields = Array<Array<Field>>
 
 typealias Segments = List<Segment>
 
+/** Corner coordinates, using offset system.
+ * @return ((min-x, max-x), (min-y, max-y)) */
 val Segments.bounds
     get() = fold(Pair(99 to -99, 99 to -99)) { acc, segment ->
         val center = segment.center
@@ -26,6 +28,10 @@ val Segments.bounds
         Pair(acc.first.first.coerceAtMost(x - 2) to acc.first.second.coerceAtLeast(x + 2),
                 acc.second.first.coerceAtMost(center.r - 2) to acc.second.second.coerceAtLeast(center.r + 2))
     }
+
+/** Size of the rectangle surrounding all segments. */
+val Segments.rectangleSize: Coordinates
+    get() = bounds.let { Coordinates(it.first.second - it.first.first + 1, it.second.second - it.second.first + 1) }
 
 @XStreamAlias("segment")
 data class Segment(

@@ -26,15 +26,6 @@ data class Board(
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
     
-    /** Corner coordinates, using offset system.
-     * @return ((min-x, max-x), (min-y, max-y)) */
-    val bounds
-        get() = segments.bounds
-    
-    /** Size of the map. */
-    val rectangleSize: Coordinates
-        get() = bounds.let { Coordinates(it.first.second - it.first.first + 1, it.second.second - it.second.first + 1) }
-    
     override fun clone(): Board = copy(segments = this.segments.clone())
     
     internal fun getNextDirection() =
