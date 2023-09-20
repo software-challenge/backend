@@ -10,12 +10,15 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 24.1.X - 2023-09-XX
-- Fix segment boundaries in special cases
+### 24.2.X - 2023-10-XX
 - Crash oversped ships
 - Allow other player to move on when one is disqualified
+- 
+### 24.1.2 Stable Release - 2023-09-20
 
 ### 24.1.1 Helper Adjustments - 2023-09-14
+- Fully rename simpleclient to playertemplate
+- Fix segment bounds special cases
 
 ### 24.1.0 Add New Helpers - 2023-09-11
 
