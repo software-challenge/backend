@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 
 abstract class TwoPlayerGameState<M: IMove>(
         @XStreamAsAttribute
-        val startTeam: Team
+        override val startTeam: Team
 ) : IGameState {
     
     abstract val board: IBoard

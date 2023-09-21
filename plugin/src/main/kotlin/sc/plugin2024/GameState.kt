@@ -414,6 +414,15 @@ data class GameState @JvmOverloads constructor(
                 intArrayOf(ship.points, ship.coal * 2, if(isWinner(ship)) PluginConstants.FINISH_POINTS else 0)
             }
     
+    override fun teamStats(team: ITeam): List<Pair<String, Int>> =
+            ships.first { it.team == team }.let {
+                listOf(
+                        "Passagiere" to currentShip.passengers,
+                        "Geschwindigkeit" to currentShip.speed,
+                        "Kohle" to currentShip.coal,
+                )
+            }
+    
     override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
     
     override fun toString() =

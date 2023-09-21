@@ -38,6 +38,9 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     /** Das Team am Zug. */
     val currentTeam: ITeam
     
+    /** Das Team, welches das Spiel eröffnet. */
+    val startTeam: ITeam
+    
     /** Ob das Spiel zu Ende ist. */
     val isOver: Boolean
     
@@ -47,4 +50,7 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     /** Eine Abfolge aller möglichen Züge des aktuellen Teams,
      * nur soweit berechnet wie nötig. */
     fun moveIterator(): Iterator<IMove>
+    
+    /** Spielspezifische Informationen, für die GUI. */
+    fun teamStats(team: ITeam): List<Pair<String, Int>> = listOf()
 }
