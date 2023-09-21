@@ -40,6 +40,7 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     
     /** Das Team, welches das Spiel eröffnet. */
     val startTeam: ITeam
+        get() = Team.ONE
     
     /** Ob das Spiel zu Ende ist. */
     val isOver: Boolean

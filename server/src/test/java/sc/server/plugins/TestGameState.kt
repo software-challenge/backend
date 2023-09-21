@@ -10,6 +10,7 @@ data class TestGameState(
         override var turn: Int = 0,
         var state: Int = 0,
 ): IGameState {
+    
     override val currentTeam: Team
         get() = Team.values()[turn % Team.values().size]
     

@@ -13,7 +13,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
 ### 24.2.X - 2023-10-XX
 - Crash oversped ships
 - Allow other player to move on when one is disqualified
-- 
+
 ### 24.1.2 Stable Release - 2023-09-20
 
 ### 24.1.1 Helper Adjustments - 2023-09-14
