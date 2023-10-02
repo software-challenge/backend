@@ -3,10 +3,7 @@ package sc.plugin2024.actions
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.CubeDirection
-import sc.plugin2024.Action
-import sc.plugin2024.Field
-import sc.plugin2024.GameState
-import sc.plugin2024.Ship
+import sc.plugin2024.*
 import sc.plugin2024.mistake.AdvanceProblem
 import sc.plugin2024.util.PluginConstants
 import kotlin.math.absoluteValue
@@ -30,7 +27,7 @@ import kotlin.math.absoluteValue
 data class Advance(
         /** Anzahl der Felder, die zurückgelegt werden. */
         @XStreamAsAttribute val distance: Int,
-): Action {
+): Action, Addable<Advance> {
     
     override fun perform(state: GameState): AdvanceProblem? {
         if(distance < PluginConstants.MIN_SPEED &&
@@ -51,5 +48,5 @@ data class Advance(
     
     override fun toString(): String = if(distance >= 0) "Gehe $distance Felder vor" else "Gehe $distance Felder zurück"
     
-    operator fun plus(other: Advance) = Advance(distance + other.distance)
+    override operator fun plus(other: Advance) = Advance(distance + other.distance)
 }

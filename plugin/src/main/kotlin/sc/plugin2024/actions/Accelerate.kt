@@ -31,7 +31,7 @@ data class Accelerate(
          * Darf nicht 0 sein.
          */
         @XStreamAsAttribute val acc: Int,
-): Action {
+): Action, Addable<Accelerate> {
     
     /**
      *
@@ -68,4 +68,6 @@ data class Accelerate(
     }
     
     override fun toString(): String = "Beschleunige um $acc"
+    
+    override fun plus(other: Accelerate): Accelerate = Accelerate(acc + other.acc)
 }

@@ -7,3 +7,7 @@ import sc.shared.IMoveMistake
 interface Action {
     fun perform(state: GameState): IMoveMistake?
 }
+
+interface Addable<T> {
+    operator fun plus(other: T): T
+}

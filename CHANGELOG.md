@@ -10,9 +10,10 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 24.2.X - 2023-10-XX
-- Crash oversped ships
+### 24.2.0 - 2023-10-XX
+- Disqualify oversped ship
 - Allow other player to move on when one is disqualified
+- Grey out winning ship so second player can follow
 
 ### 24.1.2 Stable Release - 2023-09-20
 
