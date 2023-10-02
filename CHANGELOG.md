@@ -11,7 +11,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
   and likely contains breaking changes between patches.
 
 ### 24.2.0 - 2023-10-XX
-- Disqualify oversped ship
+- Disqualify ship that cannot move because it is too fast
 - Allow other player to move on when one is disqualified
 - Grey out winning ship so second player can follow
 
