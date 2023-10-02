@@ -1,5 +1,6 @@
 package sc.framework
 
+import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -14,7 +15,9 @@ fun shuffledIndices(max: Int, limit: Int = max, random: Random = Random): IntStr
                 .limit(limit.toLong())
 
 object HelperMethods {
-    private val dateTimeFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
+    val replayFolder = File("replays")
+    val dateTimeFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
+    
     /**
      * Returns the current date and time as string formatted as yyyy.MM.dd
      * HH_mm_ss.
@@ -33,7 +36,7 @@ object HelperMethods {
      * @return name of replay
      */
     @JvmStatic
-    fun getReplayFilename(gameId: String, names: List<String>): String =
-            "replays/replay_${gameId}_${currentDateTime}_" +
-            "${names.joinToString("_") { it.replace(' ', '_') }}.xml"
+    fun getReplayFile(gameId: String, names: List<String>): File =
+            replayFolder.resolve("replay_${gameId}_${currentDateTime}_" +
+            "${names.joinToString("_").replace(' ', '_')}.xml")
 }

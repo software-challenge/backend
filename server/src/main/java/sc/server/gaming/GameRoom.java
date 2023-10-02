@@ -106,10 +106,8 @@ public class GameRoom implements IGameListener {
   }
 
   public File createReplayFile() throws IOException {
-    String fileName = HelperMethods.getReplayFilename(this.game.getPluginUUID(),
-        playerSlots.stream().map(it -> it.getPlayer().getDisplayName()).collect(Collectors.toList()));
-
-    File file = new File(fileName).getAbsoluteFile();
+    File file = HelperMethods.getReplayFile(this.game.getPluginUUID(),
+        playerSlots.stream().map(it -> it.getPlayer().getDisplayName()).collect(Collectors.toList())).getAbsoluteFile();
     if (file.getParentFile().mkdirs() || file.getParentFile().exists())
       if (file.createNewFile())
         return file;
