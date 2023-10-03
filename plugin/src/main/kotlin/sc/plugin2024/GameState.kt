@@ -417,9 +417,9 @@ data class GameState @JvmOverloads constructor(
     override fun teamStats(team: ITeam): List<Pair<String, Int>> =
             ships.first { it.team == team }.let {
                 listOf(
-                        "Passagiere" to currentShip.passengers,
-                        "Geschwindigkeit" to currentShip.speed,
-                        "Kohle" to currentShip.coal,
+                        "Passagiere" to it.passengers,
+                        "Geschwindigkeit" to it.speed,
+                        "Kohle" to it.coal,
                 )
             }
     
