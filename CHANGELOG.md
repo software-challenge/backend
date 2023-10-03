@@ -15,6 +15,12 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - Allow other player to move on when one is disqualified
 - Grey out winning ship so second player can follow
 
+### 24.1.5 Fix teamStats - 2023-10-03
+
+### 24.1.4 Interface Adjustments for GUI - 2023-10-02
+
+### 24.1.3 Provide teamStats - 2023-09-14
+
 ### 24.1.2 Stable Release - 2023-09-20
 
 ### 24.1.1 Helper Adjustments - 2023-09-14
