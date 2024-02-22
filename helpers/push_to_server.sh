@@ -5,8 +5,8 @@ if [ -z "$server" ]; then
     echo "please call push_staging.sh or push_production.sh"
     exit 1
 fi
-ssh -M -S ssh-ctrl-socket -fnNT -L 5000:localhost:5000 $server
-ssh -S ssh-ctrl-socket -O check $server || exit 1
+ssh -M -S .ssh-socket~ -fnNT -L 5000:localhost:5000 $server
+ssh -S .ssh-socket~ -O check $server || exit 1
 docker login localhost:5000 || exit 1
 
 ./gradlew clean dockerImage
@@ -14,7 +14,7 @@ docker login localhost:5000 || exit 1
 docker tag swc_game-server localhost:5000/swc_game-server
 docker push localhost:5000/swc_game-server
 
-ssh -S ssh-ctrl-socket -O exit $server
+ssh -S .ssh-socket~ -O exit $server
 
 # this is currently done in webapp
 #scp docker-compose-production.yml $server:./docker-compose.yml
