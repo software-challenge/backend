@@ -21,7 +21,7 @@ class BoardConverter: Converter {
     }
     
     override fun unmarshal(reader: HierarchicalStreamReader, context: UnmarshallingContext): Board {
-        val dir = CubeDirection.valueOf(reader.getAttribute("nextDirection"))
+        val dir = CubeDirection.valueOf(reader.getAttribute("nextDirection")) // accept missing value
         val segments = context.read<Segments>()
         return Board(segments, segments.size, nextDirection = dir)
     }

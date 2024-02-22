@@ -54,7 +54,6 @@ data class Board(
                     null
             }
     
-    // TODO check current on goal field
     fun doesFieldHaveCurrent(coords: CubeCoordinates): Boolean =
             getFieldCurrentDirection(coords) != null
     
