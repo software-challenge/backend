@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     maven
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.9.22"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
@@ -22,7 +22,7 @@ val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
 
 val deployDir by extra { buildDir.resolve("deploy") }
-val deployedPlayer by extra { "simpleclient-$gameName-$version.jar" }
+val deployedPlayer by extra { "randomplayer-$gameName-$version.jar" }
 val testingDir by extra { buildDir.resolve("tests") }
 val documentedProjects = listOf("sdk", "plugin")
 

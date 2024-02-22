@@ -32,7 +32,7 @@ dependencies {
     
     implementation("org.hamcrest", "hamcrest-core", "2.2")
     implementation("net.sf.kxml", "kxml2", "2.3.0")
-    implementation("xmlpull", "xmlpull", "1.2.0")
+    implementation("xmlpull", "xmlpull", "1.1.3.1")
     
     "testConfigApi"("io.kotest", "kotest-assertions-core")
     "testConfigApi"("io.kotest", "kotest-runner-junit5-jvm", "5.0.3")
