@@ -1,16 +1,17 @@
 import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import sc.gradle.ScriptsTask
 import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     maven
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.6.21"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
     
-    id("com.github.ben-manes.versions") version "0.47.0"
+    id("com.github.ben-manes.versions") version "0.42.0" // only upgrade with Gradle 7: https://github.com/ben-manes/gradle-versions-plugin/issues/778
     id("se.patrikerdes.use-latest-versions") version "0.2.18"
 }
 
@@ -32,7 +33,7 @@ val enableIntegrationTesting = !project.hasProperty("nointegration") && (!isBeta
 
 val javaTargetVersion = JavaVersion.VERSION_1_8
 val javaVersion = JavaVersion.current()
-println("Current version: $version (Beta: $isBeta) Game: $game (Java Version: $javaVersion)")
+println("Current version: $version (Beta: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java $javaVersion)")
 if (javaVersion != javaTargetVersion)
     System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider '-x doc' if you don't care)")
 
