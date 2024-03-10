@@ -38,7 +38,6 @@ public class GameRoom implements IGameListener {
 
   private final String id;
   private final GameRoomManager gameRoomManager;
-  private final ScoreDefinition scoreDefinition;
   private final List<PlayerSlot> playerSlots = new ArrayList<>(getMaximumPlayerCount());
   private GameStatus status = GameStatus.CREATED;
   private GameResult result;
@@ -51,18 +50,17 @@ public class GameRoom implements IGameListener {
     CREATED, ACTIVE, OVER
   }
 
-  public GameRoom(String id, GameRoomManager gameRoomManager, ScoreDefinition scoreDefinition, IGameInstance game) {
+  public GameRoom(String id, GameRoomManager gameRoomManager, IGameInstance game) {
     this.id = id;
     // TODO the GameRoom shouldn't need to know its manager
     this.gameRoomManager = gameRoomManager;
-    this.scoreDefinition = scoreDefinition;
     this.game = game;
     game.addGameListener(this);
   }
 
   /** Generate GameResult, set status to OVER and close the room. */
   @Override
-  public synchronized void onGameOver(Map<Player, PlayerScore> results) {
+  public synchronized void onGameOver(GameResult result) {
     if (isOver()) {
       logger.warn("{} received an extra GameOver-Event", game);
       return;
@@ -70,12 +68,11 @@ public class GameRoom implements IGameListener {
 
     setStatus(GameStatus.OVER);
     try {
-      result = new GameResult(scoreDefinition, results, game.getWinner());
       logger.info("{} is over (regular={})", game, result.isRegular());
       saveReplayMessage(result);
       broadcast(result);
-    } catch (Throwable t) {
-      logger.error("Failed to broadcast GameResult from " + results, t);
+    } catch (Exception ex) {
+      logger.error("Failed to broadcast " + result, ex);
     }
 
     saveReplay();
@@ -283,7 +280,7 @@ public class GameRoom implements IGameListener {
     } catch (InvalidMoveException e) {
       final String error = String.format("Ungueltiger Zug von '%s'.\n%s", player.getDisplayName(), e);
       logger.error(error, e);
-      player.setViolationReason(e.getMistake().getMessage());
+      player.setViolation(new Violation.RULE_VIOLATION(e));
       ErrorMessage errorMessage = new ErrorMessage(move, error);
       player.notifyListeners(errorMessage);
       observerBroadcast(errorMessage);
@@ -291,7 +288,7 @@ public class GameRoom implements IGameListener {
       cancel();
     } catch (GameLogicException e) {
       logger.error("Error at " + move, e);
-      player.setViolationReason(e.getMessage());
+      player.setViolation(new Violation.PROCESS_VIOLATION(e.getMessage()));
       player.notifyListeners(new ErrorMessage(move, e.getMessage()));
       cancel();
     }
@@ -379,7 +376,7 @@ public class GameRoom implements IGameListener {
 
   /** Kick all players, destroy the game and remove it from the manager. */
   public void cancel() {
-    playerSlots.forEach(slot -> { if(slot.isEmpty()) slot.getPlayer().setLeft(XStreamClient.DisconnectCause.NOT_CONNECTED); });
+    playerSlots.forEach(slot -> { if(slot.isEmpty()) slot.getPlayer().setViolation(new Violation.LEFT(XStreamClient.DisconnectCause.NOT_CONNECTED)); });
     // this will invoke onGameOver and thus stop everything else
     this.game.stop();
   }
@@ -408,7 +405,7 @@ public class GameRoom implements IGameListener {
   /** Remove a player and stop the game. */
   public void removePlayer(Player player, XStreamClient.DisconnectCause cause) {
     logger.info("Removing {} from {}", player, this);
-    player.setLeft(cause);
+    player.setViolation(new Violation.LEFT(cause));
     if (!isOver())
       cancel();
   }

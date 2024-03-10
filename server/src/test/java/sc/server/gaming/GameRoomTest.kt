@@ -11,9 +11,7 @@ import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
 import sc.server.network.Client
 import sc.server.plugins.TestPlugin
-import sc.shared.PlayerScore
-import sc.shared.ScoreCause
-import sc.shared.SlotDescriptor
+import sc.shared.*
 import java.io.StringWriter
 
 val minimalReplay = """
@@ -81,11 +79,11 @@ class GameRoomTest: WordSpec({
             manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).playerCount shouldBe 2
         }
         "return correct scores on game over" {
-            val playersScores = room.game.players.associateWith { PlayerScore(ScoreCause.REGULAR, "Game terminated", 0, it.team.index, 2) }
-            room.onGameOver(playersScores)
+            val playersScores = room.game.players.associateWith { PlayerScore(0, it.team.index, 2) }
+            room.onGameOver(GameResult(ScoreDefinition("index", "stuff"), playersScores, null))
             room.result.isRegular shouldBe true
             room.result.scores shouldContainExactly playersScores
-            room.result.winner shouldBe null
+            room.result.win shouldBe null
             room.isOver shouldBe true
         }
         "save a correct replay" {

@@ -1,23 +1,28 @@
 package sc.plugin2024.util
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.plugin2024.Game
 import sc.plugin2024.GameState
-import sc.shared.ScoreAggregation
-import sc.shared.ScoreDefinition
-import sc.shared.ScoreFragment
+import sc.shared.*
+
+@XStreamAlias(value = "winreason")
+enum class MQWinReason(override val message: String): IWinReason {
+    DIFFERING_SCORES("%s hat mehr Punkte."),
+    DIFFERING_PASSENGERS("%S hat mehr Passagiere befördert.");
+    override val isRegular = true
+}
 
 class GamePlugin: IGamePlugin {
     companion object {
         const val PLUGIN_ID = "swc_2024_mississippi_queen"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
-                        ScoreFragment("Siegpunkte", ScoreAggregation.SUM),
-                        ScoreFragment("Punkte", ScoreAggregation.AVERAGE),
-                        ScoreFragment("Kohle", ScoreAggregation.AVERAGE),
-                        ScoreFragment("Gewonnen", ScoreAggregation.AVERAGE),
+                        ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen"), ScoreAggregation.SUM),
+                        ScoreFragment("Punkte", MQWinReason.DIFFERING_SCORES, ScoreAggregation.AVERAGE),
+                        ScoreFragment("Passagiere", MQWinReason.DIFFERING_PASSENGERS, ScoreAggregation.AVERAGE),
                 ))
     }
     

@@ -50,7 +50,7 @@ object LobbyProtocol {
                 PlayerScore::class.java,
                 ScoreAggregation::class.java,
                 Team::class.java,
-                ScoreCause::class.java,
+                Violation::class.java,
                 ScoreDefinition::class.java,
                 ScoreFragment::class.java,
                 SlotDescriptor::class.java,

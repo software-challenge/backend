@@ -7,9 +7,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter
 import sc.api.plugins.Team
 import sc.framework.plugins.Player
-import sc.shared.GameResult
-import sc.shared.PlayerScore
-import sc.shared.ScoreDefinition
+import sc.shared.*
 
 fun HierarchicalStreamWriter.makeNode(node: String, action: HierarchicalStreamWriter.() -> Unit) {
     startNode(node)
@@ -33,12 +31,32 @@ class GameResultConverter: Converter {
         val obj = source as GameResult
         writer.makeNode("definition") { context.convertAnother(obj.definition) }
         writer.makeNode("scores") { context.convertAnother(obj.scores) }
-        obj.winner?.let { writer.makeNode("winner") { addAttribute("team", it.name) } }
+        obj.win?.let { win ->
+            win.winner?.let { team ->
+                writer.makeNode("winner") {
+                    addAttribute("team", team.name)
+                    addAttribute("regular", win.reason.isRegular.toString())
+                    addAttribute("reason", win.reason.getMessage(obj.scores.firstNotNullOf { entry -> entry.key.displayName.takeIf { entry.key.team == team }}))
+                }
+            }
+        }
     }
     
     override fun unmarshal(reader: HierarchicalStreamReader, context: UnmarshallingContext): Any {
         val definition = reader.readNode { context.read<ScoreDefinition>() }
         val scores = reader.readNode { context.read<LinkedHashMap<Player, PlayerScore>>() }
-        return GameResult(definition, scores, if(reader.hasMoreChildren()) reader.readNode { Team.valueOf(getAttribute("team")) } else null)
+        val winner =
+                if(reader.hasMoreChildren())
+                    reader.readNode {
+                        WinCondition(
+                                Team.valueOf(getAttribute("team")),
+                                WinReason(
+                                        getAttribute("reason"),
+                                        getAttribute("regular") == "true"
+                                )
+                        )
+                    }
+                else WinCondition(null, WinReasonTie)
+        return GameResult(definition, scores, winner)
     }
 }

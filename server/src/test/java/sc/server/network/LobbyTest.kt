@@ -2,13 +2,15 @@ package sc.server.network
 
 import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.*
 import org.junit.jupiter.api.Test
 import sc.api.plugins.Team
 import sc.server.client.TestLobbyClientListener
 import sc.server.gaming.GameRoom
 import sc.server.plugins.TestPlugin
-import sc.shared.ScoreCause
+import sc.shared.Violation
 import java.net.SocketException
+import kotlin.time.Duration.Companion.seconds
 
 class LobbyTest: RealServerTest() {
     
@@ -49,11 +51,12 @@ class LobbyTest: RealServerTest() {
         } catch(_: SocketException) {
         }
         
-        await("Game is over") { room.isOver }
+        await("Game is over", 3.seconds) { room.isOver }
         await("Receive GameResult") { room.result != null }
         withClue("Irregular GameResult") {
             room.result.isRegular shouldBe false
-            room.result.scores.filterKeys { it.team == Team.ONE }.values.single().cause shouldBe ScoreCause.LEFT
+            room.result.win?.winner shouldBe Team.TWO
+            room.result.win?.reason.shouldBeInstanceOf<Violation.LEFT>()
         }
         
         await("GameRoom closes") { gameMgr.games.isEmpty() }

@@ -386,14 +386,15 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
-    // In rare cases this returns true on the server
-    // even though the player cannot move because the target tile is not revealed yet
+    // In rare cases this returns true on the server even though the player cannot move
+    // because the target tile is not revealed yet
     fun canMove() = moveIterator().hasNext()
     
     override val isOver: Boolean
         get() = when {
+            // TODO return a WinCondition here indicating why somebody won
             // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
-            turn % 2 == 0 && ships.any { isWinner(it) } -> true
+            turn % 2 == 0 && ships.any { inGoal(it) } -> true
             // Bedingung 2: ein Spieler macht einen ungültigen Zug.
             // Das wird durch eine InvalidMoveException während des Spiels behandelt.
             // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
@@ -406,12 +407,17 @@ data class GameState @JvmOverloads constructor(
             else -> false
         }
     
-    fun isWinner(ship: Ship) =
+    fun inGoal(ship: Ship) =
             ship.passengers > 1 && board.effectiveSpeed(ship) < 2 && board[ship.position] == Field.GOAL
     
     override fun getPointsForTeam(team: ITeam): IntArray =
             ships[team.index].let { ship ->
-                intArrayOf(ship.points, ship.coal * 2, if(isWinner(ship)) PluginConstants.FINISH_POINTS else 0)
+                intArrayOf(ship.points, ship.passengers)
+            }
+    
+    override fun getPointsForTeamExtended(team: ITeam): IntArray =
+            ships[team.index].let { ship ->
+                intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) PluginConstants.FINISH_POINTS else 0)
             }
     
     override fun teamStats(team: ITeam): List<Pair<String, Int>> =

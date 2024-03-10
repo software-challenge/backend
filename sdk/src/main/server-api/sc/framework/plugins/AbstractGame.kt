@@ -9,8 +9,20 @@ import sc.api.plugins.host.IGameListener
 import sc.protocol.room.WelcomeMessage
 import sc.shared.*
 
-abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pausable {
+fun <T> Iterable<T>.maxByNoEqual(selector: (T) -> Int): T? =
+        fold(Int.MIN_VALUE to (null as T?)) { acc, pos ->
+            val value = selector(pos)
+            when {
+                value > acc.first -> value to pos
+                value == acc.first -> value to null
+                else -> acc
+            }
+        }.second
+
+abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
     val logger = LoggerFactory.getLogger(this::class.java)
+    
+    override val pluginUUID: String = plugin.id
     
     abstract val currentState: IGameState
     
@@ -22,10 +34,6 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
     protected val listeners = mutableListOf<IGameListener>()
     
     private var moveRequestTimeout: ActionTimeout? = null
-    
-    override val winner: ITeam?
-        get() = players.singleOrNull { !it.hasViolated() && !it.hasLeft() }?.team
-                ?: checkWinCondition()?.also { logger.debug("No Winner via violation, WinCondition: {}", it) }?.winner
     
     /** Pause the game after current turn has finished or continue playing. */
     override var isPaused = false
@@ -61,7 +69,7 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
             logger.info("Time needed for move: " + timer.timeDiff)
             if(timer.didTimeout()) {
                 logger.warn("Client hit soft-timeout.")
-                fromPlayer.softTimeout = true
+                fromPlayer.violation = Violation.SOFT_TIMEOUT(getTimeoutFor(fromPlayer).softTimeout / 1000)
                 stop()
             } else {
                 onRoundBasedAction(move)
@@ -74,25 +82,12 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
     @Throws(InvalidMoveException::class)
     abstract fun onRoundBasedAction(move: IMove)
     
-    /**
-     * Returns a WinCondition if the Game is over.
-     * Checks:
-     * - if a win condition in the current game state is met
-     * - round limit and end of round (and playerStats)
-     * - whether goal is reached
-     *
-     * @return WinCondition, or null if no win condition is met yet.
-     */
-    abstract fun checkWinCondition(): WinCondition?
-    // TODO this can be generified through getPointsForTeam
-    //  I think this whole class can be un-abstracted as GameState provides all necessary plugin-details
-    
     /** Stops pending MoveRequests and invokes [notifyOnGameOver]. */
     override fun stop() {
         logger.info("Stopping {}", this)
         moveRequestTimeout?.stop()
         moveRequestTimeout = null
-        notifyOnGameOver(generateScoreMap())
+        notifyOnGameOver(getResult())
     }
     
     /** Starts the game by sending a [WelcomeMessage] to all players and calling [next]. */
@@ -128,57 +123,6 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
         return player
     }
     
-    override val playerScores: List<PlayerScore>
-        get() = players.mapTo(ArrayList(players.size)) { getScoreFor(it) }
-    fun getScoreFor(player: Player): PlayerScore {
-        logger.debug("Calculating score for $player")
-        val team = player.team as Team
-        val winCondition = checkWinCondition()
-        
-        var cause: ScoreCause = ScoreCause.REGULAR
-        var reason = ""
-        var score: Int = Constants.LOSE_SCORE
-        
-        if(winCondition != null) {
-            // Game is already finished
-            score = if(winCondition.winner == null)
-                Constants.DRAW_SCORE
-            else {
-                if(winCondition.winner == team) Constants.WIN_SCORE else Constants.LOSE_SCORE
-            }
-        }
-        
-        // FIXME somehow this sometimes produces a null winner when it should not
-        when {
-            players.getOrNull(team.opponent().index)?.let { opponent ->
-                opponent.hasViolated() && !player.hasViolated() ||
-                opponent.hasLeft() && !player.hasLeft() ||
-                opponent.hasSoftTimeout() ||
-                opponent.hasHardTimeout()
-            } == true -> {
-                // Opponent did something wrong and we did not
-                score = Constants.WIN_SCORE
-            }
-            player.hasSoftTimeout() -> {
-                cause = ScoreCause.SOFT_TIMEOUT
-                reason = "Der Spieler hat für die Antwort auf die Zugaufforderung länger als ${getTimeoutFor(player).softTimeout / 1000} Sekunden gebraucht."
-            }
-            player.hasHardTimeout() -> {
-                cause = ScoreCause.HARD_TIMEOUT
-                reason = "Der Spieler hat innerhalb von ${getTimeoutFor(player).hardTimeout / 1000} Sekunden nach Aufforderung keinen Zug gesendet."
-            }
-            player.hasViolated() -> {
-                cause = ScoreCause.RULE_VIOLATION
-                reason = player.violationReason!!
-            }
-            player.hasLeft() -> {
-                cause = ScoreCause.LEFT
-                reason = "Der Spieler hat das Spiel verlassen: ${player.left}"
-            }
-        }
-        return PlayerScore(cause, reason, score, *currentState.getPointsForTeam(team))
-    }
-    
     /** Notifies the active player that it's their time to make a move. */
     protected fun notifyActivePlayer() {
         requestMove(activePlayer)
@@ -189,15 +133,15 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
     protected fun requestMove(player: Player) {
         val timeout: ActionTimeout = if(player.canTimeout) getTimeoutFor(player) else ActionTimeout(false)
         
-        // Signal the JVM to do a GC run now and lower the propability that the GC
-        // runs when the player sends back its move, resulting in disqualification
-        // because of soft timeout.
+        // Signal the JVM to do a GC run now and lower the probability
+        // that the GC runs when the player sends back its move,
+        // potentially causing a disqualification because of soft timeout.
         System.gc()
         
         moveRequestTimeout = timeout
         timeout.start {
             logger.warn("Player $player reached the timeout of ${timeout.hardTimeout}ms")
-            player.hardTimeout = true
+            player.violation = Violation.HARD_TIMEOUT(getTimeoutFor(player).softTimeout / 1000)
             stop()
         }
         
@@ -207,10 +151,6 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
     
     protected open fun getTimeoutFor(player: Player) =
             ActionTimeout(true, Constants.HARD_TIMEOUT, Constants.SOFT_TIMEOUT)
-    
-    @Suppress("ReplaceAssociateFunction")
-    fun generateScoreMap(): Map<Player, PlayerScore> =
-            players.associate { it to getScoreFor(it) }
     
     /**
      * Extends the set of listeners.
@@ -230,12 +170,12 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
         listeners.remove(listener)
     }
     
-    protected fun notifyOnGameOver(map: Map<Player, PlayerScore>) {
+    protected fun notifyOnGameOver(result: GameResult) {
         listeners.forEach {
             try {
-                it.onGameOver(map)
+                it.onGameOver(result)
             } catch(e: Exception) {
-                logger.error("GameOver notification caused an exception, scores: $map", e)
+                logger.error("GameOver notification caused an exception, scores: $result", e)
             }
         }
     }
@@ -250,5 +190,53 @@ abstract class AbstractGame(override val pluginUUID: String): IGameInstance, Pau
                 logger.error("NewState Notification caused an exception", e)
             }
         }
+    }
+    
+    override val winner: ITeam?
+        get() = players.singleOrNull { it.violation == null }?.team ?: checkWinCondition()?.winner
+    
+    /**
+     * Returns a WinCondition if the Game is over.
+     * Checks:
+     * - if a win condition in the current game state is met
+     * - round limit and end of round (and playerStats)
+     * - whether goal is reached
+     *
+     * @return WinCondition, or null if game is not regularly over yet
+     */
+    fun checkWinCondition(): WinCondition? {
+        if(!currentState.isOver) return null
+        val teams = Team.values()
+        val scores = teams.map { currentState.getPointsForTeam(it) }
+        return plugin.scoreDefinition.withIndex()
+                       .map { (index, scoreFragment) ->
+                           WinCondition(teams.withIndex()
+                                   .maxByNoEqual { team -> scores[index][team.index] }?.value, scoreFragment.explanation)
+                       }
+                       .firstOrNull { it.winner != null } ?: WinCondition(null, WinReasonTie)
+    }
+    
+    fun getResult(): GameResult {
+        val winCondition = checkWinCondition()
+        val scores =
+                if(players.any { it.violation != null }) {
+                    players.associateWith {
+                        if(it.violation == null)
+                            PlayerScore(Constants.WIN_SCORE, *currentState.getPointsForTeam(it.team))
+                        else
+                            plugin.scoreDefinition.emptyScore()
+                    }
+                } else {
+                    val winner = winCondition?.winner
+                    players.associateWith {
+                        PlayerScore(
+                                when(winner) {
+                                    it.team -> Constants.WIN_SCORE
+                                    null -> Constants.DRAW_SCORE
+                                    else -> Constants.LOSE_SCORE
+                                }, *currentState.getPointsForTeam(it.team))
+                    }
+                }
+        return GameResult(plugin.scoreDefinition, scores, winCondition)
     }
 }

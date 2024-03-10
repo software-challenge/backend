@@ -68,12 +68,12 @@ public class GameRoomManager {
       game = plugin.createGame();
     }
 
-    return createGameRoom(plugin.getScoreDefinition(), game, false);
+    return createGameRoom(game, false);
   }
 
   /** Create a new GameRoom with the given definitions. */
-  public GameRoom createGameRoom(ScoreDefinition scoreDefinition, IGameInstance game, boolean prepared) {
-    GameRoom room = new GameRoom(generateRoomId(), this, scoreDefinition, game);
+  public GameRoom createGameRoom(IGameInstance game, boolean prepared) {
+    GameRoom room = new GameRoom(generateRoomId(), this, game);
     // pause room on JoinRoomRequest if specified in server.properties
     if (!prepared) {
       boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
@@ -111,8 +111,7 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if client could not join room
    */
-  public synchronized RoomWasJoinedEvent joinOrCreateGame(Client client, String gameType)
-          throws RescuableClientException {
+  public synchronized RoomWasJoinedEvent joinOrCreateGame(Client client, String gameType) throws RescuableClientException {
     for (GameRoom gameRoom : getGames()) {
       // TODO gameType isn't checked
       if (gameRoom.join(client)) {
@@ -143,7 +142,7 @@ public class GameRoomManager {
     IGamePlugin plugin = IGamePlugin.loadPlugin(gameType);
     IGameInstance game = loadGameInfo != null ? plugin.createGameFromState(loadGameInfo) : plugin.createGame();
 
-    GameRoom room = createGameRoom(plugin.getScoreDefinition(), game, true);
+    GameRoom room = createGameRoom(game, true);
     room.pause(paused);
 
     return new GamePreparedResponse(room.getId(), room.reserveSlots(descriptors));

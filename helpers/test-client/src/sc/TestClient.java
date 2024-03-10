@@ -208,7 +208,7 @@ public class TestClient extends XStreamClient {
         GameResult result = (GameResult) packet.getData();
         if (!result.isRegular())
           irregularGames++;
-        logger.warn("Game {} ended {} Winner: {}", finishedTests, result.isRegular() ? "regularly -" : "irregularly!", result.getWinner());
+        logger.warn("Game {} ended {} Winner: {}", finishedTests, result.isRegular() ? "regularly -" : "irregularly!", result.getWin());
 
         finishedTests++;
         ScoreDefinition scoreDefinition = result.getDefinition();

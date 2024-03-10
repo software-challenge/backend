@@ -9,7 +9,9 @@ import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
+import io.kotest.matchers.types.*
 import sc.api.plugins.Team
+import sc.framework.plugins.Constants
 import sc.protocol.RemovedFromGame
 import sc.protocol.ResponsePacket
 import sc.protocol.requests.JoinPreparedRoomRequest
@@ -29,12 +31,11 @@ import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.shared.GameResult
-import sc.shared.ScoreCause
+import sc.shared.Violation
 import sc.shared.SlotDescriptor
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
 
 suspend fun await(
         clue: String? = null,
@@ -81,9 +82,9 @@ class LobbyGameTest: WordSpec({
                     admin.control(room.id).step(true)
                     val result = roomListener.waitForMessage(GameResult::class)
                     playerHandlers[0].gameResult shouldBe result
-                    result.winner shouldBe Team.ONE
+                    result.win shouldBe Team.ONE
                     result.isRegular shouldBe false
-                    result.scores.values.last().cause shouldBe ScoreCause.LEFT
+                    result.win?.reason.shouldBeInstanceOf<Violation.LEFT>()
                     admin.closed shouldBe false
                 }
                 playerClients[0].stop()
@@ -106,11 +107,11 @@ class LobbyGameTest: WordSpec({
                 admin.control(room.id).step(true)
                 val result = roomListener.waitForMessage(GameResult::class)
                 withClue("No Winner") {
-                    result.winner shouldBe null
+                    result.win?.reason.shouldBeInstanceOf<Violation.LEFT>()
                     result.isRegular shouldBe false
                     result.scores.forEach {
                         withClue(it.key.displayName) {
-                            it.value.cause shouldBe ScoreCause.LEFT
+                            it.value.parts.first().intValueExact() shouldBe Constants.LOSE_SCORE
                         }
                     }
                 }
@@ -217,9 +218,8 @@ class LobbyGameTest: WordSpec({
                 withClue("appropriate result for aborted game") {
                     playerClients[1].sendMessageToRoom(prepared.roomId, TestMove(0))
                     val result = roomListener.waitForMessage(GameResult::class)
-                    // TODO can be checked once PlayerScore generation moved from plugin to sdk
-                    // result.isRegular shouldBe false
-                    result.winner shouldBe room.game.players.first().team
+                    result.isRegular shouldBe false
+                    result.win?.winner shouldBe room.game.players.first().team
                 }
             }
         }

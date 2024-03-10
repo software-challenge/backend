@@ -16,10 +16,10 @@ import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.Constants
 import sc.framework.plugins.Player
+import sc.shared.GameResult
 import sc.shared.PlayerScore
-import sc.shared.ScoreCause
+import sc.shared.Violation
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.ExperimentalTime
 
 /** This test verifies that the Game implementation can be used to play a game.
  * It is the only plugin-test independent of the season. */
@@ -58,8 +58,8 @@ class GamePlayTest: WordSpec({
             
             var finalState: Int? = null
             game.addGameListener(object: IGameListener {
-                override fun onGameOver(results: Map<Player, PlayerScore>) {
-                    logger.info("Game over: $results")
+                override fun onGameOver(result: GameResult) {
+                    logger.info("Game over: $result")
                 }
                 
                 override fun onStateChanged(data: IGameState, observersOnly: Boolean) {
@@ -102,13 +102,10 @@ class GamePlayTest: WordSpec({
                 finalState shouldBe game.currentState.hashCode()
             }
             "return regular scores" {
-                val scores = game.playerScores
-                val score1 = game.getScoreFor(game.players.first())
-                val score2 = game.getScoreFor(game.players.last())
-                scores shouldBe listOf(score1, score2)
-                scores.forEach { it.cause shouldBe ScoreCause.REGULAR }
-                
-                score2.parts.first().intValueExact() shouldBe when(score1.parts.first().intValueExact()) {
+                val result = game.getResult()
+                result.isRegular shouldBe true
+                val scores = result.scores.values
+                scores.first().parts.first().intValueExact() shouldBe when(scores.last().parts.first().intValueExact()) {
                     Constants.LOSE_SCORE -> Constants.WIN_SCORE
                     Constants.WIN_SCORE -> Constants.LOSE_SCORE
                     Constants.DRAW_SCORE -> Constants.DRAW_SCORE

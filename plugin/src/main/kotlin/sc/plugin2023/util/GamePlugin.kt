@@ -8,14 +8,15 @@ import sc.plugin2023.GameState
 import sc.shared.ScoreAggregation
 import sc.shared.ScoreDefinition
 import sc.shared.ScoreFragment
+import sc.shared.WinReason
 
 class GamePlugin: IGamePlugin {
     companion object {
         const val PLUGIN_ID = "swc_2023_penguins"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
-                        ScoreFragment("Siegpunkte", ScoreAggregation.SUM),
-                        ScoreFragment("Fische", ScoreAggregation.AVERAGE),
+                        ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen"), ScoreAggregation.SUM),
+                        ScoreFragment("Fische", WinReason("%s hat mehr Fische gesammelt"), ScoreAggregation.AVERAGE),
                 ))
     }
     

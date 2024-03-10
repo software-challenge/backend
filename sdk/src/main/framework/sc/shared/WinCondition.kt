@@ -6,7 +6,7 @@ import sc.api.plugins.ITeam
  * Eine Zusammenfassung eines Sieges mit Sieger und Beschreibung.
  *
  * @param winner Farbe des Siegers.
- * @param reason Text, der Sieg beschreibt.
+ * @param reason Text, der den Siegesgrund beschreibt.
  */
 data class WinCondition(
         /** Farbe des Gewinners.  */
@@ -19,4 +19,6 @@ data class WinCondition(
 
     override fun toString(): String =
             reason.getMessage(winner.toString())
+    
+    override fun equals(other: Any?): Boolean = other is WinCondition && other.winner == winner
 }
