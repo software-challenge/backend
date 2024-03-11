@@ -164,38 +164,37 @@ class BoardTest: FunSpec({
     
     context("XML Serialization of") {
         test("few segments") {
-            // TODO column rather than field-array
             val serializedSegment = """
                   <segment direction="RIGHT">
                     <center q="0" r="0" s="0"/>
-                    <field-array>
+                    <column>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </field-array>
-                    <field-array>
+                    </column>
+                    <column>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </field-array>
-                    <field-array>
+                    </column>
+                    <column>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </field-array>
-                    <field-array>
+                    </column>
+                    <column>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </field-array>
+                    </column>
                   </segment>"""
             val serialized = """
                 <board nextDirection="RIGHT">$serializedSegment
@@ -236,13 +235,13 @@ class BoardTest: FunSpec({
                 <board nextDirection="UP_LEFT">
                   <segment direction="UP_LEFT">
                     <center q="1" r="1" s="-2"/>
-                    <field-array>
+                    <column>
                       <water/>
                       <goal/>
                       <island/>
                       <sandbank/>
                       <passenger direction="RIGHT" passenger="1"/>
-                    </field-array>
+                    </column>
                   </segment>
                 </board>"""
         }
