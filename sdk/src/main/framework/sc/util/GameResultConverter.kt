@@ -36,7 +36,7 @@ class GameResultConverter: Converter {
                 writer.makeNode("winner") {
                     addAttribute("team", team.name)
                     addAttribute("regular", win.reason.isRegular.toString())
-                    addAttribute("reason", win.reason.getMessage(obj.scores.firstNotNullOf { entry -> entry.key.displayName.takeIf { entry.key.team == team }}))
+                    addAttribute("reason", win.reason.getMessage(obj.scores.firstNotNullOfOrNull { entry -> entry.key.displayName.takeIf { it.isNotBlank() && entry.key.team == team } } ?: team.name))
                 }
             }
         }
