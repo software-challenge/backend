@@ -328,7 +328,7 @@ class GameStateTest: FunSpec({
     }
     
     test("serializes nicely") {
-        GameState(Board(listOf())) shouldSerializeTo """
+        GameState(Board(listOf()), lastMove = Move(Accelerate(1), Advance(2))) shouldSerializeTo """
             <state startTeam="ONE" turn="0" currentTeam="ONE">
               <board nextDirection="RIGHT"/>
               <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0">
@@ -337,6 +337,12 @@ class GameStateTest: FunSpec({
               <ship team="TWO" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0">
                 <position q="-2" r="1" s="1"/>
               </ship>
+              <lastMove>
+                <actions>
+                  <acceleration acc="1"/>
+                  <advance distance="2"/>
+                </actions>
+              </lastMove>
             </state>"""
     }
     
