@@ -11,4 +11,4 @@ import sc.api.plugins.IMove
 data class InvalidMoveException @JvmOverloads constructor(
         val mistake: IMoveMistake,
         val move: IMove? = null):
-        RuntimeException("${mistake.message}${move?.let { " bei Zug '$it'"}.orEmpty()}")
+        RuntimeException("${mistake.message}${move?.let { " bei '$it'"}.orEmpty()}")

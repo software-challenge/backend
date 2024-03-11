@@ -10,6 +10,7 @@ import sc.protocol.requests.PrepareGameRequest
 import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
 import sc.server.network.Client
+import sc.server.plugins.TestGame
 import sc.server.plugins.TestPlugin
 import sc.shared.*
 import java.io.StringWriter
@@ -45,7 +46,7 @@ val minimalReplay = """
         <scores>
           <entry>
             <player team="ONE"/>
-            <score cause="REGULAR" reason="Game terminated">
+            <score>
               <part>0</part>
               <part>0</part>
               <part>2</part>
@@ -53,7 +54,7 @@ val minimalReplay = """
           </entry>
           <entry>
             <player team="TWO"/>
-            <score cause="REGULAR" reason="Game terminated">
+            <score>
               <part>0</part>
               <part>1</part>
               <part>2</part>
@@ -79,8 +80,10 @@ class GameRoomTest: WordSpec({
             manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).playerCount shouldBe 2
         }
         "return correct scores on game over" {
-            val playersScores = room.game.players.associateWith { PlayerScore(0, it.team.index, 2) }
-            room.onGameOver(GameResult(ScoreDefinition("index", "stuff"), playersScores, null))
+            val game = (room.game as TestGame)
+            game.currentState.turn = 2
+            val playersScores = game.players.associateWith { PlayerScore(1, it.team.index, 2) }
+            room.onGameOver(game.getResult())
             room.result.isRegular shouldBe true
             room.result.scores shouldContainExactly playersScores
             room.result.win shouldBe null

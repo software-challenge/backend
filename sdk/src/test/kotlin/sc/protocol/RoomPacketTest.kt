@@ -23,8 +23,7 @@ class RoomPacketTest: StringSpec({
     GameResult::class.java.simpleName {
         RoomPacket("12345", GamePaused(false)) shouldSerializeTo """
             <room roomId="12345">
-              <data class="paused" paused="false">
-              </data>
+              <data class="paused" paused="false"/>
             </room>""".trimIndent()
     }
 })

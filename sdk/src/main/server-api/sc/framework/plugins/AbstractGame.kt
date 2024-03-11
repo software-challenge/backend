@@ -208,7 +208,8 @@ abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
         if(!currentState.isOver) return null
         val teams = Team.values()
         val scores = teams.map { currentState.getPointsForTeam(it) }
-        return plugin.scoreDefinition.withIndex()
+        return plugin.scoreDefinition.asSequence().drop(1) // drop victory points definition
+                       .withIndex().filter { it.value.relevantForRanking }
                        .map { (index, scoreFragment) ->
                            WinCondition(teams.withIndex()
                                    .maxByNoEqual { team -> scores[index][team.index] }?.value, scoreFragment.explanation)
@@ -217,14 +218,17 @@ abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
     }
     
     fun getResult(): GameResult {
-        val winCondition = checkWinCondition()
+        var winCondition = checkWinCondition()
+        val violator = players.find { it.violation != null }
         val scores =
-                if(players.any { it.violation != null }) {
+                if(violator != null) {
+                    winCondition = WinCondition(players.find { it.violation == null }?.team, violator.violation!!)
                     players.associateWith {
-                        if(it.violation == null)
+                        if(it.violation == null) {
                             PlayerScore(Constants.WIN_SCORE, *currentState.getPointsForTeam(it.team))
-                        else
+                        } else {
                             plugin.scoreDefinition.emptyScore()
+                        }
                     }
                 } else {
                     val winner = winCondition?.winner

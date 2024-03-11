@@ -76,7 +76,8 @@ class GameResultTest: WordSpec({
                     }, object: IMove {
                         override fun toString() = "TestZug"
                     }))))) shouldBe
-                    gameResultXML.replace("</scores>", "</scores>\n  <winner team=\"TWO\" regular=\"false\" reason=\"Regelverletzung von blues: kalkül bei TestZug\"/>")
+                    gameResultXML.replace("</scores>", "</scores>\n  <winner team=\"TWO\" regular=\"false\" reason=\"Regelverletzung von blues: kalkül bei &apos;TestZug&apos;\"/>")
+            // TODO check the encoding correctness here, also XML serialization on Windows
         }
     }
 })
