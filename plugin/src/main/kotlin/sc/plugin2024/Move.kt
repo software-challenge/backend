@@ -1,6 +1,7 @@
 package sc.plugin2024
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.IMove
 
 @XStreamAlias("move")
@@ -12,6 +13,7 @@ import sc.api.plugins.IMove
  * @property actions The list of actions in the move.
  */
 data class Move(
+        @XStreamImplicit
         val actions: List<Action>,
 ): IMove, Comparable<Move> {
     
