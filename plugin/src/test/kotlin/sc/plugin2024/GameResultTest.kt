@@ -1,9 +1,6 @@
 package sc.plugin2024
 
-import io.kotest.core.spec.style.FunSpec
-import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.*
 import sc.api.plugins.CubeDirection
 import sc.helpers.shouldSerializeTo
 import sc.plugin2024.actions.Accelerate
@@ -13,7 +10,7 @@ import sc.plugin2024.mistake.MoveMistake
 import sc.shared.InvalidMoveException
 import sc.shared.Violation
 
-class GameTest: WordSpec({
+class GameResultTest: WordSpec({
     "Result XML" should {
         val game = Game()
         "work when empty" {

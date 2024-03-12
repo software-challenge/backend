@@ -1,9 +1,7 @@
 package sc.shared
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.networking.clients.XStreamClient.DisconnectCause
 
-@XStreamAlias(value = "scoreCause")
 sealed class Violation(override val message: String): IWinReason {
     override val isRegular = false
     
