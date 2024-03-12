@@ -6,6 +6,8 @@ import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.maps.shouldContainExactly
 import org.junit.jupiter.api.assertThrows
+import sc.api.plugins.Team
+import sc.framework.plugins.Constants
 import sc.protocol.requests.PrepareGameRequest
 import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
@@ -55,12 +57,13 @@ val minimalReplay = """
           <entry>
             <player team="TWO"/>
             <score>
-              <part>0</part>
+              <part>2</part>
               <part>1</part>
               <part>2</part>
             </score>
           </entry>
         </scores>
+        <winner team="TWO" regular="true" reason="TWO won through index"/>
       </data>
     </room>
     </protocol>""".trimIndent()
@@ -82,11 +85,11 @@ class GameRoomTest: WordSpec({
         "return correct scores on game over" {
             val game = (room.game as TestGame)
             game.currentState.turn = 2
-            val playersScores = game.players.associateWith { PlayerScore(1, it.team.index, 2) }
+            val playersScores = game.players.associateWith { PlayerScore(it.team.index * Constants.WIN_SCORE, it.team.index, 2) }
             room.onGameOver(game.getResult())
             room.result.isRegular shouldBe true
             room.result.scores shouldContainExactly playersScores
-            room.result.win shouldBe null
+            room.result.win?.winner shouldBe Team.TWO
             room.isOver shouldBe true
         }
         "save a correct replay" {

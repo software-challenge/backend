@@ -39,6 +39,10 @@ open class Player @JvmOverloads constructor(
     
     @XStreamOmitField
     var violation: Violation? = null
+        set(value) {
+            if(field == null)
+                field = value
+        }
 
     fun addPlayerListener(listener: IPlayerListener) {
         this.listeners.add(listener)

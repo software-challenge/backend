@@ -68,6 +68,7 @@ public class GameRoom implements IGameListener {
 
     setStatus(GameStatus.OVER);
     try {
+      this.result = result;
       logger.info("{} is over (regular={})", game, result.isRegular());
       saveReplayMessage(result);
       broadcast(result);
@@ -412,6 +413,7 @@ public class GameRoom implements IGameListener {
 
   /** Get the saved {@link GameResult result}. */
   public GameResult getResult() {
+    // TODO only used for tests, use listeners there
     return this.result;
   }
 

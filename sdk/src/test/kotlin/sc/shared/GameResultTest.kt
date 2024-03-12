@@ -36,7 +36,8 @@ class GameResultTest: WordSpec({
             gameResultWinner shouldNotBe gameResultNoWinner
         }
         "serialize properly to XML" {
-            val gameResultXML = """
+            fun gameResultXML(result: String) =
+                """
                 <result>
                   <definition>
                     <fragment name="winner">
@@ -58,10 +59,11 @@ class GameResultTest: WordSpec({
                       </score>
                     </entry>
                   </scores>
-                </result>""".trimIndent()
+                  $result
+                </result>""".trimIndent().lines().filterNot { it.isBlank() }.joinToString("\n")
             forAll(
-                    row(gameResultNoWinner, gameResultXML),
-                    row(gameResultWinner, gameResultXML.replace("</scores>", "</scores>\n  <winner team=\"ONE\" regular=\"true\" reason=\"rad hat gewonnän\"/>")),
+                    row(gameResultNoWinner, gameResultXML("")),
+                    row(gameResultWinner, gameResultXML("<winner team=\"ONE\" regular=\"true\" reason=\"rad hat gewonnän\"/>")),
             ) { result, xml ->
                 result shouldSerializeTo xml
             }
@@ -69,14 +71,14 @@ class GameResultTest: WordSpec({
                     WinCondition(Team.TWO, Violation.RULE_VIOLATION(InvalidMoveException(object: IMoveMistake {
                         override val message = "bad guy"
                     }))))) shouldBe
-                    gameResultXML.replace("</scores>", "</scores>\n  <winner team=\"TWO\" regular=\"false\" reason=\"Regelverletzung von blues: bad guy\"/>")
+                    gameResultXML("<winner team=\"TWO\" regular=\"false\" reason=\"Regelverletzung von rad: bad guy\"/>")
             testXStream.toXML(GameResult(definition, scores,
                     WinCondition(Team.TWO, Violation.RULE_VIOLATION(InvalidMoveException(object: IMoveMistake {
                         override val message = "kalkül"
                     }, object: IMove {
                         override fun toString() = "TestZug"
                     }))))) shouldBe
-                    gameResultXML.replace("</scores>", "</scores>\n  <winner team=\"TWO\" regular=\"false\" reason=\"Regelverletzung von blues: kalkül bei &apos;TestZug&apos;\"/>")
+                    gameResultXML("<winner team=\"TWO\" regular=\"false\" reason=\"Regelverletzung von rad: kalkül bei &apos;TestZug&apos;\"/>")
             // TODO check the encoding correctness here, also XML serialization on Windows
         }
     }

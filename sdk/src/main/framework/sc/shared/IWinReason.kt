@@ -5,7 +5,7 @@ interface IWinReason {
     val message: String
     
     fun getMessage(playerName: String?): String =
-        message.format(playerName)
+        message.format(playerName ?: "Alle Spieler")
 }
 
 open class WinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {

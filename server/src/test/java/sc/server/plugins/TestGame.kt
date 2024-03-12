@@ -32,5 +32,5 @@ data class TestGame(
             ActionTimeout(false)
     
     override fun toString(): String =
-            "TestGame(currentState=$currentState, paused=$isPaused, players=$players)"
+            "TestGame(currentState=$currentState, paused=$isPaused, players=${players.joinToString { it.longString() }})"
 }

@@ -204,8 +204,10 @@ abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
      *
      * @return WinCondition, or null if game is not regularly over yet
      */
-    fun checkWinCondition(): WinCondition? {
-        if(!currentState.isOver) return null
+    fun checkWinCondition(): WinCondition? =
+            currentWinner().takeIf { currentState.isOver }
+    
+    fun currentWinner(): WinCondition {
         val teams = Team.values()
         val scores = teams.map { currentState.getPointsForTeam(it) }
         return plugin.scoreDefinition.asSequence().drop(1) // drop victory points definition
@@ -217,8 +219,9 @@ abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
                        .firstOrNull { it.winner != null } ?: WinCondition(null, WinReasonTie)
     }
     
+    /** Gets the [GameResult] if the Game where to end at the current state. */
     fun getResult(): GameResult {
-        var winCondition = checkWinCondition()
+        val winCondition: WinCondition
         val violator = players.find { it.violation != null }
         val scores =
                 if(violator != null) {
@@ -231,10 +234,10 @@ abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
                         }
                     }
                 } else {
-                    val winner = winCondition?.winner
+                    winCondition = currentWinner()
                     players.associateWith {
                         PlayerScore(
-                                when(winner) {
+                                when(winCondition.winner) {
                                     it.team -> Constants.WIN_SCORE
                                     null -> Constants.DRAW_SCORE
                                     else -> Constants.LOSE_SCORE

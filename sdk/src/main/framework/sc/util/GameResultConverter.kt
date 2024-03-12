@@ -32,13 +32,13 @@ class GameResultConverter: Converter {
         writer.makeNode("definition") { context.convertAnother(obj.definition) }
         writer.makeNode("scores") { context.convertAnother(obj.scores) }
         obj.win?.let { win ->
-            win.winner?.let { team ->
-                writer.makeNode("winner") {
-                    addAttribute("team", team.name)
-                    addAttribute("regular", win.reason.isRegular.toString())
-                    val reasonTeam = if(win.reason.isRegular) team else team.opponent()
-                    addAttribute("reason", win.reason.getMessage(obj.scores.firstNotNullOfOrNull { entry -> entry.key.displayName.takeIf { it.isNotBlank() && entry.key.team == reasonTeam } } ?: reasonTeam.name))
-                }
+            val team = win.winner
+            writer.makeNode("winner") {
+                //addAttribute("team", team?.name.toString())
+                team?.name?.let { addAttribute("team", it) }
+                addAttribute("regular", win.reason.isRegular.toString())
+                val reasonTeam = if(win.reason.isRegular) team else team?.opponent()
+                addAttribute("reason", win.reason.getMessage(obj.scores.firstNotNullOfOrNull { entry -> entry.key.displayName.takeIf { it.isNotBlank() && entry.key.team == reasonTeam } } ?: reasonTeam?.name))
             }
         }
     }
@@ -50,7 +50,7 @@ class GameResultConverter: Converter {
                 if(reader.hasMoreChildren())
                     reader.readNode {
                         WinCondition(
-                                Team.valueOf(getAttribute("team")),
+                                getAttribute("team")?.let { attr -> Team.values().find { attr == it.name } },
                                 WinReason(
                                         getAttribute("reason"),
                                         getAttribute("regular") == "true"

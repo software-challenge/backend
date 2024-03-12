@@ -107,13 +107,13 @@ class LobbyGameTest: WordSpec({
                 admin.control(room.id).step(true)
                 val result = roomListener.waitForMessage(GameResult::class)
                 withClue("No Winner") {
-                    result.win?.reason.shouldBeInstanceOf<Violation.LEFT>()
                     result.isRegular shouldBe false
                     result.scores.forEach {
                         withClue(it.key.displayName) {
                             it.value.parts.first().intValueExact() shouldBe Constants.LOSE_SCORE
                         }
                     }
+                    room.result.win?.reason.shouldBeInstanceOf<Violation.LEFT>()
                 }
                 adminListener.waitForMessage(RemovedFromGame::class)
                 roomListener.clearMessages() shouldBe 0
@@ -215,9 +215,11 @@ class LobbyGameTest: WordSpec({
                 val controller = admin.control(prepared.roomId)
                 controller.pause()
                 roomListener.waitForMessage(GamePaused::class)
-                withClue("appropriate result for aborted game") {
+                withClue("appropriate result for game aborted due to unrequested move") {
+                    // Not the turn of player two
                     playerClients[1].sendMessageToRoom(prepared.roomId, TestMove(0))
                     val result = roomListener.waitForMessage(GameResult::class)
+                    room.game.players[1].violation.shouldBeInstanceOf<Violation.PROCESS_VIOLATION>()
                     result.isRegular shouldBe false
                     result.win?.winner shouldBe room.game.players.first().team
                 }
