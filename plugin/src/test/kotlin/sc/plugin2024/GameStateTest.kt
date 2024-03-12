@@ -338,8 +338,10 @@ class GameStateTest: FunSpec({
                 <position q="-2" r="1" s="1"/>
               </ship>
               <lastMove>
-                <acceleration acc="1"/>
-                <advance distance="2"/>
+                <actions>
+                  <acceleration acc="1"/>
+                  <advance distance="2"/>
+                </actions>
               </lastMove>
             </state>"""
     }

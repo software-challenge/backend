@@ -167,34 +167,34 @@ class BoardTest: FunSpec({
             val serializedSegment = """
                   <segment direction="RIGHT">
                     <center q="0" r="0" s="0"/>
-                    <column>
+                    <field-array>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </column>
-                    <column>
+                    </field-array>
+                    <field-array>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </column>
-                    <column>
+                    </field-array>
+                    <field-array>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </column>
-                    <column>
+                    </field-array>
+                    <field-array>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </column>
+                    </field-array>
                   </segment>"""
             val serialized = """
                 <board nextDirection="RIGHT">$serializedSegment
@@ -235,13 +235,13 @@ class BoardTest: FunSpec({
                 <board nextDirection="UP_LEFT">
                   <segment direction="UP_LEFT">
                     <center q="1" r="1" s="-2"/>
-                    <column>
+                    <field-array>
                       <water/>
                       <goal/>
                       <island/>
                       <sandbank/>
                       <passenger direction="RIGHT" passenger="1"/>
-                    </column>
+                    </field-array>
                   </segment>
                 </board>"""
         }

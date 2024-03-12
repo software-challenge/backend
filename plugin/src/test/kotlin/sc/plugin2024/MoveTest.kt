@@ -16,18 +16,22 @@ class MoveTest: FunSpec({
         test("deserializes gracefully") {
             testXStream.fromXML("""
             <move>
-              <acceleration acc="1"/>
-              <advance distance="2"/>
+              <actions>
+                <acceleration acc="1"/>
+                <advance distance="2"/>
+               </actions>
             </move>""".trimIndent()) shouldBe Move(Accelerate(1), Advance(2))
         }
         test("serializes well") {
             Move(Accelerate(2), Advance(2), Turn(CubeDirection.UP_LEFT), Advance(1), Push(CubeDirection.LEFT)) shouldSerializeTo """
             <move>
-              <acceleration acc="2"/>
-              <advance distance="2"/>
-              <turn direction="UP_LEFT"/>
-              <advance distance="1"/>
-              <push direction="LEFT"/>
+              <actions>
+                <acceleration acc="2"/>
+                <advance distance="2"/>
+                <turn direction="UP_LEFT"/>
+                <advance distance="1"/>
+                <push direction="LEFT"/>
+              </actions>
             </move>
         """.trimIndent()
         }
@@ -35,7 +39,9 @@ class MoveTest: FunSpec({
             RoomPacket("lol", Move(Advance(1))) shouldSerializeTo """
                 <room roomId="lol">
                   <data class="move">
-                    <advance distance="1"/>
+                    <actions>
+                      <advance distance="1"/>
+                    </actions>
                   </data>
                 </room>
             """.trimIndent()

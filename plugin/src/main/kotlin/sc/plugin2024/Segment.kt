@@ -38,7 +38,7 @@ data class Segment(
         @XStreamAsAttribute val direction: CubeDirection,
         // could be omitted but helpful since ships also come with cubecoords @XStreamOmitField
         val center: CubeCoordinates,
-        @XStreamImplicit(itemFieldName = "column") val fields: SegmentFields,
+        @XStreamImplicit/*(itemFieldName = "column")*/ val fields: SegmentFields,
 ): PublicCloneable<Segment> {
     
     val tip: CubeCoordinates
