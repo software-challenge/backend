@@ -10,10 +10,18 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 24.2.0 - 2023-10-XX
-- Disqualify ship that cannot move because it is too fast
+
+### 25.0.0 - 2024
 - Allow other player to move on when one is disqualified
+
+### 24.X - Post-Finale
 - Grey out winning ship so second player can follow
+- Improve XML protocol
+
+### 24.2.1 Fix issue leading to wrong winner - 2024-03-13
+
+### 24.2.0 Fix GameResult - 2024-03-12
+- Disqualify ship that cannot move because it is too fast
 
 ### 24.1.5 Fix teamStats - 2023-10-03
 
