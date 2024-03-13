@@ -214,7 +214,7 @@ abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
                        .withIndex().filter { it.value.relevantForRanking }
                        .map { (index, scoreFragment) ->
                            WinCondition(teams.withIndex()
-                                   .maxByNoEqual { team -> scores[index][team.index] }?.value, scoreFragment.explanation)
+                                   .maxByNoEqual { team -> scores[team.index][index] }?.value, scoreFragment.explanation)
                        }
                        .firstOrNull { it.winner != null } ?: WinCondition(null, WinReasonTie)
     }
