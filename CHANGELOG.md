@@ -18,6 +18,8 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - Grey out winning ship so second player can follow
 - Improve XML protocol
 
+### 24.2.2 Detailed winner explanation - 2024-03-14
+
 ### 24.2.1 Fix issue leading to wrong winner - 2024-03-13
 
 ### 24.2.0 Fix GameResult - 2024-03-12

@@ -16,7 +16,7 @@ class ShipTest: FunSpec({
     }
     test("serializes nicely") {
          shipOne shouldSerializeTo """
-            <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0">
+            <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" stuck="false">
               <position q="-1" r="-1" s="2"/>
             </ship>"""
     }
