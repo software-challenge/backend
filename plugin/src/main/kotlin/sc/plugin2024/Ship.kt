@@ -56,11 +56,12 @@ data class Ship(
         @XStreamAsAttribute var passengers: Int = 0,
         @XStreamAsAttribute var freeTurns: Int = 1,
         @XStreamAsAttribute var points: Int = 0, // TODO don't track points here
+        @XStreamAsAttribute var stuck: Boolean = false, // TODO consider tracking as -1 points
         @XStreamOmitField var freeAcc: Int = PluginConstants.FREE_ACC,
         @XStreamOmitField var movement: Int = speed,
 ): PublicCloneable<Ship> {
-    override fun clone(): Ship =
-            this.copy()
+    
+    override fun clone(): Ship = this.copy()
     
     fun canTurn() = freeTurns > 0 || coal > 0
     

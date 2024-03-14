@@ -10,9 +10,11 @@ import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
 import sc.plugin2024.mistake.MoveMistake
+import sc.plugin2024.util.MQWinReason
 import sc.plugin2024.util.PluginConstants
 import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENT
 import sc.shared.InvalidMoveException
+import sc.shared.WinCondition
 import kotlin.math.absoluteValue
 
 /**
@@ -135,6 +137,7 @@ data class GameState @JvmOverloads constructor(
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
         if(!canMove() && !isOver) {
             lastMove = null
+            currentShip.stuck = true
             advanceTurn()
         }
     }
@@ -388,7 +391,22 @@ data class GameState @JvmOverloads constructor(
     
     // In rare cases this returns true on the server even though the player cannot move
     // because the target tile is not revealed yet
-    fun canMove() = moveIterator().hasNext()
+    fun canMove() = !currentShip.stuck && moveIterator().hasNext()
+    
+    override val winCondition: WinCondition?
+        get() =
+            arrayOf(
+                    {
+                        ships.singleOrNull { inGoal(it) }?.let { WinCondition(it.team, MQWinReason.GOAL) }
+                    },
+                    {
+                        val dist = board.segmentDistance(ships.first().position, ships.last().position)
+                        WinCondition(ships[if(dist > 0) 0 else 1].team, MQWinReason.SEGMENT_DISTANCE).takeIf { dist.absoluteValue > 3 }
+                    },
+                    {
+                        ships.singleOrNull { it.stuck }?.let { WinCondition(it.team.opponent(), MQWinReason.STUCK) }
+                    }
+            ).firstNotNullOfOrNull { it() }
     
     override val isOver: Boolean
         get() = when {

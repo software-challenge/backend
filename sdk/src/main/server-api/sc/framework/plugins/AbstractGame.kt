@@ -210,13 +210,14 @@ abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
     fun currentWinner(): WinCondition {
         val teams = Team.values()
         val scores = teams.map { currentState.getPointsForTeam(it) }
-        return plugin.scoreDefinition.asSequence().drop(1) // drop victory points definition
-                       .withIndex().filter { it.value.relevantForRanking }
-                       .map { (index, scoreFragment) ->
-                           WinCondition(teams.withIndex()
-                                   .maxByNoEqual { team -> scores[team.index][index] }?.value, scoreFragment.explanation)
-                       }
-                       .firstOrNull { it.winner != null } ?: WinCondition(null, WinReasonTie)
+        return currentState.winCondition ?: plugin.scoreDefinition.asSequence()
+                .drop(1) // drop victory points definition
+                .withIndex().filter { it.value.relevantForRanking }
+                .map { (index, scoreFragment) ->
+                    WinCondition(teams.withIndex()
+                            .maxByNoEqual { team -> scores[team.index][index] }?.value, scoreFragment.explanation)
+                }
+                .firstOrNull { it.winner != null } ?: WinCondition(null, WinReasonTie)
     }
     
     /** Gets the [GameResult] if the Game where to end at the current state. */

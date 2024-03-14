@@ -9,10 +9,12 @@ import sc.plugin2024.GameState
 import sc.shared.*
 
 @XStreamAlias(value = "winreason")
-enum class MQWinReason(override val message: String): IWinReason {
+enum class MQWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
     DIFFERING_SCORES("%s hat mehr Punkte."),
-    DIFFERING_PASSENGERS("%S hat mehr Passagiere befördert.");
-    override val isRegular = true
+    DIFFERING_PASSENGERS("%S hat mehr Passagiere befördert."),
+    SEGMENT_DISTANCE("%s liegt 3 Segmente vorne."),
+    GOAL("%s hat das Ziel zuerst erreicht."),
+    STUCK("%s kann sich nicht mehr bewegen.", false);
 }
 
 class GamePlugin: IGamePlugin {

@@ -2,6 +2,7 @@ package sc.api.plugins
 
 import sc.framework.PublicCloneable
 import sc.protocol.room.RoomMessage
+import sc.shared.WinCondition
 
 /**
  * Ein `GameState` beinhaltet alle Informationen,
@@ -44,6 +45,11 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     
     /** Ob das Spiel zu Ende ist. */
     val isOver: Boolean
+    
+    /** Falls es einen klaren Sieger anhand der Spielregeln unabhängig von der Punktzahl gibt.
+     * Wenn dieser Wert nicht null ist, sollte [isOver] true zurückgeben. */
+    val winCondition: WinCondition?
+        get() = null
     
     /** Gibt Punktzahlen des Teams passend zur ScoreDefinition des aktuellen Spielplugins zurück. */
     fun getPointsForTeam(team: ITeam): IntArray
