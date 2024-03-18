@@ -190,7 +190,7 @@ internal fun generateBoard(): Segments {
                     val lastSegments = segments.takeLast(4)
                     
                     previous.direction != lastSegments.first().direction.opposite()
-                            && it != lastSegments[1].direction.opposite()
+                            || it != lastSegments[1].direction.opposite()
                 }
                 .random()
         
