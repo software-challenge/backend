@@ -183,7 +183,16 @@ internal fun generateBoard(): Segments {
     val passengerTiles = shuffledIndices(PluginConstants.NUMBER_OF_SEGMENTS - 2, PluginConstants.NUMBER_OF_PASSENGERS).toArray()
     (2..PluginConstants.NUMBER_OF_SEGMENTS).forEach { index ->
         val previous = segments.last()
-        val direction = if(index == 2) CubeDirection.RIGHT else previous.direction.withNeighbors().filter { it != segments.takeLast(3).first().direction.opposite() }.random() // Do not allow three consecutive turns in one direction to prevent clashes
+        val direction = if(index == 2) CubeDirection.RIGHT else previous.direction
+                .withNeighbors()
+                // Do not allow four consecutive turns in one direction to prevent clashes
+                .filter {
+                    val lastSegments = segments.takeLast(4)
+                    
+                    previous.direction != lastSegments.first().direction.opposite()
+                            && it != lastSegments[1].direction.opposite()
+                }
+                .random()
         
         val segment =
                 generateSegment(index == PluginConstants.NUMBER_OF_SEGMENTS,
