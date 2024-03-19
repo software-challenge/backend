@@ -401,7 +401,7 @@ data class GameState @JvmOverloads constructor(
                     },
                     {
                         val dist = board.segmentDistance(ships.first().position, ships.last().position)
-                        WinCondition(ships[if(dist > 0) 0 else 1].team, MQWinReason.SEGMENT_DISTANCE).takeIf { dist.absoluteValue > 3 }
+                        WinCondition((if(dist > 0) ships.first() else ships.last()).team, MQWinReason.SEGMENT_DISTANCE).takeIf { dist.absoluteValue > 3 }
                     },
                     {
                         ships.singleOrNull { it.stuck }?.let { WinCondition(it.team.opponent(), MQWinReason.STUCK) }
