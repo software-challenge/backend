@@ -107,10 +107,10 @@ data class Board(
      *
      * @param coordinate1 Das erste Feld, von dem aus die Entfernung berechnet wird.
      * @param coordinate2 Das zweite Feld, aus dem die Entfernung berechnet wird.
-     * @return Der Abstand zwischen den angegebenen Feldern im Segment.
+     * @return Der Abstand zwischen den angegebenen Feldern im Segment, positives Vorzeichen wenn das erste Feld weiter vorne ist.
      */
     fun segmentDistance(coordinate1: CubeCoordinates, coordinate2: CubeCoordinates): Int =
-            abs(segmentIndex(coordinate1) - segmentIndex(coordinate2))
+            segmentIndex(coordinate1) - segmentIndex(coordinate2)
     
     /**
      * Findet den [segments]-Index für die angegebene [CubeCoordinates].
