@@ -135,9 +135,10 @@ data class GameState @JvmOverloads constructor(
         currentShip.movement = currentShip.speed
         turn++
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
-        if(!canMove() && !isOver) {
+        currentShip.stuck = !canMove()
+        
+        if(currentShip.stuck && !isOver) {
             lastMove = null
-            currentShip.stuck = true
             advanceTurn()
         }
     }
