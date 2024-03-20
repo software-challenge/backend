@@ -395,22 +395,16 @@ data class GameState @JvmOverloads constructor(
     
     override val winCondition: WinCondition?
         get() =
-            arrayOf(
-                    {
-                        ships.singleOrNull { inGoal(it) }?.let { WinCondition(it.team, MQWinReason.GOAL) }
-                    },
+            arrayOf({ ships.singleOrNull { inGoal(it) }?.let { WinCondition(it.team, MQWinReason.GOAL) } },
+                    { ships.singleOrNull { it.stuck }?.let { WinCondition(it.team.opponent(), MQWinReason.STUCK) } },
                     {
                         val dist = board.segmentDistance(ships.first().position, ships.last().position)
                         WinCondition(ships[if(dist > 0) 0 else 1].team, MQWinReason.SEGMENT_DISTANCE).takeIf { dist.absoluteValue > 3 }
                     },
-                    {
-                        ships.singleOrNull { it.stuck }?.let { WinCondition(it.team.opponent(), MQWinReason.STUCK) }
-                    }
             ).firstNotNullOfOrNull { it() }
     
     override val isOver: Boolean
         get() = when {
-            // TODO return a WinCondition here indicating why somebody won, especially because otherwise the person not in Goal might win from extra passengers
             // Bedingung 1: ein Dampfer mit 2 Passagieren erreicht ein Zielfeld mit Geschwindigkeit 1
             turn % 2 == 0 && ships.any { inGoal(it) } -> true
             // Bedingung 2: ein Spieler macht einen ungültigen Zug.
