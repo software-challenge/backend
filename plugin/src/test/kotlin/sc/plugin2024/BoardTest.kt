@@ -73,8 +73,8 @@ class BoardTest: FunSpec({
     
     test("segmentDistance") {
         board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(0, 2)) shouldBe 0
-        board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(1, 2)) shouldBe 1
-        board.segmentDistance(CubeCoordinates(-1, -2), CubeCoordinates(3, 2)) shouldBe 1
+        board.segmentDistance(CubeCoordinates.ORIGIN, CubeCoordinates(1, 2)) shouldBe -1
+        board.segmentDistance(CubeCoordinates(3, 2), CubeCoordinates(-1, -2)) shouldBe 1
     }
     
     test("find nearest field type") {
