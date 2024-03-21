@@ -15,8 +15,13 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - Allow other player to move on when one is disqualified
 
 ### 24.X - Post-Finale
-- Grey out winning ship so second player can follow
+- Allow one player to move on when other is stuck or finished
+  (add points depending on speed of reaching goal, do not require passengers?)
 - Improve XML protocol
+
+### 24.2.4 Adjust game ending inaccuracies - 2024-03-21
+- Immediately end game when one player gets stuck
+- Fix incorrect winner for edge cases involving segment distance
 
 ### 24.2.3 Fix circular Board edge-case - 2024-03-18
 
