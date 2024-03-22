@@ -426,7 +426,10 @@ data class GameState @JvmOverloads constructor(
     
     override fun getPointsForTeam(team: ITeam): IntArray =
             ships[team.index].let { ship ->
-                intArrayOf(ship.points, ship.passengers)
+                if(ship.stuck)
+                    intArrayOf(0, 0)
+                else
+                    intArrayOf(ship.points, ship.passengers)
             }
     
     override fun getPointsForTeamExtended(team: ITeam): IntArray =
