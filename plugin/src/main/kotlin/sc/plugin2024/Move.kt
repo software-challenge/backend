@@ -34,27 +34,12 @@ data class Move(
     override fun compareTo(other: Move): Int =
             actions.size.compareTo(other.actions.size)
     
-    /**
-     * Compares this move with the specified object to check if they are equal.
-     *
-     * @param other the object to compare with this move
-     * @return true if the specified object is a Move and contains the same actions as this move, false otherwise
-     */
+    /** @return true if the specified object is a Move and contains the same actions as this move, false otherwise */
     override fun equals(other: Any?): Boolean = other is Move && actions == other.actions
     
-    /**
-     * Returns the hash code value for this object.
-     *
-     * @return the hash code value for this object.
-     */
     override fun hashCode(): Int = actions.hashCode()
     
-    /**
-     * Returns a string representation of the object.
-     *
-     * @return The string representation of the object in the format "Move(action1, action2, ..., actionN)".
-     */
     override fun toString(): String =
-            actions.joinToString(separator = ", ", prefix = "Move[", postfix = "]")
+            actions.joinToString(separator = ", ", prefix = "Zug[", postfix = "]")
     
 }

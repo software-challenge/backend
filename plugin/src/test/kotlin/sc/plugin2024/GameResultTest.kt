@@ -122,7 +122,7 @@ class GameResultTest: WordSpec({
                       </score>
                     </entry>
                   </scores>
-                  <winner team="TWO" regular="false" reason="Regelverletzung von Alice: Der Zug enthält keine Aktionen bei &apos;Move[]&apos;"/>
+                  <winner team="TWO" regular="false" reason="Regelverletzung von Alice: Der Zug enthält keine Aktionen bei &apos;Zug[]&apos;"/>
                 </result>
             """.trimIndent()
         }
