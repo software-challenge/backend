@@ -19,6 +19,8 @@ The version should always be in sync with the [GUI](https://github.com/software-
   (add points depending on speed of reaching goal, do not require passengers?)
 - Improve XML protocol
 
+### 24.2.5 No points for stuck ship - 2024-03-27
+
 ### 24.2.4 Adjust game ending inaccuracies - 2024-03-21
 - Immediately end game when one player gets stuck
 - Fix incorrect winner for edge cases involving segment distance
