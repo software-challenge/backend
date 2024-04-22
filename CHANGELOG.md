@@ -14,7 +14,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
 ### 25.0.0 - 2024
 - Allow other player to move on when one is disqualified
 
-### 24.X - Post-Finale
+### 24 Post-Finale
 - Allow one player to move on when other is stuck or finished
   (add points depending on speed of reaching goal, do not require passengers?)
 - Improve XML protocol

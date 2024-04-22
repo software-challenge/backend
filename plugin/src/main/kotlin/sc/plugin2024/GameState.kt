@@ -417,9 +417,7 @@ data class GameState @JvmOverloads constructor(
             // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
             turn / 2 >= PluginConstants.ROUND_LIMIT -> true
             // Bedingung 5: beide Spieler können sich nicht mehr bewegen
-            // lastMove == null && !canMove() -> true
-            // Bedingung 5: Ein Spieler kann sich nicht mehr bewegen
-            ships.any { it.stuck } -> true
+            lastMove == null && !canMove() -> true
             // ansonsten geht das Spiel weiter
             else -> false
         }
