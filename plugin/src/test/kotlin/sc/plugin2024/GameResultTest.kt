@@ -5,12 +5,14 @@ import io.kotest.matchers.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
+import sc.framework.plugins.TwoPlayerGame
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.MoveMistake
+import sc.plugin2024.util.GamePlugin
 import sc.shared.InvalidMoveException
 import sc.shared.Violation
 import sc.shared.WinCondition
@@ -18,7 +20,7 @@ import sc.shared.WinReasonTie
 
 class GameResultTest: WordSpec({
     "Result XML" should {
-        val game = Game()
+        val game = TwoPlayerGame(GamePlugin(), GameState())
         "work when empty" {
             game.getResult() shouldSerializeTo """
                 <result>
@@ -204,7 +206,7 @@ class GameResultTest: WordSpec({
            </board>
         """.trimIndent()
         val state = GameState(testXStream.fromXML(boardXML) as Board)
-        val game = Game(state)
+        val game = TwoPlayerGame(GamePlugin(), state)
         game.onPlayerJoined()
         game.onPlayerJoined()
         "be correct on finish" {

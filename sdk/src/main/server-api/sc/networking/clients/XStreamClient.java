@@ -120,7 +120,8 @@ public abstract class XStreamClient implements IClient {
       }
     } catch (EOFException e) {
       logger.info("End of input reached, disconnecting {}", this);
-      logger.trace("Disconnected with", e);
+      logger.trace("{} disconnected with {}", this.getClass().getSimpleName(), e.toString(), e);
+      handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
     } catch (IOException e) {
       // The other side closed the connection.
       // It is better when the other side sends a CloseConnection message beforehand,
