@@ -279,7 +279,7 @@ class GameStateTest: FunSpec({
                 it.coal = 0
             }
             gameState.performMoveDirectly(Move(Advance(1)))
-            gameState.isOver shouldBe true //false
+            gameState.isOver shouldBe false
             gameState.turn shouldBe 2
             gameState.board.segments.first().fields[2][1] = Field.ISLAND
             gameState.ships.forEach {

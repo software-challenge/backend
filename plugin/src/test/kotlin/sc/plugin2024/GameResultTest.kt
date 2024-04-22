@@ -172,34 +172,34 @@ class GameResultTest: WordSpec({
             <board nextDirection="RIGHT">
              <segment direction="RIGHT">
                <center q="0" r="0" s="0"/>
-               <field-array>
+               <column>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
-               </field-array>
-               <field-array>
+               </column>
+               <column>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
-               </field-array>
-               <field-array>
+               </column>
+               <column>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
-               </field-array>
-               <field-array>
+               </column>
+               <column>
                  <water/>
                  <goal/>
                  <goal/>
                  <goal/>
                  <water/>
-               </field-array>
+               </column>
              </segment>
            </board>
         """.trimIndent()
