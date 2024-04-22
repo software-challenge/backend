@@ -11,7 +11,7 @@ import sc.shared.*
 
 data class TestGame(
         override val currentState: TestGameState = TestGameState(),
-): AbstractGame(TestPlugin()) {
+): AbstractGame<TestMove>(TestPlugin()) {
     
     override fun onRoundBasedAction(move: IMove) {
         if(move !is TestMove)

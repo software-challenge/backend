@@ -5,7 +5,7 @@ import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.shared.ScoreDefinition
 
-class TestPlugin: IGamePlugin {
+class TestPlugin: IGamePlugin<TestMove> {
     companion object {
         const val TEST_PLUGIN_UUID = "012345-norris"
     }
@@ -17,6 +17,8 @@ class TestPlugin: IGamePlugin {
     
     override val turnLimit
         get() = throw NotImplementedError()
+    
+    override val moveClass: Class<TestMove> = TestMove::class.java
     
     override fun createGame(): IGameInstance =
             TestGame()

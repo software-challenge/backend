@@ -5,7 +5,7 @@ import sc.framework.plugins.Constants
 import sc.shared.ScoreDefinition
 import java.util.ServiceLoader
 
-interface IGamePlugin {
+interface IGamePlugin<M : IMove> {
     /** Plugin identifier for the protocol. */
     val id: String
     /** Arrangement of ScoreFragments in the GameResult. */
@@ -19,6 +19,8 @@ interface IGamePlugin {
     val gameTimeout
         get() = turnLimit * Constants.SOFT_TIMEOUT
     
+    val moveClass: Class<M>
+    
     /** @return ein neues Spiel. */
     fun createGame(): IGameInstance
     /** @return ein neues Spiel mit dem gegebenen GameState. */
@@ -26,7 +28,7 @@ interface IGamePlugin {
     
     companion object {
         @JvmStatic
-        fun loadPlugins(): Iterator<IGamePlugin> =
+        fun loadPlugins(): Iterator<IGamePlugin<*>> =
                 ServiceLoader.load(IGamePlugin::class.java).iterator().takeIf {
                     it.hasNext()
                 } ?: throw PluginLoaderException("Could not find any game plugin")
@@ -34,13 +36,13 @@ interface IGamePlugin {
         /** @param gameType id of the plugin, if null return any
          * @return The plugin with an id equal to [gameType]. */
         @JvmStatic
-        fun loadPlugin(gameType: String?): IGamePlugin =
+        fun loadPlugin(gameType: String?): IGamePlugin<*> =
                 loadPlugins().asSequence().find {
                     gameType == null || it.id == gameType
                 } ?: throw PluginLoaderException("Could not find game of type '$gameType'")
         
         @JvmStatic
-        fun loadPlugin(): IGamePlugin =
+        fun loadPlugin(): IGamePlugin<*> =
                 loadPlugins().next()
         
         @JvmStatic

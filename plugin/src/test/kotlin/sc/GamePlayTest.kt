@@ -27,7 +27,7 @@ class GamePlayTest: WordSpec({
     val logger = LoggerFactory.getLogger(GamePlayTest::class.java)
     isolationMode = IsolationMode.SingleInstance
     val plugin = IGamePlugin.loadPlugin()
-    fun createGame() = plugin.createGame() as AbstractGame
+    fun createGame() = plugin.createGame() as AbstractGame<*>
     "A Game" should {
         val game = createGame()
         "let players join" {
