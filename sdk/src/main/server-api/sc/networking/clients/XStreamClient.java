@@ -94,21 +94,21 @@ public abstract class XStreamClient implements IClient {
   public void receiveThread() {
     try (ObjectInputStream in = xStream.createObjectInputStream(networkInterface.getInputStream())) {
       synchronized(readyLock) {
-        while (!isReady()) {
+        while(!isReady()) {
           readyLock.wait();
         }
       }
 
-      while (!Thread.interrupted()) {
+      while(!Thread.interrupted()) {
         Object object = in.readObject();
-        if (object instanceof ProtocolPacket) {
+        if(object instanceof ProtocolPacket) {
           ProtocolPacket response = (ProtocolPacket) object;
 
           logger.debug("Received {} via {}", response, networkInterface);
-          if (logger.isTraceEnabled())
-            logger.trace("Dumping {}:\n{}", response, xStream.toXML(response));
+          if(logger.isTraceEnabled())
+            logger.trace("Dumping received {}:\n{}", response, xStream.toXML(response));
 
-          if (response instanceof CloseConnection) {
+          if(response instanceof CloseConnection) {
             handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
             break;
           } else {
@@ -118,6 +118,9 @@ public abstract class XStreamClient implements IClient {
           throw new ClassNotFoundException("Received object of unknown class " + object.getClass().getName());
         }
       }
+    } catch (EOFException e) {
+      logger.info("End of input reached, disconnecting {}", this);
+      logger.trace("Disconnected with", e);
     } catch (IOException e) {
       // The other side closed the connection.
       // It is better when the other side sends a CloseConnection message beforehand,
@@ -182,7 +185,7 @@ public abstract class XStreamClient implements IClient {
 
     logger.debug("Sending {} via {} from {}", packet, networkInterface, this);
     if (logger.isTraceEnabled())
-      logger.trace("Dumping {}:\n{}", packet, xStream.toXML(packet));
+      logger.trace("Dumping sent {}:\n{}", packet, xStream.toXML(packet));
 
     try {
       this.out.writeObject(packet);
@@ -207,12 +210,12 @@ public abstract class XStreamClient implements IClient {
   }
 
   protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
-    logger.warn("{} disconnecting (Cause: {}, Exception: {})", this, cause, exception.toString(), exception);
+    logger.warn("Disconnecting with {} because of {}: {}", cause, exception.toString(), this, exception);
     handleDisconnect(cause);
   }
 
   protected void onDisconnected(DisconnectCause cause) {
-    logger.info("{} disconnected (Cause: {})", this, cause);
+    logger.info("Disconnected with {}: {}", cause, this);
   }
 
   public DisconnectCause getDisconnectCause() {
