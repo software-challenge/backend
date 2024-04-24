@@ -7,7 +7,7 @@ import io.kotest.matchers.collections.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.helpers.shouldSerializeTo
-import sc.plugin2024.util.PluginConstants
+import sc.plugin2024.util.MQConstants
 import kotlin.random.Random
 
 class SegmentTest: FunSpec({
@@ -29,7 +29,7 @@ class SegmentTest: FunSpec({
             val segment = generateSegment(true, arrayOf())
             segment.sumOf { it.count { it == Field.WATER } } shouldBe 17
             (1..3).toList().forAll {
-                segment[PluginConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe Field.GOAL
+                segment[MQConstants.SEGMENT_FIELDS_WIDTH - 1, it] shouldBe Field.GOAL
             }
         }
         test("proper board start") {

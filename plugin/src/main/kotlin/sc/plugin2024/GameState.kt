@@ -11,8 +11,8 @@ import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
 import sc.plugin2024.mistake.MoveMistake
 import sc.plugin2024.util.MQWinReason
-import sc.plugin2024.util.PluginConstants
-import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENT
+import sc.plugin2024.util.MQConstants
+import sc.plugin2024.util.MQConstants.POINTS_PER_SEGMENT
 import sc.shared.InvalidMoveException
 import sc.shared.WinCondition
 import kotlin.math.absoluteValue
@@ -79,7 +79,7 @@ data class GameState @JvmOverloads constructor(
             }
     
     fun calculatePoints(ship: Ship) =
-            shipAdvancePoints(ship) + ship.passengers * PluginConstants.POINTS_PER_PASSENGER
+        shipAdvancePoints(ship) + ship.passengers * MQConstants.POINTS_PER_PASSENGER
     
     fun isCurrentShipOnCurrent() =
             board.doesFieldHaveCurrent(currentShip.position)
@@ -338,7 +338,7 @@ data class GameState @JvmOverloads constructor(
         var currentPosition = start
         var totalCost = 0
         var hasCurrent = false
-        val maxMovement = maxMovementPoints.coerceIn(0, PluginConstants.MAX_SPEED)
+        val maxMovement = maxMovementPoints.coerceIn(0, MQConstants.MAX_SPEED)
         val result = ArrayList<Int>(maxMovement)
         
         fun result(condition: AdvanceProblem) =
@@ -386,8 +386,8 @@ data class GameState @JvmOverloads constructor(
         
         return (1..maxCoal + currentShip.freeAcc).flatMap { i ->
             listOfNotNull(
-                    Accelerate(i).takeIf { PluginConstants.MAX_SPEED >= currentShip.speed + i },
-                    Accelerate(-i).takeIf { PluginConstants.MIN_SPEED <= currentShip.speed - i }
+                    Accelerate(i).takeIf { MQConstants.MAX_SPEED >= currentShip.speed + i },
+                    Accelerate(-i).takeIf { MQConstants.MIN_SPEED <= currentShip.speed - i }
             )
         }
     }
@@ -415,7 +415,7 @@ data class GameState @JvmOverloads constructor(
             // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
             board.segmentDistance(ships.first().position, ships.last().position).absoluteValue > 3 -> true
             // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
-            turn / 2 >= PluginConstants.ROUND_LIMIT -> true
+            turn / 2 >= MQConstants.ROUND_LIMIT -> true
             // Bedingung 5: beide Spieler können sich nicht mehr bewegen
             lastMove == null && !canMove() -> true
             // ansonsten geht das Spiel weiter
@@ -435,7 +435,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun getPointsForTeamExtended(team: ITeam): IntArray =
             ships[team.index].let { ship ->
-                intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) PluginConstants.FINISH_POINTS else 0)
+                intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) MQConstants.FINISH_POINTS else 0)
             }
     
     override fun teamStats(team: ITeam): List<Pair<String, Int>> =

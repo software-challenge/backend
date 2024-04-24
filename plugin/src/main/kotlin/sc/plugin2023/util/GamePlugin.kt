@@ -27,7 +27,7 @@ class GamePlugin: IGamePlugin<Move> {
             Companion.scoreDefinition
     
     override val turnLimit: Int =
-            PluginConstants.BOARD_SIZE * PluginConstants.BOARD_SIZE
+        PenguinConstants.BOARD_SIZE * PenguinConstants.BOARD_SIZE
     
     override val moveClass: Class<Move> = Move::class.java
     
