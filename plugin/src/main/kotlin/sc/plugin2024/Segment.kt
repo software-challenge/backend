@@ -9,7 +9,7 @@ import sc.api.plugins.CubeDirection
 import sc.api.plugins.deepCopy
 import sc.framework.PublicCloneable
 import sc.framework.shuffledIndices
-import sc.plugin2024.util.PluginConstants
+import sc.plugin2024.util.MQConstants
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -92,7 +92,7 @@ data class Segment(
     
     companion object {
         fun inDirection(previousCenter: CubeCoordinates, direction: CubeDirection, fields: SegmentFields) =
-                Segment(direction, previousCenter + direction.vector * PluginConstants.SEGMENT_FIELDS_WIDTH, fields)
+                Segment(direction, previousCenter + direction.vector * MQConstants.SEGMENT_FIELDS_WIDTH, fields)
         
         fun empty(center: CubeCoordinates = CubeCoordinates.ORIGIN) =
                 Segment(CubeDirection.RIGHT, center, generateSegment(false, arrayOf()))
@@ -143,7 +143,7 @@ internal fun generateSegment(
         end: Boolean,
         fieldsToPlace: Array<Field>,
 ): SegmentFields {
-    val fields: SegmentFields = Array(PluginConstants.SEGMENT_FIELDS_WIDTH) { Array(PluginConstants.SEGMENT_FIELDS_HEIGHT) { Field.WATER } }
+    val fields: SegmentFields = Array(MQConstants.SEGMENT_FIELDS_WIDTH) { Array(MQConstants.SEGMENT_FIELDS_HEIGHT) { Field.WATER } }
     val columnsButLast = fields.size - 1
     
     var currentField = 0
@@ -173,23 +173,23 @@ internal fun generateSegment(
 }
 
 internal fun generateBoard(): Segments {
-    val segments = ArrayList<Segment>(PluginConstants.NUMBER_OF_SEGMENTS)
+    val segments = ArrayList<Segment>(MQConstants.NUMBER_OF_SEGMENTS)
     segments.add(Segment(
             CubeDirection.RIGHT,
             CubeCoordinates.ORIGIN,
             generateSegment(false, arrayOf())
     ))
     
-    val passengerTiles = shuffledIndices(PluginConstants.NUMBER_OF_SEGMENTS - 2, PluginConstants.NUMBER_OF_PASSENGERS).toArray()
-    (2..PluginConstants.NUMBER_OF_SEGMENTS).forEach { index ->
+    val passengerTiles = shuffledIndices(MQConstants.NUMBER_OF_SEGMENTS - 2, MQConstants.NUMBER_OF_PASSENGERS).toArray()
+    (2..MQConstants.NUMBER_OF_SEGMENTS).forEach { index ->
         val previous = segments.last()
         val direction = if(index == 2) CubeDirection.RIGHT else previous.direction.withNeighbors().filter { it != segments.takeLast(3).first().direction.opposite() }.random() // Do not allow three consecutive turns in one direction to prevent clashes
         
         val segment =
-                generateSegment(index == PluginConstants.NUMBER_OF_SEGMENTS,
-                        Array<Field>(Random.nextInt(PluginConstants.MIN_ISLANDS..PluginConstants.MAX_ISLANDS)) { Field.ISLAND } +
-                        Array<Field>(Random.nextInt(PluginConstants.MIN_SPECIAL..PluginConstants.MAX_SPECIAL)) { Field.SANDBANK } +
-                        Array<Field>(if(passengerTiles.contains(index - 2)) 1 else 0) { Field.PASSENGER() }
+                generateSegment(index == MQConstants.NUMBER_OF_SEGMENTS,
+                    Array<Field>(Random.nextInt(MQConstants.MIN_ISLANDS..MQConstants.MAX_ISLANDS)) { Field.ISLAND } +
+                    Array<Field>(Random.nextInt(MQConstants.MIN_SPECIAL..MQConstants.MAX_SPECIAL)) { Field.SANDBANK } +
+                    Array<Field>(if(passengerTiles.contains(index - 2)) 1 else 0) { Field.PASSENGER() }
                 )
         segment.forEachField { c, f ->
             // Turn local passenger field rotation into global

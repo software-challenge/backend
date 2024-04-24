@@ -20,7 +20,7 @@ import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
 import sc.plugin2024.mistake.MoveMistake
-import sc.plugin2024.util.PluginConstants
+import sc.plugin2024.util.MQConstants
 import sc.shared.InvalidMoveException
 
 class GameStateTest: FunSpec({
@@ -117,8 +117,8 @@ class GameStateTest: FunSpec({
     
     context("getPossibleActions") {
         test("getPossibleAccelerations") {
-            gameState.getPossibleAccelerations(0).size shouldBe PluginConstants.FREE_ACC
-            gameState.getPossibleAccelerations(1).size shouldBe PluginConstants.FREE_ACC + 1
+            gameState.getPossibleAccelerations(0).size shouldBe MQConstants.FREE_ACC
+            gameState.getPossibleAccelerations(1).size shouldBe MQConstants.FREE_ACC + 1
             gameState.getPossibleAccelerations().size shouldBe 5
         }
         test("getPossibleTurns") {

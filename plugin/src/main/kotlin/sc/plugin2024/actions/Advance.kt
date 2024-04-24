@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.CubeDirection
 import sc.plugin2024.*
 import sc.plugin2024.mistake.AdvanceProblem
-import sc.plugin2024.util.PluginConstants
+import sc.plugin2024.util.MQConstants
 import kotlin.math.absoluteValue
 
 /**
@@ -30,9 +30,9 @@ data class Advance(
 ): Action, Addable<Advance> {
     
     override fun perform(state: GameState): AdvanceProblem? {
-        if(distance < PluginConstants.MIN_SPEED &&
+        if(distance < MQConstants.MIN_SPEED &&
            state.board[state.currentShip.position] != Field.SANDBANK ||
-           distance > PluginConstants.MAX_SPEED)
+           distance > MQConstants.MAX_SPEED)
             return AdvanceProblem.INVALID_DISTANCE
         if(distance > state.currentShip.movement)
             return AdvanceProblem.MOVEMENT_POINTS_MISSING

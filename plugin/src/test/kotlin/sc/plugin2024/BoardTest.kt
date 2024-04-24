@@ -14,7 +14,7 @@ import sc.api.plugins.Team
 import sc.helpers.checkSerialization
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
-import sc.plugin2024.util.PluginConstants
+import sc.plugin2024.util.MQConstants
 
 class BoardTest: FunSpec({
     context("get field by CubeCoordinates") {
@@ -41,10 +41,10 @@ class BoardTest: FunSpec({
         test("end of second segment") {
             val board = Board()
             board.getCoordinateByIndex(1,
-                    PluginConstants.SEGMENT_FIELDS_WIDTH - 1, 0) shouldBe CubeCoordinates(6, -2)
+                MQConstants.SEGMENT_FIELDS_WIDTH - 1, 0) shouldBe CubeCoordinates(6, -2)
             board.getCoordinateByIndex(1,
-                    PluginConstants.SEGMENT_FIELDS_WIDTH - 1,
-                    PluginConstants.SEGMENT_FIELDS_HEIGHT - 1) shouldBe CubeCoordinates(4, 2)
+                MQConstants.SEGMENT_FIELDS_WIDTH - 1,
+                MQConstants.SEGMENT_FIELDS_HEIGHT - 1) shouldBe CubeCoordinates(4, 2)
             board[CubeCoordinates(6, -2)] shouldBe Field.WATER // top right
             board[CubeCoordinates(4, 2)] shouldBe Field.WATER // bottom right
         }
@@ -219,7 +219,7 @@ class BoardTest: FunSpec({
         }
         test("random Board has correct length") {
             testXStream.toXML(board) shouldHaveLineCount 64
-            board.visibleSegments = PluginConstants.NUMBER_OF_SEGMENTS
+            board.visibleSegments = MQConstants.NUMBER_OF_SEGMENTS
             val full = testXStream.toXML(board)
             full shouldHaveLineCount 250
             testXStream.fromXML(full) shouldBe board

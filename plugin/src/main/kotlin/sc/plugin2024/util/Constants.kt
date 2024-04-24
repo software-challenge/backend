@@ -1,7 +1,7 @@
 package sc.plugin2024.util
 
 /** Eine Sammlung an verschiedenen Konstanten, die im Spiel verwendet werden. */
-object PluginConstants {
+object MQConstants {
     const val ROUND_LIMIT = 30
     
     // Ship Properties

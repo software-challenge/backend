@@ -1,6 +1,7 @@
-package sc.plugin2024
+package sc.plugin2024.util
 
 import sc.networking.XStreamProvider
+import sc.plugin2024.*
 import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
