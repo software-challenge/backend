@@ -15,8 +15,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - Allow other player to move on when one is disqualified
 
 ### 24 Post-Finale
-- Allow one player to move on when other is stuck or finished
-  (add points depending on speed of reaching goal, do not require passengers?)
+- Allow one player to move on when other is stuck (now for clarification: crashed) or finished
 - Improve XML protocol
 
 ### 24.2.5 No points for stuck ship - 2024-03-27

@@ -10,9 +10,9 @@ import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
 import sc.plugin2024.mistake.MoveMistake
-import sc.plugin2024.util.MQWinReason
 import sc.plugin2024.util.MQConstants
 import sc.plugin2024.util.MQConstants.POINTS_PER_SEGMENT
+import sc.plugin2024.util.MQWinReason
 import sc.shared.InvalidMoveException
 import sc.shared.WinCondition
 import kotlin.math.absoluteValue
@@ -140,7 +140,7 @@ data class GameState @JvmOverloads constructor(
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
         if(!canMove() && !isOver) {
             lastMove = null
-            currentShip.stuck = true
+            currentShip.crashed = true
             advanceTurn()
         }
     }
@@ -394,12 +394,12 @@ data class GameState @JvmOverloads constructor(
     
     // In rare cases this returns true on the server even though the player cannot move
     // because the target tile is not revealed yet
-    fun canMove() = !currentShip.stuck && moveIterator().hasNext()
+    fun canMove() = !currentShip.crashed && moveIterator().hasNext()
     
     override val winCondition: WinCondition?
         get() =
             arrayOf({ ships.singleOrNull { inGoal(it) }?.let { WinCondition(it.team, MQWinReason.GOAL) } },
-                    { ships.singleOrNull { it.stuck }?.let { WinCondition(it.team.opponent(), MQWinReason.STUCK) } },
+                    { ships.singleOrNull { it.crashed }?.let { WinCondition(it.team.opponent(), MQWinReason.CRASHED) } },
                     {
                         val dist = board.segmentDistance(ships.first().position, ships.last().position)
                         WinCondition(ships[if(dist > 0) 0 else 1].team, MQWinReason.SEGMENT_DISTANCE).takeIf { dist.absoluteValue > 3 }
@@ -427,7 +427,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun getPointsForTeam(team: ITeam): IntArray =
             ships[team.index].let { ship ->
-                if(ship.stuck)
+                if(ship.crashed)
                     intArrayOf(0, 0)
                 else
                     intArrayOf(ship.points, ship.passengers)

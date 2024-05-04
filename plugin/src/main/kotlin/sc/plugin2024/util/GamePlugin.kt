@@ -15,7 +15,7 @@ enum class MQWinReason(override val message: String, override val isRegular: Boo
     DIFFERING_PASSENGERS("%S hat mehr Passagiere befördert."),
     SEGMENT_DISTANCE("%s liegt 3 Segmente vorne."),
     GOAL("%s hat das Ziel zuerst erreicht."),
-    STUCK("%s kann sich nicht mehr bewegen.", false);
+    CRASHED("%s kann sich nicht mehr bewegen.", false);
 }
 
 class GamePlugin: IGamePlugin<Move> {
