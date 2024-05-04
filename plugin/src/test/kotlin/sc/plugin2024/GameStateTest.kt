@@ -331,10 +331,10 @@ class GameStateTest: FunSpec({
         GameState(Board(listOf()), lastMove = Move(Accelerate(1), Advance(2))) shouldSerializeTo """
             <state startTeam="ONE" turn="0" currentTeam="ONE">
               <board nextDirection="RIGHT"/>
-              <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" stuck="false">
+              <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" crashed="false">
                 <position q="-1" r="-1" s="2"/>
               </ship>
-              <ship team="TWO" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" stuck="false">
+              <ship team="TWO" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" crashed="false">
                 <position q="-2" r="1" s="1"/>
               </ship>
               <lastMove>

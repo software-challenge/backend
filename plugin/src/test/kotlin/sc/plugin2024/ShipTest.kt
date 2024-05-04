@@ -1,6 +1,5 @@
 package sc.plugin2024
 
-import com.thoughtworks.xstream.XStream
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import sc.api.plugins.CubeCoordinates
@@ -16,7 +15,7 @@ class ShipTest: FunSpec({
     }
     test("serializes nicely") {
          shipOne shouldSerializeTo """
-            <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" stuck="false">
+            <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" crashed="false">
               <position q="-1" r="-1" s="2"/>
             </ship>"""
     }
