@@ -31,7 +31,10 @@ data class GameState @JvmOverloads constructor(
     
     val currentPlayer
         get() = getHare(currentTeam)
-    
+
+    val otherPlayer
+        get() = if (currentPlayer == players[0]) players[1] else players[0]
+
     val aheadPlayer
         get() = players.maxByOrNull { it.position }!!
     
