@@ -7,7 +7,7 @@ import sc.plugin2025.util.HuIConstants
 
 data class Hare(
     @XStreamAsAttribute val team: Team,
-    @XStreamAsAttribute val position: Int = 0,
+    @XStreamAsAttribute var position: Int = 0,
     @XStreamAsAttribute var salads: Int = HuIConstants.INITIAL_SALADS,
     @XStreamAsAttribute var carrots: Int = HuIConstants.INITIAL_CARROTS,
     @XStreamAsAttribute var lastAction: Action? = null,

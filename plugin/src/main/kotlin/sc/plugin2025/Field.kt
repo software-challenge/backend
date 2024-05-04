@@ -2,7 +2,7 @@ package sc.plugin2025
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 
-/** Die unterschiedlichen Spielfelder aus dem Hase und Igel Original. */
+/** Die unterschiedlichen Spielfelder aus dem Hasen und Igel Original. */
 @XStreamAlias(value = "field")
 enum class Field(val short: String, val unicode: String = short) {
     /**
