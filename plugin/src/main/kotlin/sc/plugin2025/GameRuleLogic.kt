@@ -92,28 +92,6 @@ object GameRuleLogic {
         (0..calculateMoveableFields(state.currentPlayer.carrots))
             .any { isValidToAdvance(state, it) }
 
-
-    /**
-     * Überprüft `EatSalad` Züge auf Korrektheit. Um einen Salat
-     * zu verzehren, muss der Spieler sich:
-     *
-     * - auf einem Salatfeld befinden
-     * - noch mindestens einen Salat besitzen
-     * - vorher kein Salat auf diesem Feld verzehrt wurde
-     *
-     * @param state GameState
-     * @return true, falls ein Salat gegessen werden darf
-     */
-    fun isValidToEat(state: GameState): Boolean {
-        val player: Hare = state.currentPlayer
-
-        val isSaladField = state.board.getField(player.position) == Field.SALAD
-        val hasSalad = player.salads > 0
-        val mustNotAdvance = !playerMustAdvance(state)
-
-        return isSaladField && hasSalad && mustNotAdvance
-    }
-
     /**
      * Überprüft ab der derzeitige Spieler im nächsten Zug einen Vorwärtszug machen muss.
      * @param state GameState
@@ -125,7 +103,7 @@ object GameRuleLogic {
 
         if (type == Field.HEDGEHOG || type == Field.START) return true
 
-        val lastAction: Action? = player.lastAction
+        val lastAction: HuIMove? = player.lastAction
 
         if (lastAction is EatSalad) return true
         else if (lastAction is CardAction) {

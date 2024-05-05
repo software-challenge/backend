@@ -10,7 +10,7 @@ data class Hare(
     @XStreamAsAttribute var position: Int = 0,
     @XStreamAsAttribute var salads: Int = HuIConstants.INITIAL_SALADS,
     @XStreamAsAttribute var carrots: Int = HuIConstants.INITIAL_CARROTS,
-    @XStreamAsAttribute var lastAction: Action? = null,
+    @XStreamAsAttribute var lastAction: HuIMove? = null,
     private val cards: ArrayList<Card> = arrayListOf(*Card.values()),
 ): PublicCloneable<Hare> {
     fun getCards(): List<Card> = cards

@@ -13,11 +13,11 @@ import sc.api.plugins.IMove
  * @property actions The list of actions in the move.
  */
 data class Move(
-        @XStreamImplicit
-        val actions: List<Action>,
+    @XStreamImplicit
+        val actions: List<HuIMove>,
 ): IMove, Comparable<Move> {
     
-    constructor(vararg actions: Action) : this(actions.asList())
+    constructor(vararg actions: HuIMove) : this(actions.asList())
     
     /**
      * Compares this Move instance with the specified Move for order.
