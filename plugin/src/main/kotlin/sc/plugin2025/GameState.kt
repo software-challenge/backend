@@ -65,6 +65,17 @@ data class GameState @JvmOverloads constructor(
         currentField == Field.HARE &&
         player.lastAction !is CardAction
     
+    
+    /**
+     * Überprüft `EatSalad` Zug auf Korrektheit.
+     * Um einen Salat zu verzehren, muss der Spieler sich:
+     *
+     * - auf einem Salatfeld befinden
+     * - noch mindestens einen Salat besitzen
+     * - vorher kein Salat auf diesem Feld verzehrt wurde
+     *
+     * @return true, falls ein Salat gegessen werden darf
+     */
     fun canEatSalad(player: Hare = currentPlayer) =
         player.salads > 0 &&
         board.getField(player.position) == Field.SALAD &&

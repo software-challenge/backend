@@ -16,7 +16,7 @@ enum class Card {
     HURRY_AHEAD
 }
 
-sealed class CardAction: Action {
+sealed class CardAction: HuIMove {
     abstract val card: Card
     data class PlayCard(override val card: Card): CardAction() {
         override fun perform(state: GameState): IMoveMistake? {

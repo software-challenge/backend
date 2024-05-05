@@ -2,6 +2,7 @@ package sc.plugin2025
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import sc.api.plugins.IMove
 import sc.plugin2025.GameRuleLogic.calculateCarrots
 import sc.plugin2025.GameRuleLogic.isValidToAdvance
 import sc.shared.IMoveMistake
@@ -11,7 +12,7 @@ import sc.shared.IMoveMistake
  * berechnet (Gaußsche Summe)
  */
 @XStreamAlias(value = "advance")
-class Advance(@XStreamAsAttribute val distance: Int) : Action {
+class Advance(@XStreamAsAttribute val distance: Int) : IMove {
 
     override fun perform(state: GameState): IMoveMistake? {
         if (isValidToAdvance(state, this.distance)) {
