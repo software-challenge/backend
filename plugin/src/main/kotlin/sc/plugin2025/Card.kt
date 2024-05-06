@@ -29,4 +29,56 @@ sealed class CardAction: HuIMove {
             TODO("Not yet implemented")
         }
     }
+    
+    
+    /*
+  @Override
+  public void perform(GameState state) throws InvalidMoveException {
+    state.getCurrentPlayer().setMustPlayCard(false); // player played a card
+    switch (type) { // when entering a HARE field with fall_back or hurry ahead, player has to play another card
+      case EAT_SALAD:
+        if (GameRuleLogic.isValidToPlayEatSalad(state)) {
+          state.getCurrentPlayer().eatSalad();
+          if (state.isFirst(state.getCurrentPlayer())) {
+            state.getCurrentPlayer().changeCarrotsBy(10);
+          } else {
+            state.getCurrentPlayer().changeCarrotsBy(30);
+          }
+        } else {
+          throw new InvalidMoveException("Das Ausspielen der EAT_SALAD Karte ist nicht möglich.");
+        }
+        break;
+      case FALL_BACK:
+        if (GameRuleLogic.isValidToPlayFallBack(state)) {
+          state.getCurrentPlayer().setFieldIndex(state.getOtherPlayer().getFieldIndex() - 1);
+          if (state.fieldOfCurrentPlayer() == Field.HARE) {
+            state.getCurrentPlayer().setMustPlayCard(true);
+          }
+        } else {
+          throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
+        }
+        break;
+      case HURRY_AHEAD:
+        if (GameRuleLogic.isValidToPlayHurryAhead(state)) {
+          state.getCurrentPlayer().setFieldIndex(state.getOtherPlayer().getFieldIndex() + 1);
+          if (state.fieldOfCurrentPlayer() == Field.HARE) {
+            state.getCurrentPlayer().setMustPlayCard(true);
+          }
+        } else {
+          throw new InvalidMoveException("Das Ausspielen der HURRY_AHEAD Karte ist nicht möglich.");
+        }
+        break;
+      case TAKE_OR_DROP_CARROTS:
+        if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(state, this.getValue())) {
+          state.getCurrentPlayer().changeCarrotsBy(this.getValue());
+        } else {
+          throw new InvalidMoveException("Das Ausspielen der TAKE_OR_DROP_CARROTS Karte ist nicht möglich.");
+        }
+        break;
+    }
+    state.setLastAction(this);
+    // remove player card
+    state.getCurrentPlayer().setCards(state.getCurrentPlayer().getCardsWithout(this.type));
+  }
+  */
 }

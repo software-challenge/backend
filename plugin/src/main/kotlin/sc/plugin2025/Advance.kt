@@ -8,22 +8,29 @@ import sc.plugin2025.GameRuleLogic.isValidToAdvance
 import sc.shared.IMoveMistake
 
 /**
- * Ein Vorwärtszug, um spezifizierte Distanz. Verbrauchte Karotten werden mit k = (distance * (distance + 1)) / 2
- * berechnet (Gaußsche Summe)
+ * Ein Vorwärtszug, um spezifizierte Distanz.
+ * Verbrauchte Karotten werden mit k = (distance * (distance + 1)) / 2 berechnet (Gaußsche Summe).
+ * Falls der Zug auf einem Hasenfeld endet, müssen auszuführende Hasenkarten mitgegeben werden.
  */
 @XStreamAlias(value = "advance")
-class Advance(@XStreamAsAttribute val distance: Int) : IMove {
+data class Advance(@XStreamAsAttribute val distance: Int, val cards: Array<out CardAction> = arrayOf()) : HuIMove {
+    
+    constructor(distance: Int, vararg cards: CardAction) : this(distance, cards)
 
     override fun perform(state: GameState): IMoveMistake? {
         if (isValidToAdvance(state, this.distance)) {
-            state.currentPlayer.carrots -= calculateCarrots(this.distance)
-            state.currentPlayer.position += distance
+            val player = state.currentPlayer
+            player.carrots -= calculateCarrots(this.distance)
+            player.position += distance
+            if(state.currentField == Field.HARE) {
+                if(cards.isEmpty())
+                    return MoveMistake.MUST_PLAY_CARD
+                return cards.firstNotNullOfOrNull { it.perform(state) }
+            }
             return null
         } else {
             return MoveMistake.CANNOT_MOVE_FORWARD
         }
     }
-
-    override fun equals(other: Any?) = other is Advance && this.distance == other.distance
-    override fun hashCode(): Int = distance
+    
 }
