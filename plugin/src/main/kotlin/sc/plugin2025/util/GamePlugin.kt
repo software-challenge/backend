@@ -5,8 +5,8 @@ import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.framework.plugins.TwoPlayerGame
-import sc.plugin2024.GameState
-import sc.plugin2024.Move
+import sc.plugin2025.GameState
+import sc.plugin2025.HuIMove
 import sc.shared.*
 
 @XStreamAlias(value = "winreason")
@@ -16,7 +16,7 @@ enum class HuIWinReason(override val message: String, override val isRegular: Bo
     GOAL("%s hat das Ziel zuerst erreicht."),
 }
 
-class GamePlugin: IGamePlugin<Move> {
+class GamePlugin: IGamePlugin<HuIMove> {
     companion object {
         const val PLUGIN_ID = "swc_2025_hase_und_igel"
         val scoreDefinition: ScoreDefinition =
@@ -35,7 +35,7 @@ class GamePlugin: IGamePlugin<Move> {
     override val turnLimit: Int =
         HuIConstants.ROUND_LIMIT * 2
     
-    override val moveClass = Move::class.java
+    override val moveClass = HuIMove::class.java
     
     override fun createGame(): IGameInstance =
             TwoPlayerGame(this, GameState())

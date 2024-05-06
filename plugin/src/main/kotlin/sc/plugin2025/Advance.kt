@@ -13,10 +13,8 @@ import sc.shared.IMoveMistake
  * Falls der Zug auf einem Hasenfeld endet, müssen auszuführende Hasenkarten mitgegeben werden.
  */
 @XStreamAlias(value = "advance")
-data class Advance(@XStreamAsAttribute val distance: Int, val cards: Array<out CardAction> = arrayOf()) : HuIMove {
+class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: CardAction) : HuIMove {
     
-    constructor(distance: Int, vararg cards: CardAction) : this(distance, cards)
-
     override fun perform(state: GameState): IMoveMistake? {
         if (isValidToAdvance(state, this.distance)) {
             val player = state.currentPlayer

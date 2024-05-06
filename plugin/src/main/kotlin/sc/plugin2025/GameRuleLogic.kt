@@ -56,7 +56,7 @@ object GameRuleLogic {
         return when (state.board.getField(newPosition)) {
             Field.SALAD -> player.salads > 0
             Field.HARE -> {
-                val advanceMove = Move(listOf(Advance(distance)))
+                val advanceMove = Advance(distance)
                 val nextState: GameState = state.performMove(advanceMove) as GameState
                 canPlayAnyCard(nextState)
             }
@@ -160,7 +160,7 @@ object GameRuleLogic {
         return when (state.board.getField(nextPos)) {
             Field.SALAD -> player.salads > 0
             Field.HARE -> {
-                val fallBack = Move(listOf(CardAction.PlayCard(Card.FALL_BACK)))
+                val fallBack = CardAction.PlayCard(Card.FALL_BACK)
                 val nextState: GameState = state.performMove(fallBack) as GameState
                 canPlayAnyCard(nextState)
             }
@@ -189,7 +189,7 @@ object GameRuleLogic {
         return when (state.board.getField(nextPos)) {
             Field.SALAD -> player.salads > 0
             Field.HARE -> {
-                val fallBack = Move(listOf(CardAction.PlayCard(Card.HURRY_AHEAD)))
+                val fallBack = CardAction.PlayCard(Card.HURRY_AHEAD)
                 val nextState: GameState = state.performMove(fallBack) as GameState
                 canPlayAnyCard(nextState)
             }

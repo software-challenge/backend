@@ -7,7 +7,7 @@ class XStreamClasses: XStreamProvider {
     
     override val classesToRegister =
             listOf(
-                    Move::class.java
+                    HuIMove::class.java
             )
     
 }
