@@ -26,8 +26,8 @@ data class GameState @JvmOverloads constructor(
     @XStreamImplicit
     val players: List<Hare> = Team.values().map { Hare(it) },
     /** Der zuletzt gespielte Zug. */
-    override var lastMove: Move? = null,
-): TwoPlayerGameState<Move>(players.first().team) {
+    override var lastMove: HuIMove? = null,
+): TwoPlayerGameState<HuIMove>(players.first().team) {
     
     val currentPlayer
         get() = getHare(currentTeam)
@@ -51,14 +51,8 @@ data class GameState @JvmOverloads constructor(
     override val isOver: Boolean
         get() = players.any { it.inGoal }
     
-    override fun performMoveDirectly(move: Move) {
-        move.actions.forEach {
-            if(mustPlayCard() && it !is CardAction)
-                throw InvalidMoveException(MoveMistake.MUST_PLAY_CARD)
-            it.perform(this)
-        }
-        if(mustPlayCard())
-            throw InvalidMoveException(MoveMistake.MUST_PLAY_CARD)
+    override fun performMoveDirectly(move: HuIMove) {
+        move.perform(this)
     }
     
     fun mustPlayCard(player: Hare = currentPlayer) =
@@ -81,7 +75,7 @@ data class GameState @JvmOverloads constructor(
         board.getField(player.position) == Field.SALAD &&
         player.lastAction != EatSalad
     
-    override fun moveIterator(): Iterator<Move> = TODO()
+    override fun moveIterator(): Iterator<HuIMove> = TODO()
     
     override fun clone(): GameState =
         copy(board = board.clone(), players = players.clone())

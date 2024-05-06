@@ -83,7 +83,7 @@ public class GameState implements Cloneable {
   /**
    * letzter getaetigter Zug
    */
-  private Move lastMove;
+  private HuIMove lastMove;
 
   /**
    * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt
@@ -132,7 +132,7 @@ public class GameState implements Cloneable {
     if (blue != null)
       clone.blue = this.blue.clone();
     if (lastMove != null)
-      clone.lastMove = (Move) this.lastMove.clone();
+      clone.lastMove = (HuIMove) this.lastMove.clone();
     if (board != null)
       clone.board = this.board.clone();
     if (currentPlayer != null)
@@ -482,7 +482,7 @@ public class GameState implements Cloneable {
    * Setzt letzten Zug. Nur für den Server relevant.
    * @param lastMove letzter Zug
    */
-  protected void setLastMove(Move lastMove) {
+  protected void setLastMove(HuIMove lastMove) {
     this.lastMove = lastMove;
   }
 
@@ -501,7 +501,7 @@ public class GameState implements Cloneable {
    * Gibt den letzten Zugzurück
    * @return letzter Zug
    */
-  public Move getLastMove() {
+  public HuIMove getLastMove() {
     return this.lastMove;
   }
 
@@ -541,29 +541,29 @@ public class GameState implements Cloneable {
     return fieldOfCurrentPlayer().equals(sc.plugin2018.Field.HARE);
   }
 
-  public ArrayList<Move> getPossibleMoves() {
-    ArrayList<Move> possibleMove = new ArrayList<>();
+  public ArrayList<HuIMove> getPossibleMoves() {
+    ArrayList<HuIMove> possibleMove = new ArrayList<>();
     ArrayList<Action> actions = new ArrayList<>();
     if (GameRuleLogic.isValidToEat(this)) {
       // Wenn ein Salat gegessen werden kann, muss auch ein Salat gegessen werden
       actions.add(new sc.plugin2018.EatSalad());
-      Move move = new Move(actions);
+      HuIMove move = new HuIMove(actions);
       possibleMove.add(move);
       return possibleMove;
     }
     if (GameRuleLogic.isValidToExchangeCarrots(this, 10)) {
       actions.add(new sc.plugin2018.ExchangeCarrots(10));
-      possibleMove.add(new Move(actions));
+      possibleMove.add(new HuIMove(actions));
       actions.clear();
     }
     if (GameRuleLogic.isValidToExchangeCarrots(this, -10)) {
       actions.add(new sc.plugin2018.ExchangeCarrots(-10));
-      possibleMove.add(new Move(actions));
+      possibleMove.add(new HuIMove(actions));
       actions.clear();
     }
     if (GameRuleLogic.isValidToFallBack(this)) {
       actions.add(new sc.plugin2018.FallBack());
-      possibleMove.add(new Move(actions));
+      possibleMove.add(new HuIMove(actions));
       actions.clear();
     }
     // Generiere mögliche Vorwärtszüge
@@ -590,16 +590,16 @@ public class GameState implements Cloneable {
           possibleMove.addAll(clone.checkForPlayableCards(actions));
         } else {
           // Füge möglichen Vorwärtszug hinzu
-          possibleMove.add(new Move(actions));
+          possibleMove.add(new HuIMove(actions));
         }
       }
       actions.clear();
     }
     if (possibleMove.isEmpty()) {
-      Move move;
+      HuIMove move;
       logger.warn("Muss aussetzen");
       actions.add(new sc.plugin2018.Skip());
-      move = new Move(actions);
+      move = new HuIMove(actions);
       possibleMove.add(move);
     }
     return possibleMove;
@@ -611,30 +611,30 @@ public class GameState implements Cloneable {
    * @param actions bisherige Aktionenliste
    * @return mögliche Züge
    */
-  private ArrayList<Move> checkForPlayableCards(ArrayList<Action> actions) {
-    ArrayList<Move> possibleMove = new ArrayList<>();
+  private ArrayList<HuIMove> checkForPlayableCards(ArrayList<Action> actions) {
+    ArrayList<HuIMove> possibleMove = new ArrayList<>();
     if (this.getCurrentPlayer().mustPlayCard()) { // überprüfe, ob eine Karte gespielt werden muss
       if (GameRuleLogic.isValidToPlayEatSalad(this)) {
         actions.add(new Card(sc.plugin2018.CardType.EAT_SALAD, actions.size()));
-        possibleMove.add(new Move(actions));
+        possibleMove.add(new HuIMove(actions));
 
         actions.remove(new Card(sc.plugin2018.CardType.EAT_SALAD, 1));
       }
       if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, 20)) {
         actions.add(new Card(sc.plugin2018.CardType.TAKE_OR_DROP_CARROTS, 20,  actions.size()));
-        possibleMove.add(new Move(actions));
+        possibleMove.add(new HuIMove(actions));
 
         actions.remove(new Card(sc.plugin2018.CardType.TAKE_OR_DROP_CARROTS, 20, actions.size()));
       }
       if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, -20)) {
         actions.add(new Card(sc.plugin2018.CardType.TAKE_OR_DROP_CARROTS, -20,  actions.size()));
-        possibleMove.add(new Move(actions));
+        possibleMove.add(new HuIMove(actions));
 
         actions.remove(new Card(sc.plugin2018.CardType.TAKE_OR_DROP_CARROTS, -20, actions.size()));
       }
       if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, 0)) {
         actions.add(new Card(sc.plugin2018.CardType.TAKE_OR_DROP_CARROTS, 0,  actions.size()));
-        possibleMove.add(new Move(actions));
+        possibleMove.add(new HuIMove(actions));
 
         actions.remove(new Card(sc.plugin2018.CardType.TAKE_OR_DROP_CARROTS, 0,  actions.size()));
       }
@@ -655,12 +655,12 @@ public class GameState implements Cloneable {
           e.printStackTrace();
         }
         if (clone != null && clone.getCurrentPlayer().mustPlayCard()) {
-          ArrayList<Move> moves = clone.checkForPlayableCards(actions);
+          ArrayList<HuIMove> moves = clone.checkForPlayableCards(actions);
           if (!moves.isEmpty()) {
             possibleMove.addAll(moves);
           }
         } else {
-          possibleMove.add(new Move(actions));
+          possibleMove.add(new HuIMove(actions));
         }
 
         actions.remove(new Card(sc.plugin2018.CardType.HURRY_AHEAD,  actions.size()));
@@ -682,12 +682,12 @@ public class GameState implements Cloneable {
           e.printStackTrace();
         }
         if (clone != null && clone.getCurrentPlayer().mustPlayCard()) {
-          ArrayList<Move> moves = clone.checkForPlayableCards(actions);
+          ArrayList<HuIMove> moves = clone.checkForPlayableCards(actions);
           if (!moves.isEmpty()) {
             possibleMove.addAll(moves);
           }
         } else {
-          possibleMove.add(new Move(actions));
+          possibleMove.add(new HuIMove(actions));
         }
         actions.remove(new Card(sc.plugin2018.CardType.FALL_BACK,  actions.size()));
       }
