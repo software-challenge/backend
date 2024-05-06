@@ -81,7 +81,7 @@ object GameRuleLogic {
      */
     private fun canDoAnything(state: GameState): Boolean =
         (canPlayAnyCard(state) || isValidToFallBack(state) || isValidToExchangeCarrots(state, 10)
-                || isValidToExchangeCarrots(state, -10) || isValidToEat(state) || canAdvanceToAnyField(state))
+                || isValidToExchangeCarrots(state, -10) || state.canEatSalad() || canAdvanceToAnyField(state))
 
     /**
      * Überprüft, ob der derzeitige Spieler zu irgendeinem Feld einen Vorwärtszug machen kann.
