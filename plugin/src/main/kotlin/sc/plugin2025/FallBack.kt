@@ -11,7 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 @XStreamAlias(value = "fallBack")
 object FallBack: HuIMove {
     override fun perform(state: GameState): MoveMistake? {
-        if(state.isValidToFallBack()) {
+        if(state.mayFallBack()) {
             val previousFieldIndex: Int = state.currentPlayer.position
             state.currentPlayer.position =
                 state.board.getPreviousField(Field.HEDGEHOG, previousFieldIndex) ?: return MoveMistake.CANNOT_FALL_BACK

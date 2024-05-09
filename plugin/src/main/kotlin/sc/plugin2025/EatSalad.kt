@@ -13,7 +13,7 @@ import sc.shared.IMoveMistake
 @XStreamAlias(value = "EatSalad")
 object EatSalad: HuIMove {
     override fun perform(state: GameState): IMoveMistake? {
-        if(state.canEatSalad()) {
+        if(state.mayEatSalad()) {
             val player = state.currentPlayer
             player.eatSalad()
             if(player == state.aheadPlayer) {
