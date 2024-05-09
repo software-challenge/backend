@@ -9,7 +9,7 @@ import sc.plugin2024.mistake.AccelerationProblem
 
 class AccelerationTest: FunSpec({
     test("serializes nicely") {
-        Accelerate(5) shouldSerializeTo  """<acceleration acc="5"/>"""
+        Accelerate(5) shouldSerializeTo """<acceleration acc="5"/>"""
     }
     
     val gameState = GameState()
