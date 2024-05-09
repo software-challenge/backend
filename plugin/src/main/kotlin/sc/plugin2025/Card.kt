@@ -13,20 +13,34 @@ enum class Card {
     /** Falle eine Position zurück. */
     FALL_BACK,
     /** Rücke eine Position vor. */
-    HURRY_AHEAD
+    HURRY_AHEAD,
+    /** Karottenvorrat mit dem Gegner tauschen. */
+    SWAP_CARROTS,
 }
 
 sealed class CardAction: HuIMove {
     abstract val card: Card
+    override fun perform(state: GameState): IMoveMistake? {
+        if(state.currentField != Field.HARE)
+            return MoveMistake.CANNOT_PLAY_CARD
+        if(state.currentPlayer.hasCard(card))
+            return MoveMistake.CARD_NOT_OWNED
+        return null
+    }
     data class PlayCard(override val card: Card): CardAction() {
         override fun perform(state: GameState): IMoveMistake? {
-            TODO("Not yet implemented")
+            return super.perform(state) ?: run {
+                when(card) {
+                    Card.TAKE_OR_DROP_CARROTS -> null
+                    else -> MoveMistake.CANNOT_PLAY_CARD
+                }
+            }
         }
     }
     class CarrotCard(val value: Int): CardAction() {
         override val card = Card.TAKE_OR_DROP_CARROTS
         override fun perform(state: GameState): IMoveMistake? {
-            TODO("Not yet implemented")
+            return super.perform(state)
         }
     }
     

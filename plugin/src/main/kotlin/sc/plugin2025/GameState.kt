@@ -70,10 +70,7 @@ data class GameState @JvmOverloads constructor(
         if(mustEatSalad())
                 return listOf(EatSalad)
         return (1..GameRuleLogic.calculateMoveableFields(player.carrots)).mapNotNull { distance ->
-            val newPos = player.position + distance
-            Advance(distance).takeIf {
-                board.getField(newPos) != Field.HEDGEHOG && mayEnterField(newPos)
-            }
+            Advance(distance).takeIf { mayEnterField(player.position + distance) }
         } + listOf(FallBack).takeIf { mayFallBack() }.orEmpty() +
                listOf()
     }
@@ -88,8 +85,17 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
+    /** Basic validation whether a player may move forward by that distance.
+     * Does not validate whether a card can be played on hare field. */
+    fun checkAdvance(distance: Int, player: Hare = currentPlayer) =
+        when {
+            !mayEnterField(player.position + distance, player) -> MoveMistake.CANNOT_ENTER_FIELD
+            player.carrots < calculateCarrots(distance) -> MoveMistake.MISSING_CARROTS
+            else -> null
+        }
+    
     /** Basic validation whether a field may be entered via a jump that is not backward.
-     * Does not validate whether a Hare card can be played on hare field. */
+     * Does not validate whether a card can be played on hare field. */
     fun mayEnterField(newPosition: Int, player: Hare = currentPlayer): Boolean {
         val field = board.getField(newPosition)
         if(field != Field.GOAL && newPosition == currentPlayer.opponent.position)
