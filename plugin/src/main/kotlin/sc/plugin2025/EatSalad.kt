@@ -10,7 +10,7 @@ import sc.shared.IMoveMistake
  * Durch eine Salatessen-Aktion wird ein Salat verbraucht
  * und es werden je nachdem ob der Spieler führt oder nicht 10 oder 30 Karotten aufgenommen.
  */
-@XStreamAlias(value = "Salad")
+@XStreamAlias(value = "EatSalad")
 object EatSalad: HuIMove {
     override fun perform(state: GameState): IMoveMistake? {
         if(state.canEatSalad()) {
