@@ -14,6 +14,7 @@ data class Hare(
     private val cards: ArrayList<Card> = arrayListOf(*Card.values()),
 ): PublicCloneable<Hare> {
     fun getCards(): List<Card> = cards
+    fun addCard(card: Card) = cards.add(card)
     fun hasCard(card: Card) = cards.contains(card)
     fun removeCard(card: Card) = cards.remove(card)
     
@@ -24,6 +25,14 @@ data class Hare(
         get() = carrots <= 10 && salads == 0
     
     fun eatSalad() = salads--
+    
+    fun consumeCarrots(count: Int): MoveMistake? =
+        if(carrots < count) {
+            MoveMistake.MISSING_CARROTS
+        } else {
+            carrots -= count
+            null
+        }
     
     override fun clone(): Hare = copy()
 }

@@ -3,7 +3,6 @@ package sc.plugin2025
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.plugin2025.GameRuleLogic.calculateCarrots
-import sc.plugin2025.GameRuleLogic.isValidToAdvance
 import sc.shared.IMoveMistake
 
 /**
@@ -17,18 +16,31 @@ import sc.shared.IMoveMistake
 class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: CardAction) : HuIMove {
     
     override fun perform(state: GameState): IMoveMistake? {
-        if (isValidToAdvance(state, this.distance)) {
-            val player = state.currentPlayer
-            player.carrots -= calculateCarrots(this.distance)
-            player.position += distance
-            if(state.currentField == Field.HARE) {
+        val player = state.currentPlayer
+        val check = state.checkAdvance(distance)
+        if(check != null)
+            return check
+        player.carrots -= calculateCarrots(distance)
+        player.position += distance
+        return when(state.currentField) {
+            Field.HARE -> {
                 if(cards.isEmpty())
                     return MoveMistake.MUST_PLAY_CARD
-                return cards.firstNotNullOfOrNull { it.perform(state) }
+                cards.firstNotNullOfOrNull {
+                    it.perform(state)
+                }
             }
-            return null
-        } else {
-            return MoveMistake.CANNOT_MOVE_FORWARD
+            Field.MARKET -> {
+                if(cards.size > 1)
+                    return MoveMistake.CANNOT_BUY_MULTIPLE_CARDS
+                cards.firstNotNullOfOrNull { card ->
+                    return player.consumeCarrots(10) ?: run {
+                        player.addCard(card.card)
+                        null
+                    }
+                }
+            }
+            else -> MoveMistake.CANNOT_PLAY_CARD.takeIf { cards.isNotEmpty() }
         }
     }
     
