@@ -39,14 +39,17 @@ data class GameState @JvmOverloads constructor(
     val aheadPlayer
         get() = players.maxByOrNull { it.position }!!
     
+    val currentField: Field
+        get() = currentPlayer.field
+    
+    val Hare.field: Field
+        get() = board.getField(position)
+    
     val Hare.opponent: Hare
         get() = getHare(team)
     
     fun getHare(team: ITeam) =
         players.find { it.team == team }!!
-    
-    val currentField
-        get() = board.getField(currentPlayer.position)
     
     /** Das [Team], das am Zug ist. */
     override val currentTeam: Team
@@ -64,14 +67,14 @@ data class GameState @JvmOverloads constructor(
     override fun getSensibleMoves(): List<HuIMove> = getSensibleMoves(currentPlayer)
     
     fun getSensibleMoves(player: Hare): List<HuIMove> {
-        if(currentField == Field.SALAD && player.lastAction != EatSalad)
+        if(mustEatSalad())
                 return listOf(EatSalad)
         return (1..GameRuleLogic.calculateMoveableFields(player.carrots)).mapNotNull { distance ->
             val newPos = player.position + distance
             Advance(distance).takeIf {
-                board.getField(newPos) != Field.HEDGEHOG && canEnterField(newPos)
+                board.getField(newPos) != Field.HEDGEHOG && mayEnterField(newPos)
             }
-        } + listOf(FallBack).takeIf { isValidToFallBack() }.orEmpty() +
+        } + listOf(FallBack).takeIf { mayFallBack() }.orEmpty() +
                listOf()
     }
     
@@ -87,7 +90,7 @@ data class GameState @JvmOverloads constructor(
     
     /** Basic validation whether a field may be entered via a jump that is not backward.
      * Does not validate whether a Hare card can be played on hare field. */
-    fun canEnterField(newPosition: Int, player: Hare = currentPlayer): Boolean {
+    fun mayEnterField(newPosition: Int, player: Hare = currentPlayer): Boolean {
         val field = board.getField(newPosition)
         if(field != Field.GOAL && newPosition == currentPlayer.opponent.position)
             return false
@@ -107,16 +110,11 @@ data class GameState @JvmOverloads constructor(
      * @param state GameState
      * @return true, falls der currentPlayer einen Rückzug machen darf
      */
-    fun isValidToFallBack(): Boolean {
+    fun mayFallBack(): Boolean {
         if (mustEatSalad(this)) return false
-        val newPosition: Int? = this.board.getPreviousField(Field.HEDGEHOG, this.currentPlayer.position)
-        return (newPosition != -1) && this.otherPlayer.position != newPosition
+        val lastHedgehog: Int? = this.board.getPreviousField(Field.HEDGEHOG, currentPlayer.position)
+        return lastHedgehog != null && otherPlayer.position != lastHedgehog
     }
-    
-    
-    fun mustPlayCard(player: Hare = currentPlayer) =
-        currentField == Field.HARE &&
-        player.lastAction !is CardAction
     
     /**
      * Überprüft `EatSalad` Zug auf Korrektheit.
@@ -128,9 +126,14 @@ data class GameState @JvmOverloads constructor(
      *
      * @return true, falls ein Salat gegessen werden darf
      */
-    fun canEatSalad(player: Hare = currentPlayer) =
-        player.salads > 0 &&
-        board.getField(player.position) == Field.SALAD &&
-        player.lastAction != EatSalad
+    fun mayEatSalad(player: Hare = currentPlayer) =
+        player.salads > 0 && mustEatSalad(player)
+    
+    fun mustEatSalad(player: Hare = currentPlayer) =
+        player.field == Field.SALAD && player.lastAction != EatSalad
+    
+    fun mustPlayCard(player: Hare = currentPlayer) =
+        player.field == Field.HARE &&
+        player.lastAction !is CardAction
     
 }
