@@ -10,7 +10,8 @@ object GameRuleLogic {
      * @param moveCount Anzahl der Felder, um die bewegt wird
      * @return Anzahl der benötigten Karotten
      */
-    fun calculateCarrots(moveCount: Int): Int = (moveCount * (moveCount + 1)) / 2
+    fun calculateCarrots(moveCount: Int): Int =
+        (moveCount * (moveCount + 1)) / 2
 
     /**
      * Berechnet, wie viele Züge mit `carrots` Karotten möglich sind.
@@ -72,7 +73,8 @@ object GameRuleLogic {
      * @param state GameState
      * @return true, falls der derzeitige Spieler keine andere Aktion machen kann.
      */
-    fun isValidToSkip(state: GameState): Boolean = !canDoAnything(state)
+    fun isValidToSkip(state: GameState): Boolean =
+        !canDoAnything(state)
 
     /**
      * Überprüft, ob ein Spieler einen Zug (keine Aussetzung)
@@ -128,18 +130,6 @@ object GameRuleLogic {
         n == 10 && valid || (n == -10 && player.carrots >= 10 && valid)
     }
 
-
-    /**
-     * Überprüft `FallBack` Züge auf Korrektheit
-     *
-     * @param state GameState
-     * @return true, falls der currentPlayer einen Rückzug machen darf
-     */
-    fun isValidToFallBack(state: GameState): Boolean {
-        if (mustEatSalad(state)) return false
-        val newPosition: Int? = state.board.getPreviousField(Field.HEDGEHOG, state.currentPlayer.position)
-        return (newPosition != -1) && state.otherPlayer.position != newPosition
-    }
 
     /**
      * Überprüft, ob der derzeitige Spieler die `FALL_BACK` Karte spielen darf.
@@ -213,7 +203,8 @@ object GameRuleLogic {
         val isOnHare = state.board.getField(player.position) == Field.HARE
         val hasCarrots = player.getCards().any { it == Card.TAKE_OR_DROP_CARROTS }
 
-        return mustNotAdvance && isOnHare && hasCarrots && (n == 20 || n == -20 || n == 0) &&
+        return mustNotAdvance && isOnHare && hasCarrots &&
+               (n == 20 || n == -20 || n == 0) &&
                 if (n < 0) (player.carrots + n) >= 0 else true
     }
 
@@ -222,15 +213,10 @@ object GameRuleLogic {
      * @param state GameState
      * @return true, falls die `EAT_SALAD` Karte gespielt werden darf
      */
-    fun isValidToPlayEatSalad(state: GameState): Boolean {
-        val player: Hare = state.currentPlayer
-
-        val isOnHare = state.board.getField(player.position) == Field.HARE
-        val hasEatSalad = player.getCards().any { it == Card.TAKE_OR_DROP_CARROTS }
-        val hasCarrots = player.salads > 0
-
-        return isOnHare && hasEatSalad && hasCarrots
-    }
+    fun isValidToPlayEatSalad(state: GameState, player: Hare = state.currentPlayer): Boolean =
+        state.board.getField(player.position) == Field.HARE &&
+        player.getCards().any { it == Card.EAT_SALAD } &&
+        player.salads > 0
 
     /**
      * Überprüft, ob der derzeitige Spieler irgendeine Karte spielen kann.
@@ -238,8 +224,8 @@ object GameRuleLogic {
      * @param state GameState
      * @return true, falls das Spielen einer Karte möglich ist
      */
-    private fun canPlayAnyCard(state: GameState): Boolean =
-        state.currentPlayer.getCards().any { canPlayCard(state, it) } ?: false
+    fun canPlayAnyCard(state: GameState): Boolean =
+        state.currentPlayer.getCards().any { canPlayCard(state, it) }
 
     private fun canPlayCard(state: GameState, card: Card): Boolean =
         when (card) {

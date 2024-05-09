@@ -24,7 +24,7 @@ abstract class TwoPlayerGameState<M: IMove>(
     abstract val lastMove: M?
     
     /** Führe den gegebenen Zug in einer Kopie dieses Gamestate aus und gib ihn zurück. */
-    fun performMove(move: M): IGameState =
+    fun performMove(move: M): TwoPlayerGameState<M> =
         clone().also { it.performMoveDirectly(move) }
     
     /** Performs the Move on this GameState.
