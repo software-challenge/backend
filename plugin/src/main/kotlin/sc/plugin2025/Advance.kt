@@ -13,7 +13,7 @@ import sc.shared.IMoveMistake
  *   Der Wert der Karottentauschkarte spielt dann keine Rolle.
  */
 @XStreamAlias(value = "advance")
-class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: CardAction): HuIMove {
+class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): HuIMove {
     
     override fun perform(state: GameState): IMoveMistake? {
         val player = state.currentPlayer
@@ -23,25 +23,30 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: CardActio
         player.carrots -= calculateCarrots(distance)
         player.position += distance
         
-        if(state.currentField == Field.MARKET) {
-            if(cards.size != 1)
-                return MoveMistake.MUST_BUY_ONE_CARD
-            return player.consumeCarrots(10) ?: run {
-                player.addCard(cards.single().card)
-                null
-            }
-        }
-        
         var lastCard: Card? = null
+        var bought = false
         return cards.firstNotNullOfOrNull {
+            if(bought)
+                return MoveMistake.MUST_BUY_ONE_CARD
+            if(state.currentField == Field.MARKET) {
+                return player.consumeCarrots(10) ?: run {
+                    bought = true
+                    player.addCard(it)
+                    null
+                }
+            }
             if(state.currentField != Field.HARE || lastCard?.moves == false)
                 return MoveMistake.CANNOT_PLAY_CARD
-            lastCard = it.card
+            lastCard = it
             it.perform(state)
         } ?: run {
+            MoveMistake.MUST_BUY_ONE_CARD.takeIf {
+                // On Market field and no card bought or just moved there through card
+                state.currentField == Field.MARKET && !bought
+            }
             MoveMistake.MUST_PLAY_CARD.takeIf {
                 // On Hare field and no card played or just moved there through card
-                state.currentField == Field.HARE || lastCard?.moves != false
+                state.currentField == Field.HARE && lastCard?.moves != false
             }
         }
     }

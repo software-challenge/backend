@@ -217,54 +217,5 @@ object GameRuleLogic {
         state.board.getField(player.position) == Field.HARE &&
         player.getCards().any { it == Card.EAT_SALAD } &&
         player.salads > 0
-
-    /**
-     * Überprüft, ob der derzeitige Spieler irgendeine Karte spielen kann.
-     * TAKE_OR_DROP_CARROTS wird nur mit 20 überprüft
-     * @param state GameState
-     * @return true, falls das Spielen einer Karte möglich ist
-     */
-    fun canPlayAnyCard(state: GameState): Boolean =
-        state.currentPlayer.getCards().any { canPlayCard(state, it) }
-
-    private fun canPlayCard(state: GameState, card: Card): Boolean =
-        when (card) {
-            Card.EAT_SALAD -> isValidToPlayEatSalad(state)
-            Card.FALL_BACK -> isValidToPlayFallBack(state)
-            Card.HURRY_AHEAD -> isValidToPlayHurryAhead(state)
-            Card.TAKE_OR_DROP_CARROTS -> isValidToPlayTakeOrDropCarrots(state, 20)
-            else -> TODO()
-        }
-
-    /**
-     * Überprüft, ob der derzeitige Spieler die Karte spielen kann.
-     * @param state derzeitiger GameState
-     * @param c Karte die gespielt werden soll
-     * @param n Wert fuer TAKE_OR_DROP_CARROTS
-     * @return true, falls das Spielen der entsprechenden Karte möglich ist
-     */
-    fun isValidToPlayCard(state: GameState, c: Card, n: Int): Boolean {
-        return if (c == Card.TAKE_OR_DROP_CARROTS) isValidToPlayTakeOrDropCarrots(state, n)
-        else canPlayCard(state, c)
-    }
-
-    fun mustEatSalad(state: GameState): Boolean {
-        // check whether player just moved to salad field and must eat salad
-        val player: Hare = state.currentPlayer
-        val field: Field = state.board.getField(player.position)
-
-        val isSalad = field == Field.SALAD
-        val wasLastAdvance = player.lastAction is Advance
-        val wasFallBackOrHurry = (player.lastAction as? CardAction)?.card in listOf(Card.FALL_BACK, Card.HURRY_AHEAD)
-
-        return isSalad && (wasLastAdvance || wasFallBackOrHurry)
-    }
-
-    /**
-     * Gibt zurück, ob der derzeitige Spieler eine Karte spielen kann.
-     * @param state derzeitiger GameState
-     * @return true, falls eine Karte gespielt werden kann
-     */
-    fun canPlayCard(state: GameState): Boolean =
-        state.board.getField(state.currentPlayer.position) === Field.HARE && canPlayAnyCard(state)
+    
 }
