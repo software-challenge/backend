@@ -233,6 +233,7 @@ object GameRuleLogic {
             Card.FALL_BACK -> isValidToPlayFallBack(state)
             Card.HURRY_AHEAD -> isValidToPlayHurryAhead(state)
             Card.TAKE_OR_DROP_CARROTS -> isValidToPlayTakeOrDropCarrots(state, 20)
+            else -> TODO()
         }
 
     /**

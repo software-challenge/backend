@@ -13,7 +13,7 @@ import sc.shared.IMoveMistake
  *   Der Wert der Karottentauschkarte spielt dann keine Rolle.
  */
 @XStreamAlias(value = "advance")
-class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: CardAction) : HuIMove {
+class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: CardAction): HuIMove {
     
     override fun perform(state: GameState): IMoveMistake? {
         val player = state.currentPlayer
@@ -22,25 +22,27 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: CardActio
             return check
         player.carrots -= calculateCarrots(distance)
         player.position += distance
-        return when(state.currentField) {
-            Field.HARE -> {
-                if(cards.isEmpty())
-                    return MoveMistake.MUST_PLAY_CARD
-                cards.firstNotNullOfOrNull {
-                    it.perform(state)
-                }
+        
+        if(state.currentField == Field.MARKET) {
+            if(cards.size != 1)
+                return MoveMistake.MUST_BUY_ONE_CARD
+            return player.consumeCarrots(10) ?: run {
+                player.addCard(cards.single().card)
+                null
             }
-            Field.MARKET -> {
-                if(cards.size > 1)
-                    return MoveMistake.CANNOT_BUY_MULTIPLE_CARDS
-                cards.firstNotNullOfOrNull { card ->
-                    return player.consumeCarrots(10) ?: run {
-                        player.addCard(card.card)
-                        null
-                    }
-                }
+        }
+        
+        var lastCard: Card? = null
+        return cards.firstNotNullOfOrNull {
+            if(state.currentField != Field.HARE || lastCard?.moves == false)
+                return MoveMistake.CANNOT_PLAY_CARD
+            lastCard = it.card
+            it.perform(state)
+        } ?: run {
+            MoveMistake.MUST_PLAY_CARD.takeIf {
+                // On Hare field and no card played or just moved there through card
+                state.currentField == Field.HARE || lastCard?.moves != false
             }
-            else -> MoveMistake.CANNOT_PLAY_CARD.takeIf { cards.isNotEmpty() }
         }
     }
     
