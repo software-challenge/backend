@@ -7,13 +7,14 @@ import sc.plugin2025.util.HuIConstants
 
 @XStreamAlias("board")
 data class Board(
-    @XStreamImplicit(itemFieldName = "fields") private val track: Array<Field> = generateTrack().toTypedArray(),
+    @XStreamImplicit(itemFieldName = "fields") private val track: Array<out Field> = generateTrack().toTypedArray(),
 ): IBoard {
     
     val fields
         get() = track.iterator()
     
-    fun getField(index: Int) = track[index]
+    fun getField(index: Int): Field? =
+        track.getOrNull(index)
     
     fun findField(field: Field, range: Iterable<Int> = 0 until HuIConstants.NUM_FIELDS) =
         range.find { track[it] == field }

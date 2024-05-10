@@ -3,6 +3,7 @@ package sc.plugin2025
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.Team
 import sc.framework.PublicCloneable
+import sc.plugin2025.GameRuleLogic.calculateCarrots
 import sc.plugin2025.util.HuIConstants
 
 data class Hare(
@@ -11,7 +12,7 @@ data class Hare(
     @XStreamAsAttribute var salads: Int = HuIConstants.INITIAL_SALADS,
     @XStreamAsAttribute var carrots: Int = HuIConstants.INITIAL_CARROTS,
     @XStreamAsAttribute var lastAction: HuIMove? = null,
-    private val cards: ArrayList<Card> = arrayListOf(*Card.values()),
+    private val cards: ArrayList<Card> = arrayListOf(),
 ): PublicCloneable<Hare> {
     fun getCards(): List<Card> = cards
     fun addCard(card: Card) = cards.add(card)
@@ -25,6 +26,11 @@ data class Hare(
         get() = carrots <= 10 && salads == 0
     
     fun eatSalad() = salads--
+    
+    fun advanceBy(distance: Int) {
+        calculateCarrots(distance)
+        position += distance
+    }
     
     fun consumeCarrots(count: Int): MoveMistake? =
         if(carrots < count) {

@@ -5,15 +5,24 @@ import sc.shared.IMoveMistake
 
 /** Mögliche Aktionen, die durch das Ausspielen einer Karte ausgelöst werden können. */
 @XStreamAlias(value = "card")
-enum class Card(val moves: Boolean, val error: MoveMistake, val playable: (GameState) -> Boolean, val play: (GameState) -> Unit): HuIMove {
+enum class Card(val moves: Boolean, val playable: (GameState) -> MoveMistake?, val play: (GameState) -> Unit): HuIMove {
     /** Falle hinter den Gegenspieler. */
-    FALL_BACK(true, MoveMistake.CANNOT_PLAY_FALL_BACK, { it.isAhead() && it.mayEnterField(it.otherPlayer.position + 1) }, { it.moveToField(it.otherPlayer.position - 1) }),
+    FALL_BACK(true, { state ->
+        MoveMistake.CANNOT_PLAY_FALL_BACK.takeUnless { state.isAhead() }
+        ?: state.validateTargetField(state.otherPlayer.position + 1)
+    }, { it.moveToField(it.otherPlayer.position - 1) }),
     /** Rücke vor den Gegenspieler. */
-    HURRY_AHEAD(true, MoveMistake.CANNOT_PLAY_HURRY_AHEAD, { !it.isAhead() && it.mayEnterField(it.otherPlayer.position + 1) }, { it.moveToField(it.otherPlayer.position + 1) }),
+    HURRY_AHEAD(true, { state ->
+        MoveMistake.CANNOT_PLAY_HURRY_AHEAD.takeIf { state.isAhead() }
+        ?: state.validateTargetField(state.otherPlayer.position + 1)
+    }, { it.moveToField(it.otherPlayer.position + 1) }),
     /** Friss sofort einen Salat. */
-    EAT_SALAD(false, MoveMistake.CANNOT_EAT_SALAD, { it.currentPlayer.salads > 0 }, { it.eatSalad() }),
+    EAT_SALAD(
+        false,
+        { state -> MoveMistake.NO_SALAD.takeUnless { state.currentPlayer.salads > 0 } },
+        { it.eatSalad() }),
     /** Karottenvorrat mit dem Gegner tauschen. */
-    SWAP_CARROTS(false, MoveMistake.CARD_NOT_OWNED, { true }, {
+    SWAP_CARROTS(false, { null }, {
         val car = it.currentPlayer.carrots
         it.currentPlayer.carrots = it.otherPlayer.carrots
         it.otherPlayer.carrots = car
@@ -24,9 +33,9 @@ enum class Card(val moves: Boolean, val error: MoveMistake, val playable: (GameS
             return MoveMistake.CANNOT_PLAY_CARD
         if(!state.currentPlayer.removeCard(this))
             return MoveMistake.CARD_NOT_OWNED
-        if(!playable(state))
-            return error
-        play(state)
-        return null
+        return playable(state) ?: run {
+            play(state)
+            null
+        }
     }
 }

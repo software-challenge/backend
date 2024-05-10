@@ -1,7 +1,6 @@
 package sc.plugin2025
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
-import sc.plugin2025.GameRuleLogic.isValidToExchangeCarrots
 import sc.shared.IMoveMistake
 
 /**
@@ -12,7 +11,7 @@ import sc.shared.IMoveMistake
 @XStreamAlias(value = "ExchangeCarrots")
 data class ExchangeCarrots(val value: Int): HuIMove {
     override fun perform(state: GameState): IMoveMistake? {
-        if(isValidToExchangeCarrots(state, this.value)) {
+        if(state.mayExchangeCarrots(this.value)) {
             state.currentPlayer.carrots += value
             return null
         } else {

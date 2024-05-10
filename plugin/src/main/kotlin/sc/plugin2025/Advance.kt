@@ -2,7 +2,6 @@ package sc.plugin2025
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.plugin2025.GameRuleLogic.calculateCarrots
 import sc.shared.IMoveMistake
 
 /**
@@ -20,8 +19,7 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Hu
         val check = state.checkAdvance(distance)
         if(check != null)
             return check
-        player.carrots -= calculateCarrots(distance)
-        player.position += distance
+        player.advanceBy(distance)
         
         var lastCard: Card? = null
         var bought = false
@@ -29,7 +27,7 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Hu
             if(bought)
                 return MoveMistake.MUST_BUY_ONE_CARD
             if(state.currentField == Field.MARKET) {
-                return player.consumeCarrots(10) ?: run {
+                return@firstNotNullOfOrNull player.consumeCarrots(10) ?: run {
                     bought = true
                     player.addCard(it)
                     null
@@ -39,16 +37,17 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Hu
                 return MoveMistake.CANNOT_PLAY_CARD
             lastCard = it
             it.perform(state)
-        } ?: run {
-            MoveMistake.MUST_BUY_ONE_CARD.takeIf {
-                // On Market field and no card bought or just moved there through card
-                state.currentField == Field.MARKET && !bought
-            }
-            MoveMistake.MUST_PLAY_CARD.takeIf {
-                // On Hare field and no card played or just moved there through card
-                state.currentField == Field.HARE && lastCard?.moves != false
-            }
+        } ?: MoveMistake.MUST_BUY_ONE_CARD.takeIf {
+            // On Market field and no card bought or just moved there through card
+            state.currentField == Field.MARKET && !bought
+        } ?: MoveMistake.MUST_PLAY_CARD.takeIf {
+            // On Hare field and no card played or just moved there through card
+            state.currentField == Field.HARE && lastCard?.moves != false
         }
+    }
+    
+    override fun toString(): String {
+        return "Vorwärts um $distance${cards.joinToString(prefix = " mit Karten [", postfix = "]")}"
     }
     
 }

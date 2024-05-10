@@ -3,12 +3,17 @@ package sc.plugin2025
 import sc.shared.IMoveMistake
 
 enum class MoveMistake(override val message: String) : IMoveMistake {
+    GOAL_CONDITIONS("Voraussetzungen für Zielfeld nicht erfüllt."),
+    NO_SALAD("Kein Salat verfügbar."),
     MISSING_CARROTS("Nicht genügend Karotten"),
     MUST_EAT_SALAD("Auf einem Salatfeld muss ein Salat gegessen werden"),
     CANNOT_ENTER_FIELD("Feld kann nicht betreten werden."),
+    FIELD_OCCUPIED("Das Feld ist besetzt."),
+    FIELD_NONEXISTENT("Das Feld existiert nicht."),
+    HEDGEHOG_ONLY_BACKWARDS("Ein Igelfeld kann nur mit einem Rückwärtzug betreten werden"),
     CANNOT_MOVE_FORWARD("Vorwärtszug ist nicht möglich."),
     CANNOT_FALL_BACK("Rückwärtszug ist nicht möglich."),
-    CANNOT_EAT_SALAD("Es kann gerade kein Salat (mehr) gegessen werden."),
+    CANNOT_EAT_SALAD("Es kann gerade kein Salat gegessen werden."),
     CANNOT_EXCHANGE_CARROTS("Karottentauschen kann nicht mit dieser Karottenanzahl gespielt werden."),
     
     MUST_BUY_ONE_CARD("Auf einem Marktfeld muss genau eine Karte gekauft werden."),
