@@ -17,7 +17,7 @@ enum class Field(val short: String, val unicode: String = short) {
     /** Salatfeld: Beim Betreteten wird im nächsten Zug ein Salat gegessen. */
     SALAD("S", "\uD83E\uDD57"),
     /** Karottenfeld: Hier dürfen Karotten getauscht werden. */
-    CARROT("K", "\uD83E\uDD55"),
+    CARROTS("K", "\uD83E\uDD55"),
     /** Hasenfeld: Hier wird sofort eine Hasenkarte gespielt. */
     HARE("H"),
     /** Marktfeld: Hier wird eine Hasenkarte gekauft (Variation). */

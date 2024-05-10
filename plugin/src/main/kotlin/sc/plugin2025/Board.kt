@@ -9,10 +9,14 @@ import sc.plugin2025.util.HuIConstants
 data class Board(
     @XStreamImplicit(itemFieldName = "fields") private val track: Array<Field> = generateTrack().toTypedArray(),
 ): IBoard {
-    fun findField(field: Field, range: Iterable<Int> = 0 until HuIConstants.NUM_FIELDS) =
-        range.find { track[it] == field }
+    
+    val fields
+        get() = track.iterator()
     
     fun getField(index: Int) = track[index]
+    
+    fun findField(field: Field, range: Iterable<Int> = 0 until HuIConstants.NUM_FIELDS) =
+        range.find { track[it] == field }
     
     fun getPreviousField(field: Field, index: Int = 0) =
         findField(field, (index - 1) downTo (0))
@@ -41,9 +45,9 @@ data class Board(
             segment.addAll(
                 listOf(
                     Field.HARE,
-                    Field.CARROT, Field.HARE, Field.CARROT,
-                    Field.CARROT, Field.HARE, Field.POSITION_1,
-                    Field.POSITION_2, Field.CARROT
+                    Field.CARROTS, Field.HARE, Field.CARROTS,
+                    Field.CARROTS, Field.HARE, Field.POSITION_1,
+                    Field.POSITION_2, Field.CARROTS
                 )
             )
             segment.shuffle()
@@ -54,8 +58,8 @@ data class Board(
             track.add(Field.HEDGEHOG)
             segment.addAll(
                 listOf(
-                    Field.CARROT,
-                    Field.CARROT, Field.HARE
+                    Field.CARROTS,
+                    Field.CARROTS, Field.HARE
                 )
             )
             segment.shuffle()
@@ -66,7 +70,7 @@ data class Board(
             segment.addAll(
                 listOf(
                     Field.POSITION_1,
-                    Field.POSITION_2, Field.CARROT
+                    Field.POSITION_2, Field.CARROTS
                 )
             )
             segment.shuffle()
@@ -76,8 +80,8 @@ data class Board(
             track.add(Field.HEDGEHOG)
             segment.addAll(
                 listOf(
-                    Field.CARROT,
-                    Field.CARROT, Field.POSITION_2
+                    Field.CARROTS,
+                    Field.CARROTS, Field.POSITION_2
                 )
             )
             segment.shuffle()
@@ -90,7 +94,7 @@ data class Board(
             segment.addAll(
                 listOf(
                     Field.HARE,
-                    Field.CARROT, Field.CARROT, Field.CARROT,
+                    Field.CARROTS, Field.CARROTS, Field.CARROTS,
                     Field.POSITION_2
                 )
             )
@@ -102,8 +106,8 @@ data class Board(
             segment.addAll(
                 listOf(
                     Field.HARE,
-                    Field.POSITION_1, Field.CARROT, Field.HARE,
-                    Field.POSITION_2, Field.CARROT
+                    Field.POSITION_1, Field.CARROTS, Field.HARE,
+                    Field.POSITION_2, Field.CARROTS
                 )
             )
             segment.shuffle()
@@ -113,8 +117,8 @@ data class Board(
             track.add(Field.HEDGEHOG)
             segment.addAll(
                 listOf(
-                    Field.CARROT,
-                    Field.HARE, Field.CARROT, Field.POSITION_2
+                    Field.CARROTS,
+                    Field.HARE, Field.CARROTS, Field.POSITION_2
                 )
             )
             segment.shuffle()
@@ -125,9 +129,9 @@ data class Board(
             track.add(Field.HEDGEHOG)
             segment.addAll(
                 listOf(
-                    Field.CARROT,
-                    Field.CARROT, Field.HARE, Field.POSITION_2,
-                    Field.POSITION_1, Field.CARROT
+                    Field.CARROTS,
+                    Field.CARROTS, Field.HARE, Field.POSITION_2,
+                    Field.POSITION_1, Field.CARROTS
                 )
             )
             segment.shuffle()
@@ -138,8 +142,8 @@ data class Board(
             segment.addAll(
                 listOf(
                     Field.HARE,
-                    Field.CARROT, Field.POSITION_2, Field.CARROT,
-                    Field.CARROT
+                    Field.CARROTS, Field.POSITION_2, Field.CARROTS,
+                    Field.CARROTS
                 )
             )
             segment.shuffle()
@@ -152,8 +156,8 @@ data class Board(
             segment.addAll(
                 listOf(
                     Field.HARE,
-                    Field.CARROT, Field.POSITION_1, Field.CARROT,
-                    Field.HARE, Field.CARROT
+                    Field.CARROTS, Field.POSITION_1, Field.CARROTS,
+                    Field.HARE, Field.CARROTS
                 )
             )
             segment.shuffle()

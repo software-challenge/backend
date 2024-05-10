@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
 import sc.plugin2025.GameRuleLogic.calculateCarrots
-import sc.plugin2025.GameRuleLogic.mustEatSalad
 import sc.shared.InvalidMoveException
 
 /**
@@ -73,10 +72,20 @@ data class GameState @JvmOverloads constructor(
     fun getSensibleMoves(player: Hare): List<HuIMove> {
         if(mustEatSalad())
             return listOf(EatSalad)
-        return (1..GameRuleLogic.calculateMoveableFields(player.carrots)).mapNotNull { distance ->
-            Advance(distance).takeIf { mayEnterField(player.position + distance) }
-        } + listOf(FallBack).takeIf { mayFallBack() }.orEmpty() +
-               listOf()
+        return (1..GameRuleLogic.calculateMoveableFields(player.carrots)).flatMap { distance ->
+            val newField = player.position + distance
+            if(!mayEnterField(newField))
+                return emptyList()
+            when(board.getField(newField)) {
+                //Field.HARE -> Card.values().map { Advance(distance, it) }
+                //Field.MARKET -> Card.values().map { Advance(distance, it) }
+                else -> listOf(Advance(distance))
+            }
+        } + listOfNotNull(
+            FallBack.takeIf { mayFallBack() },
+            ExchangeCarrots(10).takeIf { GameRuleLogic.isValidToExchangeCarrots(this, 10) },
+            ExchangeCarrots(-10).takeIf { GameRuleLogic.isValidToExchangeCarrots(this, -10) },
+        )
     }
     
     override fun moveIterator(): Iterator<HuIMove> = getSensibleMoves().iterator()
@@ -134,7 +143,7 @@ data class GameState @JvmOverloads constructor(
      * @return true, falls der currentPlayer einen Rückzug machen darf
      */
     fun mayFallBack(): Boolean {
-        if(mustEatSalad(this)) return false
+        if(mustEatSalad()) return false
         val lastHedgehog: Int? = this.board.getPreviousField(Field.HEDGEHOG, currentPlayer.position)
         return lastHedgehog != null && otherPlayer.position != lastHedgehog
     }
