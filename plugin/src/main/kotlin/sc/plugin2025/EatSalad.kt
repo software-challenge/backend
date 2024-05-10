@@ -14,13 +14,7 @@ import sc.shared.IMoveMistake
 object EatSalad: HuIMove {
     override fun perform(state: GameState): IMoveMistake? {
         if(state.mayEatSalad()) {
-            val player = state.currentPlayer
-            player.eatSalad()
-            if(player == state.aheadPlayer) {
-                player.carrots += 10
-            } else {
-                player.carrots += 30
-            }
+            state.eatSalad()
             return null
         } else {
             return MoveMistake.CANNOT_EAT_SALAD

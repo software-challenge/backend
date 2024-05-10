@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
 import sc.plugin2025.GameRuleLogic.calculateCarrots
 import sc.plugin2025.GameRuleLogic.mustEatSalad
+import sc.shared.InvalidMoveException
 
 /**
  * The GameState class represents the current state of the game.
@@ -32,12 +33,15 @@ data class GameState @JvmOverloads constructor(
     
     val currentPlayer
         get() = getHare(currentTeam)
-
+    
     val otherPlayer
         get() = getHare(otherTeam)
-
+    
     val aheadPlayer
         get() = players.maxByOrNull { it.position }!!
+    
+    fun isAhead(player: Hare = currentPlayer) =
+        player.position > player.opponent.position
     
     val currentField: Field
         get() = currentPlayer.field
@@ -68,7 +72,7 @@ data class GameState @JvmOverloads constructor(
     
     fun getSensibleMoves(player: Hare): List<HuIMove> {
         if(mustEatSalad())
-                return listOf(EatSalad)
+            return listOf(EatSalad)
         return (1..GameRuleLogic.calculateMoveableFields(player.carrots)).mapNotNull { distance ->
             Advance(distance).takeIf { mayEnterField(player.position + distance) }
         } + listOf(FallBack).takeIf { mayFallBack() }.orEmpty() +
@@ -78,12 +82,25 @@ data class GameState @JvmOverloads constructor(
     override fun moveIterator(): Iterator<HuIMove> = getSensibleMoves().iterator()
     
     override fun performMoveDirectly(move: HuIMove) {
-        move.perform(this)
+        val mist =
+            MoveMistake.MUST_EAT_SALAD.takeIf {
+                mustEatSalad() && move != EatSalad
+            } ?: move.perform(this)
+        if(mist != null)
+            throw InvalidMoveException(mist, move)
         turn++
         if(GameRuleLogic.isValidToSkip(this)) {
             turn++
         }
     }
+    
+    fun moveToField(newPosition: Int, player: Hare = currentPlayer): MoveMistake? =
+        if(mayEnterField(newPosition, player)) {
+            player.position = newPosition
+            null
+        } else {
+            MoveMistake.CANNOT_ENTER_FIELD
+        }
     
     /** Basic validation whether a player may move forward by that distance.
      * Does not validate whether a card can be played on hare field. */
@@ -100,7 +117,7 @@ data class GameState @JvmOverloads constructor(
         val field = board.getField(newPosition)
         if(field != Field.GOAL && newPosition == currentPlayer.opponent.position)
             return false
-        return when (field) {
+        return when(field) {
             Field.SALAD -> player.salads > 0
             Field.MARKET -> player.carrots >= 10
             Field.HARE -> player.getCards().isNotEmpty()
@@ -117,7 +134,7 @@ data class GameState @JvmOverloads constructor(
      * @return true, falls der currentPlayer einen Rückzug machen darf
      */
     fun mayFallBack(): Boolean {
-        if (mustEatSalad(this)) return false
+        if(mustEatSalad(this)) return false
         val lastHedgehog: Int? = this.board.getPreviousField(Field.HEDGEHOG, currentPlayer.position)
         return lastHedgehog != null && otherPlayer.position != lastHedgehog
     }
@@ -138,8 +155,14 @@ data class GameState @JvmOverloads constructor(
     fun mustEatSalad(player: Hare = currentPlayer) =
         player.field == Field.SALAD && player.lastAction != EatSalad
     
-    fun mustPlayCard(player: Hare = currentPlayer) =
-        player.field == Field.HARE &&
-        player.lastAction !is CardAction
+    /** Isst einen Salat, keine Überprüfung der Regelkonformität. */
+    fun eatSalad(player: Hare = currentPlayer) {
+        player.eatSalad()
+        if(isAhead(player)) {
+            player.carrots += 10
+        } else {
+            player.carrots += 30
+        }
+    }
     
 }

@@ -5,17 +5,17 @@ import sc.shared.IMoveMistake
 
 /** Mögliche Aktionen, die durch das Ausspielen einer Karte ausgelöst werden können. */
 @XStreamAlias(value = "card")
-enum class Card {
+enum class Card(val moves: Boolean) {
     /** Nehme Karotten auf, oder leg sie ab. */
-    TAKE_OR_DROP_CARROTS,
+    TAKE_OR_DROP_CARROTS(false),
     /** Iß sofort einen Salat. */
-    EAT_SALAD,
+    EAT_SALAD(false),
     /** Falle eine Position zurück. */
-    FALL_BACK,
+    FALL_BACK(true),
     /** Rücke eine Position vor. */
-    HURRY_AHEAD,
+    HURRY_AHEAD(true),
     /** Karottenvorrat mit dem Gegner tauschen. */
-    SWAP_CARROTS,
+    SWAP_CARROTS(false),
 }
 
 sealed class CardAction: HuIMove {
@@ -31,8 +31,29 @@ sealed class CardAction: HuIMove {
         override fun perform(state: GameState): IMoveMistake? {
             return super.perform(state) ?: run {
                 when(card) {
-                    Card.TAKE_OR_DROP_CARROTS -> null
-                    else -> MoveMistake.CANNOT_PLAY_CARD
+                    Card.EAT_SALAD -> {
+                        if(state.currentPlayer.salads == 0)
+                            return MoveMistake.CANNOT_EAT_SALAD
+                        state.eatSalad()
+                        null
+                    }
+                    Card.FALL_BACK -> {
+                        if(!state.isAhead())
+                            return MoveMistake.CANNOT_PLAY_FALL_BACK
+                        state.moveToField(state.otherPlayer.position - 1)
+                    }
+                    Card.HURRY_AHEAD -> {
+                        if(state.isAhead())
+                            return MoveMistake.CANNOT_PLAY_HURRY_AHEAD
+                        state.moveToField(state.otherPlayer.position + 1)
+                    }
+                    Card.SWAP_CARROTS -> {
+                        val car = state.currentPlayer.carrots
+                        state.currentPlayer.carrots = state.otherPlayer.carrots
+                        state.otherPlayer.carrots = car
+                        null
+                    }
+                    Card.TAKE_OR_DROP_CARROTS -> throw NoWhenBranchMatchedException()
                 }
             }
         }
