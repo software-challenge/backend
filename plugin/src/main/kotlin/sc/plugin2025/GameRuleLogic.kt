@@ -126,7 +126,7 @@ object GameRuleLogic {
      */
     fun isValidToExchangeCarrots(state: GameState, n: Int) = with(state) {
         val player = currentPlayer
-        val valid = board.getField(player.position) == Field.CARROT
+        val valid = board.getField(player.position) == Field.CARROTS
         n == 10 && valid || (n == -10 && player.carrots >= 10 && valid)
     }
 
