@@ -161,6 +161,10 @@ data class GameState @JvmOverloads constructor(
     fun mayEatSalad(player: Hare = currentPlayer) =
         player.salads > 0 && mustEatSalad(player)
     
+    /** Gibt zurück, ob der Spieler eine Karte spielen kann. */
+    fun canPlayCard(player: Hare = currentPlayer): Boolean =
+        board.getField(player.position) === Field.HARE && player.getCards().any { it.playable(this) }
+    
     fun mustEatSalad(player: Hare = currentPlayer) =
         player.field == Field.SALAD && player.lastAction != EatSalad
     
