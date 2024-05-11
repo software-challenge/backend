@@ -40,5 +40,5 @@ data class Hare(
             null
         }
     
-    override fun clone(): Hare = copy()
+    override fun clone(): Hare = copy(cards = ArrayList(cards))
 }

@@ -61,7 +61,7 @@ data class GameState @JvmOverloads constructor(
         get() = players.any { it.inGoal }
     
     override fun clone(): GameState =
-        copy(board = board.clone(), players = players.clone())
+        copy(players = players.clone())
     
     override fun getPointsForTeam(team: ITeam): IntArray =
         getHare(team).let { intArrayOf(it.position, it.salads) }

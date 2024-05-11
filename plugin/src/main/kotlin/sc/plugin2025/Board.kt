@@ -28,7 +28,7 @@ data class Board(
     override fun toString() =
         track.joinToString(prefix = "Board[", postfix = "]") { it.unicode }
     
-    override fun clone(): Board = Board(Array(track.size) { track[it] })
+    override fun clone(): Board = this
     
     companion object {
         /**
