@@ -10,6 +10,8 @@ data class Board(
     @XStreamImplicit(itemFieldName = "fields") private val track: Array<out Field> = generateTrack().toTypedArray(),
 ): IBoard {
     
+    val size = track.size
+    
     val fields
         get() = track.iterator()
     
