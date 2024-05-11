@@ -28,7 +28,7 @@ data class Hare(
     fun eatSalad() = salads--
     
     fun advanceBy(distance: Int) {
-        calculateCarrots(distance)
+        carrots -= calculateCarrots(distance)
         position += distance
     }
     

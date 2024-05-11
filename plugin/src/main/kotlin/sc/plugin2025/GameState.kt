@@ -63,35 +63,48 @@ data class GameState @JvmOverloads constructor(
     override fun clone(): GameState =
         copy(players = players.clone())
     
+    fun cloneCurrentPlayer(transform: (Hare) -> Unit) =
+        copy(players = players.map { if(it.team == currentTeam) it.clone().apply(transform) else it })
+    
     override fun getPointsForTeam(team: ITeam): IntArray =
         getHare(team).let { intArrayOf(it.position, it.salads) }
     
     override fun getSensibleMoves(): List<HuIMove> = getSensibleMoves(currentPlayer)
     
     fun getSensibleMoves(player: Hare): List<HuIMove> {
-        if(mustEatSalad())
+        if(mustEatSalad(player))
             return listOf(EatSalad)
-        return (1..calculateMoveableFields(player.carrots)).flatMap { distance ->
+        return (1..calculateMoveableFields(player.carrots).coerceAtMost(board.size - player.position)).flatMap { distance ->
             val newField = player.position + distance
-            if(validateTargetField(newField) != null)
+            if(validateTargetField(newField, player) != null)
                 return@flatMap emptyList()
-            when(board.getField(newField)) {
-                Field.HARE -> {
-                    val newState = copy(players = players.map { if(it.team == currentTeam) it.clone().apply { advanceBy(distance) } else it })
-                    Card.values().mapNotNull { card ->
-                        Advance(distance, card).takeIf { card.playable(newState) == null }
-                        // TODO verify card chain playing
-                    }
-                }
-                Field.MARKET -> Card.values().map { Advance(distance, it) }
-                else -> listOf(Advance(distance))
-            }
+            val newState = copy(players = players.map { if(it.team == player.team) it.clone().apply { advanceBy(distance) } else it })
+            return@flatMap newState.nextCards()?.map { cards ->
+                Advance(distance, *cards)
+            } ?: listOf(Advance(distance))
         } + listOfNotNull(
-            FallBack.takeIf { mayFallBack() },
-            ExchangeCarrots(10).takeIf { mayExchangeCarrots(10) },
-            ExchangeCarrots(-10).takeIf { mayExchangeCarrots(-10) },
+            FallBack.takeIf { mayFallBack(player) },
+            ExchangeCarrots(10).takeIf { mayExchangeCarrots(10, player) },
+            ExchangeCarrots(-10).takeIf { mayExchangeCarrots(-10, player) },
         )
     }
+    
+    fun nextCards(player: Hare = currentPlayer): Collection<Array<Card>>? =
+        when(player.field) {
+            Field.HARE -> {
+                player.getCards().flatMap { card ->
+                    if(card.playable(this) == null) {
+                        val newState = clone()
+                        card.play(newState)
+                        newState.nextCards(player)?.map { arrayOf(card, *it) } ?: listOf(arrayOf(card))
+                    } else {
+                        listOf()
+                    }
+                }
+            }
+            Field.MARKET -> Card.values().map { arrayOf(it) }
+            else -> null
+        }
     
     override fun moveIterator(): Iterator<HuIMove> = getSensibleMoves().iterator()
     
@@ -146,10 +159,10 @@ data class GameState @JvmOverloads constructor(
      * @param state GameState
      * @return true, falls der currentPlayer einen Rückzug machen darf
      */
-    fun mayFallBack(): Boolean {
-        if(mustEatSalad()) return false
-        val lastHedgehog: Int? = this.board.getPreviousField(Field.HEDGEHOG, currentPlayer.position)
-        return lastHedgehog != null && otherPlayer.position != lastHedgehog
+    fun mayFallBack(player: Hare = currentPlayer): Boolean {
+        if(mustEatSalad(player)) return false
+        val lastHedgehog: Int? = this.board.getPreviousField(Field.HEDGEHOG, player.position)
+        return lastHedgehog != null && player.opponent.position != lastHedgehog
     }
     
     /**
@@ -171,8 +184,7 @@ data class GameState @JvmOverloads constructor(
      * @param n 10 oder -10 je nach Fragestellung
      * @return true, falls die durch n spezifizierte Aktion möglich ist.
      */
-    fun mayExchangeCarrots(n: Int): Boolean {
-        val player = currentPlayer
+    fun mayExchangeCarrots(n: Int, player: Hare = currentPlayer): Boolean {
         val valid = board.getField(player.position) == Field.CARROTS
         return n == 10 && valid || (n == -10 && player.carrots >= 10 && valid)
     }

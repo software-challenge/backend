@@ -2,6 +2,7 @@ package sc.plugin2025
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import sc.plugin2025.util.HuIConstants
 import sc.shared.IMoveMistake
 
 /**
@@ -49,5 +50,16 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Hu
     override fun toString(): String {
         return "Vorwärts um $distance${cards.joinToString(prefix = " mit Karten [", postfix = "]")}"
     }
+    
+    override fun equals(other: Any?): Boolean {
+        if(this === other) return true
+        if(other !is Advance) return false
+        if(distance != other.distance) return false
+        if(!cards.contentEquals(other.cards)) return false
+        return true
+    }
+    
+    override fun hashCode(): Int =
+        distance + cards.contentHashCode() * HuIConstants.NUM_FIELDS
     
 }
