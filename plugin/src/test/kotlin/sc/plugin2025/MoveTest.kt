@@ -36,6 +36,8 @@ class MoveTest: WordSpec({
                 state.currentPlayer.position shouldBe 0
                 state.performMoveDirectly(Advance(1, Card.EAT_SALAD))
                 state.turn shouldBe 2
+                state.currentPlayer.position shouldBe 2
+                state.otherPlayer.position shouldBe 1
                 state.otherPlayer.getCards() shouldBe listOf(Card.EAT_SALAD)
                 state.getSensibleMoves(state.otherPlayer) shouldBe listOf(Advance(2, Card.EAT_SALAD))
                 state.performMoveDirectly(ExchangeCarrots(10))
