@@ -79,7 +79,7 @@ data class GameState @JvmOverloads constructor(
             if(validateTargetField(newField, player) != null)
                 return@flatMap emptyList()
             val newState = copy(players = players.map { if(it.team == player.team) it.clone().apply { advanceBy(distance) } else it })
-            return@flatMap newState.nextCards()?.map { cards ->
+            return@flatMap newState.nextCards(newState.getHare(player.team))?.map { cards ->
                 Advance(distance, *cards)
             } ?: listOf(Advance(distance))
         } + listOfNotNull(
@@ -96,7 +96,9 @@ data class GameState @JvmOverloads constructor(
                     if(card.playable(this) == null) {
                         val newState = clone()
                         card.play(newState)
-                        newState.nextCards(player)?.map { arrayOf(card, *it) } ?: listOf(arrayOf(card))
+                        if(card.moves)
+                            return@flatMap newState.nextCards(player)?.map { arrayOf(card, *it) } ?: listOf(arrayOf(card))
+                        listOf(arrayOf(card))
                     } else {
                         listOf()
                     }
@@ -139,7 +141,7 @@ data class GameState @JvmOverloads constructor(
      * Does not validate whether a card can be played on hare field. */
     fun validateTargetField(newPosition: Int, player: Hare = currentPlayer): MoveMistake? {
         val field = board.getField(newPosition)
-        if(field != Field.GOAL && newPosition == currentPlayer.opponent.position)
+        if(field != Field.GOAL && newPosition == player.opponent.position)
             return MoveMistake.FIELD_OCCUPIED
         when(field) {
             Field.SALAD -> player.salads > 0 || return MoveMistake.NO_SALAD
