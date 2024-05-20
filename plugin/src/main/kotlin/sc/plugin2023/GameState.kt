@@ -6,8 +6,8 @@ import sc.api.plugins.Coordinates
 import sc.api.plugins.ITeam
 import sc.api.plugins.Team
 import sc.api.plugins.TwoPlayerGameState
-import sc.plugin2023.util.PenguinMoveMistake
 import sc.plugin2023.util.PenguinConstants
+import sc.plugin2023.util.PenguinMoveMistake
 import sc.shared.InvalidMoveException
 import sc.shared.MoveMistake
 
@@ -86,6 +86,8 @@ data class GameState @JvmOverloads constructor(
     /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForTeam(team: ITeam): IntArray =
             intArrayOf(fishes[team.index])
+    
+    override fun teamStats(team: ITeam): List<Pair<String, Int>> = listOf()
     
     override fun clone() = GameState(this)
     
