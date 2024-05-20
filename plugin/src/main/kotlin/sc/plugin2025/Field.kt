@@ -19,9 +19,9 @@ enum class Field(val short: String, val unicode: String = short) {
     /** Karottenfeld: Hier dürfen Karotten getauscht werden. */
     CARROTS("K", "\uD83E\uDD55"),
     /** Hasenfeld: Hier wird sofort eine Hasenkarte gespielt. */
-    HARE("H"),
+    HARE("H", "\uD83D\uDC07"),
     /** Marktfeld: Hier wird eine Hasenkarte gekauft (Variation). */
-    MARKET("M"),
+    MARKET("M", "\uD83E\uDDFA"),
     /** Das Zielfeld */
     GOAL("Z", "🏁"),
     /** Das Startfeld */

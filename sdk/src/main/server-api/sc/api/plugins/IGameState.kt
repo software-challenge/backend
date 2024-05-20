@@ -63,5 +63,5 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     fun moveIterator(): Iterator<IMove>
     
     /** Spielspezifische Informationen, für die GUI. */
-    fun teamStats(team: ITeam): List<Pair<String, Int>> = listOf()
+    fun teamStats(team: ITeam): List<Pair<String, Int>>
 }

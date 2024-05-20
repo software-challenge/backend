@@ -83,11 +83,16 @@ data class GameState @JvmOverloads constructor(
                 Advance(distance, *cards)
             } ?: listOf(Advance(distance))
         } + listOfNotNull(
-            FallBack.takeIf { mayFallBack(player) },
+            FallBack.takeIf { nextFallBack(player) != null },
+            *possibleExchangeCarrotMoves(player).toTypedArray()
+        )
+    }
+    
+    fun possibleExchangeCarrotMoves(player: Hare = currentPlayer) =
+        listOfNotNull(
             ExchangeCarrots(10).takeIf { mayExchangeCarrots(10, player) },
             ExchangeCarrots(-10).takeIf { mayExchangeCarrots(-10, player) },
         )
-    }
     
     fun nextCards(player: Hare = currentPlayer): Collection<Array<Card>>? =
         when(player.field) {
@@ -114,12 +119,30 @@ data class GameState @JvmOverloads constructor(
         val mist =
             MoveMistake.MUST_EAT_SALAD.takeIf {
                 mustEatSalad() && move != EatSalad
-            } ?: move.perform(this)
+            }.also { currentPlayer.saladEaten = false } ?: move.perform(this)
         if(mist != null)
             throw InvalidMoveException(mist, move)
         turn++
+        awardPositionFields()
         if(!moveIterator().hasNext()) {
             turn++
+            awardPositionFields()
+        }
+    }
+    
+    fun awardPositionFields() {
+        when(currentField) {
+            Field.POSITION_1 -> {
+                if(isAhead()) {
+                    currentPlayer.carrots += 10
+                }
+            }
+            Field.POSITION_2 -> {
+                if(!isAhead()) {
+                    currentPlayer.carrots += 30
+                }
+            }
+            else -> {}
         }
     }
     
@@ -159,13 +182,10 @@ data class GameState @JvmOverloads constructor(
      * Überprüft `FallBack` Züge auf Korrektheit
      *
      * @param state GameState
-     * @return true, falls der currentPlayer einen Rückzug machen darf
+     * @return Igelfeldposition, falls der currentPlayer einen Rückzug machen darf
      */
-    fun mayFallBack(player: Hare = currentPlayer): Boolean {
-        if(mustEatSalad(player)) return false
-        val lastHedgehog: Int? = this.board.getPreviousField(Field.HEDGEHOG, player.position)
-        return lastHedgehog != null && player.opponent.position != lastHedgehog
-    }
+    fun nextFallBack(player: Hare = currentPlayer): Int? =
+        this.board.getPreviousField(Field.HEDGEHOG, player.position)?.takeUnless { player.opponent.position == it }
     
     /**
      * Überprüft `EatSalad` Zug auf Korrektheit.
@@ -186,17 +206,15 @@ data class GameState @JvmOverloads constructor(
      * @param n 10 oder -10 je nach Fragestellung
      * @return true, falls die durch n spezifizierte Aktion möglich ist.
      */
-    fun mayExchangeCarrots(n: Int, player: Hare = currentPlayer): Boolean {
-        val valid = board.getField(player.position) == Field.CARROTS
-        return n == 10 && valid || (n == -10 && player.carrots >= 10 && valid)
-    }
+    fun mayExchangeCarrots(n: Int, player: Hare = currentPlayer): Boolean =
+        player.field == Field.CARROTS && (n == 10 || (n == -10 && player.carrots >= 10))
     
     /** Gibt zurück, ob der Spieler eine Karte spielen kann. */
     fun canPlayAnyCard(player: Hare = currentPlayer): Boolean =
         board.getField(player.position) === Field.HARE && player.getCards().any { it.playable(this) == null }
     
     fun mustEatSalad(player: Hare = currentPlayer) =
-        player.field == Field.SALAD && player.lastAction != EatSalad
+        player.field == Field.SALAD && !player.saladEaten
     
     /** Isst einen Salat, keine Überprüfung der Regelkonformität. */
     fun eatSalad(player: Hare = currentPlayer) {
@@ -207,5 +225,15 @@ data class GameState @JvmOverloads constructor(
             player.carrots += 30
         }
     }
+    
+    override fun teamStats(team: ITeam): List<Pair<String, Int>> =
+        getHare(team).run {
+            listOf(
+                "▶ Position" to this.position,
+                "\uD83E\uDD55 Karotten" to this.carrots,
+                "\uD83E\uDD57 \uD83E\uDD57 Salate" to this.salads,
+                "Karten" to this.getCards().count(),
+            )
+        }
     
 }

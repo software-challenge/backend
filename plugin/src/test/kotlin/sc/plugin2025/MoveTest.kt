@@ -6,6 +6,7 @@ import io.kotest.matchers.*
 
 class MoveTest: WordSpec({
     isolationMode = IsolationMode.InstancePerTest
+    // TODO other move types and card chains
     "Advance" When {
         "one player advanced" should {
             val state = GameState(Board(arrayOf(Field.START, Field.MARKET, Field.CARROTS, Field.HARE, Field.GOAL)))
