@@ -33,6 +33,9 @@ data class Board(
     override fun clone(): Board = this
     
     companion object {
+        
+        private fun shuffledFields(vararg fields: Field) = fields.asList().shuffled()
+        
         /**
          * Erstellt eine zufällige Rennstrecke.
          * Die Indizes der Salat- und Igelfelder bleiben unverändert -
@@ -42,131 +45,122 @@ data class Board(
          */
         private fun generateTrack(): List<Field> {
             val track = ArrayList<Field>()
-            val segment = ArrayList<Field>()
             
             track.add(Field.START)
-            segment.addAll(
-                listOf(
+            track.addAll(
+                shuffledFields(
                     Field.HARE,
-                    Field.CARROTS, Field.HARE, Field.CARROTS,
-                    Field.CARROTS, Field.HARE, Field.POSITION_1,
-                    Field.POSITION_2, Field.CARROTS
-                )
-            )
-            segment.shuffle()
-            track.addAll(segment)
-            
-            segment.clear()
-            track.add(Field.SALAD)
-            track.add(Field.HEDGEHOG)
-            segment.addAll(
-                listOf(
                     Field.CARROTS,
-                    Field.CARROTS, Field.HARE
-                )
-            )
-            segment.shuffle()
-            track.addAll(segment)
-            
-            segment.clear()
-            track.add(Field.HEDGEHOG)
-            segment.addAll(
-                listOf(
+                    Field.HARE,
+                    Field.POSITION_3,
+                    Field.CARROTS,
+                    Field.HARE,
                     Field.POSITION_1,
-                    Field.POSITION_2, Field.CARROTS
+                    Field.POSITION_2,
+                    Field.POSITION_4
                 )
             )
-            segment.shuffle()
-            track.addAll(segment)
             
-            segment.clear()
-            track.add(Field.HEDGEHOG)
-            segment.addAll(
-                listOf(
-                    Field.CARROTS,
-                    Field.CARROTS, Field.POSITION_2
-                )
-            )
-            segment.shuffle()
-            
-            track.add(segment.removeAt(0))
-            track.add(segment.removeAt(0))
             track.add(Field.SALAD)
-            track.add(segment.removeAt(0))
             track.add(Field.HEDGEHOG)
-            segment.addAll(
-                listOf(
+            track.addAll(
+                shuffledFields(
+                    Field.POSITION_3,
+                    Field.CARROTS,
+                    Field.HARE
+                )
+            )
+            
+            track.add(Field.HEDGEHOG)
+            track.addAll(
+                shuffledFields(
+                    Field.POSITION_1,
+                    Field.POSITION_2,
+                    Field.POSITION_4
+                )
+            )
+            
+            track.add(Field.HEDGEHOG)
+            track.addAll(
+                shuffledFields(
+                    Field.POSITION_3,
+                    Field.CARROTS,
+                    Field.SALAD,
+                    Field.POSITION_2,
+                )
+            )
+            
+            track.add(Field.HEDGEHOG)
+            track.addAll(
+                shuffledFields(
                     Field.HARE,
-                    Field.CARROTS, Field.CARROTS, Field.CARROTS,
+                    Field.CARROTS,
+                    Field.POSITION_4,
+                    Field.POSITION_3,
                     Field.POSITION_2
                 )
             )
-            segment.shuffle()
-            track.addAll(segment)
             
-            segment.clear()
             track.add(Field.HEDGEHOG)
-            segment.addAll(
-                listOf(
+            track.addAll(
+                shuffledFields(
                     Field.HARE,
-                    Field.POSITION_1, Field.CARROTS, Field.HARE,
-                    Field.POSITION_2, Field.CARROTS
-                )
-            )
-            segment.shuffle()
-            track.addAll(segment)
-            
-            segment.clear()
-            track.add(Field.HEDGEHOG)
-            segment.addAll(
-                listOf(
+                    Field.POSITION_1,
                     Field.CARROTS,
-                    Field.HARE, Field.CARROTS, Field.POSITION_2
+                    Field.HARE,
+                    Field.POSITION_2,
+                    Field.POSITION_3
                 )
             )
-            segment.shuffle()
-            track.addAll(segment)
             
-            segment.clear()
+            track.add(Field.HEDGEHOG)
+            track.addAll(
+                shuffledFields(
+                    Field.CARROTS,
+                    Field.HARE,
+                    Field.CARROTS,
+                    Field.POSITION_2
+                )
+            )
+            
             track.add(Field.SALAD)
             track.add(Field.HEDGEHOG)
-            segment.addAll(
-                listOf(
-                    Field.CARROTS,
-                    Field.CARROTS, Field.HARE, Field.POSITION_2,
-                    Field.POSITION_1, Field.CARROTS
-                )
-            )
-            segment.shuffle()
-            track.addAll(segment)
-            
-            segment.clear()
-            track.add(Field.HEDGEHOG)
-            segment.addAll(
-                listOf(
+            track.addAll(
+                shuffledFields(
+                    Field.POSITION_3,
+                    Field.POSITION_4,
                     Field.HARE,
-                    Field.CARROTS, Field.POSITION_2, Field.CARROTS,
+                    Field.POSITION_2,
+                    Field.POSITION_1,
                     Field.CARROTS
                 )
             )
-            segment.shuffle()
-            track.addAll(segment)
+            
+            track.add(Field.HEDGEHOG)
+            track.addAll(
+                shuffledFields(
+                    Field.HARE,
+                    Field.POSITION_3,
+                    Field.POSITION_2,
+                    Field.POSITION_4,
+                    Field.CARROTS
+                )
+            )
             
             track.add(Field.HEDGEHOG)
             track.add(Field.SALAD)
             
-            segment.clear()
-            segment.addAll(
+            track.addAll(
                 listOf(
                     Field.HARE,
-                    Field.CARROTS, Field.POSITION_1, Field.CARROTS,
-                    Field.HARE, Field.CARROTS
+                    Field.CARROTS,
+                    Field.POSITION_1,
+                    Field.CARROTS,
+                    Field.HARE,
+                    Field.CARROTS
                 )
             )
-            segment.shuffle()
-            track.addAll(segment)
             
-            segment.clear()
             track.add(Field.GOAL)
             return track
         }
