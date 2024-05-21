@@ -435,7 +435,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun getPointsForTeamExtended(team: ITeam): IntArray =
             ships[team.index].let { ship ->
-                intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) MQConstants.FINISH_POINTS else 0)
+                intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) 6 else 0)
             }
     
     override fun teamStats(team: ITeam): List<Pair<String, Int>> =

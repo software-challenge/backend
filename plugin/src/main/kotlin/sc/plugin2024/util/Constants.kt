@@ -10,9 +10,6 @@ object MQConstants {
     const val MAX_SPEED = 6
     const val FREE_ACC = 1
     
-    // Points
-    const val FINISH_POINTS = 6
-    
     const val POINTS_PER_PASSENGER = 5
     const val POINTS_PER_SEGMENT = 5
     
