@@ -25,5 +25,10 @@ enum class Field(val short: String, val unicode: String = short) {
     /** Das Zielfeld */
     GOAL("Z", "🏁"),
     /** Das Startfeld */
-    START("0", "▶"),
+    START("0", "▶");
+    
+    companion object {
+        val POSITION_3 = CARROTS
+        val POSITION_4 = MARKET
+    }
 }
