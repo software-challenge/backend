@@ -18,7 +18,7 @@ plugins {
 val gameName by extra { property("socha.gameName") as String }
 val versions = arrayOf("year", "minor", "patch").map { property("socha.version.$it").toString().toInt() }
 val versionObject = KotlinVersion(versions[0], versions[1], versions[2])
-version = versionObject.toString()
+version = versionObject.toString() + property("socha.version.suffix").toString().takeUnless { it.isBlank() }?.let { "-$it" }.orEmpty()
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
 
