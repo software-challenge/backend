@@ -32,9 +32,9 @@ data class Hare(
         position += distance
     }
     
-    fun consumeCarrots(count: Int): MoveMistake? =
+    fun consumeCarrots(count: Int): HuIMoveMistake? =
         if(carrots < count) {
-            MoveMistake.MISSING_CARROTS
+            HuIMoveMistake.MISSING_CARROTS
         } else {
             carrots -= count
             null

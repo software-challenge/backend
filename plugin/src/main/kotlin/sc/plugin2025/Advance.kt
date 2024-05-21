@@ -26,7 +26,7 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Hu
         var bought = false
         return cards.firstNotNullOfOrNull {
             if(bought)
-                return MoveMistake.MUST_BUY_ONE_CARD
+                return HuIMoveMistake.MUST_BUY_ONE_CARD
             if(state.currentField == Field.MARKET) {
                 return@firstNotNullOfOrNull player.consumeCarrots(10) ?: run {
                     bought = true
@@ -35,13 +35,13 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Hu
                 }
             }
             if(state.currentField != Field.HARE || lastCard?.moves == false)
-                return MoveMistake.CANNOT_PLAY_CARD
+                return HuIMoveMistake.CANNOT_PLAY_CARD
             lastCard = it
             it.perform(state)
-        } ?: MoveMistake.MUST_BUY_ONE_CARD.takeIf {
+        } ?: HuIMoveMistake.MUST_BUY_ONE_CARD.takeIf {
             // On Market field and no card bought or just moved there through card
             state.currentField == Field.MARKET && !bought
-        } ?: MoveMistake.MUST_PLAY_CARD.takeIf {
+        } ?: HuIMoveMistake.MUST_PLAY_CARD.takeIf {
             // On Hare field and no card played or just moved there through card
             state.currentField == Field.HARE && lastCard?.moves != false
         }

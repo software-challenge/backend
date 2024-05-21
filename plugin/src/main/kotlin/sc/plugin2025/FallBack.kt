@@ -10,14 +10,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
  */
 @XStreamAlias(value = "fallBack")
 object FallBack: HuIMove {
-    override fun perform(state: GameState): MoveMistake? {
+    override fun perform(state: GameState): HuIMoveMistake? {
         val previousFieldIndex = state.nextFallBack()
         if(previousFieldIndex != null) {
             state.currentPlayer.carrots += 10 * (state.currentPlayer.position - previousFieldIndex)
             state.currentPlayer.position = previousFieldIndex
             return null
         } else {
-            return MoveMistake.CANNOT_FALL_BACK
+            return HuIMoveMistake.CANNOT_FALL_BACK
         }
     }
     
