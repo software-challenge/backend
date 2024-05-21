@@ -78,14 +78,21 @@ data class GameState @JvmOverloads constructor(
             val newField = player.position + distance
             if(validateTargetField(newField, player) != null)
                 return@flatMap emptyList()
-            val newState = copy(players = players.map { if(it.team == player.team) it.clone().apply { advanceBy(distance) } else it })
-            return@flatMap newState.nextCards(newState.getHare(player.team))?.map { cards ->
-                Advance(distance, *cards)
-            } ?: listOf(Advance(distance))
+            return@flatMap possibleCardMoves(distance, player) ?: listOf(Advance(distance))
         } + listOfNotNull(
             FallBack.takeIf { nextFallBack(player) != null },
             *possibleExchangeCarrotMoves(player).toTypedArray()
         )
+    }
+    
+    /** Possible Advances including buying/playing of cards.
+     * @return null if target field is neither market nor hare, empty list if no possibilities, otherwise possible Moves */
+    fun possibleCardMoves(distance: Int, player: Hare = currentPlayer): List<Advance>? {
+        val state =
+            copy(players = players.map { if(it.team == player.team) it.clone().apply { advanceBy(distance) } else it })
+        return state.nextCards(state.getHare(player.team))?.map { cards ->
+            Advance(distance, *cards)
+        }
     }
     
     fun possibleExchangeCarrotMoves(player: Hare = currentPlayer) =
@@ -100,16 +107,23 @@ data class GameState @JvmOverloads constructor(
                 player.getCards().flatMap { card ->
                     if(card.playable(this) == null) {
                         val newState = clone()
+                        newState.currentPlayer.removeCard(card)
                         card.play(newState)
                         if(card.moves)
-                            return@flatMap newState.nextCards(player)?.map { arrayOf(card, *it) } ?: listOf(arrayOf(card))
+                            return@flatMap newState.nextCards(player)?.map { arrayOf(card, *it) }
+                                           ?: listOf(arrayOf(card))
                         listOf(arrayOf(card))
                     } else {
                         listOf()
                     }
                 }
             }
-            Field.MARKET -> Card.values().map { arrayOf(it) }
+            Field.MARKET -> {
+                if(player.carrots >= 10)
+                    Card.values().map { arrayOf(it) }
+                else
+                    listOf()
+            }
             else -> null
         }
     
@@ -155,7 +169,8 @@ data class GameState @JvmOverloads constructor(
     /** Basic validation whether a player may move forward by that distance.
      * Does not validate whether a card can be played on hare field. */
     fun checkAdvance(distance: Int, player: Hare = currentPlayer): MoveMistake? {
-        if(player.carrots < calculateCarrots(distance))
+        val cost = calculateCarrots(distance)
+        if(player.carrots < cost)
             return MoveMistake.MISSING_CARROTS
         return validateTargetField(player.position + distance, player)
     }
@@ -166,11 +181,12 @@ data class GameState @JvmOverloads constructor(
         val field = board.getField(newPosition)
         if(field != Field.GOAL && newPosition == player.opponent.position)
             return MoveMistake.FIELD_OCCUPIED
+        val playerCarrots = { player.carrots - calculateCarrots(newPosition - player.position) }
         when(field) {
             Field.SALAD -> player.salads > 0 || return MoveMistake.NO_SALAD
-            Field.MARKET -> player.carrots >= 10 || return MoveMistake.MISSING_CARROTS
+            Field.MARKET -> playerCarrots() >= 10 || return MoveMistake.MISSING_CARROTS
             Field.HARE -> player.getCards().isNotEmpty() || return MoveMistake.CARD_NOT_OWNED
-            Field.GOAL -> player.carrots - calculateCarrots(newPosition - player.position) <= 10 && player.salads == 0 || return MoveMistake.GOAL_CONDITIONS
+            Field.GOAL -> playerCarrots() <= 10 && player.salads == 0 || return MoveMistake.GOAL_CONDITIONS
             Field.HEDGEHOG -> return MoveMistake.HEDGEHOG_ONLY_BACKWARDS
             null -> return MoveMistake.FIELD_NONEXISTENT
             else -> return null
