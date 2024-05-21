@@ -75,8 +75,7 @@ data class GameState @JvmOverloads constructor(
         if(mustEatSalad(player))
             return listOf(EatSalad)
         return (1..calculateMoveableFields(player.carrots).coerceAtMost(board.size - player.position)).flatMap { distance ->
-            val newField = player.position + distance
-            if(validateTargetField(newField, player) != null)
+            if(checkAdvance(distance, player) != null)
                 return@flatMap emptyList()
             return@flatMap possibleCardMoves(distance, player) ?: listOf(Advance(distance))
         } + listOfNotNull(
@@ -104,13 +103,13 @@ data class GameState @JvmOverloads constructor(
     fun nextCards(player: Hare = currentPlayer): Collection<Array<Card>>? =
         when(player.field) {
             Field.HARE -> {
-                player.getCards().flatMap { card ->
+                player.getCards().toSet().flatMap { card ->
                     if(card.playable(this) == null) {
                         val newState = clone()
                         newState.currentPlayer.removeCard(card)
                         card.play(newState)
                         if(card.moves)
-                            return@flatMap newState.nextCards(player)?.map { arrayOf(card, *it) }
+                            return@flatMap newState.nextCards(newState.getHare(player.team))?.map { arrayOf(card, *it) }
                                            ?: listOf(arrayOf(card))
                         listOf(arrayOf(card))
                     } else {
@@ -169,24 +168,26 @@ data class GameState @JvmOverloads constructor(
     /** Basic validation whether a player may move forward by that distance.
      * Does not validate whether a card can be played on hare field. */
     fun checkAdvance(distance: Int, player: Hare = currentPlayer): MoveMistake? {
-        val cost = calculateCarrots(distance)
-        if(player.carrots < cost)
-            return MoveMistake.MISSING_CARROTS
-        return validateTargetField(player.position + distance, player)
+        return validateTargetField(
+            player.position + distance,
+            player,
+            (player.carrots - calculateCarrots(distance)).takeIf { it >= 0 } ?: return MoveMistake.MISSING_CARROTS
+        )
     }
     
     /** Basic validation whether a field may be entered via a jump that is not backward.
      * Does not validate whether a card can be played on hare field. */
-    fun validateTargetField(newPosition: Int, player: Hare = currentPlayer): MoveMistake? {
+    fun validateTargetField(newPosition: Int, player: Hare = currentPlayer, carrots: Int = player.carrots): MoveMistake? {
+        if(newPosition == 0)
+            return MoveMistake.CANNOT_ENTER_FIELD
         val field = board.getField(newPosition)
         if(field != Field.GOAL && newPosition == player.opponent.position)
             return MoveMistake.FIELD_OCCUPIED
-        val playerCarrots = { player.carrots - calculateCarrots(newPosition - player.position) }
         when(field) {
             Field.SALAD -> player.salads > 0 || return MoveMistake.NO_SALAD
-            Field.MARKET -> playerCarrots() >= 10 || return MoveMistake.MISSING_CARROTS
+            Field.MARKET -> carrots >= 10 || return MoveMistake.MISSING_CARROTS
             Field.HARE -> player.getCards().isNotEmpty() || return MoveMistake.CARD_NOT_OWNED
-            Field.GOAL -> playerCarrots() <= 10 && player.salads == 0 || return MoveMistake.GOAL_CONDITIONS
+            Field.GOAL -> carrots <= 10 && player.salads == 0 || return MoveMistake.GOAL_CONDITIONS
             Field.HEDGEHOG -> return MoveMistake.HEDGEHOG_ONLY_BACKWARDS
             null -> return MoveMistake.FIELD_NONEXISTENT
             else -> return null
