@@ -5,7 +5,7 @@ import sc.shared.IMoveMistake
 
 /** Mögliche Aktionen, die durch das Ausspielen einer Karte ausgelöst werden können. */
 @XStreamAlias(value = "card")
-enum class Card(val moves: Boolean, val playable: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit): HuIMove {
+enum class Card(val moves: Boolean, val playable: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit): Move {
     /** Falle hinter den Gegenspieler. */
     FALL_BACK(true,
         { state ->

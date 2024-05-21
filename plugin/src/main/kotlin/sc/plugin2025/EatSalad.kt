@@ -11,7 +11,7 @@ import sc.shared.IMoveMistake
  * und es werden je nachdem ob der Spieler führt oder nicht 10 oder 30 Karotten aufgenommen.
  */
 @XStreamAlias(value = "EatSalad")
-object EatSalad: HuIMove {
+object EatSalad: Move {
     override fun perform(state: GameState): IMoveMistake? {
         if(state.mustEatSalad()) {
             state.currentPlayer.saladEaten = true

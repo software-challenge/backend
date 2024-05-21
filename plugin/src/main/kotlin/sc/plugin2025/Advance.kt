@@ -13,7 +13,7 @@ import sc.shared.IMoveMistake
  *   Der Wert der Karottentauschkarte spielt dann keine Rolle.
  */
 @XStreamAlias(value = "advance")
-class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): HuIMove {
+class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Move {
     
     override fun perform(state: GameState): IMoveMistake? {
         val player = state.currentPlayer
