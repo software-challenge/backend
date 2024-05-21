@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
  * Dabei werden die zurückgezogene Distanz * 10 Karotten aufgenommen.
  */
 @XStreamAlias(value = "fallBack")
-object FallBack: HuIMove {
+object FallBack: Move {
     override fun perform(state: GameState): HuIMoveMistake? {
         val previousFieldIndex = state.nextFallBack()
         if(previousFieldIndex != null) {

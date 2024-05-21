@@ -9,7 +9,7 @@ import sc.shared.IMoveMistake
  * Dies kann beliebig oft hintereinander ausgeführt werden.
  */
 @XStreamAlias(value = "ExchangeCarrots")
-data class ExchangeCarrots(val value: Int): HuIMove {
+data class ExchangeCarrots(val value: Int): Move {
     override fun perform(state: GameState): IMoveMistake? {
         if(state.mayExchangeCarrots(this.value)) {
             state.currentPlayer.carrots += value

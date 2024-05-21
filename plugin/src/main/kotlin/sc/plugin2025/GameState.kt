@@ -27,8 +27,8 @@ data class GameState @JvmOverloads constructor(
     @XStreamAsAttribute override var turn: Int = 0,
     @XStreamImplicit val players: List<Hare> = Team.values().map { Hare(it) },
     /** Der zuletzt gespielte Zug. */
-    override var lastMove: HuIMove? = null,
-): TwoPlayerGameState<HuIMove>(players.first().team) {
+    override var lastMove: Move? = null,
+): TwoPlayerGameState<Move>(players.first().team) {
     
     val currentPlayer
         get() = getHare(currentTeam)
@@ -70,9 +70,9 @@ data class GameState @JvmOverloads constructor(
     override fun getPointsForTeam(team: ITeam): IntArray =
         getHare(team).let { intArrayOf(if(it.inGoal) 1 else 0, it.position, it.salads) }
     
-    override fun getSensibleMoves(): List<HuIMove> = getSensibleMoves(currentPlayer)
+    override fun getSensibleMoves(): List<Move> = getSensibleMoves(currentPlayer)
     
-    fun getSensibleMoves(player: Hare): List<HuIMove> {
+    fun getSensibleMoves(player: Hare): List<Move> {
         if(mustEatSalad(player))
             return listOf(EatSalad)
         return (1..calculateMoveableFields(player.carrots).coerceAtMost(board.size - player.position)).flatMap { distance ->
@@ -127,9 +127,9 @@ data class GameState @JvmOverloads constructor(
             else -> null
         }
     
-    override fun moveIterator(): Iterator<HuIMove> = getSensibleMoves().iterator()
+    override fun moveIterator(): Iterator<Move> = getSensibleMoves().iterator()
     
-    override fun performMoveDirectly(move: HuIMove) {
+    override fun performMoveDirectly(move: Move) {
         val mist =
             HuIMoveMistake.MUST_EAT_SALAD.takeIf {
                 mustEatSalad() && move != EatSalad

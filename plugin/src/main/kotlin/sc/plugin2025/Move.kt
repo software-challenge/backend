@@ -5,7 +5,7 @@ import sc.api.plugins.IMove
 import sc.shared.IMoveMistake
 
 @XStreamAlias(value = "action")
-interface HuIMove: IMove {
+interface Move: IMove {
     fun perform(state: GameState): IMoveMistake?
 }
 
