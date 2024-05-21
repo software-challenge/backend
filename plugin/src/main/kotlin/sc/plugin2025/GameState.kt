@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
 import sc.plugin2025.GameRuleLogic.calculateCarrots
 import sc.plugin2025.GameRuleLogic.calculateMoveableFields
+import sc.plugin2025.util.HuIConstants
 import sc.shared.InvalidMoveException
 
 /**
@@ -58,7 +59,7 @@ data class GameState @JvmOverloads constructor(
         get() = currentTeamFromTurn()
     
     override val isOver: Boolean
-        get() = players.any { it.inGoal }
+        get() = players.any { it.inGoal } || round >= HuIConstants.ROUND_LIMIT
     
     override fun clone(): GameState =
         copy(players = players.clone())
