@@ -30,7 +30,6 @@ class MoveTest: WordSpec({
         state.checkAdvance(4) shouldBe MoveMistake.GOAL_CONDITIONS
         state.checkAdvance(5) shouldBe MoveMistake.FIELD_NONEXISTENT
         "one player advanced" should {
-            
             "allow eat salad" {
                 state.currentPlayer.addCard(Card.EAT_SALAD)
                 val adv = Advance(3, Card.EAT_SALAD)
@@ -51,6 +50,24 @@ class MoveTest: WordSpec({
                 state.performMoveDirectly(Advance(2, Card.EAT_SALAD))
                 state.turn shouldBe 4
                 state.currentPlayer.position shouldBe 2
+            }
+            
+            "allow buy and swap carrots" {
+                state.currentPlayer.position shouldBe 0
+                state.performMoveDirectly(Advance(1, Card.SWAP_CARROTS))
+                state.turn shouldBe 2
+                state.currentPlayer.position shouldBe 2
+                state.otherPlayer.position shouldBe 1
+                state.otherPlayer.getCards() shouldBe listOf(Card.SWAP_CARROTS)
+                state.getSensibleMoves(state.otherPlayer) shouldBe listOf(Advance(2, Card.SWAP_CARROTS))
+                state.performMoveDirectly(ExchangeCarrots(10))
+                state.turn shouldBe 3
+                state.currentPlayer.carrots shouldBe 57
+                state.otherPlayer.carrots shouldBe 75
+                state.performMoveDirectly(Advance(2, Card.SWAP_CARROTS))
+                state.turn shouldBe 4
+                state.currentPlayer.carrots shouldBe 54
+                state.otherPlayer.carrots shouldBe 75
             }
             
         }
