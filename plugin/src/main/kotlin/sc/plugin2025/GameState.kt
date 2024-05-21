@@ -67,7 +67,7 @@ data class GameState @JvmOverloads constructor(
         copy(players = players.map { if(it.team == currentTeam) it.clone().apply(transform) else it })
     
     override fun getPointsForTeam(team: ITeam): IntArray =
-        getHare(team).let { intArrayOf(it.position, it.salads) }
+        getHare(team).let { intArrayOf(if(it.inGoal) 1 else 0, it.position, it.salads) }
     
     override fun getSensibleMoves(): List<HuIMove> = getSensibleMoves(currentPlayer)
     
@@ -229,9 +229,9 @@ data class GameState @JvmOverloads constructor(
     override fun teamStats(team: ITeam): List<Pair<String, Int>> =
         getHare(team).run {
             listOf(
-                "▶ Position" to this.position,
-                "\uD83E\uDD55 Karotten" to this.carrots,
-                "\uD83E\uDD57 \uD83E\uDD57 Salate" to this.salads,
+                " ⃞ Position" to this.position,
+                "▾ Karotten" to this.carrots,
+                " ⃝ Salate" to this.salads,
                 "Karten" to this.getCards().count(),
             )
         }
