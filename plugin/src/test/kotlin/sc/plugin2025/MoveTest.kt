@@ -3,6 +3,7 @@ package sc.plugin2025
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
+import io.kotest.matchers.collections.*
 
 class MoveTest: WordSpec({
     isolationMode = IsolationMode.InstancePerTest
@@ -32,7 +33,9 @@ class MoveTest: WordSpec({
             
             "allow eat salad" {
                 state.currentPlayer.addCard(Card.EAT_SALAD)
-                state.performMoveDirectly(Advance(3, Card.EAT_SALAD))
+                val adv = Advance(3, Card.EAT_SALAD)
+                state.possibleCardMoves(3) shouldContainExactly listOf(adv)
+                state.performMoveDirectly(adv)
             }
             
             "allow buy and eat salad" {
@@ -53,15 +56,23 @@ class MoveTest: WordSpec({
             state.currentPlayer.position shouldBe 0
             state.currentPlayer.addCard(Card.FALL_BACK)
             state.checkAdvance(3) shouldBe null
-            "allow fallback card" {
+            "allow isolated fallback card" {
                 state.currentPlayer.position += 3
                 Card.FALL_BACK.perform(state)
+            }
+            
+            "not allow fallback to start" {
+                state.otherPlayer.position = 1
+                state.possibleCardMoves(3).shouldBeEmpty()
             }
             
             "allow fallback and buy" {
                 state.checkAdvance(3) shouldBe null
                 Advance(3, Card.FALL_BACK).perform(state.clone()) shouldBe MoveMistake.MUST_BUY_ONE_CARD
-                state.performMoveDirectly(Advance(3, Card.FALL_BACK, Card.EAT_SALAD))
+                val adv = Advance(3, Card.FALL_BACK, Card.EAT_SALAD)
+                state.possibleCardMoves(3) shouldContainExactly listOf(adv)
+                // TODO Debug
+                state.performMoveDirectly(adv)
                 state.turn shouldBe 2
                 state.otherPlayer.getCards() shouldBe listOf(Card.EAT_SALAD)
             }
