@@ -9,7 +9,7 @@ import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
-import sc.plugin2024.mistake.MoveMistake
+import sc.plugin2024.mistake.MQMoveMistake
 import sc.plugin2024.util.MQConstants
 import sc.plugin2024.util.MQConstants.POINTS_PER_SEGMENT
 import sc.plugin2024.util.MQWinReason
@@ -93,7 +93,7 @@ data class GameState @JvmOverloads constructor(
      * @throws InvalidMoveException wenn der Zug ungültig ist
      */
     override fun performMoveDirectly(move: Move) {
-        if(move.actions.isEmpty()) throw InvalidMoveException(MoveMistake.NO_ACTIONS)
+        if(move.actions.isEmpty()) throw InvalidMoveException(MQMoveMistake.NO_ACTIONS)
         
         val actions = move.actions.fold(ArrayList<Action>()) { acc, act ->
             val last = acc.lastOrNull()
@@ -106,16 +106,16 @@ data class GameState @JvmOverloads constructor(
         }
         actions.forEachIndexed { index, action ->
             when {
-                board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveMistake.SAND_BANK_END, move)
-                mustPush && action !is Push -> throw InvalidMoveException(MoveMistake.PUSH_ACTION_REQUIRED, move)
-                action is Accelerate && index != 0 -> throw InvalidMoveException(MoveMistake.FIRST_ACTION_ACCELERATE, move)
+                board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MQMoveMistake.SAND_BANK_END, move)
+                mustPush && action !is Push -> throw InvalidMoveException(MQMoveMistake.PUSH_ACTION_REQUIRED, move)
+                action is Accelerate && index != 0 -> throw InvalidMoveException(MQMoveMistake.FIRST_ACTION_ACCELERATE, move)
                 else -> action.perform(this)?.let { throw InvalidMoveException(it, move) }
             }
         }
         
         when {
-            currentShip.movement > 0 -> throw InvalidMoveException(MoveMistake.MOVEMENT_POINTS_LEFT, move)
-            currentShip.movement < 0 -> throw InvalidMoveException(MoveMistake.MOVEMENT_POINTS_MISSING, move)
+            currentShip.movement > 0 -> throw InvalidMoveException(MQMoveMistake.MOVEMENT_POINTS_LEFT, move)
+            currentShip.movement < 0 -> throw InvalidMoveException(MQMoveMistake.MOVEMENT_POINTS_MISSING, move)
         }
         
         board.pickupPassenger(currentShip)

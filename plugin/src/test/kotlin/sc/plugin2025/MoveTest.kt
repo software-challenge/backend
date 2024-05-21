@@ -13,9 +13,9 @@ class MoveTest: WordSpec({
         
         state.checkAdvance(1) shouldBe null
         state.checkAdvance(2) shouldBe null
-        state.checkAdvance(3) shouldBe MoveMistake.CARD_NOT_OWNED
-        state.checkAdvance(4) shouldBe MoveMistake.GOAL_CONDITIONS
-        state.checkAdvance(5) shouldBe MoveMistake.FIELD_NONEXISTENT
+        state.checkAdvance(3) shouldBe HuIMoveMistake.CARD_NOT_OWNED
+        state.checkAdvance(4) shouldBe HuIMoveMistake.GOAL_CONDITIONS
+        state.checkAdvance(5) shouldBe HuIMoveMistake.FIELD_NONEXISTENT
         
         state.getSensibleMoves() shouldBe listOf(
             *Card.values().map { Advance(1, it) }.toTypedArray(),
@@ -25,10 +25,10 @@ class MoveTest: WordSpec({
         state.performMoveDirectly(Advance(2))
         state.turn shouldBe 1
         
-        state.checkAdvance(2) shouldBe MoveMistake.FIELD_OCCUPIED
-        state.checkAdvance(3) shouldBe MoveMistake.CARD_NOT_OWNED
-        state.checkAdvance(4) shouldBe MoveMistake.GOAL_CONDITIONS
-        state.checkAdvance(5) shouldBe MoveMistake.FIELD_NONEXISTENT
+        state.checkAdvance(2) shouldBe HuIMoveMistake.FIELD_OCCUPIED
+        state.checkAdvance(3) shouldBe HuIMoveMistake.CARD_NOT_OWNED
+        state.checkAdvance(4) shouldBe HuIMoveMistake.GOAL_CONDITIONS
+        state.checkAdvance(5) shouldBe HuIMoveMistake.FIELD_NONEXISTENT
         "one player advanced" should {
             "allow eat salad" {
                 state.currentPlayer.addCard(Card.EAT_SALAD)
@@ -88,7 +88,7 @@ class MoveTest: WordSpec({
             
             "allow fallback and buy" {
                 state.checkAdvance(3) shouldBe null
-                Advance(3, Card.FALL_BACK).perform(state.clone()) shouldBe MoveMistake.MUST_BUY_ONE_CARD
+                Advance(3, Card.FALL_BACK).perform(state.clone()) shouldBe HuIMoveMistake.MUST_BUY_ONE_CARD
                 state.cloneCurrentPlayer { it.position = 1 }.nextCards() shouldBe Card.values().map { listOf(it) }
                 state.cloneCurrentPlayer { it.position = 3 }.nextCards() shouldBe Card.values().map { listOf(Card.FALL_BACK, it) }
                 

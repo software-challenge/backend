@@ -15,7 +15,7 @@ data class ExchangeCarrots(val value: Int): HuIMove {
             state.currentPlayer.carrots += value
             return null
         } else {
-            return MoveMistake.CANNOT_EXCHANGE_CARROTS
+            return HuIMoveMistake.CANNOT_EXCHANGE_CARROTS
         }
     }
 }

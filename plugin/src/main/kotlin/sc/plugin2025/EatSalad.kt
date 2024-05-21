@@ -18,7 +18,7 @@ object EatSalad: HuIMove {
             state.eatSalad()
             return null
         } else {
-            return MoveMistake.CANNOT_EAT_SALAD
+            return HuIMoveMistake.CANNOT_EAT_SALAD
         }
     }
     

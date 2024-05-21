@@ -131,7 +131,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun performMoveDirectly(move: HuIMove) {
         val mist =
-            MoveMistake.MUST_EAT_SALAD.takeIf {
+            HuIMoveMistake.MUST_EAT_SALAD.takeIf {
                 mustEatSalad() && move != EatSalad
             }.also { currentPlayer.saladEaten = false } ?: move.perform(this)
         if(mist != null)
@@ -160,7 +160,7 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
-    fun moveToField(newPosition: Int, player: Hare = currentPlayer): MoveMistake? =
+    fun moveToField(newPosition: Int, player: Hare = currentPlayer): HuIMoveMistake? =
         validateTargetField(newPosition, player) ?: run {
             player.position = newPosition
             null
@@ -168,29 +168,29 @@ data class GameState @JvmOverloads constructor(
     
     /** Basic validation whether a player may move forward by that distance.
      * Does not validate whether a card can be played on hare field. */
-    fun checkAdvance(distance: Int, player: Hare = currentPlayer): MoveMistake? {
+    fun checkAdvance(distance: Int, player: Hare = currentPlayer): HuIMoveMistake? {
         return validateTargetField(
             player.position + distance,
             player,
-            (player.carrots - calculateCarrots(distance)).takeIf { it >= 0 } ?: return MoveMistake.MISSING_CARROTS
+            (player.carrots - calculateCarrots(distance)).takeIf { it >= 0 } ?: return HuIMoveMistake.MISSING_CARROTS
         )
     }
     
     /** Basic validation whether a field may be entered via a jump that is not backward.
      * Does not validate whether a card can be played on hare field. */
-    fun validateTargetField(newPosition: Int, player: Hare = currentPlayer, carrots: Int = player.carrots): MoveMistake? {
+    fun validateTargetField(newPosition: Int, player: Hare = currentPlayer, carrots: Int = player.carrots): HuIMoveMistake? {
         if(newPosition == 0)
-            return MoveMistake.CANNOT_ENTER_FIELD
+            return HuIMoveMistake.CANNOT_ENTER_FIELD
         val field = board.getField(newPosition)
         if(field != Field.GOAL && newPosition == player.opponent.position)
-            return MoveMistake.FIELD_OCCUPIED
+            return HuIMoveMistake.FIELD_OCCUPIED
         when(field) {
-            Field.SALAD -> player.salads > 0 || return MoveMistake.NO_SALAD
-            Field.MARKET -> carrots >= 10 || return MoveMistake.MISSING_CARROTS
-            Field.HARE -> player.getCards().isNotEmpty() || return MoveMistake.CARD_NOT_OWNED
-            Field.GOAL -> carrots <= 10 && player.salads == 0 || return MoveMistake.GOAL_CONDITIONS
-            Field.HEDGEHOG -> return MoveMistake.HEDGEHOG_ONLY_BACKWARDS
-            null -> return MoveMistake.FIELD_NONEXISTENT
+            Field.SALAD -> player.salads > 0 || return HuIMoveMistake.NO_SALAD
+            Field.MARKET -> carrots >= 10 || return HuIMoveMistake.MISSING_CARROTS
+            Field.HARE -> player.getCards().isNotEmpty() || return HuIMoveMistake.CARD_NOT_OWNED
+            Field.GOAL -> carrots <= 10 && player.salads == 0 || return HuIMoveMistake.GOAL_CONDITIONS
+            Field.HEDGEHOG -> return HuIMoveMistake.HEDGEHOG_ONLY_BACKWARDS
+            null -> return HuIMoveMistake.FIELD_NONEXISTENT
             else -> return null
         }
         return null

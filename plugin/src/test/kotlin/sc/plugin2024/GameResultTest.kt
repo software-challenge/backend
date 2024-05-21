@@ -11,7 +11,7 @@ import sc.helpers.testXStream
 import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Turn
-import sc.plugin2024.mistake.MoveMistake
+import sc.plugin2024.mistake.MQMoveMistake
 import sc.plugin2024.util.GamePlugin
 import sc.shared.InvalidMoveException
 import sc.shared.Violation
@@ -89,7 +89,7 @@ class GameResultTest: WordSpec({
         game.currentState.performMoveDirectly(Move(Accelerate(2), Advance(3)))
         game.currentState.performMoveDirectly(Move(Accelerate(1), Advance(1), Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
         "work with violation result" {
-            game.players.first().violation = Violation.RULE_VIOLATION(InvalidMoveException(MoveMistake.NO_ACTIONS, Move()))
+            game.players.first().violation = Violation.RULE_VIOLATION(InvalidMoveException(MQMoveMistake.NO_ACTIONS, Move()))
             game.getResult() shouldSerializeTo """
                 <result>
                   <definition>
