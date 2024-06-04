@@ -133,9 +133,11 @@ data class GameState @JvmOverloads constructor(
         val mist =
             HuIMoveMistake.MUST_EAT_SALAD.takeIf {
                 mustEatSalad() && move != EatSalad
-            }.also { currentPlayer.saladEaten = false } ?: move.perform(this)
+            } ?: move.perform(this)
         if(mist != null)
             throw InvalidMoveException(mist, move)
+        if(move != EatSalad)
+            currentPlayer.saladEaten = false
         turn++
         awardPositionFields()
         if(!moveIterator().hasNext()) {
