@@ -7,6 +7,7 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import sc.helpers.shouldSerializeTo
+import sc.protocol.room.RoomPacket
 import sc.shared.InvalidMoveException
 
 class MoveTest: WordSpec({
@@ -206,6 +207,16 @@ class MoveTest: WordSpec({
         
         "produce concicse XML" {
             ExchangeCarrots(-10) shouldSerializeTo "<exchangecarrots amount=\"-10\"/>"
+        }
+    }
+    
+    "Move" should {
+        "produce a nice room message" {
+            RoomPacket("abcd", Advance(3)) shouldSerializeTo """
+                <room roomId="abcd">
+                  <data class="advance" distance="3"/>
+                </room>
+            """.trimIndent()
         }
     }
 })
