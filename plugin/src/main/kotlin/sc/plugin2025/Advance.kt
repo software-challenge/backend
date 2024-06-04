@@ -2,6 +2,7 @@ package sc.plugin2025
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.plugin2025.util.HuIConstants
 import sc.shared.IMoveMistake
 
@@ -13,7 +14,10 @@ import sc.shared.IMoveMistake
  *   Der Wert der Karottentauschkarte spielt dann keine Rolle.
  */
 @XStreamAlias(value = "advance")
-class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Move {
+class Advance(@XStreamAsAttribute val distance: Int, @XStreamImplicit private vararg val cards: Card): Move {
+    
+    @Suppress("USELESS_ELVIS")
+    fun getCards() = cards ?: arrayOf()
     
     override fun perform(state: GameState): IMoveMistake? {
         val player = state.currentPlayer
@@ -24,7 +28,7 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Mo
         
         var lastCard: Card? = null
         var bought = false
-        return cards.firstNotNullOfOrNull {
+        return getCards().firstNotNullOfOrNull {
             if(bought)
                 return HuIMoveMistake.MUST_BUY_ONE_CARD
             if(state.currentField == Field.MARKET) {
@@ -47,19 +51,18 @@ class Advance(@XStreamAsAttribute val distance: Int, vararg val cards: Card): Mo
         }
     }
     
-    override fun toString(): String {
-        return "Vorwärts um $distance${cards.joinToString(prefix = " mit Karten [", postfix = "]")}"
-    }
+    @Suppress("SAFE_CALL_WILL_CHANGE_NULLABILITY", "UNNECESSARY_SAFE_CALL")
+    override fun toString(): String =
+        "Vorwärts um $distance${cards?.takeUnless { it.isEmpty() }?.joinToString(prefix = " mit Karten [", postfix = "]") ?: ""}"
     
     override fun equals(other: Any?): Boolean {
         if(this === other) return true
         if(other !is Advance) return false
         if(distance != other.distance) return false
-        if(!cards.contentEquals(other.cards)) return false
-        return true
+        return getCards().contentEquals(other.getCards())
     }
     
     override fun hashCode(): Int =
-        distance + cards.contentHashCode() * HuIConstants.NUM_FIELDS
+        distance + getCards().contentHashCode() * HuIConstants.NUM_FIELDS
     
 }

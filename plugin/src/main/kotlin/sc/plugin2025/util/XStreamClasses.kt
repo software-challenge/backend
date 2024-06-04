@@ -1,13 +1,17 @@
 package sc.plugin2025.util
 
 import sc.networking.XStreamProvider
-import sc.plugin2025.Move
+import sc.plugin2025.*
 
 class XStreamClasses: XStreamProvider {
     
     override val classesToRegister =
-            listOf(
-                    Move::class.java
-            )
+        listOf(
+            Advance::class.java,
+            Card::class.java,
+            FallBack::class.java,
+            EatSalad::class.java,
+            ExchangeCarrots::class.java,
+        )
     
 }

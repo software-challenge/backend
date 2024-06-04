@@ -10,7 +10,7 @@ import sc.shared.IMoveMistake
  * Durch eine Salatessen-Aktion wird ein Salat verbraucht
  * und es werden je nachdem ob der Spieler führt oder nicht 10 oder 30 Karotten aufgenommen.
  */
-@XStreamAlias(value = "EatSalad")
+@XStreamAlias(value = "eatsalad")
 object EatSalad: Move {
     override fun perform(state: GameState): IMoveMistake? {
         if(state.mustEatSalad()) {
@@ -22,5 +22,9 @@ object EatSalad: Move {
         }
     }
     
+    override fun toString(): String = "Salat fressen"
+    
     override fun equals(other: Any?): Boolean = other is EatSalad
+    
+    override fun hashCode(): Int = javaClass.name.hashCode()
 }

@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
  * darf anstatt nach vorne zu ziehen ein Rückzug gemacht werden.
  * Dabei werden die zurückgezogene Distanz * 10 Karotten aufgenommen.
  */
-@XStreamAlias(value = "fallBack")
+@XStreamAlias(value = "fallback")
 object FallBack: Move {
     override fun perform(state: GameState): HuIMoveMistake? {
         val previousFieldIndex = state.nextFallBack()
@@ -21,5 +21,9 @@ object FallBack: Move {
         }
     }
     
+    override fun toString(): String = "Zurückfallen"
+    
     override fun equals(other: Any?): Boolean = other is FallBack
+    
+    override fun hashCode(): Int = javaClass.name.hashCode()
 }
