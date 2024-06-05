@@ -78,7 +78,7 @@ data class CubeCoordinates
     override fun equals(other: Any?): Boolean =
             other is CubeCoordinates && q == other.q && r == other.r && s == other.s
     
-    override fun hashCode(): Int = q * 9999 + r
+    override fun hashCode(): Int = q * 998 + r
     
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
@@ -98,6 +98,8 @@ enum class CubeDirection(val vector: CubeCoordinates) {
     val angle
         get() = ordinal * 60
     
+    fun byIndex(index: Int) = values().let { it[index.mod(it.size)] }
+    
     /** @return an array of this and the two neighboring directions. */
     fun withNeighbors() = arrayOf(rotatedBy(-1), this, rotatedBy(1))
     
@@ -110,8 +112,12 @@ enum class CubeDirection(val vector: CubeCoordinates) {
         return if(diff > 3) diff - values().size else diff
     }
     
+    fun angleTo(target: CubeDirection) = turnCountTo(target) * 60
+    
     /** @return the direction rotated clockwise [turns] times. */
-    fun rotatedBy(turns: Int) = values().let { it[(ordinal + turns).mod(it.size)] }
+    fun rotatedBy(turns: Int) = byIndex(ordinal + turns)
+    
+    operator fun minus(other: CubeDirection) = byIndex(ordinal - other.ordinal)
     
     operator fun minus(count: Int) = rotatedBy(-count)
     operator fun plus(count: Int) = rotatedBy(count)

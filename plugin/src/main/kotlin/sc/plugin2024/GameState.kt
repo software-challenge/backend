@@ -49,10 +49,13 @@ data class GameState @JvmOverloads constructor(
 ): TwoPlayerGameState<Move>(currentTeam) {
     
     val currentShip: Ship
-        get() = ships[currentTeam.index]
+        get() = getShip(currentTeam)
     
     val otherShip: Ship
-        get() = ships[currentTeam.opponent().index]
+        get() = getShip(currentTeam.opponent())
+    
+    fun getShip(team: Team) =
+        ships[team.index]
     
     /**
      * Determine the team that should go first at the beginning of the round.

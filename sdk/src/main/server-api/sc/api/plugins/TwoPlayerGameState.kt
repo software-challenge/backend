@@ -55,7 +55,7 @@ abstract class TwoPlayerGameState<M: IMove>(
     /** Calculates the [Team] of the current player from [turn] and [startTeam].
      * Based on the assumption that the current player switches every turn. */
     protected fun currentTeamFromTurn(): Team =
-            if(turn.rem(2) == 0) startTeam else startTeam.opponent()
+            if(turn.mod(2) == 0) startTeam else startTeam.opponent()
 
     override fun toString() =
             "GameState(turn=$turn,currentTeam=$currentTeam)"
