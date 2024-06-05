@@ -6,14 +6,13 @@ public class FileSystemInterface implements INetworkInterface {
   private final InputStream inputStream;
   private final OutputStream outputStream;
 
-  public FileSystemInterface(File file) throws FileNotFoundException {
-    this.inputStream = new FileInputStream(file);
-    this.outputStream = new NullOutputStream(true);
-  }
-
   public FileSystemInterface(InputStream in) {
     this.inputStream = in;
     this.outputStream = new NullOutputStream(true);
+  }
+
+  public FileSystemInterface(File file) throws FileNotFoundException {
+    this(new FileInputStream(file));
   }
 
   @Override

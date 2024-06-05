@@ -7,18 +7,15 @@ import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameRoomException;
 import sc.api.plugins.exceptions.RescuableClientException;
-import sc.networking.InvalidScoreDefinitionException;
-import sc.networking.clients.GameLoaderClient;
+import sc.framework.ReplayLoader;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.GamePreparedResponse;
 import sc.protocol.responses.RoomWasJoinedEvent;
 import sc.server.Configuration;
 import sc.server.network.Client;
-import sc.shared.*;
+import sc.shared.SlotDescriptor;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.*;
 
 /**
@@ -63,7 +60,7 @@ public class GameRoomManager {
       }
 
       logger.info("Loading game from file '{}' at turn {}", gameFile, turn);
-      game = plugin.createGameFromState(new GameLoaderClient(gameFile).getTurn(turn));
+      game = plugin.createGameFromState(new ReplayLoader(gameFile).getTurn(turn));
     } else {
       game = plugin.createGame();
     }

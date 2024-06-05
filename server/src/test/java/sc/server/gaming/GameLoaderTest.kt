@@ -3,7 +3,7 @@ package sc.server.gaming
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
-import sc.networking.clients.GameLoaderClient
+import sc.framework.ReplayLoader
 import sc.server.plugins.TestGameState
 import java.io.File
 import java.util.zip.GZIPOutputStream
@@ -18,15 +18,15 @@ class GameLoaderTest: FunSpec({
         }
         val state = TestGameState()
         listOf(
-                "String" to GameLoaderClient(minimalReplay.byteInputStream()),
-                "GZip File" to GameLoaderClient(tmpfile)
+                "String" to { ReplayLoader(minimalReplay.byteInputStream()) },
+                "GZip File" to { ReplayLoader(tmpfile) }
         ).forEach { (clue, client) ->
             test(clue) {
-                client.getHistory() shouldBe listOf(state)
-                client.getTurn(0) shouldBe state
-                client.getTurn(-1) shouldBe state
+                client().loadHistory().first shouldBe listOf(state)
+                client().getTurn(0) shouldBe state
+                client().getTurn(-1) shouldBe state
                 shouldThrow<NoSuchElementException> {
-                    client.getTurn(1)
+                    client().getTurn(1) shouldBe state
                 }
             }
         }

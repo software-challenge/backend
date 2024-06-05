@@ -118,9 +118,6 @@ public abstract class XStreamClient implements IClient {
           throw new ClassNotFoundException("Received object of unknown class " + object.getClass().getName());
         }
       }
-    } catch (EOFException e) {
-      logger.info("End of input reached, disconnecting {}", this);
-      logger.trace("Disconnected with", e);
     } catch (IOException e) {
       // The other side closed the connection.
       // It is better when the other side sends a CloseConnection message beforehand,
@@ -191,8 +188,10 @@ public abstract class XStreamClient implements IClient {
       this.out.writeObject(packet);
       this.out.flush();
     } catch (XStreamException e) {
+      stopReceiver();
       handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
     } catch (IOException e) {
+      stopReceiver();
       handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
     }
   }
@@ -203,7 +202,7 @@ public abstract class XStreamClient implements IClient {
     try {
       close();
     } catch (Exception e) {
-      logger.error("Failed to close", e);
+      logger.error("Failed to close {}", this, e);
     }
 
     onDisconnected(cause);
@@ -233,6 +232,7 @@ public abstract class XStreamClient implements IClient {
     // this side caused disconnect, notify other side
     if (!isClosed())
       send(new CloseConnection());
+    stopReceiver();
     handleDisconnect(DisconnectCause.INITIATED_DISCONNECT);
   }
 
@@ -254,8 +254,6 @@ public abstract class XStreamClient implements IClient {
     if (!isClosed()) {
       this.closed = true;
 
-      stopReceiver();
-
       try {
         if (this.out != null)
           this.out.close();
@@ -269,10 +267,10 @@ public abstract class XStreamClient implements IClient {
       try {
         this.networkInterface.close();
       } catch (Exception e) {
-        logger.warn("Failed to close " + networkInterface, e);
+        logger.warn("Failed to close {} for {}", networkInterface, this, e);
       }
     } else {
-      logger.warn("Attempted to close an already closed stream");
+      logger.warn("Attempted to close the already closed {}", this);
     }
   }
 
