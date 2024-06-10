@@ -8,7 +8,7 @@ import sc.shared.IMoveMistake
  * MoveMistakes entstehen bei Zügen, die theoretisch möglich sein könnten,
  * es aber bei dem jeweiligen Spielstand nicht sind.
  */
-enum class PenguinMoveMistake(override val message: String): IMoveMistake {
+enum class PenguinsMoveMistake(override val message: String): IMoveMistake {
     SINGLE_FISH("Pinguine können nur auf einzelne Fische gesetzt werden"),
     PENGUINS("Setze zuerst alle Pinguine"),
     MAX_PENGUINS("Bereits alle Pinguine gesetzt");

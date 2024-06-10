@@ -6,7 +6,7 @@ import sc.api.plugins.Coordinates
 import sc.api.plugins.ITeam
 import sc.api.plugins.Team
 import sc.api.plugins.TwoPlayerGameState
-import sc.plugin2023.util.PenguinMoveMistake
+import sc.plugin2023.util.PenguinsMoveMistake
 import sc.plugin2023.util.PluginConstants
 import sc.shared.InvalidMoveException
 import sc.shared.MoveMistake
@@ -38,7 +38,7 @@ data class GameState @JvmOverloads constructor(
             if(board[move.from].penguin != currentTeam)
                 throw InvalidMoveException(MoveMistake.WRONG_COLOR, move)
             if(currentPieces.size < PluginConstants.PENGUINS)
-                throw InvalidMoveException(PenguinMoveMistake.PENGUINS, move)
+                throw InvalidMoveException(PenguinsMoveMistake.PENGUINS, move)
             if(!move.to.minus(move.from).straightHex)
                 throw InvalidMoveException(MoveMistake.INVALID_MOVE, move)
             // TODO avoid this check
@@ -47,9 +47,9 @@ data class GameState @JvmOverloads constructor(
             board[move.from] = null
         } else {
             if(currentPieces.size >= PluginConstants.PENGUINS)
-                throw InvalidMoveException(PenguinMoveMistake.MAX_PENGUINS, move)
+                throw InvalidMoveException(PenguinsMoveMistake.MAX_PENGUINS, move)
             if(board[move.to].fish != 1)
-                throw InvalidMoveException(PenguinMoveMistake.SINGLE_FISH, move)
+                throw InvalidMoveException(PenguinsMoveMistake.SINGLE_FISH, move)
         }
         fishes[currentTeam.index] += board.set(move.to, currentTeam)
         lastMove = move
