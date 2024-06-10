@@ -94,8 +94,8 @@ data class Segment(
         fun inDirection(previousCenter: CubeCoordinates, direction: CubeDirection, fields: SegmentFields) =
                 Segment(direction, previousCenter + direction.vector * PluginConstants.SEGMENT_FIELDS_WIDTH, fields)
         
-        fun empty(center: CubeCoordinates = CubeCoordinates.ORIGIN) =
-                Segment(CubeDirection.RIGHT, center, generateSegment(false, arrayOf()))
+        fun empty(center: CubeCoordinates = CubeCoordinates.ORIGIN, direction: CubeDirection = CubeDirection.RIGHT) =
+                Segment(direction, center, generateSegment(false, arrayOf()))
     }
 }
 
