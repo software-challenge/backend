@@ -25,8 +25,8 @@ data class TestGameState(
     
     override val round get() = turn / 2
     
-    val red = Player(Team.ONE)
-    val blue = Player(Team.TWO)
+    val red = Player(Team.ONE, "Fred")
+    val blue = Player(Team.TWO, "Marta")
     
     override fun clone() = TestGameState(turn, state)
 }

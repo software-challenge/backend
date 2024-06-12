@@ -19,17 +19,17 @@ import java.io.StringWriter
 
 val minimalReplay = """
     <protocol>
-    <room roomId="some-id">
+    <room roomId="PLACEHOLDERID">
       <data class="memento">
         <state class="sc.server.plugins.TestGameState">
           <turn>0</turn>
           <state>0</state>
-          <red team="ONE"/>
-          <blue team="TWO"/>
+          <red name="Fred" team="ONE"/>
+          <blue name="Marta" team="TWO"/>
         </state>
       </data>
     </room>
-    <room roomId="some-id">
+    <room roomId="PLACEHOLDERID">
       <data class="result">
         <definition>
           <fragment name="winner">
@@ -47,7 +47,7 @@ val minimalReplay = """
         </definition>
         <scores>
           <entry>
-            <player team="ONE"/>
+            <player name="Fred" team="ONE"/>
             <score>
               <part>0</part>
               <part>0</part>
@@ -55,7 +55,7 @@ val minimalReplay = """
             </score>
           </entry>
           <entry>
-            <player team="TWO"/>
+            <player name="Marta" team="TWO"/>
             <score>
               <part>2</part>
               <part>1</part>
@@ -63,7 +63,7 @@ val minimalReplay = """
             </score>
           </entry>
         </scores>
-        <winner team="TWO" regular="true" reason="TWO won through index"/>
+        <winner team="TWO" regular="true" reason="Marta won through index"/>
       </data>
     </room>
     </protocol>""".trimIndent()
@@ -95,7 +95,7 @@ class GameRoomTest: WordSpec({
         "save a correct replay" {
             val replayWriter = StringWriter()
             room.saveReplay(replayWriter)
-            replayWriter.toString() shouldBe minimalReplay.replace("some-id", room.id)
+            replayWriter.toString() shouldBe minimalReplay.replace("PLACEHOLDERID", room.id)
         }
     }
     "A GameRoom with prepared reservations" should {

@@ -2,6 +2,7 @@ package sc.framework
 
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGameState
+import sc.api.plugins.Team
 import sc.networking.XStreamProvider
 import sc.protocol.room.MementoMessage
 import sc.protocol.room.RoomPacket
@@ -61,5 +62,10 @@ class ReplayLoader(inputStream: InputStream) {
     
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
+        
+        fun invert(replay: String) =
+            replay.replace(Regex("(ONE|TWO)")) {
+                Team.valueOf(it.value).opponent().name
+            }
     }
 }
