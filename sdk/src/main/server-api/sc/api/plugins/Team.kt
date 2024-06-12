@@ -19,7 +19,7 @@ enum class Team(override val index: Int): ITeam {
     
     abstract val color: String
     
-    override fun opponent(): Team = throw IllegalArgumentException()
+    abstract override fun opponent(): Team
 }
 
 /** This represents the team a player is in / is playing for. */

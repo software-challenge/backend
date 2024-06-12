@@ -54,8 +54,11 @@ data class GameState @JvmOverloads constructor(
     val otherShip: Ship
         get() = getShip(currentTeam.opponent())
     
-    fun getShip(team: Team) =
-        ships[team.index]
+    fun shipIndex(team: ITeam) =
+        ships.indexOfFirst { it.team == team }
+    
+    fun getShip(team: ITeam) =
+        ships.single { it.team == team }
     
     /**
      * Determine the team that should go first at the beginning of the round.
@@ -428,7 +431,7 @@ data class GameState @JvmOverloads constructor(
             ship.passengers > 1 && board.effectiveSpeed(ship) < 2 && board[ship.position] == Field.GOAL
     
     override fun getPointsForTeam(team: ITeam): IntArray =
-            ships[team.index].let { ship ->
+            getShip(team).let { ship ->
                 if(ship.stuck)
                     intArrayOf(0, 0)
                 else
@@ -436,7 +439,7 @@ data class GameState @JvmOverloads constructor(
             }
     
     override fun getPointsForTeamExtended(team: ITeam): IntArray =
-            ships[team.index].let { ship ->
+            getShip(team).let { ship ->
                 intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) PluginConstants.FINISH_POINTS else 0)
             }
     
@@ -452,9 +455,9 @@ data class GameState @JvmOverloads constructor(
     override fun clone(): GameState = copy(board = board.clone(), ships = ships.clone())
     
     override fun toString() =
-            "GameState $turn, $currentTeam ist dran [${ships.joinToString { "${it.team.index.plus(1)}:C${it.coal}S${it.speed}" }}]"
+            "GameState $turn, $currentTeam ist dran [${ships.joinToString { "${it.team.index.plus(1)}:C${it.coal}S${it.speed}" }}] starter $startTeam"
     
     override fun longString() =
-            "$this\n${ships.joinToString("\n")}\nLast Move: $lastMove\n$board"
+            "$this\n${ships.joinToString("\n")}\nLast Move: $lastMove (starter: $startTeam)\n$board"
     
 }
