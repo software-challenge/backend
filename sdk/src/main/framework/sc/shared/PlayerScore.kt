@@ -29,7 +29,7 @@ data class PlayerScore(
     fun toString(definition: ScoreDefinition): String {
         if(!matches(definition))
             throw IllegalArgumentException("$definition does not match $this")
-        return "PlayerScore[${parts.withIndex().joinToString { "${definition[it.index].name}=${it.value}" }}]"
+        return "PlayerScore[${parts.withIndex().joinToString { (index, value) -> "${definition[index].name}=${value}" }}]"
     }
     
     override fun toString(): String = "PlayerScore(${parts.contentToString()})"
