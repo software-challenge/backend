@@ -443,12 +443,12 @@ data class GameState @JvmOverloads constructor(
                 intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) PluginConstants.FINISH_POINTS else 0)
             }
     
-    override fun teamStats(team: ITeam): List<Pair<String, Int>> =
+    override fun teamStats(team: ITeam) =
             ships.first { it.team == team }.let {
                 listOf(
-                        "Passagiere" to it.passengers,
-                        "Geschwindigkeit" to it.speed,
-                        "Kohle" to it.coal,
+                        Stat("Passagiere", it.passengers, "☻"),
+                        Stat("Geschwindigkeit", it.speed, "⚙"),
+                        Stat("Kohle", it.coal, "⚫"),
                 )
             }
     
