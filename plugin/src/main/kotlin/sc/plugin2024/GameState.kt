@@ -9,10 +9,10 @@ import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
-import sc.plugin2024.mistake.MoveMistake
+import sc.plugin2024.mistake.MQMoveMistake
+import sc.plugin2024.util.MQConstants
+import sc.plugin2024.util.MQConstants.POINTS_PER_SEGMENT
 import sc.plugin2024.util.MQWinReason
-import sc.plugin2024.util.PluginConstants
-import sc.plugin2024.util.PluginConstants.POINTS_PER_SEGMENT
 import sc.shared.InvalidMoveException
 import sc.shared.WinCondition
 import kotlin.math.absoluteValue
@@ -82,7 +82,7 @@ data class GameState @JvmOverloads constructor(
             }
     
     fun calculatePoints(ship: Ship) =
-            shipAdvancePoints(ship) + ship.passengers * PluginConstants.POINTS_PER_PASSENGER
+        shipAdvancePoints(ship) + ship.passengers * MQConstants.POINTS_PER_PASSENGER
     
     fun isCurrentShipOnCurrent() =
             board.doesFieldHaveCurrent(currentShip.position)
@@ -96,7 +96,7 @@ data class GameState @JvmOverloads constructor(
      * @throws InvalidMoveException wenn der Zug ungültig ist
      */
     override fun performMoveDirectly(move: Move) {
-        if(move.actions.isEmpty()) throw InvalidMoveException(MoveMistake.NO_ACTIONS)
+        if(move.actions.isEmpty()) throw InvalidMoveException(MQMoveMistake.NO_ACTIONS)
         
         val actions = move.actions.fold(ArrayList<Action>()) { acc, act ->
             val last = acc.lastOrNull()
@@ -109,16 +109,16 @@ data class GameState @JvmOverloads constructor(
         }
         actions.forEachIndexed { index, action ->
             when {
-                board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MoveMistake.SAND_BANK_END, move)
-                mustPush && action !is Push -> throw InvalidMoveException(MoveMistake.PUSH_ACTION_REQUIRED, move)
-                action is Accelerate && index != 0 -> throw InvalidMoveException(MoveMistake.FIRST_ACTION_ACCELERATE, move)
+                board[currentShip.position] == Field.SANDBANK && index != 0 -> throw InvalidMoveException(MQMoveMistake.SAND_BANK_END, move)
+                mustPush && action !is Push -> throw InvalidMoveException(MQMoveMistake.PUSH_ACTION_REQUIRED, move)
+                action is Accelerate && index != 0 -> throw InvalidMoveException(MQMoveMistake.FIRST_ACTION_ACCELERATE, move)
                 else -> action.perform(this)?.let { throw InvalidMoveException(it, move) }
             }
         }
         
         when {
-            currentShip.movement > 0 -> throw InvalidMoveException(MoveMistake.MOVEMENT_POINTS_LEFT, move)
-            currentShip.movement < 0 -> throw InvalidMoveException(MoveMistake.MOVEMENT_POINTS_MISSING, move)
+            currentShip.movement > 0 -> throw InvalidMoveException(MQMoveMistake.MOVEMENT_POINTS_LEFT, move)
+            currentShip.movement < 0 -> throw InvalidMoveException(MQMoveMistake.MOVEMENT_POINTS_MISSING, move)
         }
         
         board.pickupPassenger(currentShip)
@@ -143,7 +143,7 @@ data class GameState @JvmOverloads constructor(
         currentTeam = if(turn % 2 == 0) determineAheadTeam() else currentTeam.opponent()
         if(!canMove() && !isOver) {
             lastMove = null
-            currentShip.stuck = true
+            currentShip.crashed = true
             advanceTurn()
         }
     }
@@ -341,7 +341,7 @@ data class GameState @JvmOverloads constructor(
         var currentPosition = start
         var totalCost = 0
         var hasCurrent = false
-        val maxMovement = maxMovementPoints.coerceIn(0, PluginConstants.MAX_SPEED)
+        val maxMovement = maxMovementPoints.coerceIn(0, MQConstants.MAX_SPEED)
         val result = ArrayList<Int>(maxMovement)
         
         fun result(condition: AdvanceProblem) =
@@ -389,20 +389,20 @@ data class GameState @JvmOverloads constructor(
         
         return (1..maxCoal + currentShip.freeAcc).flatMap { i ->
             listOfNotNull(
-                    Accelerate(i).takeIf { PluginConstants.MAX_SPEED >= currentShip.speed + i },
-                    Accelerate(-i).takeIf { PluginConstants.MIN_SPEED <= currentShip.speed - i }
+                    Accelerate(i).takeIf { MQConstants.MAX_SPEED >= currentShip.speed + i },
+                    Accelerate(-i).takeIf { MQConstants.MIN_SPEED <= currentShip.speed - i }
             )
         }
     }
     
     // In rare cases this returns true on the server even though the player cannot move
     // because the target tile is not revealed yet
-    fun canMove() = !currentShip.stuck && moveIterator().hasNext()
+    fun canMove() = !currentShip.crashed && moveIterator().hasNext()
     
     override val winCondition: WinCondition?
         get() =
             arrayOf({ ships.singleOrNull { inGoal(it) }?.let { WinCondition(it.team, MQWinReason.GOAL) } },
-                    { ships.singleOrNull { it.stuck }?.let { WinCondition(it.team.opponent(), MQWinReason.STUCK) } },
+                    { ships.singleOrNull { it.crashed }?.let { WinCondition(it.team.opponent(), MQWinReason.CRASHED) } },
                     {
                         val dist = board.segmentDistance(ships.first().position, ships.last().position)
                         WinCondition(ships[if(dist > 0) 0 else 1].team, MQWinReason.SEGMENT_DISTANCE).takeIf { dist.absoluteValue > 3 }
@@ -418,11 +418,9 @@ data class GameState @JvmOverloads constructor(
             // Bedingung 3: am Ende einer Runde liegt ein Dampfer mehr als 3 Spielsegmente zurück
             board.segmentDistance(ships.first().position, ships.last().position).absoluteValue > 3 -> true
             // Bedingung 4: das Rundenlimit von 30 Runden ist erreicht
-            turn / 2 >= PluginConstants.ROUND_LIMIT -> true
+            turn / 2 >= MQConstants.ROUND_LIMIT -> true
             // Bedingung 5: beide Spieler können sich nicht mehr bewegen
-            // lastMove == null && !canMove() -> true
-            // Bedingung 5: Ein Spieler kann sich nicht mehr bewegen
-            ships.any { it.stuck } -> true
+            lastMove == null && !canMove() -> true
             // ansonsten geht das Spiel weiter
             else -> false
         }
@@ -432,7 +430,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun getPointsForTeam(team: ITeam): IntArray =
             getShip(team).let { ship ->
-                if(ship.stuck)
+                if(ship.crashed)
                     intArrayOf(0, 0)
                 else
                     intArrayOf(ship.points, ship.passengers)
@@ -440,7 +438,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun getPointsForTeamExtended(team: ITeam): IntArray =
             getShip(team).let { ship ->
-                intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) PluginConstants.FINISH_POINTS else 0)
+                intArrayOf(*getPointsForTeam(team), ship.coal * 2, if(inGoal(ship)) 6 else 0)
             }
     
     override fun teamStats(team: ITeam) =

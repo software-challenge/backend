@@ -2,12 +2,9 @@ package sc.plugin2023
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.api.plugins.Coordinates
-import sc.api.plugins.ITeam
-import sc.api.plugins.Team
-import sc.api.plugins.TwoPlayerGameState
+import sc.api.plugins.*
 import sc.plugin2023.util.PenguinsMoveMistake
-import sc.plugin2023.util.PluginConstants
+import sc.plugin2023.util.PenguinConstants
 import sc.shared.InvalidMoveException
 import sc.shared.MoveMistake
 
@@ -37,7 +34,7 @@ data class GameState @JvmOverloads constructor(
         if(move.from != null) {
             if(board[move.from].penguin != currentTeam)
                 throw InvalidMoveException(MoveMistake.WRONG_COLOR, move)
-            if(currentPieces.size < PluginConstants.PENGUINS)
+            if(currentPieces.size < PenguinConstants.PENGUINS)
                 throw InvalidMoveException(PenguinsMoveMistake.PENGUINS, move)
             if(!move.to.minus(move.from).straightHex)
                 throw InvalidMoveException(MoveMistake.INVALID_MOVE, move)
@@ -46,7 +43,7 @@ data class GameState @JvmOverloads constructor(
                 throw InvalidMoveException(MoveMistake.INVALID_MOVE, move)
             board[move.from] = null
         } else {
-            if(currentPieces.size >= PluginConstants.PENGUINS)
+            if(currentPieces.size >= PenguinConstants.PENGUINS)
                 throw InvalidMoveException(PenguinsMoveMistake.MAX_PENGUINS, move)
             if(board[move.to].fish != 1)
                 throw InvalidMoveException(PenguinsMoveMistake.SINGLE_FISH, move)
@@ -60,7 +57,7 @@ data class GameState @JvmOverloads constructor(
         get() = board.filterValues { it.penguin == currentTeam }
     
     val penguinsPlaced
-        get() = currentPieces.size == PluginConstants.PENGUINS
+        get() = currentPieces.size == PenguinConstants.PENGUINS
     
     override fun getSensibleMoves(): List<Move> =
             if(penguinsPlaced) {
@@ -72,12 +69,13 @@ data class GameState @JvmOverloads constructor(
     override fun moveIterator(): Iterator<Move> =
             getSensibleMoves().iterator()
     
-    fun canPlacePenguin(pos: Coordinates) = !penguinsPlaced && board[pos].fish == 1
+    fun canPlacePenguin(pos: Coordinates) =
+        !penguinsPlaced && board[pos].fish == 1
     
     fun immovable(team: Team? = null) =
             board.getPenguins()
                     .filter { team == null || it.second == team }
-                    .takeIf { it.size == PluginConstants.PENGUINS * (if(team == null) Team.values().size else 1) }
+                    .takeIf { it.size == PenguinConstants.PENGUINS * (if(team == null) Team.values().size else 1) }
                     ?.all { pair -> pair.first.hexNeighbors.all { board.getOrEmpty(it).fish == 0 } } ?: false
     
     override val isOver: Boolean
@@ -86,6 +84,8 @@ data class GameState @JvmOverloads constructor(
     /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForTeam(team: ITeam): IntArray =
             intArrayOf(fishes[team.index])
+    
+    override fun teamStats(team: ITeam) = listOf<Stat>()
     
     override fun clone() = GameState(this)
     

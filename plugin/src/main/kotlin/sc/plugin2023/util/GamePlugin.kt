@@ -3,14 +3,15 @@ package sc.plugin2023.util
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
-import sc.plugin2023.Game
+import sc.framework.plugins.TwoPlayerGame
 import sc.plugin2023.GameState
+import sc.plugin2023.Move
 import sc.shared.ScoreAggregation
 import sc.shared.ScoreDefinition
 import sc.shared.ScoreFragment
 import sc.shared.WinReason
 
-class GamePlugin: IGamePlugin {
+class GamePlugin: IGamePlugin<Move> {
     companion object {
         const val PLUGIN_ID = "swc_2023_penguins"
         val scoreDefinition: ScoreDefinition =
@@ -26,12 +27,14 @@ class GamePlugin: IGamePlugin {
             Companion.scoreDefinition
     
     override val turnLimit: Int =
-            PluginConstants.BOARD_SIZE * PluginConstants.BOARD_SIZE
+        PenguinConstants.BOARD_SIZE * PenguinConstants.BOARD_SIZE
+    
+    override val moveClass: Class<Move> = Move::class.java
     
     override fun createGame(): IGameInstance =
-            Game()
+            TwoPlayerGame(this, GameState())
     
     override fun createGameFromState(state: IGameState): IGameInstance =
-            Game(state as GameState)
+            TwoPlayerGame(this, state as GameState)
     
 }

@@ -15,6 +15,7 @@ object LobbyProtocol {
         registerAdditionalMessages(xStream, listOf(
                 AuthenticateRequest::class.java,
                 CancelRequest::class.java,
+                CloseConnection::class.java,
                 JoinGameRequest::class.java,
                 JoinPreparedRoomRequest::class.java,
                 JoinRoomRequest::class.java,

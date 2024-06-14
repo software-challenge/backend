@@ -3,7 +3,7 @@ package sc.plugin2023
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.*
 import kotlin.random.Random
-import sc.plugin2023.util.PluginConstants as Constants
+import sc.plugin2023.util.PenguinConstants as Constants
 
 /**
  * Klasse welche eine Spielbrett darstellt. Bestehend aus einem

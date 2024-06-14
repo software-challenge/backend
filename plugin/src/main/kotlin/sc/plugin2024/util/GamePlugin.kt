@@ -4,8 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
-import sc.plugin2024.Game
+import sc.framework.plugins.TwoPlayerGame
 import sc.plugin2024.GameState
+import sc.plugin2024.Move
 import sc.shared.*
 
 @XStreamAlias(value = "winreason")
@@ -14,10 +15,10 @@ enum class MQWinReason(override val message: String, override val isRegular: Boo
     DIFFERING_PASSENGERS("%S hat mehr Passagiere befördert."),
     SEGMENT_DISTANCE("%s liegt 3 Segmente vorne."),
     GOAL("%s hat das Ziel zuerst erreicht."),
-    STUCK("%s kann sich nicht mehr bewegen.", false);
+    CRASHED("%s kann sich nicht mehr bewegen.", false);
 }
 
-class GamePlugin: IGamePlugin {
+class GamePlugin: IGamePlugin<Move> {
     companion object {
         const val PLUGIN_ID = "swc_2024_mississippi_queen"
         val scoreDefinition: ScoreDefinition =
@@ -34,12 +35,14 @@ class GamePlugin: IGamePlugin {
             Companion.scoreDefinition
     
     override val turnLimit: Int =
-            PluginConstants.ROUND_LIMIT * 2
+        MQConstants.ROUND_LIMIT * 2
+    
+    override val moveClass = Move::class.java
     
     override fun createGame(): IGameInstance =
-            Game()
+            TwoPlayerGame(this, GameState())
     
     override fun createGameFromState(state: IGameState): IGameInstance =
-            Game(state as GameState)
+            TwoPlayerGame(this, state as GameState)
     
 }

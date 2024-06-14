@@ -14,7 +14,7 @@ import sc.api.plugins.Team
 import sc.helpers.checkSerialization
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
-import sc.plugin2024.util.PluginConstants
+import sc.plugin2024.util.MQConstants
 
 class BoardTest: FunSpec({
     context("get field by CubeCoordinates") {
@@ -41,10 +41,10 @@ class BoardTest: FunSpec({
         test("end of second segment") {
             val board = Board()
             board.getCoordinateByIndex(1,
-                    PluginConstants.SEGMENT_FIELDS_WIDTH - 1, 0) shouldBe CubeCoordinates(6, -2)
+                MQConstants.SEGMENT_FIELDS_WIDTH - 1, 0) shouldBe CubeCoordinates(6, -2)
             board.getCoordinateByIndex(1,
-                    PluginConstants.SEGMENT_FIELDS_WIDTH - 1,
-                    PluginConstants.SEGMENT_FIELDS_HEIGHT - 1) shouldBe CubeCoordinates(4, 2)
+                MQConstants.SEGMENT_FIELDS_WIDTH - 1,
+                MQConstants.SEGMENT_FIELDS_HEIGHT - 1) shouldBe CubeCoordinates(4, 2)
             board[CubeCoordinates(6, -2)] shouldBe Field.WATER // top right
             board[CubeCoordinates(4, 2)] shouldBe Field.WATER // bottom right
         }
@@ -167,34 +167,34 @@ class BoardTest: FunSpec({
             val serializedSegment = """
                   <segment direction="RIGHT">
                     <center q="0" r="0" s="0"/>
-                    <field-array>
+                    <column>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </field-array>
-                    <field-array>
+                    </column>
+                    <column>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </field-array>
-                    <field-array>
+                    </column>
+                    <column>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </field-array>
-                    <field-array>
+                    </column>
+                    <column>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
                       <water/>
-                    </field-array>
+                    </column>
                   </segment>"""
             val serialized = """
                 <board nextDirection="RIGHT">$serializedSegment
@@ -219,7 +219,7 @@ class BoardTest: FunSpec({
         }
         test("random Board has correct length") {
             testXStream.toXML(board) shouldHaveLineCount 64
-            board.visibleSegments = PluginConstants.NUMBER_OF_SEGMENTS
+            board.visibleSegments = MQConstants.NUMBER_OF_SEGMENTS
             val full = testXStream.toXML(board)
             full shouldHaveLineCount 250
             testXStream.fromXML(full) shouldBe board
@@ -235,13 +235,13 @@ class BoardTest: FunSpec({
                 <board nextDirection="UP_LEFT">
                   <segment direction="UP_LEFT">
                     <center q="1" r="1" s="-2"/>
-                    <field-array>
+                    <column>
                       <water/>
                       <goal/>
                       <island/>
                       <sandbank/>
                       <passenger direction="RIGHT" passenger="1"/>
-                    </field-array>
+                    </column>
                   </segment>
                 </board>"""
         }

@@ -19,8 +19,20 @@ fun <T> Iterable<T>.maxByNoEqual(selector: (T) -> Int): T? =
             }
         }.second
 
-abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
-    val logger = LoggerFactory.getLogger(this::class.java)
+
+class TwoPlayerGame<Move : IMove, GameState: TwoPlayerGameState<Move>>(plugin: IGamePlugin<Move>, override val currentState: GameState): AbstractGame<Move>(plugin) {
+    override fun onRoundBasedAction(move: IMove) {
+        if(!plugin.moveClass.isInstance(move))
+            throw InvalidMoveException(MoveMistake.INVALID_FORMAT)
+        
+        logger.debug("Performing {}", move)
+        currentState.performMoveDirectly(plugin.moveClass.cast(move))
+        logger.debug("Current State: ${currentState.longString()}")
+    }
+}
+
+abstract class AbstractGame<M : IMove>(protected val plugin: IGamePlugin<M>): IGameInstance, Pausable {
+    protected val logger = LoggerFactory.getLogger(this::class.java)
     
     override val pluginUUID: String = plugin.id
     
@@ -247,4 +259,14 @@ abstract class AbstractGame(val plugin: IGamePlugin): IGameInstance, Pausable {
                 }
         return GameResult(plugin.scoreDefinition, scores, winCondition)
     }
+    
+    override fun toString(): String =
+        "Game(${
+            when {
+                currentState.isOver -> "OVER, "
+                isPaused -> "PAUSED, "
+                else -> ""
+            }
+        }players=$players, gameState=$currentState)"
+    
 }

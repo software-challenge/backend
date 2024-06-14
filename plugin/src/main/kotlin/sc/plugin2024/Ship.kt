@@ -8,8 +8,8 @@ import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
 import sc.framework.PublicCloneable
 import sc.plugin2024.actions.Accelerate
-import sc.plugin2024.util.PluginConstants
-import sc.plugin2024.util.PluginConstants.START_COAL
+import sc.plugin2024.util.MQConstants
+import sc.plugin2024.util.MQConstants.START_COAL
 
 /**
  * Repräsentiert das Schiff eines Spielers.
@@ -48,17 +48,17 @@ import sc.plugin2024.util.PluginConstants.START_COAL
  */
 @XStreamAlias(value = "ship")
 data class Ship(
-        var position: CubeCoordinates,
-        @XStreamAsAttribute val team: Team,
-        @XStreamAsAttribute var direction: CubeDirection = CubeDirection.RIGHT,
-        @XStreamAsAttribute var speed: Int = PluginConstants.MIN_SPEED,
-        @XStreamAsAttribute var coal: Int = START_COAL,
-        @XStreamAsAttribute var passengers: Int = 0,
-        @XStreamAsAttribute var freeTurns: Int = 1,
-        @XStreamAsAttribute var points: Int = 0, // TODO don't track points here
-        @XStreamAsAttribute var stuck: Boolean = false, // TODO consider tracking as -1 points
-        @XStreamOmitField var freeAcc: Int = PluginConstants.FREE_ACC,
-        @XStreamOmitField var movement: Int = speed,
+    var position: CubeCoordinates,
+    @XStreamAsAttribute val team: Team,
+    @XStreamAsAttribute var direction: CubeDirection = CubeDirection.RIGHT,
+    @XStreamAsAttribute var speed: Int = MQConstants.MIN_SPEED,
+    @XStreamAsAttribute var coal: Int = START_COAL,
+    @XStreamAsAttribute var passengers: Int = 0,
+    @XStreamAsAttribute var freeTurns: Int = 1,
+    @XStreamAsAttribute var points: Int = 0, // TODO don't track points here
+    @XStreamAsAttribute var crashed: Boolean = false, // TODO consider tracking as -1 points
+    @XStreamOmitField var freeAcc: Int = MQConstants.FREE_ACC,
+    @XStreamOmitField var movement: Int = speed,
 ): PublicCloneable<Ship> {
     
     override fun clone(): Ship = this.copy()
@@ -68,7 +68,7 @@ data class Ship(
     
     /** The maximum count of points this speed is able and allowed to accelerate by. */
     val maxAcc: Int
-        get() = (coal + freeAcc).coerceAtMost(PluginConstants.MAX_SPEED - speed)
+        get() = (coal + freeAcc).coerceAtMost(MQConstants.MAX_SPEED - speed)
     
     /** Adjust speed and movement simultaneously. */
     fun accelerateBy(diff: Int) {
@@ -77,7 +77,7 @@ data class Ship(
     }
     
     fun readResolve(): Ship {
-        freeAcc = PluginConstants.FREE_ACC
+        freeAcc = MQConstants.FREE_ACC
         movement = speed
         return this
     }

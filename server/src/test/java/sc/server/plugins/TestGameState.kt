@@ -23,6 +23,9 @@ data class TestGameState(
     override fun moveIterator(): Iterator<IMove> =
             throw NotImplementedError("TestGame has no Moves")
     
+    override fun teamStats(team: ITeam) =
+            throw NotImplementedError("TestGame has no teamStats")
+    
     override val round get() = turn / 2
     
     val red = Player(Team.ONE, "Fred")

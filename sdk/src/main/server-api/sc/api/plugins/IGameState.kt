@@ -54,7 +54,7 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     /** Gibt Punktzahlen des Teams passend zur ScoreDefinition des aktuellen Spielplugins zurück. */
     fun getPointsForTeam(team: ITeam): IntArray
     
-    /* Erweiterte Punktzahlen für eine grobe Evaluierung eines Zuges. */
+    /** Erweiterte Punktzahlen für eine grobe Evaluierung eines Zuges. */
     fun getPointsForTeamExtended(team: ITeam): IntArray = getPointsForTeam(team)
     
     
@@ -63,7 +63,7 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     fun moveIterator(): Iterator<IMove>
     
     /** Spielspezifische Informationen, für die GUI. */
-    fun teamStats(team: ITeam): List<Stat> = listOf()
+    fun teamStats(team: ITeam): List<Stat>
 }
 
 data class Stat(

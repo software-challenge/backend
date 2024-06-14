@@ -1,7 +1,7 @@
 package sc.plugin2024.util
 
 /** Eine Sammlung an verschiedenen Konstanten, die im Spiel verwendet werden. */
-object PluginConstants {
+object MQConstants {
     const val ROUND_LIMIT = 30
     
     // Ship Properties
@@ -9,9 +9,6 @@ object PluginConstants {
     const val MIN_SPEED = 1
     const val MAX_SPEED = 6
     const val FREE_ACC = 1
-    
-    // Points
-    const val FINISH_POINTS = 6
     
     const val POINTS_PER_PASSENGER = 5
     const val POINTS_PER_SEGMENT = 5

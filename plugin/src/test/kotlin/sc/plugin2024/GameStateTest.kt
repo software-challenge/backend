@@ -19,8 +19,8 @@ import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.AdvanceProblem
-import sc.plugin2024.mistake.MoveMistake
-import sc.plugin2024.util.PluginConstants
+import sc.plugin2024.mistake.MQMoveMistake
+import sc.plugin2024.util.MQConstants
 import sc.shared.InvalidMoveException
 
 class GameStateTest: FunSpec({
@@ -117,8 +117,8 @@ class GameStateTest: FunSpec({
     
     context("getPossibleActions") {
         test("getPossibleAccelerations") {
-            gameState.getPossibleAccelerations(0).size shouldBe PluginConstants.FREE_ACC
-            gameState.getPossibleAccelerations(1).size shouldBe PluginConstants.FREE_ACC + 1
+            gameState.getPossibleAccelerations(0).size shouldBe MQConstants.FREE_ACC
+            gameState.getPossibleAccelerations(1).size shouldBe MQConstants.FREE_ACC + 1
             gameState.getPossibleAccelerations().size shouldBe 5
         }
         test("getPossibleTurns") {
@@ -264,7 +264,7 @@ class GameStateTest: FunSpec({
                         state.performMove(Move(Accelerate(3), Advance(4)))
                         state.performMove(Move(Accelerate(4), Advance(5)))
                     }
-                    shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(3))) }.mistake shouldBe MoveMistake.MOVEMENT_POINTS_LEFT
+                    shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(3))) }.mistake shouldBe MQMoveMistake.MOVEMENT_POINTS_LEFT
                     shouldThrow<InvalidMoveException> { state.performMove(Move(Accelerate(2), Advance(4))) }.mistake shouldBe AdvanceProblem.MOVEMENT_POINTS_MISSING
                 }
             }
@@ -279,7 +279,7 @@ class GameStateTest: FunSpec({
                 it.coal = 0
             }
             gameState.performMoveDirectly(Move(Advance(1)))
-            gameState.isOver shouldBe true //false
+            gameState.isOver shouldBe false
             gameState.turn shouldBe 2
             gameState.board.segments.first().fields[2][1] = Field.ISLAND
             gameState.ships.forEach {
@@ -331,17 +331,15 @@ class GameStateTest: FunSpec({
         GameState(Board(listOf()), lastMove = Move(Accelerate(1), Advance(2))) shouldSerializeTo """
             <state startTeam="ONE" turn="0" currentTeam="ONE">
               <board nextDirection="RIGHT"/>
-              <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" stuck="false">
+              <ship team="ONE" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" crashed="false">
                 <position q="-1" r="-1" s="2"/>
               </ship>
-              <ship team="TWO" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" stuck="false">
+              <ship team="TWO" direction="RIGHT" speed="1" coal="6" passengers="0" freeTurns="1" points="0" crashed="false">
                 <position q="-2" r="1" s="1"/>
               </ship>
               <lastMove>
-                <actions>
-                  <acceleration acc="1"/>
-                  <advance distance="2"/>
-                </actions>
+                <acceleration acc="1"/>
+                <advance distance="2"/>
               </lastMove>
             </state>"""
     }

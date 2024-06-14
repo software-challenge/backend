@@ -9,7 +9,7 @@ import io.kotest.matchers.string.*
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
-import sc.plugin2023.util.PluginConstants
+import sc.plugin2023.util.PenguinConstants
 import sc.y
 
 class GameStateTest: FunSpec({
@@ -58,18 +58,18 @@ class GameStateTest: FunSpec({
     context("move calculation") {
         context("initial placement") {
             val emptyBoard = makeBoard()
-            GameState(Board()).getSensibleMoves().size shouldBeInRange (PluginConstants.PENGUINS * 2)..emptyBoard.size
+            GameState(Board()).getSensibleMoves().size shouldBeInRange (PenguinConstants.PENGUINS * 2)..emptyBoard.size
             GameState(emptyBoard).getSensibleMoves() shouldHaveSize emptyBoard.size
         }
         test("first moves") {
             // Board with max penguins for one player
-            GameState(makeBoard(*Array(PluginConstants.PENGUINS) { it y it to 0 })).getSensibleMoves() shouldHaveAtLeastSize PluginConstants.PENGUINS * 2
+            GameState(makeBoard(*Array(PenguinConstants.PENGUINS) { it y it to 0 })).getSensibleMoves() shouldHaveAtLeastSize PenguinConstants.PENGUINS * 2
         }
         test("immovable") {
             // Board with max penguins for both players
             val state = GameState(Board(arrayOf(
-                    Array(PluginConstants.PENGUINS) { Field(penguin = Team.ONE) },
-                    Array(PluginConstants.PENGUINS) { Field(penguin = Team.TWO) })))
+                    Array(PenguinConstants.PENGUINS) { Field(penguin = Team.ONE) },
+                    Array(PenguinConstants.PENGUINS) { Field(penguin = Team.TWO) })))
             state.getSensibleMoves().shouldBeEmpty()
             state.board.toString() shouldBe "RRRR\nBBBB"
             state.immovable(Team.ONE).shouldBeTrue()

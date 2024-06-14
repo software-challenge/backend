@@ -5,12 +5,14 @@ import io.kotest.matchers.*
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.Team
+import sc.framework.plugins.TwoPlayerGame
 import sc.helpers.shouldSerializeTo
 import sc.helpers.testXStream
 import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Turn
-import sc.plugin2024.mistake.MoveMistake
+import sc.plugin2024.mistake.MQMoveMistake
+import sc.plugin2024.util.GamePlugin
 import sc.shared.InvalidMoveException
 import sc.shared.Violation
 import sc.shared.WinCondition
@@ -18,7 +20,7 @@ import sc.shared.WinReasonTie
 
 class GameResultTest: WordSpec({
     "Result XML" should {
-        val game = Game()
+        val game = TwoPlayerGame(GamePlugin(), GameState())
         "work when empty" {
             game.getResult() shouldSerializeTo """
                 <result>
@@ -87,7 +89,7 @@ class GameResultTest: WordSpec({
         game.currentState.performMoveDirectly(Move(Accelerate(2), Advance(3)))
         game.currentState.performMoveDirectly(Move(Accelerate(1), Advance(1), Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
         "work with violation result" {
-            game.players.first().violation = Violation.RULE_VIOLATION(InvalidMoveException(MoveMistake.NO_ACTIONS, Move()))
+            game.players.first().violation = Violation.RULE_VIOLATION(InvalidMoveException(MQMoveMistake.NO_ACTIONS, Move()))
             game.getResult() shouldSerializeTo """
                 <result>
                   <definition>
@@ -172,39 +174,39 @@ class GameResultTest: WordSpec({
             <board nextDirection="RIGHT">
              <segment direction="RIGHT">
                <center q="0" r="0" s="0"/>
-               <field-array>
+               <column>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
-               </field-array>
-               <field-array>
+               </column>
+               <column>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
-               </field-array>
-               <field-array>
+               </column>
+               <column>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
                  <water/>
-               </field-array>
-               <field-array>
+               </column>
+               <column>
                  <water/>
                  <goal/>
                  <goal/>
                  <goal/>
                  <water/>
-               </field-array>
+               </column>
              </segment>
            </board>
         """.trimIndent()
         val state = GameState(testXStream.fromXML(boardXML) as Board)
-        val game = Game(state)
+        val game = TwoPlayerGame(GamePlugin(), state)
         game.onPlayerJoined()
         game.onPlayerJoined()
         "be correct on finish" {

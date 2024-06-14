@@ -15,10 +15,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.AbstractGame
 import sc.framework.plugins.Constants
-import sc.framework.plugins.Player
 import sc.shared.GameResult
-import sc.shared.PlayerScore
-import sc.shared.Violation
 import kotlin.time.Duration.Companion.milliseconds
 
 /** This test verifies that the Game implementation can be used to play a game.
@@ -27,7 +24,7 @@ class GamePlayTest: WordSpec({
     val logger = LoggerFactory.getLogger(GamePlayTest::class.java)
     isolationMode = IsolationMode.SingleInstance
     val plugin = IGamePlugin.loadPlugin()
-    fun createGame() = plugin.createGame() as AbstractGame
+    fun createGame() = plugin.createGame() as AbstractGame<*>
     "A Game" should {
         val game = createGame()
         "let players join" {
@@ -94,7 +91,7 @@ class GamePlayTest: WordSpec({
                     }
                 }
                 withClue(game.currentState) {
-                    // Note that this fails if the game ends incorrectly
+                    // Note that this fails if the game ends irregularly
                     game.currentState.isOver.shouldBeTrue()
                 }
             }
