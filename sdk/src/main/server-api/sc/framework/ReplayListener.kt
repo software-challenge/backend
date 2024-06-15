@@ -1,6 +1,6 @@
 package sc.framework
 
-import sc.networking.XStreamProvider.Companion.loadPluginXStream
+import sc.networking.XStreamProvider
 import java.io.IOException
 import java.io.Writer
 
@@ -12,7 +12,7 @@ class ReplayListener<T>(private val history: MutableList<T> = ArrayList()) {
     /** Write replay of game to a writer.  */
     @Throws(IOException::class)
     fun saveReplay(writer: Writer) {
-        val xStream = loadPluginXStream()
+        val xStream = XStreamProvider.allPlugins()
         writer.write("<protocol>\n")
         for (element in history) {
             // TODO do we need to save RoomPackets?

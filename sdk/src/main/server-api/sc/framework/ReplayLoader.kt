@@ -26,7 +26,7 @@ class ReplayLoader(inputStream: InputStream) {
             file.inputStream()
     )
     
-    val stream = XStreamProvider.loadPluginXStream().createObjectInputStream(inputStream)
+    val stream = XStreamProvider.currentPlugin().createObjectInputStream(inputStream)
     
     fun loadHistory(exitCondition: (IGameState) -> Boolean = { false }): Pair<List<IGameState>, GameResult?> {
         val history: MutableList<IGameState> = ArrayList(50)

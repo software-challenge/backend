@@ -16,14 +16,14 @@ interface XStreamProvider {
         * </prepare>
         */
         /** @return a XStream instance with the default project settings. */
-        fun getPureXStream(): XStream =
+        fun pure(): XStream =
                 XStream(KXml2Driver()).apply {
                     setMode(XStream.NO_REFERENCES)
                 }
     
         /** @return a XStream instance able to handle all messages in the sdk. */
-        fun getBasicXStream(): XStream =
-                getPureXStream().also { xStream ->
+        fun basic(): XStream =
+                pure().also { xStream ->
                     LobbyProtocol.registerMessages(xStream)
                 }
         
@@ -32,13 +32,21 @@ interface XStreamProvider {
          *
          * @return a XStream instance able to handle custom registered classes. */
         @JvmStatic
-        fun loadPluginXStream(): XStream =
-                getBasicXStream().also { xStream ->
-                    ServiceLoader.load(XStreamProvider::class.java).forEach { provider ->
-                        LobbyProtocol.registerAdditionalMessages(xStream, provider.classesToRegister)
-                        provider.setup(xStream)
-                    }
+        fun currentPlugin(): XStream =
+                basic().also { xStream ->
+                    ServiceLoader.load(XStreamProvider::class.java).sortedBy { it.javaClass.name }.last().load(xStream)
                 }
+        
+        fun allPlugins(): XStream =
+            basic().also { xStream ->
+                ServiceLoader.load(XStreamProvider::class.java).forEach { provider -> provider.load(xStream) }
+            }
+        
+        private fun XStreamProvider.load(xStream: XStream) {
+            println("Loading into XStream: $this")
+            LobbyProtocol.registerAdditionalMessages(xStream, this.classesToRegister)
+            this.setup(xStream)
+        }
     }
     
     val classesToRegister: Collection<Class<*>>

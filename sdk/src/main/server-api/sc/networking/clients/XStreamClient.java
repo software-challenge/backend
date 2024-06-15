@@ -31,7 +31,7 @@ public abstract class XStreamClient implements IClient {
   private final INetworkInterface networkInterface;
   private final ObjectOutputStream out;
   private final Thread receiveThread;
-  protected final XStream xStream = XStreamProvider.loadPluginXStream();
+  protected final XStream xStream = XStreamProvider.currentPlugin();
 
   private DisconnectCause disconnectCause = DisconnectCause.NOT_DISCONNECTED;
   private boolean closed = false;

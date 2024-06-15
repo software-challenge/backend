@@ -24,7 +24,7 @@ class ConverterTest {
         }
     }
     
-    private val xStream = XStreamProvider.getPureXStream()
+    private val xStream = XStreamProvider.pure()
 
     @Test
     fun shouldSerializeSensitiveDataForAuthorizedPeople() {

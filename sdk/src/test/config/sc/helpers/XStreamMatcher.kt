@@ -9,7 +9,7 @@ import sc.networking.XStreamProvider
 @AutoScan
 object XStreamProjectListener: ProjectListener {
     override suspend fun beforeProject() {
-        testXStream = XStreamProvider.loadPluginXStream()
+        testXStream = XStreamProvider.allPlugins()
     }
 }
 
