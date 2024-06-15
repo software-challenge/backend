@@ -22,7 +22,7 @@ application {
 }
 
 dependencies {
-    implementation(project(":plugin"))
+    implementation(project(":plugin$year"))
     implementation(kotlin("script-runtime"))
     implementation("ch.qos.logback", "logback-classic", "1.3.11") // Update to 1.4 with JDK upgrade
 }
@@ -37,7 +37,7 @@ tasks {
         dependsOn(":sdk:doc", ":plugin$year:doc")
         into(buildDir.resolve("zip"))
         with(copySpec {
-            from(project(":plugin").buildDir.resolve("doc"))
+            from(project(":plugin$year").buildDir.resolve("doc"))
             into("doc/plugin-$gameName")
         }, copySpec {
             from(project(":sdk").buildDir.resolve("doc"))

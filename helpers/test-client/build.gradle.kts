@@ -13,11 +13,12 @@ application {
     mainClass.set("sc.TestClient")
 }
 
+val year: String by project
 dependencies {
     implementation(project(":sdk"))
     implementation(project(":server")) // Only to access defaults of sc.server.Configuration
     implementation("ch.qos.logback", "logback-classic", "1.3.11") // Update to 1.4 with JDK upgrade
-    runtimeOnly(project(":plugin"))
+    runtimeOnly(project(":plugin$year"))
 }
 
 tasks {
