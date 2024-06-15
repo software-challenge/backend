@@ -312,7 +312,14 @@ class GameStateTest: FunSpec({
                 
                 gameState.turn shouldBe 1
                 gameState.getSensibleMoves().shouldNotBeEmpty()
+                
+                // Segment not visible
+                gameState.canMove().shouldBeFalse()
+                
+                gameState.board.revealSegment(Int.MAX_VALUE)
+                gameState.canMove().shouldBeTrue()
                 gameState.moveIterator().hasNext().shouldBeTrue()
+                gameState.getSensibleMoves().shouldNotBeEmpty()
                 ship.passengers = 2
                 gameState.isOver shouldBe false
             }

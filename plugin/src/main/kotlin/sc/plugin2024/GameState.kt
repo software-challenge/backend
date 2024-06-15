@@ -209,7 +209,7 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
-    /** Possible simple Moves (accelerate+turn+move) using at most the given coal amount.
+    /** Possible simple Moves (accelerate+turn+advance) using at most the given coal amount.
      * If a push is needed, only one push direction is offered for simplicity. */
     fun getSimpleMoves(maxCoal: Int = currentShip.coal): List<Move> =
             // SANDBANK checkSandbankAdvances(currentShip)?.map { Move(it) } ?:
@@ -395,9 +395,8 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
-    // In rare cases this returns true on the server even though the player cannot move
-    // because the target tile is not revealed yet
-    fun canMove() = !currentShip.crashed && moveIterator().hasNext()
+    fun canMove() =
+        !currentShip.crashed && copy(board = Board(board.segments.take(board.visibleSegments), board.visibleSegments)).moveIterator().hasNext()
     
     override val winCondition: WinCondition?
         get() =
