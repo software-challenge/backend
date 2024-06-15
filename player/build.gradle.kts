@@ -34,7 +34,7 @@ tasks {
     }
     
     val copyDocs by creating(Copy::class) {
-        dependsOn(":sdk:doc", ":plugin:doc")
+        dependsOn(":sdk:doc", ":plugin$year:doc")
         into(buildDir.resolve("zip"))
         with(copySpec {
             from(project(":plugin").buildDir.resolve("doc"))
@@ -69,7 +69,7 @@ tasks {
                         .replace("TwoPlayerGameState<Move>", "GameState")
             }
         }, copySpec {
-            from(configurations.default, arrayOf("sdk", "plugin")
+            from(configurations.default, arrayOf("sdk", "plugin$year")
                     .map { project(":$it").getTasksByName("sourcesJar", false) })
             into("lib")
         })

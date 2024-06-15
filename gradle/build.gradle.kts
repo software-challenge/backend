@@ -26,7 +26,7 @@ val game by extra { "${gameName}_$year" }
 val deployDir by extra { buildDir.resolve("deploy") }
 val deployedPlayer by extra { "randomplayer-$gameName-$version.jar" }
 val testingDir by extra { buildDir.resolve("tests") }
-val documentedProjects = listOf("sdk", "plugin")
+val documentedProjects = listOf("sdk", "plugin$year")
 
 val isBeta by extra { versionObject.minor == 0 }
 val enableTestClient by extra { arrayOf("check", "testTestClient").any { gradle.startParameter.taskNames.contains(it) } || !isBeta }

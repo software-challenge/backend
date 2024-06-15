@@ -12,7 +12,8 @@ class MoveIterator<Move: IMove, Action, GameState: IGameState>(state: GameState,
     
     fun process(): List<Action> {
         val (state, move) = queue.removeFirst()
-        process()
+        // TODO
+        //process(state, move)
         return move
     }
     
