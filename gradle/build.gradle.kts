@@ -3,6 +3,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import sc.gradle.ScriptsTask
 import java.nio.file.Files
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
@@ -153,7 +154,7 @@ tasks {
                     return@Thread
                 }
                 timeout.set(true)
-                println("$this has been running for over $maxGameLength seconds - killing server!")
+                println("Killing Server because of timeout!")
                 server.destroyForcibly()
             }.apply {
                 isDaemon = true
@@ -166,9 +167,9 @@ tasks {
                     println("Waiting for client $i to receive game result")
                     do {
                         if (!server.isAlive) {
-                            if (!timeout.get())
-                                throw Exception("Server terminated unexpectedly!")
-                            return@doFirst
+                            if (timeout.get())
+                                throw TimeoutException("$this task exceeded $maxGameLength seconds")
+                            throw Exception("Server terminated unexpectedly!")
                         }
                         Thread.yield()
                         Thread.sleep(100)
