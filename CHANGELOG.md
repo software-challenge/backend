@@ -11,10 +11,11 @@ The version should always be in sync with the [GUI](https://github.com/software-
   and likely contains breaking changes between patches.
 
 
-### 25.0.0 - 2024-06
+### 25.0.0 Initial Release - 2024-06-15
 
-## 2025 Game Mississippi Queen - 2024-06
+## 2025 Game Hase und Igel - 2024-06
 - Allow other player to move on when one is disqualified
+
 
 ### 24 Post-Finale
 - Allow one player to move on when other is stuck (now for clarification: crashed) or finished
@@ -80,6 +81,7 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - Implement basic version of Mississippi Queen - XML and Rules are subject to change!
 
 ## 2024 Game Mississippi Queen - 2023-08
+
 
 ### 23.0.3 Final Fixes
 - Fix Deep Cloning of GameState
