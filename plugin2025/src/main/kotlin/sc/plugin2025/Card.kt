@@ -28,11 +28,17 @@ enum class Card(val moves: Boolean, val check: (GameState) -> HuIMoveMistake?, v
         { it.eatSalad() }),
     /** Karottenvorrat mit dem Gegner tauschen. */
     SWAP_CARROTS(false,
-        { null },
-        {
-            val car = it.currentPlayer.carrots
-            it.currentPlayer.carrots = it.otherPlayer.carrots
-            it.otherPlayer.carrots = car
+        { state ->
+            state.players.firstNotNullOfOrNull { p ->
+                HuIMoveMistake.CANNOT_PLAY_SWAP_CARROTS_BEYOND_LAST_SALAD.takeIf {
+                    p.position >= HuIConstants.LAST_SALAD
+                }
+            }
+        },
+        { state ->
+            val car = state.currentPlayer.carrots
+            state.currentPlayer.carrots = state.otherPlayer.carrots
+            state.otherPlayer.carrots = car
         });
     
     override fun perform(state: GameState): IMoveMistake? {

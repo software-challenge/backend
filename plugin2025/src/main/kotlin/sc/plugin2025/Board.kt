@@ -7,7 +7,8 @@ import sc.plugin2025.util.HuIConstants
 
 @XStreamAlias("board")
 data class Board(
-    @XStreamImplicit(itemFieldName = "fields") private val track: Array<out Field> = generateTrack().toTypedArray(),
+    @XStreamImplicit(itemFieldName = "fields")
+    private val track: Array<out Field> = generateTrack().toTypedArray(),
 ): IBoard {
     
     val size = track.size
@@ -18,12 +19,15 @@ data class Board(
     fun getField(index: Int): Field? =
         track.getOrNull(index)
     
-    fun findField(field: Field, range: Iterable<Int> = 0 until HuIConstants.NUM_FIELDS) =
+    /** Findet die Position eines Feldes dieser Art im angegebenen Bereich. */
+    fun findField(field: Field, range: Iterable<Int> = 0 until HuIConstants.NUM_FIELDS): Int? =
         range.find { track[it] == field }
     
-    fun getPreviousField(field: Field, index: Int = 0) =
+    /** Findet die Position des vorherigen Feldes dieser Art vor dem angegebenen Feldindex. */
+    fun getPreviousField(field: Field, index: Int = HuIConstants.NUM_FIELDS) =
         findField(field, (index - 1) downTo (0))
     
+    /** Findet die Position des nächsten Feldes dieser Art nach dem angegebenen Feldindex. */
     fun getNextField(field: Field, index: Int = 0) =
         findField(field, (index + 1).until(HuIConstants.NUM_FIELDS))
     
