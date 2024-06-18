@@ -6,7 +6,8 @@ import sc.shared.IMoveMistake
 
 /** Mögliche Aktionen, die durch das Ausspielen einer Karte ausgelöst werden können. */
 @XStreamAlias(value = "card")
-enum class Card(val moves: Boolean, val check: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit): HuIAction {
+enum class Card(val moves: Boolean, val check: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit):
+    HuIAction {
     /** Falle hinter den Gegenspieler. */
     FALL_BACK(true,
         { state ->
@@ -32,6 +33,8 @@ enum class Card(val moves: Boolean, val check: (GameState) -> HuIMoveMistake?, v
             state.players.firstNotNullOfOrNull { p ->
                 HuIMoveMistake.CANNOT_PLAY_SWAP_CARROTS_BEYOND_LAST_SALAD.takeIf {
                     p.position >= HuIConstants.LAST_SALAD
+                } ?: HuIMoveMistake.CANNOT_PLAY_SWAP_CARROTS_ALREADY_PLAYED.takeIf {
+                    p.lastAction == SWAP_CARROTS
                 }
             }
         },

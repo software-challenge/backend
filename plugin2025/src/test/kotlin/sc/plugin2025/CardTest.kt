@@ -20,8 +20,14 @@ class CardTest: FunSpec({
         }
         state.currentPlayer.addCard(Card.SWAP_CARROTS)
         test("not repeatable") {
-            // TODO
-            //state.performMoveDirectly()
+            Card.SWAP_CARROTS.check(state) shouldBe null
+            state.currentPlayer.position = state.board.getNextField(Field.HARE)!! - 1
+            state.performMoveDirectly(Advance(1, Card.SWAP_CARROTS))
+            Card.SWAP_CARROTS.check(state) shouldBe HuIMoveMistake.CANNOT_PLAY_SWAP_CARROTS_ALREADY_PLAYED
+            state.performMoveDirectly(state.getSensibleMoves().first())
+            Card.SWAP_CARROTS.check(state) shouldBe HuIMoveMistake.CANNOT_PLAY_SWAP_CARROTS_ALREADY_PLAYED
+            state.performMoveDirectly(state.getSensibleMoves().first())
+            Card.SWAP_CARROTS.check(state) shouldBe null
         }
     }
 })
