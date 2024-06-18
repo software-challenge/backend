@@ -3,15 +3,15 @@ package sc.plugin2025
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.IBoard
-import sc.plugin2025.util.HuIConstants
 
 @XStreamAlias("board")
 data class Board(
-    @XStreamImplicit(itemFieldName = "fields")
+    @XStreamImplicit(itemFieldName = "field")
     private val track: Array<out Field> = generateTrack().toTypedArray(),
 ): IBoard {
     
-    val size = track.size
+    val size
+        get() = track.size
     
     val fields
         get() = track.iterator()
@@ -20,16 +20,16 @@ data class Board(
         track.getOrNull(index)
     
     /** Findet die Position eines Feldes dieser Art im angegebenen Bereich. */
-    fun findField(field: Field, range: Iterable<Int> = 0 until HuIConstants.NUM_FIELDS): Int? =
+    fun findField(field: Field, range: Iterable<Int> = 0 until size): Int? =
         range.find { track[it] == field }
     
     /** Findet die Position des vorherigen Feldes dieser Art vor dem angegebenen Feldindex. */
-    fun getPreviousField(field: Field, index: Int = HuIConstants.NUM_FIELDS) =
+    fun getPreviousField(field: Field, index: Int = size) =
         findField(field, (index - 1) downTo (0))
     
     /** Findet die Position des nächsten Feldes dieser Art nach dem angegebenen Feldindex. */
     fun getNextField(field: Field, index: Int = 0) =
-        findField(field, (index + 1).until(HuIConstants.NUM_FIELDS))
+        findField(field, (index + 1).until(size))
     
     override fun toString() =
         track.joinToString(prefix = "Board[", postfix = "]") { it.unicode }
