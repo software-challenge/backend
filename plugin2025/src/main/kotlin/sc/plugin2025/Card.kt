@@ -1,11 +1,12 @@
 package sc.plugin2025
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import sc.plugin2025.util.HuIConstants
 import sc.shared.IMoveMistake
 
 /** Mögliche Aktionen, die durch das Ausspielen einer Karte ausgelöst werden können. */
 @XStreamAlias(value = "card")
-enum class Card(val moves: Boolean, val playable: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit): Move {
+enum class Card(val moves: Boolean, val check: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit): HuIAction {
     /** Falle hinter den Gegenspieler. */
     FALL_BACK(true,
         { state ->
@@ -39,7 +40,7 @@ enum class Card(val moves: Boolean, val playable: (GameState) -> HuIMoveMistake?
             return HuIMoveMistake.CANNOT_PLAY_CARD
         if(!state.currentPlayer.removeCard(this))
             return HuIMoveMistake.CARD_NOT_OWNED
-        return playable(state) ?: run {
+        return check(state) ?: run {
             play(state)
             null
         }

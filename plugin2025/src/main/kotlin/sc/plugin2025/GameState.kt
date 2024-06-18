@@ -105,7 +105,7 @@ data class GameState @JvmOverloads constructor(
         when(player.field) {
             Field.HARE -> {
                 player.getCards().toSet().flatMap { card ->
-                    if(card.playable(this) == null) {
+                    if(card.check(this) == null) {
                         val newState = clone()
                         newState.currentPlayer.removeCard(card)
                         card.play(newState)
@@ -132,7 +132,7 @@ data class GameState @JvmOverloads constructor(
     override fun performMoveDirectly(move: Move) {
         val mist =
             HuIMoveMistake.MUST_EAT_SALAD.takeIf {
-                mustEatSalad() && move != EatSalad
+                move != EatSalad && mustEatSalad()
             } ?: move.perform(this)
         if(mist != null)
             throw InvalidMoveException(mist, move)
@@ -231,7 +231,7 @@ data class GameState @JvmOverloads constructor(
     
     /** Gibt zurück, ob der Spieler eine Karte spielen kann. */
     fun canPlayAnyCard(player: Hare = currentPlayer): Boolean =
-        board.getField(player.position) === Field.HARE && player.getCards().any { it.playable(this) == null }
+        board.getField(player.position) === Field.HARE && player.getCards().any { it.check(this) == null }
     
     fun mustEatSalad(player: Hare = currentPlayer) =
         player.field == Field.SALAD && !player.saladEaten
