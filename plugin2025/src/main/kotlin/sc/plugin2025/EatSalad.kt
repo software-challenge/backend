@@ -14,7 +14,6 @@ import sc.shared.IMoveMistake
 object EatSalad: Move {
     override fun perform(state: GameState): IMoveMistake? {
         if(state.mustEatSalad()) {
-            state.currentPlayer.saladEaten = true
             state.eatSalad()
             return null
         } else {

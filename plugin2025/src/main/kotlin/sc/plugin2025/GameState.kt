@@ -136,8 +136,7 @@ data class GameState @JvmOverloads constructor(
             } ?: move.perform(this)
         if(mist != null)
             throw InvalidMoveException(mist, move)
-        if(move != EatSalad)
-            currentPlayer.saladEaten = false
+        currentPlayer.lastAction = if(move is Advance) move.getCards().lastOrNull() ?: move else move
         turn++
         awardPositionFields()
         if(!moveIterator().hasNext()) {
@@ -234,7 +233,7 @@ data class GameState @JvmOverloads constructor(
         board.getField(player.position) === Field.HARE && player.getCards().any { it.check(this) == null }
     
     fun mustEatSalad(player: Hare = currentPlayer) =
-        player.field == Field.SALAD && !player.saladEaten
+        player.field == Field.SALAD && player.lastAction != EatSalad
     
     /** Isst einen Salat, keine Überprüfung der Regelkonformität. */
     fun eatSalad(player: Hare = currentPlayer) {
