@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.IBoard
 
 @XStreamAlias("board")
-data class Board(
+class Board(
     @XStreamImplicit(itemFieldName = "field")
     private val track: Array<out Field> = generateTrack().toTypedArray(),
 ): IBoard {
@@ -35,6 +35,15 @@ data class Board(
         track.joinToString(prefix = "Board[", postfix = "]") { it.unicode }
     
     override fun clone(): Board = this
+    
+    override fun equals(other: Any?): Boolean {
+        if(this === other) return true
+        if(other !is Board) return false
+        return track.contentEquals(other.track)
+    }
+    
+    override fun hashCode(): Int =
+        track.contentHashCode()
     
     companion object {
         

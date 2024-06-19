@@ -15,7 +15,6 @@ data class Hare(
     @XStreamAsAttribute var salads: Int = HuIConstants.INITIAL_SALADS,
     @XStreamAsAttribute var carrots: Int = HuIConstants.INITIAL_CARROTS,
     @XStreamAsAttribute var lastAction: HuIAction? = null,
-    @XStreamImplicit(itemFieldName = "card")
     private val cards: ArrayList<Card> = arrayListOf(),
 ): PublicCloneable<Hare> {
     fun getCards(): List<Card> = cards
@@ -44,5 +43,5 @@ data class Hare(
             null
         }
     
-    override fun clone(): Hare = copy(cards = ArrayList(cards))
+    override fun clone(): Hare = copy(cards = ArrayList(getCards()))
 }
