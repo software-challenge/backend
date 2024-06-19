@@ -22,7 +22,8 @@ fun <T> HierarchicalStreamReader.readNode(action: HierarchicalStreamReader.() ->
     return result
 }
 
-inline fun <reified T> UnmarshallingContext.read() = convertAnother(null, T::class.java) as T
+inline fun <reified T> UnmarshallingContext.read() =
+    convertAnother(null, T::class.java) as T
 
 class GameResultConverter: Converter {
     override fun canConvert(type: Class<*>?): Boolean = type == GameResult::class.java

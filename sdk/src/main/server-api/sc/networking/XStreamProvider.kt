@@ -43,7 +43,6 @@ interface XStreamProvider {
             }
         
         private fun XStreamProvider.load(xStream: XStream) {
-            println("Loading into XStream: $this")
             LobbyProtocol.registerAdditionalMessages(xStream, this.classesToRegister)
             this.setup(xStream)
         }

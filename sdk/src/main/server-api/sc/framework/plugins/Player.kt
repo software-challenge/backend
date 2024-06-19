@@ -18,8 +18,8 @@ private val logger = LoggerFactory.getLogger(Player::class.java)
 /**
  * Keeps information about a player:
  * - basic info: name and color
- * - state info: if they can time out, whether their game is paused
- * - game result info: left & timeouts, to determine the winner and potential violation information
+ * - state info: if they can time out
+ * - game result info: violations
  * - listeners: subscribers that get notified about new messages concerning this player, notably Welcome and Errors
  *
  * Note: the toString/equals/hashCode/clone methods only take [team] and [displayName] into account!
@@ -28,7 +28,7 @@ private val logger = LoggerFactory.getLogger(Player::class.java)
 @XStreamAlias("player")
 @XStreamConverter(PlayerConverter::class)
 open class Player @JvmOverloads constructor(
-        @XStreamAsAttribute var team: ITeam,
+        @XStreamAsAttribute val team: ITeam,
         @XStreamAsAttribute var displayName: String = ""
 ): PublicCloneable<Player> {
     
