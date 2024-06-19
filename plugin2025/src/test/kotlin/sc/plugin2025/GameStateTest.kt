@@ -34,17 +34,17 @@ class GameStateTest: WordSpec({
         }
         "produce nice XML" {
             Hare(Team.TWO, lastAction = EatSalad) shouldSerializeTo """
-              <player team="TWO" position="0" salads="5" carrots="68">
+              <hare team="TWO" position="0" salads="5" carrots="68">
                 <lastAction class="eatsalad"/>
                 <cards/>
-              </player>
+              </hare>
             """.trimIndent()
             Hare(Team.TWO, cards = arrayListOf(Card.HURRY_AHEAD)) shouldSerializeTo """
-              <player team="TWO" position="0" salads="5" carrots="68">
+              <hare team="TWO" position="0" salads="5" carrots="68">
                 <cards>
                   <card>HURRY_AHEAD</card>
                 </cards>
-              </player>
+              </hare>
             """.trimIndent()
             
             Advance(5, Card.EAT_SALAD) shouldSerializeTo """
@@ -69,16 +69,16 @@ class GameStateTest: WordSpec({
                   <field>HARE</field>
                   <field>GOAL</field>
                 </board>
-                <player team="TWO" position="0" salads="5" carrots="68">
+                <hare team="TWO" position="0" salads="5" carrots="68">
                   <lastAction class="advance" distance="5"/>
                   <cards>
                     <card>SWAP_CARROTS</card>
                   </cards>
-                </player>
-                <player team="ONE" position="3" salads="5" carrots="68">
+                </hare>
+                <hare team="ONE" position="3" salads="5" carrots="68">
                   <lastAction class="card">EAT_SALAD</lastAction>
                   <cards/>
-                </player>
+                </hare>
                 <lastMove class="advance" distance="5">
                   <card>EAT_SALAD</card>
                 </lastMove>
