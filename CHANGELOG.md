@@ -11,14 +11,20 @@ The version should always be in sync with the [GUI](https://github.com/software-
   and likely contains breaking changes between patches.
 
 
+### 25.0.2 XML Improvements and Rule fixes - 2024-06-19
+- Requirements for swap carrots card properly implemented
+- XML Serialization Revamped
+
+### 25.0.1 XStream Hotfix - 2024-06-15
+
 ### 25.0.0 Initial Release - 2024-06-15
 
-## 2025 Game Hase und Igel - 2024-06
+## 2025 Game Hase und Igel
 - Allow other player to move on when one is disqualified
 
-
 ### 24 Post-Finale
-- Allow one player to move on when other is stuck (now for clarification: crashed) or finished
+- Allow player to move on when other is stuck (now for clarification: crashed) or finished
+  -> need to adjust score to account for earlier arrival
 - Improve XML protocol
 
 ### 24.2.5 No points for stuck ship - 2024-03-27
