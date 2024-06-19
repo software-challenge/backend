@@ -136,7 +136,10 @@ data class GameState @JvmOverloads constructor(
             } ?: move.perform(this)
         if(mist != null)
             throw InvalidMoveException(mist, move)
-        currentPlayer.lastAction = if(move is Advance) move.getCards().lastOrNull() ?: move else move
+        currentPlayer.lastAction =
+            if(move is Advance && currentField != Field.MARKET)
+                move.getCards().lastOrNull() ?: move
+            else move
         turn++
         awardPositionFields()
         if(!moveIterator().hasNext()) {
