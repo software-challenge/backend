@@ -322,7 +322,7 @@ allprojects {
 fun Task.dependOnSubprojects() {
     if (this.project == rootProject)
         doAfterEvaluate.add {
-            if (it != rootProject)
+            if (it != rootProject && it.name != "plugin")
                 dependsOn(it.tasks.findByName(name) ?: return@add)
         }
 }
