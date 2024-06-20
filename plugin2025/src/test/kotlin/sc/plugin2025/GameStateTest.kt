@@ -47,12 +47,6 @@ class GameStateTest: WordSpec({
               </hare>
             """.trimIndent()
             
-            Advance(5, Card.EAT_SALAD) shouldSerializeTo """
-              <advance distance="5">
-                <card>EAT_SALAD</card>
-              </advance>
-            """.trimIndent()
-            
             Board(arrayOf(Field.START)) shouldSerializeTo """
                 <board>
                   <field>START</field>

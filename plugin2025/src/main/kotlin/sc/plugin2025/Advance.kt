@@ -14,7 +14,10 @@ import sc.shared.IMoveMistake
  *   Der Wert der Karottentauschkarte spielt dann keine Rolle.
  */
 @XStreamAlias(value = "advance")
-class Advance(@XStreamAsAttribute val distance: Int, @XStreamImplicit private vararg val cards: Card): Move {
+class Advance(
+    @XStreamAsAttribute val distance: Int,
+    @XStreamImplicit private vararg val cards: Card
+): Move {
     
     @Suppress("USELESS_ELVIS")
     fun getCards() = cards ?: arrayOf()

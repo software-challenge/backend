@@ -218,5 +218,12 @@ class MoveTest: WordSpec({
                 </room>
             """.trimIndent()
         }
+        "serialize Advance properly" {
+            Advance(5, Card.EAT_SALAD) shouldSerializeTo """
+              <advance distance="5">
+                <card>EAT_SALAD</card>
+              </advance>
+            """.trimIndent()
+        }
     }
 })
