@@ -6,29 +6,28 @@ import sc.shared.IMoveMistake
 
 /** Mögliche Aktionen, die durch das Ausspielen einer Karte ausgelöst werden können. */
 @XStreamAlias(value = "card")
-enum class Card(val moves: Boolean, val check: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit):
+enum class Card(val label: String, val moves: Boolean, val check: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit):
     HuIAction {
     /** Falle hinter den Gegenspieler. */
-    FALL_BACK(true,
+    FALL_BACK("Zurückfallen", true,
         { state ->
             HuIMoveMistake.CANNOT_PLAY_FALL_BACK.takeUnless { state.isAhead() }
             ?: state.validateTargetField(state.otherPlayer.position - 1)
         },
         { it.moveToField(it.otherPlayer.position - 1) }),
     /** Rücke vor den Gegenspieler. */
-    HURRY_AHEAD(true,
+    HURRY_AHEAD("Vorrücken", true,
         { state ->
             HuIMoveMistake.CANNOT_PLAY_HURRY_AHEAD.takeIf { state.isAhead() }
             ?: state.validateTargetField(state.otherPlayer.position + 1)
         },
         { it.moveToField(it.otherPlayer.position + 1) }),
     /** Friss sofort einen Salat. */
-    EAT_SALAD(
-        false,
+    EAT_SALAD("Salat fressen", false,
         { state -> HuIMoveMistake.NO_SALAD.takeUnless { state.currentPlayer.salads > 0 } },
         { it.eatSalad() }),
     /** Karottenvorrat mit dem Gegner tauschen. */
-    SWAP_CARROTS(false,
+    SWAP_CARROTS("Karotten tauschen", false,
         { state ->
             state.players.firstNotNullOfOrNull { p ->
                 HuIMoveMistake.CANNOT_PLAY_SWAP_CARROTS_BEYOND_LAST_SALAD.takeIf {

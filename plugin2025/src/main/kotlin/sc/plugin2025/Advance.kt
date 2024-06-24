@@ -19,6 +19,9 @@ class Advance(
     @XStreamImplicit private vararg val cards: Card
 ): Move {
     
+    val cost: Int
+        get() = GameRuleLogic.calculateCarrots(distance)
+    
     @Suppress("USELESS_ELVIS")
     fun getCards() = cards ?: arrayOf()
     
@@ -56,7 +59,7 @@ class Advance(
     
     @Suppress("SAFE_CALL_WILL_CHANGE_NULLABILITY", "UNNECESSARY_SAFE_CALL")
     override fun toString(): String =
-        "Vorwärts um $distance${cards?.takeUnless { it.isEmpty() }?.joinToString(prefix = " mit Karten [", postfix = "]") ?: ""}"
+        "Vorwärts um $distance${cards?.takeUnless { it.isEmpty() }?.joinToString(prefix = " mit Karten [", postfix = "]") { it.label } ?: ""}"
     
     override fun equals(other: Any?): Boolean {
         if(this === other) return true
