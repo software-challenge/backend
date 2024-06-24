@@ -7,10 +7,12 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.booleans.*
 import io.kotest.matchers.iterator.*
+import io.kotest.matchers.nulls.*
 import org.slf4j.LoggerFactory
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.api.plugins.Team
+import sc.api.plugins.TwoPlayerGameState
 import sc.api.plugins.exceptions.TooManyPlayersException
 import sc.api.plugins.host.IGameListener
 import sc.framework.plugins.AbstractGame
@@ -60,6 +62,8 @@ class GamePlayTest: WordSpec({
                 }
                 
                 override fun onStateChanged(data: IGameState, observersOnly: Boolean) {
+                    val state = data as? TwoPlayerGameState<*>
+                    state?.lastMove.shouldNotBeNull()
                     data.hashCode() shouldNotBe finalState
                     // hashing it to avoid cloning, since we get the original object which might be mutable
                     finalState = data.hashCode()

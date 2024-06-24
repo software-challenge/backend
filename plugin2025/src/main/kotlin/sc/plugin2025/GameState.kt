@@ -137,6 +137,7 @@ data class GameState @JvmOverloads constructor(
             if(move is Advance && currentField != Field.MARKET)
                 move.getCards().lastOrNull() ?: move
             else move
+        lastMove = move
         turn++
         awardPositionFields()
         if(!moveIterator().hasNext()) {
