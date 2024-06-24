@@ -67,9 +67,6 @@ data class GameState @JvmOverloads constructor(
     fun cloneCurrentPlayer(transform: (Hare) -> Unit) =
         copy(players = players.map { if(it.team == currentTeam) it.clone().apply(transform) else it })
     
-    override fun getPointsForTeam(team: ITeam): IntArray =
-        getHare(team).let { intArrayOf(if(it.inGoal) 1 else 0, it.position, it.salads) }
-    
     override fun getSensibleMoves(): List<Move> = getSensibleMoves(currentPlayer)
     
     fun getSensibleMoves(player: Hare): List<Move> {
@@ -248,14 +245,23 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
+    override fun getPointsForTeam(team: ITeam): IntArray =
+        getHare(team).let { intArrayOf(it.position, it.carrots) }
+    
+    override fun getPointsForTeamExtended(team: ITeam): IntArray =
+        getHare(team).let { intArrayOf(if(it.inGoal) 100 else 0, it.position, it.carrots, -it.salads * 2, it.getCards().size * 5) }
+    
     override fun teamStats(team: ITeam) =
         getHare(team).run {
             listOf(
                 Stat("   ⃞ Position", this.position),
                 Stat("▾ Karotten", this.carrots),
                 Stat("Salate", this.salads, "   ⃝ "),
-                Stat("Karten", this.getCards().count(), "◼ "),
+                //Stat("Karten", this.getCards().count(), "◼ "),
             )
         }
+    
+    override fun longString(): String =
+        toString()
     
 }

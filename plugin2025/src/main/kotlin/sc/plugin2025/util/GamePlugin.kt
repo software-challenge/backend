@@ -22,7 +22,6 @@ class GamePlugin: IGamePlugin<Move> {
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen"), ScoreAggregation.SUM),
-                        ScoreFragment("Ziel", HuIWinReason.GOAL, ScoreAggregation.AVERAGE),
                         ScoreFragment("Feld", HuIWinReason.DIFFERING_SCORES, ScoreAggregation.AVERAGE),
                         ScoreFragment("Karotten", HuIWinReason.DIFFERING_CARROTS, ScoreAggregation.AVERAGE),
                 ))
