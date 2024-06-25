@@ -126,11 +126,14 @@ tasks {
             testGameDir.mkdirs()
             val java = "java"
                     //File("/usr/lib/jvm").listFiles { f:File -> f.name.contains("java-1") }?.max()?.resolve("bin/java").toString()
+            val port = "13054"
+            println("Running on Port: $port")
             val server =
                 ProcessBuilder(
                     java,
                     "-Dlogback.configurationFile=${project(":server").projectDir.resolve("configuration/logback-trace.xml")}",
-                    "-jar", (project(":server").getTasksByName("jar", false).single() as Jar).archiveFile.get().asFile.absolutePath
+                    "-jar", (project(":server").getTasksByName("jar", false).single() as Jar).archiveFile.get().asFile.absolutePath,
+                    "--port", port
                 )
                     .redirectOutput(testGameDir.resolve("server.log"))
                     .redirectError(testGameDir.resolve("server-err.log"))
@@ -141,8 +144,10 @@ tasks {
                 Thread.sleep(300)
             val startClient: (Int) -> Process = {
                 Thread.sleep(300)
-                ProcessBuilder(java, "-jar", deployDir.resolve(deployedPlayer).absolutePath)
-                    .redirectOutput(testGameDir.resolve("client$it.log")).redirectError(testGameDir.resolve("client$it-err.log")).start()
+                ProcessBuilder(
+                    java, "-jar", deployDir.resolve(deployedPlayer).absolutePath,
+                    "--port", port
+                ).redirectOutput(testGameDir.resolve("client$it.log")).redirectError(testGameDir.resolve("client$it-err.log")).start()
             }
             startClient(1)
             startClient(2)
