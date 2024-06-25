@@ -10,6 +10,10 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 25.0.3 Auxiliaries - 2024-06-25
+- revamp a few internal helper methods
+- fix GameResult
+- expand testing
 
 ### 25.0.2 XML Improvements and Rule fixes - 2024-06-19
 - Requirements for swap carrots card properly implemented
