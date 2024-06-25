@@ -8,6 +8,8 @@ import sc.plugin2025.GameRuleLogic.calculateCarrots
 import sc.plugin2025.GameRuleLogic.calculateMoveableFields
 import sc.plugin2025.util.HuIConstants
 import sc.shared.InvalidMoveException
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * The GameState class represents the current state of the game.
@@ -41,6 +43,9 @@ data class GameState @JvmOverloads constructor(
     
     fun isAhead(player: Hare = currentPlayer) =
         player.position > player.opponent.position
+    
+    fun isAhead(team: Team) =
+        isAhead(getHare(team))
     
     val currentField: Field?
         get() = currentPlayer.field
@@ -115,12 +120,14 @@ data class GameState @JvmOverloads constructor(
                     }
                 }
             }
+            
             Field.MARKET -> {
                 if(player.carrots >= 10)
                     Card.values().map { arrayOf(it) }
                 else
                     listOf()
             }
+            
             else -> null
         }
     
@@ -146,18 +153,20 @@ data class GameState @JvmOverloads constructor(
         }
     }
     
-    fun awardPositionFields() {
-        when(currentField) {
+    fun awardPositionFields(hare: Hare = currentPlayer) {
+        when(hare.field) {
             Field.POSITION_1 -> {
-                if(isAhead()) {
-                    currentPlayer.carrots += 10
+                if(isAhead(hare)) {
+                    hare.carrots += 10
                 }
             }
+            
             Field.POSITION_2 -> {
-                if(!isAhead()) {
-                    currentPlayer.carrots += 30
+                if(!isAhead(hare)) {
+                    hare.carrots += 30
                 }
             }
+            
             else -> {}
         }
     }
@@ -180,7 +189,11 @@ data class GameState @JvmOverloads constructor(
     
     /** Basic validation whether a field may be entered via a jump that is not backward.
      * Does not validate whether a card can be played on hare field. */
-    fun validateTargetField(newPosition: Int, player: Hare = currentPlayer, carrots: Int = player.carrots): HuIMoveMistake? {
+    fun validateTargetField(
+        newPosition: Int,
+        player: Hare = currentPlayer,
+        carrots: Int = player.carrots,
+    ): HuIMoveMistake? {
         if(newPosition == 0)
             return HuIMoveMistake.CANNOT_ENTER_FIELD
         val field = board.getField(newPosition)
@@ -250,7 +263,22 @@ data class GameState @JvmOverloads constructor(
         getHare(team).let { intArrayOf(it.position, it.carrots) }
     
     override fun getPointsForTeamExtended(team: ITeam): IntArray =
-        getHare(team).let { intArrayOf(if(it.inGoal) 100 else 0, it.position, it.carrots, -it.salads * 2, it.getCards().size * 5) }
+        getHare(team).copy().let { hare ->
+            awardPositionFields(hare)
+            // 1 at the beginning, 12 at the end
+            val positionFactor = 1.04.pow(hare.position)
+            intArrayOf(
+                when {
+                    hare.inGoal -> 100
+                    hare.field == Field.SALAD -> 3
+                    else -> 0
+                },
+                hare.position,
+                ((55 - hare.position.toDouble()).pow(0.3) / 2 * sqrt(hare.carrots.toDouble())).toInt(),
+                -(hare.salads * positionFactor).toInt(),
+                (hare.getCards().size * (10 - positionFactor) / 3).toInt(),
+            )
+        }
     
     override fun teamStats(team: ITeam) =
         getHare(team).run {
