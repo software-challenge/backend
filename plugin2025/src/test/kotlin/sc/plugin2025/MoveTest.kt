@@ -28,6 +28,7 @@ class MoveTest: WordSpec({
         
         state.performMoveDirectly(Advance(2))
         state.turn shouldBe 1
+        state.otherPlayer.position shouldBe 2
         
         state.checkAdvance(2) shouldBe HuIMoveMistake.FIELD_OCCUPIED
         state.checkAdvance(3) shouldBe HuIMoveMistake.CARD_NOT_OWNED
@@ -85,18 +86,20 @@ class MoveTest: WordSpec({
             state.currentPlayer.addCard(Card.FALL_BACK)
             state.checkAdvance(3) shouldBe null
             
-            "not allow fallback to start" {
+            "not allow fallback to startfield" {
                 state.otherPlayer.position = 1
                 state.possibleCardMoves(3).shouldBeEmpty()
             }
             
             "allow fallback and buy" {
                 state.checkAdvance(3) shouldBe null
-                Advance(3, Card.FALL_BACK).perform(state.clone()) shouldBe HuIMoveMistake.MUST_BUY_ONE_CARD
+                Advance(2, Card.FALL_BACK).perform(state.clone()) shouldBe HuIMoveMistake.FIELD_OCCUPIED
+                state.currentPlayer.position++
+                Advance(2, Card.FALL_BACK).perform(state.clone()) shouldBe HuIMoveMistake.MUST_BUY_ONE_CARD
                 state.cloneCurrentPlayer { it.position = 1 }.nextCards() shouldBe Card.values().map { listOf(it) }
                 state.cloneCurrentPlayer { it.position = 3 }.nextCards() shouldBe Card.values().map { listOf(Card.FALL_BACK, it) }
                 
-                state.performMoveDirectly(Advance(3, Card.FALL_BACK, Card.EAT_SALAD))
+                state.performMoveDirectly(Advance(2, Card.FALL_BACK, Card.EAT_SALAD))
                 state.turn shouldBe 2
                 state.otherPlayer.getCards() shouldBe listOf(Card.EAT_SALAD)
             }
