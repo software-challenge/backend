@@ -7,6 +7,7 @@ import sc.plugin2023.util.PenguinsMoveMistake
 import sc.plugin2023.util.PenguinConstants
 import sc.shared.InvalidMoveException
 import sc.shared.MoveMistake
+import sc.shared.WinCondition
 
 /**
  * Der aktuelle Spielstand.
@@ -80,6 +81,9 @@ data class GameState @JvmOverloads constructor(
     
     override val isOver: Boolean
         get() = immovable()
+    
+    override val winCondition: WinCondition?
+        get() = TODO("Not yet implemented")
     
     /** Berechne die Punkteanzahl für das gegebene Team. */
     override fun getPointsForTeam(team: ITeam): IntArray =

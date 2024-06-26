@@ -5,6 +5,7 @@ import sc.api.plugins.IMove
 import sc.api.plugins.ITeam
 import sc.api.plugins.Team
 import sc.framework.plugins.Player
+import sc.shared.WinCondition
 
 data class TestGameState(
         override var turn: Int = 0,
@@ -14,8 +15,11 @@ data class TestGameState(
     override val currentTeam: Team
         get() = Team.values()[turn % Team.values().size]
     
-    @Transient
-    override val isOver = false
+    override val isOver
+        get() = false
+    
+    override val winCondition: WinCondition?
+        get() = null
     
     override fun getPointsForTeam(team: ITeam): IntArray =
             intArrayOf(team.index, turn)

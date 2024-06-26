@@ -10,6 +10,10 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 25.0.4 Allow Follow-up Move - 2024-06-26
+- Always finish the round even if one player is already in the goal
+- Emit proper GameResult when game ends regularly through implementing WinCondition
+
 ### 25.0.3 Auxiliaries - 2024-06-25
 - revamp a few internal helper methods
 - fix GameResult
