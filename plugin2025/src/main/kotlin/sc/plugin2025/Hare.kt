@@ -21,9 +21,6 @@ data class Hare(
     fun hasCard(card: Card) = cards.contains(card)
     fun removeCard(card: Card) = cards.remove(card)
     
-    val inGoal: Boolean
-        get() = position == HuIConstants.NUM_FIELDS - 1
-    
     val canEnterGoal: Boolean
         get() = carrots <= 10 && salads == 0
     

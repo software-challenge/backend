@@ -64,7 +64,10 @@ data class GameState @JvmOverloads constructor(
         get() = currentTeamFromTurn()
     
     override val isOver: Boolean
-        get() = players.any { it.inGoal } || round >= HuIConstants.ROUND_LIMIT
+        get() = players.any { it.inGoal } && turn.mod(2) == 0 || round >= HuIConstants.ROUND_LIMIT
+    
+    val Hare.inGoal
+        get() = position == board.size - 1
     
     override fun clone(): GameState =
         copy(players = players.clone())
@@ -147,7 +150,7 @@ data class GameState @JvmOverloads constructor(
         lastMove = move
         turn++
         awardPositionFields()
-        if(!moveIterator().hasNext()) {
+        if(!isOver && !moveIterator().hasNext()) {
             turn++
             awardPositionFields()
         }
