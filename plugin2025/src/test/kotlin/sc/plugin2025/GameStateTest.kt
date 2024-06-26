@@ -5,7 +5,9 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
+import sc.plugin2025.util.HuIWinReason
 import sc.shared.InvalidMoveException
+import sc.shared.WinCondition
 
 class GameStateTest: FunSpec({
     test("clone correctly") {
@@ -48,6 +50,7 @@ class GameStateTest: FunSpec({
             state.performMoveDirectly(EatSalad)
             state.turn shouldBe 2
             state.isOver shouldBe true
+            state.winCondition shouldBe WinCondition(Team.TWO, HuIWinReason.GOAL)
         }
         test("tie") {
             state.currentPlayer.run {
@@ -58,6 +61,7 @@ class GameStateTest: FunSpec({
             state.performMoveDirectly(Advance(2))
             state.turn shouldBe 2
             state.isOver shouldBe true
+            state.winCondition shouldBe null
         }
     }
     test("produce nice XML") {

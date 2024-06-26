@@ -47,9 +47,8 @@ interface IGameState: RoomMessage, PublicCloneable<IGameState> {
     val isOver: Boolean
     
     /** Falls es einen klaren Sieger anhand der Spielregeln unabhängig von der Punktzahl gibt.
-     * Wenn dieser Wert nicht null ist, sollte [isOver] true zurückgeben. */
+     * Wenn dieser Wert nicht null ist, muss [isOver] true zurückgeben. */
     val winCondition: WinCondition?
-        get() = null
     
     /** Gibt Punktzahlen des Teams passend zur ScoreDefinition des aktuellen Spielplugins zurück. */
     fun getPointsForTeam(team: ITeam): IntArray

@@ -7,7 +7,9 @@ import sc.api.plugins.*
 import sc.plugin2025.GameRuleLogic.calculateCarrots
 import sc.plugin2025.GameRuleLogic.calculateMoveableFields
 import sc.plugin2025.util.HuIConstants
+import sc.plugin2025.util.HuIWinReason
 import sc.shared.InvalidMoveException
+import sc.shared.WinCondition
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -65,6 +67,9 @@ data class GameState @JvmOverloads constructor(
     
     override val isOver: Boolean
         get() = players.any { it.inGoal } && turn.mod(2) == 0 || round >= HuIConstants.ROUND_LIMIT
+    
+    override val winCondition: WinCondition?
+        get() = players.singleOrNull { it.inGoal }?.team?.let { WinCondition(it, HuIWinReason.GOAL) }
     
     val Hare.inGoal
         get() = position == board.size - 1
