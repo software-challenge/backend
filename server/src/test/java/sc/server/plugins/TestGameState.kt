@@ -30,8 +30,6 @@ data class TestGameState(
     override fun teamStats(team: ITeam) =
             throw NotImplementedError("TestGame has no teamStats")
     
-    override val round get() = turn / 2
-    
     val red = Player(Team.ONE, "Fred")
     val blue = Player(Team.TWO, "Marta")
     

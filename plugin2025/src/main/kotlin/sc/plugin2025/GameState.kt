@@ -66,7 +66,7 @@ data class GameState @JvmOverloads constructor(
         get() = currentTeamFromTurn()
     
     override val isOver: Boolean
-        get() = players.any { it.inGoal } && turn.mod(2) == 0 || round >= HuIConstants.ROUND_LIMIT
+        get() = players.any { it.inGoal } && turn.mod(2) == 0 || turn / 2 >= HuIConstants.ROUND_LIMIT
     
     override val winCondition: WinCondition?
         get() = players.singleOrNull { it.inGoal }?.team?.let { WinCondition(it, HuIWinReason.GOAL) }

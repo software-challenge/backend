@@ -38,23 +38,6 @@ class GameStateTest: FunSpec({
             // TODO
         }
     }
-    context("state detection") {
-        test("isOver") {
-            val state = GameState()
-            state.round shouldBe 0
-            state.isOver shouldBe false
-            val state60 = GameState(turn = 58)
-            state60.round shouldBe 29
-            state60.isOver shouldBe false
-            state60.turn++
-            state60.round shouldBe 30
-            state60.isOver shouldBe false
-            state60.turn++
-            state60.round shouldBe 30
-            state60.isOver shouldBe false
-            //state60.isOver shouldBe true
-        }
-    }
     context("move calculation") {
         context("initial placement") {
             val emptyBoard = makeBoard()

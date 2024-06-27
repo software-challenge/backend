@@ -9,9 +9,6 @@ abstract class TwoPlayerGameState<M: IMove>(
     
     abstract val board: IBoard
     
-    override val round: Int
-        get() = (turn+1)/2
-    
     /** @return das Team, das am Zug ist. */
     override val currentTeam
         get() = currentTeamFromTurn()

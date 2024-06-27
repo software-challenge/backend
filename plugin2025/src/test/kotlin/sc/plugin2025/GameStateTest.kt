@@ -63,6 +63,12 @@ class GameStateTest: FunSpec({
             state.isOver shouldBe true
             state.winCondition shouldBe null
         }
+        test("round limit") {
+            state.turn = 59
+            state.isOver shouldBe false
+            state.turn++
+            state.isOver shouldBe true
+        }
     }
     test("produce nice XML") {
         Hare(Team.TWO, lastAction = EatSalad) shouldSerializeTo """

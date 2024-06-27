@@ -30,11 +30,8 @@ import sc.shared.WinCondition
  * Teilinformationen abgefragt werden.
  */
 interface IGameState: RoomMessage, PublicCloneable<IGameState> {
-    /** Aktuelle Zugzahl  */
+    /** Aktuelle Zugzahl.  */
     val turn: Int
-    
-    /** Aktuelle Rundenzahl */
-    val round: Int
     
     /** Das Team am Zug. */
     val currentTeam: ITeam
