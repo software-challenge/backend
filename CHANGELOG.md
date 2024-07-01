@@ -10,6 +10,11 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 25.0.5 Little Fixes - 2024-07-01
+- Remove round number from GameState
+- End game with turn 60
+- Update CI Pipeline
+
 ### 25.0.4 Allow Follow-up Move - 2024-06-26
 - Always finish the round even if one player is already in the goal
 - Emit proper GameResult when game ends regularly through implementing WinCondition
