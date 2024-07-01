@@ -1,22 +1,26 @@
 on: [push, pull_request, create]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+        os: [ubuntu-latest] #, windows-latest, macos-latest]
+        jdk: [8]
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-    - name: Set up JDK
-      uses: actions/setup-java@v3
+    - name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v4
       with:
         distribution: 'zulu'
-        java-version: 8
+        java-version: ${{ matrix.jdk }}
     - name: Cache Gradle packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.gradle/caches
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-        restore-keys: ${{ runner.os }}-gradle
+        key: ${{ matrix.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+        restore-keys: ${{ matrix.os }}-gradle
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Execute tests
@@ -24,7 +28,7 @@ jobs:
     - name: Build deployment artifacts
       run: ./gradlew deploy
     - name: Upload jars as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: software-challenge-backend-${{ github.sha }}
         path: |
@@ -35,12 +39,12 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4 # https://github.com/actions/download-artifact
       with:
         name: software-challenge-backend-${{ github.sha }}
         path: artifacts
     - name: Release ${{ github.ref }}
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v1 # https://github.com/softprops/action-gh-release
       with:
         files: artifacts/*
       env:
