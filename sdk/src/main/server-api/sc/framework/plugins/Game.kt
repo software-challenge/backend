@@ -226,8 +226,10 @@ abstract class AbstractGame<M : IMove>(protected val plugin: IGamePlugin<M>): IG
                 .drop(1) // drop victory points definition
                 .withIndex().filter { it.value.relevantForRanking }
                 .map { (index, scoreFragment) ->
-                    WinCondition(teams.withIndex()
-                            .maxByNoEqual { team -> scores[team.index][index] }?.value, scoreFragment.explanation)
+                    WinCondition(
+                        teams.withIndex().maxByNoEqual { team -> (if(scoreFragment.invert) -1 else 1) * scores[team.index][index] }?.value,
+                        scoreFragment.explanation
+                    )
                 }
                 .firstOrNull { it.winner != null } ?: WinCondition(null, WinReasonTie)
     }

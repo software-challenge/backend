@@ -12,7 +12,7 @@ import sc.shared.*
 @XStreamAlias(value = "winreason")
 enum class HuIWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
     DIFFERING_SCORES("%s ist weiter vorne."),
-    DIFFERING_CARROTS("%S hat mehr Karotten übrig."),
+    DIFFERING_CARROTS("%s hat weniger Karotten uebrig."),
     GOAL("%s hat das Ziel zuerst erreicht."),
 }
 
@@ -21,9 +21,9 @@ class GamePlugin: IGamePlugin<Move> {
         const val PLUGIN_ID = "swc_2025_hase_und_igel"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
-                        ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen"), ScoreAggregation.SUM),
+                        ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
                         ScoreFragment("Feldnummer", HuIWinReason.DIFFERING_SCORES, ScoreAggregation.AVERAGE),
-                        ScoreFragment("Karotten", HuIWinReason.DIFFERING_CARROTS, ScoreAggregation.AVERAGE),
+                        ScoreFragment("Karotten", HuIWinReason.DIFFERING_CARROTS, ScoreAggregation.AVERAGE, true),
                 ))
     }
     

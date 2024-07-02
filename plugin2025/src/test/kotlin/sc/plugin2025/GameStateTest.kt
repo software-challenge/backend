@@ -17,6 +17,15 @@ class GameStateTest: FunSpec({
         clone.currentPlayer.addCard(Card.EAT_SALAD)
         state.currentPlayer.getCards().size shouldBe 0
     }
+    test("let lower carrots win on tie") {
+        val state = GameState(Board(arrayOf(Field.GOAL)))
+        state.isOver shouldBe true
+        state.winCondition shouldBe null
+        state.players.first().carrots = 5
+        state.winCondition shouldBe WinCondition(Team.ONE, HuIWinReason.DIFFERING_CARROTS)
+        state.players.last().carrots = 4
+        state.winCondition shouldBe WinCondition(Team.TWO, HuIWinReason.DIFFERING_CARROTS)
+    }
     val state = GameState(
         Board(arrayOf(Field.START, Field.MARKET, Field.CARROTS, Field.SALAD, Field.HARE, Field.GOAL)),
         lastMove = Advance(5, Card.EAT_SALAD),
@@ -55,7 +64,7 @@ class GameStateTest: FunSpec({
         test("tie") {
             state.currentPlayer.run {
                 lastAction = EatSalad
-                carrots = 13
+                carrots = 3
                 salads = 0
             }
             state.performMoveDirectly(Advance(2))

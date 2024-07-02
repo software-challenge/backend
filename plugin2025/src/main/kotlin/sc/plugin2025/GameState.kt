@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
+import sc.framework.plugins.maxByNoEqual
 import sc.plugin2025.GameRuleLogic.calculateCarrots
 import sc.plugin2025.GameRuleLogic.calculateMoveableFields
 import sc.plugin2025.util.HuIConstants
@@ -69,7 +70,7 @@ data class GameState @JvmOverloads constructor(
         get() = players.any { it.inGoal } && turn.mod(2) == 0 || turn / 2 >= HuIConstants.ROUND_LIMIT
     
     override val winCondition: WinCondition?
-        get() = players.singleOrNull { it.inGoal }?.team?.let { WinCondition(it, HuIWinReason.GOAL) }
+        get() = players.filter { it.inGoal }.maxByNoEqual { -it.carrots }?.team?.let { WinCondition(it, HuIWinReason.DIFFERING_CARROTS) }
     
     val Hare.inGoal
         get() = position == board.size - 1

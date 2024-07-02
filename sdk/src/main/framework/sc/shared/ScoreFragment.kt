@@ -12,7 +12,11 @@ data class ScoreFragment @JvmOverloads constructor(
         /** Only present on the server, for generating the [GameResult]. */
         val explanation: IWinReason,
         val aggregation: ScoreAggregation = ScoreAggregation.AVERAGE,
-        val relevantForRanking: Boolean = true) {
+        @XStreamOmitField
+        /** Whether lower points are better. */
+        val invert: Boolean = false,
+        val relevantForRanking: Boolean = true
+) {
 
     override fun toString(): String =
             "ScoreFragment{name='$name', aggregation=$aggregation, relevantForRanking=$relevantForRanking}"
