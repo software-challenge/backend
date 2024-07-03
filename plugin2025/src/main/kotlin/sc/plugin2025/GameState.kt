@@ -302,4 +302,7 @@ data class GameState @JvmOverloads constructor(
     override fun longString(): String =
         toString()
     
+    fun succeedsState(other: GameState) =
+        other.turn + 1 == turn || other.turn + 2 == turn
+    
 }
