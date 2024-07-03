@@ -78,8 +78,9 @@ data class GameState @JvmOverloads constructor(
     override fun clone(): GameState =
         copy(players = players.clone())
     
-    fun cloneCurrentPlayer(transform: (Hare) -> Unit) =
-        copy(players = players.map { if(it.team == currentTeam) it.clone().apply(transform) else it })
+    /** Create a copy of this state with the player matching the given team adjusted. */
+    fun clonePlayer(team: Team = currentTeam, transform: (Hare) -> Unit = {}) =
+        copy(players = players.map { if(it.team == team) it.clone().apply(transform) else it })
     
     override fun getSensibleMoves(): List<Move> = getSensibleMoves(currentPlayer)
     
@@ -89,7 +90,7 @@ data class GameState @JvmOverloads constructor(
         return (1..calculateMoveableFields(player.carrots).coerceAtMost(board.size - player.position)).flatMap { distance ->
             if(checkAdvance(distance, player) != null)
                 return@flatMap emptyList()
-            return@flatMap possibleCardMoves(distance, player) ?: listOf(Advance(distance))
+            return@flatMap possibleCardMoves(distance, player.team) ?: listOf(Advance(distance))
         } + listOfNotNull(
             FallBack.takeIf { nextFallBack(player) != null },
             *possibleExchangeCarrotMoves(player).toTypedArray()
@@ -98,10 +99,9 @@ data class GameState @JvmOverloads constructor(
     
     /** Possible Advances including buying/playing of cards.
      * @return null if target field is neither market nor hare, empty list if no possibilities, otherwise possible Moves */
-    fun possibleCardMoves(distance: Int, player: Hare = currentPlayer): List<Advance>? {
-        val state =
-            copy(players = players.map { if(it.team == player.team) it.clone().apply { advanceBy(distance) } else it })
-        return state.nextCards(state.getHare(player.team))?.map { cards ->
+    fun possibleCardMoves(distance: Int, team: Team = currentTeam): List<Advance>? {
+        val state = clonePlayer(team) { it.advanceBy(distance) }
+        return state.nextCards(state.getHare(team))?.map { cards ->
             Advance(distance, *cards)
         }
     }

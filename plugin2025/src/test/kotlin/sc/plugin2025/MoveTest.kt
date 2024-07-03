@@ -96,8 +96,8 @@ class MoveTest: WordSpec({
                 Advance(2, Card.FALL_BACK).perform(state.clone()) shouldBe HuIMoveMistake.FIELD_OCCUPIED
                 state.currentPlayer.position++
                 Advance(2, Card.FALL_BACK).perform(state.clone()) shouldBe HuIMoveMistake.MUST_BUY_ONE_CARD
-                state.cloneCurrentPlayer { it.position = 1 }.nextCards() shouldBe Card.values().map { listOf(it) }
-                state.cloneCurrentPlayer { it.position = 3 }.nextCards() shouldBe Card.values().map { listOf(Card.FALL_BACK, it) }
+                state.clonePlayer { it.position = 1 }.nextCards() shouldBe Card.values().map { listOf(it) }
+                state.clonePlayer { it.position = 3 }.nextCards() shouldBe Card.values().map { listOf(Card.FALL_BACK, it) }
                 
                 state.performMoveDirectly(Advance(2, Card.FALL_BACK, Card.EAT_SALAD))
                 state.turn shouldBe 2
