@@ -11,6 +11,7 @@ import sc.plugin2025.util.HuIConstants
 import sc.plugin2025.util.HuIWinReason
 import sc.shared.InvalidMoveException
 import sc.shared.WinCondition
+import sc.shared.WinReasonTie
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -70,7 +71,16 @@ data class GameState @JvmOverloads constructor(
         get() = players.any { it.inGoal } && turn.mod(2) == 0 || turn / 2 >= HuIConstants.ROUND_LIMIT
     
     override val winCondition: WinCondition?
-        get() = players.filter { it.inGoal }.maxByNoEqual { -it.carrots }?.team?.let { WinCondition(it, HuIWinReason.DIFFERING_CARROTS) }
+        get() {
+            val goalies = players.filter { it.inGoal }
+            return when(goalies.size) {
+                0 -> null
+                1 -> WinCondition(goalies.single().team, HuIWinReason.GOAL)
+                else -> goalies.maxByNoEqual { -it.carrots }?.team?.let {
+                    WinCondition(it, HuIWinReason.DIFFERING_CARROTS)
+                } ?: WinCondition(null, WinReasonTie)
+            }
+        }
     
     val Hare.inGoal
         get() = position == board.size - 1

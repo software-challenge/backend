@@ -8,6 +8,7 @@ import sc.helpers.shouldSerializeTo
 import sc.plugin2025.util.HuIWinReason
 import sc.shared.InvalidMoveException
 import sc.shared.WinCondition
+import sc.shared.WinReasonTie
 
 class GameStateTest: FunSpec({
     test("clone correctly") {
@@ -20,7 +21,7 @@ class GameStateTest: FunSpec({
     test("let lower carrots win on tie") {
         val state = GameState(Board(arrayOf(Field.GOAL)))
         state.isOver shouldBe true
-        state.winCondition shouldBe null
+        state.winCondition shouldBe WinCondition(null, WinReasonTie)
         state.players.first().carrots = 5
         state.winCondition shouldBe WinCondition(Team.ONE, HuIWinReason.DIFFERING_CARROTS)
         state.players.last().carrots = 4
@@ -70,7 +71,7 @@ class GameStateTest: FunSpec({
             state.performMoveDirectly(Advance(2))
             state.turn shouldBe 2
             state.isOver shouldBe true
-            state.winCondition shouldBe null
+            state.winCondition shouldBe WinCondition(null, WinReasonTie)
         }
         test("round limit") {
             state.turn = 59

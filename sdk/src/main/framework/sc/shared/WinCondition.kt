@@ -20,5 +20,8 @@ data class WinCondition(
     override fun toString(): String =
             reason.getMessage((if(reason.isRegular) winner else winner?.opponent()).toString())
     
-    override fun equals(other: Any?): Boolean = other is WinCondition && other.winner == winner
+    override fun equals(other: Any?): Boolean =
+        other is WinCondition &&
+        other.winner == winner &&
+        other.reason == reason
 }
