@@ -12,4 +12,4 @@ open class WinReason(override val message: String, override val isRegular: Boole
     override fun equals(other: Any?) = other is IWinReason && other.message == this.message
 }
 
-object WinReasonTie: WinReason("Beide Teams sind gleichauf")
+object WinReasonTie: WinReason("Beide Spieler sind gleichauf")

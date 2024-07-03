@@ -28,7 +28,7 @@ class GameResultTest: WordSpec({
                     </fragment>
                   </definition>
                   <scores/>
-                  <winner regular="true" reason="Beide Teams sind gleichauf"/>
+                  <winner regular="true" reason="Beide Spieler sind gleichauf"/>
                 </result>
             """.trimIndent()
         }
@@ -69,7 +69,7 @@ class GameResultTest: WordSpec({
                       </score>
                     </entry>
                   </scores>
-                  <winner regular="true" reason="Beide Teams sind gleichauf"/>
+                  <winner regular="true" reason="Beide Spieler sind gleichauf"/>
                 </result>
             """.trimIndent()
         }
