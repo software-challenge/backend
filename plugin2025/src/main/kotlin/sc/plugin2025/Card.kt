@@ -8,20 +8,6 @@ import sc.shared.IMoveMistake
 @XStreamAlias(value = "card")
 enum class Card(val label: String, val moves: Boolean, val check: (GameState) -> HuIMoveMistake?, val play: (GameState) -> Unit):
     HuIAction {
-    /** Falle hinter den Gegenspieler. */
-    FALL_BACK("Zurückfallen", true,
-        { state ->
-            HuIMoveMistake.CANNOT_PLAY_FALL_BACK.takeUnless { state.isAhead() }
-            ?: state.validateTargetField(state.otherPlayer.position - 1)
-        },
-        { it.moveToField(it.otherPlayer.position - 1) }),
-    /** Rücke vor den Gegenspieler. */
-    HURRY_AHEAD("Vorrücken", true,
-        { state ->
-            HuIMoveMistake.CANNOT_PLAY_HURRY_AHEAD.takeIf { state.isAhead() }
-            ?: state.validateTargetField(state.otherPlayer.position + 1)
-        },
-        { it.moveToField(it.otherPlayer.position + 1) }),
     /** Friss sofort einen Salat. */
     EAT_SALAD("Salat fressen", false,
         { state -> HuIMoveMistake.NO_SALAD.takeUnless { state.currentPlayer.salads > 0 } },
@@ -41,7 +27,22 @@ enum class Card(val label: String, val moves: Boolean, val check: (GameState) ->
             val car = state.currentPlayer.carrots
             state.currentPlayer.carrots = state.otherPlayer.carrots
             state.otherPlayer.carrots = car
-        });
+        }),
+    /** Falle hinter den Gegenspieler. */
+    FALL_BACK("Zurückfallen", true,
+        { state ->
+            HuIMoveMistake.CANNOT_PLAY_FALL_BACK.takeUnless { state.isAhead() }
+            ?: state.validateTargetField(state.otherPlayer.position - 1)
+        },
+        { it.moveToField(it.otherPlayer.position - 1) }),
+    /** Rücke vor den Gegenspieler. */
+    HURRY_AHEAD("Vorrücken", true,
+        { state ->
+            HuIMoveMistake.CANNOT_PLAY_HURRY_AHEAD.takeIf { state.isAhead() }
+            ?: state.validateTargetField(state.otherPlayer.position + 1)
+        },
+        { it.moveToField(it.otherPlayer.position + 1) }),
+    ;
     
     override fun perform(state: GameState): IMoveMistake? {
         if(state.currentField != Field.HARE)

@@ -125,7 +125,7 @@ data class GameState @JvmOverloads constructor(
     fun nextCards(player: Hare = currentPlayer): Collection<Array<Card>>? =
         when(player.field) {
             Field.HARE -> {
-                player.getCards().toSet().flatMap { card ->
+                HashSet(player.getCards()).flatMap { card ->
                     if(card.check(this) == null) {
                         val newState = clone()
                         newState.currentPlayer.removeCard(card)
