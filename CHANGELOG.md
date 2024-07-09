@@ -10,6 +10,8 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 25.0.6 Tweak Win Conditions - 2024-07-09
+
 ### 25.0.5 Little Fixes - 2024-07-01
 - Remove round number from GameState
 - End game with turn 60
