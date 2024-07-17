@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ -z "$server" ]; then
+if test -z "$server"; then
     # server is not set or ""
     echo "please call push_staging.sh or push_production.sh"
     exit 1
