@@ -2,6 +2,8 @@ package sc.api.plugins
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 
+const val SENSIBLE_MOVES_COUNT = 64
+
 abstract class TwoPlayerGameState<M: IMove>(
         @XStreamAsAttribute
         override val startTeam: Team
@@ -33,7 +35,7 @@ abstract class TwoPlayerGameState<M: IMove>(
      * Bei manchen Spielen wird aufgrund der unüberschaubaren Zahl möglicher Züge
      * nur ein Ausschnitt zurückgegeben.
      * */
-    open fun getSensibleMoves(): List<M> = moves().take(64)
+    open fun getSensibleMoves(): List<M> = moves().take(SENSIBLE_MOVES_COUNT)
     
     /**
      * Gibt progressiv alle möglichen Züge in der aktuellen Spielsituation zurück.
