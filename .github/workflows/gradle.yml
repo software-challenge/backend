@@ -25,15 +25,15 @@ jobs:
       run: chmod +x gradlew
     - name: Execute tests
       run: ./gradlew check || (exitcode=$?; find build/tests -name '*.log' -type f | while read f; do echo -e "\033[4m$f\033[0m"; cat $f; done && return $exitcode)
-    - name: Build deployment artifacts
-      run: ./gradlew deploy
-    - name: Upload jars as artifact
+    - name: Bundle Artifacts
+      run: ./gradlew bundle
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: software-challenge-backend-${{ github.sha }}
         path: |
-          build/deploy/*.zip
-          build/deploy/*.jar
+          build/bundle/*.zip
+          build/bundle/*.jar
   release:
     needs: build
     runs-on: ubuntu-latest

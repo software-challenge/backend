@@ -78,19 +78,19 @@ tasks {
         args = System.getProperty("args", "").split(" ")
     }
     
-    val deployDir: File by project
-    val deployedPlayer: String by project
-    val deployShadow by creating(Copy::class) {
+    val bundleDir: File by project
+    val bundledPlayer: String by project
+    val bundleShadow by creating(Copy::class) {
         group = "distribution"
         from(shadowJar)
-        into(deployDir)
-        rename { deployedPlayer }
+        into(bundleDir)
+        rename { bundledPlayer }
     }
-    val deploy by creating(Zip::class) {
+    val bundle by creating(Zip::class) {
         group = "distribution"
-        dependsOn(deployShadow)
+        dependsOn(bundleShadow)
         from(prepareZip, copyDocs)
-        destinationDirectory.set(deployDir)
+        destinationDirectory.set(bundleDir)
         archiveFileName.set("player-$gameName-src.zip")
     }
     
@@ -118,6 +118,7 @@ tasks {
                 commandLine("java", "-jar", execDir.resolve("${game}_client.jar"), "--verify")
                 standardOutput = org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM
             }
+            println("Successfully built the shipped player package!")
         }
     }
     

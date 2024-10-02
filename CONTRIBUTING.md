@@ -43,7 +43,7 @@ Die wichtigsten Tasks:
 | Task                             | Beschreibung
 | ----                             | ------------
 | `build`                          | Kompiliert, packt und testet alles
-| `deploy`                         | Erstellt hochladbare ZIP-Pakete
+| `bundle`                         | Erstellt hochladbare ZIP-Pakete
 | `check`                          | Führt alle Tests aus
 | `test`                           | Führt Unittests aus
 | `integrationTest`                | Testet ein komplettes Spiel sowie den TestClient

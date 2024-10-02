@@ -20,7 +20,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine") // legacy java tests
 }
 
-val deployDir: File by project
+val bundleDir: File by project
 val isBeta: Boolean by project
 
 tasks {
@@ -51,10 +51,10 @@ tasks {
         into(runnableDir.resolve("lib"))
     }
     
-    val deploy by creating(Zip::class) {
+    val bundle by creating(Zip::class) {
         group = "distribution"
         dependsOn(":test-client:jar", ":player:shadowJar", makeRunnable)
-        destinationDirectory.set(deployDir)
+        destinationDirectory.set(bundleDir)
         archiveBaseName.set("software-challenge-server")
         from(runnableDir)
         doFirst {

@@ -23,8 +23,8 @@ version = versionObject.toString() + property("socha.version.suffix").toString()
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
 
-val deployDir by extra { buildDir.resolve("deploy") }
-val deployedPlayer by extra { "randomplayer-$gameName-$version.jar" }
+val bundleDir by extra { buildDir.resolve("bundle") }
+val bundledPlayer by extra { "randomplayer-$gameName-$version.jar" }
 val testingDir by extra { buildDir.resolve("tests") }
 val documentedProjects = listOf("sdk", "plugin$year")
 
@@ -48,7 +48,7 @@ tasks {
     val doc by creating(DokkaTask::class) {
         dependsOn(documentedProjects.map { ":$it:classes" })
         group = "documentation"
-        outputDirectory = deployDir.resolve("doc").toString()
+        outputDirectory = bundleDir.resolve("doc").toString()
         outputFormat = "javadoc"
         subProjects = documentedProjects
         configuration {
@@ -58,12 +58,12 @@ tasks {
         }
     }
     
-    val deploy by creating {
+    val bundle by creating {
         dependsOn(doc)
         dependOnSubprojects()
         group = "distribution"
-        description = "Zips everything up for release into ${deployDir.relativeTo(projectDir)}"
-        outputs.dir(deployDir)
+        description = "Zips everything up for release into ${bundleDir.relativeTo(projectDir)}"
+        outputs.dir(bundleDir)
     }
     
     val release by creating {
@@ -111,14 +111,14 @@ tasks {
         dependOnSubprojects()
     }
     build {
-        dependsOn(deploy)
+        dependsOn(bundle)
     }
     
     // TODO create a global constant which can be shared with testclient & co - maybe a resource?
     val maxGameLength = 150L // 2m30s
     
     val testGame by creating {
-        dependsOn(":server:deploy", ":player:deployShadow")
+        dependsOn(":server:bundle", ":player:bundleShadow")
         group = "verification"
         doFirst {
             val testGameDir = testingDir.resolve("game")
@@ -145,7 +145,7 @@ tasks {
             val startClient: (Int) -> Process = {
                 Thread.sleep(300)
                 ProcessBuilder(
-                    java, "-jar", deployDir.resolve(deployedPlayer).absolutePath,
+                    java, "-jar", bundleDir.resolve(bundledPlayer).absolutePath,
                     "--port", port
                 ).redirectOutput(testGameDir.resolve("client$it.log")).redirectError(testGameDir.resolve("client$it-err.log")).start()
             }
@@ -190,12 +190,12 @@ tasks {
                 server.destroy()
             }
             thread.interrupt()
-            println("Successfully played a game using the deployed server & client!")
+            println("Successfully played a game using the bundled server & client!")
         }
     }
     
     val testTestClient by creating {
-        dependsOn(":server:deploy")
+        dependsOn(":server:bundle")
         group = "verification"
         shouldRunAfter(testGame)
         val testClientGames = 3
@@ -203,7 +203,7 @@ tasks {
             testingDir.mkdirs()
             val serverDir = testingDir.resolve("testclient")
             serverDir.deleteRecursively()
-            unzipTo(serverDir, deployDir.resolve("software-challenge-server.zip"))
+            unzipTo(serverDir, bundleDir.resolve("software-challenge-server.zip"))
     
             val command = (project(":test-client").getTasksByName("createStartScripts", false).single() as ScriptsTask).content.split(' ') +
                           arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")

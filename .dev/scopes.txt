@@ -5,7 +5,7 @@ contributing
 git
 gradle
 ci
-deploy
+bundle
 
 # Modules
 testclient
