@@ -55,10 +55,9 @@ tasks {
             }
         }, copySpec {
             from(rootDir.resolve("gradlew"), rootDir.resolve("gradlew.bat"))
-            filter { it.replace(Regex("gradle([/\\\\])wrapper"), "lib$1gradle-wrapper") }
         }, copySpec {
             from(rootDir.resolve("gradle").resolve("wrapper"))
-            into("lib/gradle-wrapper")
+            into("gradle/wrapper")
         }, copySpec {
             from("src")
             into("src")
