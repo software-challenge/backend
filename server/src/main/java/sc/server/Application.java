@@ -9,6 +9,9 @@ import sc.shared.SharedConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public final class Application {
 
@@ -33,6 +36,13 @@ public final class Application {
       return;
     }
     logger.info("Server is starting up...");
+
+    try {
+      List<String> version = Files.readAllLines(Paths.get("version"));
+      logger.info("Running version {}", version);
+    } catch(IOException ignored) {
+      logger.debug("Could not determine running version");
+    }
 
     // register crtl + c
     addShutdownHook();
