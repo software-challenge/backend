@@ -94,14 +94,14 @@ class Board(
             )
             
             track.add(Field.HEDGEHOG)
-            track.addAll(
-                shuffledFields(
-                    Field.POSITION_3,
-                    Field.CARROTS,
-                    Field.SALAD,
-                    Field.POSITION_2,
-                )
+            val fields = shuffledFields(
+                Field.POSITION_3,
+                Field.CARROTS,
+                Field.POSITION_2,
             )
+            track.addAll(fields.take(2))
+            track.add(Field.SALAD)
+            track.add(fields.last())
             
             track.add(Field.HEDGEHOG)
             track.addAll(
