@@ -122,6 +122,14 @@ data class GameState @JvmOverloads constructor(
             ExchangeCarrots(-10).takeIf { mayExchangeCarrots(-10, player) },
         )
     
+    /** Checks which cards of the given player are usable from its current position.
+     * Does not check validity of a whole move.
+     *
+     * Usable means playable on a hare field
+     * and buyable on a market field.
+     *
+     * @return empty array means no cards are usable,
+     * null means not on a field where cards can be used. */
     fun nextCards(player: Hare = currentPlayer): Collection<Array<Card>>? =
         when(player.field) {
             Field.HARE -> {

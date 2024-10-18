@@ -2,6 +2,7 @@ package sc.plugin2025
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
+import io.kotest.matchers.collections.*
 import sc.plugin2025.util.HuIConstants
 
 class CardTest: FunSpec({
@@ -13,10 +14,13 @@ class CardTest: FunSpec({
             lastSalad shouldBe HuIConstants.LAST_SALAD
             state.currentPlayer.position = lastSalad!!
             Card.SWAP_CARROTS.check(state) shouldBe HuIMoveMistake.CANNOT_PLAY_SWAP_CARROTS_BEYOND_LAST_SALAD
-            state.currentPlayer.position = lastSalad - 1
+            state.currentPlayer.position = state.board.getPreviousField(Field.HARE, lastSalad)!!
             Card.SWAP_CARROTS.check(state) shouldBe null
+            state.currentPlayer.addCard(Card.SWAP_CARROTS)
+            state.nextCards() shouldContainExactly listOf(arrayOf(Card.SWAP_CARROTS))
             state.otherPlayer.position = lastSalad
             Card.SWAP_CARROTS.check(state) shouldBe HuIMoveMistake.CANNOT_PLAY_SWAP_CARROTS_BEYOND_LAST_SALAD
+            state.nextCards().shouldBeEmpty()
         }
         state.currentPlayer.addCard(Card.SWAP_CARROTS)
         test("not repeatable") {
