@@ -64,20 +64,22 @@ public class TestClient extends XStreamClient {
 
     // define commandline options
     CmdLineParser parser = new CmdLineParser();
-    Option loglevelOption = parser.addStringOption("loglevel");
-    Option serverOption = parser.addBooleanOption("start-server");
-    Option serverLocationOption = parser.addStringOption("server");
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
+    Option loglevelOption = parser.addStringOption("loglevel");
+
+    Option noTimeoutOption = parser.addBooleanOption("no-timeout");
+    Option[] noTimeoutOptions = {parser.addBooleanOption("no-timeout1"), parser.addBooleanOption("no-timeout2")};
+
+    Option serverOption = parser.addBooleanOption("start-server");
+    Option serverLocationOption = parser.addStringOption("server");
 
     Option numberOfTestsOption = parser.addIntegerOption('t', "tests");
     Option minTestsOption = parser.addIntegerOption("min-tests");
     Option significanceOption = parser.addDoubleOption("significance");
 
-    Option noTimeoutOption = parser.addBooleanOption("no-timeout");
     Option[] execOptions = {parser.addStringOption("player1"), parser.addStringOption("player2")};
     Option[] nameOptions = {parser.addStringOption("name1"), parser.addStringOption("name2")};
-    Option[] noTimeoutOptions = {parser.addBooleanOption("no-timeout1"), parser.addBooleanOption("no-timeout2")};
 
     try {
       parser.parse(args);
@@ -99,7 +101,6 @@ public class TestClient extends XStreamClient {
         logger.setLevel(level);
     }
 
-    boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
     String host = (String) parser.getOptionValue(hostOption, "localhost");
     int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_TESTSERVER_PORT);
 
@@ -128,7 +129,7 @@ public class TestClient extends XStreamClient {
     logger.info("Players: " + Arrays.toString(players));
 
     try {
-      if (startServer) {
+      if ((boolean) parser.getOptionValue(serverOption, false)) {
         File serverLocation = findInClasspath((File) parser.getOptionValue(serverLocationOption, new File("server.jar")));
         logger.info("Starting server from {}", serverLocation);
         ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getPath(), "--port", String.valueOf(port));

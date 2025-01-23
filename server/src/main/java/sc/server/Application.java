@@ -2,6 +2,7 @@ package sc.server;
 
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
+import jargs.gnu.CmdLineParser.Option;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +74,11 @@ public final class Application {
   public static void parseArguments(String[] params)
           throws IllegalOptionValueException, UnknownOptionException {
     CmdLineParser parser = new CmdLineParser();
-    CmdLineParser.Option pluginDirOption = parser.addStringOption(Configuration.PLUGINS_OPTION);
-    CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
-    CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
-    CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY);
-    CmdLineParser.Option portOption = parser.addIntegerOption('p', Configuration.PORT_KEY);
+    Option pluginDirOption = parser.addStringOption(Configuration.PLUGINS_OPTION);
+    Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE);
+    Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_TO_LOAD);
+    Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY);
+    Option portOption = parser.addIntegerOption('p', Configuration.PORT_KEY);
     parser.parse(params);
 
     String path = (String) parser.getOptionValue(pluginDirOption, null);
@@ -99,7 +100,7 @@ public final class Application {
     if (path != null) {
       File pluginDir = new File(path).getAbsoluteFile();
       if (pluginDir.exists() && pluginDir.isDirectory()) {
-        Configuration.set(Configuration.PLUGIN_PATH_KEY, path);
+        Configuration.set(Configuration.PLUGINS_OPTION, path);
         logger.info("Loading plugins from {}", pluginDir);
       } else {
         logger.warn("Could not find {} to load plugins from", pluginDir);
@@ -116,7 +117,7 @@ public final class Application {
         // continues the main-method of this class
         synchronized(SYNCOBJ) {
           SYNCOBJ.notifyAll();
-          logger.info("Exiting application...");
+          logger.info("Exiting Application...");
         }
       });
       shutdown.setName("ShutdownHook");

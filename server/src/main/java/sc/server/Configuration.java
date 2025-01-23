@@ -20,12 +20,9 @@ public class Configuration {
 
   public static final char DEBUG_SHORT_OPTION = 'd';
   public static final String DEBUG_OPTION = "debug";
-  public static final String PLUGINS_OPTION = "plugins";
-  public static final String GAMELOADFILE_OPTION = "loadGameFile";
+
   public static final String GAMELOADFILE = "loadGameFile";
-  public static final String TURN_OPTION = "turn";
-  public static final String TURN_TO_LOAD = "turnToLoad";
-  public static final String PLUGIN_PATH_DEFAULT_KEY = "./plugins";
+  public static final String TURN_TO_LOAD = "turn";
   public static final String SAVE_REPLAY = "saveReplay";
   public static final String PAUSED = "paused";
   public static final String TIMEOUT = "timeout";
@@ -33,7 +30,8 @@ public class Configuration {
 
   public static final String PASSWORD_KEY = "password";
   public static final String PORT_KEY = "port";
-  public static final String PLUGIN_PATH_KEY = "plugins";
+  public static final String PLUGINS_OPTION = "plugins";
+  public static final String PLUGINS_PATH_DEFAULT = "./plugins";
 
   private static final Properties properties = new Properties();
 
@@ -67,7 +65,7 @@ public class Configuration {
   }
 
   public static String getPluginPath() {
-    return get(PLUGIN_PATH_KEY, String.class, PLUGIN_PATH_DEFAULT_KEY);
+    return get(PLUGINS_OPTION, String.class, PLUGINS_PATH_DEFAULT);
   }
 
   public static String getAdministrativePassword() {
