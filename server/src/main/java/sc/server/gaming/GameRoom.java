@@ -23,10 +23,16 @@ import sc.protocol.responses.ObservationResponse;
 import sc.protocol.room.*;
 import sc.server.Configuration;
 import sc.server.network.Client;
-import sc.shared.*;
+import sc.shared.GameResult;
+import sc.shared.InvalidMoveException;
+import sc.shared.SlotDescriptor;
+import sc.shared.Violation;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**

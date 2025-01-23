@@ -75,17 +75,19 @@ public final class Application {
           throws IllegalOptionValueException, UnknownOptionException {
     CmdLineParser parser = new CmdLineParser();
     Option pluginDirOption = parser.addStringOption(Configuration.PLUGINS_OPTION);
+    Option portOption = parser.addIntegerOption('p', Configuration.PORT_KEY);
+
     Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE);
     Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_TO_LOAD);
     Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY);
-    Option portOption = parser.addIntegerOption('p', Configuration.PORT_KEY);
     parser.parse(params);
 
-    String path = (String) parser.getOptionValue(pluginDirOption, null);
+    String pluginPath = (String) parser.getOptionValue(pluginDirOption, null);
+    String port = parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT).toString();
+
     String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
     Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
     Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
-    String port = parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT).toString();
 
     Configuration.set(Configuration.PORT_KEY, port);
     if (loadGameFile != null) {
@@ -97,10 +99,10 @@ public final class Application {
     if (saveReplay)
       Configuration.set(Configuration.SAVE_REPLAY, saveReplay.toString());
 
-    if (path != null) {
-      File pluginDir = new File(path).getAbsoluteFile();
+    if (pluginPath != null) {
+      File pluginDir = new File(pluginPath).getAbsoluteFile();
       if (pluginDir.exists() && pluginDir.isDirectory()) {
-        Configuration.set(Configuration.PLUGINS_OPTION, path);
+        Configuration.set(Configuration.PLUGINS_OPTION, pluginPath);
         logger.info("Loading plugins from {}", pluginDir);
       } else {
         logger.warn("Could not find {} to load plugins from", pluginDir);
