@@ -214,14 +214,28 @@ class MoveTest: WordSpec({
     }
     
     "Move" should {
-        "produce a nice room message" {
+        "produce concise room message" {
+            RoomPacket("abcd", EatSalad) shouldSerializeTo """
+                <room roomId="abcd">
+                  <data class="eatsalad"/>
+                </room>
+            """.trimIndent()
+        }
+        "produce concise room message for carrots" {
+            RoomPacket("abcd", ExchangeCarrots(-10)) shouldSerializeTo """
+                <room roomId="abcd">
+                  <data class="exchangecarrots" amount="-10"/>
+                </room>
+            """.trimIndent()
+        }
+        "produce concise room message for advance" {
             RoomPacket("abcd", Advance(3)) shouldSerializeTo """
                 <room roomId="abcd">
                   <data class="advance" distance="3"/>
                 </room>
             """.trimIndent()
         }
-        "serialize Advance properly" {
+        "serialize full Advance" {
             Advance(5, Card.EAT_SALAD) shouldSerializeTo """
               <advance distance="5">
                 <card>EAT_SALAD</card>
