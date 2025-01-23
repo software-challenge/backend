@@ -60,6 +60,10 @@ public class Configuration {
     return get(PORT_KEY, Integer.class, SharedConfiguration.DEFAULT_PORT);
   }
 
+  public static boolean getTimeout() {
+    return get(TIMEOUT, Boolean.class, true);
+  }
+
   public static boolean getListenLocal() {
     return get(LISTEN_LOCAL_KEY, Boolean.class, true);
   }

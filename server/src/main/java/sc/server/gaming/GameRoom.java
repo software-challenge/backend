@@ -248,6 +248,7 @@ public class GameRoom implements IGameListener {
       throw new TooManyPlayersException(this);
     PlayerSlot slot = new PlayerSlot(this);
     Player player = game.onPlayerJoined();
+    player.setCanTimeout(Configuration.getTimeout());
     slot.setPlayer(player);
     this.playerSlots.add(slot);
     return slot;

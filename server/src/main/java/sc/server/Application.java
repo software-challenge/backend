@@ -76,20 +76,25 @@ public final class Application {
     CmdLineParser parser = new CmdLineParser();
     Option pluginDirOption = parser.addStringOption(Configuration.PLUGINS_OPTION);
     Option portOption = parser.addIntegerOption('p', Configuration.PORT_KEY);
+    Option noTimeoutOption = parser.addBooleanOption("no-timeout");
 
     Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE);
     Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_TO_LOAD);
     Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY);
     parser.parse(params);
 
-    String pluginPath = (String) parser.getOptionValue(pluginDirOption, null);
     String port = parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT).toString();
+    Configuration.set(Configuration.PORT_KEY, port);
+
+    boolean noTimeout = (Boolean) parser.getOptionValue(noTimeoutOption, false);
+    if(noTimeout) {
+      Configuration.set(Configuration.TIMEOUT, false);
+    }
 
     String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
     Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
     Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
 
-    Configuration.set(Configuration.PORT_KEY, port);
     if (loadGameFile != null) {
       Configuration.set(Configuration.GAMELOADFILE, loadGameFile);
       if (turnToLoad != 0)
@@ -99,6 +104,7 @@ public final class Application {
     if (saveReplay)
       Configuration.set(Configuration.SAVE_REPLAY, saveReplay.toString());
 
+    String pluginPath = (String) parser.getOptionValue(pluginDirOption, null);
     if (pluginPath != null) {
       File pluginDir = new File(pluginPath).getAbsoluteFile();
       if (pluginDir.exists() && pluginDir.isDirectory()) {
