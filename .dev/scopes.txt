@@ -5,7 +5,7 @@ contributing
 git
 gradle
 ci
-bundle
+helpers
 
 # Modules
 testclient
