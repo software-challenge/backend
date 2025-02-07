@@ -62,7 +62,7 @@ tasks {
                 from(arrayOf("jar", "copyLogbackConfig").map { project(":test-client").getTasksByName(it, false) })
             from(project(":player").getTasksByName("shadowJar", false))
             exec {
-                commandLine("git", "rev-parse", "HEAD")
+                commandLine("git", "describe", "--long", "--tags")
                 standardOutput = runnableDir.resolve("version").outputStream()
             }
         }
