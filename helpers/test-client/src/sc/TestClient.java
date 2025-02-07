@@ -102,7 +102,8 @@ public class TestClient extends XStreamClient {
     }
 
     String host = (String) parser.getOptionValue(hostOption, "localhost");
-    int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_TESTSERVER_PORT);
+    boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
+    int port = (int) parser.getOptionValue(portOption, startServer ? SharedConfiguration.DEFAULT_TESTSERVER_PORT : SharedConfiguration.DEFAULT_PORT);
 
     int numberOfTests = (int) parser.getOptionValue(numberOfTestsOption, 100);
     significance = (Double) parser.getOptionValue(significanceOption);
@@ -129,7 +130,7 @@ public class TestClient extends XStreamClient {
     logger.info("Players: " + Arrays.toString(players));
 
     try {
-      if ((boolean) parser.getOptionValue(serverOption, false)) {
+      if (startServer) {
         File serverLocation = findInClasspath((File) parser.getOptionValue(serverLocationOption, new File("server.jar")));
         logger.info("Starting server from {}", serverLocation);
         ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getPath(), "--port", String.valueOf(port));
