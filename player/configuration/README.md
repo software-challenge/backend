@@ -32,3 +32,11 @@ Außerdem gibt es zwei Möglichkeiten, die Abhängigkeiten aktuell zu halten:
   werden die lokal gespeicherten Bibliotheken aus dem `lib`-Ordner genutzt
   und du benötigst keine Internetverbindung.
   Bitte beachte, dass du diese manuell aktualisieren musst.
+
+Um auf einem Rechner komplett ohne Internet zu entwickeln,
+lade die ZIP von der URL in `gradle/wrapper/gradle-wrapper.properties` herunter,
+entpacke sie in `gradle/wrapper` und 
+[ändere die URL in den Dateinamen](https://stackoverflow.com/questions/22896569/how-to-use-gradle-zip-in-local-system-without-downloading-when-using-gradle-wrap/22898473#22898473).
+Dann kannst du diesen Ordner auf das offline-Gerät schieben und nutzen.
+Weiterhin kannst du eine Datei `gradle.properties` mit der Zeile `org.gradle.offline=true` erstellen, 
+damit Gradle standardmäßig die offline-Bibliotheken nutzt.
