@@ -10,8 +10,12 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
-### 25.0.7 Build Improvements - 2024-10
-- ease player template IDE import
+### 25.1.0 Stabilization - 2025-02-10
+- Unshuffle second HuI Salad
+- Ease player template IDE import and add offline instructions
+- Add `--no-timeout` flag to Server to disable player timeouts
+- Expand HuI Testing
+- Enhance Logging
 
 ### 25.0.6 Tweak Win Conditions - 2024-07-09
 
