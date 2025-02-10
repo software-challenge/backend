@@ -78,7 +78,7 @@ abstract class AbstractGame<M : IMove>(protected val plugin: IGamePlugin<M>): IG
         moveRequestTimeout?.let { timer ->
             moveRequestTimeout = null
             timer.stop()
-            logger.info("Time needed for move: " + timer.timeDiff)
+            logger.info("Time needed for move: " + timer.timeDiff + "ms")
             if(timer.didTimeout()) {
                 logger.warn("Client hit soft-timeout.")
                 fromPlayer.violation = Violation.SOFT_TIMEOUT(getTimeoutFor(fromPlayer).softTimeout / 1000)

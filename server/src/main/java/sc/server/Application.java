@@ -26,6 +26,7 @@ public final class Application {
   public static void main(String[] params) {
     // setup server
     try {
+      logger.info("Parsing command line arguments...");
       parseArguments(params);
     } catch (IllegalOptionValueException e) {
       logger.error("Illegal option value: " + e.getMessage());
@@ -36,7 +37,7 @@ public final class Application {
       e.printStackTrace();
       return;
     }
-    logger.info("Server is starting up...");
+    logger.info("Starting Server...");
 
     try {
       List<String> version = Files.readAllLines(Paths.get("version"));
@@ -88,6 +89,7 @@ public final class Application {
 
     boolean noTimeout = (Boolean) parser.getOptionValue(noTimeoutOption, false);
     if(noTimeout) {
+      logger.info("Disabling player timeouts");
       Configuration.set(Configuration.TIMEOUT, false);
     }
 
