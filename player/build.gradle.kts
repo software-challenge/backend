@@ -104,6 +104,14 @@ tasks {
                 from(prepareZip)
                 into(execDir)
             }
+            val logic = execDir.resolve("src/main/sc/player/Logic.java")
+            val lines = logic.readLines()
+            logic.writeText(lines.map {
+                it.replace(
+                    "// Hier intelligente Strategie zur Auswahl des Zuges einfügen",
+                    "try {Thread.sleep(3000);} catch(InterruptedException e) {throw new RuntimeException(e);}"
+                )
+            }.joinToString(System.lineSeparator()))
             // required by gradle to distinguish the test build
             execDir.resolve("settings.gradle").createNewFile()
         }
@@ -120,6 +128,13 @@ tasks {
             }
             println("Successfully built the shipped player package!")
         }
+    }
+    
+    // Run a player that hits the soft-timeout
+    val runTimeout by creating(Exec::class) {
+        dependsOn(playerTest)
+        workingDir(playerTest.workingDir)
+        commandLine("java", "-jar", workingDir.resolve("${game}_client.jar"))
     }
     
 }
