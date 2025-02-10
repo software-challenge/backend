@@ -39,11 +39,11 @@ then
       printf "feat(dev): "
     # Example for gradle projects
     expr "$path" : "gradle" \| "$path" : "build" >/dev/null &&
-      printf "chore(gradle): "
+      printf "build(gradle): "
 
     printf "\n\n# Please enter the message in the format\n"
     echo "# <type>(<scope>): <description>"
-    echo "# Possible types: fix, feat, docs, style, refactor, test, build"
+    echo "# Possible types: fix, feat, enhance, docs, style, refactor, test, build"
     test -n "$scopes" && echo "# Allowed scopes: $scopes"
     echo "# For details see https://www.notion.so/softwarechallenge/Git-217333329ea64db5b2cc8bbbaf79db87"
     echo "$original"

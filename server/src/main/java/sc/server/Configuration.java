@@ -48,8 +48,8 @@ public class Configuration {
     } else {
       logger.warn("Could not find server.properties at {}, will use default values!", file);
     }
+    // Defaults, only if server.properties cannot be loaded
     properties.setProperty(PASSWORD_KEY, "examplepassword");
-    properties.setProperty(PAUSED, "false");
   }
 
   public static void load(Reader reader) throws IOException {
@@ -113,12 +113,12 @@ public class Configuration {
   }
 
   private static boolean toBoolean(String value) {
-    if ("true".equals(value)) {
+    if ("true".equalsIgnoreCase(value)) {
       return true;
-    } else if ("false".equals(value)) {
+    } else if ("false".equalsIgnoreCase(value)) {
       return false;
     } else {
-      throw new IllegalArgumentException("Argument must be true or false");
+      throw new IllegalArgumentException("Argument '" + value + "' should be true or false");
     }
   }
 

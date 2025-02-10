@@ -5,7 +5,7 @@ scopes_file=".dev/scopes.txt"
 test -r $scopes_file &&
   scopes="($(cat "$scopes_file" | sed '/^\(#.*\|\)$/d' | sed ':a;N;s/\n/|/g;ta'))"
 
-head -1 "$1" | grep -Eq "^(fix|feat|docs|style|refactor|test|build|rework|release|revert)(\(${scopes:-.*}(/.+)?\))?: [A-Za-z]"
+head -1 "$1" | grep -Eq "^(fix|feat|enhance|docs|style|refactor|test|build|rework|release|revert)(\(${scopes:-.*}(/.+)?\))?: [A-Za-z]"
 result=$?
 if test $result -ne 0
 then printf "Invalid commit message: '$(head -1 "$1")'

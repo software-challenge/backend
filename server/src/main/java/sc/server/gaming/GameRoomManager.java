@@ -73,7 +73,7 @@ public class GameRoomManager {
     GameRoom room = new GameRoom(generateRoomId(), this, game);
     // pause room on JoinRoomRequest if specified in server.properties
     if (!prepared) {
-      boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
+      boolean paused = Configuration.get(Configuration.PAUSED, Boolean.class, false);
       room.pause(paused);
     }
 
