@@ -36,13 +36,14 @@ import static java.lang.Math.pow;
 import static sc.Util.factorial;
 
 /**
- * A simple command-line application to test clients. Enables TestMode on startup.
+ * A simple command-line application to test clients.
+ * Enables TestMode on startup.
  * <p>
  * Defaults:
  * <ul>
- * <li>starts on localhost 13051</li>
+ * <li>starts on localhost 13050 (13051 with own server)</li>
  * <li>displayNames: player1, player2</li>
- * <li>client location: ./defaultplayer.jar</li>
+ * <li>player location: defaultplayer.jar</li>
  * <li>canTimeout: true</li>
  * </ul>
  */
@@ -119,7 +120,7 @@ public class TestClient extends XStreamClient {
     for (int i = 0; i < 2; i++) {
       players[i].canTimeout = !(noTimeout || (boolean) parser.getOptionValue(noTimeoutOptions[i], false));
       players[i].name = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
-      players[i].executable = new File((String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar"));
+      players[i].executable = new File((String) parser.getOptionValue(execOptions[i], "defaultplayer.jar"));
       players[i].isJar = Util.isJar(players[i].executable);
     }
     if (players[0].name.equals(players[1].name)) {
