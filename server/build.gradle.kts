@@ -59,7 +59,7 @@ tasks {
         from(runnableDir)
         doFirst {
             if(project.property("enableTestClient") !in arrayOf(null, false))
-                from(arrayOf("jar", "copyLogbackConfig").map { project(":test-client").getTasksByName(it, false) })
+                from(project(":test-client").getTasksByName("copyLogbackConfig", false))
             from(project(":player").getTasksByName("shadowJar", false))
             exec {
                 commandLine("git", "describe", "--long", "--tags")
