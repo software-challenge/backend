@@ -26,7 +26,7 @@ class ClientManager(private val requestHandler: IClientRequestListener) : Runnab
     /**
      * Adds the given `newClient` and listens to it.
      *
-     * *(only used by tests and addAll())*
+     * *(extracted from `run` for tests)*
      */
     fun add(newClient: Client) {
         clients.add(newClient)
