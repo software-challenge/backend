@@ -22,12 +22,21 @@ abstract class TwoPlayerGameState<M: IMove>(
     /** Letzter getaetigter Zug. */
     abstract val lastMove: M?
     
-    /** Führe den gegebenen Zug in einer Kopie dieses Gamestate aus und gib ihn zurück. */
+    /**
+     * Führt den gegebenen Zug in einer Kopie dieses Gamestate aus.
+     * @return neuer GameState nach Ausführung des Zuges
+     * */
     fun performMove(move: M): TwoPlayerGameState<M> =
         clone().also { it.performMoveDirectly(move) }
     
-    /** Performs the Move on this GameState.
-     * Might lead to inconsistent state for invalid Move! */
+    /**
+     * Führt den Zug direkt in diesem Spielstatus aus.
+     *
+     * Achtung: Wenn beim Ausführen des Zugs ein Fehler auftritt,
+     * den GameState nicht weiter verwenden!
+     * Primär für interne Verwendung -
+     * generell wird [performMove] empfohlen.
+     * */
     abstract fun performMoveDirectly(move: M)
     
     /**
