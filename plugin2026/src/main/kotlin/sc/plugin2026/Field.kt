@@ -6,6 +6,8 @@ import sc.api.plugins.IField
 import sc.plugin2026.FieldState.Companion.from
 import java.util.Optional
 
+// TODO remove this
+
 /**
  * Ein Feld des Spielfelds. Ein Spielfeld hat eine x- und y-Koordinate und einen [FieldState], der anzeigt ob sich etwas auf diesem Feld befindet.
  */
@@ -14,8 +16,8 @@ class Field @JvmOverloads constructor(
     @field:XStreamAsAttribute var x: Int,
     @field:XStreamAsAttribute var y: Int,
     @field:XStreamAsAttribute var state: FieldState = FieldState.EMPTY
-):
-    IField<Field> {
+): IField<Field> {
+    
     constructor(x: Int, y: Int, piranha: PlayerColor): this(x, y, from(piranha))
     
     constructor(x: Int, y: Int, isObstructed: Boolean): this(

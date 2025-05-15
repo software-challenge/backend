@@ -2,6 +2,8 @@ package sc.plugin2026
 
 import sc.api.plugins.Team
 
+// TODO include fish size - maybe a sealed class
+
 enum class FieldState {
     ONE,
     TWO,
