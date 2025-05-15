@@ -43,32 +43,4 @@ data class Vector(override val dx: Int, override val dy: Int): IVector, Comparab
     /** Konvertiert den Vektor zu entsprechenden [Coordinates]. */
     operator fun unaryPlus(): Coordinates = Coordinates(dx, dy)
     
-    companion object {
-        val diagonals = arrayOf(Vector(-1, -1), Vector(-1, 1), Vector(1, -1), Vector(1, 1))
-        val cardinals = arrayOf(Vector(-1, 0), Vector(0, -1), Vector(1, 0), Vector(0, 1))
-    }
-}
-
-enum class HexDirection(val vector: Vector): IVector by vector {
-    RIGHT(Vector(+2, 0)),
-    DOWN_RIGHT(Vector(+1, +1)),
-    DOWN_LEFT(Vector(-1, +1)),
-    LEFT(Vector(-2, 0)),
-    UP_LEFT(Vector(-1, -1)),
-    UP_RIGHT(Vector(+1, -1));
-    
-    fun withNeighbors(): Array<HexDirection> = arrayOf(rotatedBy(-1), this, rotatedBy(1))
-    
-    fun opposite(): HexDirection = values().let { it[(ordinal + 3) % it.size] }
-    
-    fun turnCountTo(target: HexDirection): Int {
-        val diff = target.ordinal - this.ordinal
-        return if(diff >= 0) diff else diff + values().size
-    }
-    
-    fun rotatedBy(turns: Int): HexDirection = values().let { it[(ordinal + turns).mod(it.size)] }
-    
-    companion object {
-        fun random(): HexDirection = values()[Random.nextInt(values().size)]
-    }
 }

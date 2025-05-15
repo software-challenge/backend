@@ -3,6 +3,8 @@ package sc.plugin2023
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.*
+import sc.api.plugins.Coordinates
+import sc.api.plugins.HexDirection
 import sc.plugin2023.util.PenguinsMoveMistake
 import sc.plugin2023.util.PenguinConstants
 import sc.shared.InvalidMoveException
@@ -74,10 +76,10 @@ data class GameState @JvmOverloads constructor(
         !penguinsPlaced && board[pos].fish == 1
     
     fun immovable(team: Team? = null) =
-            board.getPenguins()
+        board.getPenguins()
                     .filter { team == null || it.second == team }
                     .takeIf { it.size == PenguinConstants.PENGUINS * (if(team == null) Team.values().size else 1) }
-                    ?.all { pair -> pair.first.hexNeighbors.all { board.getOrEmpty(it).fish == 0 } } ?: false
+                    ?.all { pair -> HexDirection.values().map { pair.first + it }.all { board.getOrEmpty(it).fish == 0 } } ?: false
     
     override val isOver: Boolean
         get() = immovable()

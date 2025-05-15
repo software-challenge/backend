@@ -2,6 +2,7 @@ package sc.plugin2023
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.*
+import sc.api.plugins.Coordinates
 import kotlin.random.Random
 import sc.plugin2023.util.PenguinConstants as Constants
 
@@ -50,7 +51,7 @@ class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()):
     fun <T> filterFields(filter: (Field, Coordinates) -> T?): Collection<T> =
             gameField.flatMapIndexed { y, row ->
                 row.mapIndexedNotNull { x, field ->
-                    filter(field, Coordinates.doubledHex(x, y))
+                    filter(field, Coordinates(x * 2 + y % 2, y))
                 }
             }
     
