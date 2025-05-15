@@ -4,5 +4,9 @@ package sc.plugin2026.util
 object PiranhaConstants {
     const val BOARD_LENGTH: Int = 10
     
+    const val OBSTACLES_START: Int = 2
+    const val OBSTACLES_END: Int = 7
+    const val NUM_OBSTACLES: Int = 2
+    
     const val ROUND_LIMIT: Int = 30
 }

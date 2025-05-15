@@ -12,10 +12,9 @@ import sc.shared.*
 // TODO
 
 @XStreamAlias(value = "winreason")
-enum class HuIWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
-    DIFFERING_SCORES("%s ist weiter vorne."),
-    DIFFERING_CARROTS("%s hat weniger Karotten uebrig."),
-    GOAL("%s hat das Ziel zuerst erreicht."),
+enum class PiranhasWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
+    BIGGER_SWARM("%s hat den größeren Schwarm")
+    
 }
 
 class GamePlugin: IGamePlugin<Move> {
@@ -24,8 +23,7 @@ class GamePlugin: IGamePlugin<Move> {
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
-                        ScoreFragment("Feldnummer", HuIWinReason.DIFFERING_SCORES, ScoreAggregation.AVERAGE),
-                        ScoreFragment("Karotten", HuIWinReason.DIFFERING_CARROTS, ScoreAggregation.AVERAGE, true),
+                        ScoreFragment("Schwarmgroeße", PiranhasWinReason.BIGGER_SWARM, ScoreAggregation.AVERAGE),
                 ))
     }
     
