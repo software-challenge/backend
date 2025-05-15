@@ -18,8 +18,8 @@ import kotlin.math.sqrt
 /**
  * The GameState class represents the current state of the game.
  *
- * It holds all the information about the current round, which is used
- * to calculate the next move.
+ * It holds all the information about the current round,
+ * to provide all information needed to make the next move.
  *
  * @property board The current game board.
  * @property turn The number of turns already made in the game.
