@@ -42,8 +42,8 @@ class Field @JvmOverloads constructor(
     
     val piranha: Optional<PlayerColor>
         get() {
-            if(state == FieldState.RED) return Optional.of(Team.ONE)
-            else if(state == FieldState.BLUE) return Optional.of(Team.TWO)
+            if(state == FieldState.ONE) return Optional.of(Team.ONE)
+            else if(state == FieldState.TWO) return Optional.of(Team.TWO)
             
             return Optional.empty()
         }

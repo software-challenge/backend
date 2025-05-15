@@ -1,31 +1,33 @@
 package sc.plugin2026
 
+import sc.api.plugins.Team
+
 enum class FieldState {
-    RED,
-    BLUE,
+    ONE,
+    TWO,
     OBSTRUCTED,
     EMPTY;
     
     override fun toString() = when(this) {
-        OBSTRUCTED -> "Obstructed"
-        RED -> "Red"
-        BLUE -> "Blue"
+        OBSTRUCTED -> "Krake"
+        ONE -> "Eins"
+        TWO -> "Zwei"
         else -> "empty"
     }
     
     fun asLetter() = when(this) {
         OBSTRUCTED -> 'O'
-        RED -> 'R'
-        BLUE -> 'B'
+        ONE -> 'R'
+        TWO -> 'B'
         else -> ' '
     }
     
     companion object {
         @JvmStatic
-        fun from(color: PlayerColor): FieldState {
-            return when(color) {
-                Team.ONE -> RED
-                Team.TWO -> BLUE
+        fun from(team: Team): FieldState {
+            return when(team) {
+                Team.ONE -> ONE
+                Team.TWO -> TWO
             }
         }
     }
