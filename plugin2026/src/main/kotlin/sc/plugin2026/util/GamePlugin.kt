@@ -9,8 +9,6 @@ import sc.plugin2026.GameState
 import sc.plugin2026.Move
 import sc.shared.*
 
-// TODO
-
 @XStreamAlias(value = "winreason")
 enum class PiranhasWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
     BIGGER_SWARM("%s hat den größeren Schwarm")
@@ -23,7 +21,7 @@ class GamePlugin: IGamePlugin<Move> {
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
-                        ScoreFragment("Schwarmgroeße", PiranhasWinReason.BIGGER_SWARM, ScoreAggregation.AVERAGE),
+                        ScoreFragment("Schwarmgröße", PiranhasWinReason.BIGGER_SWARM, ScoreAggregation.AVERAGE),
                 ))
     }
     
