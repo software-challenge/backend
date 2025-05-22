@@ -6,14 +6,13 @@ import kotlin.random.Random
 @XStreamAlias(value = "direction")
 enum class Direction(val vector: Vector): IVector by vector {
     UP(Vector(0, 1)),
-    // TODO
-    UP_RIGHT
-    RIGHT
-    DOWN_RIGHT
-    DOWN
-    DOWN_LEFT
-    LEFT
-    UP_LEFT
+    UP_RIGHT(Vector(1, 1)),
+    RIGHT(Vector(1, 0)),
+    DOWN_RIGHT(Vector(1, -1)),
+    DOWN(Vector(0, -1)),
+    DOWN_LEFT(Vector(-1, -1)),
+    LEFT(Vector(-1, 0)),
+    UP_LEFT(Vector(1, -1));
     
     companion object {
         // TODO
