@@ -2,6 +2,7 @@ package sc.plugin2026
 
 import sc.api.plugins.Direction
 import sc.api.plugins.Team
+import sc.framework.plugins.Constants
 import sc.plugin2026.util.PiranhaConstants
 
 class GameRuleLogic private constructor() {
@@ -17,7 +18,7 @@ class GameRuleLogic private constructor() {
          */
         fun getPossibleMoves(state: sc.plugin2026.GameState): java.util.ArrayList<Move> {
             val possibleMoves = java.util.ArrayList<Move>()
-            val fields: Collection<Field> = getOwnFields(state.board, state.getCurrentPlayerColor())
+            val fields: Collection<Field> = getOwnFields(state.board, state.getCurrentTeam())
             for(field in fields) {
                 for(direction in Direction.values()) {
                     val x = field.x
@@ -32,7 +33,7 @@ class GameRuleLogic private constructor() {
                     } catch(ignore: InvalidMoveException) {
                         /**TODO PiranhaMoveMistake for InvalidMoveException? because InvalidMoveException
                         * is missing in skd shared
-                         * /
+                         */
                     }
                 }
             }
@@ -47,11 +48,11 @@ class GameRuleLogic private constructor() {
             direction: Direction,
             distance: Int
         ): Boolean {
-            if(x >= Constants.BOARD_SIZE || y >= Constants.BOARD_SIZE || x < 0 || y < 0) throw InvalidMoveException("x or y are not within the field range")
+            if(x >= PiranhaConstants.BOARD_LENGTH || y >= PiranhaConstants.BOARD_LENGTH || x < 0 || y < 0) throw InvalidMoveException("x or y are not within the field range")
             val board = state.board
             val curField: Field = board.getField(x, y)
-            val curFieldPlayer: java.util.Optional<PlayerColor> = curField.piranha
-            if(!curFieldPlayer.isPresent() || curFieldPlayer.get() !== state.getCurrentPlayerColor()) {
+            val curFieldPlayer: java.util.Optional<Team> = curField.piranha
+            if(!curFieldPlayer.isPresent() || curFieldPlayer.get() !== state.getCurrentTeam()) {
                 throw InvalidMoveException("Field does not belong to the current player")
             }
             
@@ -73,7 +74,7 @@ class GameRuleLogic private constructor() {
             
             val fieldsInDirection = getFieldsInDirection(board, x, y, direction)
             
-            val opponentFieldColor = FieldState.from(state.getCurrentPlayerColor().opponent())
+            val opponentFieldColor = FieldState.from(state.getCurrentTeam().opponent())
             
             for(f in fieldsInDirection) {
                 if(f.state == opponentFieldColor) {
@@ -81,8 +82,8 @@ class GameRuleLogic private constructor() {
                 }
             }
             
-            val nextFieldPlayer: java.util.Optional<PlayerColor> = nextField.piranha
-            if(nextFieldPlayer.isPresent() && nextFieldPlayer.get() === state.getCurrentPlayerColor()) {
+            val nextFieldPlayer: java.util.Optional<Team> = nextField.piranha
+            if(nextFieldPlayer.isPresent() && nextFieldPlayer.get() === state.getCurrentTeam()) {
                 throw InvalidMoveException("Field obstructed with own piranha")
             }
             if(nextField.isObstructed) {
@@ -91,13 +92,13 @@ class GameRuleLogic private constructor() {
             return true
         }
         
-        fun getOwnFields(board: Board, player: PlayerColor?): Set<Field> {
+        fun getOwnFields(board: Board, player: Team?): Set<Field> {
             val fields: MutableSet<Field> = java.util.HashSet()
             var size = 0
             var i = 0
-            while(i < BOARD_LENGTH && MAX_FISH > size) {
+            while(i < PiranhaConstants.BOARD_LENGTH && MAX_FISH > size) {
                 var j = 0
-                while(j < BOARD_SIZE && MAX_FISH > size) {
+                while(j < PiranhaConstants.BOARD_LENGTH && MAX_FISH > size) {
                     val curField: Field = board.getField(i, j)
                     if(curField.piranha.isPresent() && curField.piranha.get().equals(player)) {
                         fields.add(curField)
@@ -116,7 +117,7 @@ class GameRuleLogic private constructor() {
                 for(j in -1..1) {
                     val x = f.x + i
                     val y = f.y + j
-                    if(x < 0 || x >= Constants.BOARD_SIZE || y < 0 || y >= Constants.BOARD_SIZE || (i == 0 && j == 0)) continue
+                    if(x < 0 || x >= PiranhaConstants.BOARD_LENGTH || y < 0 || y >= PiranhaConstants.BOARD_LENGTH || (i == 0 && j == 0)) continue
                     
                     val field: Field = board.getField(x, y)
                     if(parentSet.contains(field)) {
@@ -170,12 +171,12 @@ class GameRuleLogic private constructor() {
             return greatestSwarm
         }
         
-        fun greatestSwarm(board: Board, player: PlayerColor?): Set<Field> {
+        fun greatestSwarm(board: Board, player: Team?): Set<Field> {
             val occupiedFields = getOwnFields(board, player)
             return greatestSwarm(board, occupiedFields)
         }
         
-        fun greatestSwarmSize(board: Board, player: PlayerColor?): Int {
+        fun greatestSwarmSize(board: Board, player: Team?): Int {
             return greatestSwarm(board, player).size
         }
         
@@ -183,7 +184,7 @@ class GameRuleLogic private constructor() {
             return greatestSwarm(board, set).size
         }
         
-        fun isSwarmConnected(board: Board, player: PlayerColor?): Boolean {
+        fun isSwarmConnected(board: Board, player: Team?): Boolean {
             val fieldsWithFish = getOwnFields(board, player)
             val numGreatestSwarm: Int = greatestSwarmSize(board, fieldsWithFish)
             return numGreatestSwarm == fieldsWithFish.size
