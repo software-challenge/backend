@@ -5,6 +5,7 @@ import sc.api.plugins.Team
 import sc.framework.plugins.Constants
 import sc.plugin2026.util.PiranhaConstants
 
+
 class GameRuleLogic private constructor() {
     init {
         throw java.lang.IllegalStateException("Can't be instantiated.")
@@ -218,17 +219,17 @@ class GameRuleLogic private constructor() {
          */
         fun calculateMoveDistance(board: Board, x: Int, y: Int, direction: Direction): Int {
             when(direction) {
-                LEFT, RIGHT -> return moveDistanceHorizontal(board, x, y)
-                UP, DOWN -> return moveDistanceVertical(board, x, y)
-                UP_RIGHT, DOWN_LEFT -> return moveDistanceDiagonalRising(board, x, y)
-                DOWN_RIGHT, UP_LEFT -> return moveDistanceDiagonalFalling(board, x, y)
+                Direction.LEFT, Direction.RIGHT -> return moveDistanceHorizontal(board, x, y)
+                Direction.UP, Direction.DOWN -> return moveDistanceVertical(board, x, y)
+                Direction.UP_RIGHT, Direction.DOWN_LEFT -> return moveDistanceDiagonalRising(board, x, y)
+                Direction.DOWN_RIGHT, Direction.UP_LEFT -> return moveDistanceDiagonalFalling(board, x, y)
             }
             return -1
         }
         
         private fun moveDistanceHorizontal(board: Board, ignore: Int, y: Int): Int {
             var count = 0
-            for(i in 0 until BOARD_SIZE) {
+            for(i in 0 until PiranhaConstants.BOARD_LENGTH) {
                 if(board.getField(i, y).getPiranha().isPresent()) {
                     count++
                 }
@@ -238,7 +239,7 @@ class GameRuleLogic private constructor() {
         
         private fun moveDistanceVertical(board: Board, x: Int, ignore: Int): Int {
             var count = 0
-            for(i in 0 until BOARD_SIZE) {
+            for(i in 0 until PiranhaConstants.BOARD_LENGTH) {
                 if(board.getField(x, i).getPiranha().isPresent()) {
                     count++
                 }
@@ -262,7 +263,7 @@ class GameRuleLogic private constructor() {
             // Move up right
             cX = x + 1
             cY = y + 1
-            while(cX < BOARD_SIZE && cY < BOARD_SIZE) {
+            while(cX < PiranhaConstants.BOARD_LENGTH && cY < PiranhaConstants.BOARD_LENGTH) {
                 if(board.getField(cX, cY).getPiranha().isPresent()) {
                     count++
                 }
@@ -277,7 +278,7 @@ class GameRuleLogic private constructor() {
             var cX = x
             var cY = y
             // Move down left
-            while(cX < BOARD_SIZE && cY >= 0) {
+            while(cX < PiranhaConstants.BOARD_LENGTH && cY >= 0) {
                 if(board.getField(cX, cY).getPiranha().isPresent()) {
                     count++
                 }
@@ -288,7 +289,7 @@ class GameRuleLogic private constructor() {
             // Move up right
             cX = x - 1
             cY = y + 1
-            while(cX >= 0 && cY < BOARD_SIZE) {
+            while(cX >= 0 && cY < PiranhaConstants.BOARD_LENGTH) {
                 if(board.getField(cX, cY).getPiranha().isPresent()) {
                     count++
                 }
