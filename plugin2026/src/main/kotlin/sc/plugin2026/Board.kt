@@ -2,6 +2,7 @@ package sc.plugin2026
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.Coordinates
+import sc.api.plugins.ITeam
 import sc.api.plugins.MutableTwoDBoard
 import sc.api.plugins.RectangularBoard
 import sc.api.plugins.Team
@@ -35,11 +36,11 @@ class Board(gameField: MutableTwoDBoard<FieldS> = randomFields()): RectangularBo
     fun getTeam(pos: Coordinates): Team? =
         this[pos].state.team
     
-    fun fieldsForTeam(team: Team): Collection<Coordinates> =
+    fun fieldsForTeam(team: ITeam): Collection<Coordinates> =
         filterValues { field -> field.state.team == team }.map { it.key }
     
     companion object {
-        /** Erstellt eine zufälliges Spielbrett.  */
+        /** Erstellt ein zufälliges Spielbrett.  */
         private fun randomFields(): MutableTwoDBoard<FieldS> {
             val fields = generateFields { x, y -> FieldS(x, y) }
             

@@ -1,22 +1,18 @@
-package sc.plugin2019
+package sc.plugin2026
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import sc.api.plugins.Direction
 import sc.api.plugins.ITeam
 import sc.api.plugins.Stat
 import sc.api.plugins.Team
 import sc.api.plugins.TwoPlayerGameState
-import sc.plugin2026.Board
-import sc.plugin2026.FieldState
-import sc.plugin2026.Move
-import sc.plugin2026.PiranhaMoveMistake
+import sc.framework.plugins.maxByNoEqual
 import sc.plugin2026.util.GameRuleLogic
 import sc.plugin2026.util.PiranhaConstants
-import sc.shared.IMoveMistake
+import sc.plugin2026.util.PiranhasWinReason
 import sc.shared.InvalidMoveException
-import sc.shared.MoveMistake
 import sc.shared.WinCondition
+import sc.shared.WinReasonTie
 
 /**
  * The GameState class represents the current state of the game.
@@ -37,19 +33,31 @@ data class GameState @JvmOverloads constructor(
     /** Der zuletzt gespielte Zug. */
     override var lastMove: Move? = null,
 ): TwoPlayerGameState<Move>(Team.ONE) {
-
+    
     override fun getPointsForTeam(team: ITeam): IntArray =
-        GameRuleLogic.greatestSwarmSize(board, team) // TODO important
+        intArrayOf(GameRuleLogic.greatestSwarmSize(board, team))
     
     // TODO test if one player is surrounded he loses
     override val isOver: Boolean
-        get() = players.any { it.inGoal } && turn.mod(2) == 0 || turn / 2 >= PiranhaConstants.ROUND_LIMIT
+        get() = Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0 ||
+                turn / 2 >= PiranhaConstants.ROUND_LIMIT
     
     override val winCondition: WinCondition?
-        get() = TODO("Not yet implemented")
+        get() {
+            val winners = Team.values().filter { team -> GameRuleLogic.isSwarmConnected(board, team) }
+            return when(winners.size) {
+                0 -> null
+                1 -> WinCondition(winners.single(), PiranhasWinReason.SOLE_SWARM)
+                else ->
+                    winners.maxByNoEqual { team -> GameRuleLogic.greatestSwarmSize(board, team) }
+                        ?.let {
+                            WinCondition(it, PiranhasWinReason.BIGGER_SWARM)
+                        } ?: WinCondition(null, WinReasonTie)
+            }
+        }
     
     override fun performMoveDirectly(move: Move) {
-        if (board.getTeam(move.from) != currentTeam) {
+        if(board.getTeam(move.from) != currentTeam) {
             throw InvalidMoveException(PiranhaMoveMistake.WRONG_START, move)
         }
         GameRuleLogic.checkMove(board, move)?.let { throw InvalidMoveException(it, move) }
@@ -59,12 +67,12 @@ data class GameState @JvmOverloads constructor(
     }
     
     override fun getSensibleMoves(): List<Move> {
-       val piranhas = board.filterValues { field -> field.state.team == currentTeam }
-       val moves = ArrayList<Move>(piranhas.size * 2)
-       for(piranha in piranhas) {
-           moves.addAll(GameRuleLogic.possibleMovesFor(board, piranha.key))
-       }
-       return moves
+        val piranhas = board.filterValues { field -> field.state.team == currentTeam }
+        val moves = ArrayList<Move>(piranhas.size * 2)
+        for(piranha in piranhas) {
+            moves.addAll(GameRuleLogic.possibleMovesFor(board, piranha.key))
+        }
+        return moves
     }
     
     override fun moveIterator(): Iterator<Move> =
@@ -73,7 +81,10 @@ data class GameState @JvmOverloads constructor(
     override fun clone(): TwoPlayerGameState<Move> =
         copy(board = board.clone())
     
-    override fun teamStats(team: ITeam): List<Stat> = listOf() // TODO
-    
+    override fun teamStats(team: ITeam): List<Stat> =
+        listOf(
+            Stat("Fische", board.fieldsForTeam(team).size),
+            Stat("Schwarmgröße", GameRuleLogic.greatestSwarmSize(board, team))
+        )
     
 }

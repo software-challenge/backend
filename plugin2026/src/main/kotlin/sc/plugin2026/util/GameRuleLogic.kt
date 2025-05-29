@@ -2,7 +2,7 @@ package sc.plugin2026.util
 
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
-import sc.api.plugins.Team
+import sc.api.plugins.ITeam
 import sc.plugin2026.Board
 import sc.plugin2026.FieldState
 import sc.plugin2026.Move
@@ -146,13 +146,13 @@ object GameRuleLogic {
     }
     
     @JvmStatic
-    fun greatestSwarm(board: Board, team: Team): Set<Coordinates> {
+    fun greatestSwarm(board: Board, team: ITeam): Set<Coordinates> {
         val occupiedFields = board.fieldsForTeam(team)
         return greatestSwarm(occupiedFields.toHashSet())
     }
     
     @JvmStatic
-    fun greatestSwarmSize(board: Board, team: Team): Int =
+    fun greatestSwarmSize(board: Board, team: ITeam): Int =
         greatestSwarm(board, team).size
     
     @JvmStatic
@@ -160,7 +160,7 @@ object GameRuleLogic {
         greatestSwarm(set).size
     
     @JvmStatic
-    fun isSwarmConnected(board: Board, team: Team): Boolean {
+    fun isSwarmConnected(board: Board, team: ITeam): Boolean {
         val fieldsWithFish = board.fieldsForTeam(team)
         val numGreatestSwarm: Int = greatestSwarmSize(fieldsWithFish.toHashSet())
         return numGreatestSwarm == fieldsWithFish.size
