@@ -1,10 +1,12 @@
-package sc.plugin2026
+package sc.plugin2026.util
 
 import sc.api.plugins.Direction
 import sc.api.plugins.Team
-import sc.framework.plugins.Constants
-import sc.plugin2026.util.PiranhaConstants
-
+import sc.plugin2026.Board
+import sc.plugin2026.Field
+import sc.plugin2026.FieldState
+import sc.plugin2026.Move
+import sc.shared.InvalidMoveException
 
 class GameRuleLogic private constructor() {
     init {
