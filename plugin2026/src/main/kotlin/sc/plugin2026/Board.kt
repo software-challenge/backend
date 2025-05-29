@@ -4,13 +4,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.MutableTwoDBoard
 import sc.api.plugins.RectangularBoard
 import sc.api.plugins.Team
+import sc.api.plugins.deepCopy
 import sc.plugin2026.FieldState.OBSTRUCTED
 import sc.plugin2026.util.*
 import kotlin.math.floor
 
 /** Spielbrett für Piranhas mit [PiranhaConstants.BOARD_LENGTH]² Feldern.  */
 @XStreamAlias(value = "board")
-class Board(override val gameField: MutableTwoDBoard<Field> = randomFields()): RectangularBoard<Field>(gameField) {
+class Board(gameField: MutableTwoDBoard<Field> = randomFields()): RectangularBoard<Field>(gameField) {
     
     // TODO later
     //override fun toString() =
@@ -26,6 +27,9 @@ class Board(override val gameField: MutableTwoDBoard<Field> = randomFields()): R
     //    }
     //    return map.joinToString("\n", line + "\n", "\n" + line) { it.append('|').toString() }
     //}
+    
+    override fun clone(): Board =
+        Board(gameField.deepCopy())
     
     companion object {
         /** Erstellt eine zufälliges Spielbrett.  */
@@ -67,4 +71,3 @@ class Board(override val gameField: MutableTwoDBoard<Field> = randomFields()): R
         }
     }
 }
-
