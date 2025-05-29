@@ -4,14 +4,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.MutableTwoDBoard
 import sc.api.plugins.RectangularBoard
 import sc.api.plugins.Team
-import sc.api.plugins.deepCopy
-import sc.plugin2026.FieldState.OBSTRUCTED
 import sc.plugin2026.util.*
 import kotlin.math.floor
 
+typealias FieldS = Field
+
 /** Spielbrett für Piranhas mit [PiranhaConstants.BOARD_LENGTH]² Feldern.  */
 @XStreamAlias(value = "board")
-class Board(gameField: MutableTwoDBoard<Field> = randomFields()): RectangularBoard<Field>(gameField) {
+class Board(gameField: MutableTwoDBoard<FieldS> = randomFields()): RectangularBoard<FieldS>(gameField) {
     
     // TODO later
     //override fun toString() =
@@ -29,12 +29,12 @@ class Board(gameField: MutableTwoDBoard<Field> = randomFields()): RectangularBoa
     //}
     
     override fun clone(): Board =
-        Board(gameField.deepCopy())
+        Board(Array(gameField.size) { column -> this.gameField[column].clone() })
     
     companion object {
         /** Erstellt eine zufälliges Spielbrett.  */
-        private fun randomFields(): Array<Array<Field>> {
-            val fields = generateFields { x, y -> Field(x, y) }
+        private fun randomFields(): MutableTwoDBoard<FieldS> {
+            val fields = generateFields { x, y -> FieldS(x, y) }
             
             // Place Piranhas
             for(index in 1 until PiranhaConstants.BOARD_LENGTH - 1) {
@@ -52,7 +52,7 @@ class Board(gameField: MutableTwoDBoard<Field> = randomFields()): RectangularBoa
             for(i in 0 until PiranhaConstants.NUM_OBSTACLES) {
                 val indexOfFieldToBlock = floor(Math.random() * blockableFields.size).toInt()
                 val selectedField = blockableFields[indexOfFieldToBlock]
-                selectedField.state = OBSTRUCTED
+                selectedField.state = FieldState.OBSTRUCTED
                 blockableFields = blockableFields.filter { field ->
                     !(field.x == selectedField.x || field.y == selectedField.y ||
                       field.x - field.y == selectedField.x - selectedField.y ||
@@ -62,7 +62,7 @@ class Board(gameField: MutableTwoDBoard<Field> = randomFields()): RectangularBoa
             return fields
         }
         
-        private fun generateFields(generator: (Int, Int) -> Field): Array<Array<Field>> {
+        private fun generateFields(generator: (Int, Int) -> FieldS): Array<Array<FieldS>> {
             return Array(PiranhaConstants.BOARD_LENGTH) { x ->
                 Array(PiranhaConstants.BOARD_LENGTH) { y ->
                     generator(x, y)
