@@ -31,7 +31,7 @@ class Board(gameField: MutableTwoDBoard<FieldS> = randomFields()): RectangularBo
     
     override fun clone(): Board =
         Board(Array(gameField.size) { column -> this.gameField[column].clone() })
-    
+
     fun getTeam(pos: Coordinates): Team? =
         this[pos].state.team
     

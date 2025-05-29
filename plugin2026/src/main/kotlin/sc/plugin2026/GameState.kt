@@ -52,73 +52,23 @@ data class GameState @JvmOverloads constructor(
         if (board.getTeam(move.from) != currentTeam) {
             throw InvalidMoveException(PiranhaMoveMistake.WRONG_START, move)
         }
-        checkMove(move)?.let { throw InvalidMoveException(it, move) }
-        val distance = movementDistance(move)
+        GameRuleLogic.checkMove(board, move)?.let { throw InvalidMoveException(it, move) }
+        val distance = GameRuleLogic.movementDistance(board, move)
         board[move.from].state = FieldState.EMPTY
         board[move.from + move.direction.vector * distance].state = FieldState.from(currentTeam)
     }
     
-    fun movementDistance(move: Move): Int {
-        var count = 1
-        var pos = move.from
-        while(true) {
-            pos += move.direction
-            val field = board.getOrNull(pos) ?: break
-            if(field.state.team != null) {
-                count++
-            }
-        }
-        pos = move.from
-        while(true) {
-            pos += move.direction.opposite
-            val field = board.getOrNull(pos) ?: break
-            if(field.state.team != null) {
-                count++
-            }
-        }
-        return count
+    override fun getSensibleMoves(): List<Move> {
+       val piranhas = board.filterValues { field -> field.state.team == currentTeam }
+       val moves = ArrayList<Move>(piranhas.size * 2)
+       for(piranha in piranhas) {
+           moves.addAll(GameRuleLogic.possibleMovesFor(board, piranha.key))
+       }
+       return moves
     }
     
-    fun checkMove(move: Move): IMoveMistake? {
-        val distance = movementDistance(move)
-        var pos = move.from
-        var moved = 1
-        while(moved < distance) {
-            pos += move.direction
-            val field = board.getOrNull(pos) ?: return MoveMistake.DESTINATION_OUT_OF_BOUNDS
-            if(field.state.team == otherTeam) {
-                return PiranhaMoveMistake.JUMP_OVER_OPPONENT
-            }
-            moved++
-        }
-        pos += move.direction
-        val state = board.getOrNull(pos)?.state
-        return when(state) {
-            null -> MoveMistake.DESTINATION_OUT_OF_BOUNDS
-            FieldState.OBSTRUCTED -> MoveMistake.DESTINATION_BLOCKED
-            else -> {
-                if(state.team == currentTeam) {
-                    MoveMistake.DESTINATION_BLOCKED_BY_SELF
-                } else {
-                    null
-                }
-            }
-        }
-    }
-    
-    override fun moveIterator(): Iterator<Move> {
-        val piranhas = board.filterValues { field -> field.state.team == currentTeam }
-        val moves = ArrayList<Move>(piranhas.size * 2)
-        for(piranha in piranhas) {
-            for(direction in Direction.values()) {
-                val move = Move(piranha.key, direction)
-                if(checkMove(move) == null) {
-                    moves.add(move)
-                }
-            }
-        }
-        return moves.iterator()
-    }
+    override fun moveIterator(): Iterator<Move> =
+        getSensibleMoves().iterator()
     
     override fun clone(): TwoPlayerGameState<Move> =
         copy(board = board.clone())

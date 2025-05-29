@@ -1,11 +1,91 @@
 package sc.plugin2026.util
 
+import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.Team
 import sc.plugin2026.Board
 import sc.plugin2026.Field
+import sc.plugin2026.FieldState
+import sc.plugin2026.Move
+import sc.plugin2026.PiranhaMoveMistake
+import sc.shared.IMoveMistake
+import sc.shared.MoveMistake
 
 object GameRuleLogic {
+    /** Anzahl der Fische in der Bewegungsachse des Zuges. */
+    @JvmStatic
+    fun movementDistance(board: Board, move: Move): Int {
+        var count = 1
+        var pos = move.from
+        while(true) {
+            pos += move.direction
+            val field = board.getOrNull(pos) ?: break
+            if(field.state.team != null) {
+                count++
+            }
+        }
+        pos = move.from
+        while(true) {
+            pos += move.direction.opposite
+            val field = board.getOrNull(pos) ?: break
+            if(field.state.team != null) {
+                count++
+            }
+        }
+        return count
+    }
+    
+    /** Prüft ob ein Zug gültig ist.
+     * @team null wenn der Zug valide ist, sonst ein entsprechender [IMoveMistake]. */
+    @JvmStatic
+    fun checkMove(board: Board, move: Move): IMoveMistake? {
+        val distance = movementDistance(board, move)
+        var pos = move.from
+        
+        val team = board[move.from].state.team ?: return MoveMistake.START_EMPTY
+        val opponent = team.opponent()
+        
+        var moved = 1
+        while(moved < distance) {
+            pos += move.direction
+            val field = board.getOrNull(pos) ?: return MoveMistake.DESTINATION_OUT_OF_BOUNDS
+            if(field.state.team == opponent) {
+                return PiranhaMoveMistake.JUMP_OVER_OPPONENT
+            }
+            moved++
+        }
+        pos += move.direction
+        val state = board.getOrNull(pos)?.state
+        return when(state) {
+            null -> MoveMistake.DESTINATION_OUT_OF_BOUNDS
+            FieldState.OBSTRUCTED -> MoveMistake.DESTINATION_BLOCKED
+            else -> {
+                if(state.team == team) {
+                    MoveMistake.DESTINATION_BLOCKED_BY_SELF
+                } else {
+                    null
+                }
+            }
+        }
+    }
+    
+    @JvmStatic
+    fun possibleMovesFor(board: Board, pos: Coordinates): Collection<Move> {
+        val moves: MutableList<Move> = ArrayList()
+        for(direction in Direction.values()) {
+            val move = Move(pos, direction)
+            if(checkMove(board, move) == null) {
+                moves.add(move)
+            }
+        }
+        return moves
+    }
+    
+    fun possibleMovesSequence(board: Board, pos: Coordinates): Sequence<Move> =
+        Direction.values().asSequence()
+            .map { direction -> Move(pos, direction)}
+            .filter { move -> checkMove(board, move) == null }
+    
     private fun getDirectNeighbour(board: Board, f: Field, parentSet: Set<Field>): Set<Field> {
         val returnSet: MutableSet<Field> = java.util.HashSet()
         for(i in -1..1) {
