@@ -7,6 +7,7 @@ import sc.plugin2026.Field
 import sc.plugin2026.FieldState
 import sc.plugin2026.Move
 import sc.shared.InvalidMoveException
+import sc.shared.MoveMistake
 
 class GameRuleLogic private constructor() {
     init {
@@ -45,13 +46,13 @@ class GameRuleLogic private constructor() {
         
         @Throws(InvalidMoveException::class)
         fun isValidToMove(
-            state: sc.plugin2019.GameState,
+            state: sc.plugin2026.GameState,
             x: Int,
             y: Int,
             direction: Direction,
             distance: Int
         ): Boolean {
-            if(x >= PiranhaConstants.BOARD_LENGTH || y >= PiranhaConstants.BOARD_LENGTH || x < 0 || y < 0) throw InvalidMoveException("x or y are not within the field range")
+            if(x >= PiranhaConstants.BOARD_LENGTH || y >= PiranhaConstants.BOARD_LENGTH || x < 0 || y < 0) throw InvalidMoveException(MoveMistake.OUT_OF_BOUNDS)
             val board = state.board
             val curField: Field = board.getField(x, y)
             val curFieldPlayer: java.util.Optional<Team> = curField.piranha
@@ -66,13 +67,13 @@ class GameRuleLogic private constructor() {
                     y,
                     direction
                 ) != distance
-            ) throw InvalidMoveException("Move distance was incorrect")
+            ) throw InvalidMoveException(MoveMistake.INVALID_MOVEMENT)
             
             val nextField: Field
             try {
                 nextField = getFieldInDirection(board, x, y, direction, distance)
             } catch(e: ArrayIndexOutOfBoundsException) {
-                throw InvalidMoveException("Move in that direction would not be on the board")
+                throw InvalidMoveException(MoveMistake.OUT_OF_BOUNDS)
             }
             
             val fieldsInDirection = getFieldsInDirection(board, x, y, direction)
@@ -87,7 +88,7 @@ class GameRuleLogic private constructor() {
             
             val nextFieldPlayer: java.util.Optional<Team> = nextField.piranha
             if(nextFieldPlayer.isPresent() && nextFieldPlayer.get() === state.getCurrentTeam()) {
-                throw InvalidMoveException("Field obstructed with own piranha")
+                throw InvalidMoveException(MoveMistake.DESTINATION_BLOCKED)
             }
             if(nextField.isObstructed) {
                 throw InvalidMoveException("Field is obstructed")
