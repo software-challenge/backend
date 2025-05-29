@@ -24,6 +24,14 @@ enum class FieldState {
         else -> ' '
     }
     
+    val team: Team?
+        get() = when(this) {
+            ONE -> Team.ONE
+            TWO -> Team.TWO
+            OBSTRUCTED -> null
+            EMPTY -> null
+        }
+    
     companion object {
         @JvmStatic
         fun from(team: Team): FieldState {

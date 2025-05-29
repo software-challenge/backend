@@ -37,6 +37,7 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
                 row.all { it.isEmpty }
             }
     
+    /** Sind die [coordinates] teil des (rechteckigen) Spielfelds? */
     open fun isValid(coordinates: Coordinates) =
             coordinates.y in gameField.indices &&
             coordinates.x in gameField[coordinates.y].indices
@@ -44,6 +45,15 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     override operator fun get(x: Int, y: Int): FIELD =
             gameField[y][x]
     
+    operator fun set(coordinates: Coordinates, field: FIELD) {
+        gameField[coordinates.y][coordinates.x] = field
+    }
+    
+    operator fun set(x: Int, y: Int, field: FIELD) {
+        gameField[y][x] = field
+    }
+    
+    /** Gibt ein Feld zurück wenn die Koordinaten valide sind. */
     fun getOrNull(key: Coordinates) =
             if(isValid(key))
                 get(key.x, key.y)

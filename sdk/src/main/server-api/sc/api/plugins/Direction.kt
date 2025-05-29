@@ -15,10 +15,12 @@ enum class Direction(val vector: Vector): IVector by vector {
     UP_LEFT(Vector(1, -1));
     
     companion object {
-        // TODO
-        val diagonals = arrayOf(Vector(-1, -1), Vector(-1, 1), Vector(1, -1), Vector(1, 1))
+        val diagonals = arrayOf(UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT)
         val cardinals = arrayOf(UP, RIGHT, DOWN, LEFT)
     }
+    
+    val opposite: IVector
+        get() = Vector(-vector.dx, -vector.dy)
 }
 
 enum class HexDirection(val vector: Vector): IVector by vector {

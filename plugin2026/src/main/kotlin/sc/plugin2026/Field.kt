@@ -59,5 +59,5 @@ class Field @JvmOverloads constructor(
         get() = state == FieldState.OBSTRUCTED
     
     override val isEmpty: Boolean
-        get() = false
+        get() = state == FieldState.EMPTY
 }

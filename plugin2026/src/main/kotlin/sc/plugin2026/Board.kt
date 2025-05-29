@@ -1,6 +1,7 @@
 package sc.plugin2026
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import sc.api.plugins.Coordinates
 import sc.api.plugins.MutableTwoDBoard
 import sc.api.plugins.RectangularBoard
 import sc.api.plugins.Team
@@ -30,6 +31,9 @@ class Board(gameField: MutableTwoDBoard<FieldS> = randomFields()): RectangularBo
     
     override fun clone(): Board =
         Board(Array(gameField.size) { column -> this.gameField[column].clone() })
+    
+    fun getTeam(pos: Coordinates): Team? =
+        this[pos].state.team
     
     companion object {
         /** Erstellt eine zufälliges Spielbrett.  */
