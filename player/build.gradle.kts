@@ -22,9 +22,11 @@ application {
 }
 
 dependencies {
-    implementation(project(":plugin$year"))
-    implementation(kotlin("script-runtime"))
-    implementation("ch.qos.logback", "logback-classic", "1.5.18") // Update to 1.4 with JDK upgrade
+    api(project(":sdk"))
+    implementation("ch.qos.logback", "logback-classic", "1.5.18")
+    
+    runtimeOnly(project(":plugin$year"))
+    //runtimeOnly(kotlin("script-runtime"))
 }
 
 tasks {
