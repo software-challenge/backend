@@ -310,9 +310,10 @@ data class GameState @JvmOverloads constructor(
     override fun teamStats(team: ITeam) =
         getHare(team).run {
             listOf(
-                Stat("   ⃞ Position", this.position),
-                Stat("▾ Karotten", this.carrots),
-                Stat("Salate", this.salads, "   ⃝ "),
+                Stat("Position", this.position),
+                Stat("Karotten ▾", this.carrots),
+                Stat("Salate", this.salads,
+                    (if(System.getProperty("os.name").contains("mac")) "" else "  ") + " ⃝ "),
                 //Stat("Karten", this.getCards().count(), "◼ "),
             )
         }
