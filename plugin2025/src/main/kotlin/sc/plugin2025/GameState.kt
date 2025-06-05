@@ -313,7 +313,7 @@ data class GameState @JvmOverloads constructor(
                 Stat("Position", this.position),
                 Stat("Karotten ▾", this.carrots),
                 Stat("Salate", this.salads,
-                    (if(System.getProperty("os.name").contains("mac")) "" else "  ") + " ⃝ "),
+                    (if(System.getProperty("os.name").contains("mac", ignoreCase = true)) "" else "  ") + " ⃝ "),
                 //Stat("Karten", this.getCards().count(), "◼ "),
             )
         }
