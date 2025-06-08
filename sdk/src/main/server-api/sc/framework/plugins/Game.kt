@@ -217,8 +217,10 @@ abstract class AbstractGame<M : IMove>(protected val plugin: IGamePlugin<M>): IG
      * @return WinCondition, or null if game is not regularly over yet
      */
     fun checkWinCondition(): WinCondition? =
-            currentWinner().takeIf { currentState.isOver }
+            currentState.winCondition
     
+    // TODO this function is useless cause it is only used when the game is over
+    //      in which case currentState.winCondition is not null anyway
     fun currentWinner(): WinCondition {
         val teams = Team.values()
         val scores = teams.map { currentState.getPointsForTeam(it) }

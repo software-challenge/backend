@@ -36,7 +36,7 @@ data class GameState @JvmOverloads constructor(
             if(board[move.from].penguin != currentTeam)
                 throw InvalidMoveException(MoveMistake.WRONG_COLOR, move)
             if(currentPieces.size < PenguinConstants.PENGUINS)
-                throw InvalidMoveException(PenguinsMoveMistake.PENGUINS, move)
+                throw InvalidMoveException(PenguinsMoveMistake.PLACE_PENGUINS_FIRST, move)
             if(!move.to.minus(move.from).straightHex)
                 throw InvalidMoveException(MoveMistake.INVALID_MOVE, move)
             // TODO avoid this check

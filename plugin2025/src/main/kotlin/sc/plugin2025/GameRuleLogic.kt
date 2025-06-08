@@ -10,6 +10,7 @@ object GameRuleLogic {
      * @param moveCount Anzahl der Felder, um die bewegt wird
      * @return Anzahl der benötigten Karotten
      */
+    @JvmStatic
     fun calculateCarrots(moveCount: Int): Int =
         (moveCount * (moveCount + 1)) / 2
 
@@ -19,6 +20,7 @@ object GameRuleLogic {
      * @param carrots maximal ausgegebene Karotten
      * @return Felder um die maximal bewegt werden kann
      */
+    @JvmStatic
     fun calculateMoveableFields(carrots: Int): Int {
         return when {
             carrots >= 990 -> 44

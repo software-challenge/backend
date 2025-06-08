@@ -53,9 +53,9 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     /** Vergleicht zwei Spielfelder und gibt eine Liste aller Felder zurück, die sich unterscheiden. */
     fun compare(other: RectangularBoard<FIELD>): Collection<FIELD> {
         val entries = this.entries
-        return other.entries.filter {
-            it !in entries
-        }.map { it.value }
+        return other.entries
+            .filter { it !in entries }
+            .map { it.value }
     }
     
     override fun toString() =
@@ -63,7 +63,7 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
                 row.joinToString(separator = "") { it.toString() }
             }.ifEmpty { "Empty Board@" + System.identityHashCode(this) }
     
-    override val entries: Set<Map.Entry<Coordinates, FIELD>>
+    override val entries: Set<Positioned<FIELD>>
         get() = gameField.flatMapIndexedTo(HashSet()) { y, row ->
             row.mapIndexed { x, field ->
                 Positioned(Coordinates(x, y), field)

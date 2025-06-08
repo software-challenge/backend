@@ -92,7 +92,8 @@ data class GameState @JvmOverloads constructor(
     fun clonePlayer(team: Team = currentTeam, transform: (Hare) -> Unit = {}) =
         copy(players = players.map { if(it.team == team) it.clone().apply(transform) else it })
     
-    override fun getSensibleMoves(): List<Move> = getSensibleMoves(currentPlayer)
+    override fun getSensibleMoves(): List<Move> =
+        getSensibleMoves(currentPlayer)
     
     fun getSensibleMoves(player: Hare): List<Move> {
         if(mustEatSalad(player))

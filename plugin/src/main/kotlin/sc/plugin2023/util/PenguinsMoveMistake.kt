@@ -10,7 +10,7 @@ import sc.shared.IMoveMistake
  */
 enum class PenguinsMoveMistake(override val message: String): IMoveMistake {
     SINGLE_FISH("Pinguine können nur auf einzelne Fische gesetzt werden"),
-    PENGUINS("Setze zuerst alle Pinguine"),
+    PLACE_PENGUINS_FIRST("Setze zuerst alle Pinguine"),
     MAX_PENGUINS("Bereits alle Pinguine gesetzt");
     override fun toString() = message
 }
