@@ -9,7 +9,7 @@ import sc.api.plugins.Team
 import sc.plugin2026.util.*
 import kotlin.math.floor
 
-typealias FieldS = Field
+typealias FieldS = FieldState
 
 /** Spielbrett für Piranhas mit [PiranhaConstants.BOARD_LENGTH]² Feldern.  */
 @XStreamAlias(value = "board")
@@ -34,10 +34,10 @@ class Board(gameField: MutableTwoDBoard<FieldS> = randomFields()): RectangularBo
         Board(Array(gameField.size) { column -> this.gameField[column].clone() })
 
     fun getTeam(pos: Coordinates): Team? =
-        this[pos].state.team
+        this[pos].team
     
     fun fieldsForTeam(team: ITeam): Collection<Coordinates> =
-        filterValues { field -> field.state.team == team }.map { it.key }
+        filterValues { field -> field.team == team }.map { it.key }
     
     companion object {
         /** Erstellt ein zufälliges Spielbrett.  */
