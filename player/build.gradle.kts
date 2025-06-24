@@ -78,6 +78,7 @@ tasks {
     
     run.configure {
         args = System.getProperty("args", "").split(" ")
+        mustRunAfter(":server:run")
     }
     
     val bundleDir: File by project
@@ -96,6 +97,7 @@ tasks {
         archiveFileName.set("player-$gameName-src.zip")
     }
     
+    /** Build a player that times out. */
     val playerTest by creating(Exec::class) {
         group = "verification"
         dependsOn(prepareZip)
@@ -108,12 +110,12 @@ tasks {
             }
             val logic = execDir.resolve("src/main/sc/player/Logic.java")
             val lines = logic.readLines()
-            logic.writeText(lines.map {
+            logic.writeText(lines.joinToString(System.lineSeparator()) {
                 it.replace(
                     "// Hier intelligente Strategie zur Auswahl des Zuges einfügen",
                     "try {Thread.sleep(3000);} catch(InterruptedException e) {throw new RuntimeException(e);}"
                 )
-            }.joinToString(System.lineSeparator()))
+            })
             // required by gradle to distinguish the test build
             execDir.resolve("settings.gradle").createNewFile()
         }
@@ -132,8 +134,10 @@ tasks {
         }
     }
     
-    // Run a player that hits the soft-timeout
+    /** Run a player that hits the soft-timeout. */
+    // TODO incorporate into a proper test
     val runTimeout by creating(Exec::class) {
+        group = "verification"
         dependsOn(playerTest)
         workingDir(playerTest.workingDir)
         commandLine("java", "-jar", workingDir.resolve("${game}_client.jar"))
