@@ -1,7 +1,6 @@
 package sc.api.plugins
 
 import com.thoughtworks.xstream.annotations.XStreamImplicit
-import sc.framework.PublicCloneable
 
 /** Eine zweidimensionale Anordnung von Feldern, eine Liste von Zeilen. */
 typealias TwoDBoard<FIELD> = Array<Array<FIELD>>
@@ -16,11 +15,7 @@ typealias MutableTwoDBoard<FIELD> = Array<Array<FIELD>>
  */
 open class RectangularBoard<FIELD: IField<FIELD>>(
         @XStreamImplicit protected open val gameField: TwoDBoard<FIELD>
-): FieldMap<FIELD>(), IBoard, Collection<FIELD> {
-    
-    constructor(other: RectangularBoard<FIELD>): this(other.gameField.clone())
-    
-    override fun clone() = RectangularBoard(this)
+): FieldMap<FIELD>(), Collection<FIELD> {
     
     override val size: Int
         get() = gameField.size * columnCount
@@ -114,12 +109,3 @@ open class RectangularBoard<FIELD: IField<FIELD>>(
     
     override fun hashCode(): Int = gameField.contentDeepHashCode()
 }
-
-inline fun <reified T: PublicCloneable<T>> Array<Array<T>>.deepCopy() =
-        Array(size) { row -> Array(this[row].size) { column -> this[row][column].clone() } }
-
-inline fun <reified T: PublicCloneable<T>> List<T>.clone() =
-        List(size) { this[it].clone() }
-
-inline fun <reified T: PublicCloneable<T>> List<List<T>>.deepCopy() =
-        List(size) { row -> List(this[row].size) { column -> this[row][column].clone() } }
