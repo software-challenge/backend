@@ -47,13 +47,23 @@ class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
                 Array(PiranhaConstants.BOARD_LENGTH) { FieldState.EMPTY }
             }
             
+            fun randomSize(): Int {
+                // 4:3:2
+                val int = random.nextInt(9)
+                return when {
+                    int < 4 -> 1
+                    int < 7 -> 2
+                    else -> 3
+                }
+            }
+            
             // Place Piranhas
             for(index in 1 until PiranhaConstants.BOARD_LENGTH - 1) {
-                val size1 = random.nextInt(2) + 1
+                val size1 = randomSize()
                 fields[0][index] = FieldState.from(Team.ONE, size1)
                 fields[index][0] = FieldState.from(Team.TWO, size1)
                 
-                val size2 = random.nextInt(2) + 1
+                val size2 = randomSize()
                 fields[PiranhaConstants.BOARD_LENGTH - 1][index] = FieldState.from(Team.ONE, size2)
                 fields[index][PiranhaConstants.BOARD_LENGTH - 1] = FieldState.from(Team.TWO, size2)
             }
