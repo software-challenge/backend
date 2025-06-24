@@ -9,7 +9,7 @@ import sc.plugin2023.util.FieldConverter
 
 @XStreamConverter(FieldConverter::class)
 @XStreamAlias("field")
-data class Field(val fish: Int = 0, val penguin: Team? = null) : IField<Field>, PublicCloneable<Field> {
+data class Field(val fish: Int = 0, val penguin: Team? = null) : IField, PublicCloneable<Field> {
     override val isEmpty: Boolean
         get() = fish == 0 && penguin == null
     val isOccupied: Boolean

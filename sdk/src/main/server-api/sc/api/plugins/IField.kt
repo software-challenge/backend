@@ -1,5 +1,5 @@
 package sc.api.plugins
 
-interface IField<FIELD: IField<FIELD>> {
+interface IField {
     val isEmpty: Boolean
 }

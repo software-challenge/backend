@@ -13,7 +13,7 @@ typealias MutableTwoDBoard<FIELD> = Array<Array<FIELD>>
  * Ein rechteckiges Spielfeld aus Feldern.
  * Intern repräsentiert durch eine Liste an Zeilen.
  */
-open class RectangularBoard<FIELD: IField<FIELD>>(
+open class RectangularBoard<FIELD: IField>(
         @XStreamImplicit protected open val gameField: TwoDBoard<FIELD>
 ): FieldMap<FIELD>(), Collection<FIELD> {
     

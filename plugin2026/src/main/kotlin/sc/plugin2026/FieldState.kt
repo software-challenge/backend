@@ -4,7 +4,7 @@ import sc.api.plugins.IField
 import sc.api.plugins.Team
 import sc.framework.DeepCloneable
 
-enum class FieldState(val size: Int): IField<FieldState>, DeepCloneable<FieldState> {
+enum class FieldState(val size: Int): IField, DeepCloneable<FieldState> {
     ONE_S(1),
     ONE_M(2),
     ONE_L(3),

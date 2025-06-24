@@ -4,9 +4,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.CubeDirection
 import sc.api.plugins.IField
+import sc.framework.PublicCloneable
 
 @XStreamAlias("field")
-sealed class Field: IField<Field> {
+sealed class Field: IField, PublicCloneable<Field> {
     override val isEmpty
         get() = true
     
