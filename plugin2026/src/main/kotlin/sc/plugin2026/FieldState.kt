@@ -13,6 +13,8 @@ enum class FieldState(val size: Int): IField<FieldState> {
     OBSTRUCTED(0),
     EMPTY(0);
     
+    override fun copy(): FieldState = this
+    
     override val isEmpty: Boolean
         get() = this == EMPTY
     
@@ -36,5 +38,24 @@ enum class FieldState(val size: Int): IField<FieldState> {
             EMPTY -> "  "
             else -> team?.letter.toString() + size.toString()
         }
+    
+    companion object {
+        fun from(team: Team, size: Int): FieldState =
+            when(team) {
+                Team.ONE -> when(size) {
+                    1 -> ONE_S
+                    2 -> ONE_M
+                    3 -> ONE_L
+                    else -> throw IllegalArgumentException("Invalid size: $size")
+                }
+                Team.TWO -> when(size) {
+                    1 -> TWO_S
+                    2 -> TWO_M
+                    3 -> TWO_L
+                    else -> throw IllegalArgumentException("Invalid size: $size")
+                }
+            }
+        
+    }
     
 }

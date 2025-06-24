@@ -2,18 +2,19 @@ package sc.plugin2026
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.Coordinates
+import sc.api.plugins.IBoard
 import sc.api.plugins.ITeam
 import sc.api.plugins.MutableTwoDBoard
 import sc.api.plugins.RectangularBoard
 import sc.api.plugins.Team
+import sc.api.plugins.deepCopy
 import sc.plugin2026.util.*
-import kotlin.math.floor
-
-typealias FieldS = FieldState
+import kotlin.random.Random
 
 /** Spielbrett für Piranhas mit [PiranhaConstants.BOARD_LENGTH]² Feldern.  */
 @XStreamAlias(value = "board")
-class Board(gameField: MutableTwoDBoard<FieldS> = randomFields()): RectangularBoard<FieldS>(gameField) {
+class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
+    RectangularBoard<FieldState>(gameField), IBoard {
     
     // TODO later
     //override fun toString() =
@@ -31,8 +32,8 @@ class Board(gameField: MutableTwoDBoard<FieldS> = randomFields()): RectangularBo
     //}
     
     override fun clone(): Board =
-        Board(Array(gameField.size) { column -> this.gameField[column].clone() })
-
+        Board(gameField.deepCopy())
+    
     fun getTeam(pos: Coordinates): Team? =
         this[pos].team
     
@@ -41,41 +42,45 @@ class Board(gameField: MutableTwoDBoard<FieldS> = randomFields()): RectangularBo
     
     companion object {
         /** Erstellt ein zufälliges Spielbrett.  */
-        private fun randomFields(): MutableTwoDBoard<FieldS> {
-            val fields = generateFields { x, y -> FieldS(x, y) }
+        private fun randomFields(random: Random = Random.Default): MutableTwoDBoard<FieldState> {
+            val fields = Array(PiranhaConstants.BOARD_LENGTH) {
+                Array(PiranhaConstants.BOARD_LENGTH) { FieldState.EMPTY }
+            }
             
             // Place Piranhas
             for(index in 1 until PiranhaConstants.BOARD_LENGTH - 1) {
-                fields[0][index].setPiranha(Team.ONE)
-                fields[PiranhaConstants.BOARD_LENGTH - 1][index].setPiranha(Team.ONE)
-                fields[index][0].setPiranha(Team.TWO)
-                fields[index][PiranhaConstants.BOARD_LENGTH - 1].setPiranha(Team.TWO)
+                val size1 = random.nextInt(2) + 1
+                fields[0][index] = FieldState.from(Team.ONE, size1)
+                fields[index][0] = FieldState.from(Team.TWO, size1)
+                
+                val size2 = random.nextInt(2) + 1
+                fields[PiranhaConstants.BOARD_LENGTH - 1][index] = FieldState.from(Team.ONE, size2)
+                fields[index][PiranhaConstants.BOARD_LENGTH - 1] = FieldState.from(Team.TWO, size2)
             }
             
             // Place Obstacles
             // only consider fields in the middle of the board
-            var blockableFields: List<Field> = fields.slice(PiranhaConstants.OBSTACLES_START..PiranhaConstants.OBSTACLES_END).flatMap { it.slice(PiranhaConstants.OBSTACLES_START..PiranhaConstants.OBSTACLES_END) }
+            val blockableWidth = PiranhaConstants.OBSTACLES_END - PiranhaConstants.OBSTACLES_START + 1
+            val blockableSize = blockableWidth * blockableWidth
             // set fields with randomly selected coordinates to blocked
-            // coordinates may not lay on same horizontal, vertical or diagonal lines with other selected coordinates
-            for(i in 0 until PiranhaConstants.NUM_OBSTACLES) {
-                val indexOfFieldToBlock = floor(Math.random() * blockableFields.size).toInt()
-                val selectedField = blockableFields[indexOfFieldToBlock]
-                selectedField.state = FieldState.OBSTRUCTED
-                blockableFields = blockableFields.filter { field ->
-                    !(field.x == selectedField.x || field.y == selectedField.y ||
-                      field.x - field.y == selectedField.x - selectedField.y ||
-                      field.x + field.y == selectedField.x + selectedField.y)
+            val obstacles = ArrayList<Coordinates>(PiranhaConstants.NUM_OBSTACLES)
+            while(obstacles.size < PiranhaConstants.NUM_OBSTACLES) {
+                val index = random.nextInt(blockableSize + 1)
+                val pos = Coordinates(
+                    PiranhaConstants.OBSTACLES_START + index.rem(blockableWidth),
+                    PiranhaConstants.OBSTACLES_START + index.div(blockableWidth)
+                )
+                // coordinates may not lay on same horizontal, vertical or diagonal lines with other selected coordinates
+                if(obstacles.none {
+                        it.x == pos.x || it.y == pos.y ||
+                        it.x - it.y == pos.x - pos.y ||
+                        it.x + it.y == pos.x + pos.y
+                    }) {
+                    obstacles.add(pos)
+                    fields[pos.x][pos.y] = FieldState.OBSTRUCTED
                 }
             }
             return fields
-        }
-        
-        private fun generateFields(generator: (Int, Int) -> FieldS): Array<Array<FieldS>> {
-            return Array(PiranhaConstants.BOARD_LENGTH) { x ->
-                Array(PiranhaConstants.BOARD_LENGTH) { y ->
-                    generator(x, y)
-                }
-            }
         }
     }
 }

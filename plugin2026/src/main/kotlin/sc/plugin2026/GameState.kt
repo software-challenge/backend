@@ -62,12 +62,13 @@ data class GameState @JvmOverloads constructor(
         }
         GameRuleLogic.checkMove(board, move)?.let { throw InvalidMoveException(it, move) }
         val distance = GameRuleLogic.movementDistance(board, move)
-        board[move.from].state = FieldState.EMPTY
-        board[move.from + move.direction.vector * distance].state = FieldState.from(currentTeam)
+        board[move.from + move.direction.vector * distance] = board[move.from]
+        board[move.from] = FieldState.EMPTY
+        lastMove = move
     }
     
     override fun getSensibleMoves(): List<Move> {
-        val piranhas = board.filterValues { field -> field.state.team == currentTeam }
+        val piranhas = board.filterValues { field -> field.team == currentTeam }
         val moves = ArrayList<Move>(piranhas.size * 2)
         for(piranha in piranhas) {
             moves.addAll(GameRuleLogic.possibleMovesFor(board, piranha.key))
@@ -78,7 +79,7 @@ data class GameState @JvmOverloads constructor(
     override fun moveIterator(): Iterator<Move> =
         getSensibleMoves().iterator()
     
-    override fun clone(): TwoPlayerGameState<Move> =
+    override fun clone(): GameState =
         copy(board = board.clone())
     
     override fun teamStats(team: ITeam): List<Stat> =

@@ -19,7 +19,7 @@ object GameRuleLogic {
         while(true) {
             pos += move.direction
             val field = board.getOrNull(pos) ?: break
-            if(field.state.team != null) {
+            if(field.team != null) {
                 count++
             }
         }
@@ -27,7 +27,7 @@ object GameRuleLogic {
         while(true) {
             pos += move.direction.opposite
             val field = board.getOrNull(pos) ?: break
-            if(field.state.team != null) {
+            if(field.team != null) {
                 count++
             }
         }
@@ -41,20 +41,20 @@ object GameRuleLogic {
         val distance = movementDistance(board, move)
         var pos = move.from
         
-        val team = board[move.from].state.team ?: return MoveMistake.START_EMPTY
+        val team = board[move.from].team ?: return MoveMistake.START_EMPTY
         val opponent = team.opponent()
         
         var moved = 1
         while(moved < distance) {
             pos += move.direction
             val field = board.getOrNull(pos) ?: return MoveMistake.DESTINATION_OUT_OF_BOUNDS
-            if(field.state.team == opponent) {
+            if(field.team == opponent) {
                 return PiranhaMoveMistake.JUMP_OVER_OPPONENT
             }
             moved++
         }
         pos += move.direction
-        val state = board.getOrNull(pos)?.state
+        val state = board.getOrNull(pos)
         return when(state) {
             null -> MoveMistake.DESTINATION_OUT_OF_BOUNDS
             FieldState.OBSTRUCTED -> MoveMistake.DESTINATION_BLOCKED
