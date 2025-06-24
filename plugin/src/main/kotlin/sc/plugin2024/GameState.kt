@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
+import sc.framework.clone
 import sc.plugin2024.actions.Accelerate
 import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Push

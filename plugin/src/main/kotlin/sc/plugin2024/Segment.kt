@@ -6,8 +6,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.Coordinates
 import sc.api.plugins.CubeCoordinates
 import sc.api.plugins.CubeDirection
-import sc.api.plugins.deepCopy
 import sc.framework.PublicCloneable
+import sc.framework.deepCopy
 import sc.framework.shuffledIndices
 import sc.plugin2024.util.MQConstants
 import kotlin.math.absoluteValue

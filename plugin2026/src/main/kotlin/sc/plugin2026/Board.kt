@@ -7,7 +7,7 @@ import sc.api.plugins.ITeam
 import sc.api.plugins.MutableTwoDBoard
 import sc.api.plugins.RectangularBoard
 import sc.api.plugins.Team
-import sc.api.plugins.deepCopy
+import sc.framework.deepCopy
 import sc.plugin2026.util.*
 import kotlin.random.Random
 

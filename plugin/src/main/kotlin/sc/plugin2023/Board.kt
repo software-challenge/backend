@@ -3,6 +3,7 @@ package sc.plugin2023
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.*
 import sc.api.plugins.Coordinates
+import sc.framework.deepCopy
 import kotlin.random.Random
 import sc.plugin2023.util.PenguinConstants as Constants
 
@@ -13,7 +14,8 @@ import sc.plugin2023.util.PenguinConstants as Constants
  * @author soed
  */
 @XStreamAlias(value = "board")
-class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()): RectangularBoard<Field>(gameField) {
+class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()):
+    RectangularBoard<Field>(gameField), IBoard {
     
     constructor(board: Board): this(board.gameField.deepCopy())
     
@@ -62,7 +64,7 @@ class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()):
     
     fun getOrEmpty(key: Coordinates?) = key?.let { getOrNull(it) } ?: Field()
     
-    override val entries: Set<Map.Entry<Coordinates, Field>>
+    override val entries: Set<Positioned<Field>>
         get() = filterFields { f, coordinates -> Positioned(coordinates, f) }.toSet()
     
     override fun clone(): Board = Board(this)
@@ -91,7 +93,7 @@ class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()):
                 }
             }.let {
                 it + it.reversedArray().map { list ->
-                    Array(Constants.BOARD_SIZE) { index -> list[Constants.BOARD_SIZE - index - 1].clone() }
+                    Array(Constants.BOARD_SIZE) { index -> list[Constants.BOARD_SIZE - index - 1].deepCopy() }
                 }
             }
         }

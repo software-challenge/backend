@@ -4,8 +4,8 @@ import com.thoughtworks.xstream.annotations.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sc.api.plugins.*
+import sc.framework.clone
 import sc.plugin2024.util.BoardConverter
-import kotlin.math.abs
 import kotlin.reflect.KClass
 
 /**

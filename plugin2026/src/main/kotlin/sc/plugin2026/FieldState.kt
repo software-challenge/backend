@@ -2,8 +2,9 @@ package sc.plugin2026
 
 import sc.api.plugins.IField
 import sc.api.plugins.Team
+import sc.framework.DeepCloneable
 
-enum class FieldState(val size: Int): IField<FieldState> {
+enum class FieldState(val size: Int): IField<FieldState>, DeepCloneable<FieldState> {
     ONE_S(1),
     ONE_M(2),
     ONE_L(3),
@@ -13,7 +14,7 @@ enum class FieldState(val size: Int): IField<FieldState> {
     OBSTRUCTED(0),
     EMPTY(0);
     
-    override fun copy(): FieldState = this
+    override fun deepCopy(): FieldState = this
     
     override val isEmpty: Boolean
         get() = this == EMPTY

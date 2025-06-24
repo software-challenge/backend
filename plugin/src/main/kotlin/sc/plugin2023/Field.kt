@@ -15,7 +15,7 @@ data class Field(val fish: Int = 0, val penguin: Team? = null) : IField<Field>, 
     val isOccupied: Boolean
         get() = penguin != null
     
-    override fun clone(): Field = Field(fish, penguin)
+    override fun clone(): Field = copy()
     
     override fun toString(): String = penguin?.letter?.toString() ?: fish.toString()
 }
