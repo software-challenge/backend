@@ -1,14 +1,9 @@
 package sc.plugin2026
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
-import sc.api.plugins.Coordinates
-import sc.api.plugins.IBoard
-import sc.api.plugins.ITeam
-import sc.api.plugins.MutableTwoDBoard
-import sc.api.plugins.RectangularBoard
-import sc.api.plugins.Team
+import sc.api.plugins.*
 import sc.framework.deepCopy
-import sc.plugin2026.util.*
+import sc.plugin2026.util.PiranhaConstants
 import kotlin.random.Random
 
 /** Spielbrett für Piranhas mit [PiranhaConstants.BOARD_LENGTH]² Feldern.  */
@@ -87,7 +82,7 @@ class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
                         it.x + it.y == pos.x + pos.y
                     }) {
                     obstacles.add(pos)
-                    fields[pos.x][pos.y] = FieldState.OBSTRUCTED
+                    fields[pos.x][pos.y] = FieldState.SQUID
                 }
             }
             return fields

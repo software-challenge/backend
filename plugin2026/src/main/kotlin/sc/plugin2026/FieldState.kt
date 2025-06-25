@@ -11,7 +11,7 @@ enum class FieldState(val size: Int): IField, DeepCloneable<FieldState> {
     TWO_S(1),
     TWO_M(2),
     TWO_L(3),
-    OBSTRUCTED(0),
+    SQUID(0),
     EMPTY(0);
     
     override fun deepCopy(): FieldState = this
@@ -23,19 +23,19 @@ enum class FieldState(val size: Int): IField, DeepCloneable<FieldState> {
         get() = when(this) {
             ONE_S, ONE_M, ONE_L -> Team.ONE
             TWO_S, TWO_M, TWO_L -> Team.TWO
-            OBSTRUCTED, EMPTY -> null
+            SQUID, EMPTY -> null
         }
     
     override fun toString() =
         when(this) {
-            OBSTRUCTED -> "Krake"
+            SQUID -> "Krake"
             EMPTY -> "Leer"
             else -> team?.color.toString() + size.toString()
         }
     
     fun asLetters() =
         when(this) {
-            OBSTRUCTED -> "X "
+            SQUID -> "X "
             EMPTY -> "  "
             else -> team?.letter.toString() + size.toString()
         }

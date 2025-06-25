@@ -57,7 +57,7 @@ object GameRuleLogic {
         val state = board.getOrNull(pos)
         return when(state) {
             null -> MoveMistake.DESTINATION_OUT_OF_BOUNDS
-            FieldState.OBSTRUCTED -> MoveMistake.DESTINATION_BLOCKED
+            FieldState.SQUID -> MoveMistake.DESTINATION_BLOCKED
             else -> {
                 if(state.team == team) {
                     MoveMistake.DESTINATION_BLOCKED_BY_SELF
