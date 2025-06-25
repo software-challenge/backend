@@ -39,7 +39,7 @@ data class GameState @JvmOverloads constructor(
     
     // TODO test if one player is surrounded he loses
     override val isOver: Boolean
-        get() = Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0 ||
+        get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
                 turn / 2 >= PiranhaConstants.ROUND_LIMIT
     
     override val winCondition: WinCondition?
@@ -64,6 +64,7 @@ data class GameState @JvmOverloads constructor(
         val distance = GameRuleLogic.movementDistance(board, move)
         board[move.from + move.direction.vector * distance] = board[move.from]
         board[move.from] = FieldState.EMPTY
+        turn++
         lastMove = move
     }
     
