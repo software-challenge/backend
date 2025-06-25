@@ -1,9 +1,12 @@
 package sc.api.plugins
 
+import org.slf4j.LoggerFactory
 import sc.api.plugins.exceptions.PluginLoaderException
 import sc.framework.plugins.Constants
 import sc.shared.ScoreDefinition
 import java.util.ServiceLoader
+
+private val logger = LoggerFactory.getLogger(IGamePlugin::class.java)
 
 interface IGamePlugin<M : IMove> {
     /** Plugin identifier for the protocol. */
@@ -41,12 +44,10 @@ interface IGamePlugin<M : IMove> {
                     gameType == null || it.id == gameType
                 } ?: throw PluginLoaderException("Could not find game of type '$gameType'")
         
+        /** Loads the latest available game plugin. */
         @JvmStatic
         fun loadPlugin(): IGamePlugin<*> =
-                loadPlugins().next()
+                loadPlugins().asSequence().sortedByDescending { it.id }.first().also { logger.debug("Loaded plugin: {}", it.id) }
         
-        @JvmStatic
-        fun loadPluginId(): String =
-                loadPlugin().id
     }
 }

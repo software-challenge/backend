@@ -31,7 +31,7 @@ public class Starter {
     } else if (roomId != null) {
       client.joinGameRoom(roomId);
     } else {
-      client.joinGame(IGamePlugin.loadPluginId());
+      client.joinGame(IGamePlugin.loadPlugin().getId());
     }
   }
 
