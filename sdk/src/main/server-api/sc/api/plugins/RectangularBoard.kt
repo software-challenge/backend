@@ -15,7 +15,7 @@ typealias MutableTwoDBoard<FIELD> = Array<Array<FIELD>>
  */
 open class RectangularBoard<FIELD: IField>(
         @XStreamImplicit protected open val gameField: TwoDBoard<FIELD>
-): FieldMap<FIELD>(), Collection<FIELD> {
+): FieldMap<FIELD>() {
     
     override val size: Int
         get() = gameField.size * columnCount
@@ -75,7 +75,7 @@ open class RectangularBoard<FIELD: IField>(
             }
         }
     
-    override fun iterator(): Iterator<FIELD> = object: AbstractIterator<FIELD>() {
+    fun iterateFields(): Iterator<FIELD> = object: AbstractIterator<FIELD>() {
         var index = 0
         override fun computeNext() {
             if(index < size)
@@ -86,12 +86,9 @@ open class RectangularBoard<FIELD: IField>(
         }
     }
     
-    override fun containsAll(elements: Collection<FIELD>): Boolean = elements.all { contains(it) }
-    
-    override fun contains(element: FIELD): Boolean = gameField.any { it.contains(element) }
-    
-    operator fun get(index: Int): FIELD =
-            gameField[index.div(columnCount)][index.mod(columnCount)]
+    /** Get an element row by row. */
+    protected operator fun get(index: Int): FIELD =
+        gameField[index.div(columnCount)][index.mod(columnCount)]
     
     /** Initializes an empty gameField when created by XStream. */
     fun readResolve(): Any {
