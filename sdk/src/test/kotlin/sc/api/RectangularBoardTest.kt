@@ -1,19 +1,17 @@
 package sc.api
 
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.*
 import sc.api.plugins.IField
 import sc.api.plugins.RectangularBoard
 
-enum class Field: IField<Field> {
+enum class Field: IField {
     EMPTY,
     ONE,
     TWO;
     
     override val isEmpty: Boolean
         get() = this == EMPTY
-    
-    override fun copy(): Field = this
 }
 
 class RectangularBoardTest: FunSpec({

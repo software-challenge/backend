@@ -5,7 +5,7 @@ import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.ints.*
-import io.kotest.matchers.maps.shouldHaveSize
+import io.kotest.matchers.maps.*
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
 import sc.api.plugins.Coordinates
@@ -20,7 +20,7 @@ class BoardTest: FunSpec({
         val generatedBoard = Board()
         test("generates properly") {
             generatedBoard shouldHaveSize PenguinConstants.BOARD_SIZE * PenguinConstants.BOARD_SIZE
-            generatedBoard.forAll {
+            generatedBoard.iterateFields().asSequence().toList().forAll {
                 it.penguin.shouldBeNull()
                 it.fish shouldBeInRange 0..4
             }
