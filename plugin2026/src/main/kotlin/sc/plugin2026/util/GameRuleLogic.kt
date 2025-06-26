@@ -102,68 +102,52 @@ object GameRuleLogic {
         return returnSet
     }
     
-    private fun getSwarm(found: MutableSet<Coordinates>, swarm: MutableSet<Coordinates>): MutableSet<Coordinates> {
-        if(swarm.isEmpty() && !found.isEmpty()) {
-            val field = found.iterator().next()
-            swarm.add(field)
-            found.remove(field)
+    /** Called with a single fish in [swarm] and the [looseFishes] left,
+     * recursively calling with neighbors added to [swarm] to find the whole swarm. */
+    private fun getSwarm(looseFishes: Set<Coordinates>, swarm: List<Coordinates>): List<Coordinates> {
+        val swarmNeighbours =
+            swarm.flatMap { getDirectNeighbour(it, looseFishes) }
+        
+        // only search on if any neighbors were added
+        if(swarmNeighbours.isNotEmpty()) {
+            return getSwarm(looseFishes - swarmNeighbours, swarm + swarmNeighbours)
         }
-        
-        var tmpSwarm: MutableSet<Coordinates> = HashSet(swarm)
-        // O(swarm.size()) time
-        for(field in swarm) {
-            // Constant time for both calls (max of 8 neighbors)
-            val neighbours = getDirectNeighbour(field, found)
-            tmpSwarm.addAll(neighbours)
-        }
-        
-        // O(found.size()*swarm.size()) time
-        // FIXME: Might be improved O(swarm.size()) should be possible
-        if(swarm.size != tmpSwarm.size) tmpSwarm = getSwarm(found, tmpSwarm)
-        
-        swarm.addAll(tmpSwarm)
-        
-        found.removeAll(swarm)
         return swarm
     }
     
     @JvmStatic
-    fun greatestSwarm(fieldsToCheck: Set<Coordinates>): Set<Coordinates> {
+    fun greatestSwarm(fieldsToCheck: Map<Coordinates, Int>): Map<Coordinates, Int>? {
         // Make a copy, so there will be no conflict with direct calls.
-        val occupiedFields: MutableSet<Coordinates> = HashSet(fieldsToCheck)
-        var greatestSwarm: Set<Coordinates> = HashSet()
+        val fieldsLeft = fieldsToCheck.keys.toMutableList()
         var maxSize = -1
+        var maxSwarm: Map<Coordinates, Int>? = null
         
         // this is a maximum of MAX_FISH iterations, so it is a linear iteration altogether
-        while(!occupiedFields.isEmpty() && occupiedFields.size > maxSize) {
-            val swarm: Set<Coordinates> = getSwarm(occupiedFields, HashSet())
-            // TODO consider fish weights
-            if(maxSize < swarm.size) {
-                maxSize = swarm.size
-                greatestSwarm = swarm
+        while(!fieldsLeft.isEmpty() && fieldsLeft.size > maxSize) {
+            val swarmCoords = getSwarm(fieldsToCheck.keys, listOf(fieldsLeft.removeLast()))
+            fieldsLeft.removeAll(swarmCoords)
+            val swarm = fieldsToCheck.filterKeys { swarmCoords.contains(it) }
+            val swarmSize = swarm.values.sum()
+            if(maxSize < swarmSize) {
+                maxSwarm = swarm
+                maxSize = swarmSize
             }
         }
-        return greatestSwarm
+        return maxSwarm
     }
     
     @JvmStatic
-    fun greatestSwarm(board: Board, team: ITeam): Set<Coordinates> {
-        val occupiedFields = board.fieldsForTeam(team)
-        return greatestSwarm(occupiedFields.toHashSet())
-    }
+    fun greatestSwarmSize(fields: Map<Coordinates, Int>): Int =
+        greatestSwarm(fields)?.values?.sum() ?: -1
     
     @JvmStatic
     fun greatestSwarmSize(board: Board, team: ITeam): Int =
-        greatestSwarm(board, team).size
-    
-    @JvmStatic
-    fun greatestSwarmSize(set: Set<Coordinates>): Int =
-        greatestSwarm(set).size
+        greatestSwarmSize(board.fieldsForTeam(team))
     
     @JvmStatic
     fun isSwarmConnected(board: Board, team: ITeam): Boolean {
         val fieldsWithFish = board.fieldsForTeam(team)
-        val numGreatestSwarm: Int = greatestSwarmSize(fieldsWithFish.toHashSet())
-        return numGreatestSwarm == fieldsWithFish.size
+        val greatestSwarm = greatestSwarm(fieldsWithFish)
+        return greatestSwarm?.size == fieldsWithFish.size
     }
 }

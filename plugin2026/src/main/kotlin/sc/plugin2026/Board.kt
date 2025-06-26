@@ -32,8 +32,9 @@ class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
     fun getTeam(pos: Coordinates): Team? =
         this[pos].team
     
-    fun fieldsForTeam(team: ITeam): Collection<Coordinates> =
-        filterValues { field -> field.team == team }.map { it.key }
+    fun fieldsForTeam(team: ITeam): Map<Coordinates, Int> =
+        filterValues { field -> field.team == team }
+            .mapValues { (_, field) -> field.size }
     
     companion object {
         /** Erstellt ein zufälliges Spielbrett.  */
