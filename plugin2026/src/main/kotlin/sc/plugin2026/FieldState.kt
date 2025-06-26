@@ -29,7 +29,7 @@ enum class FieldState(val size: Int): IField, DeepCloneable<FieldState> {
     override fun toString() =
         when(this) {
             SQUID -> "Krake"
-            EMPTY -> "Leer"
+            EMPTY -> "Leer "
             else -> team?.color.toString() + size.toString()
         }
     

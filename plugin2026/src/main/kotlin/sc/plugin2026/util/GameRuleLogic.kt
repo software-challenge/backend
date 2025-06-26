@@ -137,6 +137,7 @@ object GameRuleLogic {
         // this is a maximum of MAX_FISH iterations, so it is a linear iteration altogether
         while(!occupiedFields.isEmpty() && occupiedFields.size > maxSize) {
             val swarm: Set<Coordinates> = getSwarm(occupiedFields, HashSet())
+            // TODO consider fish weights
             if(maxSize < swarm.size) {
                 maxSize = swarm.size
                 greatestSwarm = swarm
