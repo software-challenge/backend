@@ -34,7 +34,7 @@ val enableIntegrationTesting = !project.hasProperty("nointegration") && (!isBeta
 
 val javaTargetVersion = JavaVersion.VERSION_1_8
 val javaVersion = JavaVersion.current()
-println("Current version: $version (Beta: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java $javaVersion)")
+println("Current version: $version (unstable: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java $javaVersion)")
 if (javaVersion != javaTargetVersion)
     System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider '-x doc' if you don't care)")
 
