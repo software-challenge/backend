@@ -118,7 +118,7 @@ tasks {
     val maxGameLength = 150L // 2m30s
     
     val testGame by creating {
-        dependsOn(":server:bundle", ":player:bundleShadow")
+        dependsOn(":server:makeRunnable", ":player:bundleShadow")
         group = "verification"
         doFirst {
             val testGameDir = testingDir.resolve("game")
@@ -128,16 +128,18 @@ tasks {
                     //File("/usr/lib/jvm").listFiles { f:File -> f.name.contains("java-1") }?.max()?.resolve("bin/java").toString()
             val port = "13054"
             println("Running on Port: $port")
+            
+            val jarTask = project(":server").getTasksByName("jar", false).single() as Jar
             val server =
                 ProcessBuilder(
                     java,
                     "-Dlogback.configurationFile=${project(":server").projectDir.resolve("configuration/logback-trace.xml")}",
-                    "-jar", (project(":server").getTasksByName("jar", false).single() as Jar).archiveFile.get().asFile.absolutePath,
+                    "-jar", jarTask.archiveFile.get().asFile.absolutePath,
                     "--port", port
                 )
                     .redirectOutput(testGameDir.resolve("server.log"))
                     .redirectError(testGameDir.resolve("server-err.log"))
-                    .directory(project(":server").buildDir.resolve("runnable"))
+                    .directory(jarTask.destinationDirectory.get().asFile)
                     .start()
             var i = 0
             while(Files.size(testGameDir.resolve("server.log").toPath()) < 1000 && i++ < 50)
