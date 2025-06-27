@@ -81,8 +81,8 @@ data class GameState @JvmOverloads constructor(
     
     override fun teamStats(team: ITeam): List<Stat> =
         listOf(
-            Stat("Fische", board.fieldsForTeam(team).size),
-            Stat("Schwarmgröße", GameRuleLogic.greatestSwarmSize(board, team))
+            Stat("Anzahl Fische", board.fieldsForTeam(team).size),
+            Stat("Größter Schwarm", GameRuleLogic.greatestSwarmSize(board, team))
         )
     
 }
