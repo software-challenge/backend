@@ -155,11 +155,3 @@ object GameRuleLogic {
         return greatestSwarm?.size == fieldsWithFish.size
     }
 }
-
-sealed class MoveResult {
-    data class Valid(val target: Coordinates): MoveResult()
-    data class Error(val mistake: IMoveMistake): MoveResult()
-    
-    fun isValid() = this is Valid
-    fun getMistake() = (this as? Error)?.mistake
-}
