@@ -34,6 +34,10 @@ object GameRuleLogic {
         return count
     }
     
+    @JvmStatic
+    fun targetField(board: Board, move: Move): Coordinates =
+        move.from + move.direction.vector * movementDistance(board, move)
+    
     /** Prüft ob ein Zug gültig ist.
      * @team null wenn der Zug valide ist, sonst ein entsprechender [IMoveMistake]. */
     @JvmStatic
@@ -150,4 +154,12 @@ object GameRuleLogic {
         val greatestSwarm = greatestSwarm(fieldsWithFish)
         return greatestSwarm?.size == fieldsWithFish.size
     }
+}
+
+sealed class MoveResult {
+    data class Valid(val target: Coordinates): MoveResult()
+    data class Error(val mistake: IMoveMistake): MoveResult()
+    
+    fun isValid() = this is Valid
+    fun getMistake() = (this as? Error)?.mistake
 }
