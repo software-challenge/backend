@@ -12,6 +12,8 @@ class TestPlugin: IGamePlugin<TestMove> {
     
     override val id: String = TEST_PLUGIN_UUID
     
+    override val name = "Test Plugin"
+    
     override val scoreDefinition: ScoreDefinition =
             ScoreDefinition("winner", "index", "turn")
     

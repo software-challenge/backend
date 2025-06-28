@@ -27,6 +27,8 @@ class GamePlugin: IGamePlugin<Move> {
     
     override val id = PLUGIN_ID
     
+    override val name = "Piranhas"
+    
     override val scoreDefinition =
             Companion.scoreDefinition
     

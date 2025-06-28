@@ -11,6 +11,8 @@ private val logger = LoggerFactory.getLogger(IGamePlugin::class.java)
 interface IGamePlugin<M : IMove> {
     /** Plugin identifier for the protocol. */
     val id: String
+    /** Human readable name of the game. */
+    val name: String
     /** Arrangement of ScoreFragments in the GameResult. */
     val scoreDefinition: ScoreDefinition
     /**
