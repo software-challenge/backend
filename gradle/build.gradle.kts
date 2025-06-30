@@ -11,9 +11,17 @@ plugins {
     kotlin("jvm") version "1.6.21"
     id("org.jetbrains.dokka") version "0.10.1"
     id("scripts-task")
+    id("idea")
     
     id("com.github.ben-manes.versions") version "0.42.0" // only upgrade with Gradle 7: https://github.com/ben-manes/gradle-versions-plugin/issues/778
     id("se.patrikerdes.use-latest-versions") version "0.2.18"
+}
+
+idea {
+    module {
+        isDownloadSources = true
+        isDownloadJavadoc = true
+    }
 }
 
 val gameName by extra { property("socha.gameName") as String }
