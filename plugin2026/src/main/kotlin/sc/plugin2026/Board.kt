@@ -38,12 +38,15 @@ class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
     
     companion object {
         /** Erstellt ein zufälliges Spielbrett.  */
-        private fun randomFields(random: Random = Random.Default): MutableTwoDBoard<FieldState> {
+        fun randomFields(
+            obstacleCount: Int = PiranhaConstants.NUM_OBSTACLES,
+            random: Random = Random.Default,
+        ): MutableTwoDBoard<FieldState> {
             val fields = Array(PiranhaConstants.BOARD_LENGTH) {
                 Array(PiranhaConstants.BOARD_LENGTH) { FieldState.EMPTY }
             }
             
-            fun randomSize(): Int {
+            fun randomFishSize(): Int {
                 // 4:3:2
                 val int = random.nextInt(9)
                 return when {
@@ -55,23 +58,24 @@ class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
             
             // Place Piranhas
             for(index in 1 until PiranhaConstants.BOARD_LENGTH - 1) {
-                val size1 = randomSize()
-                fields[0][index] = FieldState.from(Team.ONE, size1)
-                fields[index][0] = FieldState.from(Team.TWO, size1)
+                val size1 = randomFishSize()
+                fields[0][index] = FieldState.from(Team.TWO, size1)
+                fields[index][0] = FieldState.from(Team.ONE, size1)
                 
-                val size2 = randomSize()
-                fields[PiranhaConstants.BOARD_LENGTH - 1][index] = FieldState.from(Team.ONE, size2)
-                fields[index][PiranhaConstants.BOARD_LENGTH - 1] = FieldState.from(Team.TWO, size2)
+                val size2 = randomFishSize()
+                fields[PiranhaConstants.BOARD_LENGTH - 1][index] = FieldState.from(Team.TWO, size2)
+                fields[index][PiranhaConstants.BOARD_LENGTH - 1] = FieldState.from(Team.ONE, size2)
             }
             
             // Place Obstacles
             // only consider fields in the middle of the board
             val blockableWidth = PiranhaConstants.OBSTACLES_END - PiranhaConstants.OBSTACLES_START + 1
+            /** total number of slots for obstacles */
             val blockableSize = blockableWidth * blockableWidth
             // set fields with randomly selected coordinates to blocked
-            val obstacles = ArrayList<Coordinates>(PiranhaConstants.NUM_OBSTACLES)
-            while(obstacles.size < PiranhaConstants.NUM_OBSTACLES) {
-                val index = random.nextInt(blockableSize + 1)
+            val obstacles = ArrayList<Coordinates>(obstacleCount)
+            while(obstacles.size < obstacleCount) {
+                val index = random.nextInt(blockableSize)
                 val pos = Coordinates(
                     PiranhaConstants.OBSTACLES_START + index.rem(blockableWidth),
                     PiranhaConstants.OBSTACLES_START + index.div(blockableWidth)
@@ -83,7 +87,8 @@ class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
                         it.x + it.y == pos.x + pos.y
                     }) {
                     obstacles.add(pos)
-                    fields[pos.x][pos.y] = FieldState.SQUID
+                    // TODO somehow a squid ended up near the border??
+                    fields[pos.y][pos.x] = FieldState.SQUID
                 }
             }
             return fields
