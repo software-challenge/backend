@@ -11,20 +11,25 @@ import kotlin.random.Random
 class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
     RectangularBoard<FieldState>(gameField), IBoard {
     
-    // TODO later
-    //override fun toString() =
-    //    "Board " + fields.joinToString(" ", "[", "]") { column -> column.joinToString(", ", prefix = "[", postfix = "]") { //it.toString() } }
-    //
-    //val line = "-".repeat(PiranhaConstants.BOARD_LENGTH + 2)
-    //fun prettyString(): String {
-    //    val map = Array(PiranhaConstants.BOARD_LENGTH) { StringBuilder("|") }
-    //    fields.forEach {
-    //        it.forEachIndexed { index, field ->
-    //            map[index].append(field.state.asLetter())
-    //        }
-    //    }
-    //    return map.joinToString("\n", line + "\n", "\n" + line) { it.append('|').toString() }
-    //}
+    override fun toString() =
+        "Board " + gameField.withIndex().joinToString(" ", "[", "]") { row ->
+            row.value.withIndex().joinToString(", ", prefix = "[", postfix = "]") {
+                "(${it.index}, ${row.index}) " + it.value.toString()
+            }
+        }
+    
+    val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
+    fun prettyString(): String {
+        val map = StringBuilder(line)
+        gameField.forEach { row ->
+            map.append("\n|")
+            row.forEach { field ->
+                map.append(field.asLetters())
+            }
+        }
+        map.append("\n").append(line)
+        return map.toString()
+    }
     
     override fun clone(): Board =
         Board(gameField.deepCopy())
