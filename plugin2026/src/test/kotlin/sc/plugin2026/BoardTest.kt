@@ -6,7 +6,7 @@ import io.kotest.matchers.*
 class BoardTest: FunSpec({
     context("generation") {
         test("obstacles position") {
-            val board = Board(Board.randomFields(36))
+            val board = Board(Board.randomFields())
             board.fieldsEmpty() shouldBe false
         }
     }
