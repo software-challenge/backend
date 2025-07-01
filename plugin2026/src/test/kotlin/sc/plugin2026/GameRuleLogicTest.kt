@@ -9,6 +9,7 @@ import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.Team
 import sc.plugin2026.util.GameRuleLogic
+import sc.shared.MoveMistake
 
 class GameRuleLogicTest: FunSpec({
     context("swarm size") {
@@ -30,7 +31,7 @@ class GameRuleLogicTest: FunSpec({
             val board = Board(arrayOf(arrayOf(FieldState.ONE_S, FieldState.ONE_L, FieldState.TWO_M, FieldState.ONE_L)))
             GameRuleLogic.isSwarmConnected(board, Team.ONE) shouldBe false
             GameRuleLogic.isSwarmConnected(board, Team.TWO) shouldBe true
-            GameRuleLogic.greatestSwarmSize(board, Team.ONE) shouldBe 4 // FIXME unreliable!
+            GameRuleLogic.greatestSwarmSize(board, Team.ONE) shouldBe 4
             GameRuleLogic.greatestSwarmSize(board, Team.TWO) shouldBe 2
         }
     }
@@ -44,7 +45,10 @@ class GameRuleLogicTest: FunSpec({
             
             board[8, 2] = FieldState.SQUID
             board[7, 3] = FieldState.EMPTY
-            GameRuleLogic.possibleMovesFor(board, Coordinates(9, 1)) shouldHaveSize 3
+            val fish = Coordinates(9, 1)
+            GameRuleLogic.checkMove(board, Move(fish, Direction.UP_RIGHT)) shouldBe MoveMistake.DESTINATION_OUT_OF_BOUNDS
+            GameRuleLogic.checkMove(board, Move(fish, Direction.UP_LEFT)) shouldBe null
+            GameRuleLogic.possibleMovesFor(board, fish) shouldHaveSize 3
         }
     }
 })

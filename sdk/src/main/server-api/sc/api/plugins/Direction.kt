@@ -14,7 +14,7 @@ enum class Direction(val vector: Vector): IVector by vector {
     DOWN(Vector(0, -1)),
     DOWN_LEFT(Vector(-1, -1)),
     LEFT(Vector(-1, 0)),
-    UP_LEFT(Vector(1, -1));
+    UP_LEFT(Vector(-1, 1));
     
     companion object {
         val diagonals = arrayOf(UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT)
