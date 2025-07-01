@@ -3,6 +3,8 @@ package sc.api.plugins
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import kotlin.random.Random
 
+/** Directions for a field of squares.
+ * Coordinates increment upwards. */
 @XStreamAlias(value = "direction")
 enum class Direction(val vector: Vector): IVector by vector {
     UP(Vector(0, 1)),
@@ -23,6 +25,12 @@ enum class Direction(val vector: Vector): IVector by vector {
         get() = Vector(-vector.dx, -vector.dy)
 }
 
+/**
+ * Double-width Directions for a field made of hexagons.
+ * https://www.redblobgames.com/grids/hexagons/#coordinates-doubled
+ *
+ * Coordinates increment downwards.
+ */
 enum class HexDirection(val vector: Vector): IVector by vector {
     RIGHT(Vector(+2, 0)),
     DOWN_RIGHT(Vector(+1, +1)),
