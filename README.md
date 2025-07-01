@@ -6,15 +6,17 @@ ein Programmierwettbewerb für Schüler.
 Dabei wird für ein jährlich wechselndes Spiel eine künstliche Intelligenz entwickelt,
 die sich dann in Duellen gegen andere durchsetzen muss.
 
-Der Code teilt sich auf in Server, Client und Spiel-Plugins.
+Der Code teilt sich auf in gemeinsames SDK, Server, Spieler(vorlage) und Spiel-Plugins.
 
 | Ordner  | Beschreibung                                   |
 |---------|------------------------------------------------|
 | helpers | Zusätzliche Tools (aktuell nur der TestClient) |
-| player  | Spielervorlage des aktuellen Jahres            |
+| player  | Spielervorlage                                 |
 | plugin  | Plugin des aktuellen Jahres                    |
 | server  | Spielserver                                    |
 | sdk     | Projektübergreifend verwendete Klassen         |
+
+Die Struktur der Plugins wird aktuell im Einklang mit der GUI neu strukturiert.
 
 Wir sind immer für Mithilfe dankbar!
 Eine Entwickler-Anleitung findet sich in [CONTRIBUTING](CONTRIBUTING.md).
