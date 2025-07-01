@@ -11,8 +11,10 @@ import io.kotest.matchers.string.*
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Team
 import sc.helpers.shouldSerializeTo
-import sc.helpers.testXStream
+import sc.networking.XStreamProvider
 import sc.plugin2023.util.PenguinConstants
+import sc.plugin2023.util.XStreamClasses
+import sc.protocol.LobbyProtocol
 import sc.y
 
 class BoardTest: FunSpec({
@@ -60,20 +62,23 @@ class BoardTest: FunSpec({
             board.possibleMovesFrom(0 y 0) shouldHaveSize PenguinConstants.BOARD_SIZE - 1
         }
     }
-    xcontext("XML Serialization") {
-        test("empty Board") {
+    val xstream = XStreamProvider.basic()
+    LobbyProtocol.registerAdditionalMessages(xstream, XStreamClasses().classesToRegister)
+    context("XML Serialization") {
+        xtest("empty Board") {
+            // TODO shouldSerializeTo needs to be uncoupled from general testXStream
             Board(arrayOf()) shouldSerializeTo """
               <board/>
             """.trimIndent()
         }
         test("random Board length") {
-            testXStream.toXML(Board()) shouldHaveLineCount 82
+            xstream.toXML(Board()) shouldHaveLineCount 82
         }
         test("Board with content") {
             val fieldTwo = "<field>TWO</field>"
-            testXStream.fromXML(fieldTwo) shouldBe Field(penguin = Team.TWO)
-            testXStream.fromXML("<board><list>$fieldTwo</list>") shouldBe makeSimpleBoard(Field(penguin = Team.TWO))
-            testXStream.toXML(makeBoard(0 y 0 to 1)) shouldContainOnlyOnce fieldTwo
+            xstream.fromXML(fieldTwo) shouldBe Field(penguin = Team.TWO)
+            // testXStream.fromXML("<board><list>$fieldTwo</list>") shouldBe makeSimpleBoard(Field(penguin = Team.TWO))
+            xstream.toXML(makeBoard(0 y 0 to 1)) shouldContainOnlyOnce fieldTwo
         }
     }
 })

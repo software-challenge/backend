@@ -7,15 +7,11 @@ import sc.framework.deepCopy
 import kotlin.random.Random
 import sc.plugin2023.util.PenguinConstants as Constants
 
-/**
- * Klasse welche eine Spielbrett darstellt. Bestehend aus einem
- * zweidimensionalen Array aus Feldern
- *
- * @author soed
- */
+/** Spielbrett aus einem zweidimensionalen Array aus Feldern. */
 @XStreamAlias(value = "board")
-class Board(override val gameField: MutableTwoDBoard<Field> = generateFields()):
-    RectangularBoard<Field>(gameField), IBoard {
+class Board(
+    gameField: MutableTwoDBoard<Field> = generateFields()
+): RectangularBoard<Field>(gameField), IBoard {
     
     constructor(board: Board): this(board.gameField.deepCopy())
     
