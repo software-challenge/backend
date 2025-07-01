@@ -6,10 +6,13 @@ import sc.framework.deepCopy
 import sc.plugin2026.util.PiranhaConstants
 import kotlin.random.Random
 
+val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
+
 /** Spielbrett für Piranhas mit [PiranhaConstants.BOARD_LENGTH]² Feldern.  */
 @XStreamAlias(value = "board")
-class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
-    RectangularBoard<FieldState>(gameField), IBoard {
+class Board(
+    gameField: MutableTwoDBoard<FieldState> = randomFields()
+): RectangularBoard<FieldState>(gameField), IBoard {
     
     override fun toString() =
         "Board " + gameField.withIndex().joinToString(" ", "[", "]") { row ->
@@ -18,7 +21,6 @@ class Board(gameField: MutableTwoDBoard<FieldState> = randomFields()):
             }
         }
     
-    val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
     fun prettyString(): String {
         val map = StringBuilder(line)
         gameField.forEach { row ->

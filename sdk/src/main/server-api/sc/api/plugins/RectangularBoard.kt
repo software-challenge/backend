@@ -14,7 +14,8 @@ typealias MutableTwoDBoard<FIELD> = Array<Array<FIELD>>
  * Intern repräsentiert durch eine Liste an Zeilen.
  */
 open class RectangularBoard<FIELD: IField>(
-        @XStreamImplicit protected open val gameField: TwoDBoard<FIELD>
+        @XStreamImplicit(itemFieldName = "row")
+        protected open val gameField: TwoDBoard<FIELD>
 ): FieldMap<FIELD>() {
     
     override val size: Int

@@ -1,9 +1,11 @@
 package sc.plugin2026
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IField
 import sc.api.plugins.Team
 import sc.framework.DeepCloneable
 
+@XStreamAlias("field")
 enum class FieldState(val size: Int): IField, DeepCloneable<FieldState> {
     ONE_S(1),
     ONE_M(2),

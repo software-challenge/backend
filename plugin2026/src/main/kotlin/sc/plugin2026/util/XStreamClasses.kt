@@ -7,6 +7,11 @@ class XStreamClasses: XStreamProvider {
     
     override val classesToRegister: List<Class<*>> =
         listOf(
+            GameState::class.java,
+            Board::class.java,
+            FieldState::class.java,
+            Move::class.java,
+            PiranhaMoveMistake::class.java,
         )
     
 }

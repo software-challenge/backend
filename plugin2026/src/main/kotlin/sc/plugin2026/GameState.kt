@@ -26,12 +26,12 @@ import sc.shared.WinReasonTie
  */
 @XStreamAlias(value = "state")
 data class GameState @JvmOverloads constructor(
-    /** Das aktuelle Spielfeld. */
-    override val board: Board = Board(),
     /** Die Anzahl an bereits getätigten Zügen. */
     @XStreamAsAttribute override var turn: Int = 0,
     /** Der zuletzt gespielte Zug. */
     override var lastMove: Move? = null,
+    /** Das aktuelle Spielfeld. */
+    override val board: Board = Board(),
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
     override fun getPointsForTeam(team: ITeam): IntArray =
