@@ -1,9 +1,9 @@
 #!/bin/bash
-shopt -s lastpipe
+# shopt -s lastpipe
 
 scopes_file=".dev/scopes.txt"
-test -r $scopes_file &&
-  scopes="($(cat "$scopes_file" | sed '/^\(#.*\|\)$/d' | sed ':a;N;s/\n/|/g;ta'))"
+test -r "$scopes_file" &&
+  scopes="($(grep -vE '^\s*(#|$)' "$scopes_file" | paste -sd '|' - ))"
 
 head -1 "$1" | grep -Eq "^(fix|feat|enhance|docs|style|refactor|test|build|rework|release|revert)(\(${scopes:-.*}(/.+)?\))?: [A-Za-z]"
 result=$?
