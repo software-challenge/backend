@@ -1,6 +1,7 @@
 package sc.protocol
 
 import com.thoughtworks.xstream.XStream
+import sc.api.plugins.Direction
 import sc.api.plugins.Team
 import sc.protocol.requests.*
 import sc.protocol.responses.*
@@ -55,7 +56,9 @@ object LobbyProtocol {
                 ScoreDefinition::class.java,
                 ScoreFragment::class.java,
                 SlotDescriptor::class.java,
-        ))
+            
+                Direction::class.java,
+            ))
         
         return xStream
     }
