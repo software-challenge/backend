@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # This hook adds guidance about the commit message format
-# on top of the default commit message.
+# on top of the default commit message hints.
 #
 # Called by "git commit" with the name of the file that has the commit message,
 # followed by the description of the commit message's source.
@@ -14,8 +14,9 @@ COMMIT_SOURCE=$2
 SHA1=$3
 
 scopes_file=".dev/scopes.txt"
-test -r $scopes_file &&
-  scopes="$(cat "$scopes_file" | sed '/^\(#.*\|\)$/d' | sed ':a;N;s/\n/, /g;ta')"
+# Join scopes to regex, skipping empty and commented lines
+test -r "$scopes_file" &&
+  scopes="($(grep -vE '^\s*(#|$)' "$scopes_file" | paste -sd '|' - ))"
 
 beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
 
@@ -36,16 +37,22 @@ then
   {
     # Infer type & scope from changed files
     expr "$path" : ".dev" >/dev/null &&
-      printf "feat(dev): "
+      ( git config list --local | grep -q kull &&
+        printf "feat(dev): " ||
+        printf "build: "; )
     # Example for gradle projects
     expr "$path" : "gradle" \| "$path" : "build" >/dev/null &&
       printf "build(gradle): "
 
-    printf "\n\n# Please enter the message in the format\n"
-    echo "# <type>(<scope>): <description>"
-    echo "# Possible types: fix, feat, enhance, docs, style, refactor, test, build"
-    test -n "$scopes" && echo "# Allowed scopes: $scopes"
-    echo "# For details see https://www.notion.so/softwarechallenge/Git-217333329ea64db5b2cc8bbbaf79db87"
-    echo "$original"
+  echo "
+# Please enter the message in the format:
+#   <type>(<scope>): <description>
+# Types:
+# - production code: fix, feat, enhance, refactor, style
+# - auxiliaries:     docs, test, build
+${scopes:+# Allowed scopes: $scopes}
+# For details see https://kull.jfischer.org
+$original
+"
   } > "$COMMIT_MSG_FILE"
 fi

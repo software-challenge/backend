@@ -1,14 +1,17 @@
 #!/bin/bash
-# shopt -s lastpipe
+msg="$(head -1 "$1")"
+# Let git handle an empty commit message
+case "$msg" in (""|\#*) exit 0;; esac
 
 scopes_file=".dev/scopes.txt"
+# Join scopes to regex, skipping empty and commented lines
 test -r "$scopes_file" &&
   scopes="($(grep -vE '^\s*(#|$)' "$scopes_file" | paste -sd '|' - ))"
 
-head -1 "$1" | grep -Eq "^(fix|feat|enhance|docs|style|refactor|test|build|rework|release|revert)(\(${scopes:-.*}(/.+)?\))?: [A-Za-z]"
+echo "$msg" | grep -Eq "^(fix|feat|enhance|docs|style|refactor|test|build|rework|release|revert)(\(${scopes:-.*}(/.+)?\))?: [A-Za-z]"
 result=$?
 if test $result -ne 0
-then printf "Invalid commit message: '$(head -1 "$1")'
-Please check the guidelines at http://karma-runner.github.io/6.2/dev/git-commit-msg.html$(test -n "$scopes" && echo " with the scope one of $scopes as defined in $scopes_file")" >&2
+then printf "Invalid commit message: '$msg'
+Please check the guidelines at https://karma-runner.github.io/6.4/dev/git-commit-msg.html$(test -n "$scopes" && echo " with the scope one of $scopes as defined in $scopes_file")" >&2
 fi
 exit $result
