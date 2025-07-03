@@ -33,8 +33,10 @@ class Board(
         return map.toString()
     }
     
-    override fun clone(): Board =
-        Board(gameField.deepCopy())
+    override fun clone(): Board {
+        println(gameField::class.java)
+        return Board(gameField.deepCopy())
+    }
     
     fun getTeam(pos: Coordinates): Team? =
         this[pos].team
