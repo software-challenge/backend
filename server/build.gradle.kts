@@ -61,9 +61,20 @@ tasks {
             if(project.property("enableTestClient") !in arrayOf(null, false))
                 from(project(":test-client").getTasksByName("copyLogbackConfig", false))
             from(project(":player").getTasksByName("shadowJar", false))
-            exec {
-                commandLine("git", "describe", "--long", "--tags")
-                standardOutput = runnableDir.resolve("version").outputStream()
+            
+            val versionFile = runnableDir.resolve("version")
+            try {
+                exec {
+                    commandLine("git", "describe", "--long", "--tags")
+                    standardOutput = versionFile.outputStream()
+                }
+            } catch(e: Exception) {
+                println("Issue with git describe for version detection, falling back to rev-parse: $e")
+                println(versionFile.readText())
+                exec {
+                    commandLine("git", "rev-parse", "HEAD")
+                    standardOutput = versionFile.outputStream()
+                }
             }
         }
     }
