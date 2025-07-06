@@ -5,6 +5,7 @@ import io.kotest.inspectors.forAll
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.ints.*
+import io.kotest.matchers.maps.*
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.Team
@@ -31,6 +32,7 @@ class GameRuleLogicTest: FunSpec({
             val board = Board(arrayOf(arrayOf(FieldState.ONE_S, FieldState.ONE_L, FieldState.TWO_M, FieldState.ONE_L)))
             GameRuleLogic.isSwarmConnected(board, Team.ONE) shouldBe false
             GameRuleLogic.isSwarmConnected(board, Team.TWO) shouldBe true
+            GameRuleLogic.greatestSwarm(board.fieldsForTeam(Team.ONE))?.shouldHaveSize(2)
             GameRuleLogic.greatestSwarmSize(board, Team.ONE) shouldBe 4
             GameRuleLogic.greatestSwarmSize(board, Team.TWO) shouldBe 2
         }

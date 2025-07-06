@@ -89,13 +89,15 @@ object GameRuleLogic {
             .map { direction -> Move(pos, direction)}
             .filter { move -> checkMove(board, move) == null }
     
-    private fun getDirectNeighbour(f: Coordinates, parentSet: Set<Coordinates>): Set<Coordinates> {
-        val returnSet: MutableSet<Coordinates> = HashSet()
+    private fun getDirectNeighbour(f: Coordinates, parentSet: Collection<Coordinates>): Collection<Coordinates> {
+        val returnSet = ArrayList<Coordinates>(8)
         for(i in -1..1) {
             for(j in -1..1) {
                 val x = f.x + i
                 val y = f.y + j
-                if(x < 0 || x >= PiranhaConstants.BOARD_LENGTH || y < 0 || y >= PiranhaConstants.BOARD_LENGTH || (i == 0 && j == 0)) continue
+                if(x < 0 || x >= PiranhaConstants.BOARD_LENGTH ||
+                   y < 0 || y >= PiranhaConstants.BOARD_LENGTH ||
+                   (i == 0 && j == 0)) continue
                 
                 val coord = Coordinates(x, y)
                 if(parentSet.contains(coord)) {
@@ -108,7 +110,7 @@ object GameRuleLogic {
     
     /** Called with a single fish in [swarm] and the [looseFishes] left,
      * recursively calling with neighbors added to [swarm] to find the whole swarm. */
-    private fun getSwarm(looseFishes: Set<Coordinates>, swarm: List<Coordinates>): List<Coordinates> {
+    private fun getSwarm(looseFishes: Collection<Coordinates>, swarm: List<Coordinates>): List<Coordinates> {
         val swarmNeighbours =
             swarm.flatMap { getDirectNeighbour(it, looseFishes) }
         
@@ -127,11 +129,15 @@ object GameRuleLogic {
         var maxSwarm: Map<Coordinates, Int>? = null
         
         // this is a maximum of MAX_FISH iterations, so it is a linear iteration altogether
-        while(!fieldsLeft.isEmpty() && fieldsLeft.size > maxSize) {
-            val swarmCoords = getSwarm(fieldsToCheck.keys, listOf(fieldsLeft.removeLast()))
+        while(!fieldsLeft.isEmpty() && fieldsLeft.size * 3 > maxSize) {
+            val swarmStart = listOf(fieldsLeft.removeLast())
+            //println("$swarmStart - $fieldsLeft")
+            val swarmCoords = getSwarm(fieldsLeft, swarmStart)
+            
             fieldsLeft.removeAll(swarmCoords)
             val swarm = fieldsToCheck.filterKeys { swarmCoords.contains(it) }
             val swarmSize = swarm.values.sum()
+            //println("$swarmCoords - $swarm - $swarmSize")
             if(maxSize < swarmSize) {
                 maxSwarm = swarm
                 maxSize = swarmSize
