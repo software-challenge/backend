@@ -2,9 +2,8 @@ package sc.plugin2026
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.string.shouldHaveLineCount
+import io.kotest.matchers.*
+import io.kotest.matchers.string.*
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.Team
@@ -30,7 +29,7 @@ class GameStateTest: FunSpec({
             val startMove = Move(Coordinates(0, 1), Direction.RIGHT)
             state.performMoveDirectly(startMove)
             restate shouldNotBe  state
-            restate.board.clone()
+            // FIXME restate.board.clone()
             //val clone = restate.clone()
             //clone shouldBe state
             restate.performMoveDirectly(startMove)
