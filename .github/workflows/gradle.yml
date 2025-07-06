@@ -27,7 +27,7 @@ jobs:
     - name: List Files
       run: find -maxdepth 1 -type d
     - name: Execute tests
-      run: ./gradlew check --debug || (exitcode=$?; find build/tests -name '*.log' -type f | while read f; do echo -e "\033[4m$f\033[0m"; cat $f; done && return $exitcode)
+      run: ./gradlew clean check || ( exitcode=$?; find build/tests -name '*.log' -type f | while read f; do echo -e "\033[4m$f\033[0m"; cat $f; done && exit $exitcode; )
     - name: Bundle Artifacts
       run: ./gradlew bundle
     - name: Upload Artifacts
