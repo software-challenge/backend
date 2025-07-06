@@ -13,14 +13,15 @@ jobs:
     - name: Set up JDK ${{ matrix.jdk }}
       uses: actions/setup-java@v4
       with:
-        distribution: 'zulu'
+        distribution: 'temurin'
         java-version: ${{ matrix.jdk }}
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.gradle/caches
-        key: ${{ matrix.os }}-gradle-jdk${{ matrix.jdk }}-${{ hashFiles('**/*.gradle.kts') }}
-        restore-keys: ${{ matrix.os }}-gradle-jdk${{ matrix.jdk }}
+        cache: 'gradle'
+    #- name: Cache Gradle packages
+    #  uses: actions/cache@v4
+    #  with:
+    #    path: [~/.gradle/caches, ~/.gradle/wrapper]
+    #    key: ${{ matrix.os }}-gradle-jdk${{ matrix.jdk }}-${{ hashFiles('**/*.gradle.kts') }}
+    #    restore-keys: ${{ matrix.os }}-gradle-jdk${{ matrix.jdk }}
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Execute tests
