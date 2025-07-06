@@ -35,7 +35,7 @@ object GameRuleLogic {
     }
     
     @JvmStatic
-    fun targetField(board: Board, move: Move): Coordinates =
+    fun targetCoordinates(board: Board, move: Move): Coordinates =
         move.from + move.direction.vector * movementDistance(board, move)
     
     /** Prüft ob ein Zug gültig ist.
