@@ -1,5 +1,6 @@
 # Changelog
-All notable changes to this project are documented in this file.
+All notable changes to this project used to be documented in this file.
+Now the focus is on semantic commit messages.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0),
 
 The `x.y.z` version is tracked in [gradle.properties](./gradle.properties) to enable programmatic updating via the Gradle `release` task.
@@ -9,6 +10,9 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - `y` is bumped for any major updates or backwards-incompatible changes.  
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
+
+
+## 2026 Game Piranhas
 
 ### 25.1.0 Stabilization - 2025-02-10
 - Unshuffle second HuI Salad
