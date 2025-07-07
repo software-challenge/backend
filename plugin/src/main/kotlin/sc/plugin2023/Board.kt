@@ -1,8 +1,8 @@
 package sc.plugin2023
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
-import sc.api.plugins.Coordinates
 import sc.framework.deepCopy
 import kotlin.random.Random
 import sc.plugin2023.util.PenguinConstants as Constants
@@ -10,8 +10,9 @@ import sc.plugin2023.util.PenguinConstants as Constants
 /** Spielbrett aus einem zweidimensionalen Array aus Feldern. */
 @XStreamAlias(value = "board")
 class Board(
-    gameField: MutableTwoDBoard<Field> = generateFields()
-): RectangularBoard<Field>(gameField), IBoard {
+    @XStreamImplicit(itemFieldName = "row")
+    override val gameField: MutableTwoDBoard<Field> = generateFields()
+): RectangularBoard<Field>(), IBoard {
     
     constructor(board: Board): this(board.gameField.deepCopy())
     

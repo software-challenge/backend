@@ -1,7 +1,5 @@
 package sc.api.plugins
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit
-
 /** Eine zweidimensionale Anordnung von Feldern, eine Liste von Zeilen. */
 typealias TwoDBoard<FIELD> = Array<Array<FIELD>>
 
@@ -13,10 +11,8 @@ typealias MutableTwoDBoard<FIELD> = Array<Array<FIELD>>
  * Ein rechteckiges Spielfeld aus Feldern.
  * Intern repräsentiert durch eine Liste an Zeilen.
  */
-open class RectangularBoard<FIELD: IField>(
-        @XStreamImplicit(itemFieldName = "row")
-        protected open val gameField: TwoDBoard<FIELD>
-): FieldMap<FIELD>() {
+abstract class RectangularBoard<FIELD: IField>: FieldMap<FIELD>() {
+    protected abstract val gameField: TwoDBoard<FIELD>
     
     override val size: Int
         get() = gameField.size * columnCount
@@ -98,12 +94,16 @@ open class RectangularBoard<FIELD: IField>(
             val field = RectangularBoard::class.java.getDeclaredField("gameField")
             field.isAccessible = true
             field.set(this, ArrayList<MutableList<FIELD>>())
+            //println("Created empty gameField")
         }
         return this
     }
     
-    override fun equals(other: Any?) =
-            other is RectangularBoard<*> && gameField.contentDeepEquals(other.gameField)
+    override fun equals(other: Any?): Boolean {
+        //println("Comparing ${other?.toString()}")
+        return other is RectangularBoard<*> && gameField.contentDeepEquals(other.gameField)
+    }
     
-    override fun hashCode(): Int = gameField.contentDeepHashCode()
+    override fun hashCode(): Int =
+        gameField.contentDeepHashCode()
 }

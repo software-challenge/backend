@@ -1,6 +1,7 @@
 package sc.plugin2026
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import sc.api.plugins.*
 import sc.framework.deepCopy
 import sc.plugin2026.util.PiranhaConstants
@@ -11,8 +12,9 @@ val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
 /** Spielbrett für Piranhas mit [PiranhaConstants.BOARD_LENGTH]² Feldern.  */
 @XStreamAlias(value = "board")
 class Board(
-    gameField: MutableTwoDBoard<FieldState> = randomFields()
-): RectangularBoard<FieldState>(gameField), IBoard {
+    @XStreamImplicit(itemFieldName = "row")
+    override val gameField: MutableTwoDBoard<FieldState> = randomFields()
+): RectangularBoard<FieldState>(), IBoard {
     
     override fun toString() =
         "Board " + gameField.withIndex().joinToString(" ", "[", "]") { row ->
@@ -34,7 +36,7 @@ class Board(
     }
     
     override fun clone(): Board {
-        println(gameField::class.java)
+        //println("Cloning with ${gameField::class.java}: $this")
         return Board(gameField.deepCopy())
     }
     
