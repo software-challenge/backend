@@ -11,7 +11,8 @@ import sc.shared.IMoveMistake
 import sc.shared.MoveMistake
 
 object GameRuleLogic {
-    /** Anzahl der Fische in der Bewegungsachse des Zuges. */
+    /** Anzahl der Fische in der Bewegungsachse des Zuges.
+     * @return wie viele Felder weit der Zug sein sollte */
     @JvmStatic
     fun movementDistance(board: Board, move: Move): Int {
         var count = 1
@@ -34,11 +35,12 @@ object GameRuleLogic {
         return count
     }
     
+    /** Berechnet die Zielkoordinaten des Zuges. */
     @JvmStatic
     fun targetCoordinates(board: Board, move: Move): Coordinates =
-        move.from + move.direction.vector * movementDistance(board, move)
+        move.from + move.direction * movementDistance(board, move)
     
-    /** Prüft ob ein Zug gültig ist.
+    /** Prüft, ob ein Zug gültig ist.
      * @team null wenn der Zug valide ist, sonst ein entsprechender [IMoveMistake]. */
     @JvmStatic
     fun checkMove(board: Board, move: Move): IMoveMistake? {
@@ -72,6 +74,7 @@ object GameRuleLogic {
         }
     }
     
+    /** Valide Züge des Fisches auf dem Startfeld [pos]. */
     @JvmStatic
     fun possibleMovesFor(board: Board, pos: Coordinates): Collection<Move> {
         val moves: MutableList<Move> = ArrayList()
@@ -89,12 +92,13 @@ object GameRuleLogic {
             .map { direction -> Move(pos, direction)}
             .filter { move -> checkMove(board, move) == null }
     
-    private fun selectNeighbors(f: Coordinates, parentSet: Collection<Coordinates>): Collection<Coordinates> {
+    /** @return the [Coordinates] from [parentSet] which are neighbors of [pos] */
+    private fun selectNeighbors(pos: Coordinates, parentSet: Collection<Coordinates>): Collection<Coordinates> {
         val returnSet = ArrayList<Coordinates>(8)
         for(i in -1..1) {
             for(j in -1..1) {
-                val x = f.x + i
-                val y = f.y + j
+                val x = pos.x + i
+                val y = pos.y + j
                 if(x < 0 || x >= PiranhaConstants.BOARD_LENGTH ||
                    y < 0 || y >= PiranhaConstants.BOARD_LENGTH ||
                    (i == 0 && j == 0)) continue
@@ -109,7 +113,7 @@ object GameRuleLogic {
     }
     
     /** Called with a single fish in [swarm] and the [looseFishes] left,
-     * recursively calling with neighbors added to [swarm] to find the whole swarm. */
+     * recursively calling with neighbors added to [swarm] to find a whole swarm. */
     private fun getSwarm(looseFishes: Collection<Coordinates>, swarm: List<Coordinates>): List<Coordinates> {
         val swarmNeighbors =
             swarm.flatMap { selectNeighbors(it, looseFishes) }
@@ -121,6 +125,7 @@ object GameRuleLogic {
         return swarm
     }
     
+    /** Finds the most weighty swarm among a set of positions with weights. */
     @JvmStatic
     fun greatestSwarm(fieldsToCheck: Map<Coordinates, Int>): Map<Coordinates, Int>? {
         // Make a copy, so there will be no conflict with direct calls.
@@ -146,14 +151,17 @@ object GameRuleLogic {
         return maxSwarm
     }
     
+    /** @return Größe des schwersten Schwarms innerhalb der gegebenen Felder */
     @JvmStatic
     fun greatestSwarmSize(fields: Map<Coordinates, Int>): Int =
         greatestSwarm(fields)?.values?.sum() ?: -1
     
+    /** @return Größe des schwersten Schwarms von [team] */
     @JvmStatic
     fun greatestSwarmSize(board: Board, team: ITeam): Int =
         greatestSwarmSize(board.fieldsForTeam(team))
     
+    /** @return ob alle Fische des Teams zusammenhängend sind */
     @JvmStatic
     fun isSwarmConnected(board: Board, team: ITeam): Boolean {
         val fieldsWithFish = board.fieldsForTeam(team)
