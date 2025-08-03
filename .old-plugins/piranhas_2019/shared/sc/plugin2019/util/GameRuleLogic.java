@@ -97,7 +97,7 @@ public class GameRuleLogic {
     return fields;
   }
 
-  private static Set<Field> getDirectNeighbour(Board board, Field f, Set<Field> parentSet) {
+  private static Set<Field> getDirectNeighbor(Board board, Field f, Set<Field> parentSet) {
     Set<Field> returnSet = new HashSet<>();
     for (int i = -1; i <= 1; i++) {
       for (int j = -1; j <= 1; j++) {
@@ -125,8 +125,8 @@ public class GameRuleLogic {
     // O(swarm.size()) time
     for (Field field : swarm) {
       // Constant time for both calls (max of 8 neighbors)
-      Set<Field> neighbours = getDirectNeighbour(board, field, found);
-      tmpSwarm.addAll(neighbours);
+      Set<Field> neighbors = getDirectNeighbor(board, field, found);
+      tmpSwarm.addAll(neighbors);
     }
 
     // O(found.size()*swarm.size()) time

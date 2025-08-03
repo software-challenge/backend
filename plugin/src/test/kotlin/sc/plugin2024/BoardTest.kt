@@ -109,7 +109,7 @@ class BoardTest: FunSpec({
     }
     
     context("pickupPassenger") {
-        test("should decrease passenger count of the neighbouring field and increase passenger count of the ship") {
+        test("should decrease passenger count of the neighboring field and increase passenger count of the ship") {
             val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))
             val nextPassengerField = board.findNearestFieldTypes(CubeCoordinates(0, 0), Field.PASSENGER::class).first()
             ship.position = nextPassengerField + (board[nextPassengerField] as Field.PASSENGER).direction.vector
@@ -127,7 +127,7 @@ class BoardTest: FunSpec({
                     .filterIsInstance<Field.PASSENGER>().first().passenger shouldBe initialFieldPassengers - 1
         }
         
-        test("should return false and not change passenger count when no neighbouring passenger fields") {
+        test("should return false and not change passenger count when no neighboring passenger fields") {
             val ship = Ship(team = Team.ONE, position = CubeCoordinates(0, 0))
             
             val initialShipPassengers = ship.passengers

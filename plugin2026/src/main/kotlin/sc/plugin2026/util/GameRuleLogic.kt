@@ -89,7 +89,7 @@ object GameRuleLogic {
             .map { direction -> Move(pos, direction)}
             .filter { move -> checkMove(board, move) == null }
     
-    private fun getDirectNeighbour(f: Coordinates, parentSet: Collection<Coordinates>): Collection<Coordinates> {
+    private fun selectNeighbors(f: Coordinates, parentSet: Collection<Coordinates>): Collection<Coordinates> {
         val returnSet = ArrayList<Coordinates>(8)
         for(i in -1..1) {
             for(j in -1..1) {
@@ -111,12 +111,12 @@ object GameRuleLogic {
     /** Called with a single fish in [swarm] and the [looseFishes] left,
      * recursively calling with neighbors added to [swarm] to find the whole swarm. */
     private fun getSwarm(looseFishes: Collection<Coordinates>, swarm: List<Coordinates>): List<Coordinates> {
-        val swarmNeighbours =
-            swarm.flatMap { getDirectNeighbour(it, looseFishes) }
+        val swarmNeighbors =
+            swarm.flatMap { selectNeighbors(it, looseFishes) }
         
         // only search on if any neighbors were added
-        if(swarmNeighbours.isNotEmpty()) {
-            return getSwarm(looseFishes - swarmNeighbours, swarm + swarmNeighbours)
+        if(swarmNeighbors.isNotEmpty()) {
+            return getSwarm(looseFishes - swarmNeighbors, swarm + swarmNeighbors)
         }
         return swarm
     }

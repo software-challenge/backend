@@ -69,7 +69,7 @@ class GameState @JvmOverloads constructor(
     }
     
     override fun getPointsForPlayer(playerColor: PlayerColor): Int {
-        return GameRuleLogic.freeBeeNeighbours(this.board, playerColor)
+        return GameRuleLogic.freeBeeNeighbors(this.board, playerColor)
     }
     
     fun getPlayerStats(p: Player): IntArray {

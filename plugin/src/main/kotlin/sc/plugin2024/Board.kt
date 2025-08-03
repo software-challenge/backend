@@ -182,14 +182,14 @@ data class Board(
      */
     fun findNearestFieldTypes(startCoordinates: CubeCoordinates, field: KClass<out Field>): List<CubeCoordinates> {
         val visitedCoordinates = mutableSetOf<CubeCoordinates>()
-        val neighbourCoordinatesQueue = ArrayDeque<CubeCoordinates>()
+        val neighborCoordinatesQueue = ArrayDeque<CubeCoordinates>()
         val nearestFieldCoordinates: MutableList<CubeCoordinates> = mutableListOf()
         
         /** Prüft das [Field] an den angegebenen [CubeCoordinates] und fügt es ggf. der [ArrayDeque] hinzu. */
         fun checkFieldAndAddToQueue(coordinates: CubeCoordinates) {
-            val neighbourField = this[coordinates]
-            if(neighbourField != null && !visitedCoordinates.contains(coordinates) && !neighbourCoordinatesQueue.contains(coordinates)) {
-                neighbourCoordinatesQueue.add(coordinates)
+            val neighborField = this[coordinates]
+            if(neighborField != null && !visitedCoordinates.contains(coordinates) && !neighborCoordinatesQueue.contains(coordinates)) {
+                neighborCoordinatesQueue.add(coordinates)
             }
         }
         
@@ -197,8 +197,8 @@ data class Board(
             checkFieldAndAddToQueue(startCoordinates + direction.vector)
         }
         
-        while(neighbourCoordinatesQueue.isNotEmpty()) {
-            val currentCoordinates = neighbourCoordinatesQueue.removeFirst()
+        while(neighborCoordinatesQueue.isNotEmpty()) {
+            val currentCoordinates = neighborCoordinatesQueue.removeFirst()
             
             if(nearestFieldCoordinates.isNotEmpty() && startCoordinates.distanceTo(currentCoordinates) > startCoordinates.distanceTo(nearestFieldCoordinates.last()))
                 break
