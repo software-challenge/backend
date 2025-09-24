@@ -26,7 +26,7 @@ configurations.archives.get().artifacts.removeIf { it.name == "testConfig" }
 
 dependencies {
     api(kotlin("stdlib"))
-    api("com.thoughtworks.xstream", "xstream", "1.4.19") // New security config for 1.4.20
+    api("com.thoughtworks.xstream", "xstream", "1.4.17") // New security config, then 1.4.20
     api("jargs", "jargs", "1.0")
     api("org.slf4j", "slf4j-api", "2.0.9")
     
