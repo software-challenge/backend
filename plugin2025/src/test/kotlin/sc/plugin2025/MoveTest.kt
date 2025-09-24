@@ -208,7 +208,7 @@ class MoveTest: WordSpec({
             state.getSensibleMoves() shouldBe listOf(FallBack, ExchangeCarrots(10))
         }
         
-        "produce concicse XML" {
+        "produce concise XML" {
             ExchangeCarrots(-10) shouldSerializeTo "<exchangecarrots amount=\"-10\"/>"
         }
     }

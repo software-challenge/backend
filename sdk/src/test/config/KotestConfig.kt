@@ -5,7 +5,6 @@ import io.kotest.core.spec.IsolationMode
 import io.kotest.core.test.TestCaseOrder
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalTime::class)
 object KotestConfig: AbstractProjectConfig() {
     override val parallelism = Runtime.getRuntime().availableProcessors()
     

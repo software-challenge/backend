@@ -306,6 +306,11 @@ allprojects {
                 dependsOn(classes)
                 outputDirectory = buildDir.resolve("doc").toString()
                 outputFormat = "javadoc"
+                configuration {
+                    reportUndocumented = false
+                    moduleName = "Software-Challenge ${project.name} $version"
+                    jdkVersion = 8
+                }
             }
             val docJar by creating(Jar::class) {
                 group = "build"
