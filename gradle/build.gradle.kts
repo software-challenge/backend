@@ -1,7 +1,6 @@
 import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import sc.gradle.ScriptsTask
 import java.nio.file.Files
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
@@ -10,7 +9,6 @@ plugins {
     maven
     kotlin("jvm") version "1.6.21"
     id("org.jetbrains.dokka") version "0.10.1"
-    id("scripts-task")
     id("idea")
     
     id("com.github.ben-manes.versions") version "0.42.0" // only upgrade with Gradle 7: https://github.com/ben-manes/gradle-versions-plugin/issues/778
@@ -165,7 +163,7 @@ tasks {
             val thread = Thread {
                 try {
                     Thread.sleep(maxGameLength * 1000)
-                } catch (e: InterruptedException) {
+                } catch(_: InterruptedException) {
                     return@Thread
                 }
                 timeout.set(true)
@@ -214,15 +212,17 @@ tasks {
             val serverDir = testingDir.resolve("testclient")
             serverDir.deleteRecursively()
             unzipTo(serverDir, bundleDir.resolve("software-challenge-server.zip"))
-    
-            val command = (project(":test-client").getTasksByName("createStartScripts", false).single() as ScriptsTask).content.split(' ') +
-                          arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
+            
+            val command = mutableListOf("java").apply {
+                addAll((project(":test-client").getTasksByName("createStartScripts", false).single() as CreateStartScripts).defaultJvmOpts!!)
+                addAll(arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055"))
+            }
             println("Testing TestClient with $command")
             val testClient = ProcessBuilder(command).directory(serverDir).start()
-            if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
+            if(testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
                 // TODO check whether TestClient actually played games
-                if (value == 0)
+                if(value == 0)
                     println("TestClient successfully tested!")
                 else
                     throw Exception("TestClient exited with exit code $value - check the logs under $serverDir!")
