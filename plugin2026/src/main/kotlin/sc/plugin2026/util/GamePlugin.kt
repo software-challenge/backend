@@ -11,7 +11,7 @@ import sc.shared.*
 
 @XStreamAlias(value = "winreason")
 enum class PiranhasWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
-    BIGGER_SWARM("%s hat den groesseren zusammenhaengenden Schwarm"),
+    BIGGER_SWARM("%s hat den größeren zusammenhängenden Schwarm"),
     FIRST_UNION("%s hat zuerst alle Fische einer Farbe vereinigt"),
 }
 
