@@ -115,12 +115,15 @@ public class TestClient extends XStreamClient {
         exit(2);
       }
     }
+	  
+	// TODO also try neighboring files, currently only pwd
 
     boolean noTimeout = (boolean) parser.getOptionValue(noTimeoutOption, false);
     for (int i = 0; i < 2; i++) {
       players[i].canTimeout = !(noTimeout || (boolean) parser.getOptionValue(noTimeoutOptions[i], false));
       players[i].name = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
-      players[i].executable = new File((String) parser.getOptionValue(execOptions[i], "defaultplayer.jar"));
+	  String playerFile = (String) parser.getOptionValue(execOptions[i], null);
+      players[i].executable = playerFile == null ? findInClasspath(new File("defaultplayer.jar")) : new File(playerFile);
       players[i].isJar = Util.isJar(players[i].executable);
     }
     if (players[0].name.equals(players[1].name)) {
@@ -129,21 +132,29 @@ public class TestClient extends XStreamClient {
       players[1].name = players[1].name + "-2";
     }
     logger.info("Players: " + Arrays.toString(players));
-
+	  
+	File stdout = new File(logDir, "server_port" + port + ".log");
+	File stderr = new File(logDir, "server_port" + port + "-err.log");
     try {
       if (startServer) {
-        File serverLocation = findInClasspath((File) parser.getOptionValue(serverLocationOption, new File("server.jar")));
+		String serverFile = (String) parser.getOptionValue(serverLocationOption, null);
+        File serverLocation = serverFile == null ? findInClasspath(new File("server.jar")) : new File(serverFile);
         logger.info("Starting server from {}", serverLocation);
-        ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getPath(), "--port", String.valueOf(port));
+        ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getName(), "--port", String.valueOf(port));
         logDir.mkdirs();
-        File stdout = new File(logDir, "server_port" + port + ".log");
+		builder.directory(serverLocation.getParentFile());
         builder.redirectOutput(stdout);
-        builder.redirectError(new File(logDir, "server_port" + port + "-err.log"));
+        builder.redirectError(stderr);
         Process server = builder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         int i = 0;
-        while(Files.size(stdout.toPath()) < 1000 && i++ < 50)
+        while(server.isAlive() && Files.size(stdout.toPath()) < 1000 && i++ < 50)
           Thread.sleep(300);
+		if(!server.isAlive()) {
+			System.out.println("Server stderr:");
+			System.out.print(new String(Files.readAllBytes(stderr.toPath())));
+			throw new IOException("Server did not start: Exit Code " + server.exitValue());
+		}
         Thread.sleep(300);
       }
       testclient = new TestClient(host, port, numberOfTests);
