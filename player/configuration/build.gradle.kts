@@ -22,6 +22,7 @@ dependencies {
         implementation(fileTree("lib"))
     } else {
         implementation("com.github.software-challenge.backend", "GAME", "VERSION")
+        implementation("ch.qos.logback", "logback-classic", "1.3.15")
     }
 }
 
