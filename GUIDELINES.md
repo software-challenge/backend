@@ -18,6 +18,23 @@ da sie keine Verschachtelung erlaubt.
 Im Server gibt es außerdem noch einige JUnit5-Tests.
 Diese sollten bei größeren Änderungen direkt zum neuen Stil migriert werden.
 
+## Debugging unreliably failing tests
+
+Sometimes, particularly when it comes to networking, a test only fails sporadically.
+To get a proper log, there are multiple approaches:
+
+This runs any test containing the word 'GameState' until it fails:
+
+```bash
+true && while test $? -eq 0; do ./gradlew :plugin:cleanTest :plugin:test --tests '*GameState*'; done
+```
+
+This can be particularly useful for some of our integration tests which are coded directly in gradle.
+
+JUnit: Annotate the test with`@RepeatedTest(100)`
+
+Kotest: https://kotest.io/docs/framework/testcaseconfig.html
+
 ## XStream
 
 All network communication (client-server) is done via XML,
@@ -74,6 +91,7 @@ The information which implementations to use resides in [resources/META-INF/serv
 is the common interface for objects sent via the XML Protocol.
 
 ### [Requests](sdk/src/server-api/sc/protocol/requests)
+
 - are all suffixed with `Request`
 - ask for an action or information  
 - any request that extends [AdminLobbyRequest](sdk/src/server-api/sc/protocol/requests/ILobbyRequest.kt)
