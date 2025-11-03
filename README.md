@@ -8,13 +8,13 @@ die sich dann in Duellen gegen andere durchsetzen muss.
 
 Der Code teilt sich auf in gemeinsames SDK, Server, Spieler(vorlage) und Spiel-Plugins.
 
-| Ordner  | Beschreibung                                   |
-|---------|------------------------------------------------|
-| helpers | Zusätzliche Tools (aktuell nur der TestClient) |
-| player  | Spielervorlage                                 |
-| plugin  | Plugin des aktuellen Jahres                    |
-| server  | Spielserver                                    |
-| sdk     | Projektübergreifend verwendete Klassen         |
+| Ordner  | Beschreibung                                                                     |
+|---------|----------------------------------------------------------------------------------|
+| helpers | Zusätzliche Tools (aktuell nur der TestClient)                                   |
+| player  | Spielervorlage                                                                   |
+| plugin  | Plugin des aktuellen Jahres (Spiel-XML, Tests, ...)                              |
+| server  | Spielserver                                                                      |
+| sdk     | Projektübergreifend verwendete Klassen (XML Networking, Protokoll, Replays, ...) |
 
 Die Struktur der Plugins wird aktuell im Einklang mit der GUI neu strukturiert.
 
