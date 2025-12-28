@@ -15,7 +15,7 @@ object GameRuleLogic {
      * @return wie viele Felder weit der Zug sein sollte */
     @JvmStatic
     fun movementDistance(board: Board, move: Move): Int {
-        var count = 1
+        var count = 0
         var pos = move.from
         while(true) {
             pos += move.direction
@@ -32,6 +32,14 @@ object GameRuleLogic {
                 count++
             }
         }
+        
+        pos = move.from
+        val field = board.getOrNull(pos)
+        if(field?.team != null) {
+            count++
+        }
+        
+        
         return count
     }
     
