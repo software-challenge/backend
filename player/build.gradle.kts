@@ -3,7 +3,8 @@ import java.time.Duration
 
 plugins {
     application
-    id("com.github.johnrengelman.shadow") version "6.1.0" // Update to v8 with Gradle update
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    distribution
 }
 
 val game: String by project
@@ -18,7 +19,7 @@ sourceSets.main {
 }
 
 application {
-    mainClassName = "sc.player.util.Starter"
+    mainClass.set("sc.player.util.Starter")
 }
 
 dependencies {
@@ -37,19 +38,19 @@ tasks {
     
     val copyDocs by creating(Copy::class) {
         dependsOn(":sdk:doc", ":plugin$year:doc")
-        into(buildDir.resolve("zip"))
+        into(layout.buildDirectory.dir("zip").get().asFile)
         with(copySpec {
-            from(project(":plugin$year").buildDir.resolve("doc"))
+            from(project(":plugin$year").layout.buildDirectory.dir("doc").get().asFile)
             into("doc/plugin-$gameName")
         }, copySpec {
-            from(project(":sdk").buildDir.resolve("doc"))
+            from(project(":sdk").layout.buildDirectory.dir("doc").get().asFile)
             into("doc/sdk")
         })
     }
     
     val prepareZip by creating(Copy::class) {
         group = "distribution"
-        into(buildDir.resolve("zip"))
+        into(layout.buildDirectory.dir("zip").get().asFile)
         with(copySpec {
             from("configuration")
             filter {
@@ -81,20 +82,22 @@ tasks {
         mustRunAfter(":server:run")
     }
     
-    val bundleDir: File by project
-    val bundledPlayer: String by project
-    val bundleShadow by creating(Copy::class) {
-        group = "distribution"
-        from(shadowJar)
-        into(bundleDir)
-        rename { bundledPlayer }
-    }
-    val bundle by creating(Zip::class) {
-        group = "distribution"
-        dependsOn(bundleShadow)
-        from(prepareZip, copyDocs)
-        destinationDirectory.set(bundleDir)
-        archiveFileName.set("player-$gameName-src.zip")
+    distributions {
+        main {
+            distributionBaseName.set("player-$gameName-src")
+            contents {
+                from(prepareZip, copyDocs)
+            }
+        }
+        
+        shadow {
+            distributionBaseName.set("player-$gameName")
+            contents {
+                from(shadowJar) {
+                    rename { "randomplayer-$gameName-$version.jar" }
+                }
+            }
+        }
     }
     
     /** Build a player that times out. */

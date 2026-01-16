@@ -6,10 +6,11 @@ import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
-    maven
+    `maven-publish`
     kotlin("jvm") version "1.6.21"
     id("org.jetbrains.dokka") version "0.10.1"
     id("idea")
+    distribution
     
     id("com.github.ben-manes.versions") version "0.42.0" // only upgrade with Gradle 7: https://github.com/ben-manes/gradle-versions-plugin/issues/778
     id("se.patrikerdes.use-latest-versions") version "0.2.18"
@@ -64,12 +65,15 @@ tasks {
         }
     }
     
-    val bundle by creating {
-        dependsOn(doc)
-        dependOnSubprojects()
-        group = "distribution"
-        description = "Zips everything up for release into ${bundleDir.relativeTo(projectDir)}"
-        outputs.dir(bundleDir)
+    distributions {
+        main {
+            distributionBaseName.set("software-challenge-backend")
+            contents {
+                from(doc) {
+                    into("doc")
+                }
+            }
+        }
     }
     
     val release by creating {
@@ -117,14 +121,14 @@ tasks {
         dependOnSubprojects()
     }
     build {
-        dependsOn(bundle)
+        dependsOn(distZip)
     }
     
     // TODO create a global constant which can be shared with testclient & co - maybe a resource?
     val maxGameLength = 150L // 2m30s
     
     val testGame by creating {
-        dependsOn(":server:makeRunnable", ":player:bundleShadow")
+        dependsOn(":server:makeRunnable", ":player:shadowJar")
         group = "verification"
         doFirst {
             val testGameDir = testingDir.resolve("game")
@@ -153,7 +157,7 @@ tasks {
             val startClient: (Int) -> Process = {
                 Thread.sleep(300)
                 ProcessBuilder(
-                    java, "-jar", bundleDir.resolve(bundledPlayer).absolutePath,
+                    java, "-jar", project(":player").tasks.named("shadowJar").get().outputs.files.singleFile.absolutePath,
                     "--port", port
                 ).redirectOutput(testGameDir.resolve("client$it.log")).redirectError(testGameDir.resolve("client$it-err.log")).start()
             }
@@ -203,7 +207,7 @@ tasks {
     }
     
     val testTestClient by creating {
-        dependsOn(":server:bundle")
+        dependsOn(":server:distZip")
         group = "verification"
         shouldRunAfter(testGame)
         val testClientGames = 3
@@ -211,7 +215,7 @@ tasks {
             testingDir.mkdirs()
             val serverDir = testingDir.resolve("testclient")
             serverDir.deleteRecursively()
-            unzipTo(serverDir, bundleDir.resolve("software-challenge-server.zip"))
+            unzipTo(serverDir, project(":server").tasks.named("distZip").get().outputs.files.singleFile)
             
             val command = mutableListOf("java").apply {
                 addAll((project(":test-client").getTasksByName("createStartScripts", false).single() as CreateStartScripts).defaultJvmOpts!!)
@@ -285,7 +289,7 @@ allprojects {
     }
     
     if (this.name in documentedProjects) {
-        apply(plugin = "maven")
+        apply(plugin = "maven-publish")
         apply(plugin = "org.jetbrains.dokka")
         tasks {
             val doc by creating(DokkaTask::class) {
@@ -306,9 +310,7 @@ allprojects {
                 archiveClassifier.set("sources")
                 from(sourceSets.main.get().allSource)
             }
-            install {
-                dependsOn(docJar, sourcesJar)
-            }
+            // Publishing configuration will be added later
             artifacts {
                 archives(sourcesJar.archiveFile) { classifier = "sources" }
                 archives(docJar.archiveFile) { classifier = "javadoc" }

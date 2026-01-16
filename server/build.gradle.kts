@@ -1,5 +1,7 @@
 plugins {
     application
+    // TODO https://github.com/CAU-Kiel-Tech-Inf/backend/issues/265
+    distribution
 }
 
 application {
@@ -21,6 +23,19 @@ dependencies {
 val bundleDir: File by project
 val isBeta: Boolean by project
 
+distributions {
+    main {
+        contents {
+            into('') {
+                from("$buildDir/install/${project.name}") {
+                    include '*.bat', '*'
+                    exclude 'bin/**'
+                }
+            }
+        }
+    }
+}
+
 tasks {
     test {
         systemProperty("junit.jupiter.execution.timeout.default", "10 s") // legacy junit tests
@@ -29,6 +44,7 @@ tasks {
     val runnableDir = buildDir.resolve("runnable")
     
     startScripts {
+        println(executableDir.toString())
         outputDir = runnableDir
         applicationName = "start-server"
         defaultJvmOpts = listOf("-Dfile.encoding=UTF-8", "-Dlogback.configurationFile=logback.xml")
@@ -49,32 +65,37 @@ tasks {
         into(runnableDir.resolve("lib"))
     }
     
-    val bundle by creating(Zip::class) {
-        group = "distribution"
-        dependsOn(":test-client:jar", ":player:shadowJar", makeRunnable)
-        destinationDirectory.set(bundleDir)
-        archiveBaseName.set("software-challenge-server")
-        from(runnableDir)
-        doFirst {
-            if(project.property("enableTestClient") !in arrayOf(null, false))
-                from(project(":test-client").getTasksByName("copyLogbackConfig", false))
-            from(project(":player").getTasksByName("shadowJar", false))
-            
-            val versionFile = runnableDir.resolve("version")
-            try {
-                exec {
-                    commandLine("git", "describe", "--long", "--tags")
-                    standardOutput = versionFile.outputStream()
-                }
-            } catch(e: Exception) {
-                println("Issue with git describe for version detection, falling back to rev-parse: $e")
-                println(versionFile.readText())
-                exec {
-                    commandLine("git", "rev-parse", "HEAD")
-                    standardOutput = versionFile.outputStream()
+    distributions {
+        main {
+            distributionBaseName.set("software-challenge-server")
+            contents {
+                from(runnableDir)
+                doFirst {
+                    if(project.property("enableTestClient") !in arrayOf(null, false))
+                        from(project(":test-client").getTasksByName("copyLogbackConfig", false))
+                    from(project(":player").getTasksByName("shadowJar", false))
+                    
+                    val versionFile = runnableDir.resolve("version")
+                    try {
+                        exec {
+                            commandLine("git", "describe", "--long", "--tags")
+                            standardOutput = versionFile.outputStream()
+                        }
+                    } catch(e: Exception) {
+                        println("Issue with git describe for version detection, falling back to rev-parse: $e")
+                        println(versionFile.readText())
+                        exec {
+                            commandLine("git", "rev-parse", "HEAD")
+                            standardOutput = versionFile.outputStream()
+                        }
+                    }
                 }
             }
         }
+    }
+    
+    distZip {
+        dependsOn(":test-client:jar", ":player:shadowJar", makeRunnable)
     }
     
     val startProduction by creating(JavaExec::class) {
