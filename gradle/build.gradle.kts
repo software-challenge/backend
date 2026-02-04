@@ -260,6 +260,31 @@ tasks {
         if (enableIntegrationTesting)
             dependsOn(integrationTest)
     }
+
+    val verifyDocs by registering {
+        group = "documentation"
+        description = "Verifies generated docs omit Companion classes."
+        dependsOn("doc")
+        doLast {
+            val forbidden = Regex("\\bCompanion\\b")
+            val offending = mutableListOf<String>()
+            documentedProjects.map { project(":$it") }.forEach { target ->
+                val docDir = target.layout.buildDirectory.dir("doc").get().asFile
+                if (!docDir.exists()) return@forEach
+                docDir.walkTopDown()
+                    .filter { it.isFile && (it.extension == "html" || it.extension == "js" || it.name == "package-list" || it.name == "element-list") }
+                    .forEach { file ->
+                        val text = runCatching { file.readText() }.getOrNull() ?: return@forEach
+                        if (forbidden.containsMatchIn(text)) {
+                            offending.add(file.relativeTo(rootProject.projectDir).path)
+                        }
+                    }
+            }
+            if (offending.isNotEmpty()) {
+                throw GradleException("Companion entries found in docs: ${offending.joinToString(", ")}")
+            }
+        }
+    }
 }
 
 // == Cross-project configuration ==
@@ -327,8 +352,8 @@ allprojects {
         }
         dokka {
             dokkaPublications.named("javadoc") {
-                moduleName.set("Software-Challenge ${project.name} $version")
-                moduleVersion.set(version.toString())
+                moduleName.set("Software-Challenge ${project.name} \"$gameName\"")
+                moduleVersion.set(rootProject.version.toString())
                 outputDirectory.set(layout.buildDirectory.dir("doc"))
                 suppressInheritedMembers.set(false)
             }
