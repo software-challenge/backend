@@ -33,6 +33,7 @@ data class Coordinates(
     val neighbors: Collection<Coordinates>
         get() = Direction.cardinals.map { this + it }
     
+    /** @suppress */
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
         val ORIGIN = Coordinates(0, 0)

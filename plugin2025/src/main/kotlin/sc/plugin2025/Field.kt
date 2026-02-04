@@ -27,6 +27,7 @@ enum class Field(val short: String, val unicode: String = short) {
     /** Das Startfeld */
     START("0", "▶");
     
+    /** @suppress */
     companion object {
         val POSITION_3 = CARROTS
         val POSITION_4 = MARKET

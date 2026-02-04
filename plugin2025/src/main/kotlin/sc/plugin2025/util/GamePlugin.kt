@@ -17,6 +17,7 @@ enum class HuIWinReason(override val message: String, override val isRegular: Bo
 }
 
 class GamePlugin: IGamePlugin<Move> {
+    /** @suppress */
     companion object {
         const val PLUGIN_ID = "swc_2025_hase_und_igel"
         val scoreDefinition: ScoreDefinition =

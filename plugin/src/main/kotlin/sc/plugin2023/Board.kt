@@ -66,6 +66,7 @@ class Board(
     
     override fun clone(): Board = Board(this)
     
+    /** @suppress */
     companion object {
         /** Generiert ein neues Spielfeld mit zufällig auf dem Spielbrett verteilten Fischen. */
         private fun generateFields(seed: Int = Random.nextInt()): MutableTwoDBoard<Field> {

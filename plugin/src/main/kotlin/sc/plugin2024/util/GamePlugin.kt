@@ -19,6 +19,7 @@ enum class MQWinReason(override val message: String, override val isRegular: Boo
 }
 
 class GamePlugin: IGamePlugin<Move> {
+    /** @suppress */
     companion object {
         const val PLUGIN_ID = "swc_2024_mississippi_queen"
         val scoreDefinition: ScoreDefinition =

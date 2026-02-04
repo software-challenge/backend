@@ -330,9 +330,11 @@ allprojects {
                 moduleName.set("Software-Challenge ${project.name} $version")
                 moduleVersion.set(version.toString())
                 outputDirectory.set(layout.buildDirectory.dir("doc"))
+                suppressInheritedMembers.set(false)
             }
             dokkaSourceSets.configureEach {
                 reportUndocumented.set(false)
+                suppressGeneratedFiles.set(true)
                 jdkVersion.set(javaTargetVersion.majorVersion.toInt())
             }
         }

@@ -25,6 +25,7 @@ data class Move(
     override fun toString(): String =
             from?.let { "Schlittern $from zu $to" } ?: "Setze Pinguin auf $to"
     
+    /** @suppress */
     companion object {
         @JvmStatic
         fun run(start: Coordinates, delta: Vector): Move =

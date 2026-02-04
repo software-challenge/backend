@@ -22,6 +22,7 @@ data class Board(
         @XStreamAsAttribute
         var nextDirection: CubeDirection = segments.lastOrNull()?.direction ?: CubeDirection.RIGHT,
 ): IBoard {
+    /** @suppress */
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }

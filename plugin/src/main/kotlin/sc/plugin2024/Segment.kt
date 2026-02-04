@@ -90,6 +90,7 @@ data class Segment(
         return result
     }
     
+    /** @suppress */
     companion object {
         fun inDirection(previousCenter: CubeCoordinates, direction: CubeDirection, fields: SegmentFields) =
                 Segment(direction, previousCenter + direction.vector * MQConstants.SEGMENT_FIELDS_WIDTH, fields)

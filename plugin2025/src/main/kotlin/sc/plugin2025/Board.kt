@@ -45,6 +45,7 @@ class Board(
     override fun hashCode(): Int =
         track.contentHashCode()
     
+    /** @suppress */
     companion object {
         
         private fun shuffledFields(vararg fields: Field) = fields.asList().shuffled()

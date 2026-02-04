@@ -108,6 +108,7 @@ class GameState @JvmOverloads constructor(
         return result
     }
     
+    /** @suppress */
     companion object {
         fun parsePiecesString(s: String, p: PlayerColor): ArrayList<Piece> {
             val l = ArrayList<Piece>()

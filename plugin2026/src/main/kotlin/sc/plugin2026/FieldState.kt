@@ -42,6 +42,7 @@ enum class FieldState(val size: Int): IField, DeepCloneable<FieldState> {
             else -> team?.letter.toString() + size.toString()
         }
     
+    /** @suppress */
     companion object {
         fun from(team: Team, size: Int): FieldState =
             when(team) {

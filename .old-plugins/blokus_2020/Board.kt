@@ -106,6 +106,7 @@ data class Board(
     
     fun getFieldsOwnedBy(owner: PlayerColor): List<Field> = fields.filter { it.owner == owner }
     
+    /** @suppress */
     companion object {
         private const val SHIFT = (Constants.BOARD_SIZE - 1) / 2
         

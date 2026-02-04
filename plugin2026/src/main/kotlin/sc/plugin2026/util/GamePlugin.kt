@@ -16,6 +16,7 @@ enum class PiranhasWinReason(override val message: String, override val isRegula
 }
 
 class GamePlugin: IGamePlugin<Move> {
+    /** @suppress */
     companion object {
         const val PLUGIN_ID = "swc_2026_piranhas"
         val scoreDefinition: ScoreDefinition =

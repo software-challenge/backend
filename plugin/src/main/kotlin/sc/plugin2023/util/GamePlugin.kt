@@ -12,6 +12,7 @@ import sc.shared.ScoreFragment
 import sc.shared.WinReason
 
 class GamePlugin: IGamePlugin<Move> {
+    /** @suppress */
     companion object {
         const val PLUGIN_ID = "swc_2023_penguins"
         val scoreDefinition: ScoreDefinition =
