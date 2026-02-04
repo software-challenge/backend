@@ -4,15 +4,11 @@ This document captures development standards and architecture decisions of this 
 
 ## Gradle
 
-We build everything with gradle, nesting projects if needed.
-Currently we have some pending updates, due to the following incompatibilities:
+We build everything with Gradle, nesting projects if needed.
+Current toolchain: Gradle 9.3, Java 25 toolchain (bytecode target 8), Kotlin 2.3, Dokka 2.1.
 
-- The new johnrengelman.shadow plugin version needs Gradle 7
-- The current Dokka version can neither handle Gradle 7 nor Kotlin 1.5.30+ nor Java beyond version 8
-
-The bottleneck is updating dokka,
-which is a longer process tracked in 
-https://github.com/software-challenge/backend/pull/404
+Dokka v2 generates Javadoc per project (Javadoc is still alpha and does not support multi-project aggregation),
+so we generate per-module docs and collect them during bundling.
 
 ## Testing
 
@@ -121,4 +117,3 @@ and is then wrapped in a [RoomPacket](sdk/src/server-api/sc/protocol/room/RoomPa
 
 The package contains a few standard messages,
 but most will be implemented in the corresponding plugin.
-

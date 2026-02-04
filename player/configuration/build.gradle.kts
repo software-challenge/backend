@@ -1,18 +1,18 @@
 plugins {
     java
     application
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.gradleup.shadow") version "9.3.1"
 }
 
 sourceSets.main.get().java.srcDir("src/main")
 sourceSets.main.get().resources.srcDir("src/resources")
 
 application {
-    mainClassName = "sc.player.util.Starter"
+    mainClass.set("sc.player.util.Starter")
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven("https://maven.wso2.org/nexus/content/groups/wso2-public/")
     maven("https://jitpack.io")
 }

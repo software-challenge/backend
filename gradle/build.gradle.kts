@@ -1,20 +1,24 @@
 import org.gradle.kotlin.dsl.support.unzipTo
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import sc.gradle.ScriptsTask
+import org.gradle.api.GradleException
 import java.nio.file.Files
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
-    kotlin("jvm") version "1.6.21"
-    id("org.jetbrains.dokka") version "0.10.1"
+    kotlin("jvm") version "2.3.0"
+    id("org.jetbrains.dokka") version "2.1.0"
+    id("org.jetbrains.dokka-javadoc") version "2.1.0"
     id("scripts-task")
     id("idea")
     `maven-publish`
     
-    id("com.github.ben-manes.versions") version "0.42.0" // only upgrade with Gradle 7: https://github.com/ben-manes/gradle-versions-plugin/issues/778
-    id("se.patrikerdes.use-latest-versions") version "0.2.18"
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("se.patrikerdes.use-latest-versions") version "0.2.19"
 }
 
 idea {
@@ -31,42 +35,44 @@ version = versionObject.toString() + property("socha.version.suffix").toString()
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
 
-val bundleDir by extra { buildDir.resolve("bundle") }
+val bundleDir by extra { layout.buildDirectory.dir("bundle").get().asFile }
 val bundledPlayer by extra { "randomplayer-$gameName-$version.jar" }
-val testingDir by extra { buildDir.resolve("tests") }
+val testingDir by extra { layout.buildDirectory.dir("tests").get().asFile }
 val documentedProjects = listOf("sdk", "plugin$year")
 
 val isBeta by extra { versionObject.minor == 0 }
 val enableTestClient by extra { arrayOf("check", "testTestClient").any { gradle.startParameter.taskNames.contains(it) } || !isBeta }
 val enableIntegrationTesting = !project.hasProperty("nointegration") && (!isBeta || enableTestClient)
 
+val javaToolchainVersion = 25
 val javaTargetVersion = JavaVersion.VERSION_1_8
-val javaVersion = JavaVersion.current()
-println("Current version: $version (unstable: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java $javaVersion)")
-if (javaVersion != javaTargetVersion)
-    System.err.println("Java version $javaTargetVersion is recommended - expect issues with generating documentation (consider '-x doc' if you don't care)")
+val kotlinJvmTarget = JvmTarget.fromTarget(javaTargetVersion.toString())
+val javaRuntimeVersion = JavaVersion.current()
+println("Current version: $version (unstable: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java runtime $javaRuntimeVersion, toolchain $javaToolchainVersion, target $javaTargetVersion)")
+if (!javaRuntimeVersion.isCompatibleWith(JavaVersion.VERSION_17))
+    System.err.println("Gradle 9+ requires Java 17+ to run. Toolchain is set to $javaToolchainVersion; install it or enable toolchain auto-download.")
 
 val doAfterEvaluate = ArrayList<(Project) -> Unit>()
 tasks {
-    val startServer by creating {
+    val startServer by registering {
         dependsOn(":server:run")
         group = "application"
     }
     
-    val doc by creating(DokkaTask::class) {
-        dependsOn(documentedProjects.map { ":$it:classes" })
+    val doc by registering(Copy::class) {
+        dependsOn(documentedProjects.map { ":$it:doc" })
         group = "documentation"
-        outputDirectory = bundleDir.resolve("doc").toString()
-        outputFormat = "javadoc"
-        subProjects = documentedProjects
-        configuration {
-            reportUndocumented = false
-            moduleName = "Software-Challenge API $version"
-            jdkVersion = 8
+        description = "Collects Javadoc output for documented projects into ${bundleDir.relativeTo(projectDir)}/doc"
+        into(bundleDir.resolve("doc"))
+        from(project(":sdk").layout.buildDirectory.dir("doc")) {
+            into("sdk")
+        }
+        from(project(":plugin$year").layout.buildDirectory.dir("doc")) {
+            into("plugin-$gameName")
         }
     }
     
-    val bundle by creating {
+    val bundle by registering {
         dependsOn(doc)
         dependOnSubprojects()
         group = "distribution"
@@ -74,12 +80,12 @@ tasks {
         outputs.dir(bundleDir)
     }
     
-    val release by creating {
+    val release by registering {
         dependsOn(clean, check)
         group = "distribution"
         description = "Prepares a new Release by bumping the version and pushing a commit tagged with the new version"
         doLast {
-            var newVersion = version
+            var newVersion = version.toString()
             fun String.editVersion(version: String, new: Int) =
                     if (startsWith("socha.version.$version"))
                         "socha.version.$version=${new.toString().padStart(2, '0')}"
@@ -105,10 +111,19 @@ tasks {
             
             println("Version: $newVersion")
             println("Beschreibung: $desc")
-            exec { commandLine("git", "add", "gradle.properties", "CHANGELOG.md") }
-            exec { commandLine("git", "commit", "-m", "release: v$newVersion") }
-            exec { commandLine("git", "tag", newVersion, "-m", desc) }
-            exec { commandLine("git", "push", "--follow-tags") }
+            fun runGit(vararg args: String) {
+                val process = ProcessBuilder(listOf("git") + args)
+                    .inheritIO()
+                    .start()
+                val exitCode = process.waitFor()
+                if (exitCode != 0) {
+                    throw GradleException("git ${args.joinToString(" ")} failed with exit code $exitCode")
+                }
+            }
+            runGit("add", "gradle.properties", "CHANGELOG.md")
+            runGit("commit", "-m", "release: v$newVersion")
+            runGit("tag", newVersion, "-m", desc)
+            runGit("push", "--follow-tags")
         }
     }
     
@@ -125,7 +140,7 @@ tasks {
     // TODO create a global constant which can be shared with testclient & co - maybe a resource?
     val maxGameLength = 150L // 2m30s
     
-    val testGame by creating {
+    val testGame by registering {
         dependsOn(":server:makeRunnable", ":player:bundleShadow")
         group = "verification"
         doFirst {
@@ -204,7 +219,7 @@ tasks {
         }
     }
     
-    val testTestClient by creating {
+    val testTestClient by registering {
         dependsOn(":server:bundle")
         group = "verification"
         shouldRunAfter(testGame)
@@ -232,7 +247,7 @@ tasks {
         }
     }
     
-    val integrationTest by creating {
+    val integrationTest by registering {
         dependsOn(testGame, ":player:playerTest")
         if (enableTestClient)
             dependsOn(testTestClient)
@@ -255,6 +270,15 @@ subprojects {
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "se.patrikerdes.use-latest-versions")
     
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(javaToolchainVersion))
+        }
+    }
+    kotlin {
+        jvmToolchain(javaToolchainVersion)
+    }
+    
     dependencies {
         testImplementation(project(":sdk", "testConfig"))
     }
@@ -269,10 +293,10 @@ subprojects {
             this.targetCompatibility = javaTargetVersion.toString()
         }
         
-        withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-            kotlinOptions {
-                this.jvmTarget = javaTargetVersion.toString()
-                this.freeCompilerArgs = listOf("-Xjvm-default=all")
+        withType<KotlinCompile>().configureEach {
+            compilerOptions {
+                jvmTarget.set(kotlinJvmTarget)
+                freeCompilerArgs.add("-Xjvm-default=all")
             }
         }
     }
@@ -287,6 +311,7 @@ allprojects {
     if (this.name in documentedProjects) {
         apply(plugin = "maven-publish")
         apply(plugin = "org.jetbrains.dokka")
+        apply(plugin = "org.jetbrains.dokka-javadoc")
         publishing {
             publications {
                 create<MavenPublication>(name) {
@@ -300,33 +325,25 @@ allprojects {
             withSourcesJar()
             withJavadocJar()
         }
+        dokka {
+            dokkaPublications.named("javadoc") {
+                moduleName.set("Software-Challenge ${project.name} $version")
+                moduleVersion.set(version.toString())
+                outputDirectory.set(layout.buildDirectory.dir("doc"))
+            }
+            dokkaSourceSets.configureEach {
+                reportUndocumented.set(false)
+                jdkVersion.set(javaTargetVersion.majorVersion.toInt())
+            }
+        }
         tasks {
-            val doc by creating(DokkaTask::class) {
+            val doc by registering {
                 group = "documentation"
-                dependsOn(classes)
-                outputDirectory = buildDir.resolve("doc").toString()
-                outputFormat = "javadoc"
-                configuration {
-                    reportUndocumented = false
-                    moduleName = "Software-Challenge ${project.name} $version"
-                    jdkVersion = 8
-                }
+                dependsOn("dokkaGeneratePublicationJavadoc")
             }
-            val docJar by creating(Jar::class) {
-                group = "build"
-                from(doc)
-                archiveBaseName.set(jar.get().archiveBaseName)
-                archiveClassifier.set("javadoc")
-            }
-            //val sourcesJar by creating(Jar::class) {
-            //    group = "build"
-            //    archiveBaseName.set(jar.get().archiveBaseName)
-            //    archiveClassifier.set("sources")
-            //    from(sourceSets.main.get().allSource)
-            //}
-            artifacts {
-                //archives(sourcesJar.archiveFile) { classifier = "sources" }
-                archives(docJar.archiveFile) { classifier = "javadoc" }
+            named<Jar>("javadocJar") {
+                dependsOn("dokkaGeneratePublicationJavadoc")
+                from(layout.buildDirectory.dir("doc"))
             }
         }
     }
