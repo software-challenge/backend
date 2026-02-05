@@ -359,7 +359,6 @@ allprojects {
         publishing {
             publications {
                 create<MavenPublication>(name) {
-                    println(components.joinToString())
                     from(components["java"])
                     version = rootProject.version.toString()
                 }
@@ -370,16 +369,9 @@ allprojects {
             withJavadocJar()
         }
         dokka {
-            dokkaPublications.named("javadoc") {
+            dokkaPublications.configureEach {
                 moduleName.set("Software-Challenge ${project.name} \"$gameName\"")
                 moduleVersion.set(rootProject.version.toString())
-                outputDirectory.set(layout.buildDirectory.dir("doc"))
-                suppressInheritedMembers.set(false)
-            }
-            dokkaPublications.named("html") {
-                moduleName.set("Software-Challenge ${project.name} \"$gameName\"")
-                moduleVersion.set(rootProject.version.toString())
-                outputDirectory.set(layout.buildDirectory.dir("doc-html"))
                 suppressInheritedMembers.set(false)
             }
             dokkaSourceSets.configureEach {
