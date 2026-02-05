@@ -2,6 +2,7 @@ import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import sc.gradle.ScriptsTask
 import org.gradle.api.GradleException
 import java.nio.file.Files
@@ -68,6 +69,19 @@ tasks {
             into("sdk")
         }
         from(project(":plugin$year").layout.buildDirectory.dir("doc")) {
+            into("plugin-$gameName")
+        }
+    }
+
+    val docHtml by registering(Copy::class) {
+        dependsOn(documentedProjects.map { ":$it:docHtml" })
+        group = "documentation"
+        description = "Collects Dokka HTML output for documented projects into ${bundleDir.relativeTo(projectDir)}/doc-html"
+        into(bundleDir.resolve("doc-html"))
+        from(project(":sdk").layout.buildDirectory.dir("doc-html")) {
+            into("sdk")
+        }
+        from(project(":plugin$year").layout.buildDirectory.dir("doc-html")) {
             into("plugin-$gameName")
         }
     }
@@ -264,21 +278,26 @@ tasks {
     val verifyDocs by registering {
         group = "documentation"
         description = "Verifies generated docs omit Companion classes."
-        dependsOn("doc")
+        dependsOn("doc", "docHtml")
         doLast {
             val forbidden = Regex("\\bCompanion\\b")
             val offending = mutableListOf<String>()
             documentedProjects.map { project(":$it") }.forEach { target ->
-                val docDir = target.layout.buildDirectory.dir("doc").get().asFile
-                if (!docDir.exists()) return@forEach
-                docDir.walkTopDown()
-                    .filter { it.isFile && (it.extension == "html" || it.extension == "js" || it.name == "package-list" || it.name == "element-list") }
-                    .forEach { file ->
-                        val text = runCatching { file.readText() }.getOrNull() ?: return@forEach
-                        if (forbidden.containsMatchIn(text)) {
-                            offending.add(file.relativeTo(rootProject.projectDir).path)
+                val docDirs = listOf(
+                    target.layout.buildDirectory.dir("doc").get().asFile,
+                    target.layout.buildDirectory.dir("doc-html").get().asFile,
+                )
+                docDirs.forEach { docDir ->
+                    if (!docDir.exists()) return@forEach
+                    docDir.walkTopDown()
+                        .filter { it.isFile && (it.extension == "html" || it.extension == "js" || it.name == "package-list" || it.name == "element-list") }
+                        .forEach { file ->
+                            val text = runCatching { file.readText() }.getOrNull() ?: return@forEach
+                            if (forbidden.containsMatchIn(text)) {
+                                offending.add(file.relativeTo(rootProject.projectDir).path)
+                            }
                         }
-                    }
+                }
             }
             if (offending.isNotEmpty()) {
                 throw GradleException("Companion entries found in docs: ${offending.joinToString(", ")}")
@@ -357,19 +376,71 @@ allprojects {
                 outputDirectory.set(layout.buildDirectory.dir("doc"))
                 suppressInheritedMembers.set(false)
             }
+            dokkaPublications.named("html") {
+                moduleName.set("Software-Challenge ${project.name} \"$gameName\"")
+                moduleVersion.set(rootProject.version.toString())
+                outputDirectory.set(layout.buildDirectory.dir("doc-html"))
+                suppressInheritedMembers.set(false)
+            }
             dokkaSourceSets.configureEach {
                 reportUndocumented.set(false)
                 suppressGeneratedFiles.set(true)
+                documentedVisibilities.set(setOf(VisibilityModifier.Public))
                 jdkVersion.set(javaTargetVersion.majorVersion.toInt())
             }
         }
         tasks {
+            val inlineHtmlNav by registering {
+                group = "documentation"
+                description = "Inlines navigation.html into Dokka HTML to avoid empty sidebars."
+                dependsOn("dokkaGeneratePublicationHtml")
+                doLast {
+                    val docDir = layout.buildDirectory.dir("doc-html").get().asFile
+                    val navFile = docDir.resolve("navigation.html")
+                    if (!navFile.exists()) return@doLast
+                    val navHtml = navFile.readText()
+                    val marker = "<div class=\"sidebar--inner\" id=\"sideMenu\"></div>"
+                    docDir.walkTopDown()
+                        .filter { it.isFile && it.extension == "html" }
+                        .forEach { file ->
+                            val original = file.readText()
+                            if (!original.contains(marker)) return@forEach
+                            val updated = original.replace(marker, "<div class=\"sidebar--inner\" id=\"sideMenu\">$navHtml</div>")
+                            if (updated != original) {
+                                file.writeText(updated)
+                            }
+                        }
+                }
+            }
+            val sanitizeJavadoc by registering {
+                group = "documentation"
+                description = "Removes private field rows from Dokka Javadoc HTML output."
+                dependsOn("dokkaGeneratePublicationJavadoc")
+                doLast {
+                    val docDir = layout.buildDirectory.dir("doc").get().asFile
+                    if (!docDir.exists()) return@doLast
+                    val rowRegex = Regex("(?s)<tr[^>]*>\\s*<td class=\\\"colFirst\\\"><code>private.*?</code>.*?</tr>")
+                    docDir.walkTopDown()
+                        .filter { it.isFile && it.extension == "html" }
+                        .forEach { file ->
+                            val original = file.readText()
+                            val sanitized = original.replace(rowRegex, "")
+                            if (sanitized != original) {
+                                file.writeText(sanitized)
+                            }
+                        }
+                }
+            }
             val doc by registering {
                 group = "documentation"
-                dependsOn("dokkaGeneratePublicationJavadoc")
+                dependsOn(sanitizeJavadoc)
+            }
+            val docHtml by registering {
+                group = "documentation"
+                dependsOn(inlineHtmlNav)
             }
             named<Jar>("javadocJar") {
-                dependsOn("dokkaGeneratePublicationJavadoc")
+                dependsOn(sanitizeJavadoc)
                 from(layout.buildDirectory.dir("doc"))
             }
         }
