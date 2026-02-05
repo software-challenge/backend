@@ -92,7 +92,7 @@ object GameRuleLogic {
             .map { direction -> Move(pos, direction)}
             .filter { move -> checkMove(board, move) == null }
     
-    /** @return the [Coordinates] from [parentSet] which are neighbors of [pos] */
+    /** @return die [Coordinates] aus [parentSet], die Nachbarn von [pos] sind */
     private fun selectNeighbors(pos: Coordinates, parentSet: Collection<Coordinates>): Collection<Coordinates> {
         val returnSet = ArrayList<Coordinates>(8)
         for(i in -1..1) {
@@ -112,8 +112,8 @@ object GameRuleLogic {
         return returnSet
     }
     
-    /** Called with a single fish in [swarm] and the [looseFishes] left,
-     * recursively calling with neighbors added to [swarm] to find a whole swarm. */
+    /** Startet mit einem einzelnen Fisch in [swarm] und den verbleibenden [looseFishes],
+     * ruft sich rekursiv mit hinzugefügten Nachbarn auf, um den gesamten Schwarm zu finden. */
     private fun getSwarm(looseFishes: Collection<Coordinates>, swarm: List<Coordinates>): List<Coordinates> {
         val swarmNeighbors =
             swarm.flatMap { selectNeighbors(it, looseFishes) }
@@ -125,7 +125,7 @@ object GameRuleLogic {
         return swarm
     }
     
-    /** Finds the most weighty swarm among a set of positions with weights. */
+    /** Findet den schwersten Schwarm innerhalb einer Menge gewichteter Positionen. */
     @JvmStatic
     fun greatestSwarm(fieldsToCheck: Map<Coordinates, Int>): Map<Coordinates, Int>? {
         // Make a copy, so there will be no conflict with direct calls.

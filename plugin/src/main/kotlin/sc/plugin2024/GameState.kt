@@ -19,14 +19,14 @@ import sc.shared.WinCondition
 import kotlin.math.absoluteValue
 
 /**
- * The GameState class represents the current state of the game.
+ * Die Klasse GameState repräsentiert den aktuellen Zustand des Spiels.
  *
- * It holds all the information about the current round, which is used
- * to calculate the next move.
+ * Sie enthält alle Informationen über die aktuelle Runde,
+ * die zur Berechnung des nächsten Zuges verwendet werden.
  *
- * @property board The current game board.
- * @property turn The number of turns already made in the game.
- * @property lastMove The last move made in the game.
+ * @property board Das aktuelle Spielfeld.
+ * @property turn Die Anzahl der bereits gespielten Züge.
+ * @property lastMove Der zuletzt gespielte Zug.
  */
 @XStreamAlias(value = "state")
 data class GameState @JvmOverloads constructor(

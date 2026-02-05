@@ -17,14 +17,14 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
- * The GameState class represents the current state of the game.
+ * Die Klasse GameState repräsentiert den aktuellen Zustand des Spiels.
  *
- * It holds all the information about the current round,
- * to provide all information needed to make the next move.
+ * Sie enthält alle Informationen über die aktuelle Runde,
+ * um alle benötigten Daten für den nächsten Zug bereitzustellen.
  *
- * @property board The current game board.
- * @property turn The number of turns already made in the game.
- * @property lastMove The last move made in the game.
+ * @property board Das aktuelle Spielfeld.
+ * @property turn Die Anzahl der bereits gespielten Züge.
+ * @property lastMove Der zuletzt gespielte Zug.
  */
 @XStreamAlias(value = "state")
 data class GameState @JvmOverloads constructor(

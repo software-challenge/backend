@@ -16,6 +16,8 @@ class Board(
     
     private val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
     
+    /** Gibt eine kompakte String-Darstellung des Spielfelds mit Koordinaten
+     * und einer zweibuchstabigen Darstellung der Feldzustände zurück. */
     override fun toString() =
         "Board " + gameField.withIndex().joinToString(" ", "[", "]") { row ->
             row.value.withIndex().joinToString(", ", prefix = "[", postfix = "]") {
@@ -23,6 +25,7 @@ class Board(
             }
         }
     
+    /** Gibt eine visuell formatierte Darstellung des Spielfelds mit ASCII-Rahmen zurück. */
     fun prettyString(): String {
         val map = StringBuilder(line)
         gameField.forEach { row ->
@@ -35,21 +38,25 @@ class Board(
         return map.toString()
     }
     
+    /** Erstellt eine tiefe Kopie dieses [Board] durch Klonen der zugrunde liegenden Felder. */
     override fun clone(): Board {
         //println("Cloning with ${gameField::class.java}: $this")
         return Board(gameField.deepCopy())
     }
     
+    /** Gibt das [Team] eines Fisches an [pos] zurück,
+     * oder `null` falls sich kein Fisch auf dem Feld befindet. */
     fun getTeam(pos: Coordinates): Team? =
         this[pos].team
     
+    /** Gibt eine Zuordnung aller von [team] belegten Felder zu deren Fischgrößen zurück. */
     fun fieldsForTeam(team: ITeam): Map<Coordinates, Int> =
         filterValues { field -> field.team == team }
             .mapValues { (_, field) -> field.size }
     
     /** @suppress */
     companion object {
-        /** Erstellt ein zufälliges Spielbrett.  */
+        /** Erstellt ein zufälliges Spielbrett. */
         fun randomFields(
             obstacleCount: Int = PiranhaConstants.NUM_OBSTACLES,
             random: Random = Random.Default,

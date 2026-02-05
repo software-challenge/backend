@@ -15,14 +15,17 @@ import sc.shared.WinCondition
 import sc.shared.WinReasonTie
 
 /**
- * The GameState class represents the current state of the game.
+ * Die Klasse GameState repräsentiert den aktuellen Zustand des Spiels.
  *
- * It holds all the information about the current round,
- * to provide all information needed to make the next move.
+ * Sie enthält alle Informationen über die aktuelle Runde,
+ * um alle benötigten Daten für den nächsten Zug bereitzustellen.
  *
- * @property board The current game board.
- * @property turn The number of turns already made in the game.
- * @property lastMove The last move made in the game.
+ * @param turn Die Anzahl der bereits gespielten Züge.
+ * @param lastMove Der zuletzt gespielte Zug.
+ * @param board Das aktuelle Spielfeld.
+ * @property board Das aktuelle Spielfeld.
+ * @property turn Die Anzahl der bereits gespielten Züge.
+ * @property lastMove Der zuletzt gespielte Zug.
  */
 @XStreamAlias(value = "state")
 data class GameState @JvmOverloads constructor(
@@ -34,14 +37,17 @@ data class GameState @JvmOverloads constructor(
     override val board: Board = Board(),
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
+    /** Berechnet die Punktwerte für das angegebene [team]. */
     override fun getPointsForTeam(team: ITeam): IntArray =
         intArrayOf(GameRuleLogic.greatestSwarmSize(board, team))
     
     // TODO test if one player is unable to move he loses e.g. in corner
+    /** Gibt an, ob das Spiel beendet ist. */
     override val isOver: Boolean
         get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
                 turn / 2 >= PiranhaConstants.ROUND_LIMIT
     
+    /** Liefert die aktuelle Gewinnbedingung oder null, falls das Spiel noch nicht entschieden ist. */
     override val winCondition: WinCondition?
         get() =
             if(Team.values().any { team -> GameRuleLogic.isSwarmConnected(board, team) }) {
@@ -52,6 +58,7 @@ data class GameState @JvmOverloads constructor(
                 null
             }
     
+    /** Führt einen gültigen [move] direkt aus und aktualisiert Spielfeld sowie Zähler. */
     override fun performMoveDirectly(move: Move) {
         if(board.getTeam(move.from) != currentTeam) {
             throw InvalidMoveException(PiranhaMoveMistake.WRONG_START, move)
@@ -64,6 +71,7 @@ data class GameState @JvmOverloads constructor(
         lastMove = move
     }
     
+    /** Gibt alle sinnvollen Züge für den aktuellen Spieler auf dem aktuellen [board] zurück. */
     override fun getSensibleMoves(): List<Move> {
         val piranhas = board.filterValues { field -> field.team == currentTeam }
         val moves = ArrayList<Move>(piranhas.size * 2)
@@ -73,12 +81,15 @@ data class GameState @JvmOverloads constructor(
         return moves
     }
     
+    /** Iteriert über alle sinnvollen Züge des aktuellen Spielers. */
     override fun moveIterator(): Iterator<Move> =
         getSensibleMoves().iterator()
     
+    /** Erstellt eine tiefe Kopie dieses Spielzustands inklusive geklontem [board]. */
     override fun clone(): GameState =
         copy(board = board.clone())
     
+    /** Ermittelt zusammenfassende Statistiken für das angegebene [team]. */
     override fun teamStats(team: ITeam): List<Stat> =
         listOf(
             Stat("Anzahl Fische", board.fieldsForTeam(team).size),
