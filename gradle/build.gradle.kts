@@ -384,7 +384,7 @@ allprojects {
             dokkaPublications.configureEach {
                 moduleName.set("Software-Challenge ${project.name} \"$gameName\"")
                 moduleVersion.set(rootProject.version.toString())
-                suppressInheritedMembers.set(false)
+                //suppressInheritedMembers.set(false)
             }
             dokkaSourceSets.configureEach {
                 reportUndocumented.set(false)
