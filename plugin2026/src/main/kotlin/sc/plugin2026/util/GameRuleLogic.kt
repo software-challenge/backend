@@ -10,6 +10,7 @@ import sc.plugin2026.PiranhaMoveMistake
 import sc.shared.IMoveMistake
 import sc.shared.MoveMistake
 
+/** Regellogik und Hilfsfunktionen für das Piranhas-Spiel. */
 object GameRuleLogic {
     /** Anzahl der Fische in der Bewegungsachse des Zuges.
      * @return wie viele Felder weit der Zug sein sollte */
@@ -41,7 +42,7 @@ object GameRuleLogic {
         move.from + move.direction * movementDistance(board, move)
     
     /** Prüft, ob ein Zug gültig ist.
-     * @team null wenn der Zug valide ist, sonst ein entsprechender [IMoveMistake]. */
+     * @return null wenn der Zug valide ist, sonst ein entsprechender [IMoveMistake]. */
     @JvmStatic
     fun checkMove(board: Board, move: Move): IMoveMistake? {
         val distance = movementDistance(board, move)
@@ -87,6 +88,7 @@ object GameRuleLogic {
         return moves
     }
     
+    /** Sequenz aller gültigen Züge des Fisches auf dem Startfeld [pos]. */
     fun possibleMovesSequence(board: Board, pos: Coordinates): Sequence<Move> =
         Direction.values().asSequence()
             .map { direction -> Move(pos, direction)}

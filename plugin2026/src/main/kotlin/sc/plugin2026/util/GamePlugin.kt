@@ -9,12 +9,14 @@ import sc.plugin2026.GameState
 import sc.plugin2026.Move
 import sc.shared.*
 
+/** Gewinn-Gründe für Piranhas. */
 @XStreamAlias(value = "winreason")
 enum class PiranhasWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
     BIGGER_SWARM("%s hat den größeren zusammenhängenden Schwarm"),
     FIRST_UNION("%s hat zuerst alle Fische einer Farbe vereinigt"),
 }
 
+/** Plugin-Implementierung für das Piranhas-Spiel. */
 class GamePlugin: IGamePlugin<Move> {
     /** @suppress */
     companion object {
@@ -26,21 +28,28 @@ class GamePlugin: IGamePlugin<Move> {
                 ))
     }
     
+    /** Eindeutige Plugin-ID. */
     override val id = PLUGIN_ID
     
+    /** Anzeigename des Spiels. */
     override val name = "Piranhas"
     
+    /** Definition der Wertung und Auswertung. */
     override val scoreDefinition =
             Companion.scoreDefinition
     
+    /** Maximale Zuganzahl (beide Spieler). */
     override val turnLimit: Int =
         PiranhaConstants.ROUND_LIMIT * 2
     
+    /** Klasse der Zug-Implementierung. */
     override val moveClass = Move::class.java
     
+    /** Erstellt eine neue Spielinstanz im Startzustand. */
     override fun createGame(): IGameInstance =
             TwoPlayerGame(this, GameState())
     
+    /** Erstellt eine Spielinstanz aus einem vorhandenen [state]. */
     override fun createGameFromState(state: IGameState): IGameInstance =
             TwoPlayerGame(this, state as GameState)
     

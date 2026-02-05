@@ -19,9 +19,11 @@ data class Move(
     val direction: Direction,
 ): IMove {
     
-    /** Zugdistanz auf dem gegebenen [board]. Kann mit [direction] multipliziert werden um Zugvektor zu ermitteln. */
+    /** Erwartete Zugdistanz auf dem gegebenen [board].
+     * Kann mit [direction] multipliziert werden, um den Zugvektor zu ermitteln. */
     fun getDistance(board: Board) = GameRuleLogic.movementDistance(board, this)
     
+    /** Kurzbeschreibung des Zugs für Log-Ausgaben. */
     override fun toString(): String =
         "Schwimme von $from in Richtung $direction"
     
