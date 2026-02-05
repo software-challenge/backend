@@ -12,13 +12,21 @@ import sc.framework.DeepCloneable
  */
 @XStreamAlias("field")
 enum class FieldState(val size: Int): IField, DeepCloneable<FieldState> {
+    /** Team 1, kleiner Fisch. */
     ONE_S(1),
+    /** Team 1, mittlerer Fisch. */
     ONE_M(2),
+    /** Team 1, grosser Fisch. */
     ONE_L(3),
+    /** Team 2, kleiner Fisch. */
     TWO_S(1),
+    /** Team 2, mittlerer Fisch. */
     TWO_M(2),
+    /** Team 2, grosser Fisch. */
     TWO_L(3),
+    /** Gesperrtes Feld (Krake). */
     SQUID(0),
+    /** Leeres Feld. */
     EMPTY(0);
     
     /** Liefert eine Kopie dieses Feldzustands. */
