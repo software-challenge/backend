@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.support.unzipTo
+import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -65,10 +66,12 @@ tasks {
         group = "documentation"
         description = "Collects Javadoc output for documented projects into ${bundleDir.relativeTo(projectDir)}/doc"
         into(bundleDir.resolve("doc"))
-        from(project(":sdk").layout.buildDirectory.dir("doc")) {
+        val sdkJavadoc = project(":sdk").tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationJavadoc")
+        val pluginJavadoc = project(":plugin$year").tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationJavadoc")
+        from(sdkJavadoc.flatMap { it.outputDirectory }) {
             into("sdk")
         }
-        from(project(":plugin$year").layout.buildDirectory.dir("doc")) {
+        from(pluginJavadoc.flatMap { it.outputDirectory }) {
             into("plugin-$gameName")
         }
     }
@@ -78,10 +81,12 @@ tasks {
         group = "documentation"
         description = "Collects Dokka HTML output for documented projects into ${bundleDir.relativeTo(projectDir)}/doc-html"
         into(bundleDir.resolve("doc-html"))
-        from(project(":sdk").layout.buildDirectory.dir("doc-html")) {
+        val sdkHtml = project(":sdk").tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
+        val pluginHtml = project(":plugin$year").tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
+        from(sdkHtml.flatMap { it.outputDirectory }) {
             into("sdk")
         }
-        from(project(":plugin$year").layout.buildDirectory.dir("doc-html")) {
+        from(pluginHtml.flatMap { it.outputDirectory }) {
             into("plugin-$gameName")
         }
     }
@@ -283,10 +288,17 @@ tasks {
             val forbidden = Regex("\\bCompanion\\b")
             val offending = mutableListOf<String>()
             documentedProjects.map { project(":$it") }.forEach { target ->
-                val docDirs = listOf(
-                    target.layout.buildDirectory.dir("doc").get().asFile,
-                    target.layout.buildDirectory.dir("doc-html").get().asFile,
-                )
+                val javadocDir = target.tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationJavadoc")
+                    .get()
+                    .outputDirectory
+                    .get()
+                    .asFile
+                val htmlDir = target.tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
+                    .get()
+                    .outputDirectory
+                    .get()
+                    .asFile
+                val docDirs = listOf(javadocDir, htmlDir)
                 docDirs.forEach { docDir ->
                     if (!docDir.exists()) return@forEach
                     docDir.walkTopDown()
@@ -382,41 +394,73 @@ allprojects {
             }
         }
         tasks {
+            val javadocTask = named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationJavadoc")
+            val htmlTask = named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
+
             val inlineHtmlNav by registering {
                 group = "documentation"
                 description = "Inlines navigation.html into Dokka HTML to avoid empty sidebars."
-                dependsOn("dokkaGeneratePublicationHtml")
+                dependsOn(htmlTask)
                 doLast {
-                    val docDir = layout.buildDirectory.dir("doc-html").get().asFile
+                    val docDir = htmlTask.get().outputDirectory.get().asFile
                     val navFile = docDir.resolve("navigation.html")
                     if (!navFile.exists()) return@doLast
                     val navHtml = navFile.readText()
                     val marker = "<div class=\"sidebar--inner\" id=\"sideMenu\"></div>"
+                    val linkFixScript = """
+                        <script>
+                        (function () {
+                          var path = window.pathToRoot || "";
+                          document.querySelectorAll('.toc--link').forEach(function (tocLink) {
+                            var href = tocLink.getAttribute('href');
+                            if (!href) return;
+                            if (!href.startsWith(path)) {
+                              tocLink.setAttribute('href', path + href);
+                            }
+                          });
+                          document.querySelectorAll('.toc--skip-link').forEach(function (skipLink) {
+                            skipLink.setAttribute('href', '#main');
+                          });
+                        })();
+                        </script>
+                    """.trimIndent()
                     docDir.walkTopDown()
                         .filter { it.isFile && it.extension == "html" }
                         .forEach { file ->
-                            val original = file.readText()
-                            if (!original.contains(marker)) return@forEach
-                            val updated = original.replace(marker, "<div class=\"sidebar--inner\" id=\"sideMenu\">$navHtml</div>")
-                            if (updated != original) {
-                                file.writeText(updated)
+                            var updated = file.readText()
+                            if (updated.contains(marker)) {
+                                updated = updated.replace(marker, "<div class=\"sidebar--inner\" id=\"sideMenu\">$navHtml</div>")
                             }
+                            if (!updated.contains("dokka-inline-nav-fix")) {
+                                val taggedScript = linkFixScript.replace("<script>", "<script id=\"dokka-inline-nav-fix\">")
+                                updated = updated.replace("</body>", "$taggedScript</body>")
+                            }
+                            file.writeText(updated)
                         }
                 }
             }
             val sanitizeJavadoc by registering {
                 group = "documentation"
                 description = "Removes private field rows from Dokka Javadoc HTML output."
-                dependsOn("dokkaGeneratePublicationJavadoc")
+                dependsOn(javadocTask)
                 doLast {
-                    val docDir = layout.buildDirectory.dir("doc").get().asFile
+                    val docDir = javadocTask.get().outputDirectory.get().asFile
                     if (!docDir.exists()) return@doLast
                     val rowRegex = Regex("(?s)<tr[^>]*>\\s*<td class=\\\"colFirst\\\"><code>private.*?</code>.*?</tr>")
+                    fun stripEmptySection(html: String, anchorId: String): String {
+                        val sectionRegex = Regex("(?s)<li class=\\\"blockList\\\">\\s*<a id=\\\"$anchorId\\\">.*?</li>")
+                        return sectionRegex.replace(html) { matchResult ->
+                            val block = matchResult.value
+                            if (block.contains("rowColor") || block.contains("altColor")) block else ""
+                        }
+                    }
                     docDir.walkTopDown()
                         .filter { it.isFile && it.extension == "html" }
                         .forEach { file ->
                             val original = file.readText()
-                            val sanitized = original.replace(rowRegex, "")
+                            var sanitized = original.replace(rowRegex, "")
+                            sanitized = stripEmptySection(sanitized, "field.summary")
+                            sanitized = stripEmptySection(sanitized, "nested.class.summary")
                             if (sanitized != original) {
                                 file.writeText(sanitized)
                             }
@@ -433,7 +477,7 @@ allprojects {
             }
             named<Jar>("javadocJar") {
                 dependsOn(sanitizeJavadoc)
-                from(layout.buildDirectory.dir("doc"))
+                from(javadocTask.flatMap { it.outputDirectory })
             }
         }
     }
