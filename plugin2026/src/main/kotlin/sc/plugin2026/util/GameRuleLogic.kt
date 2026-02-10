@@ -16,6 +16,10 @@ object GameRuleLogic {
     @JvmStatic
     fun movementDistance(board: Board, move: Move): Int {
         var count = 0
+        if(board.getOrNull(move.from)?.team != null) {
+            count++
+        }
+        
         var pos = move.from
         while(true) {
             pos += move.direction
@@ -24,6 +28,7 @@ object GameRuleLogic {
                 count++
             }
         }
+        
         pos = move.from
         while(true) {
             pos += move.direction.opposite
@@ -32,13 +37,6 @@ object GameRuleLogic {
                 count++
             }
         }
-        
-        pos = move.from
-        val field = board.getOrNull(pos)
-        if(field?.team != null) {
-            count++
-        }
-        
         
         return count
     }

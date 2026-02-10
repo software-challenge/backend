@@ -52,5 +52,41 @@ class GameRuleLogicTest: FunSpec({
             GameRuleLogic.checkMove(board, Move(fish, Direction.UP_LEFT)) shouldBe null
             GameRuleLogic.possibleMovesFor(board, fish) shouldHaveSize 3
         }
+        test("check movementDistance before and after moving") {
+            // Construct a tiny deterministic board (1x5) with fishes aligned horizontally.
+            val fields = arrayOf(arrayOf(
+                FieldState.EMPTY,
+                FieldState.TWO_S,
+                FieldState.ONE_S,
+                FieldState.EMPTY,
+                FieldState.ONE_S,
+            ))
+            val state = GameState(board = Board(fields))
+            state.board.prettyString() shouldBe """
+                ------------
+                |  B1R1  R1|
+                ------------
+            """.trimIndent()
+            
+            val move = Move(Coordinates(4,0), Direction.LEFT)
+            // Sanity: move is valid and has distance 3
+            GameRuleLogic.movementDistance(state.board, move) shouldBe 3
+            GameRuleLogic.checkMove(state.board, move) shouldBe null
+            GameRuleLogic.targetCoordinates(state.board, move) shouldBe Coordinates(1, 0)
+            state.performMoveDirectly(move)
+            
+            state.board.prettyString() shouldBe """
+                ------------
+                |  R1R1    |
+                ------------
+            """.trimIndent()
+            
+            val next = Move(Coordinates(1, 0), Direction.RIGHT)
+            GameRuleLogic.movementDistance(state.board, next) shouldBe 2
+            GameRuleLogic.checkMove(state.board, next) shouldBe null
+            
+            // FIXME this test fails because the piranha that was eaten is gone
+            GameRuleLogic.movementDistance(state.board, state.lastMove!!) shouldBe 3
+        }
     }
 })
