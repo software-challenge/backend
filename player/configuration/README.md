@@ -19,7 +19,8 @@ Dazu gibst du Gradle noch einen Auftrag:
 - `run` startet deinen Spieler
 - `shadowJar` erstellt eine eigenständige ("fat") jar im Projektverzeichnis,
   die du ausführen, weitergeben
-  und im [Wettkampfsystem](https://contest.software-challenge.de) hochladen kannst
+  und im [Wettkampfsystem](https://contest.software-challenge.de) hochladen kannst.
+  Im backend wird eine defaultplayer.jar in `backend/player/build/libs` erstellt.
 
 Außerdem gibt es zwei Möglichkeiten, die Abhängigkeiten aktuell zu halten:
 - Wenn du Gradle normal ausführst, wird die in `build.gradle.kts` Zeile 24
