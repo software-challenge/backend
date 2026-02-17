@@ -1,0 +1,50 @@
+/*
+ * Shared JVM conventions for all subprojects.
+ *
+ * Kept as a plain applied Gradle script (no extra plugin) for readability.
+ */
+
+def javaToolchainVersion = rootProject.ext.javaToolchainVersion as int
+def javaTargetVersion = rootProject.ext.javaTargetVersion as JavaVersion
+
+def kotlinCompileTaskNames = ["compileKotlin", "compileTestKotlin"] as Set
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'kotlin'
+    apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: 'se.patrikerdes.use-latest-versions'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
+        }
+    }
+
+    if (name != 'sdk' && name != 'test-config') {
+        dependencies {
+            testImplementation project(':test-config')
+        }
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = javaTargetVersion.toString()
+        targetCompatibility = javaTargetVersion.toString()
+    }
+
+    // Configure Kotlin tasks dynamically so this script stays independent of Kotlin plugin classes.
+    tasks.matching { task -> task.name in kotlinCompileTaskNames }.configureEach { task ->
+        def kotlinOptions = task.hasProperty('kotlinOptions') ? task.property('kotlinOptions') : null
+        if (kotlinOptions != null) {
+            kotlinOptions.jvmTarget = javaTargetVersion.toString()
+            def args = (kotlinOptions.freeCompilerArgs ?: []) as List
+            if (!args.contains('-Xjvm-default=all')) {
+                kotlinOptions.freeCompilerArgs = args + ['-Xjvm-default=all']
+            }
+        }
+    }
+}

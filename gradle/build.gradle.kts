@@ -1,9 +1,7 @@
 import org.gradle.api.GradleException
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "2.3.0"
@@ -44,7 +42,6 @@ val enableIntegrationTesting by extra { !project.hasProperty("nointegration") &&
 
 val javaToolchainVersion by extra { 25 }
 val javaTargetVersion by extra { JavaVersion.VERSION_1_8 }
-val kotlinJvmTarget by extra { JvmTarget.fromTarget(javaTargetVersion.toString()) }
 
 val javaRuntimeVersion = JavaVersion.current()
 println("Current version: $version (unstable: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java runtime $javaRuntimeVersion, toolchain $javaToolchainVersion, target $javaTargetVersion)")
@@ -53,6 +50,8 @@ if (!javaRuntimeVersion.isCompatibleWith(JavaVersion.VERSION_17)) {
 }
 
 // == Split script modules ==
+// JVM conventions are kept in a dedicated applied script for readability.
+apply(from = "gradle/jvm-conventions.gradle")
 apply(from = "gradle/integration-tasks.gradle.kts")
 apply(from = "gradle/release-task.gradle.kts")
 
@@ -64,7 +63,20 @@ tasks {
         dependsOn(":server:run")
         group = "application"
     }
-
+    
+    clean {
+        dependOnSubprojects()
+    }
+    test {
+        dependOnSubprojects()
+    }
+    check {
+        dependOnSubprojects()
+    }
+    build {
+        dependsOn("bundle")
+    }
+    
     register<Copy>("doc") {
         dependsOn(documentedProjects.map { ":$it:doc" })
         group = "documentation"
@@ -93,19 +105,6 @@ tasks {
         group = "distribution"
         description = "Zips everything up for release into ${bundleDir.relativeTo(projectDir)}"
         outputs.dir(bundleDir)
-    }
-
-    clean {
-        dependOnSubprojects()
-    }
-    test {
-        dependOnSubprojects()
-    }
-    check {
-        dependOnSubprojects()
-    }
-    build {
-        dependsOn("bundle")
     }
 
     register("verifyDocs") {
@@ -162,48 +161,6 @@ tasks {
             }
             if (!allClassesText.contains("sc/protocol/room/WelcomeMessage.html")) {
                 throw GradleException("SDK javadoc index is missing Kotlin type link for sc.protocol.room.WelcomeMessage.")
-            }
-        }
-    }
-}
-
-// == Cross-project JVM conventions ==
-
-subprojects {
-    apply(plugin = "java-library")
-    apply(plugin = "kotlin")
-    apply(plugin = "com.github.ben-manes.versions")
-    apply(plugin = "se.patrikerdes.use-latest-versions")
-
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(javaToolchainVersion))
-        }
-    }
-    kotlin {
-        jvmToolchain(javaToolchainVersion)
-    }
-
-    if (name != "sdk" && name != "test-config") {
-        dependencies {
-            testImplementation(project(":test-config"))
-        }
-    }
-
-    tasks {
-        test {
-            useJUnitPlatform()
-        }
-
-        withType<JavaCompile> {
-            sourceCompatibility = javaTargetVersion.toString()
-            targetCompatibility = javaTargetVersion.toString()
-        }
-
-        withType<KotlinCompile>().configureEach {
-            compilerOptions {
-                jvmTarget.set(kotlinJvmTarget)
-                freeCompilerArgs.add("-Xjvm-default=all")
             }
         }
     }
