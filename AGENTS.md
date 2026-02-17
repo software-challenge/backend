@@ -34,6 +34,9 @@ Primary languages are Kotlin and Java, but all new code must be written in Kotli
 - No repository-wide formatter is enforced in Gradle; run IDE reformat with project defaults.
 
 ## General Workflow Policies
+- Follow commit/changelog/test/lint/refactor/process rules in this file for all AI-assisted changes.
+- Keep edits focused, reviewable, and behavior-safe unless intentional behavioral changes are requested.
+
 ### Testing & Verification
 - Tests are mainly Kotest (`WordSpec` preferred, `FunSpec` for algorithmic cases) on JUnit 5; some legacy JUnit 5 tests remain.
 - Place new tests under `src/test/kotlin`.
@@ -45,6 +48,7 @@ Primary languages are Kotlin and Java, but all new code must be written in Kotli
 - Prefer behavior/outcome tests over implementation-detail tests.
 
 ### Commit & PR Discipline
+- Always commit every completed change.
 - Use commit messages in format `type(scope): summary` (example: `fix(plugin26): avoid transient hash checks for observers`).
 - Enable local hooks: `git config core.hooksPath .dev/githooks`.
 - Prefer branch names like `feat/server/login` or `chore/gradle/release-fix`.
@@ -125,6 +129,25 @@ special_commands:
     - "Ask explicit confirmation before pushing branch or tags."
 ```
 
+### Assistant Response Formatting
+```yaml
+assistant_response_formatting:
+  summary:
+    - "Keep summaries compact and scannable."
+    - "Prefer single-line status items when content fits."
+    - "Avoid repetitive progress boilerplate."
+  commit_reporting_format: "✅ <hash> <type>: <message>"
+  status_indicators:
+    success: "✅"
+    warning: "⚠️"
+    failure: "❌"
+    diagnostics: "🔍"
+    verification: "🧪"
+  style:
+    - "Prefer concise bullets over verbose prose."
+    - "Use status indicators consistently."
+```
+
 ### Plans & Artifacts
 ```yaml
 planning:
@@ -133,5 +156,10 @@ planning:
     - "Use descriptive kebab-case filenames."
     - "Do not commit plan files unless explicitly requested."
   after_implementation:
-    - "Create a cleanup plan in plans/ summarizing post-implementation refactors or deferred cleanup."
+    - "Delete the corresponding plan file after implementation is complete."
+    - "Before deleting untracked text artifacts (for example files in plans/), run git add on them once without committing so they are recoverable via index/reflog if deletion was a mistake."
 ```
+
+### AGENTS Maintenance
+- When the user gives new standing workflow/process instructions, update `AGENTS.md` in the same session.
+- Keep updates concise and place them in the most relevant existing section (create a new section only when needed).
