@@ -1,10 +1,5 @@
-@file:Suppress("DEPRECATION")
-
 package sc.server.network
 
-import io.kotest.assertions.timing.eventually
-import io.kotest.assertions.until.Interval
-import io.kotest.assertions.until.fibonacci
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
@@ -35,17 +30,6 @@ import sc.server.plugins.TestPlugin
 import sc.shared.GameResult
 import sc.shared.Violation
 import sc.shared.SlotDescriptor
-import kotlinx.coroutines.runBlocking
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-
-fun await(
-        clue: String? = null,
-        duration: Duration = 1.seconds,
-        interval: Interval = 20.milliseconds.fibonacci(),
-        f: suspend () -> Unit,
-) = runBlocking { withClue(clue) { eventually(duration, interval, f) } }
 
 class LobbyGameTest: WordSpec({
     "A Lobby with connected clients" When {
