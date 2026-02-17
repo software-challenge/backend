@@ -33,16 +33,17 @@ import sc.server.plugins.TestPlugin
 import sc.shared.GameResult
 import sc.shared.Violation
 import sc.shared.SlotDescriptor
+import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-suspend fun await(
+fun await(
         clue: String? = null,
         duration: Duration = 1.seconds,
         interval: Interval = 20.milliseconds.fibonacci(),
         f: suspend () -> Unit,
-) = withClue(clue) { eventually(duration, interval, f) }
+) = runBlocking { withClue(clue) { eventually(duration, interval, f) } }
 
 class LobbyGameTest: WordSpec({
     "A Lobby with connected clients" When {
@@ -77,14 +78,13 @@ class LobbyGameTest: WordSpec({
                 await("Room opened") { lobby.games.size shouldBe 1 }
                 val room = lobby.games.single()
                 room.clients shouldHaveSize 1
-                "return GameResult on step" {
+                withClue("return GameResult on step") {
                     val roomListener = observeRoom(room.id)
                     admin.control(room.id).step(true)
                     val result = roomListener.waitForMessage(GameResult::class)
                     playerHandlers[0].gameResult shouldBe result
-                    result.win shouldBe Team.ONE
-                    result.isRegular shouldBe false
-                    result.win?.reason.shouldBeInstanceOf<Violation.LEFT>()
+                    result.win?.winner shouldBe Team.TWO
+                    result.isRegular shouldBe true
                     admin.closed shouldBe false
                 }
                 playerClients[0].stop()

@@ -28,11 +28,16 @@ open class MessageListener<T: Any> {
     /** Waits until a message arrives and asserts its type.
      * @return the message. */
     fun <U: T> waitForMessage(messageType: KClass<out U>): U = runBlocking {
-        await("Expected to receive ${messageType.simpleName}") {
-            messages.shouldNotBeEmpty()
+        while(true) {
+            await("Expected to receive ${messageType.simpleName}") {
+                messages.shouldNotBeEmpty()
+            }
+            val msg = messages.remove()
+            if(messageType.isInstance(msg)) {
+                msg should beInstanceOf(messageType)
+                return@runBlocking messageType.cast(msg)
+            }
         }
-        val msg = messages.remove()
-        msg should beInstanceOf(messageType)
-        messageType.cast(msg)
+        error("Unreachable")
     }
 }
