@@ -71,7 +71,7 @@ tasks {
                     .replace("TwoPlayerGameState<Move>", "GameState")
             }
         }, copySpec {
-            from(configurations.default)
+            from(configurations.runtimeClasspath)
             from(arrayOf("sdk", "plugin$year").map { project(":$it").tasks.named("sourcesJar") })
             into("lib")
         })

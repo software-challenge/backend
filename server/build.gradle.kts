@@ -48,7 +48,7 @@ tasks {
     val makeRunnable by registering(Copy::class) {
         group = "distribution"
         dependsOn(jar, copyConfig, createStartScripts)
-        from(configurations.default)
+        from(configurations.runtimeClasspath)
         into(runnableDir.resolve("lib"))
     }
     
@@ -119,7 +119,7 @@ tasks {
         destinationDirectory.set(runnableDir)
         doFirst {
             manifest.attributes(
-                    "Class-Path" to configurations.default.get().joinToString(" ") { "lib/" + it.name }
+                    "Class-Path" to configurations.runtimeClasspath.get().joinToString(" ") { "lib/" + it.name }
             )
         }
     }

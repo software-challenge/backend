@@ -7,7 +7,9 @@ import java.io.File
 open class ScriptsTask : DefaultTask() {
     @OutputDirectory
     lateinit var destinationDir: File
+    @Input
     lateinit var fileName: String
+    @Input
     lateinit var content: String
     
     init {
