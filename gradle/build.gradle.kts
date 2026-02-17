@@ -314,6 +314,42 @@ tasks {
             if (offending.isNotEmpty()) {
                 throw GradleException("Companion entries found in docs: ${offending.joinToString(", ")}")
             }
+
+            val sdkJavadocDir = project(":sdk")
+                .tasks
+                .named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationJavadoc")
+                .get()
+                .outputDirectory
+                .get()
+                .asFile
+            val javaDocPage = sdkJavadocDir.resolve("sc/networking/clients/IClient.html")
+            val kotlinDocPage = sdkJavadocDir.resolve("sc/protocol/room/WelcomeMessage.html")
+            val missing = buildList {
+                if (!javaDocPage.exists()) add(javaDocPage.relativeTo(rootProject.projectDir).path)
+                if (!kotlinDocPage.exists()) add(kotlinDocPage.relativeTo(rootProject.projectDir).path)
+            }
+            if (missing.isNotEmpty()) {
+                throw GradleException("SDK javadoc is missing expected Java/Kotlin pages: ${missing.joinToString(", ")}")
+            }
+            val javaDocText = javaDocPage.readText()
+            val kotlinDocText = kotlinDocPage.readText()
+            if (!javaDocText.contains("Client interface to send packages to the server.")) {
+                throw GradleException("SDK javadoc is missing JavaDoc content for sc.networking.clients.IClient.")
+            }
+            if (!kotlinDocText.contains("Nachricht, die zu Beginn eines Spiels")) {
+                throw GradleException("SDK javadoc is missing KDoc content for sc.protocol.room.WelcomeMessage.")
+            }
+            val allClassesPage = sdkJavadocDir.resolve("allclasses.html")
+            if (!allClassesPage.exists()) {
+                throw GradleException("SDK javadoc is missing allclasses index page.")
+            }
+            val allClassesText = allClassesPage.readText()
+            if (!allClassesText.contains("sc/networking/clients/IClient.html")) {
+                throw GradleException("SDK javadoc index is missing Java type link for sc.networking.clients.IClient.")
+            }
+            if (!allClassesText.contains("sc/protocol/room/WelcomeMessage.html")) {
+                throw GradleException("SDK javadoc index is missing Kotlin type link for sc.protocol.room.WelcomeMessage.")
+            }
         }
     }
 }
@@ -398,6 +434,9 @@ allprojects {
         tasks {
             val javadocTask = named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationJavadoc")
             val htmlTask = named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
+            named<Javadoc>("javadoc") {
+                enabled = false
+            }
 
             val inlineHtmlNav by registering {
                 group = "documentation"
@@ -478,6 +517,7 @@ allprojects {
                 dependsOn(inlineHtmlNav)
             }
             named<Jar>("javadocJar") {
+                dependsOn("cleanJavadoc")
                 dependsOn(sanitizeJavadoc)
                 from(javadocTask.flatMap { it.outputDirectory })
             }
