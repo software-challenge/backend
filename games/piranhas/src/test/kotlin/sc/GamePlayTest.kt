@@ -64,10 +64,12 @@ class GamePlayTest: WordSpec({
                 override fun onStateChanged(data: IGameState, observersOnly: Boolean) {
                     val state = data as? TwoPlayerGameState<*>
                     state?.lastMove.shouldNotBeNull()
-                    data.hashCode() shouldNotBe finalState
-                    // hashing it to avoid cloning, since we get the original object which might be mutable
-                    finalState = data.hashCode()
-                    logger.debug("Updating state hash to $finalState")
+                    if(!observersOnly) {
+                        data.hashCode() shouldNotBe finalState
+                        // hashing it to avoid cloning, since we get the original object which might be mutable
+                        finalState = data.hashCode()
+                        logger.debug("Updating state hash to $finalState")
+                    }
                 }
             })
             

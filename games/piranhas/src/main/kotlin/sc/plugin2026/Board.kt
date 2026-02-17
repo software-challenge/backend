@@ -2,6 +2,7 @@ package sc.plugin2026
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamImplicit
+import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
 import sc.framework.deepCopy
 import sc.plugin2026.util.PiranhaConstants
@@ -14,8 +15,6 @@ class Board(
     override val gameField: MutableTwoDBoard<FieldState> = randomFields()
 ): RectangularBoard<FieldState>(), IBoard {
     
-    private val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
-    
     /** Gibt eine kompakte String-Darstellung des Spielfelds mit Koordinaten
      * und einer zweibuchstabigen Darstellung der Feldzustände zurück. */
     override fun toString() =
@@ -25,6 +24,8 @@ class Board(
             }
         }
     
+    @Transient
+    private val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
     /** Gibt eine visuell formatierte Darstellung des Spielfelds mit ASCII-Rahmen zurück. */
     fun prettyString(): String {
         val map = StringBuilder(line)
