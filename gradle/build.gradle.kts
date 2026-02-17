@@ -335,8 +335,10 @@ subprojects {
         jvmToolchain(javaToolchainVersion)
     }
     
-    dependencies {
-        testImplementation(project(":sdk", "testConfig"))
+    if (name != "sdk" && name != "test-config") {
+        dependencies {
+            testImplementation(project(":test-config"))
+        }
     }
     
     tasks {
