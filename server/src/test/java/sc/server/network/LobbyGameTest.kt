@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package sc.server.network
 
 import io.kotest.assertions.timing.eventually

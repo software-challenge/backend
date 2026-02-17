@@ -32,8 +32,10 @@ subprojects {
     }
 
     tasks.withType(JavaCompile).configureEach {
-        sourceCompatibility = javaTargetVersion.toString()
-        targetCompatibility = javaTargetVersion.toString()
+        options.release.set(javaTargetVersion.majorVersion.toInteger())
+        if (!options.compilerArgs.contains('-Xlint:-options')) {
+            options.compilerArgs.add('-Xlint:-options')
+        }
     }
 
     // Configure Kotlin tasks dynamically so this script stays independent of Kotlin plugin classes.
@@ -42,9 +44,17 @@ subprojects {
         if (kotlinOptions != null) {
             kotlinOptions.jvmTarget = javaTargetVersion.toString()
             def args = (kotlinOptions.freeCompilerArgs ?: []) as List
-            if (!args.contains('-Xjvm-default=all')) {
-                kotlinOptions.freeCompilerArgs = args + ['-Xjvm-default=all']
+            def updated = args
+            if (updated.contains('-Xjvm-default=all')) {
+                updated = updated.findAll { it != '-Xjvm-default=all' }
             }
+            if (!updated.contains('-jvm-default=no-compatibility')) {
+                updated = updated + ['-jvm-default=no-compatibility']
+            }
+            if (!updated.contains('-Xconsistent-data-class-copy-visibility')) {
+                updated = updated + ['-Xconsistent-data-class-copy-visibility']
+            }
+            kotlinOptions.freeCompilerArgs = updated
         }
     }
 }

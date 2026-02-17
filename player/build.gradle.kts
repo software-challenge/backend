@@ -24,7 +24,7 @@ application {
 
 dependencies {
     api(project(":sdk"))
-    implementation("ch.qos.logback", "logback-classic", "1.3.15")
+    implementation("ch.qos.logback:logback-classic:1.3.15")
     
     runtimeOnly(project(":plugin$year"))
     //runtimeOnly(kotlin("script-runtime"))
