@@ -10,6 +10,7 @@ import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.Team
 import sc.plugin2026.util.GameRuleLogic
+import sc.plugin2026.util.PiranhaConstants
 import sc.shared.MoveMistake
 
 class GameRuleLogicTest: FunSpec({
@@ -51,6 +52,35 @@ class GameRuleLogicTest: FunSpec({
             GameRuleLogic.checkMove(board, Move(fish, Direction.UP_RIGHT)) shouldBe MoveMistake.DESTINATION_OUT_OF_BOUNDS
             GameRuleLogic.checkMove(board, Move(fish, Direction.UP_LEFT)) shouldBe null
             GameRuleLogic.possibleMovesFor(board, fish) shouldHaveSize 3
+        }
+    }
+    /**
+     * Check if a player loses when no move is possible.
+     */
+    context("losing by no moves") {
+        test("cornered") {
+            val board = Board()
+            // Remove all piranhas from the board
+            for(x in 0 until PiranhaConstants.BOARD_LENGTH) {
+                for(y in 0 until PiranhaConstants.BOARD_LENGTH) {
+                    board[x, y] = FieldState.EMPTY
+                }
+            }
+            
+            // Readd piranhas for the test
+            // Piranha at (0, 0) is blocked
+            board[0, 0] = FieldState.ONE_S
+            board[1, 0] = FieldState.TWO_S
+            board[1, 1] = FieldState.TWO_S
+            board[0, 1] = FieldState.TWO_S
+            
+            // Piranha at (9, 9) is also blocked
+            board[9, 9] = FieldState.ONE_S
+            board[8, 9] = FieldState.TWO_S
+            board[8, 8] = FieldState.TWO_S
+            board[9, 8] = FieldState.TWO_S
+            val gameState = GameState(board = board, turn = 0)
+            gameState.isOver shouldBe true
         }
     }
 })
