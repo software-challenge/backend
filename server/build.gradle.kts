@@ -55,14 +55,15 @@ tasks {
     
     val bundle by registering(Zip::class) {
         group = "distribution"
-        dependsOn(":test-client:jar", ":player:shadowJar", makeRunnable)
+        dependsOn(":player:shadowJar", makeRunnable)
         destinationDirectory.set(bundleDir)
         archiveBaseName.set("software-challenge-server")
         from(runnableDir)
         if (enableTestClient) {
-            from(project(":test-client").tasks.named("copyLogbackConfig"))
+            dependsOn(":test-client:jar", ":test-client:copyLogbackConfig")
+            from({ project(":test-client").tasks.getByName("copyLogbackConfig").outputs.files })
         }
-        from(project(":player").tasks.named("shadowJar"))
+        from({ project(":player").tasks.getByName("shadowJar").outputs.files })
         doFirst {
             val versionFile = runnableDir.resolve("version")
             try {
