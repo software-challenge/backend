@@ -12,7 +12,8 @@ This repository is a multi-module Gradle project for the Software Challenge back
 - `gradle/` and `gradlew`: build logic and wrapper.
 
 ### Build, Test & Development Commands
-Run from repo root:
+Use the Gradle wrapper from repo root.
+Always use the default Gradle user home from the environment; do not pass a custom home (no `-g ...`, no overridden `GRADLE_USER_HOME`).
 
 - `./gradlew build`: compile, test, and create distribution bundles.
 - `./gradlew check`: run verification tasks across modules.
@@ -51,8 +52,10 @@ Primary languages are Kotlin and Java, but all new code must be written in Kotli
 - Always commit every completed change.
 - Use commit messages in format `type(scope): summary` (example: `fix(plugin26): avoid transient hash checks for observers`).
 - Enable local hooks: `git config core.hooksPath .dev/githooks`.
+- Commit format is enforced by hook: `type(scope): summary`.
+- Allowed types are: `fix`, `feat`, `enhance`, `docs`, `style`, `refactor`, `test`, `build`, `rework`, `release`, `revert`.
 - Prefer branch names like `feat/server/login` or `chore/gradle/release-fix`.
-- Keep PRs focused, link related issues, and describe behavior impact plus test coverage.
+- For PRs, include: concise description, linked issue(s), test evidence (commands/results), and logs/screenshots when behavior/output changed.
 - Use rebase merge when commits are independently valid; otherwise squash merge with PR title matching final commit message.
 - Make atomic commits; if a commit only fixes the previous local commit, squash before handoff.
 
