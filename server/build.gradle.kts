@@ -13,6 +13,7 @@ application {
 }
 
 val year: String by project
+val enableTestClient: Boolean by project
 dependencies {
     api(project(":sdk"))
     implementation("ch.qos.logback:logback-classic:1.3.15") // Update to 1.4 with JDK upgrade
@@ -58,11 +59,11 @@ tasks {
         destinationDirectory.set(bundleDir)
         archiveBaseName.set("software-challenge-server")
         from(runnableDir)
+        if (enableTestClient) {
+            from(project(":test-client").tasks.named("copyLogbackConfig"))
+        }
+        from(project(":player").tasks.named("shadowJar"))
         doFirst {
-            if(project.property("enableTestClient") !in arrayOf(null, false))
-                from(project(":test-client").tasks.named("copyLogbackConfig"))
-            from(project(":player").tasks.named("shadowJar"))
-            
             val versionFile = runnableDir.resolve("version")
             try {
                 val describe = ProcessBuilder("git", "describe", "--long", "--tags")
