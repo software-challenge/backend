@@ -11,7 +11,7 @@ und du dich voll und ganz auf das konzentrieren kannst,
 was wirklich zählt –
 [deine Strategie umsetzen](https://docs.software-challenge.de/entwicklung/simpleclient-erweitern) :)
 Dazu musst du nur noch das Java JDK installieren,
-Version 11-15 sollten problemlos funktionieren.
+für Gradle 9 wird mindestens Java 17 benötigt.
 
 Du kannst Gradle entweder über deine IDE oder über die Kommandozeile aufrufen (`./gradlew` oder `gradlew.bat`) -
 in der IDE den "wrapper" auswählen, damit die richtige Version genutzt wird.

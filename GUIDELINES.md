@@ -88,10 +88,11 @@ We recently introduced the use of the
 to make some year-specific implementations from the plugin accessible in the sdk and server.
 
 Currently there are two interfaces,
-[IGamePlugin](sdk/src/server-api/sc/api/plugins/IGamePlugin.java) 
-and [XStreamProvider]( sdk/src/server-api/sc/networking/XStreamProvider.kt),
-which are implemented in the plugin and then loaded through a ServiceLoader.
-The information which implementations to use resides in [resources/META-INF/services](plugin/src/resources/META-INF/services).
+[IGamePlugin](sdk/src/server-api/sc/api/plugins/IGamePlugin.java)
+and [XStreamProvider](sdk/src/server-api/sc/networking/XStreamProvider.kt),
+which are implemented in the yearly game plugin and then loaded through a ServiceLoader.
+The information which implementations to use resides in each plugin module under
+`src/main/resources/META-INF/services` (for example `games/piranhas/src/main/resources/META-INF/services`).
 
 ## Networking Protocol Classes
 
