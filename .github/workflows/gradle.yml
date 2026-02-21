@@ -7,32 +7,56 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        jdk:
+          - "17"
+          - "25"
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK
+      - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: ${{ matrix.jdk }}
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Build, verify and bundle
         run: ./gradlew --no-daemon clean check bundle
+      - name: Prepare CI diagnostics artifact
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p ci-artifacts
+          {
+            echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "Job: ${{ github.job }}"
+            echo "OS: ${{ matrix.os }}"
+            echo "JDK: ${{ matrix.jdk }}"
+            echo "SHA: ${{ github.sha }}"
+          } > ./build/reports/ci-info.txt
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ github.sha }}
+          name: test-reports-${{ matrix.os }}-jdk${{ matrix.jdk }}-${{ github.sha }}
+          if-no-files-found: warn
           path: |
-            **/build/reports/tests/**
-            **/build/test-results/**
+            ./build/reports/ci-info.txt
+            **/build/reports/**/*
+            **/build/test-results/**/*
       - name: Upload bundle artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: software-challenge-backend-${{ github.sha }}
+          name: software-challenge-backend-${{ matrix.os }}-jdk${{ matrix.jdk }}-${{ github.sha }}
           path: |
             build/bundle/*.zip
             build/bundle/*.jar
@@ -46,8 +70,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: software-challenge-backend-${{ github.sha }}
+          pattern: software-challenge-backend-*-${{ github.sha }}
           path: artifacts
+          merge-multiple: true
       - name: Release ${{ github.ref }}
         uses: softprops/action-gh-release@v2
         with:
