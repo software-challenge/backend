@@ -10,7 +10,7 @@ plugins {
 val game: String by project
 val year: String by project
 val gameName: String by project
-val testingDir: File by project
+val integrationReportsDir: File by project
 val version = rootProject.version.toString()
 
 sourceSets.main {
@@ -102,7 +102,7 @@ tasks {
     val playerTest by registering(Exec::class) {
         group = "verification"
         dependsOn(prepareZip)
-        val execDir = testingDir.resolve("player")
+        val execDir = integrationReportsDir.resolve("player")
         doFirst {
             delete { delete(execDir) }
             copy {

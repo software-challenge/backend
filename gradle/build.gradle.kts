@@ -37,7 +37,7 @@ val bundledJavadocDir by extra { "javadoc" }
 val bundledDokkaDir by extra { "dokka" }
 val sdkDocsDir by extra { "sdk" }
 val pluginDocsDir by extra { "plugin-$gameName" }
-val testingDir by extra { layout.buildDirectory.dir("tests").get().asFile }
+val integrationReportsDir by extra { layout.buildDirectory.dir("reports").get().asFile }
 val documentedProjects by extra { listOf("sdk", "plugin$year") }
 
 val isBeta by extra { versionObject.minor == 0 }

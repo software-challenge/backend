@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 val bundleDir: File by rootProject.extra
 val bundledPlayer: String by rootProject.extra
-val testingDir: File by rootProject.extra
+val integrationReportsDir: File by rootProject.extra
 val enableTestClient: Boolean by rootProject.extra
 val enableIntegrationTesting: Boolean by rootProject.extra
 
@@ -23,7 +23,7 @@ tasks {
         dependsOn(":server:makeRunnable", ":player:bundleShadow")
         group = "verification"
         doFirst {
-            val testGameDir = testingDir.resolve("game")
+            val testGameDir = integrationReportsDir.resolve("game")
             testGameDir.deleteRecursively()
             testGameDir.mkdirs()
             val java = "java"
@@ -114,8 +114,8 @@ tasks {
         shouldRunAfter("testGame")
         val testClientGames = 3
         doFirst {
-            testingDir.mkdirs()
-            val serverDir = testingDir.resolve("testclient")
+            integrationReportsDir.mkdirs()
+            val serverDir = integrationReportsDir.resolve("testclient")
             serverDir.deleteRecursively()
             unzipTo(serverDir, bundleDir.resolve("software-challenge-server.zip"))
 
