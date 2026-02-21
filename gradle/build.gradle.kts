@@ -33,6 +33,10 @@ val game by extra { "${gameName}_$year" }
 
 val bundleDir by extra { layout.buildDirectory.dir("bundle").get().asFile }
 val bundledPlayer by extra { "randomplayer-$gameName-$version.jar" }
+val bundledJavadocDir by extra { "javadoc" }
+val bundledDokkaDir by extra { "dokka" }
+val sdkDocsDir by extra { "sdk" }
+val pluginDocsDir by extra { "plugin-$gameName" }
 val testingDir by extra { layout.buildDirectory.dir("tests").get().asFile }
 val documentedProjects by extra { listOf("sdk", "plugin$year") }
 
@@ -77,30 +81,58 @@ tasks {
         dependsOn("bundle")
     }
     
-    register<Copy>("doc") {
-        dependsOn(documentedProjects.map { ":$it:doc" })
+    val bundleJavadocDocs by registering(Copy::class) {
+        dependsOn(documentedProjects.map { ":$it:javadocDocs" })
         group = "documentation"
-        description = "Collects Javadoc output for documented projects into ${bundleDir.relativeTo(projectDir)}/doc"
-        into(bundleDir.resolve("doc"))
+        description = "Collects Javadoc output for documented projects into ${bundleDir.relativeTo(projectDir)}/$bundledJavadocDir"
+        into(bundleDir.resolve(bundledJavadocDir))
         val sdkJavadoc = project(":sdk").tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationJavadoc")
         val pluginJavadoc = project(":plugin$year").tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationJavadoc")
-        from(sdkJavadoc.flatMap { it.outputDirectory }) { into("sdk") }
-        from(pluginJavadoc.flatMap { it.outputDirectory }) { into("plugin-$gameName") }
+        from(sdkJavadoc.flatMap { it.outputDirectory }) { into(sdkDocsDir) }
+        from(pluginJavadoc.flatMap { it.outputDirectory }) { into(pluginDocsDir) }
     }
 
-    register<Copy>("docHtml") {
-        dependsOn(documentedProjects.map { ":$it:docHtml" })
+    val bundleDokkaDocs by registering(Copy::class) {
+        dependsOn(documentedProjects.map { ":$it:dokkaDocs" })
         group = "documentation"
-        description = "Collects Dokka HTML output for documented projects into ${bundleDir.relativeTo(projectDir)}/doc-html"
-        into(bundleDir.resolve("doc-html"))
+        description = "Collects Dokka HTML output for documented projects into ${bundleDir.relativeTo(projectDir)}/$bundledDokkaDir"
+        into(bundleDir.resolve(bundledDokkaDir))
         val sdkHtml = project(":sdk").tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
         val pluginHtml = project(":plugin$year").tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
-        from(sdkHtml.flatMap { it.outputDirectory }) { into("sdk") }
-        from(pluginHtml.flatMap { it.outputDirectory }) { into("plugin-$gameName") }
+        from(sdkHtml.flatMap { it.outputDirectory }) { into(sdkDocsDir) }
+        from(pluginHtml.flatMap { it.outputDirectory }) { into(pluginDocsDir) }
     }
 
+    fun wireDocAlias(taskName: String, taskDescription: String, aggregateTask: TaskProvider<Copy>) {
+        if (findByName(taskName) != null) {
+            named(taskName) {
+                group = "documentation"
+                description = taskDescription
+                dependsOn(aggregateTask)
+                onlyIf { false }
+            }
+        } else {
+            register(taskName) {
+                group = "documentation"
+                description = taskDescription
+                dependsOn(aggregateTask)
+            }
+        }
+    }
+
+    wireDocAlias(
+        taskName = "javadoc",
+        taskDescription = "Collects Javadoc output for documented projects into ${bundleDir.relativeTo(projectDir)}/$bundledJavadocDir",
+        aggregateTask = bundleJavadocDocs
+    )
+    wireDocAlias(
+        taskName = "dokka",
+        taskDescription = "Collects Dokka HTML output for documented projects into ${bundleDir.relativeTo(projectDir)}/$bundledDokkaDir",
+        aggregateTask = bundleDokkaDocs
+    )
+
     register("bundle") {
-        dependsOn("doc")
+        dependsOn("javadoc")
         dependOnSubprojects()
         group = "distribution"
         description = "Zips everything up for release into ${bundleDir.relativeTo(projectDir)}"
@@ -110,7 +142,7 @@ tasks {
     register("verifyDocs") {
         group = "documentation"
         description = "Verifies generated docs omit Companion classes and include Java+Kotlin SDK docs."
-        dependsOn("doc", "docHtml")
+        dependsOn("javadoc", "dokka")
         doLast {
             val forbidden = Regex("\\bCompanion\\b")
             val offending = mutableListOf<String>()
@@ -279,11 +311,11 @@ allprojects {
                 }
             }
 
-            register("doc") {
+            register("javadocDocs") {
                 group = "documentation"
                 dependsOn(sanitizeJavadoc)
             }
-            register("docHtml") {
+            register("dokkaDocs") {
                 group = "documentation"
                 dependsOn(inlineHtmlNav)
             }

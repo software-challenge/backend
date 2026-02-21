@@ -37,7 +37,7 @@ tasks {
     }
     
     val copyDocs by registering(Copy::class) {
-        dependsOn(":sdk:doc", ":plugin$year:doc")
+        dependsOn(":sdk:javadocDocs", ":plugin$year:javadocDocs")
         into(layout.buildDirectory.dir("zip"))
         with(copySpec {
             from(project(":plugin$year").layout.buildDirectory.dir("doc"))
