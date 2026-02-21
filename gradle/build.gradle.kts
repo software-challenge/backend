@@ -55,7 +55,7 @@ if (!javaRuntimeVersion.isCompatibleWith(JavaVersion.VERSION_17)) {
 
 // == Split script modules ==
 // JVM conventions are kept in a dedicated applied script for readability.
-apply(from = "gradle/jvm-conventions.gradle")
+apply(from = "gradle/jvm-conventions.gradle.kts")
 apply(from = "gradle/integration-tasks.gradle.kts")
 apply(from = "gradle/release-task.gradle.kts")
 

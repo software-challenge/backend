@@ -1,18 +1,16 @@
 /*
  * Shared JVM conventions for all subprojects.
- *
- * Kotlin DSL alternative to gradle/jvm-conventions.gradle.
- * Not wired into the build by default.
  */
 
 import org.gradle.api.JavaVersion
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.api.tasks.testing.Test
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 val javaToolchainVersion = rootProject.extra["javaToolchainVersion"] as Int
 val javaTargetVersion = rootProject.extra["javaTargetVersion"] as JavaVersion
+val kotlinCompileTaskNames = setOf("compileKotlin", "compileTestKotlin")
 
 subprojects {
     apply(plugin = "java-library")
@@ -20,7 +18,7 @@ subprojects {
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "se.patrikerdes.use-latest-versions")
 
-    java {
+    extensions.configure(JavaPluginExtension::class.java) {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(javaToolchainVersion))
         }
@@ -43,19 +41,30 @@ subprojects {
         }
     }
 
-    tasks.withType(KotlinJvmCompile::class.java).configureEach {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(javaTargetVersion.toString()))
+    tasks
+        .matching { it.name in kotlinCompileTaskNames }
+        .configureEach {
+            val kotlinOptions = if (hasProperty("kotlinOptions")) property("kotlinOptions") else null
+            if (kotlinOptions != null) {
+                kotlinOptions.javaClass.getMethod("setJvmTarget", String::class.java)
+                    .invoke(kotlinOptions, javaTargetVersion.toString())
 
-            val current = freeCompilerArgs.get().toMutableList()
-            current.removeAll { it == "-Xjvm-default=all" }
-            if (!current.contains("-jvm-default=no-compatibility")) {
-                current.add("-jvm-default=no-compatibility")
+                @Suppress("UNCHECKED_CAST")
+                val args = (kotlinOptions.javaClass.getMethod("getFreeCompilerArgs").invoke(kotlinOptions) as? List<String>).orEmpty()
+                val updated = args
+                    .filterNot { it == "-Xjvm-default=all" }
+                    .toMutableList()
+                    .also {
+                        if (!it.contains("-jvm-default=no-compatibility")) {
+                            it.add("-jvm-default=no-compatibility")
+                        }
+                        if (!it.contains("-Xconsistent-data-class-copy-visibility")) {
+                            it.add("-Xconsistent-data-class-copy-visibility")
+                        }
+                    }
+
+                kotlinOptions.javaClass.getMethod("setFreeCompilerArgs", List::class.java)
+                    .invoke(kotlinOptions, updated)
             }
-            if (!current.contains("-Xconsistent-data-class-copy-visibility")) {
-                current.add("-Xconsistent-data-class-copy-visibility")
-            }
-            freeCompilerArgs.set(current)
         }
-    }
 }
