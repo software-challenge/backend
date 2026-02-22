@@ -5,14 +5,14 @@ import io.kotest.matchers.should
 import io.kotest.matchers.types.beInstanceOf
 import kotlinx.coroutines.runBlocking
 import sc.server.network.await
-import java.util.ArrayDeque
 import java.util.Queue
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 import kotlin.time.ExperimentalTime
 
 open class MessageListener<T: Any> {
-    protected val messages: Queue<T> = ArrayDeque()
+    protected val messages: Queue<T> = ConcurrentLinkedQueue()
     
     fun addMessage(message: T) =
             messages.add(message)
