@@ -1,7 +1,9 @@
 import org.gradle.api.GradleException
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm") version "2.3.0"
@@ -44,18 +46,10 @@ val isBeta by extra { versionObject.minor == 0 }
 val enableTestClient by extra { arrayOf("check", "testTestClient").any { gradle.startParameter.taskNames.contains(it) } || !isBeta }
 val enableIntegrationTesting by extra { !project.hasProperty("nointegration") && (!isBeta || enableTestClient) }
 
-val javaToolchainVersion by extra { 25 }
-val javaTargetVersion by extra { JavaVersion.VERSION_17 }
-
-val javaRuntimeVersion = JavaVersion.current()
-println("Current version: $version (unstable: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java runtime $javaRuntimeVersion, toolchain $javaToolchainVersion, target $javaTargetVersion)")
-if (!javaRuntimeVersion.isCompatibleWith(JavaVersion.VERSION_17)) {
-    System.err.println("Gradle 9+ requires Java 17+ to run. Toolchain is set to $javaToolchainVersion; install it or enable toolchain auto-download.")
-}
+val javaRuntimeVersion: JavaVersion = JavaVersion.current()
+println("Current version: $version (unstable: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java runtime $javaRuntimeVersion)")
 
 // == Split script modules ==
-// JVM conventions are kept in a dedicated applied script for readability.
-apply(from = "gradle/jvm-conventions.gradle.kts")
 apply(from = "gradle/integration-tasks.gradle.kts")
 apply(from = "gradle/release-task.gradle.kts")
 
@@ -198,6 +192,30 @@ tasks {
     }
 }
 
+subprojects {
+    apply(plugin = "java-library")
+    apply(plugin = "kotlin")
+    apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "se.patrikerdes.use-latest-versions")
+
+    if (name != "test-config") {
+        dependencies {
+            add("testImplementation", project(":test-config"))
+        }
+    }
+
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
+
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.fromTarget(javaRuntimeVersion.toString()))
+            freeCompilerArgs.add("-Xjdk-release=${javaRuntimeVersion.majorVersion}")
+        }
+    }
+}
+
 allprojects {
     repositories {
         mavenCentral()
@@ -232,7 +250,7 @@ allprojects {
                 reportUndocumented.set(false)
                 suppressGeneratedFiles.set(true)
                 documentedVisibilities.set(setOf(VisibilityModifier.Public))
-                jdkVersion.set(javaTargetVersion.majorVersion.toInt())
+                jdkVersion.set(javaRuntimeVersion.majorVersion.toInt())
             }
         }
 

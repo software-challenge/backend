@@ -1,8 +1,5 @@
 sourceSets {
     main.get().java.setSrcDirs(listOf("framework", "server-api", "player").map { "src/main/$it" })
-    named("test") {
-        kotlin.srcDir(file("../helpers/test-config/src/main/kotlin"))
-    }
 }
 
 dependencies {
