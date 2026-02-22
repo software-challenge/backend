@@ -45,7 +45,7 @@ val enableTestClient by extra { arrayOf("check", "testTestClient").any { gradle.
 val enableIntegrationTesting by extra { !project.hasProperty("nointegration") && (!isBeta || enableTestClient) }
 
 val javaToolchainVersion by extra { 25 }
-val javaTargetVersion by extra { JavaVersion.VERSION_1_8 }
+val javaTargetVersion by extra { JavaVersion.VERSION_17 }
 
 val javaRuntimeVersion = JavaVersion.current()
 println("Current version: $version (unstable: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java runtime $javaRuntimeVersion, toolchain $javaToolchainVersion, target $javaTargetVersion)")

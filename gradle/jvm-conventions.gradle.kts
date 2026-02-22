@@ -48,23 +48,6 @@ subprojects {
             if (kotlinOptions != null) {
                 kotlinOptions.javaClass.getMethod("setJvmTarget", String::class.java)
                     .invoke(kotlinOptions, javaTargetVersion.toString())
-
-                @Suppress("UNCHECKED_CAST")
-                val args = (kotlinOptions.javaClass.getMethod("getFreeCompilerArgs").invoke(kotlinOptions) as? List<String>).orEmpty()
-                val updated = args
-                    .filterNot { it == "-Xjvm-default=all" }
-                    .toMutableList()
-                    .also {
-                        if (!it.contains("-jvm-default=no-compatibility")) {
-                            it.add("-jvm-default=no-compatibility")
-                        }
-                        if (!it.contains("-Xconsistent-data-class-copy-visibility")) {
-                            it.add("-Xconsistent-data-class-copy-visibility")
-                        }
-                    }
-
-                kotlinOptions.javaClass.getMethod("setFreeCompilerArgs", List::class.java)
-                    .invoke(kotlinOptions, updated)
             }
         }
 }
