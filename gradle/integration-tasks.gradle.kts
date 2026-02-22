@@ -125,16 +125,23 @@ tasks {
                 arrayOf("--start-server", "--tests", testClientGames.toString(), "--port", "13055")
             println("Testing TestClient with $command")
 
-            val testClient = ProcessBuilder(command).directory(serverDir).start()
+            val testClientOut = serverDir.resolve("testclient.log")
+            val testClientErr = serverDir.resolve("testclient-err.log")
+            val testClient = ProcessBuilder(command)
+                .directory(serverDir)
+                .redirectOutput(testClientOut)
+                .redirectError(testClientErr)
+                .start()
             if (testClient.waitFor(maxGameLength * testClientGames, TimeUnit.SECONDS)) {
                 val value = testClient.exitValue()
                 if (value == 0) {
                     println("TestClient successfully tested!")
                 } else {
-                    throw Exception("TestClient exited with exit code $value - check the logs under $serverDir!")
+                    throw Exception("TestClient exited with exit code $value - check $testClientOut and $testClientErr!")
                 }
             } else {
-                throw Exception("TestClient exceeded timeout of ${maxGameLength * testClientGames} seconds - check the logs under $serverDir!")
+                testClient.destroyForcibly()
+                throw Exception("TestClient exceeded timeout of ${maxGameLength * testClientGames} seconds - check $testClientOut and $testClientErr!")
             }
         }
     }
