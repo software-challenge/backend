@@ -8,7 +8,6 @@ die sich dann in Duellen gegen andere durchsetzen muss.
 
 Der Code teilt sich auf in gemeinsames SDK, Server, Spieler(vorlage) und Spiel-Plugins.
 
-<<<<<<< HEAD
 | Ordner   | Beschreibung                                                      |
 |----------|-------------------------------------------------------------------|
 | games    | Spiel-Plugins pro Jahr          |

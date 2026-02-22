@@ -35,7 +35,6 @@ jobs:
         if: always()
         shell: bash
         run: |
-          mkdir -p ci-artifacts
           {
             echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             echo "Job: ${{ github.job }}"
