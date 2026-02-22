@@ -38,7 +38,7 @@ class LobbyGameTest: WordSpec({
         
         val adminListener = MessageListener<ResponsePacket>()
         val lobbyClient = testLobby.connectClient()
-        val admin = lobbyClient.authenticate(PASSWORD, adminListener::addMessage)
+        val admin = testLobby.authenticateAdmin(lobbyClient, adminListener::addMessage)
         fun prepareGame(request: PrepareGameRequest): GamePreparedResponse {
             admin.prepareGame(request)
             val prepared = adminListener.waitForMessage(GamePreparedResponse::class)
