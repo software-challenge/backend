@@ -130,6 +130,7 @@ class GameResultTest: WordSpec({
         }
         game.currentState.performMoveDirectly(Move(Accelerate(-1), Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
         "work with regular result" {
+            game.players.forEach { it.violation = null }
             game.getResult() shouldSerializeTo """
                 <result>
                   <definition>
