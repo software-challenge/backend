@@ -49,6 +49,9 @@ data class GameState @JvmOverloads constructor(
                 Team.values().toList().maxByNoEqual { team -> GameRuleLogic.greatestSwarmSize(board, team) }
                            ?.let { WinCondition(it, PiranhasWinReason.BIGGER_SWARM) }
                        ?: WinCondition(null, WinReasonTie)
+            } else if (this.getSensibleMoves().isEmpty()) {
+                val team = this.currentTeam.opponent()
+                WinCondition(team, PiranhasWinReason.BLOCKED)
             } else {
                 null
             }

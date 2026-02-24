@@ -9,9 +9,9 @@ import io.kotest.matchers.maps.*
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.Team
-import sc.plugin2026.util.GameRuleLogic
-import sc.plugin2026.util.PiranhaConstants
+import sc.plugin2026.util.*
 import sc.shared.MoveMistake
+import sc.shared.WinCondition
 
 class GameRuleLogicTest: FunSpec({
     context("swarm size") {
@@ -81,6 +81,7 @@ class GameRuleLogicTest: FunSpec({
             board[9, 8] = FieldState.TWO_S
             val gameState = GameState(board = board, turn = 0)
             gameState.isOver shouldBe true
+            gameState.winCondition shouldBe WinCondition(Team.TWO, PiranhasWinReason.BLOCKED)
         }
     }
 })

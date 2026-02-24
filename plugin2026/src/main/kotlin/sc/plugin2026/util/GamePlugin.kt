@@ -13,6 +13,7 @@ import sc.shared.*
 enum class PiranhasWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
     BIGGER_SWARM("%s hat den größeren zusammenhängenden Schwarm"),
     FIRST_UNION("%s hat zuerst alle Fische einer Farbe vereinigt"),
+    BLOCKED("%s hat den Gegner blockiert, sodass er keinen Zug mehr machen kann"),
 }
 
 class GamePlugin: IGamePlugin<Move> {
