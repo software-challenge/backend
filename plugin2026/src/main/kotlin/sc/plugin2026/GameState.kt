@@ -37,7 +37,6 @@ data class GameState @JvmOverloads constructor(
     override fun getPointsForTeam(team: ITeam): IntArray =
         intArrayOf(GameRuleLogic.greatestSwarmSize(board, team))
     
-    // TODO test if one player is unable to move he loses e.g. in corner
     override val isOver: Boolean
         get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
                 this.getSensibleMoves().isEmpty() ||
