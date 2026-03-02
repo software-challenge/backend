@@ -1,10 +1,9 @@
-import org.gradle.api.GradleException
 import org.gradle.internal.os.OperatingSystem
 import java.time.Duration
 
 plugins {
     application
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.1.0"
 }
 
 val game: String by project

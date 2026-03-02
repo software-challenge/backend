@@ -1,4 +1,3 @@
-import org.gradle.api.GradleException
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -217,6 +216,8 @@ subprojects {
 }
 
 allprojects {
+    this.group = "software-challenge"
+    
     repositories {
         mavenCentral()
         maven("https://maven.wso2.org/nexus/content/groups/wso2-public/")
