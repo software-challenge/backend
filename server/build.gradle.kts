@@ -132,4 +132,11 @@ tasks {
         jvmArgs = listOf("-Dlogback.configurationFile=../../configuration/logback.xml")
         args = System.getProperty("args", "").split(" ")
     }
+
+    // Keep application plugin for run, but disable generated distribution tasks.
+    listOf("distZip", "distTar", "installDist", "startScripts").forEach { taskName ->
+        named(taskName) {
+            enabled = false
+        }
+    }
 }

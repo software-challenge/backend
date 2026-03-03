@@ -57,4 +57,11 @@ tasks {
                 println("Using command-line arguments: $args")
         }
     }
+    
+    // Keep application plugin for run, but disable generated distribution tasks.
+    listOf("distZip", "distTar", "installDist", "startScripts").forEach { taskName ->
+        named(taskName) {
+            enabled = false
+        }
+    }
 }
