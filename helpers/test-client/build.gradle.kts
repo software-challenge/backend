@@ -22,13 +22,13 @@ dependencies {
 }
 
 tasks {
-    val createStartScripts by creating(ScriptsTask::class) {
+    val createStartScripts by registering(ScriptsTask::class) {
         destinationDir = jar.get().destinationDirectory.get().asFile
         fileName = "start-tests"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
     }
     
-    val copyLogbackConfig by creating(Copy::class) {
+    val copyLogbackConfig by registering(Copy::class) {
         from("src/logback-tests.xml")
         into(jar.get().destinationDirectory)
     }
@@ -52,7 +52,7 @@ tasks {
                 val playerLocation = project(":player").tasks.getByName<Jar>("shadowJar").archiveFile.get()
                 "--start-server --tests 3 --player1 $playerLocation --player2 $playerLocation"
             })
-            @Suppress("UNNECESSARY_SAFE_CALL", "SimplifyBooleanWithConstants")
+            @Suppress("UNNECESSARY_SAFE_CALL")
             if(args?.isEmpty() == false)
                 println("Using command-line arguments: $args")
         }

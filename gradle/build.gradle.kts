@@ -144,15 +144,17 @@ tasks {
                     .get().outputDirectory.get().asFile
                 val htmlDir = target.tasks.named<DokkaGeneratePublicationTask>("dokkaGeneratePublicationHtml")
                     .get().outputDirectory.get().asFile
-                listOf(javadocDir, htmlDir).forEach { docDir ->
-                    if (!docDir.exists()) return@forEach
-                    docDir.walkTopDown()
-                        .filter { it.isFile && (it.extension == "html" || it.extension == "js" || it.name == "package-list" || it.name == "element-list") }
-                        .forEach { file ->
-                            val text = runCatching { file.readText() }.getOrNull() ?: return@forEach
-                            if (forbidden.containsMatchIn(text)) offending.add(file.relativeTo(rootProject.projectDir).path)
-                        }
-                }
+                listOf(javadocDir, htmlDir)
+                    .asSequence()
+                    .filter { it.exists() }
+                    .flatMap { dir ->
+                        dir.walkTopDown()
+                            .filter { it.isFile && (it.extension == "html" || it.extension == "js" || it.name == "package-list" || it.name == "element-list") }
+                    }
+                    .forEach { file ->
+                        val text = runCatching { file.readText() }.getOrNull() ?: return@forEach
+                        if (forbidden.containsMatchIn(text)) offending.add(file.relativeTo(rootProject.projectDir).path)
+                    }
             }
             if (offending.isNotEmpty()) {
                 throw GradleException("Companion entries found in docs: ${offending.joinToString(", ")}")
