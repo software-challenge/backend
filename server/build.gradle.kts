@@ -16,7 +16,7 @@ val year: String by project
 val enableTestClient: Boolean by project
 dependencies {
     api(project(":sdk"))
-    implementation("ch.qos.logback:logback-classic:1.3.15") // Update to 1.4 with JDK upgrade
+    implementation("ch.qos.logback:logback-classic:1.5.32") // Update to 1.4 with JDK upgrade
     
     runtimeOnly(project(":plugin$year"))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine") // legacy java tests
@@ -37,7 +37,7 @@ tasks {
         fileName = "start"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar server.jar"
     }
-    
+
     val copyConfig by registering(Copy::class) {
         group = "distribution"
         from("configuration/logback-release.xml", "configuration/server.properties.example")
