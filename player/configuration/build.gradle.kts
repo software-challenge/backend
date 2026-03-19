@@ -1,7 +1,7 @@
 plugins {
     java
     application
-    id("com.gradleup.shadow") version "9.1.0"
+    id("com.gradleup.shadow") version "8.3.10"
 }
 
 sourceSets.main.get().java.srcDir("src/main")
