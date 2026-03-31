@@ -17,18 +17,18 @@ val year: String by project
 dependencies {
     implementation(project(":sdk"))
     implementation(project(":server")) // Only to access defaults of sc.server.Configuration
-    implementation("ch.qos.logback", "logback-classic", "1.3.15") // Update to 1.4 with JDK upgrade
+    implementation("ch.qos.logback:logback-classic:1.5.32")
     runtimeOnly(project(":plugin$year"))
 }
 
 tasks {
-    val createStartScripts by creating(ScriptsTask::class) {
+    val createStartScripts by registering(ScriptsTask::class) {
         destinationDir = jar.get().destinationDirectory.get().asFile
         fileName = "start-tests"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test-client.jar"
     }
     
-    val copyLogbackConfig by creating(Copy::class) {
+    val copyLogbackConfig by registering(Copy::class) {
         from("src/logback-tests.xml")
         into(jar.get().destinationDirectory)
     }
@@ -37,7 +37,7 @@ tasks {
         dependsOn(createStartScripts, copyLogbackConfig)
         doFirst {
             manifest.attributes(
-                    "Class-Path" to configurations.default.get()
+                    "Class-Path" to configurations.runtimeClasspath.get()
                             .map { "lib/" + it.name }
                             .plus("server.jar")
                             .joinToString(" ")
@@ -52,9 +52,16 @@ tasks {
                 val playerLocation = project(":player").tasks.getByName<Jar>("shadowJar").archiveFile.get()
                 "--start-server --tests 3 --player1 $playerLocation --player2 $playerLocation"
             })
-            @Suppress("UNNECESSARY_SAFE_CALL", "SimplifyBooleanWithConstants")
+            @Suppress("UNNECESSARY_SAFE_CALL")
             if(args?.isEmpty() == false)
                 println("Using command-line arguments: $args")
+        }
+    }
+    
+    // Keep application plugin for run, but disable generated distribution tasks.
+    listOf("distZip", "distTar", "installDist", "startScripts").forEach { taskName ->
+        named(taskName) {
+            enabled = false
         }
     }
 }

@@ -49,7 +49,7 @@ public class ClientXmlReadTest {
     client.start();
     client.send(new ExamplePacket());
     // TODO this attempts to close a closed stream: client.close();
-    String data = stringInterface.readData();
+    String data = stringInterface.readData().replace("\r\n", "\n").replace('\r', '\n');
     assertEquals("<protocol>\n  <example/>", data);
   }
 

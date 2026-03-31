@@ -1,12 +1,12 @@
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "2.3.0"
     `java-gradle-plugin`
 }
 
 sourceSets.main.get().java.setSrcDirs(listOf("src"))
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {

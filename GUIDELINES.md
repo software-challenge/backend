@@ -2,6 +2,14 @@
 
 This document captures development standards and architecture decisions of this project as a point of reference.
 
+## Gradle
+
+We build everything with Gradle, nesting projects if needed.
+Current toolchain: Gradle 9.3, Java 25 toolchain (bytecode target 8), Kotlin 2.3, Dokka 2.1.
+
+Dokka v2 generates Javadoc per project (Javadoc is still alpha and does not support multi-project aggregation),
+so we generate per-module docs and collect them during bundling.
+
 ## Testing
 
 Unsere Unittests nutzen das [Kotest-Framework](https://kotest.io) 
@@ -58,7 +66,7 @@ annotate the serialized fields with a concrete type instead.
 Ideally these fields should then be private with generically typed getters 
 as to not expose the implementation details internally.
 
-## Cloning
+## Object Cloning
 
 Relevant discussion: https://github.com/software-challenge/backend/pull/148
 
@@ -80,10 +88,11 @@ We recently introduced the use of the
 to make some year-specific implementations from the plugin accessible in the sdk and server.
 
 Currently there are two interfaces,
-[IGamePlugin](sdk/src/server-api/sc/api/plugins/IGamePlugin.java) 
-and [XStreamProvider]( sdk/src/server-api/sc/networking/XStreamProvider.kt),
-which are implemented in the plugin and then loaded through a ServiceLoader.
-The information which implementations to use resides in [resources/META-INF/services](plugin/src/resources/META-INF/services).
+[IGamePlugin](sdk/src/server-api/sc/api/plugins/IGamePlugin.java)
+and [XStreamProvider](sdk/src/server-api/sc/networking/XStreamProvider.kt),
+which are implemented in the yearly game plugin and then loaded through a ServiceLoader.
+The information which implementations to use resides in each plugin module under
+`src/main/resources/META-INF/services` (for example `games/piranhas/src/main/resources/META-INF/services`).
 
 ## Networking Protocol Classes
 
@@ -109,4 +118,3 @@ and is then wrapped in a [RoomPacket](sdk/src/server-api/sc/protocol/room/RoomPa
 
 The package contains a few standard messages,
 but most will be implemented in the corresponding plugin.
-

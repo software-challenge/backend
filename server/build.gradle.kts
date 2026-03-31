@@ -1,3 +1,4 @@
+import org.gradle.api.GradleException
 import sc.gradle.ScriptsTask
 
 plugins {
@@ -12,9 +13,10 @@ application {
 }
 
 val year: String by project
+val enableTestClient: Boolean by project
 dependencies {
     api(project(":sdk"))
-    implementation("ch.qos.logback", "logback-classic", "1.3.15") // Update to 1.4 with JDK upgrade
+    implementation("ch.qos.logback:logback-classic:1.5.32")
     
     runtimeOnly(project(":plugin$year"))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine") // legacy java tests
@@ -28,15 +30,15 @@ tasks {
         systemProperty("junit.jupiter.execution.timeout.default", "10 s") // legacy junit tests
     }
     
-    val runnableDir = buildDir.resolve("runnable")
+    val runnableDir = layout.buildDirectory.dir("runnable").get().asFile
     
-    val createStartScripts by creating(ScriptsTask::class) {
+    val createStartScripts by registering(ScriptsTask::class) {
         destinationDir = runnableDir
         fileName = "start"
         content = "java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar server.jar"
     }
-    
-    val copyConfig by creating(Copy::class) {
+
+    val copyConfig by registering(Copy::class) {
         group = "distribution"
         from("configuration/logback-release.xml", "configuration/server.properties.example")
         into(runnableDir)
@@ -44,42 +46,49 @@ tasks {
         rename("server.properties.example", "server.properties")
     }
     
-    val makeRunnable by creating(Copy::class) {
+    val makeRunnable by registering(Copy::class) {
         group = "distribution"
         dependsOn(jar, copyConfig, createStartScripts)
-        from(configurations.default)
+        from(configurations.runtimeClasspath)
         into(runnableDir.resolve("lib"))
     }
     
-    val bundle by creating(Zip::class) {
+    val bundle by registering(Zip::class) {
         group = "distribution"
-        dependsOn(":test-client:jar", ":player:shadowJar", makeRunnable)
+        dependsOn(":player:shadowJar", makeRunnable)
         destinationDirectory.set(bundleDir)
         archiveBaseName.set("software-challenge-server")
         from(runnableDir)
+        if (enableTestClient) {
+            dependsOn(":test-client:jar", ":test-client:copyLogbackConfig")
+            from({ project(":test-client").tasks.getByName("copyLogbackConfig").outputs.files })
+        }
+        from({ project(":player").tasks.getByName("shadowJar").outputs.files })
         doFirst {
-            if(project.property("enableTestClient") !in arrayOf(null, false))
-                from(project(":test-client").getTasksByName("copyLogbackConfig", false))
-            from(project(":player").getTasksByName("shadowJar", false))
-            
             val versionFile = runnableDir.resolve("version")
             try {
-                exec {
-                    commandLine("git", "describe", "--long", "--tags")
-                    standardOutput = versionFile.outputStream()
+                val describe = ProcessBuilder("git", "describe", "--long", "--tags")
+                    .redirectOutput(versionFile)
+                    .redirectError(ProcessBuilder.Redirect.INHERIT)
+                    .start()
+                if (describe.waitFor() != 0) {
+                    throw GradleException("git describe failed")
                 }
             } catch(e: Exception) {
                 println("Issue with git describe for version detection, falling back to rev-parse: $e")
                 println(versionFile.readText())
-                exec {
-                    commandLine("git", "rev-parse", "HEAD")
-                    standardOutput = versionFile.outputStream()
+                val revParse = ProcessBuilder("git", "rev-parse", "HEAD")
+                    .redirectOutput(versionFile)
+                    .redirectError(ProcessBuilder.Redirect.INHERIT)
+                    .start()
+                if (revParse.waitFor() != 0) {
+                    throw GradleException("git rev-parse failed")
                 }
             }
         }
     }
     
-    val startProduction by creating(JavaExec::class) {
+    val startProduction by registering(JavaExec::class) {
         group = "application"
         dependsOn(makeRunnable)
         classpath = jar.get().outputs.files
@@ -87,10 +96,10 @@ tasks {
             "-XX:MaxGCPauseMillis=100", "-XX:GCPauseIntervalMillis=2050", "-XX:+ScavengeBeforeFullGC")
     }
     
-    val dockerImage by creating(Exec::class) {
+    val dockerImage by registering(Exec::class) {
         group = "application"
         dependsOn(makeRunnable)
-        workingDir = buildDir
+        workingDir = layout.buildDirectory.get().asFile
         doFirst {
             val tag = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "--verify", "HEAD"))
                     .inputStream.reader().readText().trim()
@@ -112,7 +121,7 @@ tasks {
         destinationDirectory.set(runnableDir)
         doFirst {
             manifest.attributes(
-                    "Class-Path" to configurations.default.get().joinToString(" ") { "lib/" + it.name }
+                    "Class-Path" to configurations.runtimeClasspath.get().joinToString(" ") { "lib/" + it.name }
             )
         }
     }
@@ -122,5 +131,12 @@ tasks {
         workingDir = runnableDir
         jvmArgs = listOf("-Dlogback.configurationFile=../../configuration/logback.xml")
         args = System.getProperty("args", "").split(" ")
+    }
+
+    // Keep application plugin for run, but disable generated distribution tasks.
+    listOf("distZip", "distTar", "installDist", "startScripts").forEach { taskName ->
+        named(taskName) {
+            enabled = false
+        }
     }
 }

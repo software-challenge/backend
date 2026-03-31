@@ -6,6 +6,7 @@ import sc.protocol.LobbyProtocol
 import java.util.ServiceLoader
 
 interface XStreamProvider {
+    /** @suppress */
     companion object {
         /*
         * Using the KXml2 parser because the default (Xpp3) and StAX can't parse some special characters in attribute values:
