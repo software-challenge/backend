@@ -16,7 +16,7 @@ val year: String by project
 val enableTestClient: Boolean by project
 dependencies {
     api(project(":sdk"))
-    implementation("ch.qos.logback:logback-classic:1.5.32") // Update to 1.4 with JDK upgrade
+    implementation("ch.qos.logback:logback-classic:1.5.32")
     
     runtimeOnly(project(":plugin$year"))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine") // legacy java tests
