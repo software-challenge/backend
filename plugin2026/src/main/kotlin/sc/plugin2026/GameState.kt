@@ -37,9 +37,9 @@ data class GameState @JvmOverloads constructor(
     override fun getPointsForTeam(team: ITeam): IntArray =
         intArrayOf(GameRuleLogic.greatestSwarmSize(board, team))
     
-    // TODO test if one player is unable to move he loses e.g. in corner
     override val isOver: Boolean
         get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
+                this.getSensibleMoves().isEmpty() ||
                 turn / 2 >= PiranhaConstants.ROUND_LIMIT
     
     override val winCondition: WinCondition?
@@ -48,6 +48,9 @@ data class GameState @JvmOverloads constructor(
                 Team.values().toList().maxByNoEqual { team -> GameRuleLogic.greatestSwarmSize(board, team) }
                            ?.let { WinCondition(it, PiranhasWinReason.BIGGER_SWARM) }
                        ?: WinCondition(null, WinReasonTie)
+            } else if (this.getSensibleMoves().isEmpty()) {
+                val team = this.currentTeam.opponent()
+                WinCondition(team, PiranhasWinReason.BLOCKED)
             } else {
                 null
             }
