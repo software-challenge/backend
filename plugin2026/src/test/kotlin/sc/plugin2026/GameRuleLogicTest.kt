@@ -54,18 +54,10 @@ class GameRuleLogicTest: FunSpec({
             GameRuleLogic.possibleMovesFor(board, fish) shouldHaveSize 3
         }
     }
-    /**
-     * Check if a player loses when no move is possible.
-     */
+    /** Check if a player loses when no move is possible. */
     context("losing by no moves") {
         test("cornered") {
-            val board = Board()
-            // Remove all piranhas from the board
-            for(x in 0 until PiranhaConstants.BOARD_LENGTH) {
-                for(y in 0 until PiranhaConstants.BOARD_LENGTH) {
-                    board[x, y] = FieldState.EMPTY
-                }
-            }
+            val board = Board.EMPTY
             
             // Readd piranhas for the test
             // Piranha at (0, 0) is blocked

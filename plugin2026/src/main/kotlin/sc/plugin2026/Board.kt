@@ -48,6 +48,10 @@ class Board(
             .mapValues { (_, field) -> field.size }
     
     companion object {
+        /** Test helper to generate an empty board. */
+        val EMPTY
+            get() = Board(Array(PiranhaConstants.BOARD_LENGTH) { Array(PiranhaConstants.BOARD_LENGTH) { FieldState.EMPTY } })
+        
         /** Erstellt ein zufälliges Spielbrett.  */
         fun randomFields(
             obstacleCount: Int = PiranhaConstants.NUM_OBSTACLES,
