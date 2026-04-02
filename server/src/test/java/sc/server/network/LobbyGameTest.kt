@@ -69,8 +69,8 @@ class LobbyGameTest: WordSpec({
                     admin.control(room.id).step(true)
                     val result = roomListener.waitForMessage(GameResult::class)
                     playerHandlers[0].gameResult shouldBe result
-                    result.win?.winner shouldBe Team.TWO
-                    result.isRegular shouldBe true
+                    result.isRegular shouldBe false
+                    result.win?.winner shouldBe Team.ONE
                     admin.closed shouldBe false
                 }
                 playerClients[0].stop()

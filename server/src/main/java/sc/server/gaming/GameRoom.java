@@ -370,10 +370,14 @@ public class GameRoom implements IGameListener {
     if (getStatus() == GameStatus.CREATED) {
       if (forced) {
         logger.warn("Forcing game start for {}", game);
-        if(getClients().size() < 2)
+        if(getClients().size() < 2) {
+          if(playerSlots.size() < 2) {
+            openSlot();
+          }
           cancel();
-        else
-          start();
+          return;
+        }
+        start();
       } else {
         logger.info("Game isn't active yet, step was not forced.");
       }
