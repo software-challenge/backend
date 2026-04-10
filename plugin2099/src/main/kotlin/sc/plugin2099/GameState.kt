@@ -10,7 +10,6 @@ import sc.plugin2099.util.GameRuleLogic
 import sc.plugin2099.util.TicTacToeConstants
 import sc.plugin2099.util.TicTacToeWinReason
 import sc.shared.InvalidMoveException
-import sc.shared.MoveMistake
 import sc.shared.WinCondition
 import sc.shared.WinReasonTie
 
@@ -34,9 +33,8 @@ data class GameState @JvmOverloads constructor(
     override val board: Board = Board(),
 ): TwoPlayerGameState<Move>(Team.ONE) {
 
-    // Bin mir nicht sicher wie man TicTacToe bewerten soll.
     override fun getPointsForTeam(team: ITeam): IntArray =
-        intArrayOf(0)
+        intArrayOf()
 
     override val isOver: Boolean
         get() = (GameRuleLogic.checkWinner(board) != null) ||
@@ -76,7 +74,6 @@ data class GameState @JvmOverloads constructor(
     override fun clone(): GameState =
         copy(board = board.clone())
 
-    // Keine wirklichen Stats vorhanden bei TicTacToe.
     override fun teamStats(team: ITeam): List<Stat> =
         listOf(
         )
