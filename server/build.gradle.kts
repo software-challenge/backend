@@ -82,7 +82,7 @@ tasks {
                     .redirectError(ProcessBuilder.Redirect.INHERIT)
                     .start()
                 if (revParse.waitFor() != 0) {
-                    throw GradleException("git rev-parse failed")
+                    println("git rev-parse failed, no version file written")
                 }
             }
         }
