@@ -101,8 +101,8 @@ object GameRuleLogic {
             for(j in -1..1) {
                 val x = pos.x + i
                 val y = pos.y + j
-                if(x < 0 || x >= PiranhaConstants.BOARD_LENGTH ||
-                   y < 0 || y >= PiranhaConstants.BOARD_LENGTH ||
+                if(x < 0 || x >= PiranhaConstants.BOARD_HEIGHT ||
+                   y < 0 || y >= PiranhaConstants.BOARD_WIDTH ||
                    (i == 0 && j == 0)) continue
                 
                 val coord = Coordinates(x, y)
