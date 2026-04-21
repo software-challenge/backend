@@ -1,22 +1,23 @@
-package sc.plugin2026
+package sc.plugin2098
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.annotations.XStreamOmitField
 import sc.api.plugins.*
 import sc.framework.deepCopy
-import sc.plugin2026.util.PiranhaConstants
+import sc.plugin2098.util.Connect4Constants
 import kotlin.random.Random
+import kotlin.toString
 
-/** Spielbrett für Vier Gewinnt mit [PiranhaConstants.BOARD_WIDTH] * [PiranhaConstants.BOARD_HEIGHT] Feldern.  */
+val line = "-".repeat(Connect4Constants.BOARD_WIDTH * 2 + 2)
+
+/** Spielbrett für Vier Gewinnt mit [Connect4Constants.BOARD_WIDTH] * [Connect4Constants.BOARD_HEIGHT] Feldern.  */
 @XStreamAlias(value = "board")
 class Board(
     @XStreamImplicit(itemFieldName = "row")
-    override val gameField: MutableTwoDBoard<FieldState> = randomFields()
+    override val gameField: MutableTwoDBoard<FieldState> = emptyFields()
 ): RectangularBoard<FieldState>(), IBoard {
     
-    /** Gibt eine kompakte String-Darstellung des Spielfelds mit Koordinaten
-     * und einer zweibuchstabigen Darstellung der Feldzustände zurück. */
     override fun toString() =
         "Board " + gameField.withIndex().joinToString(" ", "[", "]") { row ->
             row.value.withIndex().joinToString(", ", prefix = "[", postfix = "]") {
@@ -24,9 +25,6 @@ class Board(
             }
         }
     
-    @Transient
-    private val line = "-".repeat(PiranhaConstants.BOARD_WIDTH * 2 + 2)
-    /** Gibt eine visuell formatierte Darstellung des Spielfelds mit ASCII-Rahmen zurück. */
     fun prettyString(): String {
         val map = StringBuilder(line)
         gameField.forEach { row ->
@@ -39,30 +37,22 @@ class Board(
         return map.toString()
     }
     
-    /** Erstellt eine tiefe Kopie dieses [Board] durch Klonen der zugrunde liegenden Felder. */
-    override fun clone(): Board {
+    override fun clone(): sc.plugin2098.Board {
         //println("Cloning with ${gameField::class.java}: $this")
         return Board(gameField.deepCopy())
     }
     
-    /** Gibt das [Team] eines Fisches an [pos] zurück,
-     * oder `null` falls sich kein Fisch auf dem Feld befindet. */
     fun getTeam(pos: Coordinates): Team? =
         this[pos].team
     
-    /** Gibt eine Zuordnung aller von [team] belegten Felder zu deren Fischgrößen zurück. */
-    fun fieldsForTeam(team: ITeam): Map<Coordinates, Int> =
-        filterValues { field -> field.team == team }
-            .mapValues { (_, field) -> field.size }
     
-    /** @suppress */
     companion object {
-        /** Erstellt ein Spielbrett **/
-        fun randomFields(): MutableTwoDBoard<FieldState> {
-            val fields = Array(PiranhaConstants.BOARD_HEIGHT) {
-                Array(PiranhaConstants.BOARD_WIDTH) { FieldState.EMPTY }
+        /** Erstellt ein leeres Spielbrett.  */
+        fun emptyFields(): MutableTwoDBoard<FieldState> {
+            return Array(Connect4Constants.BOARD_WIDTH) {
+                Array(Connect4Constants.BOARD_HEIGHT) { FieldState.EMPTY }
             }
-            return fields
         }
     }
 }
+

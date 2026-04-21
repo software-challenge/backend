@@ -1,12 +1,12 @@
-package sc.plugin2026.util
+package sc.plugin2098.util
 
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.ITeam
-import sc.plugin2026.Board
-import sc.plugin2026.FieldState
-import sc.plugin2026.Move
-import sc.plugin2026.PiranhaMoveMistake
+import sc.plugin2098.Board
+import sc.plugin2098.FieldState
+import sc.plugin2098.Move
+import sc.plugin2098.PiranhaMoveMistake
 import sc.shared.IMoveMistake
 import sc.shared.MoveMistake
 

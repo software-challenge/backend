@@ -1,10 +1,10 @@
-package sc.plugin2026
+package sc.plugin2098
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.IMove
-import sc.plugin2026.util.GameRuleLogic
+import sc.plugin2098.util.GameRuleLogic
 
 @XStreamAlias("move")
 /**

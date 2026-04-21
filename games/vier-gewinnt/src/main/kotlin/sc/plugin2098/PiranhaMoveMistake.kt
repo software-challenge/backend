@@ -1,4 +1,4 @@
-package sc.plugin2026
+package sc.plugin2098
 
 import sc.shared.IMoveMistake
 

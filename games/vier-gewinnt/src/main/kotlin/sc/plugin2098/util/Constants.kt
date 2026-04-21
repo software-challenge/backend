@@ -1,7 +1,7 @@
-package sc.plugin2026.util
+package sc.plugin2098.util
 
 /** Eine Sammlung an verschiedenen Konstanten, die im Spiel verwendet werden. */
-object PiranhaConstants {
+object Connect4Constants {
     const val BOARD_WIDTH: Int = 7
     const val BOARD_HEIGHT: Int = 6
     

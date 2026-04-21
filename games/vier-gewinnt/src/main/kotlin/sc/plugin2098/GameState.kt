@@ -1,4 +1,4 @@
-package sc.plugin2026
+package sc.plugin2098
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
@@ -7,9 +7,9 @@ import sc.api.plugins.Stat
 import sc.api.plugins.Team
 import sc.api.plugins.TwoPlayerGameState
 import sc.framework.plugins.maxByNoEqual
-import sc.plugin2026.util.GameRuleLogic
-import sc.plugin2026.util.PiranhaConstants
-import sc.plugin2026.util.PiranhasWinReason
+import sc.plugin2098.util.GameRuleLogic
+import sc.plugin2098.util.Connect4Constants
+import sc.plugin2098.util.Connect4WinReason
 import sc.shared.InvalidMoveException
 import sc.shared.WinCondition
 import sc.shared.WinReasonTie
@@ -45,14 +45,14 @@ data class GameState @JvmOverloads constructor(
     /** Gibt an, ob das Spiel beendet ist. */
     override val isOver: Boolean
         get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
-                turn / 2 >= PiranhaConstants.ROUND_LIMIT
+                turn / 2 >= Connect4Constants.ROUND_LIMIT
     
     /** Liefert die aktuelle Gewinnbedingung oder null, falls das Spiel noch nicht entschieden ist. */
     override val winCondition: WinCondition?
         get() =
             if(Team.values().any { team -> GameRuleLogic.isSwarmConnected(board, team) }) {
                 Team.values().toList().maxByNoEqual { team -> GameRuleLogic.greatestSwarmSize(board, team) }
-                           ?.let { WinCondition(it, PiranhasWinReason.BIGGER_SWARM) }
+                           ?.let { WinCondition(it, Connect4WinReason.BIGGER_SWARM) }
                        ?: WinCondition(null, WinReasonTie)
             } else {
                 null
@@ -92,7 +92,7 @@ data class GameState @JvmOverloads constructor(
     /** Ermittelt zusammenfassende Statistiken für das angegebene [team]. */
     override fun teamStats(team: ITeam): List<Stat> =
         listOf(
-            Stat("Anzahl Fische", board.fieldsForTeam(team).size),
+            /*Stat("Anzahl Fische", board.fieldsForTeam(team).size),*/
             Stat("Größter Schwarm", GameRuleLogic.greatestSwarmSize(board, team))
         )
     

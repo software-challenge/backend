@@ -1,17 +1,17 @@
-package sc.plugin2026.util
+package sc.plugin2098.util
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.framework.plugins.TwoPlayerGame
-import sc.plugin2026.GameState
-import sc.plugin2026.Move
+import sc.plugin2098.GameState
+import sc.plugin2098.Move
 import sc.shared.*
 
-/** Gewinn-Gründe für Piranhas. */
+/** Gewinn-Gründe für 4 Gewinnt. */
 @XStreamAlias(value = "winreason")
-enum class PiranhasWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
+enum class Connect4WinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
     /** Groesster zusammenhaengender Schwarm entscheidet. */
     BIGGER_SWARM("%s hat den größeren zusammenhängenden Schwarm"),
     /** Alle Fische einer Farbe zuerst vereinigt. */
@@ -26,7 +26,7 @@ class GamePlugin: IGamePlugin<Move> {
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
-                        ScoreFragment("Schwarmgröße", PiranhasWinReason.BIGGER_SWARM, ScoreAggregation.AVERAGE),
+                        ScoreFragment("Schwarmgröße", Connect4WinReason.BIGGER_SWARM, ScoreAggregation.AVERAGE),
                 ))
     }
     
@@ -42,7 +42,7 @@ class GamePlugin: IGamePlugin<Move> {
     
     /** Maximale Zuganzahl (beide Spieler). */
     override val turnLimit: Int =
-        PiranhaConstants.ROUND_LIMIT * 2
+        Connect4Constants.ROUND_LIMIT * 2
     
     /** Klasse der Zug-Implementierung. */
     override val moveClass = Move::class.java

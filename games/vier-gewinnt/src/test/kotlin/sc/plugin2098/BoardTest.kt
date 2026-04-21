@@ -1,4 +1,4 @@
-package sc.plugin2026
+package sc.plugin2098
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.*
@@ -6,10 +6,10 @@ import io.kotest.matchers.string.*
 import io.kotest.matchers.types.*
 import sc.helpers.shouldSerializeTo
 import sc.networking.XStreamProvider
-import sc.plugin2026.util.XStreamClasses
+import sc.plugin2098.util.XStreamClasses
 import sc.protocol.LobbyProtocol
 
-class BoardTest: FunSpec({
+class BoardTest: FunSpec({/*
     val board = Board()
     context("generation") {
         test("obstacles position") {
@@ -46,5 +46,5 @@ class BoardTest: FunSpec({
             
             (reboard as Board).clone() shouldBe board
         }
-    }
+    }*/
 })

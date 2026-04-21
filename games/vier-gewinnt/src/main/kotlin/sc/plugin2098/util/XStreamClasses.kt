@@ -1,7 +1,7 @@
-package sc.plugin2026.util
+package sc.plugin2098.util
 
 import sc.networking.XStreamProvider
-import sc.plugin2026.*
+import sc.plugin2098.*
 
 /** @suppress */
 class XStreamClasses: XStreamProvider {
