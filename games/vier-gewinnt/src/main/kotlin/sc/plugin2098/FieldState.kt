@@ -12,8 +12,8 @@ import sc.framework.DeepCloneable
  */
 @XStreamAlias("field")
 enum class FieldState(): IField, DeepCloneable<FieldState> {
-    RED,
-    YELLOW,
+    RED, // Team ONE
+    YELLOW, // Team TWO
     EMPTY;
     
     override fun deepCopy(): FieldState = this

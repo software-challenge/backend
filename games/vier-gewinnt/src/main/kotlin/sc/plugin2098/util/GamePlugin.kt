@@ -22,7 +22,7 @@ enum class Connect4WinReason(override val message: String, override val isRegula
 class GamePlugin: IGamePlugin<Move> {
     /** @suppress */
     companion object {
-        const val PLUGIN_ID = "swc_2026_piranhas"
+        const val PLUGIN_ID = "swc_2026_connect_4"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
@@ -34,7 +34,7 @@ class GamePlugin: IGamePlugin<Move> {
     override val id = PLUGIN_ID
     
     /** Anzeigename des Spiels. */
-    override val name = "Piranhas"
+    override val name = "4 Gewinnt!"
     
     /** Definition der Wertung und Auswertung. */
     override val scoreDefinition =
