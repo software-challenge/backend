@@ -8,23 +8,15 @@ import sc.plugin2098.util.GameRuleLogic
 
 @XStreamAlias("move")
 /**
- * Spielzug: Eine Bewegung eines Fisches.
+ * Spielzug: Das setzen eines Plätchens.
  *
  * Für weitere Funktionen siehe [GameRuleLogic].
  */
 data class Move(
-    /** Position des zu bewegenden Fisches. */
-    val from: Coordinates,
-    /** Bewegungsrichtung des Zugs. */
-    val direction: Direction,
+    /** Position an der das Plätchen plaziert werden soll. */
+    val position: Coordinates,
 ): IMove {
-    
-    /** Erwartete Zugdistanz auf dem gegebenen [board].
-     * Kann mit [direction] multipliziert werden, um den Zugvektor zu ermitteln. */
-    fun getDistance(board: Board) = GameRuleLogic.movementDistance(board, this)
-    
     /** Kurzbeschreibung des Zugs für Log-Ausgaben. */
     override fun toString(): String =
-        "Schwimme von $from in Richtung $direction"
-    
+        "Plaziere ein Plätchen auf $position."
 }
