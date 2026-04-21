@@ -38,46 +38,54 @@ data class GameState @JvmOverloads constructor(
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
     /** Berechnet die Punktwerte für das angegebene [team]. */
+    // TODO: Punktebewertung implementieren
     override fun getPointsForTeam(team: ITeam): IntArray =
-        intArrayOf(GameRuleLogic.greatestSwarmSize(board, team))
-    
-    // TODO test if one player is unable to move he loses e.g. in corner
+        intArrayOf(1)
+
     /** Gibt an, ob das Spiel beendet ist. */
+    // TODO: Implementieren
     override val isOver: Boolean
-        get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
-                turn / 2 >= Connect4Constants.ROUND_LIMIT
-    
+        get() = false
+        /*get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
+                turn / 2 >= Connect4Constants.ROUND_LIMIT*/
+
     /** Liefert die aktuelle Gewinnbedingung oder null, falls das Spiel noch nicht entschieden ist. */
+    // TODO: Win Condition implementieren
     override val winCondition: WinCondition?
         get() =
-            if(Team.values().any { team -> GameRuleLogic.isSwarmConnected(board, team) }) {
-                Team.values().toList().maxByNoEqual { team -> GameRuleLogic.greatestSwarmSize(board, team) }
-                           ?.let { WinCondition(it, Connect4WinReason.BIGGER_SWARM) }
-                       ?: WinCondition(null, WinReasonTie)
+            if(Team.entries.any { team -> GameRuleLogic.is4Connected(board, team) }) {
+//                Team.entries.maxByNoEqual { team -> GameRuleLogic.is4Connected(board, team) }
+//                           ?.let { WinCondition(it, Connect4WinReason.BIGGER_SWARM) }
+//                       ?: WinCondition(null, WinReasonTie)
+                WinCondition(null, WinReasonTie)
             } else {
                 null
             }
     
     /** Führt einen gültigen [move] direkt aus und aktualisiert Spielfeld sowie Zähler. */
     override fun performMoveDirectly(move: Move) {
-        if(board.getTeam(move.from) != currentTeam) {
-            throw InvalidMoveException(PiranhaMoveMistake.WRONG_START, move)
-        }
         GameRuleLogic.checkMove(board, move)?.let { throw InvalidMoveException(it, move) }
-        val distance = GameRuleLogic.movementDistance(board, move)
-        board[move.from + move.direction.vector * distance] = board[move.from]
-        board[move.from] = FieldState.EMPTY
+
+        if(this.currentTeam == Team.ONE) {
+            board[move.position] = FieldState.RED
+        } else {
+            board[move.position] = FieldState.YELLOW
+        }
+
         turn++
         lastMove = move
     }
     
-    /** Gibt alle sinnvollen Züge für den aktuellen Spieler auf dem aktuellen [board] zurück. */
+    /** Gibt alle Züge für den aktuellen Spieler auf dem aktuellen [board] zurück. */
     override fun getSensibleMoves(): List<Move> {
-        val piranhas = board.filterValues { field -> field.team == currentTeam }
-        val moves = ArrayList<Move>(piranhas.size * 2)
+        /*val piranhas = board.filterValues { field -> field.team == currentTeam }
+        val moves = ArrayList<Move>(piranhas.siz * 2)
         for(piranha in piranhas) {
             moves.addAll(GameRuleLogic.possibleMovesFor(board, piranha.key))
-        }
+        }*/
+
+        val moves = ArrayList<Move>(Connect4Constants.BOARD_WIDTH)
+
         return moves
     }
     
@@ -90,10 +98,11 @@ data class GameState @JvmOverloads constructor(
         copy(board = board.clone())
     
     /** Ermittelt zusammenfassende Statistiken für das angegebene [team]. */
+    // TODO: Implementieren
     override fun teamStats(team: ITeam): List<Stat> =
         listOf(
             /*Stat("Anzahl Fische", board.fieldsForTeam(team).size),*/
-            Stat("Größter Schwarm", GameRuleLogic.greatestSwarmSize(board, team))
+            Stat("Größter Schwarm", 1)
         )
     
 }

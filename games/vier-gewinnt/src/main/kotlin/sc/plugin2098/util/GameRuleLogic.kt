@@ -3,12 +3,13 @@ package sc.plugin2098.util
 import sc.api.plugins.Coordinates
 import sc.api.plugins.Direction
 import sc.api.plugins.ITeam
+import sc.api.plugins.Team
 import sc.plugin2098.Board
 import sc.plugin2098.FieldState
 import sc.plugin2098.Move
-import sc.plugin2098.PiranhaMoveMistake
 import sc.shared.IMoveMistake
 import sc.shared.MoveMistake
+import sc.plugin2098.Connect4MoveMistake
 import sc.api.plugins.Vector
 
 /** Regellogik und Hilfsfunktionen für das Piranhas-Spiel. */
@@ -61,10 +62,18 @@ object GameRuleLogic {
         // TODO: Überprüfen, ob der untere Rand tatsächlich y=0 ist
         val fieldBelow = move.position + Vector(0, -1)
         if(move.position.y != 0 && board[fieldBelow].isEmpty) {
-            return MoveMistake.DESTINATION_IN_AIR
+            return Connect4MoveMistake.DESTINATION_IN_AIR
         }
 
         return null
+    }
+
+    /** Prüft ob 4 Plätchen einer Farbe verbunden sind
+     * @return true wenn 4 gleichfarbige Plätchen verbunden sind, sonst false */
+    // TODO: Implementieren
+    @JvmStatic
+    fun is4Connected(board: Board, team: Team): Boolean {
+        return false
     }
     
     /*/** Valide Züge des Fisches auf dem Startfeld(???) [pos]. */
