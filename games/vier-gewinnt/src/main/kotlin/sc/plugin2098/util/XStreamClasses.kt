@@ -13,7 +13,7 @@ class XStreamClasses: XStreamProvider {
             Board::class.java,
             FieldState::class.java,
             Move::class.java,
-            PiranhaMoveMistake::class.java,
+            Connect4MoveMistake::class.java,
         )
     
 }
