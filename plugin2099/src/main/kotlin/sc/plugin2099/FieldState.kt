@@ -18,8 +18,8 @@ enum class FieldState(): IField, DeepCloneable<FieldState> {
 
     val team: Team?
         get() = when(this) {
-            FieldState.CIRCLE -> Team.ONE
-            FieldState.CROSS -> Team.TWO
+            CROSS -> Team.ONE
+            CIRCLE -> Team.TWO
             EMPTY -> null
         }
 
@@ -33,7 +33,7 @@ enum class FieldState(): IField, DeepCloneable<FieldState> {
     fun asLetters() =
         when(this) {
             CIRCLE -> "O "
-            CROSS -> "X"
+            CROSS -> "X "
             EMPTY -> "  "
         }
 
