@@ -29,28 +29,8 @@ object GameRuleLogic {
         return moves
     }
 
-    /** @return the [Coordinates] from [parentSet] which are neighbors of [pos] */
-    private fun selectNeighbors(pos: Coordinates, parentSet: Collection<Coordinates>): Collection<Coordinates> {
-        val returnSet = ArrayList<Coordinates>(8)
-        for(i in -1..1) {
-            for(j in -1..1) {
-                val x = pos.x + i
-                val y = pos.y + j
-                if(x < 0 || x >= TicTacToeConstants.BOARD_LENGTH ||
-                   y < 0 || y >= TicTacToeConstants.BOARD_LENGTH ||
-                   (i == 0 && j == 0)) continue
-                
-                val coord = Coordinates(x, y)
-                if(parentSet.contains(coord)) {
-                    returnSet.add(coord)
-                }
-            }
-        }
-        return returnSet
-    }
-
     @JvmStatic
-    fun checkWinner(board: Board,): Team? {
+    fun checkWinner(board: Board): Team? {
         // Check rows and columns for a win
         for (i in 0 until 3) {
             if (board[Coordinates(i, 0)] != FieldState.EMPTY &&
