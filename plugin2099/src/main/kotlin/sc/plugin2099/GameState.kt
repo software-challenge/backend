@@ -52,11 +52,7 @@ data class GameState @JvmOverloads constructor(
     
     override fun performMoveDirectly(move: Move) {
         GameRuleLogic.checkMove(board, move)?.let { throw InvalidMoveException(it, move) }
-        board[move.field] = if (turn % 2 == 0) {
-            FieldState.CIRCLE
-        } else {
-            FieldState.CROSS
-        }
+        board[move.field] = FieldState.fromTeam(currentTeam)
         turn++
         lastMove = move
     }

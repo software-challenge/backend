@@ -6,9 +6,9 @@ import sc.api.plugins.Team
 import sc.framework.DeepCloneable
 
 @XStreamAlias("field")
-enum class FieldState(): IField, DeepCloneable<FieldState> {
-    CIRCLE,
+enum class FieldState: IField, DeepCloneable<FieldState> {
     CROSS,
+    CIRCLE,
     EMPTY;
 
     override fun deepCopy(): FieldState = this
@@ -25,16 +25,23 @@ enum class FieldState(): IField, DeepCloneable<FieldState> {
 
     override fun toString() =
         when(this) {
-            CIRCLE -> "Kreis"
             CROSS -> "Kreuz"
+            CIRCLE -> "Kreis"
             EMPTY -> " "
         }
 
     fun asLetters() =
         when(this) {
-            CIRCLE -> "O "
             CROSS -> "X "
+            CIRCLE -> "O "
             EMPTY -> "  "
         }
+    
+    companion object {
+        fun fromTeam(team: Team): FieldState = when (team) {
+            Team.ONE -> CROSS
+            Team.TWO -> CIRCLE
+        }
+    }
 
 }
