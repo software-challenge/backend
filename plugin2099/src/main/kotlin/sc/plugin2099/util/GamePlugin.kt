@@ -16,10 +16,11 @@ enum class TicTacToeWinReason(override val message: String, override val isRegul
 
 class GamePlugin: IGamePlugin<Move> {
     companion object {
-        const val PLUGIN_ID = "swc_2026_tictactoe"
+        const val PLUGIN_ID = "swc_2099_tictactoe"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
+                        ScoreFragment("Dummy score definition", WinReason("%s hat gewonnen, aber dieser Text sollte niemals angezeigt werden"), ScoreAggregation.AVERAGE),
                 ))
     }
     

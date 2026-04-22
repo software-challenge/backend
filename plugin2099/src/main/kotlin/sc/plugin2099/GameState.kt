@@ -34,7 +34,7 @@ data class GameState @JvmOverloads constructor(
 ): TwoPlayerGameState<Move>(Team.ONE) {
 
     override fun getPointsForTeam(team: ITeam): IntArray =
-        intArrayOf()
+        intArrayOf(0)
 
     override val isOver: Boolean
         get() = (GameRuleLogic.checkWinner(board) != null) ||
