@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -75,7 +76,6 @@ import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
-import sun.awt.VerticalBagLayout;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
@@ -237,8 +237,10 @@ public class TestRangeDialog extends JDialog {
 
 		createSaveReplayCheckboxGroup();
 		// -------------------------------------------
-		pnlBottomTop = new JPanel(new VerticalBagLayout(10));
+		pnlBottomTop = new JPanel();
+		pnlBottomTop.setLayout(new BoxLayout(pnlBottomTop, BoxLayout.PAGE_AXIS));
 		pnlBottomTop.add(pnl_showLogLeft);
+		pnlBottomTop.add(Box.createVerticalStrut(10));
 		pnlBottomTop.add(pnl_saveReplay);
 
 		pnlBottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -283,7 +285,9 @@ public class TestRangeDialog extends JDialog {
 	}
 
 	private void createSaveReplayCheckboxGroup() {
-		pnl_saveReplay = new JPanel(new VerticalBagLayout());
+		pnl_saveReplay = new JPanel();
+		pnl_saveReplay.setLayout(new BoxLayout(pnl_saveReplay,
+				BoxLayout.PAGE_AXIS));
 		//setVerticalFlowLayout(pnl_saveReplay);
 		
 		JPanel pnl_saveReplayLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
