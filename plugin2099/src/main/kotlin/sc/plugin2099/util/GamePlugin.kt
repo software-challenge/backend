@@ -1,40 +1,38 @@
-package sc.plugin2026.util
+package sc.plugin2099.util
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import sc.api.plugins.IGameInstance
 import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.framework.plugins.TwoPlayerGame
-import sc.plugin2026.GameState
-import sc.plugin2026.Move
+import sc.plugin2099.GameState
+import sc.plugin2099.Move
 import sc.shared.*
 
 @XStreamAlias(value = "winreason")
-enum class PiranhasWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
-    BIGGER_SWARM("%s hat den größeren zusammenhängenden Schwarm"),
-    FIRST_UNION("%s hat zuerst alle Fische einer Farbe vereinigt"),
-    BLOCKED("%s hat den Gegner blockiert, sodass er keinen Zug mehr machen kann"),
+enum class TicTacToeWinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
+    FIRST_THREE_IN_A_LINE("%s hat zuerst drei felder mit seiner Markierung markiert."),
 }
 
 class GamePlugin: IGamePlugin<Move> {
     companion object {
-        const val PLUGIN_ID = "swc_2026_piranhas"
+        const val PLUGIN_ID = "swc_2099_tictactoe"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
-                        ScoreFragment("Schwarmgröße", PiranhasWinReason.BIGGER_SWARM, ScoreAggregation.AVERAGE),
+                        ScoreFragment("Dummy score definition", WinReason("%s hat gewonnen, aber dieser Text sollte niemals angezeigt werden"), ScoreAggregation.AVERAGE),
                 ))
     }
     
     override val id = PLUGIN_ID
     
-    override val name = "Piranhas"
-    
+    override val name = "TicTacToe"
+
     override val scoreDefinition =
             Companion.scoreDefinition
     
     override val turnLimit: Int =
-        PiranhaConstants.ROUND_LIMIT * 2
+        TicTacToeConstants.TURN_LIMIT
     
     override val moveClass = Move::class.java
     
