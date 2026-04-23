@@ -32,22 +32,29 @@ data class GameState @JvmOverloads constructor(
     override var lastMove: Move? = null,
     /** Das aktuelle Spielfeld. */
     override val board: Board = Board(),
+    /** Team, das als erstes seinen vollständigen Schwarm gebildet hat (alle eigenen Fische zusammenhängend). */
+    @XStreamAsAttribute var firstUnion: Team? = null,
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
     override fun getPointsForTeam(team: ITeam): IntArray =
         intArrayOf(GameRuleLogic.greatestSwarmSize(board, team))
     
-    // TODO test if one player is unable to move he loses e.g. in corner
     override val isOver: Boolean
         get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
+                this.getSensibleMoves().isEmpty() ||
                 turn / 2 >= PiranhaConstants.ROUND_LIMIT
     
     override val winCondition: WinCondition?
         get() =
             if(Team.values().any { team -> GameRuleLogic.isSwarmConnected(board, team) }) {
-                Team.values().toList().maxByNoEqual { team -> GameRuleLogic.greatestSwarmSize(board, team) }
-                           ?.let { WinCondition(it, PiranhasWinReason.BIGGER_SWARM) }
-                       ?: WinCondition(null, WinReasonTie)
+                // Bestimme Team mit eindeutig größtem Schwarm oder nutze Tie‑Breaker FIRST_UNION, sonst Unentschieden
+                val best = Team.values().toList().maxByNoEqual { team -> GameRuleLogic.greatestSwarmSize(board, team) }
+                best?.let { WinCondition(it, PiranhasWinReason.BIGGER_SWARM) }
+                             ?: firstUnion?.let { WinCondition(it, PiranhasWinReason.FIRST_UNION) }
+                             ?: WinCondition(null, WinReasonTie)
+            } else if (this.getSensibleMoves().isEmpty()) {
+                val team = this.currentTeam.opponent()
+                WinCondition(team, PiranhasWinReason.BLOCKED)
             } else {
                 null
             }
@@ -62,6 +69,15 @@ data class GameState @JvmOverloads constructor(
         board[move.from] = FieldState.EMPTY
         turn++
         lastMove = move
+        // Nach dem Zug prüfen, ob ein Team erstmals vollständig verbunden ist
+        if(firstUnion == null) {
+            for(team in Team.values()) {
+                if(GameRuleLogic.isSwarmConnected(board, team)) {
+                    firstUnion = team
+                    break
+                }
+            }
+        }
     }
     
     override fun getSensibleMoves(): List<Move> {
