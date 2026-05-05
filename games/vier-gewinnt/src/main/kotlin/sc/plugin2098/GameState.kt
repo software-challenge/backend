@@ -38,16 +38,13 @@ data class GameState @JvmOverloads constructor(
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
     /** Berechnet die Punktwerte für das angegebene [team]. */
-    // TODO: Punktebewertung implementieren
+    // TODO: Implementieren falls ein Weg gefunden sinnvoll zu implementieren
     override fun getPointsForTeam(team: ITeam): IntArray =
         intArrayOf(1)
 
     /** Gibt an, ob das Spiel beendet ist. */
-    // TODO: Implementieren
     override val isOver: Boolean
-        get() = false
-        /*get() = (Team.values().any { GameRuleLogic.isSwarmConnected(board, it) } && turn.mod(2) == 0) ||
-                turn / 2 >= Connect4Constants.ROUND_LIMIT*/
+        get() = (Team.entries.any { GameRuleLogic.is4Connected(board, it) })
 
     /** Liefert die aktuelle Gewinnbedingung oder null, falls das Spiel noch nicht entschieden ist. */
     // TODO: Win Condition implementieren
@@ -78,12 +75,6 @@ data class GameState @JvmOverloads constructor(
     
     /** Gibt alle Züge für den aktuellen Spieler auf dem aktuellen [board] zurück. */
     override fun getSensibleMoves(): List<Move> {
-        /*val piranhas = board.filterValues { field -> field.team == currentTeam }
-        val moves = ArrayList<Move>(piranhas.siz * 2)
-        for(piranha in piranhas) {
-            moves.addAll(GameRuleLogic.possibleMovesFor(board, piranha.key))
-        }*/
-
         val moves = ArrayList<Move>(Connect4Constants.BOARD_WIDTH)
 
         return moves
@@ -98,11 +89,11 @@ data class GameState @JvmOverloads constructor(
         copy(board = board.clone())
     
     /** Ermittelt zusammenfassende Statistiken für das angegebene [team]. */
-    // TODO: Implementieren
+    // TODO: Implementieren falls ein Weg gefunden sinnvoll zu implementieren
     override fun teamStats(team: ITeam): List<Stat> =
         listOf(
             /*Stat("Anzahl Fische", board.fieldsForTeam(team).size),*/
-            Stat("Größter Schwarm", 1)
+            /*Stat("Größter Schwarm", 1)*/
         )
     
 }

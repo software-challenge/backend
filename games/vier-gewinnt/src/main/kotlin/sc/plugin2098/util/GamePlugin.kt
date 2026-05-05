@@ -12,21 +12,17 @@ import sc.shared.*
 /** Gewinn-Gründe für 4 Gewinnt. */
 @XStreamAlias(value = "winreason")
 enum class Connect4WinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
-    /** Groesster zusammenhaengender Schwarm entscheidet. */
-    BIGGER_SWARM("%s hat den größeren zusammenhängenden Schwarm"),
-    /** Alle Fische einer Farbe zuerst vereinigt. */
-    FIRST_UNION("%s hat zuerst alle Fische einer Farbe vereinigt"),
+    CONNECTED_FOUR("%s hat 4 Plätchen in eine Reihe verbunden")
 }
 
-/** Plugin-Implementierung für das Piranhas-Spiel. */
+/** Plugin-Implementierung für das Vier-Gewinnt-Spiel. */
 class GamePlugin: IGamePlugin<Move> {
     /** @suppress */
     companion object {
-        const val PLUGIN_ID = "swc_2026_connect_4"
+        const val PLUGIN_ID = "swc_2098_connect_4"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
                         ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
-                        ScoreFragment("Schwarmgröße", Connect4WinReason.BIGGER_SWARM, ScoreAggregation.AVERAGE),
                 ))
     }
     

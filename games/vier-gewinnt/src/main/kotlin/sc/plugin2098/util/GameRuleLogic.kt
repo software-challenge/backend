@@ -1,11 +1,7 @@
 package sc.plugin2098.util
 
-import sc.api.plugins.Coordinates
-import sc.api.plugins.Direction
-import sc.api.plugins.ITeam
 import sc.api.plugins.Team
 import sc.plugin2098.Board
-import sc.plugin2098.FieldState
 import sc.plugin2098.Move
 import sc.shared.IMoveMistake
 import sc.shared.MoveMistake
@@ -73,7 +69,68 @@ object GameRuleLogic {
     // TODO: Implementieren
     @JvmStatic
     fun is4Connected(board: Board, team: Team): Boolean {
-        return false
+        
+        var connected = false
+        
+        for (x in 0 until Connect4Constants.BOARD_WIDTH) {
+            for (y in 0 until Connect4Constants.BOARD_HEIGHT) {
+                
+                if(board[x, y].team != team) continue
+                
+                // Links, rechts, oben, unten, oben-links, oben-rechts, unten-links, unten-rechts
+                var connectedForCord = booleanArrayOf(true, true, true, true, true, true, true, true)
+                
+                for (i in 1 until 4) {
+                    // Links
+                    if(connectedForCord[0] && (x - i < 0 || board[x - i, y].team != team)) {
+                        connectedForCord[0] = false
+                    }
+                    
+                    // Rechts
+                    if(connectedForCord[1] && (x + i >= Connect4Constants.BOARD_WIDTH || board[x + i, y].team != team)) {
+                        connectedForCord[1] = false
+                    }
+                    
+                    // Oben
+                    if(connectedForCord[2] && (y - i < 0 || board[x, y - i].team != team)) {
+                        connectedForCord[2] = false
+                    }
+                    
+                    // Unten
+                    if(connectedForCord[3] && (y + i >= Connect4Constants.BOARD_HEIGHT || board[x, y + i].team != team)) {
+                        connectedForCord[3] = false
+                    }
+                    
+                    // Oben-Links
+                    if(connectedForCord[4] && (x - i < 0 || y - i < 0 || board[x - i, y - i].team != team)) {
+                        connectedForCord[4] = false
+                    }
+                    
+                    // Oben-Rechts
+                    if(connectedForCord[5] && (x + i >= Connect4Constants.BOARD_WIDTH || y - i < 0 || board[x + i, y - i].team != team)) {
+                        connectedForCord[5] = false
+                    }
+                    
+                    // Unten-Links
+                    if(connectedForCord[6] && (x - i < 0 || y + i >= Connect4Constants.BOARD_HEIGHT || board[x - i, y + i].team != team)) {
+                        connectedForCord[6] = false
+                    }
+                    
+                    // Unten-Rechts
+                    if(connectedForCord[7] && (x + i >= Connect4Constants.BOARD_WIDTH || y + i >= Connect4Constants.BOARD_HEIGHT || board[x + i, y + i].team != team)) {
+                        connectedForCord[7] = false
+                    }
+                }
+                
+                if (true in connectedForCord) {
+                    connected = true
+                    break
+                }
+            }
+            if (connected) break
+        }
+        
+        return connected
     }
     
     /*/** Valide Züge des Fisches auf dem Startfeld(???) [pos]. */
