@@ -78,7 +78,18 @@ data class GameState @JvmOverloads constructor(
     /** Gibt alle Züge für den aktuellen Spieler auf dem aktuellen [board] zurück. */
     override fun getSensibleMoves(): List<Move> {
         val moves = ArrayList<Move>(Connect4Constants.BOARD_WIDTH)
-
+        
+        for(x in 0 until Connect4Constants.BOARD_WIDTH) {
+            for(y in 0 until Connect4Constants.BOARD_HEIGHT) {
+                val position = Coordinates(x, y)
+                val move = Move(position)
+                if(GameRuleLogic.checkMove(board, move) == null) {
+                    moves.add(move)
+                    break
+                }
+            }
+        }
+        
         return moves
     }
     
