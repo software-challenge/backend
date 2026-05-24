@@ -49,8 +49,8 @@ class Board(
     companion object {
         /** Erstellt ein leeres Spielbrett.  */
         fun emptyFields(): MutableTwoDBoard<FieldState> {
-            return Array(Connect4Constants.BOARD_WIDTH) {
-                Array(Connect4Constants.BOARD_HEIGHT) { FieldState.EMPTY }
+            return Array(Connect4Constants.BOARD_HEIGHT) {
+                Array(Connect4Constants.BOARD_WIDTH) { FieldState.EMPTY }
             }
         }
     }

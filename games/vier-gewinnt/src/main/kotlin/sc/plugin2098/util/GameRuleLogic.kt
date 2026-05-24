@@ -66,73 +66,43 @@ object GameRuleLogic {
 
     /** Prüft ob 4 Plätchen einer Farbe verbunden sind
      * @return true wenn 4 gleichfarbige Plätchen verbunden sind, sonst false */
-    // TODO: Implementieren
     @JvmStatic
     fun is4Connected(board: Board, team: Team): Boolean {
-        
-        var connected = false
-        
-        for (x in 0 until Connect4Constants.BOARD_WIDTH) {
-            for (y in 0 until Connect4Constants.BOARD_HEIGHT) {
-                
-                if(board[x, y].team != team) continue
-                
-                // Links, rechts, oben, unten, oben-links, oben-rechts, unten-links, unten-rechts
-                var connectedForCord = booleanArrayOf(true, true, true, true, true, true, true, true)
-                
-                for (i in 1 until 4) {
-                    // Links
-                    if(connectedForCord[0] && (x - i < 0 || board[x - i, y].team != team)) {
-                        connectedForCord[0] = false
+        val directions = arrayOf(
+            Vector(1, 0),   // Rechts
+            Vector(0, 1),   // Oben
+            Vector(1, 1),   // Oben-Rechts
+            Vector(1, -1),  // Unten-Rechts
+        )
+
+        for (y in 0 until Connect4Constants.BOARD_HEIGHT) {
+            for (x in 0 until Connect4Constants.BOARD_WIDTH) {
+                if (board[x, y].team != team) continue
+
+                for (direction in directions) {
+                    var connected = true
+
+                    for (i in 1 until 4) {
+                        val nextX = x + direction.dx * i
+                        val nextY = y + direction.dy * i
+
+                        if (
+                            nextX !in 0 until Connect4Constants.BOARD_WIDTH ||
+                            nextY !in 0 until Connect4Constants.BOARD_HEIGHT ||
+                            board[nextX, nextY].team != team
+                        ) {
+                            connected = false
+                            break
+                        }
                     }
-                    
-                    // Rechts
-                    if(connectedForCord[1] && (x + i >= Connect4Constants.BOARD_WIDTH || board[x + i, y].team != team)) {
-                        connectedForCord[1] = false
-                    }
-                    
-                    // Oben
-                    if(connectedForCord[2] && (y - i < 0 || board[x, y - i].team != team)) {
-                        connectedForCord[2] = false
-                    }
-                    
-                    // Unten
-                    if(connectedForCord[3] && (y + i >= Connect4Constants.BOARD_HEIGHT || board[x, y + i].team != team)) {
-                        connectedForCord[3] = false
-                    }
-                    
-                    // Oben-Links
-                    if(connectedForCord[4] && (x - i < 0 || y - i < 0 || board[x - i, y - i].team != team)) {
-                        connectedForCord[4] = false
-                    }
-                    
-                    // Oben-Rechts
-                    if(connectedForCord[5] && (x + i >= Connect4Constants.BOARD_WIDTH || y - i < 0 || board[x + i, y - i].team != team)) {
-                        connectedForCord[5] = false
-                    }
-                    
-                    // Unten-Links
-                    if(connectedForCord[6] && (x - i < 0 || y + i >= Connect4Constants.BOARD_HEIGHT || board[x - i, y + i].team != team)) {
-                        connectedForCord[6] = false
-                    }
-                    
-                    // Unten-Rechts
-                    if(connectedForCord[7] && (x + i >= Connect4Constants.BOARD_WIDTH || y + i >= Connect4Constants.BOARD_HEIGHT || board[x + i, y + i].team != team)) {
-                        connectedForCord[7] = false
-                    }
-                }
-                
-                if (true in connectedForCord) {
-                    connected = true
-                    break
+
+                    if (connected) return true
                 }
             }
-            if (connected) break
         }
-        
-        return connected
+
+        return false
     }
-    
     /*/** Valide Züge des Fisches auf dem Startfeld(???) [pos]. */
     @JvmStatic
     fun possibleMovesFor(board: Board, pos: Coordinates): Collection<Move> {
