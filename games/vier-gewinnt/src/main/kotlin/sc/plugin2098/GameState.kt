@@ -2,6 +2,7 @@ package sc.plugin2098
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import sc.api.plugins.Coordinates
 import sc.api.plugins.ITeam
 import sc.api.plugins.Stat
 import sc.api.plugins.Team
@@ -44,21 +45,22 @@ data class GameState @JvmOverloads constructor(
 
     /** Gibt an, ob das Spiel beendet ist. */
     override val isOver: Boolean
-        get() = (Team.entries.any { GameRuleLogic.is4Connected(board, it) })
+        get() = winCondition != null
 
     /** Liefert die aktuelle Gewinnbedingung oder null, falls das Spiel noch nicht entschieden ist. */
-    // TODO: Win Condition implementieren
     override val winCondition: WinCondition?
-        get() =
-            if(Team.entries.any { team -> GameRuleLogic.is4Connected(board, team) }) {
-//                Team.entries.maxByNoEqual { team -> GameRuleLogic.is4Connected(board, team) }
-//                           ?.let { WinCondition(it, Connect4WinReason.BIGGER_SWARM) }
-//                       ?: WinCondition(null, WinReasonTie)
+        get() {
+            Team.entries
+                .firstOrNull { team -> GameRuleLogic.is4Connected(board, team) }
+                ?.let { winner -> return WinCondition(winner, Connect4WinReason.CONNECTED_FOUR) }
+
+            return if(board.entries.all { (_, field) -> !field.isEmpty }) {
                 WinCondition(null, WinReasonTie)
             } else {
                 null
             }
-    
+        }
+
     /** Führt einen gültigen [move] direkt aus und aktualisiert Spielfeld sowie Zähler. */
     override fun performMoveDirectly(move: Move) {
         GameRuleLogic.checkMove(board, move)?.let { throw InvalidMoveException(it, move) }
