@@ -39,9 +39,16 @@ data class GameState @JvmOverloads constructor(
 ): TwoPlayerGameState<Move>(Team.ONE) {
     
     /** Berechnet die Punktwerte für das angegebene [team]. */
-    // TODO: Implementieren falls ein Weg gefunden sinnvoll zu implementieren
-    override fun getPointsForTeam(team: ITeam): IntArray =
-        intArrayOf(1)
+    override fun getPointsForTeam(team: ITeam): IntArray {
+        val win = winCondition
+
+        return when {
+            win == null -> intArrayOf(0)
+            win.winner == null -> intArrayOf(0)
+            win.winner == team -> intArrayOf(1)
+            else -> intArrayOf(0)
+        }
+    }
 
     /** Gibt an, ob das Spiel beendet ist. */
     override val isOver: Boolean

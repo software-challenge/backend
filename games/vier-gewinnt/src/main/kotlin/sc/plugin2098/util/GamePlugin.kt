@@ -12,7 +12,7 @@ import sc.shared.*
 /** Gewinn-Gründe für 4 Gewinnt. */
 @XStreamAlias(value = "winreason")
 enum class Connect4WinReason(override val message: String, override val isRegular: Boolean = true): IWinReason {
-    CONNECTED_FOUR("%s hat 4 Plätchen in eine Reihe verbunden")
+    CONNECTED_FOUR("%s hat 4 Plätchen in einer Reihe verbunden")
 }
 
 /** Plugin-Implementierung für das Vier-Gewinnt-Spiel. */
@@ -22,10 +22,10 @@ class GamePlugin: IGamePlugin<Move> {
         const val PLUGIN_ID = "swc_2098_connect_4"
         val scoreDefinition: ScoreDefinition =
                 ScoreDefinition(arrayOf(
-                        ScoreFragment("Siegpunkte", WinReason("%s hat gewonnen."), ScoreAggregation.SUM),
+                        ScoreFragment("Siegpunkte", Connect4WinReason.CONNECTED_FOUR, ScoreAggregation.SUM),
                 ))
     }
-    
+
     /** Eindeutige Plugin-ID. */
     override val id = PLUGIN_ID
     
