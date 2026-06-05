@@ -1,5 +1,6 @@
 package sc.plugin2098.util
 
+import sc.api.plugins.Coordinates
 import sc.api.plugins.Team
 import sc.plugin2098.Board
 import sc.plugin2098.Move
@@ -20,14 +21,12 @@ object GameRuleLogic {
         if (move.position.x < 0 || move.position.x >= Connect4Constants.BOARD_WIDTH ||
                 move.position.y < 0 || move.position.y >= Connect4Constants.BOARD_HEIGHT)
             return MoveMistake.DESTINATION_OUT_OF_BOUNDS
-
-
+        
         // Überprüfen ob das Feld nicht leer ist
         if(!board[move.position].isEmpty)
             return MoveMistake.DESTINATION_BLOCKED
 
         // Überprüfen ob das Feld unter dem Ziel nicht unterhalb des Spielfelds ist und nicht von einem Plätchen belegt ist
-        // TODO: Überprüfen, ob der untere Rand tatsächlich y=0 ist
         val fieldBelow = move.position + Vector(0, -1)
         if(move.position.y != 0 && board[fieldBelow].isEmpty) {
             return Connect4MoveMistake.DESTINATION_IN_AIR
@@ -35,11 +34,21 @@ object GameRuleLogic {
 
         return null
     }
-
-    /** Prüft ob 4 Plätchen einer Farbe verbunden sind
-     * @return true wenn 4 gleichfarbige Plätchen verbunden sind, sonst false */
+    
+    /** Prüft ob 4 Plätchen einer Farbe verbunden sind.
+     * @return true wenn 4 Plätchen verbunden sind, sonst false.
+     */
     @JvmStatic
     fun is4Connected(board: Board, team: Team): Boolean {
+        return get4Connected(board, team).isNotEmpty()
+    }
+    
+    /** Prüft ob 4 Plätchen einer Farbe verbunden sind und gibt diese Zurück.
+     * @return Liste mit 4 {@link Coordinates} der 4 gleichfarbige Plätchen die verbunden sind, sonst leere Liste.
+     */
+    @JvmStatic
+    fun get4Connected(board: Board, team: Team): List<Coordinates> {
+        
         val directions = arrayOf(
             Vector(1, 0),   // Rechts
             Vector(0, 1),   // Oben
@@ -68,11 +77,19 @@ object GameRuleLogic {
                         }
                     }
 
-                    if (connected) return true
+                    if (connected) {
+                        val chipCords = mutableListOf<Coordinates>()
+                        
+                        for (i in 1 until 4) {
+                            chipCords.add(Coordinates(x + direction.dx * i, y + direction.dy * i))
+                        }
+                        
+                        return chipCords
+                    }
                 }
             }
         }
 
-        return false
+        return listOf()
     }
 }
