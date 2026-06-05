@@ -70,7 +70,9 @@ class GameRuleLogicTest : FunSpec({
                 Triple(3, 0, FieldState.RED),
             )
             
+            GameRuleLogic.get4Connected(board, Team.ONE).size shouldBe 4
             GameRuleLogic.is4Connected(board, Team.ONE).shouldBeTrue()
+            GameRuleLogic.get4Connected(board, Team.TWO).size shouldBe 0
             GameRuleLogic.is4Connected(board, Team.TWO).shouldBeFalse()
         }
         
@@ -82,7 +84,9 @@ class GameRuleLogicTest : FunSpec({
                 Triple(2, 3, FieldState.YELLOW),
             )
             
+            GameRuleLogic.get4Connected(board, Team.TWO).size shouldBe 4
             GameRuleLogic.is4Connected(board, Team.TWO).shouldBeTrue()
+            GameRuleLogic.get4Connected(board, Team.ONE).size shouldBe 0
             GameRuleLogic.is4Connected(board, Team.ONE).shouldBeFalse()
         }
         

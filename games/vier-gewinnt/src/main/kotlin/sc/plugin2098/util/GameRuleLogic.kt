@@ -92,7 +92,7 @@ object GameRuleLogic {
             if(connected) {
                 val chipCords = mutableListOf<Coordinates>()
                 
-                for(i in 1 until 4) {
+                for(i in 0 until 4) {
                     chipCords.add(Coordinates(piece.x + direction.dx * i, piece.y + direction.dy * i))
                 }
                 
