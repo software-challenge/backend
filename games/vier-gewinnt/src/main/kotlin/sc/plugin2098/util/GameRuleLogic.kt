@@ -43,11 +43,16 @@ object GameRuleLogic {
         return get4Connected(board, team).isNotEmpty()
     }
     
+    // Up could be ignored in some cases for better performance
     val directions = arrayOf(
-        Vector(1, 0),   // Rechts
-        Vector(0, 1),   // Oben
-        Vector(1, 1),   // Oben-Rechts
-        Vector(1, -1),  // Unten-Rechts
+        Vector(1, 0),   // Right
+        Vector(-1, 0),  // Left
+        Vector(0, 1),   // Up
+        Vector(0, -1),  // Down
+        Vector(1, 1),   // Up-Right
+        Vector(-1, -1), // Down-Left
+        Vector(1, -1),  // Down-Right
+        Vector(-1, 1),  // Up-Left
     )
     
     /** Prüft ob 4 Plätchen einer Farbe verbunden sind und gibt diese Zurück.
@@ -57,7 +62,7 @@ object GameRuleLogic {
     @JvmStatic
     fun get4Connected(board: Board, team: Team, piece: Coordinates): List<Coordinates> {
         
-        if(board[piece.x, piece.y].team != team) return listOf()
+        if(board.get(piece.x, piece.y).team != team) return listOf()
         
         for(direction in directions) {
             var connected = true
@@ -69,7 +74,7 @@ object GameRuleLogic {
                 if(
                     nextX !in 0 until Connect4Constants.BOARD_WIDTH ||
                     nextY !in 0 until Connect4Constants.BOARD_HEIGHT ||
-                    board[nextX, nextY].team != team
+                    board.get(nextX, nextY).team != team
                 ) {
                     connected = false
                     break
@@ -95,9 +100,15 @@ object GameRuleLogic {
      */
     @JvmStatic
     fun get4Connected(board: Board, team: Team): List<Coordinates> {
-        for (y in 0 until Connect4Constants.BOARD_HEIGHT) {
-            for (x in 0 until Connect4Constants.BOARD_WIDTH) {
+        for (x in 0 until Connect4Constants.BOARD_WIDTH) {
+            // Check for each column every piece starting from the top going downwards until a non-empty field is found
+            // This must be the last piece placed in this column and thus can be the only one in the row ending the game
+            // If a piece below the top piece would cause a win, there is either a double win (which still would be caught by this algorithm)
+            // or there was a win condition earlier in the game that wasn't caught
+            for (y in Connect4Constants.BOARD_HEIGHT - 1 downTo 0) {
+                if (board.get(x, y).isEmpty) continue
                 get4Connected(board, team, Coordinates(x, y)).let { if (it.isNotEmpty()) return it }
+                break
             }
         }
 
