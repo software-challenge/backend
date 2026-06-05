@@ -43,50 +43,61 @@ object GameRuleLogic {
         return get4Connected(board, team).isNotEmpty()
     }
     
+    val directions = arrayOf(
+        Vector(1, 0),   // Rechts
+        Vector(0, 1),   // Oben
+        Vector(1, 1),   // Oben-Rechts
+        Vector(1, -1),  // Unten-Rechts
+    )
+    
+    /** Prüft ob 4 Plätchen einer Farbe verbunden sind und gibt diese Zurück.
+     * Diese Version dieser Funktion ist deutlich effizienter, setzt aber vorraus, dass das als letze platzierte Pltächen bekannt ist.
+     * @return Liste mit 4 {@link Coordinates} der 4 gleichfarbige Plätchen die verbunden sind, sonst leere Liste.
+     */
+    @JvmStatic
+    fun get4Connected(board: Board, team: Team, piece: Coordinates): List<Coordinates> {
+        
+        if(board[piece.x, piece.y].team != team) return listOf()
+        
+        for(direction in directions) {
+            var connected = true
+            
+            for(i in 1 until 4) {
+                val nextX = piece.x + direction.dx * i
+                val nextY = piece.y + direction.dy * i
+                
+                if(
+                    nextX !in 0 until Connect4Constants.BOARD_WIDTH ||
+                    nextY !in 0 until Connect4Constants.BOARD_HEIGHT ||
+                    board[nextX, nextY].team != team
+                ) {
+                    connected = false
+                    break
+                }
+            }
+            
+            if(connected) {
+                val chipCords = mutableListOf<Coordinates>()
+                
+                for(i in 1 until 4) {
+                    chipCords.add(Coordinates(piece.x + direction.dx * i, piece.y + direction.dy * i))
+                }
+                
+                return chipCords
+            }
+        }
+        
+        return listOf()
+    }
+    
     /** Prüft ob 4 Plätchen einer Farbe verbunden sind und gibt diese Zurück.
      * @return Liste mit 4 {@link Coordinates} der 4 gleichfarbige Plätchen die verbunden sind, sonst leere Liste.
      */
     @JvmStatic
     fun get4Connected(board: Board, team: Team): List<Coordinates> {
-        
-        val directions = arrayOf(
-            Vector(1, 0),   // Rechts
-            Vector(0, 1),   // Oben
-            Vector(1, 1),   // Oben-Rechts
-            Vector(1, -1),  // Unten-Rechts
-        )
-
         for (y in 0 until Connect4Constants.BOARD_HEIGHT) {
             for (x in 0 until Connect4Constants.BOARD_WIDTH) {
-                if (board[x, y].team != team) continue
-
-                for (direction in directions) {
-                    var connected = true
-
-                    for (i in 1 until 4) {
-                        val nextX = x + direction.dx * i
-                        val nextY = y + direction.dy * i
-
-                        if (
-                            nextX !in 0 until Connect4Constants.BOARD_WIDTH ||
-                            nextY !in 0 until Connect4Constants.BOARD_HEIGHT ||
-                            board[nextX, nextY].team != team
-                        ) {
-                            connected = false
-                            break
-                        }
-                    }
-
-                    if (connected) {
-                        val chipCords = mutableListOf<Coordinates>()
-                        
-                        for (i in 1 until 4) {
-                            chipCords.add(Coordinates(x + direction.dx * i, y + direction.dy * i))
-                        }
-                        
-                        return chipCords
-                    }
-                }
+                get4Connected(board, team, Coordinates(x, y)).let { if (it.isNotEmpty()) return it }
             }
         }
 
