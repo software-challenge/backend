@@ -53,12 +53,12 @@ data class GameState @JvmOverloads constructor(
     /** Gibt an, ob das Spiel beendet ist. */
     override val isOver: Boolean
         get() = winCondition != null
-
+    
     /** Liefert die aktuelle Gewinnbedingung oder null, falls das Spiel noch nicht entschieden ist. */
     override val winCondition: WinCondition?
         get() {
             Team.entries
-                .firstOrNull { team -> GameRuleLogic.is4Connected(board, team) }
+                .firstOrNull { team -> lastMove?.position?.let { GameRuleLogic.is4Connected(board, team, it) } ?: false }
                 ?.let { winner -> return WinCondition(winner, Connect4WinReason.CONNECTED_FOUR) }
 
             return if(board.entries.all { (_, field) -> !field.isEmpty }) {

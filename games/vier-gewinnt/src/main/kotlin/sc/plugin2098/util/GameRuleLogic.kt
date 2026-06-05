@@ -43,6 +43,14 @@ object GameRuleLogic {
         return get4Connected(board, team).isNotEmpty()
     }
     
+    /** Prüft ob 4 Plätchen einer Farbe verbunden sind bei einem bestimmtes Plätchen.
+     * @return true wenn 4 Plätchen verbunden sind, sonst false.
+     */
+    @JvmStatic
+    fun is4Connected(board: Board, team: Team, piece: Coordinates): Boolean {
+        return get4Connected(board, team, piece).isNotEmpty()
+    }
+    
     // Up could be ignored in some cases for better performance
     val directions = arrayOf(
         Vector(1, 0),   // Right

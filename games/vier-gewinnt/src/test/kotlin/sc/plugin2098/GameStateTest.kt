@@ -94,6 +94,7 @@ class GameStateTest : FunSpec({
     context("win condition") {
         test("detects team one win after horizontal four") {
             val state = GameState(
+                lastMove = Move(Coordinates(0, 0)),
                 board = Board().also { board ->
                     board[0, 0] = FieldState.RED
                     board[1, 0] = FieldState.RED
@@ -109,6 +110,7 @@ class GameStateTest : FunSpec({
         
         test("detects team two win after vertical four") {
             val state = GameState(
+                lastMove = Move(Coordinates(4, 0)),
                 board = Board().also { board ->
                     board[4, 0] = FieldState.YELLOW
                     board[4, 1] = FieldState.YELLOW
