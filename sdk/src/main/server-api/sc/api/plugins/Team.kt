@@ -8,13 +8,13 @@ enum class Team(override val index: Int): ITeam {
     ONE(0) {
         override fun opponent(): Team = TWO
         override val letter = 'R'
-        override val color = "red"
+        override val color = "blue" // FIXME maybe add secondary color
     },
     
     TWO(1) {
         override fun opponent(): Team = ONE
         override val letter = 'B'
-        override val color = "blue"
+        override val color = "yellow" // FIXME maybe add secondary color
     };
     
     abstract val color: String
