@@ -11,6 +11,10 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+  
+### 27.0.0-beta Initial Release - 2026-06-25
+
+## 2027 Game Piranhas
 
 ## 2026 Game Piranhas
 
