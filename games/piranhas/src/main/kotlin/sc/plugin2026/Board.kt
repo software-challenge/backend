@@ -8,6 +8,8 @@ import sc.framework.deepCopy
 import sc.plugin2026.util.PiranhaConstants
 import kotlin.random.Random
 
+val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
+
 /** Spielbrett für Piranhas mit [PiranhaConstants.BOARD_LENGTH]² Feldern.  */
 @XStreamAlias(value = "board")
 class Board(
@@ -24,8 +26,6 @@ class Board(
             }
         }
     
-    @Transient
-    private val line = "-".repeat(PiranhaConstants.BOARD_LENGTH * 2 + 2)
     /** Gibt eine visuell formatierte Darstellung des Spielfelds mit ASCII-Rahmen zurück. */
     fun prettyString(): String {
         val map = StringBuilder(line)
@@ -57,7 +57,11 @@ class Board(
     
     /** @suppress */
     companion object {
-        /** Erstellt ein zufälliges Spielbrett. */
+        /** Test helper to generate an empty board. */
+        val EMPTY
+            get() = Board(Array(PiranhaConstants.BOARD_LENGTH) { Array(PiranhaConstants.BOARD_LENGTH) { FieldState.EMPTY } })
+        
+        /** Erstellt ein zufälliges Spielbrett.  */
         fun randomFields(
             obstacleCount: Int = PiranhaConstants.NUM_OBSTACLES,
             random: Random = Random.Default,
