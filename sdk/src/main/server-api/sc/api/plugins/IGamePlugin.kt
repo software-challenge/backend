@@ -31,6 +31,7 @@ interface IGamePlugin<M : IMove> {
     /** @return ein neues Spiel mit dem gegebenen GameState. */
     fun createGameFromState(state: IGameState): IGameInstance
     
+    /** @suppress */
     companion object {
         @JvmStatic
         fun loadPlugins(): Iterator<IGamePlugin<*>> =

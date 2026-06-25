@@ -1,6 +1,7 @@
 # docs
 readme
 contributing
+agents
 # chore
 git
 gradle

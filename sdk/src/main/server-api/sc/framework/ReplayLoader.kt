@@ -60,6 +60,7 @@ class ReplayLoader(inputStream: InputStream) {
         loadHistory { it.turn >= turn }.first.last().takeIf { it.turn >= turn }
         ?: throw NoSuchElementException("No GameState of turn $turn")
     
+    /** @suppress */
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
         

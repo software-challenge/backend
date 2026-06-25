@@ -18,6 +18,7 @@ class ConverterTest {
             return !(field == "secret" && hacker == viewer)
         }
 
+        /** @suppress */
         companion object {
             val hacker = Any()
             val goodFriend = Any()

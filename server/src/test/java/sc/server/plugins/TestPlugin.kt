@@ -6,6 +6,7 @@ import sc.api.plugins.IGameState
 import sc.shared.ScoreDefinition
 
 class TestPlugin: IGamePlugin<TestMove> {
+    /** @suppress */
     companion object {
         const val TEST_PLUGIN_UUID = "012345-norris"
     }

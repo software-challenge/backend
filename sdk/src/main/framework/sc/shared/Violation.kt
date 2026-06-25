@@ -9,7 +9,7 @@ sealed class Violation(override val message: String): IWinReason {
     class LEFT(cause: DisconnectCause): Violation("%s hat das Spiel verlassen: $cause")
     /** The player violated against the games rules.  */
     class RULE_VIOLATION(reason: InvalidMoveException): Violation("Regelverletzung von %s: ${reason.message}")
-    /** The player violated against the game rder.  */
+    /** The player violated against the game order.  */
     class PROCESS_VIOLATION(reason: String): Violation("Missachtung des Spielablaufs von %s: $reason")
     /** The player took to long to respond to the move request.  */
     class SOFT_TIMEOUT(timeout: Number): Violation("%s hat fuer die Antwort auf die Zugaufforderung laenger als $timeout Sekunden gebraucht.")

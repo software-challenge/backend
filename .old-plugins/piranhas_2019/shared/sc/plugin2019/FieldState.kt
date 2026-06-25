@@ -22,6 +22,7 @@ enum class FieldState {
         else -> ' '
     }
 
+    /** @suppress */
     companion object {
         @JvmStatic
         fun from(color: PlayerColor): FieldState {

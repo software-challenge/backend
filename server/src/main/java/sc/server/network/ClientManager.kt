@@ -90,6 +90,7 @@ class ClientManager(private val requestHandler: IClientRequestListener) : Runnab
         clients.remove(source)
     }
 
+    /** @suppress */
     companion object {
         private val logger = LoggerFactory.getLogger(ClientManager::class.java)
     }

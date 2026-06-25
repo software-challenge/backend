@@ -80,6 +80,7 @@ data class CubeCoordinates
     
     override fun hashCode(): Int = q * 998 + r
     
+    /** @suppress */
     companion object {
         /** Der Ursprung des Koordinatensystems (0, 0). */
         val ORIGIN = CubeCoordinates(0, 0)

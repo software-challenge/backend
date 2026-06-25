@@ -16,6 +16,7 @@ enum class Direction(val vector: Vector): IVector by vector {
     LEFT(Vector(-1, 0)),
     UP_LEFT(Vector(-1, 1));
     
+    /** @suppress */
     companion object {
         val diagonals = arrayOf(UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT)
         val cardinals = arrayOf(UP, RIGHT, DOWN, LEFT)
@@ -50,6 +51,7 @@ enum class HexDirection(val vector: Vector): IVector by vector {
     
     fun rotatedBy(turns: Int): HexDirection = values().let { it[(ordinal + turns).mod(it.size)] }
     
+    /** @suppress */
     companion object {
         fun random(): HexDirection = values()[Random.nextInt(values().size)]
     }

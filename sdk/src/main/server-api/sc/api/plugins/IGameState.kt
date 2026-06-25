@@ -9,7 +9,7 @@ import sc.shared.WinCondition
  * die den Spielstand zu einem gegebenen Zeitpunkt,
  * das heisst zwischen zwei Spielzuegen, beschreiben.
  * Dies umfasst:
- * - eine fortlaufende Zugnummer ([round] & [turn]) und wer dran ist
+ * - eine fortlaufende Zugnummer ([turn]) und wer dran ist
  * - das Spielfeld
  * - der zuletzt getaetigte Spielzug
  *
