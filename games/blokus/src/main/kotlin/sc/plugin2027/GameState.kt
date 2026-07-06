@@ -198,7 +198,7 @@ data class GameState @JvmOverloads constructor(
      */
     override val isOver: Boolean
         get() = !hasValidColors() ||
-                turn / 2 >= Constants.ROUND_LIMIT
+                this.round >= Constants.ROUND_LIMIT
     
     /**
      * Die Gewinnbedingung für Blokus ist, dass das Team mit den meisten Punkten gewinnt.
@@ -312,6 +312,8 @@ data class GameState @JvmOverloads constructor(
         }
         this.advance()
         lastMove = move
+        // If new player has no move, remove color and advance.
+        GameRuleLogic.removeInvalidColors(this)
     }
     
     /**
