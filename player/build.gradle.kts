@@ -132,7 +132,7 @@ tasks {
                 execDir.resolve("${game}_client.jar").absolutePath,
                 "--verify"
             )
-                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                 .redirectError(ProcessBuilder.Redirect.INHERIT)
                 .start()
             val exitCode = process.waitFor()
