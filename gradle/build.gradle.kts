@@ -212,7 +212,10 @@ subprojects {
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(JvmTarget.fromTarget(javaRuntimeVersion.toString()))
-            freeCompilerArgs.add("-Xjdk-release=${javaRuntimeVersion.majorVersion}")
+            // This is incompatible with JDK 8 and superfluous anyways,
+            //  since it just instructs to Kotlin to compile against the API of the current JDK
+            //  which it does anyway.
+            //freeCompilerArgs.add("-Xjdk-release=${javaRuntimeVersion.majorVersion}")
         }
     }
 }
