@@ -24,8 +24,8 @@ class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
     
     private fun notifyObservers(packet: ProtocolPacket) =
             clientManager.clients
-                    .filter { it.isAdministrator }
-                    .forEach { it.send(packet) }
+                    .filter(Client::isAdministrator)
+                    .forEach { admin -> admin.send(packet) }
     
     /** Handle requests or moves of clients.
      * @throws RescuableClientException if something goes wrong.

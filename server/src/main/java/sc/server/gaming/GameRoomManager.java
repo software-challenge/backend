@@ -7,18 +7,15 @@ import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.IGameState;
 import sc.api.plugins.exceptions.GameRoomException;
 import sc.api.plugins.exceptions.RescuableClientException;
-import sc.networking.InvalidScoreDefinitionException;
-import sc.networking.clients.GameLoaderClient;
+import sc.framework.ReplayLoader;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.GamePreparedResponse;
 import sc.protocol.responses.RoomWasJoinedEvent;
 import sc.server.Configuration;
 import sc.server.network.Client;
-import sc.shared.*;
+import sc.shared.SlotDescriptor;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.*;
 
 /**
@@ -63,20 +60,20 @@ public class GameRoomManager {
       }
 
       logger.info("Loading game from file '{}' at turn {}", gameFile, turn);
-      game = plugin.createGameFromState(new GameLoaderClient(gameFile).getTurn(turn));
+      game = plugin.createGameFromState(new ReplayLoader(gameFile).getTurn(turn));
     } else {
       game = plugin.createGame();
     }
 
-    return createGameRoom(plugin.getScoreDefinition(), game, false);
+    return createGameRoom(game, false);
   }
 
   /** Create a new GameRoom with the given definitions. */
-  public GameRoom createGameRoom(ScoreDefinition scoreDefinition, IGameInstance game, boolean prepared) {
-    GameRoom room = new GameRoom(generateRoomId(), this, scoreDefinition, game);
+  public GameRoom createGameRoom(IGameInstance game, boolean prepared) {
+    GameRoom room = new GameRoom(generateRoomId(), this, game);
     // pause room on JoinRoomRequest if specified in server.properties
     if (!prepared) {
-      boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
+      boolean paused = Configuration.get(Configuration.PAUSED, Boolean.class, false);
       room.pause(paused);
     }
 
@@ -111,8 +108,7 @@ public class GameRoomManager {
    *
    * @throws RescuableClientException if client could not join room
    */
-  public synchronized RoomWasJoinedEvent joinOrCreateGame(Client client, String gameType)
-          throws RescuableClientException {
+  public synchronized RoomWasJoinedEvent joinOrCreateGame(Client client, String gameType) throws RescuableClientException {
     for (GameRoom gameRoom : getGames()) {
       // TODO gameType isn't checked
       if (gameRoom.join(client)) {
@@ -143,7 +139,7 @@ public class GameRoomManager {
     IGamePlugin plugin = IGamePlugin.loadPlugin(gameType);
     IGameInstance game = loadGameInfo != null ? plugin.createGameFromState(loadGameInfo) : plugin.createGame();
 
-    GameRoom room = createGameRoom(plugin.getScoreDefinition(), game, true);
+    GameRoom room = createGameRoom(game, true);
     room.pause(paused);
 
     return new GamePreparedResponse(room.getId(), room.reserveSlots(descriptors));

@@ -1,5 +1,3 @@
-#!/bin/bash
-
+#!/bin/sh
 echo "pushing to staging"
-export server=ebbe
-./helpers/push_to_server.sh
+server=ebbe "$(dirname $0)/push_to_server.sh"

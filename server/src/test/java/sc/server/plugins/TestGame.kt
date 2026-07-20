@@ -11,7 +11,7 @@ import sc.shared.*
 
 data class TestGame(
         override val currentState: TestGameState = TestGameState(),
-): AbstractGame(TestPlugin.TEST_PLUGIN_UUID) {
+): AbstractGame<TestMove>(TestPlugin()) {
     
     override fun onRoundBasedAction(move: IMove) {
         if(move !is TestMove)
@@ -19,12 +19,6 @@ data class TestGame(
                 override val message = "TestGame only processes TestMove"
             })
         move.perform(currentState)
-    }
-    
-    override fun checkWinCondition(): WinCondition? {
-        return if(currentState.round > 1) {
-            WinCondition(if(currentState.state % 2 == 0) Team.ONE else Team.TWO, TestWinReason.WIN)
-        } else null
     }
     
     override fun onPlayerJoined(): Player =
@@ -38,5 +32,5 @@ data class TestGame(
             ActionTimeout(false)
     
     override fun toString(): String =
-            "TestGame(currentState=$currentState, paused=$isPaused, players=$players)"
+            "TestGame(currentState=$currentState, paused=$isPaused, players=${players.joinToString { it.longString() }})"
 }

@@ -1,5 +1,6 @@
 # Changelog
-All notable changes to this project are documented in this file.
+All notable changes to this project used to be documented in this file.
+Now the focus is on semantic commit messages.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0),
 
 The `x.y.z` version is tracked in [gradle.properties](./gradle.properties) to enable programmatic updating via the Gradle `release` task.
@@ -9,6 +10,118 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - `y` is bumped for any major updates or backwards-incompatible changes.  
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
+
+  
+### 27.0.0-beta Initial Release - 2026-06-25
+
+## 2027 Game Piranhas
+
+## 2026 Game Piranhas
+
+### 25.1.0 Stabilization - 2025-02-10
+- Unshuffle second HuI Salad
+- Ease player template IDE import and add offline instructions
+- Add `--no-timeout` flag to Server to disable player timeouts
+- Expand HuI Testing
+- Enhance Logging
+
+### 25.0.6 Tweak Win Conditions - 2024-07-09
+
+### 25.0.5 Little Fixes - 2024-07-01
+- Remove round number from GameState
+- End game with turn 60
+- Update CI Pipeline
+
+### 25.0.4 Allow Follow-up Move - 2024-06-26
+- Always finish the round even if one player is already in the goal
+- Emit proper GameResult when game ends regularly through implementing WinCondition
+
+### 25.0.3 Auxiliaries - 2024-06-25
+- revamp a few internal helper methods
+- fix GameResult
+- expand testing
+
+### 25.0.2 XML Improvements and Rule fixes - 2024-06-19
+- Requirements for swap carrots card properly implemented
+- XML Serialization Revamped
+
+### 25.0.1 XStream Hotfix - 2024-06-15
+
+### 25.0.0 Initial Release - 2024-06-15
+
+## 2025 Game Hase und Igel
+- Allow other player to move on when one is disqualified
+
+### 24 Post-Finale
+- Allow player to move on when other is stuck (now for clarification: crashed) or finished
+  -> need to adjust score to account for earlier arrival
+- Improve XML protocol
+
+### 24.2.5 No points for stuck ship - 2024-03-27
+
+### 24.2.4 Adjust game ending inaccuracies - 2024-03-21
+- Immediately end game when one player gets stuck
+- Fix incorrect winner for edge cases involving segment distance
+
+### 24.2.3 Fix circular Board edge-case - 2024-03-18
+
+### 24.2.2 Detailed winner explanation - 2024-03-14
+
+### 24.2.1 Fix issue leading to wrong winner - 2024-03-13
+
+### 24.2.0 Fix GameResult - 2024-03-12
+- Disqualify ship that cannot move because it is too fast
+
+### 24.1.5 Fix teamStats - 2023-10-03
+
+### 24.1.4 Interface Adjustments for GUI - 2023-10-02
+
+### 24.1.3 Provide teamStats - 2023-09-14
+
+### 24.1.2 Stable Release - 2023-09-20
+
+### 24.1.1 Helper Adjustments - 2023-09-14
+- Fully rename simpleclient to playertemplate
+- Fix segment bounds special cases
+
+### 24.1.0 Add New Helpers - 2023-09-11
+
+### 24.0.8 All The Moves - 2023-09-04
+- moveIterator should now generate all possible Moves
+- Reduce usage of magic numbers
+- Fix some test cases and update kotest
+- Fix oversight in SimplePlayer template
+
+### 24.0.7 Game Procedure - 2023-08-29
+- Make SimplePlayer template more convenient
+- Clarify game over edge case conditions
+
+### 24.0.6 Refine Adjuncts - 2023-08-24
+- Properly handle consecutive advances
+- Fix ScoreDefinition
+
+### 24.0.5 Eliminating Oversights - 2023-08-23
+- Revamp calculation structure for available Moves
+- Add some helpers and documentation
+- Fix revealing of Segments including nextDirection
+- Fix passing on of nextDirection in Board
+
+### 24.0.3 Rule Fixes - 2023-08-12
+- Properly deep copy board
+- Allow picking up passengers at speed 2 in current
+- Skip player turn if ship is immovable
+- Extend tests
+
+### 24.0.0 New Game with adjusted rules - 2023-08-10
+- Fix Orientation of Coordinates and Directions for Cartesian, DoubledHex and Cube
+- Implement basic version of Mississippi Queen - XML and Rules are subject to change!
+
+## 2024 Game Mississippi Queen - 2023-08
+
+
+### 23.0.3 Final Fixes
+- Fix Deep Cloning of GameState
+- Update Board generation counts to prevent missing ice floes
 
 ### [23.0.2](https://github.com/software-challenge/backend/commits/23.0.2) New Board generation - 2022-08-21
 - Update Board generation: 

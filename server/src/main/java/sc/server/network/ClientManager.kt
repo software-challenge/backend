@@ -26,7 +26,7 @@ class ClientManager(private val requestHandler: IClientRequestListener) : Runnab
     /**
      * Adds the given `newClient` and listens to it.
      *
-     * *(only used by tests and addAll())*
+     * *(extracted from `run` for tests)*
      */
     fun add(newClient: Client) {
         clients.add(newClient)
@@ -90,6 +90,7 @@ class ClientManager(private val requestHandler: IClientRequestListener) : Runnab
         clients.remove(source)
     }
 
+    /** @suppress */
     companion object {
         private val logger = LoggerFactory.getLogger(ClientManager::class.java)
     }

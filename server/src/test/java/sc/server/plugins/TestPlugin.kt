@@ -5,17 +5,23 @@ import sc.api.plugins.IGamePlugin
 import sc.api.plugins.IGameState
 import sc.shared.ScoreDefinition
 
-class TestPlugin: IGamePlugin {
+class TestPlugin: IGamePlugin<TestMove> {
+    /** @suppress */
     companion object {
         const val TEST_PLUGIN_UUID = "012345-norris"
     }
     
     override val id: String = TEST_PLUGIN_UUID
     
+    override val name = "Test Plugin"
+    
     override val scoreDefinition: ScoreDefinition =
             ScoreDefinition("winner", "index", "turn")
     
-    override val gameTimeout = 1000
+    override val turnLimit
+        get() = throw NotImplementedError()
+    
+    override val moveClass: Class<TestMove> = TestMove::class.java
     
     override fun createGame(): IGameInstance =
             TestGame()

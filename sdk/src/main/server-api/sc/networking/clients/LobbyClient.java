@@ -26,10 +26,10 @@ import java.util.function.Function;
 /**
  * This class is used to handle all communication with a server.
  *
- * - It is used in a client (e.g. the java simple client).
- * - It is also used to represent observer-threads started by the server which connect to the server.
+ * - from clients (e.g. java player)
+ * - represents observer-threads started by the server which connect to the server
  *
- * The server always has a Client object for every LobbyClient representing the client on the server-side.
+ * The server always has a Client object representing the connected LobbyClient on the server-side.
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory {
   private static final Logger logger = LoggerFactory.getLogger(LobbyClient.class);

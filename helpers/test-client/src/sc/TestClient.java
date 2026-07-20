@@ -16,7 +16,6 @@ import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.GamePreparedResponse;
 import sc.protocol.responses.ObservationResponse;
 import sc.protocol.room.RoomPacket;
-import sc.server.Configuration;
 import sc.shared.*;
 
 import java.io.File;
@@ -37,13 +36,14 @@ import static java.lang.Math.pow;
 import static sc.Util.factorial;
 
 /**
- * A simple command-line application to test clients. Enables TestMode on startup.
+ * A simple command-line application to test clients.
+ * Enables TestMode on startup.
  * <p>
  * Defaults:
  * <ul>
- * <li>starts on localhost 13051</li>
+ * <li>starts on localhost 13050 (13051 with own server)</li>
  * <li>displayNames: player1, player2</li>
- * <li>client location: ./defaultplayer.jar</li>
+ * <li>player location: defaultplayer.jar</li>
  * <li>canTimeout: true</li>
  * </ul>
  */
@@ -65,20 +65,22 @@ public class TestClient extends XStreamClient {
 
     // define commandline options
     CmdLineParser parser = new CmdLineParser();
-    Option loglevelOption = parser.addStringOption("loglevel");
-    Option serverOption = parser.addBooleanOption("start-server");
-    Option serverLocationOption = parser.addStringOption("server");
     Option hostOption = parser.addStringOption('h', "host");
     Option portOption = parser.addIntegerOption('p', "port");
+    Option loglevelOption = parser.addStringOption("loglevel");
+
+    Option noTimeoutOption = parser.addBooleanOption("no-timeout");
+    Option[] noTimeoutOptions = {parser.addBooleanOption("no-timeout1"), parser.addBooleanOption("no-timeout2")};
+
+    Option serverOption = parser.addBooleanOption("start-server");
+    Option serverLocationOption = parser.addStringOption("server");
 
     Option numberOfTestsOption = parser.addIntegerOption('t', "tests");
     Option minTestsOption = parser.addIntegerOption("min-tests");
     Option significanceOption = parser.addDoubleOption("significance");
 
-    Option noTimeoutOption = parser.addBooleanOption("no-timeout");
     Option[] execOptions = {parser.addStringOption("player1"), parser.addStringOption("player2")};
     Option[] nameOptions = {parser.addStringOption("name1"), parser.addStringOption("name2")};
-    Option[] noTimeoutOptions = {parser.addBooleanOption("no-timeout1"), parser.addBooleanOption("no-timeout2")};
 
     try {
       parser.parse(args);
@@ -88,7 +90,7 @@ public class TestClient extends XStreamClient {
       exit(2);
     }
 
-    Configuration.loadServerProperties();
+    sc.server.Configuration.loadServerProperties();
 
     // read commandline options
     String loglevel = (String) parser.getOptionValue(loglevelOption, null);
@@ -100,9 +102,9 @@ public class TestClient extends XStreamClient {
         logger.setLevel(level);
     }
 
-    boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
     String host = (String) parser.getOptionValue(hostOption, "localhost");
-    int port = (int) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_TESTSERVER_PORT);
+    boolean startServer = (boolean) parser.getOptionValue(serverOption, false);
+    int port = (int) parser.getOptionValue(portOption, startServer ? SharedConfiguration.DEFAULT_TESTSERVER_PORT : SharedConfiguration.DEFAULT_PORT);
 
     int numberOfTests = (int) parser.getOptionValue(numberOfTestsOption, 100);
     significance = (Double) parser.getOptionValue(significanceOption);
@@ -113,12 +115,15 @@ public class TestClient extends XStreamClient {
         exit(2);
       }
     }
+	  
+	// TODO also try neighboring files, currently only pwd
 
     boolean noTimeout = (boolean) parser.getOptionValue(noTimeoutOption, false);
     for (int i = 0; i < 2; i++) {
       players[i].canTimeout = !(noTimeout || (boolean) parser.getOptionValue(noTimeoutOptions[i], false));
       players[i].name = (String) parser.getOptionValue(nameOptions[i], "player" + (i + 1));
-      players[i].executable = new File((String) parser.getOptionValue(execOptions[i], "./defaultplayer.jar"));
+	  String playerFile = (String) parser.getOptionValue(execOptions[i], null);
+      players[i].executable = playerFile == null ? findInClasspath(new File("defaultplayer.jar")) : new File(playerFile);
       players[i].isJar = Util.isJar(players[i].executable);
     }
     if (players[0].name.equals(players[1].name)) {
@@ -127,21 +132,29 @@ public class TestClient extends XStreamClient {
       players[1].name = players[1].name + "-2";
     }
     logger.info("Players: " + Arrays.toString(players));
-
+	  
+	File stdout = new File(logDir, "server_port" + port + ".log");
+	File stderr = new File(logDir, "server_port" + port + "-err.log");
     try {
       if (startServer) {
-        File serverLocation = findInClasspath((File) parser.getOptionValue(serverLocationOption, new File("server.jar")));
+		String serverFile = (String) parser.getOptionValue(serverLocationOption, null);
+        File serverLocation = serverFile == null ? findInClasspath(new File("server.jar")) : new File(serverFile);
         logger.info("Starting server from {}", serverLocation);
-        ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getPath(), "--port", String.valueOf(port));
+        ProcessBuilder builder = new ProcessBuilder("java", "-classpath", classpath, "-Dfile.encoding=UTF-8", "-jar", serverLocation.getName(), "--port", String.valueOf(port));
         logDir.mkdirs();
-        File stdout = new File(logDir, "server_port" + port + ".log");
+		builder.directory(serverLocation.getParentFile());
         builder.redirectOutput(stdout);
-        builder.redirectError(new File(logDir, "server_port" + port + "-err.log"));
+        builder.redirectError(stderr);
         Process server = builder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(server::destroyForcibly));
         int i = 0;
-        while(Files.size(stdout.toPath()) < 1000 && i++ < 50)
+        while(server.isAlive() && Files.size(stdout.toPath()) < 1000 && i++ < 50)
           Thread.sleep(300);
+		if(!server.isAlive()) {
+			System.out.println("Server stderr:");
+			System.out.print(new String(Files.readAllBytes(stderr.toPath())));
+			throw new IOException("Server did not start: Exit Code " + server.exitValue());
+		}
         Thread.sleep(300);
       }
       testclient = new TestClient(host, port, numberOfTests);
@@ -189,7 +202,7 @@ public class TestClient extends XStreamClient {
     this.totalTests = totalTests;
     start();
     logger.debug("Authenticating as administrator");
-    send(new AuthenticateRequest(Configuration.getAdministrativePassword()));
+    send(new AuthenticateRequest(sc.server.Configuration.getAdministrativePassword()));
     logger.info("Starting clients");
     prepareNewClients();
   }
@@ -209,7 +222,7 @@ public class TestClient extends XStreamClient {
         GameResult result = (GameResult) packet.getData();
         if (!result.isRegular())
           irregularGames++;
-        logger.warn("Game {} ended {} Winner: {}", finishedTests, result.isRegular() ? "regularly -" : "abnormally!", result.getWinner());
+        logger.warn("Game {} ended {} Winner: {}", finishedTests, result.isRegular() ? "regularly -" : "irregularly!", result.getWin());
 
         finishedTests++;
         ScoreDefinition scoreDefinition = result.getDefinition();
@@ -380,7 +393,7 @@ public class TestClient extends XStreamClient {
               "%s: %.0f\n" +
               "%s: %.0f\n" +
               "=======================================\n" +
-              "{} of {} games ended abnormally!",
+              "{} of {} games ended irregularly!",
           players[0].name, players[0].score[0].getValue(),
           players[1].name, players[1].score[0].getValue()),
           irregularGames, finishedTests);

@@ -7,9 +7,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter
 import sc.api.plugins.Team
 import sc.framework.plugins.Player
-import sc.shared.GameResult
-import sc.shared.PlayerScore
-import sc.shared.ScoreDefinition
+import sc.shared.*
 
 fun HierarchicalStreamWriter.makeNode(node: String, action: HierarchicalStreamWriter.() -> Unit) {
     startNode(node)
@@ -24,7 +22,8 @@ fun <T> HierarchicalStreamReader.readNode(action: HierarchicalStreamReader.() ->
     return result
 }
 
-inline fun <reified T> UnmarshallingContext.read() = convertAnother(null, T::class.java) as T
+inline fun <reified T> UnmarshallingContext.read() =
+    convertAnother(null, T::class.java) as T
 
 class GameResultConverter: Converter {
     override fun canConvert(type: Class<*>?): Boolean = type == GameResult::class.java
@@ -33,12 +32,33 @@ class GameResultConverter: Converter {
         val obj = source as GameResult
         writer.makeNode("definition") { context.convertAnother(obj.definition) }
         writer.makeNode("scores") { context.convertAnother(obj.scores) }
-        obj.winner?.let { writer.makeNode("winner") { addAttribute("team", it.name) } }
+        obj.win?.let { win ->
+            val team = win.winner
+            writer.makeNode("winner") {
+                //addAttribute("team", team?.name.toString())
+                team?.name?.let { addAttribute("team", it) }
+                addAttribute("regular", win.reason.isRegular.toString())
+                val reasonTeam = if(win.reason.isRegular) team else team?.opponent()
+                addAttribute("reason", win.reason.getMessage(obj.scores.firstNotNullOfOrNull { entry -> entry.key.displayName.takeIf { it.isNotBlank() && entry.key.team == reasonTeam } } ?: reasonTeam?.name))
+            }
+        }
     }
     
     override fun unmarshal(reader: HierarchicalStreamReader, context: UnmarshallingContext): Any {
         val definition = reader.readNode { context.read<ScoreDefinition>() }
         val scores = reader.readNode { context.read<LinkedHashMap<Player, PlayerScore>>() }
-        return GameResult(definition, scores, if(reader.hasMoreChildren()) reader.readNode { Team.valueOf(getAttribute("team")) } else null)
+        val winner =
+                if(reader.hasMoreChildren())
+                    reader.readNode {
+                        WinCondition(
+                                getAttribute("team")?.let { attr -> Team.values().find { attr == it.name } },
+                                WinReason(
+                                        getAttribute("reason"),
+                                        getAttribute("regular") == "true"
+                                )
+                        )
+                    }
+                else WinCondition(null, WinReasonTie)
+        return GameResult(definition, scores, winner)
     }
 }

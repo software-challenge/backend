@@ -1,6 +1,7 @@
 package sc.protocol
 
 import com.thoughtworks.xstream.XStream
+import sc.api.plugins.Direction
 import sc.api.plugins.Team
 import sc.protocol.requests.*
 import sc.protocol.responses.*
@@ -15,6 +16,7 @@ object LobbyProtocol {
         registerAdditionalMessages(xStream, listOf(
                 AuthenticateRequest::class.java,
                 CancelRequest::class.java,
+                CloseConnection::class.java,
                 JoinGameRequest::class.java,
                 JoinPreparedRoomRequest::class.java,
                 JoinRoomRequest::class.java,
@@ -50,11 +52,13 @@ object LobbyProtocol {
                 PlayerScore::class.java,
                 ScoreAggregation::class.java,
                 Team::class.java,
-                ScoreCause::class.java,
+                Violation::class.java,
                 ScoreDefinition::class.java,
                 ScoreFragment::class.java,
                 SlotDescriptor::class.java,
-        ))
+            
+                Direction::class.java,
+            ))
         
         return xStream
     }

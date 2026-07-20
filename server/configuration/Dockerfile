@@ -1,4 +1,4 @@
-FROM openjdk:11-jre
+FROM eclipse-temurin:17-jre
 
 # Where to get the game server files from. Needs to be below or in directory
 # where this Dockerfile resides. Is the standard build result when executing
@@ -9,7 +9,7 @@ ADD $game_server_dir /app
 WORKDIR /app
 # the following files from the configuration directory will be copied to the
 # docker working directory before build
-ADD logback-production.xml /app/logback-production.xml
+ADD logback.xml /app/logback.xml
 # This will be overwritten by the docker secret with the real password in production:
 ADD server.properties.production /run/secrets/gameserver_properties
 RUN rm /app/server.properties && \
@@ -18,7 +18,6 @@ RUN rm /app/server.properties && \
 ENTRYPOINT ["java"]
 
 CMD ["-Dfile.encoding=UTF-8", \
-     "-Dlogback.configurationFile=logback-production.xml", \
      "-Djava.security.egd=file:/dev/./urandom", \
      "-server", \
      "-Xmx16g", \

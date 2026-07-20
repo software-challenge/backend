@@ -1,8 +1,5 @@
 package sc.api.plugins
 
-import sc.framework.PublicCloneable
-
-interface IField<FIELD: IField<FIELD>>: PublicCloneable<FIELD> {
+interface IField {
     val isEmpty: Boolean
-    val isOccupied: Boolean
 }

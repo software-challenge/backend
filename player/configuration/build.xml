@@ -7,7 +7,7 @@
     <property name="src.dir" value="src"/>
     <property name="classes.dir" value="${build.dir}/bin"/>
     <property name="jar.dir" value="${build.dir}/jar"/>
-    <property name="main-class" value="sc.playerYEAR.Starter"/>
+    <property name="main-class" value="sc.player.util.Starter"/>
 
     <path id="classpath.libs">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>

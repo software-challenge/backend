@@ -2,13 +2,14 @@ package sc.api.plugins
 
 import sc.framework.PublicCloneable
 import sc.protocol.room.RoomMessage
+import sc.shared.WinCondition
 
 /**
  * Ein `GameState` beinhaltet alle Informationen,
  * die den Spielstand zu einem gegebenen Zeitpunkt,
  * das heisst zwischen zwei Spielzuegen, beschreiben.
  * Dies umfasst:
- * - eine fortlaufende Zugnummer ([round] & [turn]) und wer dran ist
+ * - eine fortlaufende Zugnummer ([turn]) und wer dran ist
  * - das Spielfeld
  * - der zuletzt getaetigte Spielzug
  *
@@ -28,22 +29,41 @@ import sc.protocol.room.RoomMessage
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen abgefragt werden.
  */
-interface IGameState : RoomMessage, PublicCloneable<IGameState> {
-    /** Aktuelle Zugzahl  */
+interface IGameState: RoomMessage, PublicCloneable<IGameState> {
+    /** Aktuelle Zugzahl.  */
     val turn: Int
-
-    /** Aktuelle Rundenzahl */
-    val round: Int
     
     /** Das Team am Zug. */
     val currentTeam: ITeam
     
+    /** Das Team, welches das Spiel eröffnet. */
+    val startTeam: ITeam
+        get() = Team.ONE
+    
     /** Ob das Spiel zu Ende ist. */
     val isOver: Boolean
     
-    /** Gibt Punktzahlen des Teams entsprechend der [ScoreDefinition] zurück. */
+    /** Falls es einen klaren Sieger anhand der Spielregeln unabhängig von der Punktzahl gibt.
+     * Wenn dieser Wert nicht null ist, muss [isOver] true zurückgeben. */
+    val winCondition: WinCondition?
+    
+    /** Gibt Punktzahlen des Teams passend zur ScoreDefinition des aktuellen Spielplugins zurück. */
     fun getPointsForTeam(team: ITeam): IntArray
     
-    /** Die möglichen Züge des aktuellen Teams in der aktuellen Situation. */
-    fun getPossibleMoves(): Collection<IMove>
+    /** Erweiterte Punktzahlen für eine grobe Evaluierung eines Zuges. */
+    fun getPointsForTeamExtended(team: ITeam): IntArray = getPointsForTeam(team)
+    
+    
+    /** Eine Abfolge aller möglichen Züge des aktuellen Teams,
+     * nur soweit berechnet wie nötig. */
+    fun moveIterator(): Iterator<IMove>
+    
+    /** Spielspezifische Informationen, für die GUI. */
+    fun teamStats(team: ITeam): List<Stat>
 }
+
+data class Stat(
+    val label: String,
+    val value: Int,
+    val icon: String? = null,
+)

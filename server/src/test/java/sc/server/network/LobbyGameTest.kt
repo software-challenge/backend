@@ -1,16 +1,14 @@
 package sc.server.network
 
-import io.kotest.assertions.timing.eventually
-import io.kotest.assertions.until.Interval
-import io.kotest.assertions.until.fibonacci
 import io.kotest.assertions.withClue
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.nulls.*
 import io.kotest.matchers.string.*
+import io.kotest.matchers.types.*
 import sc.api.plugins.Team
+import sc.framework.plugins.Constants
 import sc.protocol.RemovedFromGame
 import sc.protocol.ResponsePacket
 import sc.protocol.requests.JoinPreparedRoomRequest
@@ -30,19 +28,8 @@ import sc.server.plugins.TestGame
 import sc.server.plugins.TestMove
 import sc.server.plugins.TestPlugin
 import sc.shared.GameResult
-import sc.shared.PlayerScore
-import sc.shared.ScoreCause
+import sc.shared.Violation
 import sc.shared.SlotDescriptor
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
-
-@OptIn(ExperimentalTime::class)
-suspend fun await(
-        clue: String? = null,
-        duration: Duration = Duration.seconds(1),
-        interval: Interval = Duration.milliseconds(20).fibonacci(),
-        f: suspend () -> Unit,
-) = withClue(clue) { eventually(duration, interval, f) }
 
 class LobbyGameTest: WordSpec({
     "A Lobby with connected clients" When {
@@ -51,7 +38,7 @@ class LobbyGameTest: WordSpec({
         
         val adminListener = MessageListener<ResponsePacket>()
         val lobbyClient = testLobby.connectClient()
-        val admin = lobbyClient.authenticate(PASSWORD, adminListener::addMessage)
+        val admin = testLobby.authenticateAdmin(lobbyClient, adminListener::addMessage)
         fun prepareGame(request: PrepareGameRequest): GamePreparedResponse {
             admin.prepareGame(request)
             val prepared = adminListener.waitForMessage(GamePreparedResponse::class)
@@ -77,14 +64,13 @@ class LobbyGameTest: WordSpec({
                 await("Room opened") { lobby.games.size shouldBe 1 }
                 val room = lobby.games.single()
                 room.clients shouldHaveSize 1
-                "return GameResult on step" {
+                withClue("return GameResult on step") {
                     val roomListener = observeRoom(room.id)
                     admin.control(room.id).step(true)
                     val result = roomListener.waitForMessage(GameResult::class)
                     playerHandlers[0].gameResult shouldBe result
-                    result.winner shouldBe Team.ONE
                     result.isRegular shouldBe false
-                    result.scores.values.last().cause shouldBe ScoreCause.LEFT
+                    result.win?.winner shouldBe Team.ONE
                     admin.closed shouldBe false
                 }
                 playerClients[0].stop()
@@ -107,11 +93,13 @@ class LobbyGameTest: WordSpec({
                 admin.control(room.id).step(true)
                 val result = roomListener.waitForMessage(GameResult::class)
                 withClue("No Winner") {
-                    result.winner shouldBe null
                     result.isRegular shouldBe false
-                    forAll<PlayerScore>(result.scores.mapKeys { it.key.displayName }.toList()) {
-                        it.cause shouldBe ScoreCause.LEFT
+                    result.scores.forEach {
+                        withClue(it.key.displayName) {
+                            it.value.parts.first().intValueExact() shouldBe Constants.LOSE_SCORE
+                        }
                     }
+                    room.result.win?.reason.shouldBeInstanceOf<Violation.LEFT>()
                 }
                 adminListener.waitForMessage(RemovedFromGame::class)
                 roomListener.clearMessages() shouldBe 0
@@ -213,12 +201,13 @@ class LobbyGameTest: WordSpec({
                 val controller = admin.control(prepared.roomId)
                 controller.pause()
                 roomListener.waitForMessage(GamePaused::class)
-                withClue("appropriate result for aborted game") {
+                withClue("appropriate result for game aborted due to unrequested move") {
+                    // Not the turn of player two
                     playerClients[1].sendMessageToRoom(prepared.roomId, TestMove(0))
                     val result = roomListener.waitForMessage(GameResult::class)
-                    // TODO can be checked once PlayerScore generation moved from plugin to sdk
-                    // result.isRegular shouldBe false
-                    result.winner shouldBe room.game.players.first().team
+                    room.game.players[1].violation.shouldBeInstanceOf<Violation.PROCESS_VIOLATION>()
+                    result.isRegular shouldBe false
+                    result.win?.winner shouldBe room.game.players.first().team
                 }
             }
         }

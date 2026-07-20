@@ -1,9 +1,5 @@
 package sc.server.network
 
-import io.kotest.assertions.timing.eventually
-import io.kotest.assertions.until.fibonacci
-import io.kotest.assertions.withClue
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -18,6 +14,7 @@ import java.io.IOException
 import java.net.Socket
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 
 abstract class RealServerTest {
@@ -31,12 +28,8 @@ abstract class RealServerTest {
     fun connectPlayer() =
             LobbyClient("localhost", serverPort).apply { start() }
     
-    @OptIn(ExperimentalTime::class)
-    fun await(clue: String? = null, time: Duration = Duration.seconds(1), f: () -> Boolean) = runBlocking {
-        withClue(clue) {
-            eventually(time, Duration.milliseconds(20).fibonacci(), predicate = { f() }) {}
-        }
-    }
+    fun await(clue: String? = null, time: Duration = 1.seconds, f: () -> Boolean) =
+        sc.server.network.awaitUntil(clue = clue, duration = time, predicate = f)
     
     @BeforeEach
     fun setup() {

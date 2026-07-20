@@ -1,38 +1,56 @@
 package sc.api.plugins
 
+import org.slf4j.LoggerFactory
 import sc.api.plugins.exceptions.PluginLoaderException
+import sc.framework.plugins.Constants
 import sc.shared.ScoreDefinition
 import java.util.ServiceLoader
 
-interface IGamePlugin {
+private val logger = LoggerFactory.getLogger(IGamePlugin::class.java)
+
+interface IGamePlugin<M : IMove> {
+    /** Plugin identifier for the protocol. */
     val id: String
+    /** Human readable name of the game. */
+    val name: String
+    /** Arrangement of ScoreFragments in the GameResult. */
     val scoreDefinition: ScoreDefinition
-    val gameTimeout: Int
+    /**
+     * Maximum Turns allowed in a game.
+     * Used to detect unresponsive games.
+     */
+    val turnLimit: Int
     
-    /** @return eine neues Spiel. */
+    val gameTimeout
+        get() = turnLimit * Constants.SOFT_TIMEOUT
+    
+    val moveClass: Class<M>
+    
+    /** @return ein neues Spiel. */
     fun createGame(): IGameInstance
-    /** @return eine neues Spiel mit dem gegebenen GameState. */
+    /** @return ein neues Spiel mit dem gegebenen GameState. */
     fun createGameFromState(state: IGameState): IGameInstance
     
+    /** @suppress */
     companion object {
         @JvmStatic
-        fun loadPlugins(): Iterator<IGamePlugin> =
-            ServiceLoader.load(IGamePlugin::class.java).iterator().takeIf {
-                it.hasNext()
-            } ?: throw PluginLoaderException("Could not find any game plugin")
+        fun loadPlugins(): Iterator<IGamePlugin<*>> =
+                ServiceLoader.load(IGamePlugin::class.java).iterator().takeIf {
+                    it.hasNext()
+                } ?: throw PluginLoaderException("Could not find any game plugin")
         
         /** @param gameType id of the plugin, if null return any
          * @return The plugin with an id equal to [gameType]. */
         @JvmStatic
-        fun loadPlugin(gameType: String?): IGamePlugin = loadPlugins().asSequence().find {
-            gameType == null || it.id == gameType
-        } ?: throw PluginLoaderException("Could not find game of type '$gameType'")
+        fun loadPlugin(gameType: String?): IGamePlugin<*> =
+                loadPlugins().asSequence().find {
+                    gameType == null || it.id == gameType
+                } ?: throw PluginLoaderException("Could not find game of type '$gameType'")
         
+        /** Loads the latest available game plugin. */
         @JvmStatic
-        fun loadPlugin(): IGamePlugin = loadPlugins().next()
+        fun loadPlugin(): IGamePlugin<*> =
+                loadPlugins().asSequence().sortedByDescending { it.id }.first().also { logger.debug("Loaded plugin: {}", it.id) }
         
-        @JvmStatic
-        fun loadPluginId(): String =
-                loadPlugin().id
     }
 }

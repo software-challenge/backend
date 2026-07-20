@@ -1,11 +1,12 @@
 # docs
 readme
 contributing
+agents
 # chore
 git
 gradle
 ci
-deploy
+helpers
 
 # Modules
 testclient
@@ -13,10 +14,16 @@ player
 server
 
 plugin
+plugin23
+plugin24
+plugin25
+plugin26
 gamerules
 
 sdk
 framework
 network
 logging
+
 Game
+Board

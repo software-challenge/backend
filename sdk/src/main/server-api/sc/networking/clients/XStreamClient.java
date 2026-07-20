@@ -31,7 +31,7 @@ public abstract class XStreamClient implements IClient {
   private final INetworkInterface networkInterface;
   private final ObjectOutputStream out;
   private final Thread receiveThread;
-  protected final XStream xStream = XStreamProvider.loadPluginXStream();
+  protected final XStream xStream = XStreamProvider.currentPlugin();
 
   private DisconnectCause disconnectCause = DisconnectCause.NOT_DISCONNECTED;
   private boolean closed = false;
@@ -94,21 +94,21 @@ public abstract class XStreamClient implements IClient {
   public void receiveThread() {
     try (ObjectInputStream in = xStream.createObjectInputStream(networkInterface.getInputStream())) {
       synchronized(readyLock) {
-        while (!isReady()) {
+        while(!isReady()) {
           readyLock.wait();
         }
       }
 
-      while (!Thread.interrupted()) {
+      while(!Thread.interrupted()) {
         Object object = in.readObject();
-        if (object instanceof ProtocolPacket) {
+        if(object instanceof ProtocolPacket) {
           ProtocolPacket response = (ProtocolPacket) object;
 
           logger.debug("Received {} via {}", response, networkInterface);
-          if (logger.isTraceEnabled())
-            logger.trace("Dumping {}:\n{}", response, xStream.toXML(response));
+          if(logger.isTraceEnabled())
+            logger.trace("Dumping received {}:\n{}", response, xStream.toXML(response));
 
-          if (response instanceof CloseConnection) {
+          if(response instanceof CloseConnection) {
             handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
             break;
           } else {
@@ -182,14 +182,16 @@ public abstract class XStreamClient implements IClient {
 
     logger.debug("Sending {} via {} from {}", packet, networkInterface, this);
     if (logger.isTraceEnabled())
-      logger.trace("Dumping {}:\n{}", packet, xStream.toXML(packet));
+      logger.trace("Dumping sent {}:\n{}", packet, xStream.toXML(packet));
 
     try {
       this.out.writeObject(packet);
       this.out.flush();
     } catch (XStreamException e) {
+      stopReceiver();
       handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
     } catch (IOException e) {
+      stopReceiver();
       handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
     }
   }
@@ -200,19 +202,19 @@ public abstract class XStreamClient implements IClient {
     try {
       close();
     } catch (Exception e) {
-      logger.error("Failed to close", e);
+      logger.error("Failed to close {}", this, e);
     }
 
     onDisconnected(cause);
   }
 
   protected final void handleDisconnect(DisconnectCause cause, Throwable exception) {
-    logger.warn("{} disconnecting (Cause: {}, Exception: {})", this, cause, exception.toString(), exception);
+    logger.warn("Disconnecting with {} because of {}: {}", cause, exception.toString(), this, exception);
     handleDisconnect(cause);
   }
 
   protected void onDisconnected(DisconnectCause cause) {
-    logger.info("{} disconnected (Cause: {})", this, cause);
+    logger.info("Disconnected with {}: {}", cause, this);
   }
 
   public DisconnectCause getDisconnectCause() {
@@ -230,6 +232,7 @@ public abstract class XStreamClient implements IClient {
     // this side caused disconnect, notify other side
     if (!isClosed())
       send(new CloseConnection());
+    stopReceiver();
     handleDisconnect(DisconnectCause.INITIATED_DISCONNECT);
   }
 
@@ -251,8 +254,6 @@ public abstract class XStreamClient implements IClient {
     if (!isClosed()) {
       this.closed = true;
 
-      stopReceiver();
-
       try {
         if (this.out != null)
           this.out.close();
@@ -266,10 +267,10 @@ public abstract class XStreamClient implements IClient {
       try {
         this.networkInterface.close();
       } catch (Exception e) {
-        logger.warn("Failed to close " + networkInterface, e);
+        logger.warn("Failed to close {} for {}", networkInterface, this, e);
       }
     } else {
-      logger.warn("Attempted to close an already closed stream");
+      logger.warn("Attempted to close the already closed {}", this);
     }
   }
 

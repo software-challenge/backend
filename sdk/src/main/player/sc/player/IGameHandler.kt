@@ -20,7 +20,8 @@ interface IGameHandler {
     /** Wird aufgerufen, wenn das Spiel beendet ist. */
     fun onGameOver(data: GameResult)
     
-    /** Wird aufgerufen, wenn der Server einen Fehler meldet*/
+    /** Wird aufgerufen, wenn der Server einen Fehler meldet.
+     * Bedeutet auch den Abbruch des Spiels. */
     fun onError(error: String)
     
 }

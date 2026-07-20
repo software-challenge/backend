@@ -45,11 +45,6 @@ interface IGameInstance {
     /** Used for generating replay name.  */
     val pluginUUID: String
 
-    /** @return the two players, the startplayer will be first in the List
-     */
+    /** @return the players, the startplayer will be first in the List */
     val players: List<Player>
-
-    /** @return the PlayerScores for both players
-     */
-    val playerScores: List<PlayerScore>
 }

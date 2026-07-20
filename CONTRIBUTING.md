@@ -13,7 +13,7 @@ git clone git@github.com:software-challenge/backend.git --recurse-submodules --s
 ## Kollaboration
 
 Unsere Commit-Messages folgen dem Muster `type(scope): summary`
-(siehe [Karma Runner Konvention](http://karma-runner.github.io/latest/dev/git-commit-msg.html)),
+(siehe [Karma Runner Konvention](https://karma-runner.github.io/6.2/dev/git-commit-msg.html)),
 wobei die gängigen Scopes in [.dev/scopes.txt](.dev/scopes.txt) definiert werden.
 Nach dem Klonen mit git sollte dazu der hook aktiviert werden:
 
@@ -43,14 +43,14 @@ Die wichtigsten Tasks:
 | Task                             | Beschreibung
 | ----                             | ------------
 | `build`                          | Kompiliert, packt und testet alles
-| `deploy`                         | Erstellt hochladbare ZIP-Pakete
+| `bundle`                         | Erstellt hochladbare ZIP-Pakete
 | `check`                          | Führt alle Tests aus
 | `test`                           | Führt Unittests aus
 | `integrationTest`                | Testet ein komplettes Spiel sowie den TestClient
 | `startServer` oder `:server:run` | Startet den Server direkt vom Quellcode
 | `:server:startProduction`        | Startet den gepackten Server
-| `:player:run`                    | Startet den SimpleClient direkt vom Quellcode
-| `:player:shadowJar`              | Packt den SimpleClient zu einer eigenständig ausführbaren Datei
+| `:player:run`                    | Startet den Zufallsspieler direkt vom Quellcode
+| `:player:shadowJar`              | Packt den Zufallsspieler zu einer eigenständig ausführbaren Datei
 | `:test-client:run`               | Startet den TestClient
 
 ### Unterprojekte

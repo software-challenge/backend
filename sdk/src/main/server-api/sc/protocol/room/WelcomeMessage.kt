@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import sc.api.plugins.ITeam
 
 /** Nachricht, die zu Beginn eines Spiels an einen Client geschickt wird, um ihm seine Spielerfarbe mitzuteilen.  */
-@Suppress("DataClassPrivateConstructor")
+@ConsistentCopyVisibility
 @XStreamAlias(value = "welcomeMessage")
 data class WelcomeMessage private constructor(
         @XStreamAsAttribute val color: String,

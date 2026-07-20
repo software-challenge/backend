@@ -18,13 +18,14 @@ class ConverterTest {
             return !(field == "secret" && hacker == viewer)
         }
 
+        /** @suppress */
         companion object {
             val hacker = Any()
             val goodFriend = Any()
         }
     }
     
-    private val xStream = XStreamProvider.getPureXStream()
+    private val xStream = XStreamProvider.pure()
 
     @Test
     fun shouldSerializeSensitiveDataForAuthorizedPeople() {

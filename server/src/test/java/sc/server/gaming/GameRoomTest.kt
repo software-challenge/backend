@@ -6,29 +6,30 @@ import io.kotest.matchers.*
 import io.kotest.matchers.collections.*
 import io.kotest.matchers.maps.shouldContainExactly
 import org.junit.jupiter.api.assertThrows
+import sc.api.plugins.Team
+import sc.framework.plugins.Constants
 import sc.protocol.requests.PrepareGameRequest
 import sc.server.Configuration
 import sc.server.helpers.StringNetworkInterface
 import sc.server.network.Client
+import sc.server.plugins.TestGame
 import sc.server.plugins.TestPlugin
-import sc.shared.PlayerScore
-import sc.shared.ScoreCause
-import sc.shared.SlotDescriptor
+import sc.shared.*
 import java.io.StringWriter
 
 val minimalReplay = """
     <protocol>
-    <room roomId="some-id">
+    <room roomId="PLACEHOLDERID">
       <data class="memento">
         <state class="sc.server.plugins.TestGameState">
           <turn>0</turn>
           <state>0</state>
-          <red team="ONE"/>
-          <blue team="TWO"/>
+          <red name="Fred" team="ONE"/>
+          <blue name="Marta" team="TWO"/>
         </state>
       </data>
     </room>
-    <room roomId="some-id">
+    <room roomId="PLACEHOLDERID">
       <data class="result">
         <definition>
           <fragment name="winner">
@@ -46,22 +47,23 @@ val minimalReplay = """
         </definition>
         <scores>
           <entry>
-            <player team="ONE"/>
-            <score cause="REGULAR" reason="Game terminated">
+            <player name="Fred" team="ONE"/>
+            <score>
               <part>0</part>
               <part>0</part>
               <part>2</part>
             </score>
           </entry>
           <entry>
-            <player team="TWO"/>
-            <score cause="REGULAR" reason="Game terminated">
-              <part>0</part>
+            <player name="Marta" team="TWO"/>
+            <score>
+              <part>2</part>
               <part>1</part>
               <part>2</part>
             </score>
           </entry>
         </scores>
+        <winner team="TWO" regular="true" reason="Marta won through index"/>
       </data>
     </room>
     </protocol>""".trimIndent()
@@ -81,17 +83,19 @@ class GameRoomTest: WordSpec({
             manager.joinOrCreateGame(client, TestPlugin.TEST_PLUGIN_UUID).playerCount shouldBe 2
         }
         "return correct scores on game over" {
-            val playersScores = room.game.players.associateWith { PlayerScore(ScoreCause.REGULAR, "Game terminated", 0, it.team.index, 2) }
-            room.onGameOver(playersScores)
+            val game = (room.game as TestGame)
+            game.currentState.turn = 2
+            val playersScores = game.players.associateWith { PlayerScore(it.team.index * Constants.WIN_SCORE, it.team.index, 2) }
+            room.onGameOver(game.getResult())
             room.result.isRegular shouldBe true
             room.result.scores shouldContainExactly playersScores
-            room.result.winner shouldBe null
+            room.result.win?.winner shouldBe Team.TWO
             room.isOver shouldBe true
         }
         "save a correct replay" {
             val replayWriter = StringWriter()
             room.saveReplay(replayWriter)
-            replayWriter.toString() shouldBe minimalReplay.replace("some-id", room.id)
+            replayWriter.toString() shouldBe minimalReplay.replace("PLACEHOLDERID", room.id)
         }
     }
     "A GameRoom with prepared reservations" should {

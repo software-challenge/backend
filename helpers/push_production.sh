@@ -1,5 +1,3 @@
-#!/bin/bash
-
+#!/bin/sh
 echo "pushing to PRODUCTION"
-export server=flut
-./helpers/push_to_server.sh
+server=flut "$(dirname $0)/push_to_server.sh"

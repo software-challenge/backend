@@ -20,12 +20,9 @@ public class Configuration {
 
   public static final char DEBUG_SHORT_OPTION = 'd';
   public static final String DEBUG_OPTION = "debug";
-  public static final String PLUGINS_OPTION = "plugins";
-  public static final String GAMELOADFILE_OPTION = "loadGameFile";
+
   public static final String GAMELOADFILE = "loadGameFile";
-  public static final String TURN_OPTION = "turn";
-  public static final String TURN_TO_LOAD = "turnToLoad";
-  public static final String PLUGIN_PATH_DEFAULT_KEY = "./plugins";
+  public static final String TURN_TO_LOAD = "turn";
   public static final String SAVE_REPLAY = "saveReplay";
   public static final String PAUSED = "paused";
   public static final String TIMEOUT = "timeout";
@@ -33,7 +30,8 @@ public class Configuration {
 
   public static final String PASSWORD_KEY = "password";
   public static final String PORT_KEY = "port";
-  public static final String PLUGIN_PATH_KEY = "plugins";
+  public static final String PLUGINS_OPTION = "plugins";
+  public static final String PLUGINS_PATH_DEFAULT = "./plugins";
 
   private static final Properties properties = new Properties();
 
@@ -50,8 +48,8 @@ public class Configuration {
     } else {
       logger.warn("Could not find server.properties at {}, will use default values!", file);
     }
+    // Defaults, only if server.properties cannot be loaded
     properties.setProperty(PASSWORD_KEY, "examplepassword");
-    properties.setProperty(PAUSED, "false");
   }
 
   public static void load(Reader reader) throws IOException {
@@ -62,12 +60,16 @@ public class Configuration {
     return get(PORT_KEY, Integer.class, SharedConfiguration.DEFAULT_PORT);
   }
 
+  public static boolean getTimeout() {
+    return get(TIMEOUT, Boolean.class, true);
+  }
+
   public static boolean getListenLocal() {
     return get(LISTEN_LOCAL_KEY, Boolean.class, true);
   }
 
   public static String getPluginPath() {
-    return get(PLUGIN_PATH_KEY, String.class, PLUGIN_PATH_DEFAULT_KEY);
+    return get(PLUGINS_OPTION, String.class, PLUGINS_PATH_DEFAULT);
   }
 
   public static String getAdministrativePassword() {
@@ -111,12 +113,12 @@ public class Configuration {
   }
 
   private static boolean toBoolean(String value) {
-    if ("true".equals(value)) {
+    if ("true".equalsIgnoreCase(value)) {
       return true;
-    } else if ("false".equals(value)) {
+    } else if ("false".equalsIgnoreCase(value)) {
       return false;
     } else {
-      throw new IllegalArgumentException("Argument must be true or false");
+      throw new IllegalArgumentException("Argument '" + value + "' should be true or false");
     }
   }
 
