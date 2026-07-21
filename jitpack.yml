@@ -1,2 +1,6 @@
 jdk:
   - openjdk11
+
+install:
+  - ./gradlew :sdk:publishToMavenLocal :plugin2027:publishToMavenLocal -x test
+
