@@ -31,6 +31,7 @@ val versionObject by extra { KotlinVersion(versions[0], versions[1], versions[2]
 version = versionObject.toString() + property("socha.version.suffix").toString().takeUnless { it.isBlank() }?.let { "-$it" }.orEmpty()
 val year by extra { "20${versionObject.major}" }
 val game by extra { "${gameName}_$year" }
+val pluginName by extra { "plugin$year"}
 
 val bundleDir by extra { layout.buildDirectory.dir("bundle").get().asFile }
 val bundledPlayer by extra { "randomplayer-$gameName-$version.jar" }

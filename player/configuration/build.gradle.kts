@@ -21,7 +21,7 @@ dependencies {
     if(gradle.startParameter.isOffline) {
         implementation(fileTree("lib"))
     } else {
-        implementation("com.github.software-challenge.backend", "GAME", "VERSION")
+        implementation("com.github.software-challenge.backend", "PLUGIN_NAME", "VERSION")
         implementation("ch.qos.logback", "logback-classic", "1.5.32")
     }
 }

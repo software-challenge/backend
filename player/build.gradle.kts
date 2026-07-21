@@ -9,6 +9,7 @@ plugins {
 val game: String by project
 val year: String by project
 val gameName: String by project
+val pluginName: String by project
 val integrationReportsDir: File by project
 val version = rootProject.version.toString()
 
@@ -53,7 +54,10 @@ tasks {
         with(copySpec {
             from("configuration")
             filter {
-                it.replace("VERSION", version).replace("GAME", game).replace("YEAR", year)
+                it.replace("VERSION", version)
+                    .replace("GAME", game)
+                    .replace("YEAR", year)
+                    .replace("PLUGIN_NAME", pluginName)
             }
         }, copySpec {
             from(rootDir.resolve("gradlew"), rootDir.resolve("gradlew.bat"))
