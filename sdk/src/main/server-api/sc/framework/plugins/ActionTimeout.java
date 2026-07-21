@@ -2,12 +2,10 @@ package sc.framework.plugins;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.GarbageCollectorMXBean;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO We can probably utilise an inbuilt class instead.
 /** Tracks timeouts in Milliseconds. */
 public class ActionTimeout {
     static final Logger logger = LoggerFactory.getLogger(ActionTimeout.class);
@@ -24,10 +22,11 @@ public class ActionTimeout {
 
     private long startTimestamp = 0;
     private long stopTimestamp = 0;
-    private long gcTime = 0;
+    private long gcStartTime = 0;
+    private long gcStopTime = 0;
 
     private static final int DEFAULT_HARD_TIMEOUT = 10000;
-    private static final int DEFAULT_SOFT_TIMEOUT = 5000;
+    private static final int DEFAULT_SOFT_TIMEOUT = 2000;
 
     private enum Status {
         NEW, STARTED, STOPPED
@@ -73,8 +72,12 @@ public class ActionTimeout {
             throw new IllegalStateException("Timeout was not stopped.");
         }
 
+
+        logger.info("Garbage collection time: {} {} {}", gcStopTime, gcStartTime, gcStopTime - gcStartTime);
+        logger.info("Real time difference: {}", stopTimestamp - startTimestamp);
+        logger.info("Unaltered time difference: {}", stopTimestamp - startTimestamp - gcStopTime + gcStartTime);
         // Subtract the garbage collection time for an unaltered time
-        return stopTimestamp - startTimestamp - gcTime;
+        return stopTimestamp - startTimestamp - gcStopTime + gcStartTime;
     }
 
     public synchronized boolean didTimeout() {
@@ -99,18 +102,13 @@ public class ActionTimeout {
         }
 
         // Get the garbage collection time
-        this.gcTime = ManagementFactory.getGarbageCollectorMXBeans()
-                .stream()
-                .mapToLong(GarbageCollectorMXBean::getCollectionTime)
-                .sum();
+        this.gcStopTime = getGCTime();
     }
 
     public synchronized void start(final Runnable onTimeout) {
         if (this.status != Status.NEW) {
             throw new IllegalStateException("Redundant start: was already started!");
         }
-
-        clearGCStats();
 
         if (canTimeout()) {
             this.timeoutThread = new Thread(() -> {
@@ -119,9 +117,12 @@ public class ActionTimeout {
                     stop();
                     onTimeout.run();
                 } catch (InterruptedException e) {
-                    logger.info("HardTimout wasn't reached.");
+                    logger.info("HardTimeout wasn't reached.");
                 }
             });
+
+            // Get the garbage collection time
+            this.gcStartTime = getGCTime();
             this.timeoutThread.start();
         }
 
@@ -129,9 +130,28 @@ public class ActionTimeout {
         this.status = Status.STARTED;
     }
 
-    private void clearGCStats() {
-        // With the call of `getCollectionTime` we'll clear the GarbageCollectorMXBean from older gcs.
-        List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        gcBeans.forEach(GarbageCollectorMXBean::getCollectionTime);
+  /**
+   * Measures the total garbage collection time.
+   * This is meant to be used as a value relative to a start time.
+   * @return The total garbage collection time
+   */
+  private long getGCTime() {
+        long gcTime = 0;
+        for (GarbageCollectorMXBean gcBean : ManagementFactory.getGarbageCollectorMXBeans()) {
+            gcTime += gcBean.getCollectionTime();
+        }
+        return gcTime;
+    }
+
+    @Override
+    public String toString() {
+        return "ActionTimeout{" +
+            "canTimeout=" + canTimeout +
+            ", status=" + status +
+            ", start=" + startTimestamp +
+            ", stop=" + stopTimestamp +
+            ", gcStart=" + gcStartTime +
+            ", gcStop=" + gcStopTime +
+            '}';
     }
 }
