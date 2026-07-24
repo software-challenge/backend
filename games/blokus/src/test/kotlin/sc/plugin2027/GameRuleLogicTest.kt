@@ -107,7 +107,7 @@ class GameRuleLogicTest: WordSpec({
                     * 4 // 4 sides to consider
                     * 17 // 18 places on a side - 1 to remove duplicates for other side
         )
-        val actualMoves = state.getSensibleMoves()
+        val actualMoves = GameRuleLogic.getAllPossibleMoves(state)
         "has no duplicates" {
             actualMoves.size shouldBe actualMoves.toSet().size
         }

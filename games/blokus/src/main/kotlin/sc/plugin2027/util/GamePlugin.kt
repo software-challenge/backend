@@ -40,6 +40,7 @@ class GamePlugin: IGamePlugin<Move> {
     override val scoreDefinition =
             Companion.scoreDefinition
     
+    // FIXME unused
     override val turnLimit: Int =
         Constants.ROUND_LIMIT * 2
     

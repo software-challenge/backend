@@ -325,37 +325,72 @@ object GameRuleLogic {
         }
     
     /**
+     * In den ersten fünf Runden gibt diese Methode nur die Liste der [SetMove]s
+     * mit Pentominos zurück.
+     * Ansonsten eine Liste an möglichen [SetMove]s zurück.
+     * Diese Liste enthält auch mögliche Startzüge.
+     *
+     * @param gameState der aktuelle Spielstand
+     * @return eine Liste aller möglichen [SetMove]s für den aktuellen Spielstand
+     */
+    @JvmStatic
+    fun getFilteredPossibleMoves(gameState: GameState): List<SetMove> =
+        if (isFirstMove(gameState)) {
+            getPossibleStartMoves(gameState, true)
+        } else if (gameState.round <= 5) {
+            getPentominoMoves(gameState)
+        } else {
+            getPossibleMoves(gameState)
+        }
+    
+    /**
      * Gibt alle möglichen [SetMove]s für den ersten Zug zurück.
      *
      * @param gameState der aktuelle Spielstand
      * @return eine Liste aller möglichen [SetMove]s für den ersten Zug
      */
+    fun getPossibleStartMoves(gameState: GameState): List<SetMove> = getPossibleStartMoves(gameState, false)
+    
+    /**
+     * Gibt alle möglichen [SetMove]s für den ersten Zug zurück.
+     *
+     * @param gameState der aktuelle Spielstand
+     * @param filter ob die Startzüge gefiltert werden sollen. Falls ja, werden
+     *      für den ersten Spieler jedes Teams nur die obere linke Hälfte und für
+     *      den zweiten Spieler jedes Teams nur die untere rechte Hälfte
+     *      vorgeschlagen.
+     * @return eine Liste aller möglichen [SetMove]s für den ersten Zug
+     */
     @JvmStatic
-    fun getPossibleStartMoves(gameState: GameState): List<SetMove> {
+    fun getPossibleStartMoves(gameState: GameState, filter: Boolean): List<SetMove> {
         val moves = ArrayList<SetMove>()
         val filteredMoves = ArrayList<SetMove>()
         val kind = gameState.startPiece
         for (variant: Map.Entry<Set<Coordinates>, Pair<Rotation, Boolean>> in kind.variants) {
             val borderCoordinates: ArrayList<Coordinates> = ArrayList()
-            // Add top border
-            // x from [0,16], y = 0
-            for (x in 0 until Constants.BOARD_LENGTH - variant.key.area.dx - 1) {
-                borderCoordinates.add(Coordinates(x, 0))
+            if (!filter || gameState.currentColor == Color.BLUE || gameState.currentColor == Color.YELLOW) {
+                // Add top border
+                // x from [0,16], y = 0
+                for(x in 0 until Constants.BOARD_LENGTH - variant.key.area.dx - 1) {
+                    borderCoordinates.add(Coordinates(x, 0))
+                }
+                // Add left border
+                // x = 0, y from [1, 17]
+                for (y in 1 until Constants.BOARD_LENGTH - variant.key.area.dy) {
+                    borderCoordinates.add(Coordinates(0, y))
+                }
             }
-            // Add right border
-            // x = 20-2-1 = 17, y from [0,16]
-            for (y in 0 until Constants.BOARD_LENGTH - variant.key.area.dy - 1) {
-                borderCoordinates.add(Coordinates(Constants.BOARD_LENGTH - variant.key.area.dx - 1, y))
-            }
-            // Add bottom border
-            // x from [1, 17] = 17, y = 20 - 2 - 1 = 17
-            for (x in 1 until Constants.BOARD_LENGTH - variant.key.area.dx) {
-                borderCoordinates.add(Coordinates(x, Constants.BOARD_LENGTH - variant.key.area.dy - 1))
-            }
-            // Add left border
-            // x = 0, y from [1, 17]
-            for (y in 1 until Constants.BOARD_LENGTH - variant.key.area.dy) {
-                borderCoordinates.add(Coordinates(0, y))
+            if (!filter || gameState.currentColor == Color.RED || gameState.currentColor == Color.GREEN) {
+                // Add right border
+                // x = 20-2-1 = 17, y from [0,16]
+                for (y in 0 until Constants.BOARD_LENGTH - variant.key.area.dy - 1) {
+                    borderCoordinates.add(Coordinates(Constants.BOARD_LENGTH - variant.key.area.dx - 1, y))
+                }
+                // Add bottom border
+                // x from [1, 17] = 17, y = 20 - 2 - 1 = 17
+                for (x in 1 until Constants.BOARD_LENGTH - variant.key.area.dx) {
+                    borderCoordinates.add(Coordinates(x, Constants.BOARD_LENGTH - variant.key.area.dy - 1))
+                }
             }
             for (borderCoordinate in borderCoordinates) {
                 val move = SetMove(Piece(gameState.currentColor, kind, variant.key, borderCoordinate))
@@ -382,6 +417,24 @@ object GameRuleLogic {
         val moves: ArrayList<SetMove> = ArrayList()
         for (shape in gameState.undeployedPieceShapes()) {
              moves.addAll(getPossibleMovesForShape(gameState, shape, validFields))
+        }
+        return moves
+    }
+    
+    /**
+     * Gib eine Sammlung aller möglichen [SetMove]s zurück (ohne den Startzug).
+     *
+     * @param gameState der aktuelle Spielstand
+     * @return eine Sammlung aller möglichen [SetMove]s (ohne den Startzug)
+     */
+    @JvmStatic
+    fun getPentominoMoves(gameState: GameState): List<SetMove> {
+        val validFields: Set<Coordinates> = getValidFields(gameState.board, gameState.currentColor)
+        val moves: ArrayList<SetMove> = ArrayList()
+        for (shape in gameState.undeployedPieceShapes()) {
+            if (shape.size == 5) {
+                moves.addAll(getPossibleMovesForShape(gameState, shape, validFields))
+            }
         }
         return moves
     }
