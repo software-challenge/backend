@@ -323,7 +323,7 @@ data class GameState @JvmOverloads constructor(
      * @return Liste der möglichen Züge der aktuellen Spielerfarbe.
      */
     override fun getSensibleMoves(): List<Move> {
-        val possibleMoves = GameRuleLogic.getAllPossibleMoves(this)
+        val possibleMoves = GameRuleLogic.getFilteredPossibleMoves(this)
         if (possibleMoves.isEmpty()) {
             return listOf(SkipMove(currentColor))
         }
