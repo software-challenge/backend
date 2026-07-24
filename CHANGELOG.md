@@ -11,10 +11,13 @@ The version should always be in sync with the [GUI](https://github.com/software-
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
 
+### 27.0.5 Sensible Moves and GC Time-Tracking - 2026-07-24
+- Advanced player filters possible moves to avoid timeouts
+- Track garbage collection time and subtract from used time when checking timeout.
   
 ### 27.0.0-beta Initial Release - 2026-06-25
 
-## 2027 Game Piranhas
+## 2027 Game Blokus
 
 ## 2026 Game Piranhas
 
