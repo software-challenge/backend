@@ -46,7 +46,7 @@ val isBeta by extra { versionObject.minor == 0 }
 val enableTestClient by extra { arrayOf("check", "testTestClient").any { gradle.startParameter.taskNames.contains(it) } || !isBeta }
 val enableIntegrationTesting by extra { !project.hasProperty("nointegration") && (!isBeta || enableTestClient) }
 
-val javaRuntimeVersion: JavaVersion = JavaVersion.current()
+val javaRuntimeVersion: JavaVersion = JavaVersion.VERSION_11
 println("Current version: $version (unstable: $isBeta) Game: $game (Kotlin ${kotlinExtension.coreLibrariesVersion}, Java runtime $javaRuntimeVersion)")
 
 // == Split script modules ==
