@@ -10,6 +10,8 @@ The version should always be in sync with the [GUI](https://github.com/software-
 - `y` is bumped for any major updates or backwards-incompatible changes.  
   A `y` version of 0 marks the beta of the current year
   and likely contains breaking changes between patches.
+### 27.0.6 Fix artifact race condition
+- GitHub artifacts are now compiled with Java 11
 
 ### 27.0.5 Sensible Moves and GC Time-Tracking - 2026-07-24
 - Advanced player filters possible moves to avoid timeouts
