@@ -14,21 +14,13 @@ internal const val PASSWORD = "TEST_PASSWORD"
 data class TestLobby(val lobby: Lobby = Lobby()): Closeable by lobby {
     
     val serverPort: Int
-        get() = NewClientListener.lastUsedPort
+        get() = lobby.port
     
     init {
         Configuration.set(Configuration.PORT_KEY, "0") // Random PortAllocation
         Configuration.set(Configuration.PASSWORD_KEY, PASSWORD)
         
-        NewClientListener.lastUsedPort = 0
         lobby.start()
-        waitForServer()
-    }
-    
-    private fun waitForServer() {
-        while (NewClientListener.lastUsedPort == 0) {
-            Thread.yield()
-        }
     }
     
     fun connectClient() =

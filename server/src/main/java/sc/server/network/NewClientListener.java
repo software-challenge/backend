@@ -23,7 +23,9 @@ public class NewClientListener implements Runnable, Closeable {
   private final BlockingQueue<Client> queue;
 
   protected static final Logger logger = LoggerFactory.getLogger(NewClientListener.class);
-  public static int lastUsedPort = 0;
+
+  /** The port this listener is bound to, 0 while it is not listening. */
+  private volatile int port = 0;
 
   NewClientListener() {
     this.serverSocket = null;
@@ -39,6 +41,11 @@ public class NewClientListener implements Runnable, Closeable {
    */
   public Client fetchNewSingleClient() throws InterruptedException {
     return this.queue.take();
+  }
+
+  /** @return the port this listener is bound to, 0 while it is not listening. */
+  public int getPort() {
+    return this.port;
   }
 
   /** Wait for a client to connect and add it to the queue. */
@@ -90,20 +97,18 @@ public class NewClientListener implements Runnable, Closeable {
    * @throws IOException if server could not be started on set port
    */
   private void startSocketListener() throws IOException {
-    int port = Configuration.getPort();
+    int configuredPort = Configuration.getPort();
     InetAddress bindAddr = null; // From the docs: If bindAddr is null, it will default accepting connections on any/all local addresses.
     if (Configuration.getListenLocal()) {
       bindAddr = InetAddress.getByName(null); // localhost
     }
 
     try {
-      this.serverSocket = new ServerSocket(port, 0, bindAddr);
-      int usedPort = this.serverSocket.getLocalPort();
-      NewClientListener.lastUsedPort = usedPort;
-      logger.info("Listening on port {} for incoming connections.",
-              usedPort);
+      this.serverSocket = new ServerSocket(configuredPort, 0, bindAddr);
+      this.port = this.serverSocket.getLocalPort();
+      logger.info("Listening on port {} for incoming connections.", this.port);
     } catch (IOException e) {
-      logger.error("Could not start server on port " + port, e);
+      logger.error("Could not start server on port " + configuredPort, e);
       throw e; // do not throw a new IOException to preserve the inheritance hierarchy
     }
   }

@@ -15,6 +15,11 @@ class ClientManager(private val requestHandler: IClientRequestListener) : Runnab
     /** Listener waits for new clients to connect. */
     private val clientListener = NewClientListener()
 
+    /** The port the [clientListener] is bound to, 0 while it is not listening.
+     * Only meaningful after [start] returned. */
+    val port: Int
+        get() = clientListener.port
+
     private var running: Boolean = false
     private var serviceThread: Thread? = null
 

@@ -23,7 +23,7 @@ abstract class RealServerTest {
     protected lateinit var gameMgr: GameRoomManager
     
     protected val serverPort: Int
-        get() = NewClientListener.lastUsedPort
+        get() = lobby.port
     
     fun connectPlayer() =
             LobbyClient("localhost", serverPort).apply { start() }
@@ -42,20 +42,12 @@ abstract class RealServerTest {
         
         IGamePlugin.loadPlugin(TestPlugin.TEST_PLUGIN_UUID)
         
-        NewClientListener.lastUsedPort = 0
         this.lobby.start()
-        waitForServer()
     }
     
     @AfterEach
     fun tearDown() {
         this.lobby.close()
-    }
-    
-    private fun waitForServer() {
-        while (NewClientListener.lastUsedPort == 0) {
-            Thread.yield()
-        }
     }
     
     protected fun waitForConnect(count: Int) =
@@ -65,7 +57,7 @@ abstract class RealServerTest {
         return try {
             if (serverPort == 0)
                 throw RuntimeException("Could not find an open port to connect to.")
-            val mySocket = Socket("localhost", NewClientListener.lastUsedPort)
+            val mySocket = Socket("localhost", serverPort)
             TestTcpClient(mySocket).apply { start() }
         } catch (e: IOException) {
             e.printStackTrace()

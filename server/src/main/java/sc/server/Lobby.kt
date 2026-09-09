@@ -16,6 +16,11 @@ import java.io.IOException
 class Lobby: GameRoomManager(), Closeable, IClientRequestListener {
     val clientManager = ClientManager(this)
     
+    /** The port this lobby listens on, 0 until [start] returned.
+     * Resolves the actual port when configured to bind a random one. */
+    val port: Int
+        get() = clientManager.port
+    
     /** @see ClientManager.start */
     @Throws(IOException::class)
     fun start() {
