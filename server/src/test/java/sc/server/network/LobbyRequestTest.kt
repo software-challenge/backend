@@ -27,16 +27,18 @@ class LobbyRequestTest: FunSpec({
         }
     }
     context("admin authentication") {
-        val pwd = "Bobby"
+        // Always configure the shared PASSWORD: Configuration is global state
+        // and other specs run against it concurrently.
         test("wrong password") {
+            Configuration.set(Configuration.PASSWORD_KEY, PASSWORD)
             shouldThrow<AuthenticationFailedException> {
-                lobby.onRequest(dummy, PacketCallback(AuthenticateRequest(pwd)))
+                lobby.onRequest(dummy, PacketCallback(AuthenticateRequest("Bobby")))
             }
             dummy.isAdministrator.shouldBeFalse()
         }
-        test("wrong password") {
-            Configuration.set(Configuration.PASSWORD_KEY, pwd)
-            lobby.onRequest(dummy, PacketCallback(AuthenticateRequest(pwd)))
+        test("correct password") {
+            Configuration.set(Configuration.PASSWORD_KEY, PASSWORD)
+            lobby.onRequest(dummy, PacketCallback(AuthenticateRequest(PASSWORD)))
             dummy.isAdministrator.shouldBeTrue()
         }
     }

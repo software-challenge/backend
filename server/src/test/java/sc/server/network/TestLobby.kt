@@ -9,6 +9,9 @@ import sc.server.Lobby
 import sc.server.helpers.TestGameHandler
 import java.io.Closeable
 
+/** The administrative password every test configures.
+ * [sc.server.Configuration] is global state shared by all specs running in parallel,
+ * so tests must never set a *different* password. */
 internal const val PASSWORD = "TEST_PASSWORD"
 
 data class TestLobby(val lobby: Lobby = Lobby()): Closeable by lobby {

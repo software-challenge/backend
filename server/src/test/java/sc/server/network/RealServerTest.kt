@@ -35,7 +35,7 @@ abstract class RealServerTest {
     fun setup() {
         // Random PortAllocation
         Configuration.set(Configuration.PORT_KEY, "0")
-        Configuration.set(Configuration.PASSWORD_KEY, "TEST_PASSWORD")
+        Configuration.set(Configuration.PASSWORD_KEY, PASSWORD)
         this.lobby = Lobby()
         this.clientMgr = this.lobby.clientManager
         this.gameMgr = this.lobby
