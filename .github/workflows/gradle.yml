@@ -51,7 +51,7 @@ jobs:
       - name: Upload bundle artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: software-challenge-backend-${{ matrix.os }}-jdk${{ matrix.jdk }}-${{ github.sha }}
+          name: software-challenge-backend-${{ github.sha }}-jdk${{ matrix.jdk }}-${{ matrix.os }}
           path: |
             build/bundle/*.zip
             build/bundle/*.jar
@@ -65,9 +65,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: software-challenge-backend-*-${{ github.sha }}
+          name: software-challenge-backend-${{ github.sha }}-jdk11-ubuntu-latest
           path: artifacts
-          merge-multiple: true
       - name: Release ${{ github.ref }}
         uses: softprops/action-gh-release@v2
         with:

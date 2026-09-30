@@ -14,6 +14,9 @@ data class Coordinates(
         @XStreamAsAttribute val x: Int,
         @XStreamAsAttribute val y: Int,
 ) {
+    override fun equals(other: Any?): Boolean {
+        return other is Coordinates && this.x == other.x && this.y == other.y
+    }
     
     override fun toString(): String = "[$x|$y]"
     
@@ -32,6 +35,9 @@ data class Coordinates(
     /** Gibt die vier benachbarten Feldkoordinaten zurück. */
     val neighbors: Collection<Coordinates>
         get() = Direction.cardinals.map { this + it }
+    /** Gibt die vier angrenzenden Ecken der Feldkoordinaten zurück. */
+    val diagonalNeighbors: Collection<Coordinates>
+        get() = Direction.diagonals.map { this + it }
     
     /** @suppress */
     companion object {

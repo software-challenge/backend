@@ -87,6 +87,7 @@ agent_policy:
       - plugin2024
       - plugin2025
       - plugin2026
+      - plugin2027
       - test-client
       - test-config
   verification:

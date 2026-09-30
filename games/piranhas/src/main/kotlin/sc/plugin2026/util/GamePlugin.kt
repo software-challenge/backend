@@ -16,6 +16,7 @@ enum class PiranhasWinReason(override val message: String, override val isRegula
     BIGGER_SWARM("%s hat den größeren zusammenhängenden Schwarm"),
     /** Alle Fische einer Farbe zuerst vereinigt. */
     FIRST_UNION("%s hat zuerst alle Fische einer Farbe vereinigt"),
+    BLOCKED("%s hat den Gegner blockiert, sodass er keinen Zug mehr machen kann"),
 }
 
 /** Plugin-Implementierung für das Piranhas-Spiel. */
