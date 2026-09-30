@@ -1,0 +1,58 @@
+package sc.plugin2098
+
+import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamImplicit
+import com.thoughtworks.xstream.annotations.XStreamOmitField
+import sc.api.plugins.*
+import sc.framework.deepCopy
+import sc.plugin2098.util.Connect4Constants
+import kotlin.random.Random
+import kotlin.toString
+
+val line = "-".repeat(Connect4Constants.BOARD_WIDTH * 2 + 2)
+
+/** Spielbrett für Vier Gewinnt mit [Connect4Constants.BOARD_WIDTH] * [Connect4Constants.BOARD_HEIGHT] Feldern.  */
+@XStreamAlias(value = "board")
+class Board(
+    @XStreamImplicit(itemFieldName = "row")
+    override val gameField: MutableTwoDBoard<FieldState> = emptyFields()
+): RectangularBoard<FieldState>(), IBoard {
+    
+    override fun toString() =
+        "Board " + gameField.withIndex().joinToString(" ", "[", "]") { row ->
+            row.value.withIndex().joinToString(", ", prefix = "[", postfix = "]") {
+                "(${it.index}, ${row.index}) " + it.value.toString()
+            }
+        }
+    
+    fun prettyString(): String {
+        val map = StringBuilder(line)
+        gameField.forEach { row ->
+            map.append("\n|")
+            row.forEach { field ->
+                map.append(field.asLetters())
+            }
+        }
+        map.append("\n").append(line)
+        return map.toString()
+    }
+    
+    override fun clone(): sc.plugin2098.Board {
+        //println("Cloning with ${gameField::class.java}: $this")
+        return Board(gameField.deepCopy())
+    }
+    
+    fun getTeam(pos: Coordinates): Team? =
+        this[pos].team
+    
+    
+    companion object {
+        /** Erstellt ein leeres Spielbrett.  */
+        fun emptyFields(): MutableTwoDBoard<FieldState> {
+            return Array(Connect4Constants.BOARD_HEIGHT) {
+                Array(Connect4Constants.BOARD_WIDTH) { FieldState.EMPTY }
+            }
+        }
+    }
+}
+
