@@ -114,17 +114,20 @@ class BoardTest: FunSpec({
             val nextPassengerField = board.findNearestFieldTypes(CubeCoordinates(0, 0), Field.PASSENGER::class).first()
             ship.position = nextPassengerField + (board[nextPassengerField] as Field.PASSENGER).direction.vector
             
+            // A field may border more than one passenger field,
+            // so sum them up instead of guessing which one pickupPassenger picks.
+            fun neighboringPassengers() = board.neighboringFields(ship.position)
+                    .filterIsInstance<Field.PASSENGER>().sumOf { it.passenger }
+            
             val initialShipPassengers: Int = ship.passengers
-            val initialFieldPassengers: Int = board.neighboringFields(ship.position)
-                                                 .filterIsInstance<Field.PASSENGER>().first().passenger
+            val initialFieldPassengers: Int = neighboringPassengers()
             
             val isPickedUp = board.pickupPassenger(ship)
             
             isPickedUp shouldBe true
             
-            ship.passengers shouldBe initialShipPassengers + initialFieldPassengers
-            board.neighboringFields(ship.position)
-                    .filterIsInstance<Field.PASSENGER>().first().passenger shouldBe initialFieldPassengers - 1
+            ship.passengers shouldBe initialShipPassengers + 1
+            neighboringPassengers() shouldBe initialFieldPassengers - 1
         }
         
         test("should return false and not change passenger count when no neighboring passenger fields") {

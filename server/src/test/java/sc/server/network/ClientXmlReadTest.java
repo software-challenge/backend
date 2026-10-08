@@ -21,8 +21,15 @@ public class ClientXmlReadTest {
     }
   }
 
-  /** Denotes an empty ObjectStream (to be used with XStream). */
-  private static final String EMPTY_OBJECT_STREAM = "<protocol></protocol>";
+  /**
+   * An ObjectStream that is opened but never closed (to be used with XStream).
+   *
+   * It must not contain the closing tag: the receive thread started by the
+   * {@link XStreamClient} constructor would hit the end of the stream,
+   * treat it as a lost connection and close the client -
+   * racing against the sending thread, which then silently drops its packet.
+   */
+  private static final String OPEN_OBJECT_STREAM = "<protocol>";
 
   @Test @Timeout(2)
   public void clientReceivePacketTest() throws IOException, InterruptedException {
@@ -42,7 +49,7 @@ public class ClientXmlReadTest {
 
   @Test
   public void clientSendPacketTest() throws IOException {
-    StringNetworkInterface stringInterface = new StringNetworkInterface(EMPTY_OBJECT_STREAM);
+    StringNetworkInterface stringInterface = new StringNetworkInterface(OPEN_OBJECT_STREAM);
     Client client = new Client(stringInterface);
     aliasExamplePacket(client);
 

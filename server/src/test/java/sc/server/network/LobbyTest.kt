@@ -9,7 +9,7 @@ import sc.server.client.TestLobbyClientListener
 import sc.server.gaming.GameRoom
 import sc.server.plugins.TestPlugin
 import sc.shared.Violation
-import java.net.SocketException
+import java.io.IOException
 import kotlin.time.Duration.Companion.seconds
 
 class LobbyTest: RealServerTest() {
@@ -48,7 +48,9 @@ class LobbyTest: RealServerTest() {
         
         try {
             player1.sendCustomData("<yarr>")
-        } catch(_: SocketException) {
+        } catch(_: IOException) {
+            // The server may have dropped the connection already;
+            // Windows surfaces that as a plain IOException rather than a SocketException.
         }
         
         await("Game is over", 3.seconds) { room.isOver }

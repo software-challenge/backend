@@ -13,6 +13,7 @@ import sc.plugin2024.actions.Advance
 import sc.plugin2024.actions.Turn
 import sc.plugin2024.mistake.MQMoveMistake
 import sc.plugin2024.util.GamePlugin
+import sc.plugin2024.util.MQConstants
 import sc.shared.InvalidMoveException
 import sc.shared.Violation
 import sc.shared.WinCondition
@@ -21,6 +22,11 @@ import sc.shared.WinReasonTie
 class GameResultTest: WordSpec({
     "Result XML" should {
         val game = TwoPlayerGame(GamePlugin(), GameState())
+        // GameState generates a random Board, on which a ship may end up next to a
+        // passenger field and pick it up, adding POINTS_PER_PASSENGER to its score.
+        // The advance points themselves are deterministic, so account for the bonus.
+        fun Ship.expectedPoints(advancePoints: Int) =
+                advancePoints + passengers * MQConstants.POINTS_PER_PASSENGER
         "work when empty" {
             game.getResult() shouldSerializeTo """
                 <result>
@@ -90,6 +96,7 @@ class GameResultTest: WordSpec({
         game.currentState.performMoveDirectly(Move(Accelerate(1), Advance(1), Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
         "work with violation result" {
             game.players.first().violation = Violation.RULE_VIOLATION(InvalidMoveException(MQMoveMistake.NO_ACTIONS, Move()))
+            val bob = game.currentState.getShip(Team.TWO)
             game.getResult() shouldSerializeTo """
                 <result>
                   <definition>
@@ -119,8 +126,8 @@ class GameResultTest: WordSpec({
                       <player name="Bob" team="TWO"/>
                       <score>
                         <part>2</part>
-                        <part>2</part>
-                        <part>0</part>
+                        <part>${bob.expectedPoints(2)}</part>
+                        <part>${bob.passengers}</part>
                       </score>
                     </entry>
                   </scores>
@@ -131,6 +138,8 @@ class GameResultTest: WordSpec({
         game.currentState.performMoveDirectly(Move(Accelerate(-1), Turn(CubeDirection.DOWN_RIGHT), Advance(1)))
         "work with regular result" {
             game.players.forEach { it.violation = null }
+            val alice = game.currentState.getShip(Team.ONE)
+            val bob = game.currentState.getShip(Team.TWO)
             game.getResult() shouldSerializeTo """
                 <result>
                   <definition>
@@ -152,16 +161,16 @@ class GameResultTest: WordSpec({
                       <player name="Alice" team="ONE"/>
                       <score>
                         <part>2</part>
-                        <part>3</part>
-                        <part>0</part>
+                        <part>${alice.expectedPoints(3)}</part>
+                        <part>${alice.passengers}</part>
                       </score>
                     </entry>
                     <entry>
                       <player name="Bob" team="TWO"/>
                       <score>
                         <part>0</part>
-                        <part>2</part>
-                        <part>0</part>
+                        <part>${bob.expectedPoints(2)}</part>
+                        <part>${bob.passengers}</part>
                       </score>
                     </entry>
                   </scores>
